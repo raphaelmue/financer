@@ -78,6 +78,7 @@ public class Server {
         try {
             method = FinancerService.class.getMethod(connectionCall.getMethodName(), Map.class);
             result = (ConnectionResult<Object>) method.invoke(this.service, connectionCall.getParameters());
+            this.logger.log(Level.INFO, "Request has been successfully handled.");
         } catch (NoSuchMethodException e) {
             this.logger.log(Level.SEVERE, e.getMessage(), e);
             result = new ConnectionResult<>("Method does not exists!");
@@ -88,5 +89,6 @@ public class Server {
 
         output.writeUTF(gson.toJson(result));
         client.close();
+        this.logger.log(Level.INFO, "Connection to Client () has been closed.");
     }
 }

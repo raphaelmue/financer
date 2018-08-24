@@ -1,13 +1,10 @@
-package de.raphaelmuesseler.financer.client.ui;
+package de.raphaelmuesseler.financer.client.ui.login;
 
 import de.raphaelmuesseler.financer.client.connection.ServerRequest;
 import javafx.application.Application;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
@@ -43,6 +40,9 @@ public class LoginApplication extends Application {
         this.passwordTextField = new PasswordField();
         gridPane.add(this.passwordTextField, 1, 1);
 
+        CheckBox rememberMeCheckBox = new CheckBox("Remember Me");
+        gridPane.add(rememberMeCheckBox, 1, 2);
+
         // add button
         Button btn = new Button();
         btn.setText("Login");
@@ -52,12 +52,17 @@ public class LoginApplication extends Application {
             parameters.put("email", emailTextField.getText());
             parameters.put("password", passwordTextField.getText());
             try {
-                System.out.println(new ServerRequest().make("checkCredentials", parameters).getResult());
+                Boolean result = (Boolean) new ServerRequest().make("checkCredentials", parameters).getResult();
+                if (result) {
+
+                } else {
+
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
         });
-        gridPane.add(btn, 0, 2, 2, 1);
+        gridPane.add(btn, 0, 3, 2, 1);
 
         // setting scene
         StackPane root = new StackPane();
