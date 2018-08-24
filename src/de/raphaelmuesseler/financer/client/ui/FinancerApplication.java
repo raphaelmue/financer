@@ -13,7 +13,14 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.net.Socket;
+
 public class FinancerApplication extends Application implements EventHandler<ActionEvent> {
+
+    private Socket socket;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -60,6 +67,16 @@ public class FinancerApplication extends Application implements EventHandler<Act
 
     @Override
     public void handle(ActionEvent event) {
+        try {
+            this.socket = new Socket("localhost", 3500);
+            DataOutputStream output = new DataOutputStream(this.socket.getOutputStream());
+            output.writeUTF("Test");
 
+            DataInputStream input = new DataInputStream(this.socket.getInputStream());
+            System.out.println(input.readUTF());
+            this.socket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

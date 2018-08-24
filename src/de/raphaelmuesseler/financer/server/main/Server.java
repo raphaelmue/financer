@@ -1,7 +1,8 @@
 package de.raphaelmuesseler.financer.server.main;
 
-import java.io.IOException;
-import java.io.PrintWriter;
+import de.raphaelmuesseler.financer.server.service.FinancerService;
+
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Scanner;
@@ -13,6 +14,7 @@ public class Server {
     private static final int PORT = 3500;
 
     private Logger logger = Logger.getLogger("Server");
+    private FinancerService service = FinancerService.getInstance();
     private ServerSocket serverSocket;
 
     public static void main(String[] args) {
@@ -28,6 +30,7 @@ public class Server {
                 port = PORT;
             }
             Server server = new Server(port);
+            server.run();
         } catch (NumberFormatException e) {
             System.out.println("Please enter a real port!");
         } catch (IOException e) {
@@ -35,19 +38,31 @@ public class Server {
         }
     }
 
-    Server(int port) throws IOException {
+    private Server(int port) throws IOException {
         this.serverSocket = new ServerSocket(port);
         this.logger.log(Level.INFO, "Java Server started and is running on port " + port);
+    }
 
+    private void run() {
         while (true) {
-            this.handleConnection(this.serverSocket.accept());
+            this.logger.log(Level.INFO, "Waiting for client ...");
+            try (Socket client = this.serverSocket.accept()) {
+                this.handleConnection(client);
+            } catch (IOException e) {
+                e.printStackTrace();
+                break;
+            }
         }
     }
 
     private void handleConnection(Socket client) throws IOException {
-        Scanner in  = new Scanner(client.getInputStream());
-        PrintWriter out = new PrintWriter(client.getOutputStream(), true);
+        this.logger.log(Level.INFO, "Client (" + client.getRemoteSocketAddress() + ") has established connection.");
 
+        DataInputStream input = new DataInputStream(client.getInputStream());
+        System.out.println(input.readUTF());
+        DataOutputStream output = new DataOutputStream(client.getOutputStream());
+        output.writeUTF("Result");
 
+        client.close();
     }
 }

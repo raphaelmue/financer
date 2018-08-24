@@ -11,7 +11,7 @@ public class Database {
 
     private static Database INSTANCE = null;
 
-    Database() {
+    private Database() {
         // initializing DB access
     }
 
