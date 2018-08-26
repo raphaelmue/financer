@@ -1,5 +1,7 @@
 package de.raphaelmuesseler.financer.server.main;
 
+import de.raphaelmuesseler.financer.server.service.FinancerService;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -16,6 +18,7 @@ public class Server {
 
     private Logger logger = Logger.getLogger("Server");
     private ServerSocket serverSocket;
+    private FinancerService service = FinancerService.getInstance();
     private ExecutorService executor = Executors.newCachedThreadPool();
 
     public static void main(String[] args) {

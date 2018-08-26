@@ -43,8 +43,8 @@ public class ClientHandler implements Runnable {
 
             Method method;
             try {
-                method = FinancerService.class.getMethod(connectionCall.getMethodName(), Map.class);
-                result = (ConnectionResult<Object>) method.invoke(this.service, connectionCall.getParameters());
+                method = FinancerService.class.getMethod(connectionCall.getMethodName(), Logger.class, Map.class);
+                result = (ConnectionResult<Object>) method.invoke(this.service, this.logger, connectionCall.getParameters());
                 this.logger.log(Level.INFO, "Request has been successfully handled.");
             } catch (NoSuchMethodException e) {
                 this.logger.log(Level.SEVERE, e.getMessage(), e);
