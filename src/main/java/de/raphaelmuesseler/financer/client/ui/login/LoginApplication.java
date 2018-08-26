@@ -12,14 +12,18 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class LoginApplication extends Application {
 
     private TextField emailTextField;
     private PasswordField passwordTextField;
+    private Logger logger = Logger.getLogger("LoginApplication");
 
     @Override
     public void start(Stage primaryStage) {
+        this.logger.log(Level.INFO, "Login Application has started.");
         this.intialize(primaryStage);
     }
 
@@ -54,9 +58,9 @@ public class LoginApplication extends Application {
             try {
                 Boolean result = (Boolean) new ServerRequest().make("checkCredentials", parameters).getResult();
                 if (result) {
-
+                    this.logger.log(Level.INFO, "User's credentials are correct.");
                 } else {
-
+                    this.logger.log(Level.INFO, "User's credentials are incorrect.");
                 }
             } catch (IOException e) {
                 e.printStackTrace();
