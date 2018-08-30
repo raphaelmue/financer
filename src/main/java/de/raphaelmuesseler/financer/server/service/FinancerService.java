@@ -57,7 +57,7 @@ public class FinancerService {
         } catch (Exception ignored) { }
 
         if (!result) {
-            logger.log(Level.INFO,"Credentials of user '" + user.getFullName() + "' incorrect.");
+            logger.log(Level.INFO,"Credentials are incorrect.");
         }
 
         return new ConnectionResult<>(result);

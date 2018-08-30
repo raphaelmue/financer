@@ -46,12 +46,9 @@ public class ClientHandler implements Runnable {
                 method = FinancerService.class.getMethod(connectionCall.getMethodName(), Logger.class, Map.class);
                 result = (ConnectionResult<Object>) method.invoke(this.service, this.logger, connectionCall.getParameters());
                 this.logger.log(Level.INFO, "Request has been successfully handled.");
-            } catch (NoSuchMethodException e) {
+            } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
                 this.logger.log(Level.SEVERE, e.getMessage(), e);
-                result = new ConnectionResult<>("Method does not exists!");
-            } catch (IllegalAccessException | InvocationTargetException e) {
-                this.logger.log(Level.SEVERE, e.getMessage(), e);
-                result = new ConnectionResult<>("Cannot access on method!");
+                result = new ConnectionResult<>(null, e.getMessage());
             }
 
             // sending result to client

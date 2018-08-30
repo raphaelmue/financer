@@ -1,7 +1,9 @@
 package de.raphaelmuesseler.financer.client.ui.login;
 
-import de.raphaelmuesseler.financer.client.connection.ServerRequest;
+import de.raphaelmuesseler.financer.client.connection.ServerRequestHandler;
 import javafx.application.Application;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -9,17 +11,20 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class LoginApplication extends Application {
+public class LoginApplication extends Application implements EventHandler<ActionEvent> {
 
     private TextField emailTextField;
     private PasswordField passwordTextField;
     private Logger logger = Logger.getLogger("LoginApplication");
+    private ExecutorService executor = Executors.newCachedThreadPool();
+
 
     @Override
     public void start(Stage primaryStage) {
@@ -51,21 +56,7 @@ public class LoginApplication extends Application {
         Button btn = new Button();
         btn.setText("Login");
         btn.setId("login-btn");
-        btn.setOnAction(event -> {
-            Map<String, Object> parameters = new HashMap<>();
-            parameters.put("email", emailTextField.getText());
-            parameters.put("password", passwordTextField.getText());
-            try {
-                Boolean result = (Boolean) new ServerRequest().make("checkCredentials", parameters).getResult();
-                if (result) {
-                    this.logger.log(Level.INFO, "User's credentials are correct.");
-                } else {
-                    this.logger.log(Level.INFO, "User's credentials are incorrect.");
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });
+        btn.setOnAction(this);
         gridPane.add(btn, 0, 3, 2, 1);
 
         // setting scene
@@ -74,12 +65,27 @@ public class LoginApplication extends Application {
         root.getChildren().add(gridPane);
 
         // setting title
-        primaryStage.setTitle("Financer");
+        primaryStage.setTitle("Financer - Login");
 
         // setting scene
         primaryStage.setScene(scene);
 
         // show application
         primaryStage.show();
+    }
+
+    @Override
+    public void handle(ActionEvent event) {
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("email", this.emailTextField.getText());
+        parameters.put("password", this.passwordTextField.getText());
+        this.logger.log(Level.INFO, "User's credentials will be checked.");
+        this.executor.execute(new ServerRequestHandler("checkCredentials", parameters, result -> {
+            if ((Boolean) result.getResult()) {
+                logger.log(Level.INFO, "User's credentials are correct.");
+            } else {
+                logger.log(Level.INFO, "User's credentials are incorrect.");
+            }
+        }));
     }
 }

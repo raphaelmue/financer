@@ -4,7 +4,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParseException;
 import de.raphaelmuesseler.financer.server.util.Converter;
-import jdk.nashorn.internal.scripts.JD;
 
 import java.lang.reflect.Type;
 import java.sql.*;

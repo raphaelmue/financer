@@ -16,13 +16,22 @@ public class ServerRequest {
     private final static String HOST = "localhost";
     private final static int PORT = 3500;
 
-    public ConnectionResult make(String methodName, Map<String, Object> parameters) throws IOException {
-        Gson gson = new GsonBuilder().create();
-        ConnectionCall call = new ConnectionCall(methodName, parameters);
-        return this.make(gson.toJson(call));
+    private final ConnectionCall connectionCall;
+
+    ServerRequest(String methodName, Map<String, Object> parameters) {
+        this.connectionCall = new ConnectionCall(methodName, parameters);
     }
 
-    public ConnectionResult make(String gsonString) throws IOException {
+    ServerRequest(ConnectionCall connectionCall) {
+        this.connectionCall = connectionCall;
+    }
+
+    ConnectionResult make() throws IOException {
+        Gson gson = new GsonBuilder().create();
+        return this.make(gson.toJson(this.connectionCall));
+    }
+
+    private ConnectionResult make(String gsonString) throws IOException {
         Gson gson = new GsonBuilder().create();
 
         Socket socket = new Socket(HOST, PORT);
