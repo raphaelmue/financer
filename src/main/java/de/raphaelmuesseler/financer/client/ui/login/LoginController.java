@@ -32,7 +32,6 @@ public class LoginController {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("email", this.emailTextField.getText());
         parameters.put("password", this.passwordField.getText());
-        System.out.println(parameters.get("email"));
         logger.log(Level.INFO, "User's credentials will be checked ...");
         this.executor.execute(new ServerRequestHandler("checkCredentials", parameters, result -> {
             if ((Boolean) result.getResult()) {
