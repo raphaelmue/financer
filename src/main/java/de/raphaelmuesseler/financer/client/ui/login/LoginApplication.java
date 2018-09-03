@@ -1,5 +1,7 @@
 package de.raphaelmuesseler.financer.client.ui.login;
 
+import de.raphaelmuesseler.financer.client.local.LocalStorage;
+import de.raphaelmuesseler.financer.client.ui.main.FinancerApplication;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -21,16 +23,25 @@ public class LoginApplication extends Application {
 
     @Override
     public void start(Stage primaryStage) throws IOException {
-        Parent root = FXMLLoader.load(getClass().getResource("/views/login.fxml"));
+        if (LocalStorage.getLoggedInUser() != null) {
+            // open main application
+            try {
+                new FinancerApplication().start(new Stage());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+            Parent root = FXMLLoader.load(getClass().getResource("/views/login.fxml"));
+    
+            Scene scene = new Scene(root, 500, 575);
 
-        Scene scene = new Scene(root, 500, 575);
+            primaryStage.getIcons().add(new Image(LoginApplication.class.getResourceAsStream("/images/financer-icon.png")));
 
-        primaryStage.getIcons().add(new Image(LoginApplication.class.getResourceAsStream("/images/financer-icon.png")));
+            primaryStage.setTitle("Financer - Login");
+            primaryStage.setScene(scene);
+            primaryStage.show();
 
-        primaryStage.setTitle("Financer - Login");
-        primaryStage.setScene(scene);
-        primaryStage.show();
-
-        this.logger.log(Level.INFO, "Login Application has started.");
+            this.logger.log(Level.INFO, "Login Application has started.");
+        }
     }
 }

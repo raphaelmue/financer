@@ -5,13 +5,11 @@ import com.google.gson.GsonBuilder;
 import de.raphaelmuesseler.financer.shared.connection.ConnectionCall;
 import de.raphaelmuesseler.financer.shared.connection.ConnectionResult;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.Socket;
 import java.util.Map;
 
-public class ServerRequest {
+class ServerRequest {
 
     private final static String HOST = "localhost";
     private final static int PORT = 3500;
@@ -26,20 +24,14 @@ public class ServerRequest {
         this.connectionCall = connectionCall;
     }
 
-    ConnectionResult make() throws IOException {
-        Gson gson = new GsonBuilder().create();
-        return this.make(gson.toJson(this.connectionCall));
-    }
-
-    private ConnectionResult make(String gsonString) throws IOException {
-        Gson gson = new GsonBuilder().create();
-
+    ConnectionResult make() throws IOException, ClassNotFoundException {
         Socket socket = new Socket(HOST, PORT);
-        DataOutputStream output = new DataOutputStream(socket.getOutputStream());
-        output.writeUTF(gsonString);
 
-        DataInputStream input = new DataInputStream(socket.getInputStream());
+        ObjectOutputStream output = new ObjectOutputStream(new DataOutputStream(socket.getOutputStream()));
+        output.writeObject(this.connectionCall);
 
-        return gson.fromJson(input.readUTF(), ConnectionResult.class);
+        ObjectInputStream input = new ObjectInputStream(new DataInputStream(socket.getInputStream()));
+
+        return (ConnectionResult) input.readObject();
     }
 }

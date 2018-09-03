@@ -14,33 +14,37 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<StackPane alignment="center" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.raphaelmuesseler.financer.client.ui.login.LoginController">
+<StackPane alignment="center" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="de.raphaelmuesseler.financer.client.ui.login.LoginController">
     <VBox alignment="CENTER" spacing="25">
         <ImageView fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true">
             <image>
-                <Image url="/images/financer-icon.png" />
+                <Image url="/images/financer-icon.png"/>
             </image>
         </ImageView>
         <Label text="Welcome" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="0">
             <font>
-                <Font size="18.0" />
+                <Font size="18.0"/>
             </font>
         </Label>
-        <Label fx:id="errorLabel" text="Your credentials are incorrect!" textAlignment="CENTER" textFill="crimson" visible="false" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="1" />
+        <Label fx:id="errorLabel" text="Your credentials are incorrect!" textAlignment="CENTER" textFill="crimson"
+               visible="false" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="1"/>
         <GridPane fx:id="gridPane" alignment="CENTER" hgap="10" vgap="10">
-            <Label text="E-Mail:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
-            <TextField fx:id="emailTextField" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-            <Label text="Password:" GridPane.columnIndex="0" GridPane.rowIndex="3" />
-            <PasswordField fx:id="passwordField" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+            <Label text="E-Mail:" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+            <TextField fx:id="emailTextField" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+            <Label text="Password:" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+            <PasswordField fx:id="passwordField" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
 
-            <CheckBox fx:id="rememberMeCheckBox" text="Remember me" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+            <CheckBox fx:id="rememberMeCheckBox" text="Remember me" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
 
             <HBox alignment="bottom_right" spacing="10" GridPane.columnIndex="1" GridPane.rowIndex="5">
-                <Button onAction="#handleSignInButtonAction" text="Sign In" />
+                <Button onAction="#handleSignInButtonAction" text="Sign In"/>
             </HBox>
         </GridPane>
     </VBox>
-    <VBox fx:id="progressIndicatorBox" alignment="CENTER" style="-fx-background-color: rgba(255, 255, 255, 0.6);" visible="false">
-        <ProgressIndicator />
+    <VBox fx:id="progressIndicatorBox" alignment="CENTER" style="-fx-background-color: rgba(255, 255, 255, 0.6);"
+          spacing="20" visible="false">
+        <ProgressIndicator/>
+        <Label text="Please wait ..." textAlignment="CENTER"/>
     </VBox>
 </StackPane>

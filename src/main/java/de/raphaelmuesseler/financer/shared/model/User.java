@@ -1,6 +1,9 @@
 package de.raphaelmuesseler.financer.shared.model;
 
-public class User {
+import java.io.Serializable;
+
+public class User implements Serializable {
+    private static final long serialVersionUID = 4469731095492349222L;
     private int id;
     private String email, password, salt, name, surname;
 

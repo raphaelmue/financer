@@ -1,21 +1,24 @@
 package de.raphaelmuesseler.financer.shared.connection;
 
-public class ConnectionResult<T> {
+import java.io.Serializable;
+
+public class ConnectionResult<T> implements Serializable {
+    private static final long serialVersionUID = 5566504159960287868L;
     private final T result;
-    private final String errorMessage;
+    private final Exception exception;
 
     public ConnectionResult(T result) {
         this.result = result;
-        this.errorMessage = null;
+        this.exception = null;
     }
 
-    public ConnectionResult(T result, String errorMessage) {
+    public ConnectionResult(T result, Exception exception) {
         this.result = result;
-        this.errorMessage = errorMessage;
+        this.exception = exception;
     }
 
-    public String getErrorMessage() {
-        return errorMessage;
+    public Exception getException() {
+        return this.exception;
     }
 
     public T getResult() {

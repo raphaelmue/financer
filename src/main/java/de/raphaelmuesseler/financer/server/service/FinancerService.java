@@ -37,30 +37,27 @@ public class FinancerService {
      * @param parameters [email, password]
      * @return true, if credentials are correct
      */
-    public ConnectionResult<Boolean> checkCredentials(Logger logger, Map<String, Object> parameters) {
+    public ConnectionResult<User> checkCredentials(Logger logger, Map<String, Object> parameters) throws Exception {
         logger.log(Level.INFO, "Checking credetials ...");
-        boolean result = false;
 
         Map<String, Object> whereEmail = new HashMap<>();
         whereEmail.put("email", parameters.get("email"));
 
-        User user = null;
-        try {
-            user = (User) this.database.get("users", User.class, whereEmail);
-            if (user != null) {
-                String password = Hash.create((String) parameters.get("password"), user.getSalt());
-                if (password.equals(user.getPassword())) {
-                    result = true;
-                    logger.log(Level.INFO,"Credentials of user '" + user.getFullName() + "' are approved.");
-                }
+        User user = (User) this.database.get("users", User.class, whereEmail);
+        if (user != null) {
+            String password = Hash.create((String) parameters.get("password"), user.getSalt());
+            if (password.equals(user.getPassword())) {
+                logger.log(Level.INFO, "Credentials of user '" + user.getFullName() + "' are approved.");
+            } else {
+                user = null;
             }
-        } catch (Exception ignored) { }
-
-        if (!result) {
-            logger.log(Level.INFO,"Credentials are incorrect.");
         }
 
-        return new ConnectionResult<>(result);
+        if (user == null) {
+            logger.log(Level.INFO, "Credentials are incorrect.");
+        }
+
+        return new ConnectionResult<>(user);
     }
 
 }

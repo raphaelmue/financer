@@ -1,8 +1,10 @@
 package de.raphaelmuesseler.financer.shared.connection;
 
+import java.io.Serializable;
 import java.util.Map;
 
-public class ConnectionCall {
+public class ConnectionCall implements Serializable {
+    private static final long serialVersionUID = -4886612977513896452L;
     private final String methodName;
     private final Map<String, Object> parameters;
 

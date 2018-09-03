@@ -21,15 +21,18 @@ public class ServerRequestHandler implements Runnable {
 
     @Override
     public void run() {
+        this.asyncCall.onBefore();
         try {
             ConnectionResult result = this.serverRequest.make();
-            if (result.getErrorMessage() == null && result.getResult() != null) {
+            if (result.getException() == null) {
                 this.asyncCall.onSuccess(result);
             } else {
-                this.asyncCall.onFailure(new Throwable(result.getErrorMessage()));
+                this.asyncCall.onFailure(result.getException());
             }
         } catch (Exception e) {
             this.asyncCall.onFailure(e);
+        } finally {
+            this.asyncCall.onAfter();
         }
     }
 }
