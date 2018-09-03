@@ -35,8 +35,6 @@
             <Label text="Password:" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
             <PasswordField fx:id="passwordField" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
 
-            <CheckBox fx:id="rememberMeCheckBox" text="Remember me" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
-
             <HBox alignment="bottom_right" spacing="10" GridPane.columnIndex="1" GridPane.rowIndex="5">
                 <Button onAction="#handleSignInButtonAction" text="Sign In"/>
             </HBox>

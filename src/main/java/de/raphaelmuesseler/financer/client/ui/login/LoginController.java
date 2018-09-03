@@ -25,7 +25,6 @@ public class LoginController {
 
     public TextField emailTextField;
     public PasswordField passwordField;
-    public CheckBox rememberMeCheckBox;
     public Label errorLabel;
     public GridPane gridPane;
     public VBox progressIndicatorBox;
@@ -48,15 +47,14 @@ public class LoginController {
                     logger.log(Level.INFO, "User's credentials are correct.");
                     errorLabel.setVisible(false);
 
-                    if (rememberMeCheckBox.isSelected()) {
-                        if (!LocalStorage.writeUser((User) result.getResult())) {
-                            Alert alert = new Alert(Alert.AlertType.ERROR);
-                            alert.setTitle("Financer");
-                            alert.setHeaderText("Login");
-                            alert.setContentText("Something went wrong storing your personal information. Please try again later.");
-                            alert.showAndWait();
-                            return;
-                        }
+                    // storing user data
+                    if (!LocalStorage.writeUser((User) result.getResult())) {
+                        Alert alert = new Alert(Alert.AlertType.ERROR);
+                        alert.setTitle("Financer");
+                        alert.setHeaderText("Login");
+                        alert.setContentText("Something went wrong storing your personal information. Please try again later.");
+                        alert.showAndWait();
+                        return;
                     }
 
                     Platform.runLater(() -> {
