@@ -2,7 +2,31 @@
 
 <?import javafx.scene.layout.StackPane?>
 
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.geometry.Insets?>
 <StackPane alignment="center" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1"
            fx:controller="de.raphaelmuesseler.financer.client.ui.main.FinancerController">
+    <BorderPane>
+        <top>
+            <fx:include source="header_bar.fxml" />
+        </top>
+        <left>
+            <fx:include fx:id="navigationBar" source="navigation_bar.fxml" maxWidth="250"/>
+        </left>
+        <right>
 
+        </right>
+        <bottom>
+            <HBox alignment="CENTER" styleClass="footer" spacing="200">
+                <padding>
+                    <Insets top="10" right="10" bottom="10" left="10"/>
+                </padding>
+                <Label text="Standard License" />
+                <Label text="Financer 2018" />
+                <Label text="© Raphael Müßeler" />
+            </HBox>
+        </bottom>
+    </BorderPane>
 </StackPane>

@@ -35,7 +35,7 @@ public class LoginApplication extends Application {
     
             Scene scene = new Scene(root, 500, 575);
 
-            primaryStage.getIcons().add(new Image(LoginApplication.class.getResourceAsStream("/images/financer-icon.png")));
+            primaryStage.getIcons().add(new Image(LoginApplication.class.getResourceAsStream("/images/icons/financer-icon.png")));
 
             primaryStage.setTitle("Financer - Login");
             primaryStage.setScene(scene);

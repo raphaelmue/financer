@@ -12,7 +12,7 @@ public class FinancerExceptionDialog extends Alert {
     public FinancerExceptionDialog(String header, Exception exception) {
         super(AlertType.ERROR);
 
-        ((Stage) this.getDialogPane().getScene().getWindow()).getIcons().add(new Image(LoginApplication.class.getResourceAsStream("/images/financer-icon.png")));
+        ((Stage) this.getDialogPane().getScene().getWindow()).getIcons().add(new Image(LoginApplication.class.getResourceAsStream("/images/icons/financer-icon.png")));
 
         this.setTitle("Financer");
         this.setHeaderText(header);

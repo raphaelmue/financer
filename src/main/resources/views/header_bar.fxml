@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.Label?>
+<HBox alignment="center" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="de.raphaelmuesseler.financer.client.ui.main.FinancerController" spacing="50" >
+
+    <Label text="Account" alignment="CENTER_RIGHT"/>
+
+
+</HBox>

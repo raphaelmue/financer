@@ -19,10 +19,10 @@
     <VBox alignment="CENTER" spacing="25">
         <ImageView fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true">
             <image>
-                <Image url="/images/financer-icon.png"/>
+                <Image url="/images/icons/financer-icon.png"/>
             </image>
         </ImageView>
-        <Label text="Welcome" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="0">
+        <Label text="Welcome">
             <font>
                 <Font size="18.0"/>
             </font>
