@@ -6,6 +6,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
+import java.net.ConnectException;
 import java.net.UnknownHostException;
 
 public class FinancerExceptionDialog extends Alert {
@@ -22,6 +23,8 @@ public class FinancerExceptionDialog extends Alert {
             throw exception;
         } catch (UnknownHostException | CJCommunicationsException e) {
             message = "The database is not available at the moment. Please try again later";
+        } catch (ConnectException connectException) {
+            message = "Server is currently not available. Please try again later.";
         } catch (Exception ignored) {
         } finally {
             this.setContentText(message);

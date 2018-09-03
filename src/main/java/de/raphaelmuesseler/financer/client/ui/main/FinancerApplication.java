@@ -28,6 +28,8 @@ public class FinancerApplication extends Application {
 
         scene.getStylesheets().add(getClass().getResource("navbar.style.css").toExternalForm());
         scene.getStylesheets().add(getClass().getResource("footer.style.css").toExternalForm());
+        scene.getStylesheets().add(getClass().getResource("header.style.css").toExternalForm());
+        scene.getStylesheets().add(getClass().getResource("colors.style.css").toExternalForm());
         primaryStage.getIcons().add(new Image(FinancerApplication.class.getResourceAsStream("/images/icons/financer-icon.png")));
 
         primaryStage.setTitle("Financer");

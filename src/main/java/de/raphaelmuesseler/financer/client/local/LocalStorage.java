@@ -32,4 +32,8 @@ public class LocalStorage {
 
         return result;
     }
+
+    public static boolean logUserOut() {
+        return USERDATA_FILE.delete();
+    }
 }

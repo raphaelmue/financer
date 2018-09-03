@@ -11,6 +11,10 @@
 <VBox fx:id="navigationBox" prefWidth="250" spacing="30" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="de.raphaelmuesseler.financer.client.ui.main.NavigationBarController" alignment="TOP_CENTER">
 
+    <padding>
+        <Insets top="25" />
+    </padding>
+
     <ImageView fitHeight="150.0" fitWidth="247.0" pickOnBounds="true" preserveRatio="true">
         <Image url="/images/icons/financer-icon.png"/>
     </ImageView>
