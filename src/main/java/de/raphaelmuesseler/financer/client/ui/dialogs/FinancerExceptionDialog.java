@@ -1,7 +1,8 @@
-package de.raphaelmuesseler.financer.client.ui;
+package de.raphaelmuesseler.financer.client.ui.dialogs;
 
 import com.mysql.cj.exceptions.CJCommunicationsException;
 import de.raphaelmuesseler.financer.client.ui.login.LoginApplication;
+import de.raphaelmuesseler.financer.client.ui.main.FinancerApplication;
 import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
@@ -9,13 +10,10 @@ import javafx.stage.Stage;
 import java.net.ConnectException;
 import java.net.UnknownHostException;
 
-public class FinancerExceptionDialog extends Alert {
+public class FinancerExceptionDialog extends FinancerDialog {
     public FinancerExceptionDialog(String header, Exception exception) {
         super(AlertType.ERROR);
 
-        ((Stage) this.getDialogPane().getScene().getWindow()).getIcons().add(new Image(LoginApplication.class.getResourceAsStream("/images/icons/financer-icon.png")));
-
-        this.setTitle("Financer");
         this.setHeaderText(header);
 
         String message = "Something went wrong. Please try again later.";

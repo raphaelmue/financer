@@ -10,6 +10,8 @@ import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.Locale;
+import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -31,8 +33,17 @@ public class LoginApplication extends Application {
                 e.printStackTrace();
             }
         } else {
-            Parent root = FXMLLoader.load(getClass().getResource("/views/login.fxml"));
-    
+            // setting up language
+            Locale locale;
+            if (LocalStorage.getSettings() != null) {
+                locale = LocalStorage.getSettings().getLanguage();
+            } else {
+                locale = Locale.ENGLISH;
+            }
+            ResourceBundle resourceBundle = ResourceBundle.getBundle("Financer", locale);
+
+            // loading FXML file
+            Parent root = FXMLLoader.load(getClass().getResource("/views/login.fxml"), resourceBundle);
             Scene scene = new Scene(root, 500, 575);
 
             primaryStage.getIcons().add(new Image(LoginApplication.class.getResourceAsStream("/images/icons/financer-icon.png")));

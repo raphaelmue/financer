@@ -2,35 +2,56 @@ package de.raphaelmuesseler.financer.client.ui.login;
 
 import de.raphaelmuesseler.financer.client.connection.ServerRequestHandler;
 import de.raphaelmuesseler.financer.client.local.LocalStorage;
-import de.raphaelmuesseler.financer.client.ui.FinancerExceptionDialog;
+import de.raphaelmuesseler.financer.client.local.Settings;
+import de.raphaelmuesseler.financer.client.ui.I18N;
+import de.raphaelmuesseler.financer.client.ui.dialogs.FinancerDialog;
+import de.raphaelmuesseler.financer.client.ui.dialogs.FinancerExceptionDialog;
 import de.raphaelmuesseler.financer.client.ui.main.FinancerApplication;
 import de.raphaelmuesseler.financer.shared.connection.AsyncConnectionCall;
 import de.raphaelmuesseler.financer.shared.connection.ConnectionResult;
 import de.raphaelmuesseler.financer.shared.model.User;
 import javafx.application.Platform;
+import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
+import java.util.ResourceBundle;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class LoginController {
+public class LoginController implements Initializable {
 
     public TextField emailTextField;
     public PasswordField passwordField;
     public Label errorLabel;
     public GridPane gridPane;
     public VBox progressIndicatorBox;
+    public Menu languageMenu;
 
     private Logger logger = Logger.getLogger("LoginApplication");
     private ExecutorService executor = Executors.newCachedThreadPool();
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        if (LocalStorage.getSettings() != null) {
+            for (MenuItem item : this.languageMenu.getItems()) {
+                RadioMenuItem radioMenuItem = (RadioMenuItem) item;
+                if (radioMenuItem.getUserData().equals(LocalStorage.getSettings().getLanguage().getLanguage())) {
+                    radioMenuItem.setSelected(true);
+                    break;
+                }
+            }
+        }
+    }
 
     public void handleSignInButtonAction() {
         this.gridPane.setDisable(true);
@@ -89,5 +110,24 @@ public class LoginController {
                 progressIndicatorBox.setVisible(false);
             }
         }));
+    }
+
+    public void onSelectEnglishLanguage() {
+        this.changeLanguage(Locale.ENGLISH);
+    }
+
+    public void onSelectGermanLanguage() {
+        this.changeLanguage(Locale.GERMAN);
+    }
+
+    private void changeLanguage(Locale locale) {
+        new FinancerDialog(Alert.AlertType.INFORMATION, I18N.get("language"), I18N.get("warnChangesAfterRestart")).showAndWait();
+
+        Settings settings = LocalStorage.getSettings();
+        if (settings == null) {
+            settings = new Settings();
+        }
+        settings.setLanguage(locale);
+        LocalStorage.writeSettings(settings);
     }
 }

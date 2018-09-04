@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.ProgressIndicator?>
@@ -14,34 +14,66 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.SeparatorMenuItem?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.RadioMenuItem?>
+<?import javafx.scene.control.ToggleGroup?>
 <StackPane alignment="center" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1"
            fx:controller="de.raphaelmuesseler.financer.client.ui.login.LoginController">
-    <VBox alignment="CENTER" spacing="25">
-        <ImageView fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true">
-            <image>
+    <VBox>
+        <MenuBar fx:id="menuBar">
+            <Menu text="%file">
+                <MenuItem text="%exit"/>
+            </Menu>
+            <Menu text="%settings">
+                <fx:define>
+                    <ToggleGroup fx:id="languageToggleGroup"/>
+                </fx:define>
+                <Menu fx:id="languageMenu" text="%language">
+                    <RadioMenuItem text="English" userData="en" toggleGroup="$languageToggleGroup"
+                                   onAction="#onSelectEnglishLanguage"/>
+                    <RadioMenuItem text="German" userData="de" toggleGroup="$languageToggleGroup"
+                                   onAction="#onSelectGermanLanguage"/>
+                </Menu>
+            </Menu>
+            <Menu text="%help">
+                <MenuItem text="%onlineManual"/>
+                <SeparatorMenuItem/>
+                <MenuItem text="%about"/>
+            </Menu>
+        </MenuBar>
+        <VBox alignment="CENTER" spacing="25">
+            <padding>
+                <Insets top="50"/>
+            </padding>
+            <ImageView fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true">
                 <Image url="/images/icons/financer-icon.png"/>
-            </image>
-        </ImageView>
-        <Label text="Welcome">
-            <font>
-                <Font size="18.0"/>
-            </font>
-        </Label>
-        <Label fx:id="errorLabel" text="Your credentials are incorrect!" textAlignment="CENTER" textFill="crimson"
-               visible="false" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="1"/>
-        <GridPane fx:id="gridPane" alignment="CENTER" hgap="10" vgap="10">
-            <Label text="E-Mail:" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
-            <TextField fx:id="emailTextField" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
-            <Label text="Password:" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
-            <PasswordField fx:id="passwordField" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+            </ImageView>
+            <Label text="%welcome">
+                <font>
+                    <Font size="18.0"/>
+                </font>
+            </Label>
+            <Label fx:id="errorLabel" text="%incorrectCredentials" textAlignment="CENTER" textFill="crimson"
+                   visible="false"
+                   GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="1"/>
+            <GridPane fx:id="gridPane" alignment="CENTER" hgap="10" vgap="10">
+                <Label text="%email" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                <TextField fx:id="emailTextField" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+                <Label text="%password" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+                <PasswordField fx:id="passwordField" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
 
-            <HBox alignment="bottom_right" spacing="10" GridPane.columnIndex="1" GridPane.rowIndex="5">
-                <Button onAction="#handleSignInButtonAction" text="Sign In"/>
-            </HBox>
-        </GridPane>
+                <HBox alignment="bottom_right" spacing="10" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                    <Button onAction="#handleSignInButtonAction" text="%signIn"/>
+                </HBox>
+            </GridPane>
+        </VBox>
     </VBox>
-    <VBox fx:id="progressIndicatorBox" alignment="CENTER" style="-fx-background-color: rgba(255, 255, 255, 0.6);"
-          spacing="20" visible="false">
+    <VBox fx:id="progressIndicatorBox" alignment="CENTER" spacing="20"
+          style="-fx-background-color: rgba(255, 255, 255, 0.6);" visible="false">
         <ProgressIndicator/>
         <Label text="Please wait ..." textAlignment="CENTER"/>
     </VBox>
