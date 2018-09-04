@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox fx:controller="de.raphaelmuesseler.financer.client.ui.main.statistics.StatisticsController"
+      xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" styleClass="content">
+
+    <Label text="%statistics" styleClass="content-heading"/>
+
+</VBox>

@@ -1,0 +1,10 @@
+.content {
+    -fx-background-color: #ffffff;
+    -fx-padding: 20 35;
+}
+
+.content-heading {
+    -fx-fill: #5b5d5f;
+    -fx-font-size: 18;
+    -fx-font-weight: 700;
+}

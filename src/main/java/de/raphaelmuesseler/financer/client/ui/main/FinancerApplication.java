@@ -10,6 +10,8 @@ import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.Locale;
+import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -31,7 +33,16 @@ public class FinancerApplication extends Application {
                 e.printStackTrace();
             }
         } else {
-            Parent root = FXMLLoader.load(getClass().getResource("/views/financer.fxml"));
+            // setting up language
+            Locale locale;
+            if (LocalStorage.getSettings() != null) {
+                locale = LocalStorage.getSettings().getLanguage();
+            } else {
+                locale = Locale.ENGLISH;
+            }
+            ResourceBundle resourceBundle = ResourceBundle.getBundle("Financer", locale);
+
+            Parent root = FXMLLoader.load(getClass().getResource("/views/financer.fxml"), resourceBundle);
 
             Scene scene = new Scene(root, 1200, 600);
 
@@ -39,6 +50,7 @@ public class FinancerApplication extends Application {
             scene.getStylesheets().add(getClass().getResource("footer.style.css").toExternalForm());
             scene.getStylesheets().add(getClass().getResource("header.style.css").toExternalForm());
             scene.getStylesheets().add(getClass().getResource("colors.style.css").toExternalForm());
+            scene.getStylesheets().add(getClass().getResource("main.style.css").toExternalForm());
             primaryStage.getIcons().add(new Image(FinancerApplication.class.getResourceAsStream("/images/icons/financer-icon.png")));
 
             primaryStage.setTitle("Financer");
