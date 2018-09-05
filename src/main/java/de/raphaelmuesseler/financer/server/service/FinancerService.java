@@ -75,9 +75,10 @@ public class FinancerService {
             JSONArray jsonArray = this.database.get("users_categories", whereClause);
             if (jsonArray.length() > 0) {
                 result.put(Integer.toString(i), new JSONObject(jsonArray.getJSONObject(0).get("structure").toString()));
+            } else {
+                result.put(Integer.toString(i), new JSONObject());
             }
         }
-
         return new ConnectionResult<>(result.toString());
     }
 }
