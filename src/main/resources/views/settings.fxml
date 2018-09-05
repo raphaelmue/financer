@@ -8,4 +8,9 @@
 
     <Label text="%settings" styleClass="content-heading"/>
 
+    <GridPane hgap="300" vgap="20">
+        <Label text="%language" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+        <MenuButton fx:id="languageMenuBtn" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+    </GridPane>
+
 </VBox>

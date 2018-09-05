@@ -9,11 +9,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
-import java.util.ResourceBundle;
+import java.util.*;
 import java.util.concurrent.Callable;
 /**
  * I18N utility class..
@@ -23,9 +19,14 @@ import java.util.concurrent.Callable;
 public final class I18N {
     /** the current selected Locale. */
     private static final ObjectProperty<Locale> locale;
+    public static final Map<String, Locale> LANGUAGES;
     static {
         locale = new SimpleObjectProperty<>(getDefaultLocale());
         locale.addListener((observable, oldValue, newValue) -> Locale.setDefault(newValue));
+
+        LANGUAGES = new HashMap<>();
+        LANGUAGES.put("English", Locale.ENGLISH);
+        LANGUAGES.put("German", Locale.GERMAN);
     }
     /**
      * getObject the supported Locales.
