@@ -66,7 +66,7 @@ public class FinancerService {
         logger.log(Level.INFO, "Fetching users categories ...");
 
         Map<String, Object> whereClause = new HashMap<>();
-        whereClause.put("id", ((User) parameters.get("user")).getId());
+        whereClause.put("user_id", ((User) parameters.get("user")).getId());
 
         JSONObject result = new JSONObject();
 
