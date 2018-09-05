@@ -3,7 +3,9 @@ package de.raphaelmuesseler.financer.server.service;
 import de.raphaelmuesseler.financer.server.db.Database;
 import de.raphaelmuesseler.financer.server.util.Hash;
 import de.raphaelmuesseler.financer.shared.connection.ConnectionResult;
+import de.raphaelmuesseler.financer.shared.model.Category;
 import de.raphaelmuesseler.financer.shared.model.User;
+import de.raphaelmuesseler.financer.shared.util.SerialTreeItem;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -68,17 +70,28 @@ public class FinancerService {
         Map<String, Object> whereClause = new HashMap<>();
         whereClause.put("user_id", ((User) parameters.get("user")).getId());
 
-        JSONObject result = new JSONObject();
+        SerialTreeItem<Category> tree = new SerialTreeItem<>(new Category("categories", true));
 
         for (int i = 0; i < 4; i++) {
             whereClause.put("cat_id", i);
-            JSONArray jsonArray = this.database.get("users_categories", whereClause);
-            if (jsonArray.length() > 0) {
-                result.put(Integer.toString(i), new JSONObject(jsonArray.getJSONObject(0).get("structure").toString()));
-            } else {
-                result.put(Integer.toString(i), new JSONObject());
+            JSONArray jsonArray = this.database.get("users_categories", whereClause, "cat_id ASC, parent_id ASC");
+
+            SerialTreeItem<Category> subTree = new SerialTreeItem<>(new Category(Category.CATEGORIES[i], true));
+
+            for (int j = 0; j < jsonArray.length(); j++) {
+                JSONObject jsonObject = jsonArray.getJSONObject(j);
+
+                if (jsonObject.get("parent_id").equals("null")) {
+                    subTree.getChildren().add(new SerialTreeItem<>(new Category(jsonObject.getInt("id"), jsonObject.getString("name"))));
+                } else {
+                    subTree.insertByValue(new SerialTreeItem<>(new Category(jsonObject.getInt("id"), jsonObject.getInt("parent_id"),
+                            jsonObject.getString("name"))), (o1, o2) -> Integer.compare(o1.getParentId(), o2.getId()));
+                }
             }
+
+            tree.getChildren().add(subTree);
+
         }
-        return new ConnectionResult<>(result.toString());
+        return new ConnectionResult<>(tree.getJson().toString());
     }
 }

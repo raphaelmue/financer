@@ -73,11 +73,17 @@ public class Database {
         }
         return result;
     }
-    // TODO select specific fields
+
     public JSONArray get(String tableName, Map<String, Object> whereParameters) throws SQLException {
+        return this.get(tableName, whereParameters, null);
+    }
+
+    // TODO select specific fields
+    // TODO escape strings
+    public JSONArray get(String tableName, Map<String, Object> whereParameters, String orderByClause) throws SQLException {
         Statement statement = connection.createStatement();
         StringBuilder query = new StringBuilder("SELECT * FROM " + tableName);
-        query.append(this.getWhereClause(whereParameters));
+        query.append(this.getWhereClause(whereParameters)).append(this.getOrderByClause(orderByClause));
 
         // execute query
         ResultSet result = statement.executeQuery(query.toString());
@@ -100,5 +106,13 @@ public class Database {
             }
         }
         return whereClauseString.toString();
+    }
+
+    private String getOrderByClause(String field) {
+        StringBuilder orderByClauseString = new StringBuilder();
+        if (field != null) {
+            orderByClauseString.append(" ORDER BY ").append(field);
+        }
+        return orderByClauseString.toString();
     }
 }
