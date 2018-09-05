@@ -3,13 +3,16 @@ package de.raphaelmuesseler.financer.client.local;
 import de.raphaelmuesseler.financer.shared.model.User;
 
 import java.io.*;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 public class LocalStorage {
 
-    private static final String LOCATION = System.getenv("APPDATA") + "/Financer";
-    private static final File USERDATA_FILE = new File(LOCATION + "/usr/usr.fnc");
-    private static final File SETTINGS_FILE = new File(LocalStorage.LOCATION + "/usr/settings.fnc");
+    public static final String LOCATION = System.getenv("APPDATA") + "/Financer";
+    public static final File USERDATA_FILE = new File(LOCATION + "/usr/usr.fnc");
+    public static final File SETTINGS_FILE = new File(LOCATION + "/usr/settings.fnc");
+    public static final File PROFILE_FILE = new File(LOCATION + "/data/profile.fnc");
+
 
     public static User getLoggedInUser() {
         try (ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream(USERDATA_FILE))) {
@@ -37,11 +40,11 @@ public class LocalStorage {
     }
 
     public static boolean writeSettings(Settings settings) {
-        SETTINGS_FILE.getParentFile().mkdirs();
         return writeObject(SETTINGS_FILE, settings);
     }
 
-    private static boolean writeObject(File file, Object object) {
+    public static boolean writeObject(File file, Object object) {
+        file.getParentFile().mkdirs();
         boolean result = false;
         try {
             ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream(file));
@@ -52,5 +55,18 @@ public class LocalStorage {
             e.printStackTrace();
         }
         return result;
+    }
+
+    public static List<Object> readObject(File file) {
+        List<Object> result = new ArrayList<>();
+        try (FileInputStream fileInputStream = new FileInputStream(file)) {
+            ObjectInputStream inputStream = new ObjectInputStream(fileInputStream);
+            while (fileInputStream.available() > 0) {
+                result.add(inputStream.readObject());
+            }
+            return result;
+        } catch (IOException | ClassNotFoundException ignored) { }
+
+        return null;
     }
 }
