@@ -4,10 +4,14 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParseException;
 import de.raphaelmuesseler.financer.server.util.Converter;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.lang.reflect.Type;
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Database {
@@ -53,43 +57,48 @@ public class Database {
         return INSTANCE;
     }
 
-    public Object get(String tableName, Type resultType) throws SQLException {
-        return this.get(tableName, resultType, new HashMap<>());
+    public List<Object> getObject(String tableName, Type resultType) throws SQLException {
+        return this.getObject(tableName, resultType, new HashMap<>());
     }
 
-    public Object get(String tableName, Type resultType, Map<String, Object> where) throws SQLException {
-        Statement statement = null;
-        ResultSet result = null;
+    public List<Object> getObject(String tableName, Type resultType, Map<String, Object> whereParameters) throws SQLException {
         Gson gson = new GsonBuilder().create();
-        statement = connection.createStatement();
+        JSONArray jsonArray = this.get(tableName, whereParameters);
+        List<Object> result = new ArrayList<>();
+        for (int i = 0; i < jsonArray.length(); i++) {
+            JSONObject jsonObject = jsonArray.getJSONObject(i);
+            try {
+                 result.add(gson.fromJson(jsonObject.toString(), resultType));
+            } catch (JsonParseException ignored) { }
+        }
+        return result;
+    }
+    // TODO select specific fields
+    public JSONArray get(String tableName, Map<String, Object> whereParameters) throws SQLException {
+        Statement statement = connection.createStatement();
         StringBuilder query = new StringBuilder("SELECT * FROM " + tableName);
+        query.append(this.getWhereClause(whereParameters));
 
-        // setting where-clause
-        if (where.size() > 0) {
-            query.append(" WHERE ");
+        // execute query
+        ResultSet result = statement.executeQuery(query.toString());
+
+        return Converter.convertResultSetIntoJSON(result);
+    }
+
+    private String getWhereClause(Map<String, Object> whereParameters) {
+        StringBuilder whereClauseString = new StringBuilder();
+        if (whereParameters.size() > 0) {
+            whereClauseString.append(" WHERE ");
             boolean first = true;
-            for (Map.Entry<String, Object> entry : where.entrySet()) {
+            for (Map.Entry<String, Object> entry : whereParameters.entrySet()) {
                 if (first) {
                     first = false;
                 } else {
-                    query.append(" AND ");
+                    whereClauseString.append(" AND ");
                 }
-                query.append(entry.getKey()).append(" = '").append(entry.getValue()).append("'");
+                whereClauseString.append(entry.getKey()).append(" = '").append(entry.getValue()).append("'");
             }
         }
-
-        // execute query
-        result = statement.executeQuery(query.toString());
-
-        String json = Converter.convertResultSetIntoJSON(result)
-                .toString()
-                .replace("[", "")
-                .replace("]", "");
-
-        try {
-            return gson.fromJson(json, resultType);
-        } catch (JsonParseException e) {
-            return null;
-        }
+        return whereClauseString.toString();
     }
 }

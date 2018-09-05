@@ -28,7 +28,7 @@ public final class I18N {
         locale.addListener((observable, oldValue, newValue) -> Locale.setDefault(newValue));
     }
     /**
-     * get the supported Locales.
+     * getObject the supported Locales.
      *
      * @return List of Locale objects.
      */
@@ -36,7 +36,7 @@ public final class I18N {
         return new ArrayList<>(Arrays.asList(Locale.ENGLISH, Locale.GERMAN));
     }
     /**
-     * get the default locale. This is the systems default if contained in the supported locales, english otherwise.
+     * getObject the default locale. This is the systems default if contained in the supported locales, english otherwise.
      *
      * @return
      */

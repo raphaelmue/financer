@@ -1,7 +1,5 @@
 package de.raphaelmuesseler.financer.client.connection;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import de.raphaelmuesseler.financer.shared.connection.ConnectionCall;
 import de.raphaelmuesseler.financer.shared.connection.ConnectionResult;
 
