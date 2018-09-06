@@ -29,6 +29,29 @@ public class Database {
 
     private static Database INSTANCE = null;
 
+    public enum Table {
+        CATEGORIES("categories"),
+        FIXED_TRANSACTIONS("fixed_transactions"),
+        TRANSACTIONS("transactions"),
+        USERS("users"),
+        USERS_CATEGORIES("users_categories");
+
+        private String tableName;
+
+        Table(String tableName) {
+            this.tableName = tableName;
+        }
+
+        public String getTableName() {
+            return tableName;
+        }
+
+        @Override
+        public String toString() {
+            return this.getTableName();
+        }
+    }
+
     private Database() throws SQLException {
         try {
             // loading database driver
@@ -57,55 +80,106 @@ public class Database {
         return INSTANCE;
     }
 
-    public List<Object> getObject(String tableName, Type resultType) throws SQLException {
+    public List<Object> getObject(Table tableName, Type resultType) throws SQLException {
         return this.getObject(tableName, resultType, new HashMap<>());
     }
 
-    public List<Object> getObject(String tableName, Type resultType, Map<String, Object> whereParameters) throws SQLException {
+    public List<Object> getObject(Table tableName, Type resultType, Map<String, Object> whereParameters) throws SQLException {
         Gson gson = new GsonBuilder().create();
         JSONArray jsonArray = this.get(tableName, whereParameters);
         List<Object> result = new ArrayList<>();
         for (int i = 0; i < jsonArray.length(); i++) {
             JSONObject jsonObject = jsonArray.getJSONObject(i);
             try {
-                 result.add(gson.fromJson(jsonObject.toString(), resultType));
-            } catch (JsonParseException ignored) { }
+                result.add(gson.fromJson(jsonObject.toString(), resultType));
+            } catch (JsonParseException ignored) {
+            }
         }
         return result;
     }
 
-    public JSONArray get(String tableName, Map<String, Object> whereParameters) throws SQLException {
+    public JSONArray get(Table tableName, Map<String, Object> whereParameters) throws SQLException {
         return this.get(tableName, whereParameters, null);
     }
 
     // TODO select specific fields
     // TODO escape strings
-    public JSONArray get(String tableName, Map<String, Object> whereParameters, String orderByClause) throws SQLException {
-        Statement statement = connection.createStatement();
-        StringBuilder query = new StringBuilder("SELECT * FROM " + tableName);
-        query.append(this.getWhereClause(whereParameters)).append(this.getOrderByClause(orderByClause));
+    public JSONArray get(Table tableName, Map<String, Object> whereParameters, String orderByClause) throws SQLException {
+        PreparedStatement statement;
+        StringBuilder query = new StringBuilder("SELECT * FROM " + tableName.getTableName())
+                .append(this.getClause(whereParameters, "WHERE", " AND "))
+                .append(this.getOrderByClause(orderByClause));
 
         // execute query
-        ResultSet result = statement.executeQuery(query.toString());
-
+        statement = connection.prepareStatement(query.toString());
+        this.preparedStatement(statement, whereParameters);
+        ResultSet result = statement.executeQuery();
         return Converter.convertResultSetIntoJSON(result);
     }
 
-    private String getWhereClause(Map<String, Object> whereParameters) {
+    public void insert(Table tableName, Map<String, Object> values) throws SQLException {
+        PreparedStatement statement;
+        StringBuilder query = new StringBuilder("INSERT INTO " + tableName + " ")
+                .append(values.keySet().toString().replace("[", "(").replace("]", ")"))
+                .append(" values (");
+
+        boolean first = true;
+        for (int i = 0; i < values.size(); i++) {
+            if (first) {
+                first = false;
+            } else {
+                query.append(", ");
+            }
+            query.append("?");
+        }
+        query.append(")");
+        statement = connection.prepareStatement(query.toString());
+        statement = this.preparedStatement(statement, values);
+
+        statement.execute();
+    }
+
+    public void update(Table tableName, Map<String, Object> whereParameters, Map<String, Object> values) throws SQLException {
+        PreparedStatement statement;
+        StringBuilder query = new StringBuilder("UPDATE " + tableName.getTableName())
+                .append(this.getClause(values, "SET", ", "))
+                .append(this.getClause(whereParameters, "WHERE", " AND "));
+
+        statement = connection.prepareStatement(query.toString());
+        System.out.println(query.toString());
+        this.preparedStatement(statement, values);
+        this.preparedStatement(statement, whereParameters, values.size() + 1);
+        statement.execute();
+
+    }
+
+    private String getClause(Map<String, Object> values, String operation, String seperator) {
         StringBuilder whereClauseString = new StringBuilder();
-        if (whereParameters.size() > 0) {
-            whereClauseString.append(" WHERE ");
+        if (values.size() > 0) {
+            whereClauseString.append(" " + operation + " ");
             boolean first = true;
-            for (Map.Entry<String, Object> entry : whereParameters.entrySet()) {
+            for (Map.Entry<String, Object> entry : values.entrySet()) {
                 if (first) {
                     first = false;
                 } else {
-                    whereClauseString.append(" AND ");
+                    whereClauseString.append(seperator);
                 }
-                whereClauseString.append(entry.getKey()).append(" = '").append(entry.getValue()).append("'");
+                whereClauseString.append(entry.getKey()).append(" = ?");
             }
         }
         return whereClauseString.toString();
+    }
+
+    private PreparedStatement preparedStatement(PreparedStatement statement, Map<String, Object> values) throws SQLException {
+        return this.preparedStatement(statement, values, 1);
+    }
+
+        private PreparedStatement preparedStatement(PreparedStatement statement, Map<String, Object> values, int index) throws SQLException {
+        for (Map.Entry<String, Object> entry : values.entrySet()) {
+            statement.setObject(index, entry.getValue());
+            index++;
+        }
+        return statement;
     }
 
     private String getOrderByClause(String field) {

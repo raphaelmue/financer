@@ -82,14 +82,26 @@ public class SerialTreeItem<T> extends TreeItem<T> implements Serializable {
                 item.getChildren().add(treeItem);
                 return true;
             } else {
-                if (!item.isLeaf()) {
-                    if (serialTreeItem.insertByValue(treeItem, serialTreeItem, comparator)) {
-                        return true;
-                    }
+                if (serialTreeItem.insertByValue(treeItem, serialTreeItem, comparator)) {
+                    return true;
                 }
             }
         }
         return false;
+    }
+
+    public void traverse(Action<T> action) {
+        this.traverse(this, action);
+    }
+
+    private void traverse(SerialTreeItem<T> root, Action<T> action) {
+        action.action(root.getValue());
+        if (!root.isLeaf()) {
+            for (TreeItem<T> item : root.getChildren()) {
+                SerialTreeItem<T> serialTreeItem = (SerialTreeItem<T>) item;
+                serialTreeItem.traverse(serialTreeItem, action);
+            }
+        }
     }
 
     @Override

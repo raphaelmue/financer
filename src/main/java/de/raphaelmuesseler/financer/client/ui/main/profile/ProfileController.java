@@ -11,7 +11,6 @@ import de.raphaelmuesseler.financer.shared.model.Category;
 import de.raphaelmuesseler.financer.shared.model.User;
 import de.raphaelmuesseler.financer.shared.util.SerialTreeItem;
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldTreeCell;
@@ -81,7 +80,23 @@ public class ProfileController implements Initializable {
     }
 
     public void handleSaveCategories() {
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("user", this.user);
+        parameters.put("tree", this.structure.getJson().toString());
 
+        this.executor.execute(new ServerRequestHandler("updateUsersCategories", parameters, new AsyncConnectionCall() {
+            @Override
+            public void onSuccess(ConnectionResult result) { }
+
+            @Override
+            public void onFailure(Exception exception) {
+                logger.log(Level.SEVERE, exception.getMessage(), exception);
+                Platform.runLater(() -> {
+                    FinancerExceptionDialog dialog = new FinancerExceptionDialog("Login", exception);
+                    dialog.showAndWait();
+                });
+            }
+        }));
     }
 
     public void handleRefreshCategories() {
@@ -125,10 +140,19 @@ public class ProfileController implements Initializable {
     }
 
     public void handleNewCategory() {
-        SerialTreeItem<Category> newCategory = new SerialTreeItem<>(new Category("newCategory", true));
-        this.categoriesTreeView.getSelectionModel().getSelectedItem().getChildren().add(newCategory);
-        categoriesTreeView.setRoot(structure);
-        this.categoriesTreeView.setCellFactory(param -> getCellFactory());
+        SerialTreeItem<Category> currentItem = (SerialTreeItem<Category>) this.categoriesTreeView.getSelectionModel().getSelectedItem();
+
+        Category newCategory = new Category(-1, currentItem.getValue().getId(), currentItem.getValue().getRootId(),
+                "newCategory", true);
+
+        this.structure.insertByValue(new SerialTreeItem<>(newCategory), (o1, o2) -> {
+            if (o1.getParentId() == o2.getId() || o1.getRootId() == o2.getId()){
+                return 0;
+            } else {
+                return -1;
+            }
+        });
+        this.categoriesTreeView.getSelectionModel().getSelectedItem().getChildren().add(new SerialTreeItem<>(newCategory));
     }
 
     public void handleEditCategory() {
