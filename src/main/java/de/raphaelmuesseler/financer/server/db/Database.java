@@ -37,7 +37,7 @@ public class Database {
             // initializing DB access
             this.connection = DriverManager.getConnection("jdbc:mysql://" + HOST + ":3306/" + DB_NAME +
                             "?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&" +
-                            "serverTimezone=UTC",
+                            "serverTimezone=UTC&autoReconnect=true",
                     DB_USER, DB_PASSWORD);
 
         } catch (ClassNotFoundException e) {

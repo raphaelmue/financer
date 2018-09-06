@@ -61,16 +61,17 @@ public class ProfileController implements Initializable {
             @Override
             public void onFailure(Exception exception) {
                 if (exception instanceof ConnectException) {
-                    List<Object> result = LocalStorage.readObject(LocalStorage.PROFILE_FILE);
-                    if (result != null && result.size() > 0) {
-                        structure = SerialTreeItem.fromJson(((String) result.get(0)), Category.class);
-                    }
+                    // TODO set offline
                 } else {
                     logger.log(Level.SEVERE, exception.getMessage(), exception);
                     Platform.runLater(() -> {
                         FinancerExceptionDialog dialog = new FinancerExceptionDialog("Login", exception);
                         dialog.showAndWait();
                     });
+                }
+                List<Object> result = LocalStorage.readObject(LocalStorage.PROFILE_FILE);
+                if (result != null && result.size() > 0) {
+                    structure = SerialTreeItem.fromJson(((String) result.get(0)), Category.class);
                 }
             }
 
