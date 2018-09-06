@@ -1,5 +1,6 @@
 package de.raphaelmuesseler.financer.client.ui.main.profile;
 
+import com.jfoenix.controls.JFXButton;
 import de.raphaelmuesseler.financer.client.connection.ServerRequestHandler;
 import de.raphaelmuesseler.financer.client.local.LocalStorage;
 import de.raphaelmuesseler.financer.client.ui.I18N;
@@ -11,11 +12,13 @@ import de.raphaelmuesseler.financer.shared.model.User;
 import de.raphaelmuesseler.financer.shared.util.SerialTreeItem;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldTreeCell;
 import javafx.util.StringConverter;
+import org.controlsfx.glyphfont.FontAwesome;
+import org.controlsfx.glyphfont.GlyphFont;
+import org.controlsfx.glyphfont.GlyphFontRegistry;
 
 import java.net.ConnectException;
 import java.net.URL;
@@ -34,6 +37,11 @@ public class ProfileController implements Initializable {
     public Label surnameLabel;
     public Label emailLabel;
     public TreeView<Category> categoriesTreeView;
+    public JFXButton saveCategoriesBtn;
+    public JFXButton refreshCategoriesBtn;
+    public JFXButton newCategoryBtn;
+    public JFXButton editCategoryBtn;
+    public JFXButton deleteCategoryBtn;
 
     private User user;
     private Logger logger = Logger.getLogger("FinancerApplication");
@@ -43,6 +51,9 @@ public class ProfileController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        /**
+         * Personal Information
+         */
         this.user = LocalStorage.getLoggedInUser();
         if (user != null) {
             this.nameLabel.setText(user.getName());
@@ -50,6 +61,30 @@ public class ProfileController implements Initializable {
             this.emailLabel.setText(user.getEmail());
         }
 
+        /**
+         * Categories
+         */
+
+        GlyphFont fontAwesome = GlyphFontRegistry.font("FontAwesome");
+        this.saveCategoriesBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.SAVE));
+        this.saveCategoriesBtn.setGraphicTextGap(8);
+        this.refreshCategoriesBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.REFRESH));
+        this.refreshCategoriesBtn.setGraphicTextGap(8);
+        this.newCategoryBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.PLUS));
+        this.newCategoryBtn.setGraphicTextGap(8);
+        this.editCategoryBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.EDIT));
+        this.editCategoryBtn.setGraphicTextGap(8);
+        this.deleteCategoryBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.TRASH));
+        this.deleteCategoryBtn.setGraphicTextGap(8);
+
+        this.handleRefreshCategories();
+    }
+
+    public void handleSaveCategories() {
+
+    }
+
+    public void handleRefreshCategories() {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("user", this.user);
 
@@ -83,38 +118,50 @@ public class ProfileController implements Initializable {
                     categoriesTreeView.setEditable(true);
                     categoriesTreeView.setRoot(structure);
                     expandTreeView(structure);
-                    categoriesTreeView.setCellFactory(param -> new TextFieldTreeCellImpl(new StringConverter<Category>() {
-                        @Override
-                        public String toString(Category object) {
-                            return object.toString();
-                        }
-
-                        @Override
-                        public Category fromString(String string) {
-                            return new Category(string);
-                        }
-                    }));
+                    categoriesTreeView.setCellFactory(param -> getCellFactory());
                 });
             }
         }));
     }
 
-    public void handleNewCategory(ActionEvent actionEvent) {
-
+    public void handleNewCategory() {
+        SerialTreeItem<Category> newCategory = new SerialTreeItem<>(new Category("newCategory", true));
+        this.categoriesTreeView.getSelectionModel().getSelectedItem().getChildren().add(newCategory);
+        categoriesTreeView.setRoot(structure);
+        this.categoriesTreeView.setCellFactory(param -> getCellFactory());
     }
 
-    public void handleEditCategory(ActionEvent actionEvent) {
-
+    public void handleEditCategory() {
     }
 
-    public void handleDeleteCategory(ActionEvent actionEvent) {
-
+    public void handleDeleteCategory() {
+        if (!this.categoriesTreeView.getSelectionModel().getSelectedItem().getValue().isKey()) {
+            this.categoriesTreeView.getSelectionModel()
+                    .getSelectedItem()
+                    .getParent()
+                    .getChildren()
+                    .remove(this.categoriesTreeView.getSelectionModel().getSelectedItem());
+        }
     }
 
-    private void expandTreeView(TreeItem<?> item){
-        if(item != null && !item.isLeaf()){
+    private TextFieldTreeCellImpl getCellFactory() {
+        return new TextFieldTreeCellImpl(new StringConverter<Category>() {
+            @Override
+            public String toString(Category object) {
+                return object.toString();
+            }
+
+            @Override
+            public Category fromString(String string) {
+                return new Category(string);
+            }
+        });
+    }
+
+    private void expandTreeView(TreeItem<?> item) {
+        if (item != null && !item.isLeaf()) {
             item.setExpanded(true);
-            for(TreeItem<?> child:item.getChildren()){
+            for (TreeItem<?> child : item.getChildren()) {
                 expandTreeView(child);
             }
         }
