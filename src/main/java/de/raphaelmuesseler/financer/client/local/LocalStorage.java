@@ -8,7 +8,16 @@ import java.util.List;
 
 public class LocalStorage {
 
-    public static final String LOCATION = System.getenv("APPDATA") + "/Financer";
+    public static final String LOCATION;
+
+    static {
+        if (System.getenv("APPDATA") != null) {
+            LOCATION = System.getenv("APPDATA") + "/Financer";
+        } else {
+            LOCATION = System.getProperty("user.home") + "/Financer";
+        }
+    }
+
     public static final File USERDATA_FILE = new File(LOCATION + "/usr/usr.fnc");
     public static final File SETTINGS_FILE = new File(LOCATION + "/usr/settings.fnc");
     public static final File PROFILE_FILE = new File(LOCATION + "/data/profile.fnc");
