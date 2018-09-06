@@ -86,7 +86,6 @@ public class FinancerService {
                     subTree.getChildren().add(new SerialTreeItem<>(new Category(jsonObject.getInt("id"), -1, i,
                             jsonObject.getString("name"), false)));
                 } else {
-                    System.out.println(i);
                     subTree.insertByValue(new SerialTreeItem<>(new Category(jsonObject.getInt("id"),
                                     (jsonObject.getInt("parent_id")), i,
                                     jsonObject.getString("name"), false)),
@@ -106,29 +105,29 @@ public class FinancerService {
         User user = (User) parameters.get("user");
         SerialTreeItem<Category> tree = SerialTreeItem.fromJson((String) parameters.get("tree"), Category.class);
 
-        tree.traverse(category -> {
+        tree.traverseValue(category -> {
             if (!category.isKey()) {
                 System.out.println(category.getName() + " " + category.getId() + " " + category.getParentId() + " " + category.getRootId());
 
                 Map<String, Object> whereClause = new HashMap<>();
                 whereClause.put("id", category.getId());
-//                try {
-//                    Map<String, Object> values = new HashMap<>();
-//                    values.put("name", category.getName());
-//
-//                    JSONArray jsonArray = this.database.get(Database.Table.USERS_CATEGORIES, whereClause);
-//                    if (jsonArray.length() > 0) {
-//                        JSONObject jsonObject = jsonArray.getJSONObject(0);
-//                        this.database.update(Database.Table.USERS_CATEGORIES, whereClause, values);
-//                    } else {
-//                        values.put("parent_id", (category.getParentId() == -1 ? null : category.getParentId()));
-//                        values.put("cat_id", category.getRootId());
-//                        values.put("user_id", user.getId());
-//                        this.database.insert(Database.Table.USERS_CATEGORIES, values);
-//                    }
-//                } catch (SQLException e) {
-//                    e.printStackTrace();
-//                }
+                try {
+                    Map<String, Object> values = new HashMap<>();
+                    values.put("name", category.getName());
+                    values.put("parent_id", (category.getParentId() == -1 ? null : category.getParentId()));
+                    values.put("cat_id", category.getRootId());
+                    values.put("user_id", user.getId());
+
+                    JSONArray jsonArray = this.database.get(Database.Table.USERS_CATEGORIES, whereClause);
+                    if (jsonArray.length() > 0) {
+                        JSONObject jsonObject = jsonArray.getJSONObject(0);
+                        this.database.update(Database.Table.USERS_CATEGORIES, whereClause, values);
+                    } else {
+                        this.database.insert(Database.Table.USERS_CATEGORIES, values);
+                    }
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
             }
         });
 

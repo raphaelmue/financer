@@ -1,5 +1,7 @@
 package de.raphaelmuesseler.financer.client.ui.main.profile;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.jfoenix.controls.JFXButton;
 import de.raphaelmuesseler.financer.client.connection.ServerRequestHandler;
 import de.raphaelmuesseler.financer.client.local.LocalStorage;
@@ -86,7 +88,8 @@ public class ProfileController implements Initializable {
 
         this.executor.execute(new ServerRequestHandler("updateUsersCategories", parameters, new AsyncConnectionCall() {
             @Override
-            public void onSuccess(ConnectionResult result) { }
+            public void onSuccess(ConnectionResult result) {
+            }
 
             @Override
             public void onFailure(Exception exception) {
@@ -95,6 +98,11 @@ public class ProfileController implements Initializable {
                     FinancerExceptionDialog dialog = new FinancerExceptionDialog("Login", exception);
                     dialog.showAndWait();
                 });
+            }
+
+            @Override
+            public void onAfter() {
+                handleRefreshCategories();
             }
         }));
     }
@@ -134,6 +142,11 @@ public class ProfileController implements Initializable {
                     categoriesTreeView.setRoot(structure);
                     expandTreeView(structure);
                     categoriesTreeView.setCellFactory(param -> getCellFactory());
+                    categoriesTreeView.setOnEditCommit(event -> {
+                        event.getNewValue().setId(event.getOldValue().getId());
+                        event.getNewValue().setParentId(event.getOldValue().getParentId());
+                        event.getNewValue().setRootId(event.getOldValue().getRootId());
+                    });
                 });
             }
         }));
@@ -143,7 +156,8 @@ public class ProfileController implements Initializable {
         SerialTreeItem<Category> currentItem = (SerialTreeItem<Category>) this.categoriesTreeView.getSelectionModel().getSelectedItem();
 
         Category newCategory = new Category(-1, (currentItem.getValue().isKey() ? -1 : currentItem.getValue().getId()),
-                currentItem.getValue().getRootId(), I18N.get("newCategory"), false);
+                (currentItem.getValue().isKey() ? currentItem.getValue().getId() : currentItem.getValue().getRootId()),
+                I18N.get("newCategory"), false);
 
         currentItem.getChildren().add(new SerialTreeItem<>(newCategory));
         expandTreeView(currentItem);
@@ -194,12 +208,9 @@ public class ProfileController implements Initializable {
 
             MenuItem addMenuItem = new MenuItem(I18N.get("new"));
             addMenuItem.setOnAction(t -> {
-                Category newCategory =  new Category(-1, (getTreeItem().getValue().isKey() ? -1 : getTreeItem().getValue().getId()),
-                        getTreeItem().getValue().getRootId(), I18N.get("newCategory"), false);
-
-                if (getTreeItem().getValue().isKey()) {
-                    newCategory.setParentId(-1);
-                }
+                Category newCategory = new Category(-1, (getTreeItem().getValue().isKey() ? -1 : getTreeItem().getValue().getId()),
+                        (getTreeItem().getValue().isKey() ? getTreeItem().getValue().getId() : getTreeItem().getValue().getRootId()),
+                        I18N.get("newCategory"), false);
 
                 getTreeItem().getChildren().add(new SerialTreeItem<>(newCategory));
                 expandTreeView(getTreeItem());
@@ -218,11 +229,10 @@ public class ProfileController implements Initializable {
             deleteMenuItem.setOnAction(t -> getTreeItem().getParent().getChildren().remove(getTreeItem()));
         }
 
-
         @Override
         public void updateItem(Category item, boolean empty) {
             super.updateItem(item, empty);
-            if (item != null && !isEditing() && getParent() != null) {
+             if (item != null && !isEditing() && getParent() != null) {
                 if (item.isKey() && !item.getName().equals(I18N.get("categories"))) {
                     setContextMenu(this.contextMenu);
                 } else if (!item.isKey()) {

@@ -146,7 +146,6 @@ public class Database {
                 .append(this.getClause(whereParameters, "WHERE", " AND "));
 
         statement = connection.prepareStatement(query.toString());
-        System.out.println(query.toString());
         this.preparedStatement(statement, values);
         this.preparedStatement(statement, whereParameters, values.size() + 1);
         statement.execute();
