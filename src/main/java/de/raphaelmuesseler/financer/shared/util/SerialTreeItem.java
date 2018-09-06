@@ -29,8 +29,8 @@ public class SerialTreeItem<T> extends TreeItem<T> implements Serializable {
         JSONObject result = new JSONObject();
         Gson gson = new GsonBuilder().create();
         for (TreeItem<T> item : this.getChildren()) {
-            SerialTreeItem<T> serialTreeItem = (SerialTreeItem<T>) item;
             if (item != null) {
+                SerialTreeItem<T> serialTreeItem = (SerialTreeItem<T>) item;
                 if (serialTreeItem.getChildren().size() > 0) {
                     result.put(gson.toJson(serialTreeItem.getValue()), serialTreeItem.getJson(false));
                 } else {

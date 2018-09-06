@@ -58,7 +58,7 @@ public class Category implements Serializable {
     }
 
     public int getParentId() {
-        return (parentId == -1 ? rootId : parentId);
+        return parentId;
     }
 
     public int getRootId() {

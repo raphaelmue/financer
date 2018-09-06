@@ -142,17 +142,11 @@ public class ProfileController implements Initializable {
     public void handleNewCategory() {
         SerialTreeItem<Category> currentItem = (SerialTreeItem<Category>) this.categoriesTreeView.getSelectionModel().getSelectedItem();
 
-        Category newCategory = new Category(-1, currentItem.getValue().getId(), currentItem.getValue().getRootId(),
-                "newCategory", true);
+        Category newCategory = new Category(-1, (currentItem.getValue().isKey() ? -1 : currentItem.getValue().getId()),
+                currentItem.getValue().getRootId(), I18N.get("newCategory"), false);
 
-        this.structure.insertByValue(new SerialTreeItem<>(newCategory), (o1, o2) -> {
-            if (o1.getParentId() == o2.getId() || o1.getRootId() == o2.getId()){
-                return 0;
-            } else {
-                return -1;
-            }
-        });
-        this.categoriesTreeView.getSelectionModel().getSelectedItem().getChildren().add(new SerialTreeItem<>(newCategory));
+        currentItem.getChildren().add(new SerialTreeItem<>(newCategory));
+        expandTreeView(currentItem);
     }
 
     public void handleEditCategory() {
@@ -200,8 +194,14 @@ public class ProfileController implements Initializable {
 
             MenuItem addMenuItem = new MenuItem(I18N.get("new"));
             addMenuItem.setOnAction(t -> {
-                SerialTreeItem<Category> newCategory = new SerialTreeItem<>(new Category("newCategory", true));
-                getTreeItem().getChildren().add(newCategory);
+                Category newCategory =  new Category(-1, (getTreeItem().getValue().isKey() ? -1 : getTreeItem().getValue().getId()),
+                        getTreeItem().getValue().getRootId(), I18N.get("newCategory"), false);
+
+                if (getTreeItem().getValue().isKey()) {
+                    newCategory.setParentId(-1);
+                }
+
+                getTreeItem().getChildren().add(new SerialTreeItem<>(newCategory));
                 expandTreeView(getTreeItem());
             });
             this.contextMenu.getItems().add(addMenuItem);
