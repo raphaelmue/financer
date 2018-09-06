@@ -56,6 +56,10 @@ public class Category implements Serializable {
         return parentId;
     }
 
+    public boolean isKey() {
+        return isKey;
+    }
+
     @Override
     public String toString() {
         return this.getName();

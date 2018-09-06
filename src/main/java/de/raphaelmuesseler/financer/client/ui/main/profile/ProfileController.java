@@ -2,6 +2,7 @@ package de.raphaelmuesseler.financer.client.ui.main.profile;
 
 import de.raphaelmuesseler.financer.client.connection.ServerRequestHandler;
 import de.raphaelmuesseler.financer.client.local.LocalStorage;
+import de.raphaelmuesseler.financer.client.ui.I18N;
 import de.raphaelmuesseler.financer.client.ui.dialogs.FinancerExceptionDialog;
 import de.raphaelmuesseler.financer.shared.connection.AsyncConnectionCall;
 import de.raphaelmuesseler.financer.shared.connection.ConnectionResult;
@@ -10,10 +11,11 @@ import de.raphaelmuesseler.financer.shared.model.User;
 import de.raphaelmuesseler.financer.shared.util.SerialTreeItem;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Label;
-import javafx.scene.control.TreeView;
-import org.json.JSONObject;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.TextFieldTreeCell;
+import javafx.util.StringConverter;
 
 import java.net.ConnectException;
 import java.net.URL;
@@ -77,7 +79,22 @@ public class ProfileController implements Initializable {
 
             @Override
             public void onAfter() {
-                Platform.runLater(() -> categoriesTreeView.setRoot(structure));
+                Platform.runLater(() -> {
+                    categoriesTreeView.setEditable(true);
+                    categoriesTreeView.setRoot(structure);
+                    expandTreeView(structure);
+                    categoriesTreeView.setCellFactory(param -> new TextFieldTreeCellImpl(new StringConverter<Category>() {
+                        @Override
+                        public String toString(Category object) {
+                            return object.toString();
+                        }
+
+                        @Override
+                        public Category fromString(String string) {
+                            return new Category(string);
+                        }
+                    }));
+                });
             }
         }));
     }
@@ -92,5 +109,55 @@ public class ProfileController implements Initializable {
 
     public void handleDeleteCategory(ActionEvent actionEvent) {
 
+    }
+
+    private void expandTreeView(TreeItem<?> item){
+        if(item != null && !item.isLeaf()){
+            item.setExpanded(true);
+            for(TreeItem<?> child:item.getChildren()){
+                expandTreeView(child);
+            }
+        }
+    }
+
+    private final class TextFieldTreeCellImpl extends TextFieldTreeCell<Category> {
+        private ContextMenu contextMenu = new ContextMenu();
+        private ContextMenu deleteContextMenu = new ContextMenu();
+
+        TextFieldTreeCellImpl(StringConverter<Category> stringConverter) {
+            super(stringConverter);
+
+            MenuItem addMenuItem = new MenuItem(I18N.get("new"));
+            addMenuItem.setOnAction(t -> {
+                SerialTreeItem<Category> newCategory = new SerialTreeItem<>(new Category("newCategory", true));
+                getTreeItem().getChildren().add(newCategory);
+                expandTreeView(getTreeItem());
+            });
+            this.contextMenu.getItems().add(addMenuItem);
+
+            MenuItem addMenuItemDelete = new MenuItem(I18N.get("new"));
+            addMenuItemDelete.setOnAction(t -> {
+                SerialTreeItem<Category> newCategory = new SerialTreeItem<>(new Category("newCategory", true));
+                getTreeItem().getChildren().add(newCategory);
+            });
+            this.deleteContextMenu.getItems().add(addMenuItemDelete);
+
+            MenuItem deleteMenuItem = new MenuItem(I18N.get("delete"));
+            this.deleteContextMenu.getItems().add(deleteMenuItem);
+            deleteMenuItem.setOnAction(t -> getTreeItem().getParent().getChildren().remove(getTreeItem()));
+        }
+
+
+        @Override
+        public void updateItem(Category item, boolean empty) {
+            super.updateItem(item, empty);
+            if (item != null && !isEditing() && getParent() != null) {
+                if (item.isKey() && !item.getName().equals(I18N.get("categories"))) {
+                    setContextMenu(this.contextMenu);
+                } else if (!item.isKey()) {
+                    setContextMenu(this.deleteContextMenu);
+                }
+            }
+        }
     }
 }
