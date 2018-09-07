@@ -127,32 +127,33 @@ public class ProfileController implements Initializable {
     }
 
     private void handleNewCategory(SerialTreeItem<Category> currentItem) {
+        if (currentItem != null && !currentItem.getValue().getKey().equals("categories")) {
+            Category category = new Category(-1, (currentItem.getValue().isKey() ? -1 : currentItem.getValue().getId()),
+                    (currentItem.getValue().isKey() ? currentItem.getValue().getId() : currentItem.getValue().getRootId()),
+                    I18N.get("newCategory"), false);
 
-        Category category = new Category(-1, (currentItem.getValue().isKey() ? -1 : currentItem.getValue().getId()),
-                (currentItem.getValue().isKey() ? currentItem.getValue().getId() : currentItem.getValue().getRootId()),
-                I18N.get("newCategory"), false);
+            Map<String, Object> parameters = new HashMap<>();
+            parameters.put("user", this.user);
+            parameters.put("category", category);
 
-        Map<String, Object> parameters = new HashMap<>();
-        parameters.put("user", this.user);
-        parameters.put("category", category);
+            this.executor.execute(new ServerRequestHandler("addCategory", parameters, new AsyncConnectionCall() {
+                @Override
+                public void onSuccess(ConnectionResult result) {
+                    Platform.runLater(() -> {
+                        category.setId(((Category) result.getResult()).getId());
+                        currentItem.getChildren().add(new SerialTreeItem<>(category));
+                        expandTreeView(currentItem);
+                    });
+                }
 
-        this.executor.execute(new ServerRequestHandler("addCategory", parameters, new AsyncConnectionCall() {
-            @Override
-            public void onSuccess(ConnectionResult result) {
-                Platform.runLater(() -> {
-                    category.setId(((Category) result.getResult()).getId());
-                    currentItem.getChildren().add(new SerialTreeItem<>(category));
-                    expandTreeView(currentItem);
-                });
-            }
-
-            @Override
-            public void onFailure(Exception exception) {
-                AsyncConnectionCall.super.onFailure(exception);
-                logger.log(Level.SEVERE, exception.getMessage(), exception);
-                handleRefreshCategories();
-            }
-        }));
+                @Override
+                public void onFailure(Exception exception) {
+                    AsyncConnectionCall.super.onFailure(exception);
+                    logger.log(Level.SEVERE, exception.getMessage(), exception);
+                    handleRefreshCategories();
+                }
+            }));
+        }
     }
 
     public void handleEditCategory() {
@@ -177,7 +178,8 @@ public class ProfileController implements Initializable {
     }
 
     public void handleDeleteCategory() {
-        if (!this.categoriesTreeView.getSelectionModel().getSelectedItem().getValue().isKey()) {
+        if (this.categoriesTreeView.getSelectionModel().getSelectedItem() != null &&
+                !this.categoriesTreeView.getSelectionModel().getSelectedItem().getValue().isKey()) {
             Map<String, Object> parameters = new HashMap<>();
             parameters.put("category", this.categoriesTreeView.getSelectionModel()
                     .getSelectedItem().getValue());
