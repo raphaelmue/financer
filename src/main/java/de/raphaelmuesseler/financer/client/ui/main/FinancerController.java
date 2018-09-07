@@ -19,6 +19,7 @@ public class FinancerController implements Initializable {
     public Button statisticsTabBtn;
     public Button profileTabBtn;
     public Button settingTabBtn;
+    public Button transactionsTabBtn;
 
     private ResourceBundle resourceBundle;
 
@@ -42,6 +43,13 @@ public class FinancerController implements Initializable {
         this.loadFXML(getClass().getResource("/views/overview.fxml"));
         this.removeSelectedStyleClass();
         this.overviewTabBtn.getStyleClass().add("selected");
+    }
+
+
+    public void handleShowTransactionsContent(ActionEvent actionEvent) {
+        this.loadFXML(getClass().getResource("/views/tranactions.fxml"));
+        this.removeSelectedStyleClass();
+        this.transactionsTabBtn.getStyleClass().add("selected");
     }
 
     public void handleShowStatisticsContent(ActionEvent actionEvent) {

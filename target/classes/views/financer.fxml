@@ -38,6 +38,7 @@
                         <Insets top="25" bottom="25" />
                     </padding>
                     <Button fx:id="overviewTabBtn" minWidth="250.0" styleClass="nav-btn, selected" text="%overview" onAction="#handleShowOverviewContent"/>
+                    <Button fx:id="transactionsTabBtn" minWidth="250.0" styleClass="nav-btn, selected" text="%overview" onAction="#handleShowTransactionsContent"/>
                     <Button fx:id="statisticsTabBtn" minWidth="250.0" styleClass="nav-btn" text="%statistics" onAction="#handleShowStatisticsContent"/>
                     <Button fx:id="profileTabBtn" minWidth="250.0" styleClass="nav-btn" text="%profile" onAction="#handleShowProfileContent"/>
                     <Button fx:id="settingTabBtn" minWidth="250.0" styleClass="nav-btn" text="%settings" onAction="#handleShowSettingsContent"/>
