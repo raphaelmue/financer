@@ -31,9 +31,7 @@
                     <JFXButton fx:id="editCategoryBtn" text="%edit" onAction="#handleEditCategory" />
                     <JFXButton fx:id="deleteCategoryBtn" text="%delete" onAction="#handleDeleteCategory" />
                 </HBox>
-                <TreeView fx:id="categoriesTreeView">
-
-                </TreeView>
+                <TreeView fx:id="categoriesTreeView" />
             </VBox>
         </Tab>
     </TabPane>

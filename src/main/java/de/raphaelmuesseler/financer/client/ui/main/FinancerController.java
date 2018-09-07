@@ -47,7 +47,7 @@ public class FinancerController implements Initializable {
 
 
     public void handleShowTransactionsContent(ActionEvent actionEvent) {
-        this.loadFXML(getClass().getResource("/views/tranactions.fxml"));
+        this.loadFXML(getClass().getResource("/views/transactions.fxml"));
         this.removeSelectedStyleClass();
         this.transactionsTabBtn.getStyleClass().add("selected");
     }
@@ -73,6 +73,8 @@ public class FinancerController implements Initializable {
     private void removeSelectedStyleClass() {
         this.overviewTabBtn.getStyleClass().clear();
         this.overviewTabBtn.getStyleClass().add("nav-btn");
+        this.transactionsTabBtn.getStyleClass().clear();
+        this.transactionsTabBtn.getStyleClass().add("nav-btn");
         this.statisticsTabBtn.getStyleClass().clear();
         this.statisticsTabBtn.getStyleClass().add("nav-btn");
         this.profileTabBtn.getStyleClass().clear();

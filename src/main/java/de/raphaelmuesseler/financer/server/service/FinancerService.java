@@ -5,13 +5,13 @@ import de.raphaelmuesseler.financer.server.util.Hash;
 import de.raphaelmuesseler.financer.shared.connection.ConnectionResult;
 import de.raphaelmuesseler.financer.shared.model.Category;
 import de.raphaelmuesseler.financer.shared.model.User;
+import de.raphaelmuesseler.financer.shared.model.transactions.Transaction;
 import de.raphaelmuesseler.financer.shared.util.SerialTreeItem;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -142,5 +142,28 @@ public class FinancerService {
         this.database.delete(Database.Table.USERS_CATEGORIES, where);
 
         return new ConnectionResult<>(null);
+    }
+
+    public ConnectionResult<List<Transaction>> getTransactions(Logger logger, Map<String, Object> parameters) throws Exception {
+        List<Transaction> transactions = new ArrayList<>();
+
+        Map<String, Object> whereClause = new HashMap<>();
+        whereClause.put("user_id", ((User) parameters.get("user")).getId());
+
+        JSONArray jsonArray = this.database.get(Database.Table.TRANSACTIONS, whereClause);
+        whereClause.clear();
+        for (int i = 0; i < jsonArray.length(); i++) {
+            JSONObject jsonObjectTransaction = jsonArray.getJSONObject(i);
+
+            whereClause.put("id", jsonObjectTransaction.getInt("cat_id"));
+            JSONObject jsonObjectCategory = this.database.get(Database.Table.USERS_CATEGORIES, whereClause).getJSONObject(0);
+            Category category = new Category(jsonObjectCategory.getInt("id"), jsonObjectCategory.getInt("parent_id"),
+                    jsonObjectCategory.getInt("cat_id"), jsonObjectCategory.getString("name"), false);
+
+            transactions.add(new Transaction(jsonObjectTransaction.getInt("id"), jsonObjectTransaction.getDouble("amount"), category,
+                    jsonObjectTransaction.getString("product"), jsonObjectTransaction.getString("purpose"),
+                    (Date) jsonObjectTransaction.get("value_date"), jsonObjectTransaction.getString("shop")));
+        }
+        return new ConnectionResult<>(transactions);
     }
 }

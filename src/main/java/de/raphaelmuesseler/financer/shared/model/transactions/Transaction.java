@@ -9,8 +9,8 @@ public class Transaction extends AbstractTransaction {
 
     private final String shop;
 
-    public Transaction(double amount, Category category, String product, String purpose, Date valueDate, String shop) {
-        super(amount, category, product, purpose, valueDate);
+    public Transaction(int id, double amount, Category category, String product, String purpose, Date valueDate, String shop) {
+        super(id, amount, category, product, purpose, valueDate);
         this.shop = shop;
     }
 }
