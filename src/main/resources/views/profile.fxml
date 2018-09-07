@@ -26,7 +26,6 @@
             <VBox styleClass="tab-content">
                 <Label text="%categories" styleClass="tab-heading"/>
                 <HBox styleClass="tool-btn-bar">
-                    <JFXButton fx:id="saveCategoriesBtn" text="%save" onAction="#handleSaveCategories" />
                     <JFXButton fx:id="refreshCategoriesBtn" text="%refresh" onAction="#handleRefreshCategories" />
                     <JFXButton fx:id="newCategoryBtn" text="%new" onAction="#handleNewCategory"/>
                     <JFXButton fx:id="editCategoryBtn" text="%edit" onAction="#handleEditCategory" />

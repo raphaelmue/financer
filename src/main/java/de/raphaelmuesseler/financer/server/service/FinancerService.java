@@ -99,38 +99,48 @@ public class FinancerService {
         return new ConnectionResult<>(tree.getJson().toString());
     }
 
-    public ConnectionResult<Boolean> updateUsersCategories(Logger logger, Map<String, Object> parameters) throws Exception {
-        logger.log(Level.INFO, "Updating users categories ...");
-        boolean result = false;
+    public ConnectionResult<Category> addCategory(Logger logger, Map<String, Object> parameters) throws Exception {
+        logger.log(Level.INFO, "Adding new category ...");
         User user = (User) parameters.get("user");
-        SerialTreeItem<Category> tree = SerialTreeItem.fromJson((String) parameters.get("tree"), Category.class);
+        Category category = (Category) parameters.get("category");
 
-        tree.traverseValue(category -> {
-            if (!category.isKey()) {
-                System.out.println(category.getName() + " " + category.getId() + " " + category.getParentId() + " " + category.getRootId());
+        Map<String, Object> values = new HashMap<>();
+        values.put("user_id", user.getId());
+        values.put("cat_id", category.getRootId());
+        if (category.getParentId() != -1 ) {
+            values.put("parent_id", category.getParentId());
+        }
+        values.put("name", category.getName());
 
-                Map<String, Object> whereClause = new HashMap<>();
-                whereClause.put("id", category.getId());
-                try {
-                    Map<String, Object> values = new HashMap<>();
-                    values.put("name", category.getName());
-                    values.put("parent_id", (category.getParentId() == -1 ? null : category.getParentId()));
-                    values.put("cat_id", category.getRootId());
-                    values.put("user_id", user.getId());
+        this.database.insert(Database.Table.USERS_CATEGORIES, values);
 
-                    JSONArray jsonArray = this.database.get(Database.Table.USERS_CATEGORIES, whereClause);
-                    if (jsonArray.length() > 0) {
-                        JSONObject jsonObject = jsonArray.getJSONObject(0);
-                        this.database.update(Database.Table.USERS_CATEGORIES, whereClause, values);
-                    } else {
-                        this.database.insert(Database.Table.USERS_CATEGORIES, values);
-                    }
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
+        return new ConnectionResult<>((Category) this.database.getObject(Database.Table.USERS_CATEGORIES, Category.class, values).get(0));
+    }
 
-        return new ConnectionResult<>(result);
+    public ConnectionResult<Void> updateCategory(Logger logger, Map<String, Object> parameters) throws Exception {
+        logger.log(Level.INFO, "Updating users categories ...");
+        Category category = (Category) parameters.get("category");
+
+        Map<String, Object> where = new HashMap<>();
+        where.put("id", category.getId());
+
+        Map<String, Object> values = new HashMap<>();
+        values.put("name", category.getName());
+
+        this.database.update(Database.Table.USERS_CATEGORIES, where, values);
+
+        return new ConnectionResult<>(null);
+    }
+
+    public ConnectionResult<Void> deleteCategory(Logger logger, Map<String, Object> parameters) throws Exception {
+        logger.log(Level.INFO, "Deleting category ...");
+        Category category = (Category) parameters.get("category");
+
+        Map<String, Object> where = new HashMap<>();
+        where.put("id", category.getId());
+
+        this.database.delete(Database.Table.USERS_CATEGORIES, where);
+
+        return new ConnectionResult<>(null);
     }
 }

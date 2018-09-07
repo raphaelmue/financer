@@ -152,6 +152,17 @@ public class Database {
 
     }
 
+    public void delete(Table table, Map<String, Object> whereParameters) throws SQLException {
+        PreparedStatement statement;
+        StringBuilder query = new StringBuilder("DELETE FROM " + table.getTableName() + " ")
+                .append(this.getClause(whereParameters, "WHERE", " AND "));
+
+        statement = connection.prepareStatement(query.toString());
+        statement = this.preparedStatement(statement, whereParameters);
+
+        statement.execute();
+    }
+
     private String getClause(Map<String, Object> values, String operation, String seperator) {
         StringBuilder whereClauseString = new StringBuilder();
         if (values.size() > 0) {

@@ -1,7 +1,5 @@
 package de.raphaelmuesseler.financer.client.ui.main.profile;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.jfoenix.controls.JFXButton;
 import de.raphaelmuesseler.financer.client.connection.ServerRequestHandler;
 import de.raphaelmuesseler.financer.client.local.LocalStorage;
@@ -38,7 +36,6 @@ public class ProfileController implements Initializable {
     public Label surnameLabel;
     public Label emailLabel;
     public TreeView<Category> categoriesTreeView;
-    public JFXButton saveCategoriesBtn;
     public JFXButton refreshCategoriesBtn;
     public JFXButton newCategoryBtn;
     public JFXButton editCategoryBtn;
@@ -67,8 +64,6 @@ public class ProfileController implements Initializable {
          */
 
         GlyphFont fontAwesome = GlyphFontRegistry.font("FontAwesome");
-        this.saveCategoriesBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.SAVE));
-        this.saveCategoriesBtn.setGraphicTextGap(8);
         this.refreshCategoriesBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.REFRESH));
         this.refreshCategoriesBtn.setGraphicTextGap(8);
         this.newCategoryBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.PLUS));
@@ -79,32 +74,6 @@ public class ProfileController implements Initializable {
         this.deleteCategoryBtn.setGraphicTextGap(8);
 
         this.handleRefreshCategories();
-    }
-
-    public void handleSaveCategories() {
-        Map<String, Object> parameters = new HashMap<>();
-        parameters.put("user", this.user);
-        parameters.put("tree", this.structure.getJson().toString());
-
-        this.executor.execute(new ServerRequestHandler("updateUsersCategories", parameters, new AsyncConnectionCall() {
-            @Override
-            public void onSuccess(ConnectionResult result) {
-            }
-
-            @Override
-            public void onFailure(Exception exception) {
-                logger.log(Level.SEVERE, exception.getMessage(), exception);
-                Platform.runLater(() -> {
-                    FinancerExceptionDialog dialog = new FinancerExceptionDialog("Login", exception);
-                    dialog.showAndWait();
-                });
-            }
-
-            @Override
-            public void onAfter() {
-                handleRefreshCategories();
-            }
-        }));
     }
 
     public void handleRefreshCategories() {
@@ -146,6 +115,7 @@ public class ProfileController implements Initializable {
                         event.getNewValue().setId(event.getOldValue().getId());
                         event.getNewValue().setParentId(event.getOldValue().getParentId());
                         event.getNewValue().setRootId(event.getOldValue().getRootId());
+                        handleUpdateCategory(event.getNewValue());
                     });
                 });
             }
@@ -153,25 +123,78 @@ public class ProfileController implements Initializable {
     }
 
     public void handleNewCategory() {
-        SerialTreeItem<Category> currentItem = (SerialTreeItem<Category>) this.categoriesTreeView.getSelectionModel().getSelectedItem();
+        this.handleNewCategory((SerialTreeItem<Category>) this.categoriesTreeView.getSelectionModel().getSelectedItem());
+    }
 
-        Category newCategory = new Category(-1, (currentItem.getValue().isKey() ? -1 : currentItem.getValue().getId()),
+    private void handleNewCategory(SerialTreeItem<Category> currentItem) {
+
+        Category category = new Category(-1, (currentItem.getValue().isKey() ? -1 : currentItem.getValue().getId()),
                 (currentItem.getValue().isKey() ? currentItem.getValue().getId() : currentItem.getValue().getRootId()),
                 I18N.get("newCategory"), false);
 
-        currentItem.getChildren().add(new SerialTreeItem<>(newCategory));
-        expandTreeView(currentItem);
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("user", this.user);
+        parameters.put("category", category);
+
+        this.executor.execute(new ServerRequestHandler("addCategory", parameters, new AsyncConnectionCall() {
+            @Override
+            public void onSuccess(ConnectionResult result) {
+                Platform.runLater(() -> {
+                    category.setId(((Category) result.getResult()).getId());
+                    currentItem.getChildren().add(new SerialTreeItem<>(category));
+                    expandTreeView(currentItem);
+                });
+            }
+
+            @Override
+            public void onFailure(Exception exception) {
+                AsyncConnectionCall.super.onFailure(exception);
+                logger.log(Level.SEVERE, exception.getMessage(), exception);
+                handleRefreshCategories();
+            }
+        }));
     }
 
     public void handleEditCategory() {
+        // TODO set selected item editable
+    }
+
+    private void handleUpdateCategory(Category category) {
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("category", category);
+
+        this.executor.execute(new ServerRequestHandler("updateCategory", parameters, new AsyncConnectionCall() {
+            @Override
+            public void onSuccess(ConnectionResult result) { }
+
+            @Override
+            public void onFailure(Exception exception) {
+                AsyncConnectionCall.super.onFailure(exception);
+                logger.log(Level.SEVERE, exception.getMessage(), exception);
+                handleRefreshCategories();
+            }
+        }));
     }
 
     public void handleDeleteCategory() {
         if (!this.categoriesTreeView.getSelectionModel().getSelectedItem().getValue().isKey()) {
-            this.categoriesTreeView.getSelectionModel()
-                    .getSelectedItem()
-                    .getParent()
-                    .getChildren()
+            Map<String, Object> parameters = new HashMap<>();
+            parameters.put("category", this.categoriesTreeView.getSelectionModel()
+                    .getSelectedItem().getValue());
+
+            this.executor.execute(new ServerRequestHandler("deleteCategory", parameters, new AsyncConnectionCall() {
+                @Override
+                public void onSuccess(ConnectionResult result) {
+                }
+
+                @Override
+                public void onFailure(Exception exception) {
+                    AsyncConnectionCall.super.onFailure(exception);
+                    logger.log(Level.SEVERE, exception.getMessage(), exception);
+                }
+            }));
+
+            this.categoriesTreeView.getSelectionModel().getSelectedItem().getParent().getChildren()
                     .remove(this.categoriesTreeView.getSelectionModel().getSelectedItem());
         }
     }
@@ -208,12 +231,7 @@ public class ProfileController implements Initializable {
 
             MenuItem addMenuItem = new MenuItem(I18N.get("new"));
             addMenuItem.setOnAction(t -> {
-                Category newCategory = new Category(-1, (getTreeItem().getValue().isKey() ? -1 : getTreeItem().getValue().getId()),
-                        (getTreeItem().getValue().isKey() ? getTreeItem().getValue().getId() : getTreeItem().getValue().getRootId()),
-                        I18N.get("newCategory"), false);
-
-                getTreeItem().getChildren().add(new SerialTreeItem<>(newCategory));
-                expandTreeView(getTreeItem());
+                handleNewCategory((SerialTreeItem<Category>) getTreeItem());
             });
             this.contextMenu.getItems().add(addMenuItem);
 
