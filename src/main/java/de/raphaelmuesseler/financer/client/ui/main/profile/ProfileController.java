@@ -127,7 +127,8 @@ public class ProfileController implements Initializable {
     }
 
     private void handleNewCategory(SerialTreeItem<Category> currentItem) {
-        if (currentItem != null && !currentItem.getValue().getKey().equals("categories")) {
+        if (currentItem != null && ((currentItem.getValue().getKey() != null && !currentItem.getValue().getKey().equals("categories")) ||
+                currentItem.getValue().getKey() == null)) {
             Category category = new Category(-1, (currentItem.getValue().isKey() ? -1 : currentItem.getValue().getId()),
                     (currentItem.getValue().isKey() ? currentItem.getValue().getId() : currentItem.getValue().getRootId()),
                     I18N.get("newCategory"), false);
