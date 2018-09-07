@@ -98,7 +98,7 @@ public class ProfileController implements Initializable {
                         dialog.showAndWait();
                     });
                 }
-                List<Object> result = LocalStorage.readObject(LocalStorage.PROFILE_FILE);
+                List<Object> result = (List<Object>) LocalStorage.readObject(LocalStorage.PROFILE_FILE);
                 if (result != null && result.size() > 0) {
                     structure = SerialTreeItem.fromJson(((String) result.get(0)), Category.class);
                 }
@@ -152,7 +152,7 @@ public class ProfileController implements Initializable {
                     logger.log(Level.SEVERE, exception.getMessage(), exception);
                     handleRefreshCategories();
                 }
-            }));
+            }, true));
         }
     }
 
@@ -174,7 +174,7 @@ public class ProfileController implements Initializable {
                 logger.log(Level.SEVERE, exception.getMessage(), exception);
                 handleRefreshCategories();
             }
-        }));
+        }, true));
     }
 
     public void handleDeleteCategory() {
@@ -194,7 +194,7 @@ public class ProfileController implements Initializable {
                     AsyncConnectionCall.super.onFailure(exception);
                     logger.log(Level.SEVERE, exception.getMessage(), exception);
                 }
-            }));
+            }, true));
 
             this.categoriesTreeView.getSelectionModel().getSelectedItem().getParent().getChildren()
                     .remove(this.categoriesTreeView.getSelectionModel().getSelectedItem());

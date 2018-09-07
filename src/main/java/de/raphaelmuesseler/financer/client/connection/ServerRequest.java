@@ -11,6 +11,7 @@ class ServerRequest {
 
     private final static String HOST = "localhost";
     private final static int PORT = 3500;
+    private final static int TIMEOUT = 5000;
 
     private final ConnectionCall connectionCall;
 
@@ -31,5 +32,14 @@ class ServerRequest {
         ObjectInputStream input = new ObjectInputStream(new DataInputStream(socket.getInputStream()));
 
         return (ConnectionResult) input.readObject();
+    }
+
+    static boolean testConnection() throws IOException {
+        Socket socket = new Socket(HOST, PORT);
+        return socket.getInetAddress().isReachable(TIMEOUT);
+    }
+
+    ConnectionCall getConnectionCall() {
+        return connectionCall;
     }
 }

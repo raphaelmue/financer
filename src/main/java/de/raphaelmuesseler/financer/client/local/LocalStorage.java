@@ -21,6 +21,7 @@ public class LocalStorage {
     public static final File USERDATA_FILE = new File(LOCATION + "/usr/usr.fnc");
     public static final File SETTINGS_FILE = new File(LOCATION + "/usr/settings.fnc");
     public static final File PROFILE_FILE = new File(LOCATION + "/data/profile.fnc");
+    public static final File REQUESTS_FILE = new File(LOCATION + "/tmp/requests.fnc");
 
 
     public static User getLoggedInUser() {
@@ -66,7 +67,17 @@ public class LocalStorage {
         return result;
     }
 
-    public static List<Object> readObject(File file) {
+    public static boolean writeObjects(File file, Iterable<Object> objects) {
+        boolean result = true;
+        for (Object object : objects) {
+            if (!writeObject(file, object)) {
+                result = false;
+            }
+        }
+        return result;
+    }
+
+    public static Iterable<Object> readObject(File file) {
         List<Object> result = new ArrayList<>();
         try (FileInputStream fileInputStream = new FileInputStream(file)) {
             ObjectInputStream inputStream = new ObjectInputStream(fileInputStream);

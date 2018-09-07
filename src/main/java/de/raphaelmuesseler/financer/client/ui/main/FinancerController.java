@@ -1,5 +1,6 @@
 package de.raphaelmuesseler.financer.client.ui.main;
 
+import de.raphaelmuesseler.financer.client.connection.ServerRequestHandler;
 import de.raphaelmuesseler.financer.client.local.LocalStorage;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -12,6 +13,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Locale;
 import java.util.ResourceBundle;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class FinancerController implements Initializable {
     public BorderPane rootLayout;
@@ -21,6 +24,8 @@ public class FinancerController implements Initializable {
     public Button settingTabBtn;
 
     private ResourceBundle resourceBundle;
+    private ExecutorService executor = Executors.newCachedThreadPool();
+
 
     @FXML
     public void initialize(URL location, ResourceBundle resources) {
@@ -32,6 +37,10 @@ public class FinancerController implements Initializable {
             locale = Locale.ENGLISH;
         }
         this.resourceBundle = ResourceBundle.getBundle("Financer", locale);
+
+        try {
+            ServerRequestHandler.makeRequests(this.executor);
+        } catch (IOException ignored) { }
     }
 
     public BorderPane getRootLayout() {
