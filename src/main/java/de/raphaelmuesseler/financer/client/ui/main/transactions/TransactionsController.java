@@ -62,7 +62,7 @@ public class TransactionsController implements Initializable {
         TableColumn<Transaction, String> productColumn = new TableColumn<>(I18N.get("product"));
         TableColumn<Transaction, String> purposeColumn = new TableColumn<>(I18N.get("purpose"));
 
-        idColumn.setCellValueFactory(new PropertyValueFactory<>("id")).;
+        idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
         valueDateColumn.setCellValueFactory(new PropertyValueFactory<>("valueDate"));
         amountColumn.setCellValueFactory(new PropertyValueFactory<>("amount"));
         categoryColumn.setCellValueFactory(new PropertyValueFactory<>("category"));
