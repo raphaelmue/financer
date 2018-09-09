@@ -21,6 +21,7 @@ public class LocalStorage {
     public static final File USERDATA_FILE = new File(LOCATION + "/usr/usr.fnc");
     public static final File SETTINGS_FILE = new File(LOCATION + "/usr/settings.fnc");
     public static final File PROFILE_FILE = new File(LOCATION + "/data/profile.fnc");
+    public static final File TRANSACTIONS_FILE = new File(LOCATION + "/data/transactions.fnc");
 
 
     public static User getLoggedInUser() {

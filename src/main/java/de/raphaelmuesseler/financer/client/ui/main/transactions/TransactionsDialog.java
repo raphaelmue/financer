@@ -7,7 +7,7 @@ import de.raphaelmuesseler.financer.client.ui.components.DoubleField;
 import de.raphaelmuesseler.financer.client.ui.dialogs.FinancerDialog;
 import de.raphaelmuesseler.financer.shared.model.Category;
 import de.raphaelmuesseler.financer.shared.model.transactions.Transaction;
-import de.raphaelmuesseler.financer.shared.util.SerialTreeItem;
+import de.raphaelmuesseler.financer.shared.util.collections.SerialTreeItem;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 

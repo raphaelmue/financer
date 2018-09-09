@@ -9,7 +9,7 @@ import de.raphaelmuesseler.financer.shared.connection.AsyncConnectionCall;
 import de.raphaelmuesseler.financer.shared.connection.ConnectionResult;
 import de.raphaelmuesseler.financer.shared.model.Category;
 import de.raphaelmuesseler.financer.shared.model.User;
-import de.raphaelmuesseler.financer.shared.util.SerialTreeItem;
+import de.raphaelmuesseler.financer.shared.util.collections.SerialTreeItem;
 import javafx.application.Platform;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -93,10 +93,7 @@ public class ProfileController implements Initializable {
                     // TODO set offline
                 } else {
                     logger.log(Level.SEVERE, exception.getMessage(), exception);
-                    Platform.runLater(() -> {
-                        FinancerExceptionDialog dialog = new FinancerExceptionDialog("Login", exception);
-                        dialog.showAndWait();
-                    });
+                    AsyncConnectionCall.super.onFailure(exception);
                 }
                 List<Object> result = LocalStorage.readObject(LocalStorage.PROFILE_FILE);
                 if (result != null && result.size() > 0) {

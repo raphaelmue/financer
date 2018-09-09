@@ -6,7 +6,7 @@ import de.raphaelmuesseler.financer.shared.connection.ConnectionResult;
 import de.raphaelmuesseler.financer.shared.model.Category;
 import de.raphaelmuesseler.financer.shared.model.User;
 import de.raphaelmuesseler.financer.shared.model.transactions.Transaction;
-import de.raphaelmuesseler.financer.shared.util.SerialTreeItem;
+import de.raphaelmuesseler.financer.shared.util.collections.SerialTreeItem;
 import org.json.JSONArray;
 import org.json.JSONObject;
 

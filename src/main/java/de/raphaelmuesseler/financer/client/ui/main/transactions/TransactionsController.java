@@ -9,6 +9,7 @@ import de.raphaelmuesseler.financer.shared.connection.ConnectionResult;
 import de.raphaelmuesseler.financer.shared.model.Category;
 import de.raphaelmuesseler.financer.shared.model.User;
 import de.raphaelmuesseler.financer.shared.model.transactions.Transaction;
+import de.raphaelmuesseler.financer.shared.util.collections.CollectionUtil;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -16,10 +17,12 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import jdk.vm.ci.meta.Local;
 import org.controlsfx.glyphfont.FontAwesome;
 import org.controlsfx.glyphfont.GlyphFont;
 import org.controlsfx.glyphfont.GlyphFontRegistry;
 
+import java.net.ConnectException;
 import java.net.URL;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
@@ -90,13 +93,26 @@ public class TransactionsController implements Initializable {
             @Override
             public void onSuccess(ConnectionResult result) {
                 transactions = FXCollections.observableArrayList((List<Transaction>) result.getResult());
-                Platform.runLater(() -> transactionsTableView.setItems(transactions));
+                LocalStorage.writeObject(LocalStorage.TRANSACTIONS_FILE, result.getResult());
             }
 
             @Override
             public void onFailure(Exception exception) {
-                logger.log(Level.SEVERE, exception.getMessage(), exception);
-                AsyncConnectionCall.super.onFailure(exception);
+                if (exception instanceof ConnectException) {
+                    // TODO set offline
+                } else {
+                    logger.log(Level.SEVERE, exception.getMessage(), exception);
+                    AsyncConnectionCall.super.onFailure(exception);
+                }
+                List<Object> result = LocalStorage.readObject(LocalStorage.TRANSACTIONS_FILE);
+                if (result != null && result.size() > 0) {
+                    transactions = CollectionUtil.castObjectListToObservable((List<Object>) result.get(0));
+                }
+            }
+
+            @Override
+            public void onAfter() {
+                Platform.runLater(() -> transactionsTableView.setItems(transactions));
             }
         }));
     }

@@ -1,8 +1,7 @@
-package de.raphaelmuesseler.financer.shared.util;
+package de.raphaelmuesseler.financer.shared.util.collections;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import de.raphaelmuesseler.financer.shared.model.Category;
 import javafx.scene.control.TreeItem;
 import org.json.JSONObject;
 
