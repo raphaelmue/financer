@@ -102,14 +102,80 @@ public class TransactionsController implements Initializable {
     }
 
     public void handleNewTransaction() {
+        Transaction transaction = new TransactionsDialog(null).showAndGetResult();
+        if (transaction != null) {
+            Map<String, Object> parameters = new HashMap<>();
+            parameters.put("user", this.user);
+            parameters.put("transaction", transaction);
 
+            this.executor.execute(new ServerRequestHandler("addTransaction", parameters, new AsyncConnectionCall() {
+                @Override
+                public void onSuccess(ConnectionResult result) {
+                    Platform.runLater(() -> {
+                        // removing numbers in category's name
+                        transaction.getCategory().setName(transaction.getCategory().getName().substring(
+                                transaction.getCategory().getName().indexOf(" ") + 1));
+                        transactionsTableView.getItems().add(transaction);
+                    });
+                }
+
+                @Override
+                public void onFailure(Exception exception) {
+                    logger.log(Level.SEVERE, exception.getMessage(), exception);
+                    AsyncConnectionCall.super.onFailure(exception);
+                }
+            }));
+        }
     }
 
     public void handleEditTransaction() {
+        Transaction transaction = new TransactionsDialog(this.transactionsTableView.getSelectionModel().getSelectedItem())
+                .showAndGetResult();
+        if (transaction != null) {
+            Map<String, Object> parameters = new HashMap<>();
+            parameters.put("user", this.user);
+            parameters.put("transaction", transaction);
 
+            this.executor.execute(new ServerRequestHandler("updateTransaction", parameters, new AsyncConnectionCall() {
+                @Override
+                public void onSuccess(ConnectionResult result) {
+                    Platform.runLater(() -> {
+                        // removing numbers in category's name
+                        transaction.getCategory().setName(transaction.getCategory().getName().substring(
+                                transaction.getCategory().getName().indexOf(" ") + 1));
+                        transactionsTableView.getItems().add(transaction);
+                    });
+                }
+
+                @Override
+                public void onFailure(Exception exception) {
+                    logger.log(Level.SEVERE, exception.getMessage(), exception);
+                    AsyncConnectionCall.super.onFailure(exception);
+                }
+            }));
+        }
     }
 
     public void handleDeleteTransaction() {
+        Transaction transaction = this.transactionsTableView.getSelectionModel().getSelectedItem();
+        if (transaction != null) {
+            Map<String, Object> parameters = new HashMap<>();
+            parameters.put("transaction", transaction);
 
+            this.executor.execute(new ServerRequestHandler("deleteTransaction", parameters, new AsyncConnectionCall() {
+                @Override
+                public void onSuccess(ConnectionResult result) {
+                    Platform.runLater(() -> {
+                        transactionsTableView.getItems().remove(transaction);
+                    });
+                }
+
+                @Override
+                public void onFailure(Exception exception) {
+                    logger.log(Level.SEVERE, exception.getMessage(), exception);
+                    AsyncConnectionCall.super.onFailure(exception);
+                }
+            }));
+        }
     }
 }

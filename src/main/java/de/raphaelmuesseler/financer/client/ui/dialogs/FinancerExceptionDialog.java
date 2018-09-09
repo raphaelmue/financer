@@ -3,7 +3,7 @@ package de.raphaelmuesseler.financer.client.ui.dialogs;
 import java.net.ConnectException;
 import java.net.UnknownHostException;
 
-public class FinancerExceptionDialog extends FinancerDialog {
+public class FinancerExceptionDialog extends FinancerAlert {
     public FinancerExceptionDialog(String header, Exception exception) {
         super(AlertType.ERROR);
 

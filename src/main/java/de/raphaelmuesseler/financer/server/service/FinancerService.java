@@ -10,8 +10,12 @@ import de.raphaelmuesseler.financer.shared.util.SerialTreeItem;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.sql.Date;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -145,6 +149,7 @@ public class FinancerService {
     }
 
     public ConnectionResult<List<Transaction>> getTransactions(Logger logger, Map<String, Object> parameters) throws Exception {
+        logger.log(Level.INFO, "Fetching users transaction ...");
         List<Transaction> transactions = new ArrayList<>();
 
         Map<String, Object> whereClause = new HashMap<>();
@@ -162,8 +167,62 @@ public class FinancerService {
 
             transactions.add(new Transaction(jsonObjectTransaction.getInt("id"), jsonObjectTransaction.getDouble("amount"), category,
                     jsonObjectTransaction.getString("product"), jsonObjectTransaction.getString("purpose"),
-                    (Date) jsonObjectTransaction.get("value_date"), jsonObjectTransaction.getString("shop")));
+                    ((Date) jsonObjectTransaction.get("value_date")).toLocalDate(),
+                    jsonObjectTransaction.getString("shop")));
         }
         return new ConnectionResult<>(transactions);
+    }
+
+    public ConnectionResult<Void> addTransaction(Logger logger, Map<String, Object> parameters) throws Exception {
+        logger.log(Level.INFO, "Adding transaction ...");
+        User user = (User) parameters.get("user");
+        Transaction transaction = (Transaction) parameters.get("transaction");
+
+        Map<String, Object> values = new HashMap<>();
+        values.put("user_id", user.getId());
+        values.put("value_date", transaction.getValueDate());
+        values.put("amount", transaction.getAmount());
+        values.put("product", transaction.getProduct());
+        values.put("purpose", transaction.getPurpose());
+        values.put("shop", transaction.getShop());
+        values.put("cat_id", transaction.getCategory().getId());
+
+        this.database.insert(Database.Table.TRANSACTIONS, values);
+
+        return new ConnectionResult<>(null);
+    }
+
+
+    public ConnectionResult<Void> updateTransaction(Logger logger, Map<String, Object> parameters) throws Exception {
+        logger.log(Level.INFO, "Adding transaction ...");
+        User user = (User) parameters.get("user");
+        Transaction transaction = (Transaction) parameters.get("transaction");
+
+        Map<String, Object> where = new HashMap<>();
+        where.put("id", transaction.getId());
+
+        Map<String, Object> values = new HashMap<>();
+        values.put("value_date", transaction.getValueDate());
+        values.put("amount", transaction.getAmount());
+        values.put("product", transaction.getProduct());
+        values.put("purpose", transaction.getPurpose());
+        values.put("shop", transaction.getShop());
+        values.put("cat_id", transaction.getCategory().getId());
+
+        this.database.update(Database.Table.TRANSACTIONS, where, values);
+
+        return new ConnectionResult<>(null);
+    }
+
+    public ConnectionResult<Void> deleteTransaction(Logger logger, Map<String, Object> parameters) throws Exception {
+        logger.log(Level.INFO, "Adding transaction ...");
+        Transaction transaction = (Transaction) parameters.get("transaction");
+
+        Map<String, Object> where = new HashMap<>();
+        where.put("id", transaction.getId());
+
+        this.database.delete(Database.Table.TRANSACTIONS, where);
+
+        return new ConnectionResult<>(null);
     }
 }

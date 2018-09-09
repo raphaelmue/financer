@@ -3,7 +3,7 @@ package de.raphaelmuesseler.financer.client.ui.main.settings;
 import de.raphaelmuesseler.financer.client.local.LocalStorage;
 import de.raphaelmuesseler.financer.client.local.Settings;
 import de.raphaelmuesseler.financer.client.ui.I18N;
-import de.raphaelmuesseler.financer.client.ui.dialogs.FinancerDialog;
+import de.raphaelmuesseler.financer.client.ui.dialogs.FinancerAlert;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.MenuButton;
@@ -38,7 +38,7 @@ public class SettingsController implements Initializable {
         settings.setLanguage(locale);
         LocalStorage.writeSettings(settings);
 
-        new FinancerDialog(Alert.AlertType.INFORMATION, I18N.get("language"), I18N.get("warnChangesAfterRestart")).showAndWait();
+        new FinancerAlert(Alert.AlertType.INFORMATION, I18N.get("language"), I18N.get("warnChangesAfterRestart")).showAndWait();
     }
 
 }

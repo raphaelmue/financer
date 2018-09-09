@@ -4,7 +4,7 @@ import de.raphaelmuesseler.financer.client.connection.ServerRequestHandler;
 import de.raphaelmuesseler.financer.client.local.LocalStorage;
 import de.raphaelmuesseler.financer.client.local.Settings;
 import de.raphaelmuesseler.financer.client.ui.I18N;
-import de.raphaelmuesseler.financer.client.ui.dialogs.FinancerDialog;
+import de.raphaelmuesseler.financer.client.ui.dialogs.FinancerAlert;
 import de.raphaelmuesseler.financer.client.ui.dialogs.FinancerExceptionDialog;
 import de.raphaelmuesseler.financer.client.ui.main.FinancerApplication;
 import de.raphaelmuesseler.financer.shared.connection.AsyncConnectionCall;
@@ -121,7 +121,7 @@ public class LoginController implements Initializable {
     }
 
     private void changeLanguage(Locale locale) {
-        new FinancerDialog(Alert.AlertType.INFORMATION, I18N.get("language"), I18N.get("warnChangesAfterRestart")).showAndWait();
+        new FinancerAlert(Alert.AlertType.INFORMATION, I18N.get("language"), I18N.get("warnChangesAfterRestart")).showAndWait();
 
         Settings settings = LocalStorage.getSettings();
         if (settings == null) {

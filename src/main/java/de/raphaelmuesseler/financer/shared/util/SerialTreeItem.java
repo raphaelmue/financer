@@ -2,6 +2,7 @@ package de.raphaelmuesseler.financer.shared.util;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import de.raphaelmuesseler.financer.shared.model.Category;
 import javafx.scene.control.TreeItem;
 import org.json.JSONObject;
 
@@ -90,6 +91,25 @@ public class SerialTreeItem<T> extends TreeItem<T> implements Serializable {
         return false;
     }
 
+    public boolean deleteByValue(SerialTreeItem<T> treeItem, Comparator<T> comparator) {
+        return this.deleteByValue(treeItem, this, comparator);
+    }
+
+    private boolean deleteByValue(SerialTreeItem<T> treeItem, SerialTreeItem<T> tree, Comparator<T> comparator) {
+        for (TreeItem<T> item : tree.getChildren()) {
+            SerialTreeItem<T> serialTreeItem = (SerialTreeItem<T>) item;
+            if (comparator.compare(treeItem.getValue(), item.getValue()) == 0) {
+                item.getChildren().remove(treeItem);
+                return true;
+            } else {
+                if (serialTreeItem.deleteByValue(treeItem, serialTreeItem, comparator)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     public void traverseValue(Action<T> action) {
         this.traverseValue(this, action);
     }
@@ -116,6 +136,14 @@ public class SerialTreeItem<T> extends TreeItem<T> implements Serializable {
                 serialTreeItem.traverse(serialTreeItem, action);
             }
         }
+    }
+
+    public void getItemByValue(T searchValue, Action<SerialTreeItem<T>> action, Comparator<T> comparator) {
+        this.traverse(value -> {
+            if (comparator.compare(searchValue, value.getValue()) == 0) {
+                action.action(value);
+            }
+        });
     }
 
     @Override
