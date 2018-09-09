@@ -5,6 +5,7 @@ import de.raphaelmuesseler.financer.client.connection.ServerRequestHandler;
 import de.raphaelmuesseler.financer.client.local.LocalStorage;
 import de.raphaelmuesseler.financer.client.ui.I18N;
 import de.raphaelmuesseler.financer.client.ui.dialogs.FinancerExceptionDialog;
+import de.raphaelmuesseler.financer.client.ui.dialogs.FinancerTextInputDialog;
 import de.raphaelmuesseler.financer.shared.connection.AsyncConnectionCall;
 import de.raphaelmuesseler.financer.shared.connection.ConnectionResult;
 import de.raphaelmuesseler.financer.shared.model.Category;
@@ -126,31 +127,36 @@ public class ProfileController implements Initializable {
     private void handleNewCategory(SerialTreeItem<Category> currentItem) {
         if (currentItem != null && ((currentItem.getValue().getKey() != null && !currentItem.getValue().getKey().equals("categories")) ||
                 currentItem.getValue().getKey() == null)) {
-            Category category = new Category(-1, (currentItem.getValue().isKey() ? -1 : currentItem.getValue().getId()),
-                    (currentItem.getValue().isKey() ? currentItem.getValue().getId() : currentItem.getValue().getRootId()),
-                    I18N.get("newCategory"), false);
 
-            Map<String, Object> parameters = new HashMap<>();
-            parameters.put("user", this.user);
-            parameters.put("category", category);
+            String categoryName = new FinancerTextInputDialog(I18N.get("enterCategoryName"), I18N.get("newCategory"))
+                    .showAndGetResult();
+            if (categoryName != null) {
+                Category category = new Category(-1, (currentItem.getValue().isKey() ? -1 : currentItem.getValue().getId()),
+                        (currentItem.getValue().isKey() ? currentItem.getValue().getId() : currentItem.getValue().getRootId()),
+                        categoryName, false);
 
-            this.executor.execute(new ServerRequestHandler("addCategory", parameters, new AsyncConnectionCall() {
-                @Override
-                public void onSuccess(ConnectionResult result) {
-                    Platform.runLater(() -> {
-                        category.setId(((Category) result.getResult()).getId());
-                        currentItem.getChildren().add(new SerialTreeItem<>(category));
-                        expandTreeView(currentItem);
-                    });
-                }
+                Map<String, Object> parameters = new HashMap<>();
+                parameters.put("user", this.user);
+                parameters.put("category", category);
 
-                @Override
-                public void onFailure(Exception exception) {
-                    AsyncConnectionCall.super.onFailure(exception);
-                    logger.log(Level.SEVERE, exception.getMessage(), exception);
-                    handleRefreshCategories();
-                }
-            }));
+                this.executor.execute(new ServerRequestHandler("addCategory", parameters, new AsyncConnectionCall() {
+                    @Override
+                    public void onSuccess(ConnectionResult result) {
+                        Platform.runLater(() -> {
+                            category.setId(((Category) result.getResult()).getId());
+                            currentItem.getChildren().add(new SerialTreeItem<>(category));
+                            expandTreeView(currentItem);
+                        });
+                    }
+
+                    @Override
+                    public void onFailure(Exception exception) {
+                        AsyncConnectionCall.super.onFailure(exception);
+                        logger.log(Level.SEVERE, exception.getMessage(), exception);
+                        handleRefreshCategories();
+                    }
+                }));
+            }
         }
     }
 

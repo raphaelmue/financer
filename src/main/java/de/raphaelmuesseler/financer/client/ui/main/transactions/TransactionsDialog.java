@@ -8,6 +8,7 @@ import de.raphaelmuesseler.financer.client.ui.dialogs.FinancerDialog;
 import de.raphaelmuesseler.financer.shared.model.Category;
 import de.raphaelmuesseler.financer.shared.model.transactions.Transaction;
 import de.raphaelmuesseler.financer.shared.util.collections.SerialTreeItem;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 
@@ -15,20 +16,27 @@ import java.util.Comparator;
 
 class TransactionsDialog extends FinancerDialog<Transaction> {
 
-    private final DoubleField amountField;
-    private final ComboBox<Category> categoryComboBox;
-    private final TextField productField;
-    private final TextField purposeField;
-    private final TextField shopField;
-    private final JFXDatePicker valueDateField;
+    private DoubleField amountField;
+    private ComboBox<Category> categoryComboBox;
+    private TextField productField;
+    private TextField purposeField;
+    private TextField shopField;
+    private JFXDatePicker valueDateField;
+    private SerialTreeItem<Category> tree;
 
     TransactionsDialog(Transaction transaction) {
         super(transaction);
 
         this.setHeaderText(I18N.get("transaction"));
 
-        final DialogPane dialogPane = getDialogPane();
+        this.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
+        this.getDialogPane().getButtonTypes().add(ButtonType.OK);
 
+        this.prepareDialogContent();
+    }
+
+    @Override
+    protected Node setDialogContent() {
         GridPane gridPane = new GridPane();
         gridPane.setHgap(80);
         gridPane.setVgap(8);
@@ -40,7 +48,7 @@ class TransactionsDialog extends FinancerDialog<Transaction> {
         gridPane.add(new Label(I18N.get("category")), 0, 1);
         this.categoryComboBox = new ComboBox<>();
         this.categoryComboBox.setPlaceholder(new Label(I18N.get("selectCategory")));
-        SerialTreeItem<Category> tree = SerialTreeItem.fromJson((String) LocalStorage.readObject(LocalStorage.PROFILE_FILE).get(0),
+        tree = SerialTreeItem.fromJson((String) LocalStorage.readObject(LocalStorage.PROFILE_FILE).get(0),
                 Category.class);
 
         this.renameCategoriesInOrder(tree);
@@ -70,21 +78,21 @@ class TransactionsDialog extends FinancerDialog<Transaction> {
         this.valueDateField = new JFXDatePicker();
         gridPane.add(this.valueDateField, 1, 5);
 
-        if (transaction != null) {
-            this.amountField.setText(String.valueOf(transaction.getAmount()));
+        return gridPane;
+    }
+
+    @Override
+    protected void prepareDialogContent() {
+        if (this.getValue() != null) {
+            this.amountField.setText(String.valueOf(this.getValue().getAmount()));
             tree.getItemByValue(this.getValue().getCategory(), serialTreeItem -> {
                 this.categoryComboBox.getSelectionModel().select(serialTreeItem.getValue());
             }, Comparator.comparingInt(Category::getId));
-            this.productField.setText(transaction.getProduct());
-            this.purposeField.setText(transaction.getPurpose());
-            this.shopField.setText(transaction.getShop());
+            this.productField.setText(this.getValue().getProduct());
+            this.purposeField.setText(this.getValue().getPurpose());
+            this.shopField.setText(this.getValue().getShop());
             this.valueDateField.setValue(this.getValue().getValueDate());
         }
-
-        dialogPane.setContent(gridPane);
-
-        this.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
-        this.getDialogPane().getButtonTypes().add(ButtonType.OK);
     }
 
     @Override
