@@ -1,62 +1,78 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.layout.StackPane?>
-
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.control.Label?>
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.control.*?>
 <?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
-<?import javafx.scene.control.Button?>
+<?import com.jfoenix.controls.JFXHamburger?>
 <StackPane alignment="center" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1"
            fx:controller="de.raphaelmuesseler.financer.client.ui.main.FinancerController">
     <BorderPane fx:id="rootLayout">
-        <top>
-            <fx:include fx:id="headerBar" source="header_bar.fxml"/>
-        </top>
+        <center>
+            <fx:include fx:id="overviewContent" source="overview.fxml"/>
+        </center>
+        <!--<bottom>-->
+        <!--<HBox alignment="CENTER" styleClass="footer" spacing="200">-->
+        <!--<padding>-->
+        <!--<Insets top="10" right="10" bottom="10" left="10"/>-->
+        <!--</padding>-->
+        <!--<Label text="Standard License"/>-->
+        <!--<Label text="Financer 2018"/>-->
+        <!--<Label text="© Raphael Müßeler"/>-->
+        <!--</HBox>-->
+        <!--</bottom>-->
         <left>
             <VBox fx:id="navigationBox" prefWidth="250" spacing="30" alignment="TOP_CENTER">
 
-                <padding>
-                    <Insets top="25" />
-                </padding>
-
-                <ImageView fitHeight="150.0" fitWidth="247.0" pickOnBounds="true" preserveRatio="true">
-                    <Image url="/images/icons/financer-icon.png"/>
-                </ImageView>
-                <Label alignment="CENTER" prefHeight="27.0" prefWidth="250.0" text="Financer" textAlignment="CENTER">
-                    <font>
-                        <Font size="18.0"/>
-                    </font>
-                </Label>
+                <VBox fx:id="imageContainer">
+                    <VBox alignment="CENTER">
+                    <ImageView fitHeight="150.0" pickOnBounds="true" preserveRatio="true">
+                        <Image url="/images/icons/financer-icon.png"/>
+                    </ImageView>
+                    </VBox>
+                    <Label fx:id="userNameLabel" />
+                </VBox>
 
                 <VBox spacing="10">
                     <padding>
-                        <Insets top="25" bottom="25" />
+                        <Insets top="25" bottom="25"/>
                     </padding>
-                    <Button fx:id="overviewTabBtn" minWidth="250.0" styleClass="nav-btn, selected" text="%overview" onAction="#handleShowOverviewContent"/>
-                    <Button fx:id="transactionsTabBtn" minWidth="250.0" styleClass="nav-btn" text="%transactions" onAction="#handleShowTransactionsContent"/>
-                    <Button fx:id="statisticsTabBtn" minWidth="250.0" styleClass="nav-btn" text="%statistics" onAction="#handleShowStatisticsContent"/>
-                    <Button fx:id="profileTabBtn" minWidth="250.0" styleClass="nav-btn" text="%profile" onAction="#handleShowProfileContent"/>
-                    <Button fx:id="settingTabBtn" minWidth="250.0" styleClass="nav-btn" text="%settings" onAction="#handleShowSettingsContent"/>
+                    <Button fx:id="overviewTabBtn" minWidth="250.0" styleClass="nav-btn, selected" text="%overview"
+                            onAction="#handleShowOverviewContent"/>
+                    <Button fx:id="transactionsTabBtn" minWidth="250.0" styleClass="nav-btn" text="%transactions"
+                            onAction="#handleShowTransactionsContent"/>
+                    <Button fx:id="statisticsTabBtn" minWidth="250.0" styleClass="nav-btn" text="%statistics"
+                            onAction="#handleShowStatisticsContent"/>
+                    <Button fx:id="profileTabBtn" minWidth="250.0" styleClass="nav-btn" text="%profile"
+                            onAction="#handleShowProfileContent"/>
+                    <Button fx:id="settingTabBtn" minWidth="250.0" styleClass="nav-btn" text="%settings"
+                            onAction="#handleShowSettingsContent"/>
                 </VBox>
             </VBox>
         </left>
-        <center>
-            <fx:include fx:id="overviewContent" source="overview.fxml" />
-        </center>
-        <bottom>
-            <HBox alignment="CENTER" styleClass="footer" spacing="200">
-                <padding>
-                    <Insets top="10" right="10" bottom="10" left="10"/>
-                </padding>
-                <Label text="Standard License"/>
-                <Label text="Financer 2018"/>
-                <Label text="© Raphael Müßeler"/>
-            </HBox>
-        </bottom>
+        <top>
+            <BorderPane styleClass="header">
+                <left>
+                    <HBox>
+                        <JFXHamburger fx:id="hamburgerBtn" onMouseClicked="#onToggleNavigationBar" alignment="CENTER_LEFT"/>
+                        <Label fx:id="financerLabel" text="F I N A N C E R" alignment="CENTER"/>
+                    </HBox>
+                </left>
+                <center>
+                    <Label fx:id="contentLabel" text="%overview" alignment="CENTER" textAlignment="CENTER"/>
+                </center>
+                <right>
+                    <MenuButton fx:id="accountMenuBtn" text="Account">
+                        <items>
+                            <MenuItem fx:id="logoutBtn" text="Logout" onAction="#handleLogout" />
+                        </items>
+                    </MenuButton>
+                </right>
+
+            </BorderPane>
+
+        </top>
     </BorderPane>
 </StackPane>

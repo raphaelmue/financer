@@ -6,34 +6,39 @@
 <VBox fx:controller="de.raphaelmuesseler.financer.client.ui.main.profile.ProfileController"
       xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" styleClass="content">
 
-    <Label text="%profile" styleClass="content-heading"/>
+    <GridPane hgap="20" vgap="20" maxHeight="Infinity" maxWidth="Infinity">
+        <VBox styleClass="content-box" GridPane.columnIndex="0" GridPane.rowIndex="0"
+              GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS">
+            <Label text="%profile" styleClass="content-heading"/>
 
-    <TabPane styleClass="tab-container">
-        <Tab text="%personalInformation" closable="false" styleClass="tab">
-            <VBox styleClass="tab-content">
-                <Label text="%personalInformation" styleClass="tab-heading"/>
-                <GridPane hgap="100" vgap="15">
-                    <Label text="%name" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
-                    <Label fx:id="nameLabel" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
-                    <Label text="%surname" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-                    <Label fx:id="surnameLabel" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
-                    <Label text="%email" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
-                    <Label fx:id="emailLabel" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
-                </GridPane>
-            </VBox>
-        </Tab>
-        <Tab text="%categories" closable="false">
-            <VBox styleClass="tab-content">
-                <Label text="%categories" styleClass="tab-heading"/>
-                <HBox styleClass="tool-btn-bar">
-                    <JFXButton fx:id="refreshCategoriesBtn" text="%refresh" onAction="#handleRefreshCategories" />
-                    <JFXButton fx:id="newCategoryBtn" text="%new" onAction="#handleNewCategory"/>
-                    <JFXButton fx:id="editCategoryBtn" text="%edit" onAction="#handleEditCategory" />
-                    <JFXButton fx:id="deleteCategoryBtn" text="%delete" onAction="#handleDeleteCategory" />
-                </HBox>
-                <TreeView fx:id="categoriesTreeView" />
-            </VBox>
-        </Tab>
-    </TabPane>
+            <TabPane styleClass="tab-container">
+                <Tab text="%personalInformation" closable="false" styleClass="tab">
+                    <VBox styleClass="tab-content">
+                        <Label text="%personalInformation" styleClass="tab-heading"/>
+                        <GridPane hgap="100" vgap="15">
+                            <Label text="%name" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                            <Label fx:id="nameLabel" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+                            <Label text="%surname" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                            <Label fx:id="surnameLabel" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+                            <Label text="%email" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                            <Label fx:id="emailLabel" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+                        </GridPane>
+                    </VBox>
+                </Tab>
+                <Tab text="%categories" closable="false">
+                    <VBox styleClass="tab-content">
+                        <Label text="%categories" styleClass="tab-heading"/>
+                        <HBox styleClass="tool-btn-bar">
+                            <JFXButton fx:id="refreshCategoriesBtn" text="%refresh" onAction="#handleRefreshCategories" />
+                            <JFXButton fx:id="newCategoryBtn" text="%new" onAction="#handleNewCategory"/>
+                            <JFXButton fx:id="editCategoryBtn" text="%edit" onAction="#handleEditCategory" />
+                            <JFXButton fx:id="deleteCategoryBtn" text="%delete" onAction="#handleDeleteCategory" />
+                        </HBox>
+                        <TreeView fx:id="categoriesTreeView" />
+                    </VBox>
+                </Tab>
+            </TabPane>
+        </VBox>
+    </GridPane>
 
 </VBox>

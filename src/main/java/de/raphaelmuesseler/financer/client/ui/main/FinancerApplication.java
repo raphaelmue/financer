@@ -7,6 +7,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -52,6 +53,9 @@ public class FinancerApplication extends Application {
             scene.getStylesheets().add(getClass().getResource("colors.style.css").toExternalForm());
             scene.getStylesheets().add(getClass().getResource("main.style.css").toExternalForm());
             primaryStage.getIcons().add(new Image(FinancerApplication.class.getResourceAsStream("/images/icons/financer-icon.png")));
+
+            Font.loadFont(getClass().getResource("/fonts/Roboto-Regular.ttf").toExternalForm(), 12);
+            Font.loadFont(getClass().getResource("/fonts/Roboto-Medium.ttf").toExternalForm(), 12);
 
             primaryStage.setTitle("Financer");
             primaryStage.setScene(scene);

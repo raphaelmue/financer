@@ -1,10 +1,41 @@
 .header {
     -fx-background-color: #92cab1;
     -fx-fill: #ffffff;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 20, 0, 0, 0);
+    -fx-padding: 8 10;
+
+    -fx-text-fill: #ffffff;
 }
 
+#hamburgerBtn {
+    -fx-padding: 10;
+    -fx-cursor: hand;
+    -fx-fill: #ffffff;
+}
 
+#hamburgerBtn StackPane {
+    -fx-background-color: #ffffff;
+    -fx-pref-width: 18px;
+    -fx-pref-height: 2px;
+    -fx-background-radius: 2px;
+}
+
+#financerLabel {
+    -fx-text-fill: #ffffff;
+    -fx-padding: 9 0 0 15;
+    -fx-font-size: 14;
+}
+
+#contentLabel {
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 14;
+    text
+}
 
 #accountMenuBtn {
-    /*-fx-background-color: #fffffff;*/
+    -fx-padding: 4 15 0 0;
+    -fx-background-color: transparent;
+    -fx-cursor: hand;
+    -fx-text-fill: #ffffff;
+
 }

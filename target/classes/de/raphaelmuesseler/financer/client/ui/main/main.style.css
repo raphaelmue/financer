@@ -1,11 +1,19 @@
 .content {
+    -fx-background-color: #f5f5f5;
+    -fx-padding: 20;
+    -fx-text-overrun: scroll;
+}
+
+.content-box {
+    -fx-padding: 5 8;
     -fx-background-color: #ffffff;
-    -fx-padding: 20 35;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 3, 0, 0, 2);
 }
 
 .content-heading {
-    -fx-fill: #5b5d5f;
-    -fx-font-size: 18;
+    -fx-font-family: "Roboto Medium";
+    -fx-font-size: 14;
+    -fx-text-fill: #92cab1;
     -fx-font-weight: 700;
     -fx-padding: 10 10 30 10;
 }

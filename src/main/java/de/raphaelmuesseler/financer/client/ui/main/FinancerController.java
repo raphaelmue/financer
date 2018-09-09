@@ -1,12 +1,28 @@
 package de.raphaelmuesseler.financer.client.ui.main;
 
+import com.jfoenix.controls.JFXHamburger;
+import com.jfoenix.transitions.hamburger.HamburgerSlideCloseTransition;
 import de.raphaelmuesseler.financer.client.local.LocalStorage;
+import de.raphaelmuesseler.financer.client.ui.I18N;
+import de.raphaelmuesseler.financer.client.ui.login.LoginApplication;
+import de.raphaelmuesseler.financer.shared.model.User;
+import javafx.animation.Transition;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.MenuButton;
+import javafx.scene.control.MenuItem;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.BorderPane;
+import javafx.stage.Stage;
+import org.controlsfx.glyphfont.FontAwesome;
+import org.controlsfx.glyphfont.GlyphFont;
+import org.controlsfx.glyphfont.GlyphFontRegistry;
 
 import java.io.IOException;
 import java.net.URL;
@@ -16,12 +32,18 @@ import java.util.ResourceBundle;
 public class FinancerController implements Initializable {
     public BorderPane rootLayout;
     public Button overviewTabBtn;
+    public Button transactionsTabBtn;
     public Button statisticsTabBtn;
     public Button profileTabBtn;
     public Button settingTabBtn;
-    public Button transactionsTabBtn;
+    public Label userNameLabel;
+    public MenuButton accountMenuBtn;
+    public MenuItem logoutBtn;
+    public JFXHamburger hamburgerBtn;
+    public Label contentLabel;
 
     private ResourceBundle resourceBundle;
+    private User user;
 
     @FXML
     public void initialize(URL location, ResourceBundle resources) {
@@ -33,6 +55,31 @@ public class FinancerController implements Initializable {
             locale = Locale.ENGLISH;
         }
         this.resourceBundle = ResourceBundle.getBundle("Financer", locale);
+
+        this.user = LocalStorage.getLoggedInUser();
+        this.userNameLabel.setText(this.user.getFullName());
+
+        GlyphFont fontAwesome = GlyphFontRegistry.font("FontAwesome");
+        this.overviewTabBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.COLUMNS));
+        this.overviewTabBtn.setGraphicTextGap(10);
+        this.transactionsTabBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.MONEY));
+        this.transactionsTabBtn.setGraphicTextGap(8);
+        this.statisticsTabBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.LINE_CHART));
+        this.statisticsTabBtn.setGraphicTextGap(8);
+        this.profileTabBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.USER));
+        this.profileTabBtn.setGraphicTextGap(15);
+        this.settingTabBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.COGS));
+        this.settingTabBtn.setGraphicTextGap(8);
+        this.accountMenuBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.USER));
+        this.accountMenuBtn.setGraphicTextGap(10);
+        this.logoutBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.SIGN_OUT));
+
+        HamburgerSlideCloseTransition burgerTask = new HamburgerSlideCloseTransition(this.hamburgerBtn);
+        burgerTask.setRate(-1);
+        this.hamburgerBtn.addEventHandler(MouseEvent.MOUSE_PRESSED, (e)->{
+            burgerTask.setRate(burgerTask.getRate()*-1);
+            burgerTask.play();
+        });
     }
 
     public BorderPane getRootLayout() {
@@ -43,6 +90,7 @@ public class FinancerController implements Initializable {
         this.loadFXML(getClass().getResource("/views/overview.fxml"));
         this.removeSelectedStyleClass();
         this.overviewTabBtn.getStyleClass().add("selected");
+        this.contentLabel.setText(I18N.get("overview"));
     }
 
 
@@ -50,24 +98,28 @@ public class FinancerController implements Initializable {
         this.loadFXML(getClass().getResource("/views/transactions.fxml"));
         this.removeSelectedStyleClass();
         this.transactionsTabBtn.getStyleClass().add("selected");
+        this.contentLabel.setText(I18N.get("transactions"));
     }
 
     public void handleShowStatisticsContent(ActionEvent actionEvent) {
         this.loadFXML(getClass().getResource("/views/statistics.fxml"));
         this.removeSelectedStyleClass();
         this.statisticsTabBtn.getStyleClass().add("selected");
+        this.contentLabel.setText(I18N.get("statistics"));
     }
 
     public void handleShowProfileContent(ActionEvent actionEvent) {
         this.loadFXML(getClass().getResource("/views/profile.fxml"));
         this.removeSelectedStyleClass();
         this.profileTabBtn.getStyleClass().add("selected");
+        this.contentLabel.setText(I18N.get("profile"));
     }
 
     public void handleShowSettingsContent(ActionEvent actionEvent) {
         this.loadFXML(getClass().getResource("/views/settings.fxml"));
         this.removeSelectedStyleClass();
         this.settingTabBtn.getStyleClass().add("selected");
+        this.contentLabel.setText(I18N.get("settings"));
     }
 
     private void removeSelectedStyleClass() {
@@ -86,8 +138,25 @@ public class FinancerController implements Initializable {
     private void loadFXML(URL url) {
         try {
             this.rootLayout.setCenter(FXMLLoader.load(url, this.resourceBundle));
+            // TODO bring center to back
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void handleLogout() {
+        LocalStorage.logUserOut();
+
+        Stage stage = (Stage) this.accountMenuBtn.getScene().getWindow();
+        stage.close();
+
+        try {
+            new LoginApplication().start(new Stage());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void onToggleNavigationBar(MouseEvent mouseEvent) {
     }
 }

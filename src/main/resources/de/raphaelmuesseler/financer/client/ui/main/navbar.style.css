@@ -1,24 +1,40 @@
 #navigationBox {
-    -fx-background-color: #f8f8f8;
+    -fx-background-color: #ffffff;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.5), 10, 0, 0, 0);
+}
+
+#imageContainer {
+    -fx-background-color: #7baa95;
+    -fx-padding: 15 8;
+}
+
+#imageContainer .label {
+    -fx-text-fill: #ffffff;
+    -fx-alignment: BOTTOM_LEFT;
+    -fx-font-size: 12;
+    -fx-padding: 15 0 0 10;
 }
 
 .nav-btn {
+    -fx-font-family: "Roboto Medium";
     -fx-background-color: transparent;
     -fx-font-size: 12;
-    -fx-cursor: pointer;
+    -fx-cursor: hand;
     -fx-padding: 10 20;
     -fx-border-radius: 0;
     -fx-pref-width: 100%;
     -fx-alignment: CENTER-LEFT;
-    -fx-fill: #b6b6b7;
+    -fx-text-fill: #909ca8;
+    -fx-font-weight: 700;
 }
 
 .nav-btn.selected {
-    -fx-font-weight: 700;
-    -fx-background-color: #ebebeb;
-    -fx-fill: #5b5d5f;
+    -fx-background-color: #fbfbfb;
+    -fx-text-fill: #92cab1;
+    -fx-border-color: #92cab1;
+    -fx-border-width: 0 3 0 0;
 }
 
 .nav-btn:hover {
-    -fx-background-color: #eeeeee;
+    -fx-background-color: #fbfbfb;
 }

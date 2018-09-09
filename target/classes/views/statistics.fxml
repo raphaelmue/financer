@@ -6,6 +6,11 @@
 <VBox fx:controller="de.raphaelmuesseler.financer.client.ui.main.statistics.StatisticsController"
       xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" styleClass="content">
 
-    <Label text="%statistics" styleClass="content-heading"/>
+    <GridPane hgap="20" vgap="20" maxHeight="Infinity" maxWidth="Infinity">
+        <VBox styleClass="content-box" GridPane.columnIndex="0" GridPane.rowIndex="0"
+              GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS">
+            <Label text="%statistics" styleClass="content-heading"/>
+        </VBox>
+    </GridPane>
 
 </VBox>
