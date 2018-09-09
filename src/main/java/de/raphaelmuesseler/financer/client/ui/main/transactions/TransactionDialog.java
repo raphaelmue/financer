@@ -14,7 +14,7 @@ import javafx.scene.layout.GridPane;
 
 import java.util.Comparator;
 
-class TransactionsDialog extends FinancerDialog<Transaction> {
+class TransactionDialog extends FinancerDialog<Transaction> {
 
     private DoubleField amountField;
     private ComboBox<Category> categoryComboBox;
@@ -24,7 +24,7 @@ class TransactionsDialog extends FinancerDialog<Transaction> {
     private JFXDatePicker valueDateField;
     private SerialTreeItem<Category> tree;
 
-    TransactionsDialog(Transaction transaction) {
+    TransactionDialog(Transaction transaction) {
         super(transaction);
 
         this.setHeaderText(I18N.get("transaction"));

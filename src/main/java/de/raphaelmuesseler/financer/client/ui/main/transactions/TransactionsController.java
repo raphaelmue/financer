@@ -17,7 +17,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
-import jdk.vm.ci.meta.Local;
 import org.controlsfx.glyphfont.FontAwesome;
 import org.controlsfx.glyphfont.GlyphFont;
 import org.controlsfx.glyphfont.GlyphFontRegistry;
@@ -118,7 +117,7 @@ public class TransactionsController implements Initializable {
     }
 
     public void handleNewTransaction() {
-        Transaction transaction = new TransactionsDialog(null).showAndGetResult();
+        Transaction transaction = new TransactionDialog(null).showAndGetResult();
         if (transaction != null) {
             Map<String, Object> parameters = new HashMap<>();
             parameters.put("user", this.user);
@@ -145,7 +144,7 @@ public class TransactionsController implements Initializable {
     }
 
     public void handleEditTransaction() {
-        Transaction transaction = new TransactionsDialog(this.transactionsTableView.getSelectionModel().getSelectedItem())
+        Transaction transaction = new TransactionDialog(this.transactionsTableView.getSelectionModel().getSelectedItem())
                 .showAndGetResult();
         if (transaction != null) {
             Map<String, Object> parameters = new HashMap<>();
@@ -155,12 +154,7 @@ public class TransactionsController implements Initializable {
             this.executor.execute(new ServerRequestHandler("updateTransaction", parameters, new AsyncConnectionCall() {
                 @Override
                 public void onSuccess(ConnectionResult result) {
-                    Platform.runLater(() -> {
-                        // removing numbers in category's name
-                        transaction.getCategory().setName(transaction.getCategory().getName().substring(
-                                transaction.getCategory().getName().indexOf(" ") + 1));
-                        transactionsTableView.getItems().add(transaction);
-                    });
+                    handleRefreshTransactions();
                 }
 
                 @Override
