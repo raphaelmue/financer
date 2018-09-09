@@ -1,22 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.*?>
 <?import javafx.scene.control.*?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.*?>
 <VBox fx:controller="de.raphaelmuesseler.financer.client.ui.main.transactions.TransactionsController"
       xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" styleClass="content">
 
     <GridPane hgap="20" vgap="20" maxHeight="Infinity" maxWidth="Infinity">
-        <VBox styleClass="content-box" GridPane.columnIndex="0" GridPane.rowIndex="0"
+        <VBox styleClass="tab-box" GridPane.columnIndex="0" GridPane.rowIndex="0"
               GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS">
-            <Label text="%overview" styleClass="content-heading"/>
-
-            <TabPane styleClass="tab-container">
+            <JFXTabPane styleClass="tab-container">
                 <Tab text="%transactions" closable="false" styleClass="tab">
                     <VBox styleClass="tab-content">
-                        <Label text="%transactions" styleClass="tab-heading"/>
+                        <Label text="%transactions" styleClass="content-heading"/>
                         <HBox styleClass="tool-btn-bar">
                             <JFXButton fx:id="refreshTransactionsBtn" text="%refresh"
                                        onAction="#handleRefreshTransactions"/>
@@ -29,12 +25,12 @@
                 </Tab>
                 <Tab text="%fixedExpenses" closable="false">
                     <VBox styleClass="tab-content">
-                        <Label text="%fixedExpenses" styleClass="tab-heading"/>
+                        <Label text="%fixedExpenses" styleClass="content-heading"/>
                         <HBox styleClass="tool-btn-bar">
                         </HBox>
                     </VBox>
                 </Tab>
-            </TabPane>
+            </JFXTabPane>
         </VBox>
     </GridPane>
 

@@ -3,18 +3,17 @@
 <?import com.jfoenix.controls.JFXButton?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import com.jfoenix.controls.JFXTabPane?>
 <VBox fx:controller="de.raphaelmuesseler.financer.client.ui.main.profile.ProfileController"
       xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" styleClass="content">
 
     <GridPane hgap="20" vgap="20" maxHeight="Infinity" maxWidth="Infinity">
-        <VBox styleClass="content-box" GridPane.columnIndex="0" GridPane.rowIndex="0"
+        <VBox styleClass="tab-box" GridPane.columnIndex="0" GridPane.rowIndex="0"
               GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS">
-            <Label text="%profile" styleClass="content-heading"/>
-
-            <TabPane styleClass="tab-container">
+            <JFXTabPane styleClass="tab-container">
                 <Tab text="%personalInformation" closable="false" styleClass="tab">
                     <VBox styleClass="tab-content">
-                        <Label text="%personalInformation" styleClass="tab-heading"/>
+                        <Label text="%personalInformation" styleClass="content-heading"/>
                         <GridPane hgap="100" vgap="15">
                             <Label text="%name" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
                             <Label fx:id="nameLabel" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
@@ -27,7 +26,7 @@
                 </Tab>
                 <Tab text="%categories" closable="false">
                     <VBox styleClass="tab-content">
-                        <Label text="%categories" styleClass="tab-heading"/>
+                        <Label text="%categories" styleClass="content-heading"/>
                         <HBox styleClass="tool-btn-bar">
                             <JFXButton fx:id="refreshCategoriesBtn" text="%refresh" onAction="#handleRefreshCategories" />
                             <JFXButton fx:id="newCategoryBtn" text="%new" onAction="#handleNewCategory"/>
@@ -37,7 +36,7 @@
                         <TreeView fx:id="categoriesTreeView" />
                     </VBox>
                 </Tab>
-            </TabPane>
+            </JFXTabPane>
         </VBox>
     </GridPane>
 
