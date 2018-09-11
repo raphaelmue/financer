@@ -1,6 +1,7 @@
 package de.raphaelmuesseler.financer.client.ui.main.transactions;
 
 import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXListView;
 import de.raphaelmuesseler.financer.client.connection.ServerRequestHandler;
 import de.raphaelmuesseler.financer.client.local.LocalStorage;
 import de.raphaelmuesseler.financer.client.ui.I18N;
@@ -8,15 +9,20 @@ import de.raphaelmuesseler.financer.shared.connection.AsyncConnectionCall;
 import de.raphaelmuesseler.financer.shared.connection.ConnectionResult;
 import de.raphaelmuesseler.financer.shared.model.Category;
 import de.raphaelmuesseler.financer.shared.model.User;
+import de.raphaelmuesseler.financer.shared.model.transactions.FixedTransaction;
 import de.raphaelmuesseler.financer.shared.model.transactions.Transaction;
 import de.raphaelmuesseler.financer.shared.util.collections.CollectionUtil;
+import de.raphaelmuesseler.financer.shared.util.collections.SerialTreeItem;
+import de.raphaelmuesseler.financer.shared.util.date.Month;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.cell.TextFieldTreeCell;
+import javafx.util.Callback;
 import org.controlsfx.glyphfont.FontAwesome;
 import org.controlsfx.glyphfont.GlyphFont;
 import org.controlsfx.glyphfont.GlyphFontRegistry;
@@ -37,6 +43,12 @@ public class TransactionsController implements Initializable {
     public JFXButton editTransactionBtn;
     public JFXButton deleteTransactionBtn;
     public TableView<Transaction> transactionsTableView;
+    public JFXButton refreshFixedTransactionsBtn;
+    public JFXButton newFixedTransactionBtn;
+    public JFXButton editFixedTransactionBtn;
+    public JFXButton deleteFixedTransactionBtn;
+    public JFXListView categoriesListView;
+    public JFXListView fixedTransactionsListView;
 
     private User user;
     private Logger logger = Logger.getLogger("FinancerApplication");
@@ -57,10 +69,15 @@ public class TransactionsController implements Initializable {
         this.deleteTransactionBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.TRASH));
         this.deleteTransactionBtn.setGraphicTextGap(8);
 
+        this.loadTransactionsTable();
+        this.loadFixedTransactionsTable();
+    }
+
+    private void loadTransactionsTable() {
+        TableColumn<Transaction, Category> categoryColumn = new TableColumn<>(I18N.get("category"));
         TableColumn<Transaction, Integer> idColumn = new TableColumn<>(I18N.get("id"));
         TableColumn<Transaction, Date> valueDateColumn = new TableColumn<>(I18N.get("valueDate"));
         TableColumn<Transaction, Double> amountColumn = new TableColumn<>(I18N.get("amount"));
-        TableColumn<Transaction, Category> categoryColumn = new TableColumn<>(I18N.get("category"));
         TableColumn<Transaction, String> productColumn = new TableColumn<>(I18N.get("product"));
         TableColumn<Transaction, String> purposeColumn = new TableColumn<>(I18N.get("purpose"));
 
@@ -82,6 +99,27 @@ public class TransactionsController implements Initializable {
         this.transactionsTableView.getColumns().addAll(idColumn, valueDateColumn, amountColumn, categoryColumn, productColumn, purposeColumn);
 
         this.handleRefreshTransactions();
+    }
+
+    private void loadFixedTransactionsTable() {
+        SerialTreeItem<Category> tree = SerialTreeItem.fromJson((String) LocalStorage.readObject(LocalStorage.PROFILE_FILE).get(0),
+                Category.class);
+        tree.numberItemsByValue((result, prefix) -> {
+            result.getValue().setName(prefix + " " + result.getValue().getName());
+            result.getValue().setKey(false);
+        });
+        tree.traverse(treeItem -> {
+            if ((treeItem.getValue().getRootId() != -1 && treeItem.getValue().getRootId() == 0) ||
+                    (treeItem.getValue().getRootId() == -1 && treeItem.getValue().getParentId() == 0)) {
+                categoriesListView.getItems().add(treeItem.getValue());
+            }
+        });
+
+        this.categoriesListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            showFixedTransactions((Category) newValue);
+        });
+
+        this.handleRefreshFixedTransactions();
     }
 
     public void handleRefreshTransactions() {
@@ -175,9 +213,7 @@ public class TransactionsController implements Initializable {
             this.executor.execute(new ServerRequestHandler("deleteTransaction", parameters, new AsyncConnectionCall() {
                 @Override
                 public void onSuccess(ConnectionResult result) {
-                    Platform.runLater(() -> {
-                        transactionsTableView.getItems().remove(transaction);
-                    });
+                    Platform.runLater(() -> transactionsTableView.getItems().remove(transaction));
                 }
 
                 @Override
@@ -187,5 +223,22 @@ public class TransactionsController implements Initializable {
                 }
             }));
         }
+    }
+
+    public void handleRefreshFixedTransactions() {
+
+    }
+
+    public void handleNewFixedTransaction() {
+    }
+
+    public void handleEditFixedTransaction() {
+    }
+
+    public void handleDeleteFixedTransaction() {
+    }
+
+    private void showFixedTransactions(Category category) {
+        // TODO show fixed transactions for specific category
     }
 }

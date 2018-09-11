@@ -12,15 +12,13 @@ abstract class AbstractTransaction implements Serializable {
     private double amount;
     private Category category;
     private String product, purpose;
-    private LocalDate valueDate;
 
-    AbstractTransaction(int id, double amount, Category category, String product, String purpose, LocalDate valueDate) {
+    AbstractTransaction(int id, double amount, Category category, String product, String purpose) {
         this.id = id;
         this.amount = amount;
         this.category = category;
         this.product = product;
         this.purpose = purpose;
-        this.valueDate = valueDate;
     }
 
     public int getId() {
@@ -33,10 +31,6 @@ abstract class AbstractTransaction implements Serializable {
 
     public Category getCategory() {
         return category;
-    }
-
-    public LocalDate getValueDate() {
-        return valueDate;
     }
 
     public String getProduct() {
@@ -65,10 +59,6 @@ abstract class AbstractTransaction implements Serializable {
 
     public void setPurpose(String purpose) {
         this.purpose = purpose;
-    }
-
-    public void setValueDate(LocalDate valueDate) {
-        this.valueDate = valueDate;
     }
 
     @Override

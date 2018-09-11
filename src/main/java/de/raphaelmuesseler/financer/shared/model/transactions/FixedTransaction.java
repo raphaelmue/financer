@@ -1,12 +1,48 @@
 package de.raphaelmuesseler.financer.shared.model.transactions;
 
 import de.raphaelmuesseler.financer.shared.model.Category;
+import de.raphaelmuesseler.financer.shared.util.date.Month;
+import jdk.vm.ci.meta.Local;
 
 import java.time.LocalDate;
 import java.util.Date;
+import java.util.List;
 
 public class FixedTransaction extends AbstractTransaction {
-    FixedTransaction(int id, double amount, Category category, String product, String purpose, LocalDate valueDate) {
-        super(id, amount, category, product, purpose, valueDate);
+
+    private LocalDate startDate, endDate;
+    private boolean isVariable;
+    private int day;
+    private List<TransactionAmount> transactionAmounts;
+
+    FixedTransaction(int id, double amount, Category category, String product, String purpose, LocalDate startDate,
+                     LocalDate endDate, boolean isVariable, int day, List<TransactionAmount> transactionAmounts) {
+        super(id, amount, category, product, purpose);
+        this.startDate = startDate;
+        this.endDate = endDate;
+    }
+
+    public TransactionAmount getAmountByMonth(Month month) {
+        return null;
+    }
+
+    public LocalDate getStartDate() {
+        return startDate;
+    }
+
+    public LocalDate getEndDate() {
+        return endDate;
+    }
+
+    public boolean isVariable() {
+        return isVariable;
+    }
+
+    public int getDay() {
+        return day;
+    }
+
+    public List<TransactionAmount> getTransactionAmounts() {
+        return transactionAmounts;
     }
 }

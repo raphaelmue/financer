@@ -51,7 +51,10 @@ class TransactionDialog extends FinancerDialog<Transaction> {
         tree = SerialTreeItem.fromJson((String) LocalStorage.readObject(LocalStorage.PROFILE_FILE).get(0),
                 Category.class);
 
-        this.renameCategoriesInOrder(tree);
+        tree.numberItemsByValue((result, prefix) -> {
+            result.getValue().setName(prefix + " " + result.getValue().getName());
+            result.getValue().setKey(false);
+        });
 
         tree.traverse(treeItem -> {
             // selecting only variable revenue (id: 1) and variable expenses (id: 3) => id % 2 == 1
@@ -111,27 +114,5 @@ class TransactionDialog extends FinancerDialog<Transaction> {
         }
 
         return super.onConfirm();
-    }
-
-    private void renameCategoriesInOrder(SerialTreeItem<Category> tree) {
-        this.renameCategoriesInOrder(tree, "");
-    }
-
-    private void renameCategoriesInOrder(SerialTreeItem<Category> tree, String prefix) {
-        int counter = 1;
-        if (!tree.isLeaf()) {
-            for (TreeItem<Category> item : tree.getChildren()) {
-                SerialTreeItem<Category> serialTreeItem = (SerialTreeItem<Category>) item;
-
-                String prefixCopy = prefix + counter + ".";
-
-                serialTreeItem.getValue().setName(prefixCopy + " " + serialTreeItem.getValue().getName());
-                serialTreeItem.getValue().setKey(false);
-
-                this.renameCategoriesInOrder(serialTreeItem, prefixCopy);
-
-                counter++;
-            }
-        }
     }
 }

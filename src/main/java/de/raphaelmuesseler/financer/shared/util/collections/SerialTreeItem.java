@@ -2,6 +2,7 @@ package de.raphaelmuesseler.financer.shared.util.collections;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import de.raphaelmuesseler.financer.shared.model.Category;
 import javafx.scene.control.TreeItem;
 import org.json.JSONObject;
 
@@ -143,6 +144,23 @@ public class SerialTreeItem<T> extends TreeItem<T> implements Serializable {
                 action.action(value);
             }
         });
+    }
+
+    public void numberItemsByValue(NumberAction<SerialTreeItem<T>> action) {
+        this.numberItemsByValue(this, action, "");
+    }
+
+    private void numberItemsByValue(SerialTreeItem<T> root, NumberAction<SerialTreeItem<T>> action, String prefix) {
+        int counter = 1;
+        if (!root.isLeaf()) {
+            for (TreeItem<T> item : root.getChildren()) {
+                SerialTreeItem<T> serialTreeItem = (SerialTreeItem<T>) item;
+                String prefixCopy = prefix + counter + ".";
+                action.action(serialTreeItem, prefixCopy);
+                root.numberItemsByValue(serialTreeItem, action, prefixCopy);
+                counter++;
+            }
+        }
     }
 
     @Override

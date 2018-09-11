@@ -27,8 +27,17 @@
                     <VBox styleClass="tab-content">
                         <Label text="%fixedExpenses" styleClass="content-heading"/>
                         <HBox styleClass="tool-btn-bar">
+                            <JFXButton fx:id="refreshFixedTransactionsBtn" text="%refresh" onAction="#handleRefreshFixedTransactions"/>
+                            <JFXButton fx:id="newFixedTransactionBtn" text="%new" onAction="#handleNewFixedTransaction"/>
+                            <JFXButton fx:id="editFixedTransactionBtn" text="%edit" onAction="#handleEditFixedTransaction"/>
+                            <JFXButton fx:id="deleteFixedTransactionBtn" text="%delete" onAction="#handleDeleteFixedTransaction"/>
                         </HBox>
+                        <SplitPane>
+                            <JFXListView fx:id="categoriesListView" />
+                            <JFXListView fx:id="fixedTransactionsListView" />
+                        </SplitPane>
                     </VBox>
+
                 </Tab>
             </JFXTabPane>
         </VBox>
