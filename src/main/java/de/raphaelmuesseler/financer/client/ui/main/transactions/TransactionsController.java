@@ -298,8 +298,6 @@ public class TransactionsController implements Initializable {
                         }
                     }
                 }
-tus
-
                 setGraphic(this.borderPane);
             }
         }
