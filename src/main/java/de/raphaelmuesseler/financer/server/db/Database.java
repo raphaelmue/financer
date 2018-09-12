@@ -32,6 +32,7 @@ public class Database {
     public enum Table {
         CATEGORIES("categories"),
         FIXED_TRANSACTIONS("fixed_transactions"),
+        FIXED_TRANSACTIONS_AMOUNTS("fixed_transactions_amounts"),
         TRANSACTIONS("transactions"),
         USERS("users"),
         USERS_CATEGORIES("users_categories");

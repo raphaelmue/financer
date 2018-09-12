@@ -5,7 +5,9 @@ import de.raphaelmuesseler.financer.server.util.Hash;
 import de.raphaelmuesseler.financer.shared.connection.ConnectionResult;
 import de.raphaelmuesseler.financer.shared.model.Category;
 import de.raphaelmuesseler.financer.shared.model.User;
+import de.raphaelmuesseler.financer.shared.model.transactions.FixedTransaction;
 import de.raphaelmuesseler.financer.shared.model.transactions.Transaction;
+import de.raphaelmuesseler.financer.shared.model.transactions.TransactionAmount;
 import de.raphaelmuesseler.financer.shared.util.collections.SerialTreeItem;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -111,7 +113,7 @@ public class FinancerService {
         Map<String, Object> values = new HashMap<>();
         values.put("user_id", user.getId());
         values.put("cat_id", category.getRootId());
-        if (category.getParentId() != -1 ) {
+        if (category.getParentId() != -1) {
             values.put("parent_id", category.getParentId());
         }
         values.put("name", category.getName());
@@ -224,5 +226,57 @@ public class FinancerService {
         this.database.delete(Database.Table.TRANSACTIONS, where);
 
         return new ConnectionResult<>(null);
+    }
+
+    public ConnectionResult<List<FixedTransaction>> getFixedTransactions(Logger logger, Map<String, Object> parameters) throws Exception {
+        logger.log(Level.INFO, "Fetching fixed transactions ...");
+
+        Map<String, Object> whereClause = new HashMap<>();
+        whereClause.put("user_id", ((User) parameters.get("user")).getId());
+
+        List<FixedTransaction> fixedTransactions = new ArrayList<>();
+
+        JSONArray jsonArray = this.database.get(Database.Table.FIXED_TRANSACTIONS, whereClause);
+        whereClause.clear();
+        for (int i = 0; i < jsonArray.length(); i++) {
+            JSONObject jsonObjectTransaction = jsonArray.getJSONObject(i);
+
+            // fetching category object
+            whereClause.put("id", jsonObjectTransaction.getInt("cat_id"));
+            JSONObject jsonObjectCategory = this.database.get(Database.Table.USERS_CATEGORIES, whereClause).getJSONObject(0);
+            whereClause.clear();
+            Category category = new Category(jsonObjectCategory.getInt("id"),
+                    (jsonObjectCategory.get("parent_id") == "null" ? -1 : jsonObjectCategory.getInt("parent_id")),
+                    jsonObjectCategory.getInt("cat_id"),
+                    jsonObjectCategory.getString("name"), false);
+
+            // fetching respective transaction amounts if the flag "is_variable" is true
+            List<TransactionAmount> transactionAmounts = new ArrayList<>();
+            if (jsonObjectTransaction.getInt("is_variable") == 1) {
+                whereClause.put("fixed_transaction_id", jsonObjectTransaction.get("id"));
+                JSONArray jsonArrayTansactionAmount = this.database.get(Database.Table.FIXED_TRANSACTIONS_AMOUNTS, whereClause);
+                for (int j = 0; j < jsonArrayTansactionAmount.length(); j++) {
+                    JSONObject jsonObjectTransactionAmount = jsonArrayTansactionAmount.getJSONObject(i);
+                    transactionAmounts.add(new TransactionAmount(jsonObjectTransactionAmount.getInt("id"),
+                            jsonObjectTransactionAmount.getDouble("amount"),
+                            ((Date)jsonObjectTransactionAmount.get("value_date")).toLocalDate()));
+                }
+            }
+
+            whereClause.clear();
+
+            fixedTransactions.add(new FixedTransaction(jsonObjectTransaction.getInt("id"),
+                    (jsonObjectTransaction.get("amount") == "null" ? 0 : jsonObjectTransaction.getDouble("amount")),
+                    category,
+                    (jsonObjectTransaction.get("product") == "null" ? null : jsonObjectTransaction.getString("product")),
+                    (jsonObjectTransaction.get("purpose") == "null" ? null : jsonObjectTransaction.getString("purpose")),
+                    ((Date) jsonObjectTransaction.get("start_date")).toLocalDate(),
+                    (jsonObjectTransaction.get("end_date") == "null" ? null : ((Date) jsonObjectTransaction.get("end_date")).toLocalDate()),
+                    (jsonObjectTransaction.getInt("is_variable") == 1),
+                    jsonObjectTransaction.getInt("day"),
+                    transactionAmounts));
+        }
+
+        return new ConnectionResult<>(fixedTransactions);
     }
 }

@@ -15,7 +15,7 @@ public class FixedTransaction extends AbstractTransaction {
     private int day;
     private List<TransactionAmount> transactionAmounts;
 
-    FixedTransaction(int id, double amount, Category category, String product, String purpose, LocalDate startDate,
+    public FixedTransaction(int id, double amount, Category category, String product, String purpose, LocalDate startDate,
                      LocalDate endDate, boolean isVariable, int day, List<TransactionAmount> transactionAmounts) {
         super(id, amount, category, product, purpose);
         this.startDate = startDate;

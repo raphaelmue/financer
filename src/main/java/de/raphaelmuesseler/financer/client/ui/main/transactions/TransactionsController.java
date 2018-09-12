@@ -13,16 +13,13 @@ import de.raphaelmuesseler.financer.shared.model.transactions.FixedTransaction;
 import de.raphaelmuesseler.financer.shared.model.transactions.Transaction;
 import de.raphaelmuesseler.financer.shared.util.collections.CollectionUtil;
 import de.raphaelmuesseler.financer.shared.util.collections.SerialTreeItem;
-import de.raphaelmuesseler.financer.shared.util.date.Month;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
-import javafx.scene.control.*;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.control.cell.TextFieldTreeCell;
-import javafx.util.Callback;
 import org.controlsfx.glyphfont.FontAwesome;
 import org.controlsfx.glyphfont.GlyphFont;
 import org.controlsfx.glyphfont.GlyphFontRegistry;
@@ -54,6 +51,7 @@ public class TransactionsController implements Initializable {
     private Logger logger = Logger.getLogger("FinancerApplication");
     private ExecutorService executor = Executors.newCachedThreadPool();
     private ObservableList<Transaction> transactions;
+    private ObservableList<FixedTransaction> fixedTransactions;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -226,7 +224,30 @@ public class TransactionsController implements Initializable {
     }
 
     public void handleRefreshFixedTransactions() {
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("user", this.user);
 
+        this.executor.execute(new ServerRequestHandler("getFixedTransactions", parameters, new AsyncConnectionCall() {
+            @Override
+            public void onSuccess(ConnectionResult result) {
+                fixedTransactions = FXCollections.observableArrayList((List<FixedTransaction>) result.getResult());
+                LocalStorage.writeObject(LocalStorage.TRANSACTIONS_FILE, result.getResult());
+            }
+
+            @Override
+            public void onFailure(Exception exception) {
+                if (exception instanceof ConnectException) {
+                    // TODO set offline
+                } else {
+                    logger.log(Level.SEVERE, exception.getMessage(), exception);
+                    AsyncConnectionCall.super.onFailure(exception);
+                }
+                List<Object> result = LocalStorage.readObject(LocalStorage.TRANSACTIONS_FILE);
+                if (result != null && result.size() > 1) {
+                    fixedTransactions = CollectionUtil.castObjectListToObservable((List<Object>) result.get(1));
+                }
+            }
+        }));
     }
 
     public void handleNewFixedTransaction() {
@@ -240,5 +261,11 @@ public class TransactionsController implements Initializable {
 
     private void showFixedTransactions(Category category) {
         // TODO show fixed transactions for specific category
+        this.fixedTransactionsListView.getItems().clear();
+        for (FixedTransaction transaction : this.fixedTransactions) {
+            if (transaction.getCategory().getId() == category.getId()) {
+                this.fixedTransactionsListView.getItems().add(transaction);
+            }
+        }
     }
 }
