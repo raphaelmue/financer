@@ -288,7 +288,13 @@ public class TransactionsController implements Initializable {
                 if (fixedTransactions != null && fixedTransactions.size() > 0) {
                     for (FixedTransaction fixedTransaction : fixedTransactions) {
                         if (fixedTransaction.getCategory().getId() == item.getId() && !item.isKey()) {
-                            this.amountLabel.setText(String.valueOf(fixedTransaction.getAmount()));
+                            if (fixedTransaction.getAmount() == 0) {
+                                this.amountLabel.setText(String.valueOf(fixedTransaction.getTransactionAmounts().get(
+                                        fixedTransaction.getTransactionAmounts().size() - 1
+                                ).getAmount()));
+                            } else {
+                                this.amountLabel.setText(String.valueOf(fixedTransaction.getAmount()));
+                            }
                             if (fixedTransaction.getAmount() < 0) {
                                 this.amountLabel.getStyleClass().add("neg-amount");
                             } else {
