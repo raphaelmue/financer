@@ -1,8 +1,10 @@
 package de.raphaelmuesseler.financer.shared.model.transactions;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 
-public class TransactionAmount {
+public class TransactionAmount implements Serializable {
+    private static final long serialVersionUID = -6751558797407170754L;
     private final int id;
     private final double amount;
     private final LocalDate value_date;

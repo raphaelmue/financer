@@ -237,8 +237,9 @@ public class FinancerService {
         List<FixedTransaction> fixedTransactions = new ArrayList<>();
 
         JSONArray jsonArray = this.database.get(Database.Table.FIXED_TRANSACTIONS, whereClause);
-        whereClause.clear();
         for (int i = 0; i < jsonArray.length(); i++) {
+            whereClause.clear();
+
             JSONObject jsonObjectTransaction = jsonArray.getJSONObject(i);
 
             // fetching category object
@@ -253,7 +254,7 @@ public class FinancerService {
             // fetching respective transaction amounts if the flag "is_variable" is true
             List<TransactionAmount> transactionAmounts = new ArrayList<>();
             if (jsonObjectTransaction.getInt("is_variable") == 1) {
-                whereClause.put("fixed_transaction_id", jsonObjectTransaction.get("id"));
+                whereClause.put("fixed_transaction_id", jsonObjectTransaction.getInt("id"));
                 JSONArray jsonArrayTansactionAmount = this.database.get(Database.Table.FIXED_TRANSACTIONS_AMOUNTS, whereClause);
                 for (int j = 0; j < jsonArrayTansactionAmount.length(); j++) {
                     JSONObject jsonObjectTransactionAmount = jsonArrayTansactionAmount.getJSONObject(i);
@@ -262,8 +263,6 @@ public class FinancerService {
                             ((Date)jsonObjectTransactionAmount.get("value_date")).toLocalDate()));
                 }
             }
-
-            whereClause.clear();
 
             fixedTransactions.add(new FixedTransaction(jsonObjectTransaction.getInt("id"),
                     (jsonObjectTransaction.get("amount") == "null" ? 0 : jsonObjectTransaction.getDouble("amount")),

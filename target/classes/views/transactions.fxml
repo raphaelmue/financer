@@ -23,9 +23,9 @@
                         <TableView fx:id="transactionsTableView"/>
                     </VBox>
                 </Tab>
-                <Tab text="%fixedExpenses" closable="false">
+                <Tab text="%fixedTransactions" closable="false">
                     <VBox styleClass="tab-content">
-                        <Label text="%fixedExpenses" styleClass="content-heading"/>
+                        <Label text="%fixedTransactions" styleClass="content-heading"/>
                         <HBox styleClass="tool-btn-bar">
                             <JFXButton fx:id="refreshFixedTransactionsBtn" text="%refresh" onAction="#handleRefreshFixedTransactions"/>
                             <JFXButton fx:id="newFixedTransactionBtn" text="%new" onAction="#handleNewFixedTransaction"/>

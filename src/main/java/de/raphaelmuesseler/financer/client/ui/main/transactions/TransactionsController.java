@@ -17,9 +17,10 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.Initializable;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.BorderPane;
+import javafx.util.Callback;
 import org.controlsfx.glyphfont.FontAwesome;
 import org.controlsfx.glyphfont.GlyphFont;
 import org.controlsfx.glyphfont.GlyphFontRegistry;
@@ -103,19 +104,21 @@ public class TransactionsController implements Initializable {
         SerialTreeItem<Category> tree = SerialTreeItem.fromJson((String) LocalStorage.readObject(LocalStorage.PROFILE_FILE).get(0),
                 Category.class);
         tree.numberItemsByValue((result, prefix) -> {
-            result.getValue().setName(prefix + " " + result.getValue().getName());
-            result.getValue().setKey(false);
+            if (!result.getValue().isKey()) {
+                result.getValue().setName(prefix + " " + result.getValue().getName());
+            }
         });
         tree.traverse(treeItem -> {
-            if ((treeItem.getValue().getRootId() != -1 && treeItem.getValue().getRootId() == 0) ||
-                    (treeItem.getValue().getRootId() == -1 && treeItem.getValue().getParentId() == 0)) {
+            if ((treeItem.getValue().getRootId() != -1 && (treeItem.getValue().getRootId() % 2) == 0) ||
+                    (treeItem.getValue().getRootId() == -1 && (treeItem.getValue().getParentId() % 2) == 0)) {
                 categoriesListView.getItems().add(treeItem.getValue());
             }
         });
 
-        this.categoriesListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            showFixedTransactions((Category) newValue);
-        });
+        this.categoriesListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) ->
+                showFixedTransactions((Category) newValue));
+
+        this.categoriesListView.setCellFactory(param -> new CategoryListViewImpl());
 
         this.handleRefreshFixedTransactions();
     }
@@ -266,6 +269,51 @@ public class TransactionsController implements Initializable {
             if (transaction.getCategory().getId() == category.getId()) {
                 this.fixedTransactionsListView.getItems().add(transaction);
             }
+        }
+    }
+
+    private final class CategoryListViewImpl extends ListCell<Category> {
+        private BorderPane borderPane;
+        private Label categoryLabel, amountLabel;
+
+        @Override
+        protected void updateItem(Category item, boolean empty) {
+            super.updateItem(item, empty);
+
+            if(empty || item == null) {
+                setGraphic(null);
+            } else {
+                this.initListCell();
+                this.categoryLabel.setText(item.getName());
+                if (fixedTransactions != null && fixedTransactions.size() > 0) {
+                    for (FixedTransaction fixedTransaction : fixedTransactions) {
+                        if (fixedTransaction.getCategory().getId() == item.getId() && !item.isKey()) {
+                            this.amountLabel.setText(String.valueOf(fixedTransaction.getAmount()));
+                            if (fixedTransaction.getAmount() < 0) {
+                                this.amountLabel.getStyleClass().add("neg-amount");
+                            } else {
+                                this.amountLabel.getStyleClass().add("pos-amount");
+                            }
+                            break;
+                        }
+                    }
+                }
+tus
+
+                setGraphic(this.borderPane);
+            }
+        }
+
+        private void initListCell() {
+            this.borderPane = new BorderPane();
+            this.borderPane.getStyleClass().add("categories-list-item");
+            this.categoryLabel = new Label();
+            this.categoryLabel.getStyleClass().add("category-label");
+            this.amountLabel = new Label();
+            this.amountLabel.getStyleClass().add("amount-label");
+
+            this.borderPane.setLeft(this.categoryLabel);
+            this.borderPane.setRight(this.amountLabel);
         }
     }
 }
