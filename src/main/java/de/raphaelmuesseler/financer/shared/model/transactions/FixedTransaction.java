@@ -2,10 +2,8 @@ package de.raphaelmuesseler.financer.shared.model.transactions;
 
 import de.raphaelmuesseler.financer.shared.model.Category;
 import de.raphaelmuesseler.financer.shared.util.date.Month;
-import jdk.vm.ci.meta.Local;
 
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
 
 public class FixedTransaction extends AbstractTransaction {
