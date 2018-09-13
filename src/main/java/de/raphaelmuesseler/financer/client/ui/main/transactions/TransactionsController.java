@@ -18,12 +18,14 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
-import javafx.scene.control.*;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.TextAlignment;
-import javafx.util.Callback;
 import org.controlsfx.glyphfont.FontAwesome;
 import org.controlsfx.glyphfont.GlyphFont;
 import org.controlsfx.glyphfont.GlyphFontRegistry;
@@ -70,6 +72,15 @@ public class TransactionsController implements Initializable {
         this.editTransactionBtn.setGraphicTextGap(8);
         this.deleteTransactionBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.TRASH));
         this.deleteTransactionBtn.setGraphicTextGap(8);
+
+        this.refreshFixedTransactionsBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.REFRESH));
+        this.refreshFixedTransactionsBtn.setGraphicTextGap(8);
+        this.newFixedTransactionBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.PLUS));
+        this.newFixedTransactionBtn.setGraphicTextGap(8);
+        this.editFixedTransactionBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.EDIT));
+        this.editFixedTransactionBtn.setGraphicTextGap(8);
+        this.deleteFixedTransactionBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.TRASH));
+        this.deleteFixedTransactionBtn.setGraphicTextGap(8);
 
         this.loadTransactionsTable();
         this.loadFixedTransactionsTable();
@@ -256,7 +267,9 @@ public class TransactionsController implements Initializable {
 
             @Override
             public void onAfter() {
-                Platform.runLater(() -> fixedTransactionsListView.setCellFactory(param -> new FixedTransactionListCellImpl()));
+                Platform.runLater(() -> {
+                    showFixedTransactions((Category) categoriesListView.getSelectionModel().getSelectedItem());
+                });
             }
         }));
     }
@@ -271,11 +284,12 @@ public class TransactionsController implements Initializable {
     }
 
     private void showFixedTransactions(Category category) {
-        // TODO show fixed transactions for specific category
-        this.fixedTransactionsListView.getItems().clear();
-        for (FixedTransaction transaction : this.fixedTransactions) {
-            if (transaction.getCategory().getId() == category.getId()) {
-                this.fixedTransactionsListView.getItems().add(transaction);
+        if (category != null) {
+            this.fixedTransactionsListView.getItems().clear();
+            for (FixedTransaction transaction : this.fixedTransactions) {
+                if (transaction.getCategory().getId() == category.getId()) {
+                    this.fixedTransactionsListView.getItems().add(transaction);
+                }
             }
         }
         this.fixedTransactionsListView.setCellFactory(param -> new FixedTransactionListCellImpl());
