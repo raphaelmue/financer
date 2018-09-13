@@ -20,6 +20,8 @@ public class FixedTransaction extends AbstractTransaction {
         super(id, amount, category, product, purpose);
         this.startDate = startDate;
         this.endDate = endDate;
+        this.isVariable = isVariable;
+        this.day = day;
         this.transactionAmounts = transactionAmounts;
     }
 

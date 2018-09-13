@@ -17,9 +17,12 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.TextAlignment;
 import javafx.util.Callback;
 import org.controlsfx.glyphfont.FontAwesome;
 import org.controlsfx.glyphfont.GlyphFont;
@@ -250,6 +253,11 @@ public class TransactionsController implements Initializable {
                     fixedTransactions = CollectionUtil.castObjectListToObservable((List<Object>) result.get(1));
                 }
             }
+
+            @Override
+            public void onAfter() {
+                Platform.runLater(() -> fixedTransactionsListView.setCellFactory(param -> new FixedTransactionListCellImpl()));
+            }
         }));
     }
 
@@ -270,6 +278,7 @@ public class TransactionsController implements Initializable {
                 this.fixedTransactionsListView.getItems().add(transaction);
             }
         }
+        this.fixedTransactionsListView.setCellFactory(param -> new FixedTransactionListCellImpl());
     }
 
     private final class CategoryListViewImpl extends ListCell<Category> {
@@ -280,7 +289,7 @@ public class TransactionsController implements Initializable {
         protected void updateItem(Category item, boolean empty) {
             super.updateItem(item, empty);
 
-            if(empty || item == null) {
+            if (empty || item == null) {
                 setGraphic(null);
             } else {
                 this.initListCell();
@@ -312,12 +321,106 @@ public class TransactionsController implements Initializable {
             this.borderPane = new BorderPane();
             this.borderPane.getStyleClass().add("categories-list-item");
             this.categoryLabel = new Label();
-            this.categoryLabel.getStyleClass().add("category-label");
+            this.categoryLabel.getStyleClass().add("list-cell-title");
             this.amountLabel = new Label();
-            this.amountLabel.getStyleClass().add("amount-label");
+            this.amountLabel.getStyleClass().add("list-cell-title");
 
             this.borderPane.setLeft(this.categoryLabel);
             this.borderPane.setRight(this.amountLabel);
+        }
+    }
+
+    private final class FixedTransactionListCellImpl extends ListCell<FixedTransaction> {
+        private BorderPane borderPane;
+        private Label activeLabel, dateLabel, amountLabel, isVariableLabel, dayLabel, lastAmountLabel, preLastAmountLabel;
+
+        @Override
+        protected void updateItem(FixedTransaction item, boolean empty) {
+            super.updateItem(item, empty);
+            if (empty || item == null) {
+                setGraphic(null);
+            } else {
+                this.initListCell(item);
+                if (item.getEndDate() == null) {
+                    this.activeLabel.setText(I18N.get("active"));
+                    this.activeLabel.getStyleClass().add("pos-amount");
+
+                    this.dateLabel.setText(I18N.get("since") + " " + item.getStartDate());
+                } else {
+                    this.activeLabel.setText(I18N.get("active"));
+
+                    this.dateLabel.setText(item.getStartDate() + " - " + item.getEndDate());
+                }
+
+                if (item.isVariable()) {
+                    this.amountLabel.setText(String.valueOf(item.getTransactionAmounts().get(
+                            item.getTransactionAmounts().size() - 1).getAmount()));
+                    if (item.getTransactionAmounts().size() > 1) {
+                        this.lastAmountLabel.setText(String.valueOf(item.getTransactionAmounts().get(
+                                item.getTransactionAmounts().size() - 2).getAmount()));
+                        if (item.getTransactionAmounts().size() > 2) {
+                            this.preLastAmountLabel.setText(String.valueOf(item.getTransactionAmounts().get(
+                                    item.getTransactionAmounts().size() - 3).getAmount()));
+                        }
+                    }
+                } else {
+                    this.amountLabel.setText(String.valueOf(item.getAmount()));
+                }
+                if (item.getAmount() < 0) {
+                    this.amountLabel.getStyleClass().add("neg-amount");
+                } else {
+                    this.amountLabel.getStyleClass().add("pos-amount");
+                }
+
+                this.isVariableLabel.setText(I18N.get("isVariable") + ": " +
+                        (item.isVariable() ? I18N.get("yes") : I18N.get("no")));
+                this.dayLabel.setText(I18N.get("valueDate") + ": " + Integer.toString(item.getDay()));
+
+
+                setGraphic(this.borderPane);
+            }
+        }
+
+        private void initListCell(FixedTransaction item) {
+            this.borderPane = new BorderPane();
+            this.borderPane.getStyleClass().add("transactions-list-item");
+
+            VBox vBoxLeft = new VBox();
+            this.activeLabel = new Label();
+            this.activeLabel.getStyleClass().add("list-cell-title");
+            vBoxLeft.getChildren().add(this.activeLabel);
+
+            this.isVariableLabel = new Label();
+            vBoxLeft.getChildren().add(this.isVariableLabel);
+
+            this.dayLabel = new Label();
+            vBoxLeft.getChildren().add(this.dayLabel);
+
+            this.dateLabel = new Label();
+            this.dateLabel.setTextAlignment(TextAlignment.CENTER);
+
+            VBox vBoxRight = new VBox();
+            this.amountLabel = new Label();
+            this.amountLabel.setAlignment(Pos.CENTER_RIGHT);
+            this.amountLabel.getStyleClass().add("list-cell-title");
+            vBoxRight.getChildren().add(this.amountLabel);
+
+            if (item.isVariable()) {
+                this.lastAmountLabel = new Label();
+                this.lastAmountLabel.setAlignment(Pos.CENTER_RIGHT);
+                vBoxRight.getChildren().add(this.lastAmountLabel);
+
+                this.preLastAmountLabel = new Label();
+                this.preLastAmountLabel.setAlignment(Pos.CENTER_RIGHT);
+                vBoxRight.getChildren().add(this.preLastAmountLabel);
+            }
+            vBoxRight.setAlignment(Pos.CENTER_RIGHT);
+
+            this.borderPane.setLeft(vBoxLeft);
+            this.borderPane.setCenter(this.dateLabel);
+            this.borderPane.setRight(vBoxRight);
+            BorderPane.setAlignment(this.borderPane.getCenter(), Pos.TOP_CENTER);
+            BorderPane.setAlignment(this.borderPane.getRight(), Pos.CENTER_RIGHT);
         }
     }
 }

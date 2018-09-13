@@ -2,9 +2,14 @@
     -fx-padding: 8 10;
 }
 
-.category-label {
+.transactions-list-item {
+    -fx-padding: 8 10;
+}
+
+.list-cell-title {
     -fx-font-weight: 700;
-    -fx-font-size: 12;
+    -fx-font-size: 14;
+    -fx-padding: 0 0 5 0;
 }
 
 .amount-label {
