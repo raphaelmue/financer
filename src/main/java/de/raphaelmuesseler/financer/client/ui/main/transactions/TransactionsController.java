@@ -116,26 +116,28 @@ public class TransactionsController implements Initializable {
     }
 
     private void loadFixedTransactionsTable() {
-        SerialTreeItem<Category> tree = SerialTreeItem.fromJson((String) LocalStorage.readObject(LocalStorage.PROFILE_FILE).get(0),
-                Category.class);
-        tree.numberItemsByValue((result, prefix) -> {
-            if (!result.getValue().isKey()) {
-                result.getValue().setName(prefix + " " + result.getValue().getName());
-            }
-        });
-        tree.traverse(treeItem -> {
-            if ((treeItem.getValue().getRootId() != -1 && (treeItem.getValue().getRootId() % 2) == 0) ||
-                    (treeItem.getValue().getRootId() == -1 && (treeItem.getValue().getParentId() % 2) == 0)) {
-                categoriesListView.getItems().add(treeItem.getValue());
-            }
-        });
+        if( LocalStorage.readObject(LocalStorage.PROFILE_FILE) != null) {
+            SerialTreeItem<Category> tree = SerialTreeItem.fromJson((String) LocalStorage.readObject(LocalStorage.PROFILE_FILE).get(0),
+                    Category.class);
+            tree.numberItemsByValue((result, prefix) -> {
+                if (!result.getValue().isKey()) {
+                    result.getValue().setName(prefix + " " + result.getValue().getName());
+                }
+            });
+            tree.traverse(treeItem -> {
+                if ((treeItem.getValue().getRootId() != -1 && (treeItem.getValue().getRootId() % 2) == 0) ||
+                        (treeItem.getValue().getRootId() == -1 && (treeItem.getValue().getParentId() % 2) == 0)) {
+                    categoriesListView.getItems().add(treeItem.getValue());
+                }
+            });
 
-        this.categoriesListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) ->
-                showFixedTransactions((Category) newValue));
+            this.categoriesListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) ->
+                    showFixedTransactions((Category) newValue));
 
-        this.categoriesListView.setCellFactory(param -> new CategoryListViewImpl());
+            this.categoriesListView.setCellFactory(param -> new CategoryListViewImpl());
 
-        this.handleRefreshFixedTransactions();
+            this.handleRefreshFixedTransactions();
+        }
     }
 
     public void handleRefreshTransactions() {

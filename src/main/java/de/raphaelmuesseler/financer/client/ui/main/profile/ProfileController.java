@@ -161,12 +161,13 @@ public class ProfileController implements Initializable {
     }
 
     public void handleEditCategory() {
-        // TODO set selected item editable
-        Category category = this.categoriesTreeView.getSelectionModel().getSelectedItem().getValue();
-        String categoryName = new FinancerTextInputDialog(I18N.get("enterCategoryName"), category.getName())
-                .showAndGetResult();
-        category.setName(categoryName);
-        this.handleUpdateCategory(category);
+        if(this.categoriesTreeView.getSelectionModel().getSelectedItem() != null) {
+            Category category = this.categoriesTreeView.getSelectionModel().getSelectedItem().getValue();
+            String categoryName = new FinancerTextInputDialog(I18N.get("enterCategoryName"), category.getName())
+                    .showAndGetResult();
+            category.setName(categoryName);
+            this.handleUpdateCategory(category);
+        }
     }
 
     private void handleUpdateCategory(Category category) {
