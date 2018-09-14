@@ -14,6 +14,7 @@ import org.json.JSONObject;
 
 import java.sql.Date;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -236,7 +237,7 @@ public class FinancerService {
 
         List<FixedTransaction> fixedTransactions = new ArrayList<>();
 
-        JSONArray jsonArray = this.database.get(Database.Table.FIXED_TRANSACTIONS, whereClause);
+        JSONArray jsonArray = this.database.get(Database.Table.FIXED_TRANSACTIONS, whereClause, "start_date DESC");
         for (int i = 0; i < jsonArray.length(); i++) {
             whereClause.clear();
 
@@ -260,7 +261,7 @@ public class FinancerService {
                     JSONObject jsonObjectTransactionAmount = jsonArrayTansactionAmount.getJSONObject(i);
                     transactionAmounts.add(new TransactionAmount(jsonObjectTransactionAmount.getInt("id"),
                             jsonObjectTransactionAmount.getDouble("amount"),
-                            ((Date)jsonObjectTransactionAmount.get("value_date")).toLocalDate()));
+                            ((Date) jsonObjectTransactionAmount.get("value_date")).toLocalDate()));
                 }
             }
 
@@ -277,5 +278,34 @@ public class FinancerService {
         }
 
         return new ConnectionResult<>(fixedTransactions);
+    }
+
+    public ConnectionResult<FixedTransaction> addFixedTransactions(Logger logger, Map<String, Object> parameters) throws Exception {
+        logger.log(Level.INFO, "Adding fixed transactions ...");
+        User user = (User) parameters.get("user");
+        FixedTransaction fixedTransaction = (FixedTransaction) parameters.get("fixedTransaction");
+
+        Map<String, Object> whereParameters = new HashMap<>();
+        whereParameters.put("user_id", user.getId());
+        whereParameters.put("cat_id", fixedTransaction.getCategory().getId());
+        whereParameters.put("end_date", null);
+
+        Map<String, Object> values = new HashMap<>();
+        values.put("end_date", LocalDate.now().toString());
+
+        this.database.update(Database.Table.FIXED_TRANSACTIONS, whereParameters, values);
+
+        values.clear();
+        values.put("user_id", user.getId());
+        values.put("amount", (fixedTransaction.isVariable() ? null : fixedTransaction.getAmount()));
+        values.put("cat_id", fixedTransaction.getCategory().getId());
+        values.put("start_date", fixedTransaction.getStartDate());
+        values.put("end_date", fixedTransaction.getEndDate());
+        values.put("is_variable", (fixedTransaction.isVariable() ? 1 : 0));
+        values.put("day",fixedTransaction.getDay());
+
+        this.database.insert(Database.Table.FIXED_TRANSACTIONS, values);
+
+        return new ConnectionResult<>(null);
     }
 }

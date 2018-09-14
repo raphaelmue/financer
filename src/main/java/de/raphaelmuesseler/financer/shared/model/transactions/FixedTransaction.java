@@ -48,4 +48,20 @@ public class FixedTransaction extends AbstractTransaction {
     public List<TransactionAmount> getTransactionAmounts() {
         return transactionAmounts;
     }
+
+    public void setStartDate(LocalDate startDate) {
+        this.startDate = startDate;
+    }
+
+    public void setEndDate(LocalDate endDate) {
+        this.endDate = endDate;
+    }
+
+    public void setVariable(boolean variable) {
+        isVariable = variable;
+    }
+
+    public void setDay(int day) {
+        this.day = day;
+    }
 }

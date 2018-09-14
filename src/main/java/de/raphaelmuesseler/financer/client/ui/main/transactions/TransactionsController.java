@@ -32,6 +32,7 @@ import org.controlsfx.glyphfont.GlyphFontRegistry;
 
 import java.net.ConnectException;
 import java.net.URL;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -275,9 +276,37 @@ public class TransactionsController implements Initializable {
     }
 
     public void handleNewFixedTransaction() {
+        FixedTransaction fixedTransaction = new FixedTransactionDialog(null,
+                ((Category) this.categoriesListView.getSelectionModel().getSelectedItem()))
+                .showAndGetResult();
+        if (fixedTransaction != null) {
+            Map<String, Object> parameters = new HashMap<>();
+            parameters.put("user", this.user);
+            parameters.put("fixedTransaction", fixedTransaction);
+
+            this.executor.execute(new ServerRequestHandler("addFixedTransactions", parameters, new AsyncConnectionCall() {
+                @Override
+                public void onSuccess(ConnectionResult result) {
+                    handleRefreshFixedTransactions();
+                }
+
+                @Override
+                public void onFailure(Exception exception) {
+                    logger.log(Level.SEVERE, exception.getMessage(), exception);
+                    AsyncConnectionCall.super.onFailure(exception);
+                }
+            }));
+        }
     }
 
     public void handleEditFixedTransaction() {
+        FixedTransaction fixedTransaction = new FixedTransactionDialog(
+                (FixedTransaction) this.fixedTransactionsListView.getSelectionModel().getSelectedItem(),
+                ((Category) this.categoriesListView.getSelectionModel().getSelectedItem()))
+                .showAndGetResult();
+        if (fixedTransaction != null) {
+
+        }
     }
 
     public void handleDeleteFixedTransaction() {
@@ -355,14 +384,16 @@ public class TransactionsController implements Initializable {
                 setGraphic(null);
             } else {
                 this.initListCell(item);
-                if (item.getEndDate() == null) {
+                if (item.getEndDate() == null || (item.getEndDate() != null && item.getEndDate().compareTo(LocalDate.now()) >= 0)) {
                     this.activeLabel.setText(I18N.get("active"));
                     this.activeLabel.getStyleClass().add("pos-amount");
+                } else {
+                    this.activeLabel.setText(I18N.get("inactive"));
+                }
 
+                if (item.getEndDate() == null) {
                     this.dateLabel.setText(I18N.get("since") + " " + item.getStartDate());
                 } else {
-                    this.activeLabel.setText(I18N.get("active"));
-
                     this.dateLabel.setText(item.getStartDate() + " - " + item.getEndDate());
                 }
 
