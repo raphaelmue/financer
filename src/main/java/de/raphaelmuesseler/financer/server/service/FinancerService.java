@@ -198,7 +198,6 @@ public class FinancerService {
 
     public ConnectionResult<Void> updateTransaction(Logger logger, Map<String, Object> parameters) throws Exception {
         logger.log(Level.INFO, "Adding transaction ...");
-        User user = (User) parameters.get("user");
         Transaction transaction = (Transaction) parameters.get("transaction");
 
         Map<String, Object> where = new HashMap<>();
@@ -255,10 +254,11 @@ public class FinancerService {
             // fetching respective transaction amounts if the flag "is_variable" is true
             List<TransactionAmount> transactionAmounts = new ArrayList<>();
             if (jsonObjectTransaction.getInt("is_variable") == 1) {
+                whereClause.clear();
                 whereClause.put("fixed_transaction_id", jsonObjectTransaction.getInt("id"));
-                JSONArray jsonArrayTansactionAmount = this.database.get(Database.Table.FIXED_TRANSACTIONS_AMOUNTS, whereClause);
-                for (int j = 0; j < jsonArrayTansactionAmount.length(); j++) {
-                    JSONObject jsonObjectTransactionAmount = jsonArrayTansactionAmount.getJSONObject(i);
+                JSONArray jsonArrayTransactionAmount = this.database.get(Database.Table.FIXED_TRANSACTIONS_AMOUNTS, whereClause);
+                for (int j = 0; j < jsonArrayTransactionAmount.length(); j++) {
+                    JSONObject jsonObjectTransactionAmount = jsonArrayTransactionAmount.getJSONObject(j);
                     transactionAmounts.add(new TransactionAmount(jsonObjectTransactionAmount.getInt("id"),
                             jsonObjectTransactionAmount.getDouble("amount"),
                             ((Date) jsonObjectTransactionAmount.get("value_date")).toLocalDate()));
@@ -302,10 +302,58 @@ public class FinancerService {
         values.put("start_date", fixedTransaction.getStartDate());
         values.put("end_date", fixedTransaction.getEndDate());
         values.put("is_variable", (fixedTransaction.isVariable() ? 1 : 0));
-        values.put("day",fixedTransaction.getDay());
+        values.put("day", fixedTransaction.getDay());
 
         this.database.insert(Database.Table.FIXED_TRANSACTIONS, values);
 
+        return new ConnectionResult<>(null);
+    }
+
+
+    public ConnectionResult<Void> updateFixedTransaction(Logger logger, Map<String, Object> parameters) throws Exception {
+        logger.log(Level.INFO, "Updating fixed transaction ...");
+        FixedTransaction fixedTransaction = (FixedTransaction) parameters.get("fixedTransaction");
+
+        Map<String, Object> whereParameters = new HashMap<>();
+        whereParameters.put("id", fixedTransaction.getId());
+
+        Map<String, Object> values = new HashMap<>();
+        values.put("amount", (fixedTransaction.isVariable() ? null : fixedTransaction.getAmount()));
+        values.put("start_date", fixedTransaction.getStartDate());
+        values.put("end_date", fixedTransaction.getEndDate());
+        values.put("is_variable", (fixedTransaction.isVariable() ? 1 : 0));
+        values.put("day", fixedTransaction.getDay());
+
+        this.database.update(Database.Table.FIXED_TRANSACTIONS, whereParameters, values);
+        whereParameters.clear();
+        values.clear();
+
+        for (TransactionAmount transactionAmount : fixedTransaction.getTransactionAmounts()) {
+            whereParameters.put("id", transactionAmount.getId());
+            JSONObject jsonObject = this.database.get(Database.Table.FIXED_TRANSACTIONS_AMOUNTS, whereParameters).getJSONObject(0);
+
+            values.put("fixed_transaction_id", fixedTransaction.getId());
+            values.put("value_date", transactionAmount.getValueDate());
+            values.put("amount", transactionAmount.getAmount());
+            if (jsonObject.isEmpty()) {
+                this.database.insert(Database.Table.FIXED_TRANSACTIONS_AMOUNTS, values);
+            } else {
+                this.database.update(Database.Table.FIXED_TRANSACTIONS_AMOUNTS, whereParameters, values);
+            }
+        }
+
+        return new ConnectionResult<>(null);
+    }
+
+    public ConnectionResult<Void> deleteFixedTransaction(Logger logger, Map<String, Object> parameters) throws Exception {
+        logger.log(Level.INFO, "Deleting fixed transaction ...");
+        Map<String, Object> whereParameters = new HashMap<>();
+        whereParameters.put("id", ((FixedTransaction) parameters.get("fixedTransaction")).getId());
+        this.database.delete(Database.Table.FIXED_TRANSACTIONS, whereParameters);
+
+        whereParameters.clear();
+        whereParameters.put("fixed_transaction_id", ((FixedTransaction) parameters.get("fixedTransaction")).getId());
+        this.database.delete(Database.Table.FIXED_TRANSACTIONS_AMOUNTS, whereParameters);
         return new ConnectionResult<>(null);
     }
 }

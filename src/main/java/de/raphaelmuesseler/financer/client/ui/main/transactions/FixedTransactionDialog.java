@@ -12,10 +12,8 @@ import de.raphaelmuesseler.financer.shared.model.transactions.FixedTransaction;
 import de.raphaelmuesseler.financer.shared.model.transactions.TransactionAmount;
 import de.raphaelmuesseler.financer.shared.util.collections.SerialTreeItem;
 import javafx.scene.Node;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
+import javafx.scene.control.*;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 
@@ -50,8 +48,8 @@ public class FixedTransactionDialog extends FinancerDialog<FixedTransaction> {
     @Override
     protected Node setDialogContent() {
         GridPane gridPane = new GridPane();
-        gridPane.setHgap(80);
-        gridPane.setVgap(8);
+        gridPane.setHgap(120);
+        gridPane.setVgap(10);
 
         gridPane.add(new Label(I18N.get("category")), 0, 0);
         this.categoryLabel = new Label();
@@ -85,9 +83,31 @@ public class FixedTransactionDialog extends FinancerDialog<FixedTransaction> {
         gridPane.add(this.amountField, 1, 5);
 
         this.transactionAmountContainer = new VBox();
-        this.transactionAmountContainer.setPrefHeight(80);
+        this.transactionAmountContainer.setPrefHeight(200);
         this.transactionAmountContainer.getChildren().add(new Label());
         this.transactionAmountListView = new JFXListView<>();
+        this.transactionAmountListView.setCellFactory(param -> new ListCell<TransactionAmount>() {
+            @Override
+            protected void updateItem(TransactionAmount item, boolean empty) {
+                super.updateItem(item, empty);
+
+                if (item == null || empty) {
+                    setGraphic(null);
+                } else {
+                    BorderPane borderPane = new BorderPane();
+                    borderPane.getStyleClass().add("transactions-list-item");
+                    borderPane.setLeft(new Label(item.getValueDate().toString()));
+                    Label amountLabel = new Label(Double.toString(item.getAmount()));
+                    if (item.getAmount() < 0) {
+                        amountLabel.getStyleClass().add("neg-amount");
+                    } else {
+                        amountLabel.getStyleClass().add("pos-amount");
+                    }
+                    borderPane.setRight(amountLabel);
+                    setGraphic(borderPane);
+                }
+            }
+        });
         this.transactionAmountContainer.getChildren().add(this.transactionAmountListView);
         gridPane.add(this.transactionAmountContainer, 0, 6, 2, 1);
 
@@ -104,11 +124,17 @@ public class FixedTransactionDialog extends FinancerDialog<FixedTransaction> {
             this.isVariableCheckbox.setSelected(this.getValue().isVariable());
             if (this.getValue().isVariable()) {
                 this.transactionAmountListView.getItems().addAll(this.getValue().getTransactionAmounts());
+                this.amountField.setDisable(true);
             } else {
-                this.transactionAmountListView.setVisible(false);
+                this.amountField.setText(Double.toString(this.getValue().getAmount()));
+                this.transactionAmountContainer.setPrefHeight(0);
+                this.transactionAmountContainer.setVisible(false);
+                this.transactionAmountContainer.setDisable(true);
             }
         } else {
             this.transactionAmountContainer.setPrefHeight(0);
+            this.transactionAmountContainer.setVisible(false);
+            this.transactionAmountContainer.setDisable(true);
         }
     }
 
@@ -129,6 +155,7 @@ public class FixedTransactionDialog extends FinancerDialog<FixedTransaction> {
             this.getValue().setEndDate(this.endDateField.getValue());
             this.getValue().setVariable(this.isVariableCheckbox.isSelected());
             this.getValue().setDay(this.dayField.getValue());
+            this.getValue().setAmount(Double.valueOf(this.amountField.getText()));
         }
 
         return super.onConfirm();

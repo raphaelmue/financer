@@ -7,12 +7,12 @@ public class TransactionAmount implements Serializable {
     private static final long serialVersionUID = -6751558797407170754L;
     private final int id;
     private final double amount;
-    private final LocalDate value_date;
+    private final LocalDate valueDate;
 
-    public TransactionAmount(int id, double amount, LocalDate value_date) {
+    public TransactionAmount(int id, double amount, LocalDate valueDate) {
         this.id = id;
         this.amount = amount;
-        this.value_date = value_date;
+        this.valueDate = valueDate;
     }
 
     public int getId() {
@@ -23,7 +23,12 @@ public class TransactionAmount implements Serializable {
         return amount;
     }
 
-    public LocalDate getValue_date() {
-        return value_date;
+    public LocalDate getValueDate() {
+        return valueDate;
+    }
+
+    @Override
+    public String toString() {
+        return this.getAmount() + " [ " + this.getValueDate() + " ]";
     }
 }

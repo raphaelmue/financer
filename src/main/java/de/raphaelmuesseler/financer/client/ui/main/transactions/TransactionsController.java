@@ -5,6 +5,7 @@ import com.jfoenix.controls.JFXListView;
 import de.raphaelmuesseler.financer.client.connection.ServerRequestHandler;
 import de.raphaelmuesseler.financer.client.local.LocalStorage;
 import de.raphaelmuesseler.financer.client.ui.I18N;
+import de.raphaelmuesseler.financer.client.ui.dialogs.FinancerConfirmDialog;
 import de.raphaelmuesseler.financer.shared.connection.AsyncConnectionCall;
 import de.raphaelmuesseler.financer.shared.connection.ConnectionResult;
 import de.raphaelmuesseler.financer.shared.model.Category;
@@ -307,11 +308,49 @@ public class TransactionsController implements Initializable {
                 ((Category) this.categoriesListView.getSelectionModel().getSelectedItem()))
                 .showAndGetResult();
         if (fixedTransaction != null) {
+            Map<String, Object> parameters = new HashMap<>();
+            parameters.put("fixedTransaction", fixedTransaction);
 
+            this.executor.execute(new ServerRequestHandler("updateFixedTransaction", parameters, new AsyncConnectionCall() {
+                @Override
+                public void onSuccess(ConnectionResult result) { }
+
+                @Override
+                public void onFailure(Exception exception) {
+                    logger.log(Level.SEVERE, exception.getMessage(), exception);
+                    AsyncConnectionCall.super.onFailure(exception);
+                }
+
+                @Override
+                public void onAfter() {
+                    handleRefreshFixedTransactions();
+                }
+            }));
         }
     }
 
     public void handleDeleteFixedTransaction() {
+        boolean result = new FinancerConfirmDialog(I18N.get("confirmDeleteFixedTransaction")).showAndGetResult();
+        if (result) {
+            Map<String, Object> parameters = new HashMap<>();
+            parameters.put("fixedTransaction", this.fixedTransactionsListView.getSelectionModel().getSelectedItem());
+
+            this.executor.execute(new ServerRequestHandler("deleteFixedTransaction", parameters, new AsyncConnectionCall() {
+                @Override
+                public void onSuccess(ConnectionResult result) { }
+
+                @Override
+                public void onFailure(Exception exception) {
+                    logger.log(Level.SEVERE, exception.getMessage(), exception);
+                    AsyncConnectionCall.super.onFailure(exception);
+                }
+
+                @Override
+                public void onAfter() {
+                    handleRefreshFixedTransactions();
+                }
+            }));
+        }
     }
 
     private void showFixedTransactions(Category category) {
