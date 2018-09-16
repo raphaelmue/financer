@@ -16,9 +16,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItem;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
-import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import org.controlsfx.glyphfont.FontAwesome;
 import org.controlsfx.glyphfont.GlyphFont;
@@ -31,6 +29,7 @@ import java.util.ResourceBundle;
 
 public class FinancerController implements Initializable {
     public BorderPane rootLayout;
+    private static VBox loadingBox;
     public Button overviewTabBtn;
     public Button transactionsTabBtn;
     public Button statisticsTabBtn;
@@ -56,6 +55,12 @@ public class FinancerController implements Initializable {
         }
         this.resourceBundle = ResourceBundle.getBundle("Financer", locale);
 
+        try {
+            loadingBox = FXMLLoader.load(getClass().getResource("/views/loading.fxml"), this.resourceBundle);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         this.user = LocalStorage.getLoggedInUser();
         this.userNameLabel.setText(this.user.getFullName());
 
@@ -80,6 +85,22 @@ public class FinancerController implements Initializable {
             burgerTask.setRate(burgerTask.getRate()*-1);
             burgerTask.play();
         });
+    }
+
+    public static boolean showLoadingBox() {
+        if (loadingBox != null) {
+            loadingBox.setVisible(true);
+            return true;
+        }
+        return false;
+    }
+
+    public static boolean hideLoadingBox() {
+        if (loadingBox != null && loadingBox.isVisible()) {
+            loadingBox.setVisible(false);
+            return true;
+        }
+        return false;
     }
 
     public BorderPane getRootLayout() {
@@ -137,7 +158,10 @@ public class FinancerController implements Initializable {
 
     private void loadFXML(URL url) {
         try {
-            this.rootLayout.setCenter(FXMLLoader.load(url, this.resourceBundle));
+            StackPane stackPane = new StackPane();
+            stackPane.getChildren().add(FXMLLoader.load(url, this.resourceBundle));
+            stackPane.getChildren().add(this.loadingBox);
+            this.rootLayout.setCenter(stackPane);
             // TODO bring center to back
         } catch (IOException e) {
             e.printStackTrace();

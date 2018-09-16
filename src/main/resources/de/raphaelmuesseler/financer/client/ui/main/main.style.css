@@ -12,6 +12,15 @@
     -fx-background-radius: 2;
 }
 
+.loading-box {
+    -fx-background-color: rgba(255, 255, 255, 0.7);
+}
+
+.loading-box .label {
+    -fx-font-size: 14;
+    -fx-padding: 15;
+}
+
 .tab-box {
     -fx-background-color: #ffffff;
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 3, 0, 0, 2);

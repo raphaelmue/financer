@@ -6,6 +6,7 @@ import de.raphaelmuesseler.financer.client.connection.ServerRequestHandler;
 import de.raphaelmuesseler.financer.client.local.LocalStorage;
 import de.raphaelmuesseler.financer.client.ui.I18N;
 import de.raphaelmuesseler.financer.client.ui.dialogs.FinancerConfirmDialog;
+import de.raphaelmuesseler.financer.client.ui.main.FinancerController;
 import de.raphaelmuesseler.financer.shared.connection.AsyncConnectionCall;
 import de.raphaelmuesseler.financer.shared.connection.ConnectionResult;
 import de.raphaelmuesseler.financer.shared.model.Category;
@@ -17,6 +18,7 @@ import de.raphaelmuesseler.financer.shared.util.collections.SerialTreeItem;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
@@ -42,17 +44,27 @@ import java.util.logging.Logger;
 
 public class TransactionsController implements Initializable {
 
-
+    @FXML
     public JFXButton refreshTransactionsBtn;
+    @FXML
     public JFXButton newTransactionBtn;
+    @FXML
     public JFXButton editTransactionBtn;
+    @FXML
     public JFXButton deleteTransactionBtn;
+    @FXML
     public TableView<Transaction> transactionsTableView;
+    @FXML
     public JFXButton refreshFixedTransactionsBtn;
+    @FXML
     public JFXButton newFixedTransactionBtn;
+    @FXML
     public JFXButton editFixedTransactionBtn;
+    @FXML
     public JFXButton deleteFixedTransactionBtn;
+    @FXML
     public JFXListView categoriesListView;
+    @FXML
     public JFXListView fixedTransactionsListView;
 
     private User user;
@@ -63,6 +75,8 @@ public class TransactionsController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        FinancerController.showLoadingBox();
+
         this.user = LocalStorage.getLoggedInUser();
 
         GlyphFont fontAwesome = GlyphFontRegistry.font("FontAwesome");
@@ -84,8 +98,11 @@ public class TransactionsController implements Initializable {
         this.deleteFixedTransactionBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.TRASH));
         this.deleteFixedTransactionBtn.setGraphicTextGap(8);
 
-        this.loadTransactionsTable();
-        this.loadFixedTransactionsTable();
+
+        Platform.runLater(() -> {
+            this.loadTransactionsTable();
+            this.loadFixedTransactionsTable();
+        });
     }
 
     private void loadTransactionsTable() {
@@ -168,7 +185,10 @@ public class TransactionsController implements Initializable {
 
             @Override
             public void onAfter() {
-                Platform.runLater(() -> transactionsTableView.setItems(transactions));
+                Platform.runLater(() -> {
+                    transactionsTableView.setItems(transactions);
+                    FinancerController.hideLoadingBox();
+                });
             }
         }));
     }
@@ -273,6 +293,7 @@ public class TransactionsController implements Initializable {
             public void onAfter() {
                 Platform.runLater(() -> {
                     showFixedTransactions((Category) categoriesListView.getSelectionModel().getSelectedItem());
+                    FinancerController.hideLoadingBox();
                 });
             }
         }));
