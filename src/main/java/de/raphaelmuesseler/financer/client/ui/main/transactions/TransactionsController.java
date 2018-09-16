@@ -19,10 +19,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
@@ -79,10 +76,13 @@ public class TransactionsController implements Initializable {
         this.refreshFixedTransactionsBtn.setGraphicTextGap(8);
         this.newFixedTransactionBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.PLUS));
         this.newFixedTransactionBtn.setGraphicTextGap(8);
+        this.newFixedTransactionBtn.setDisable(true);
         this.editFixedTransactionBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.EDIT));
         this.editFixedTransactionBtn.setGraphicTextGap(8);
+        this.editFixedTransactionBtn.setDisable(true);
         this.deleteFixedTransactionBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.TRASH));
         this.deleteFixedTransactionBtn.setGraphicTextGap(8);
+        this.deleteFixedTransactionBtn.setDisable(true);
 
         this.loadTransactionsTable();
         this.loadFixedTransactionsTable();
@@ -120,22 +120,35 @@ public class TransactionsController implements Initializable {
         if (LocalStorage.readObject(LocalStorage.PROFILE_FILE) != null) {
             SerialTreeItem<Category> tree = SerialTreeItem.fromJson((String) LocalStorage.readObject(LocalStorage.PROFILE_FILE).get(0),
                     Category.class);
-            tree.numberItemsByValue((result, prefix) -> {
-                if (!result.getValue().isKey()) {
-                    result.getValue().setName(prefix + " " + result.getValue().getName());
+
+            for (TreeItem<Category> subTree : tree.getChildren()) {
+                SerialTreeItem<Category> serialSubTree = (SerialTreeItem) subTree;
+                if ((serialSubTree.getValue().getRootId() != -1 && (serialSubTree.getValue().getRootId() % 2) == 0) ||
+                        (serialSubTree.getValue().getRootId() == -1 && (serialSubTree.getValue().getParentId() % 2) == 0)) {
+                    serialSubTree.numberItemsByValue((result, prefix) -> {
+                        if (!result.getValue().isKey()) {
+                            result.getValue().setName(prefix + " " + result.getValue().getName());
+                        }
+                    });
+                    serialSubTree.traverse(treeItem -> categoriesListView.getItems().add(treeItem.getValue()));
                 }
-            });
-            tree.traverse(treeItem -> {
-                if ((treeItem.getValue().getRootId() != -1 && (treeItem.getValue().getRootId() % 2) == 0) ||
-                        (treeItem.getValue().getRootId() == -1 && (treeItem.getValue().getParentId() % 2) == 0)) {
-                    categoriesListView.getItems().add(treeItem.getValue());
+            }
+
+            this.categoriesListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+                showFixedTransactions((Category) newValue);
+                if (!((Category) newValue).isKey()) {
+                    newFixedTransactionBtn.setDisable(false);
+                } else {
+                    newFixedTransactionBtn.setDisable(true);
                 }
+                editFixedTransactionBtn.setDisable(true);
+                deleteFixedTransactionBtn.setDisable(true);
             });
 
-            this.categoriesListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) ->
-                    showFixedTransactions((Category) newValue));
-
-            this.categoriesListView.setCellFactory(param -> new CategoryListViewImpl());
+            this.fixedTransactionsListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+                editFixedTransactionBtn.setDisable(false);
+                deleteFixedTransactionBtn.setDisable(false);
+            });
 
             this.handleRefreshFixedTransactions();
         }
@@ -273,6 +286,7 @@ public class TransactionsController implements Initializable {
             public void onAfter() {
                 Platform.runLater(() -> {
                     showFixedTransactions((Category) categoriesListView.getSelectionModel().getSelectedItem());
+                    categoriesListView.setCellFactory(param -> new CategoryListViewImpl());
                 });
             }
         }));
@@ -397,6 +411,9 @@ public class TransactionsController implements Initializable {
                             }
                             break;
                         }
+                        if (item.isKey()) {
+                            this.categoryLabel.getStyleClass().add("list-cell-title");
+                        }
                     }
                 }
                 setGraphic(this.borderPane);
@@ -407,7 +424,7 @@ public class TransactionsController implements Initializable {
             this.borderPane = new BorderPane();
             this.borderPane.getStyleClass().add("categories-list-item");
             this.categoryLabel = new Label();
-            this.categoryLabel.getStyleClass().add("list-cell-title");
+
             this.amountLabel = new Label();
             this.amountLabel.getStyleClass().add("list-cell-title");
 
