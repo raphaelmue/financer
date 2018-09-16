@@ -441,14 +441,11 @@ public class TransactionsController implements Initializable {
                 }
 
                 if (item.isVariable()) {
-                    this.amountLabel.setText(String.valueOf(item.getTransactionAmounts().get(
-                            item.getTransactionAmounts().size() - 1).getAmount()));
+                    this.amountLabel.setText(String.valueOf(item.getTransactionAmounts().get(0).getAmount()));
                     if (item.getTransactionAmounts().size() > 1) {
-                        this.lastAmountLabel.setText(String.valueOf(item.getTransactionAmounts().get(
-                                item.getTransactionAmounts().size() - 2).getAmount()));
+                        this.lastAmountLabel.setText(String.valueOf(item.getTransactionAmounts().get(1).getAmount()));
                         if (item.getTransactionAmounts().size() > 2) {
-                            this.preLastAmountLabel.setText(String.valueOf(item.getTransactionAmounts().get(
-                                    item.getTransactionAmounts().size() - 3).getAmount()));
+                            this.preLastAmountLabel.setText(String.valueOf(item.getTransactionAmounts().get(2).getAmount()));
                         }
                     }
                 } else {

@@ -4,6 +4,7 @@ import de.raphaelmuesseler.financer.shared.model.Category;
 import de.raphaelmuesseler.financer.shared.util.date.Month;
 
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
 
 public class FixedTransaction extends AbstractTransaction {
@@ -21,6 +22,10 @@ public class FixedTransaction extends AbstractTransaction {
         this.isVariable = isVariable;
         this.day = day;
         this.transactionAmounts = transactionAmounts;
+    }
+
+    public void sortTransactionAmounts() {
+        this.getTransactionAmounts().sort(Comparator.comparing(TransactionAmount::getValueDate).reversed());
     }
 
     public TransactionAmount getAmountByMonth(Month month) {

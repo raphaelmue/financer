@@ -96,6 +96,7 @@ public class FixedTransactionDialog extends FinancerDialog<FixedTransaction> {
             if (transactionAmount != null) {
                 transactionAmountListView.getItems().add(transactionAmount);
                 getValue().getTransactionAmounts().add(transactionAmount);
+                getValue().sortTransactionAmounts();
             }
         });
         editTransactionAmountBtn.setOnAction(event -> {
@@ -108,6 +109,7 @@ public class FixedTransactionDialog extends FinancerDialog<FixedTransaction> {
                         if (transactionAmount.getId() == getValue().getTransactionAmounts().get(i).getId()) {
                             getValue().getTransactionAmounts().get(i).setValueDate(transactionAmount.getValueDate());
                             getValue().getTransactionAmounts().get(i).setAmount(transactionAmount.getAmount());
+                            getValue().sortTransactionAmounts();
                             break;
                         }
                     }

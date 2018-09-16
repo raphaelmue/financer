@@ -15,10 +15,7 @@ import org.json.JSONObject;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -256,7 +253,8 @@ public class FinancerService {
             if (jsonObjectTransaction.getInt("is_variable") == 1) {
                 whereClause.clear();
                 whereClause.put("fixed_transaction_id", jsonObjectTransaction.getInt("id"));
-                JSONArray jsonArrayTransactionAmount = this.database.get(Database.Table.FIXED_TRANSACTIONS_AMOUNTS, whereClause);
+                JSONArray jsonArrayTransactionAmount = this.database.get(Database.Table.FIXED_TRANSACTIONS_AMOUNTS, whereClause,
+                        "value_date DESC");
                 for (int j = 0; j < jsonArrayTransactionAmount.length(); j++) {
                     JSONObject jsonObjectTransactionAmount = jsonArrayTransactionAmount.getJSONObject(j);
                     transactionAmounts.add(new TransactionAmount(jsonObjectTransactionAmount.getInt("id"),
@@ -264,6 +262,8 @@ public class FinancerService {
                             ((Date) jsonObjectTransactionAmount.get("value_date")).toLocalDate()));
                 }
             }
+
+            transactionAmounts.sort(Comparator.comparing(TransactionAmount::getValueDate).reversed());
 
             fixedTransactions.add(new FixedTransaction(jsonObjectTransaction.getInt("id"),
                     (jsonObjectTransaction.get("amount") == "null" ? 0 : jsonObjectTransaction.getDouble("amount")),
