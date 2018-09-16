@@ -48,10 +48,10 @@ class TransactionDialog extends FinancerDialog<Transaction> {
         gridPane.add(new Label(I18N.get("category")), 0, 1);
         this.categoryComboBox = new ComboBox<>();
         this.categoryComboBox.setPlaceholder(new Label(I18N.get("selectCategory")));
-        tree = SerialTreeItem.fromJson((String) LocalStorage.readObject(LocalStorage.PROFILE_FILE).get(0),
+        this.tree = SerialTreeItem.fromJson((String) LocalStorage.readObject(LocalStorage.PROFILE_FILE, "categories"),
                 Category.class);
 
-        tree.numberItemsByValue((result, prefix) -> {
+        this.tree.numberItemsByValue((result, prefix) -> {
             result.getValue().setName(prefix + " " + result.getValue().getName());
             result.getValue().setKey(false);
         });
