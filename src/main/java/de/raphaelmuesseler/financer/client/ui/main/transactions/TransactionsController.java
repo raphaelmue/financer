@@ -69,8 +69,10 @@ public class TransactionsController implements Initializable {
         this.newTransactionBtn.setGraphicTextGap(8);
         this.editTransactionBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.EDIT));
         this.editTransactionBtn.setGraphicTextGap(8);
+        this.editTransactionBtn.setDisable(true);
         this.deleteTransactionBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.TRASH));
         this.deleteTransactionBtn.setGraphicTextGap(8);
+        this.deleteTransactionBtn.setDisable(true);
 
         this.refreshFixedTransactionsBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.REFRESH));
         this.refreshFixedTransactionsBtn.setGraphicTextGap(8);
@@ -90,28 +92,33 @@ public class TransactionsController implements Initializable {
 
     private void loadTransactionsTable() {
         TableColumn<Transaction, Category> categoryColumn = new TableColumn<>(I18N.get("category"));
-        TableColumn<Transaction, Integer> idColumn = new TableColumn<>(I18N.get("id"));
         TableColumn<Transaction, Date> valueDateColumn = new TableColumn<>(I18N.get("valueDate"));
         TableColumn<Transaction, Double> amountColumn = new TableColumn<>(I18N.get("amount"));
         TableColumn<Transaction, String> productColumn = new TableColumn<>(I18N.get("product"));
         TableColumn<Transaction, String> purposeColumn = new TableColumn<>(I18N.get("purpose"));
+        TableColumn<Transaction, String> shopColumn = new TableColumn<>(I18N.get("shop"));
 
-        idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
         valueDateColumn.setCellValueFactory(new PropertyValueFactory<>("valueDate"));
         amountColumn.setCellValueFactory(new PropertyValueFactory<>("amount"));
         categoryColumn.setCellValueFactory(new PropertyValueFactory<>("category"));
         productColumn.setCellValueFactory(new PropertyValueFactory<>("product"));
         purposeColumn.setCellValueFactory(new PropertyValueFactory<>("purpose"));
+        shopColumn.setCellValueFactory(new PropertyValueFactory<>("shop"));
 
-        idColumn.prefWidthProperty().bind(this.transactionsTableView.widthProperty().divide(18));
+
         valueDateColumn.prefWidthProperty().bind(this.transactionsTableView.widthProperty().divide(6));
-        amountColumn.prefWidthProperty().bind(this.transactionsTableView.widthProperty().divide(12));
+        amountColumn.prefWidthProperty().bind(this.transactionsTableView.widthProperty().divide(6));
         categoryColumn.prefWidthProperty().bind(this.transactionsTableView.widthProperty().divide(6));
-        productColumn.prefWidthProperty().bind(this.transactionsTableView.widthProperty().divide(4));
-        purposeColumn.prefWidthProperty().bind(this.transactionsTableView.widthProperty().divide(4));
+        productColumn.prefWidthProperty().bind(this.transactionsTableView.widthProperty().divide(6));
+        purposeColumn.prefWidthProperty().bind(this.transactionsTableView.widthProperty().divide(6));
+        shopColumn.prefWidthProperty().bind(this.transactionsTableView.widthProperty().divide(6));
 
-        valueDateColumn.setSortType(TableColumn.SortType.DESCENDING);
-        this.transactionsTableView.getColumns().addAll(idColumn, valueDateColumn, amountColumn, categoryColumn, productColumn, purposeColumn);
+        this.transactionsTableView.getColumns().addAll(categoryColumn, valueDateColumn, amountColumn, productColumn, purposeColumn, shopColumn);
+
+        this.transactionsTableView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            editTransactionBtn.setDisable(false);
+            deleteTransactionBtn.setDisable(false);
+        });
 
         this.handleRefreshTransactions();
     }
@@ -181,7 +188,11 @@ public class TransactionsController implements Initializable {
 
             @Override
             public void onAfter() {
-                Platform.runLater(() -> transactionsTableView.setItems(transactions));
+                Platform.runLater(() -> {
+                    transactionsTableView.setItems(transactions);
+                    transactionsTableView.getColumns().get(1).setSortType(TableColumn.SortType.DESCENDING);
+                    transactionsTableView.getSortOrder().add(transactionsTableView.getColumns().get(1));
+                });
             }
         }));
     }
