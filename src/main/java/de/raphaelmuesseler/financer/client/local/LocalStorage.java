@@ -49,20 +49,20 @@ public class LocalStorage {
 
     public static boolean writeObject(File file, String key, Object object) {
         file.getParentFile().mkdirs();
-        try {
-            ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream(file));
-            Map<String, Object> map = readFile(file);
-            if (map == null) {
-                map = new HashMap<>();
-            }
+        boolean result = false;
+        Map<String, Object> map = readFile(file);
+        if (map == null) {
+            map = new HashMap<>();
+        }
+
+        try (ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream(file))) {
             map.put(key, object);
             outputStream.writeObject(map);
-            outputStream.close();
-            return true;
+            result = true;
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return false;
+        return result;
     }
 
     public static Object readObject(File file, String key) {
@@ -70,11 +70,11 @@ public class LocalStorage {
     }
 
     private static Map<String, Object> readFile(File file) {
-        try (FileInputStream fileInputStream = new FileInputStream(file)) {
-            ObjectInputStream inputStream = new ObjectInputStream(fileInputStream);
-            return (Map<String, Object>) inputStream.readObject();
+        Map<String, Object> result = null;
+        try (ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream(file))) {
+            result =  (Map<String, Object>) inputStream.readObject();
         } catch (IOException | ClassNotFoundException ignored) { }
 
-        return null;
+        return result;
     }
 }
