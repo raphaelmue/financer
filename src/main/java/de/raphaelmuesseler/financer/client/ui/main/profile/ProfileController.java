@@ -85,7 +85,7 @@ public class ProfileController implements Initializable {
             @Override
             public void onSuccess(ConnectionResult result) {
                 structure = SerialTreeItem.fromJson(((String) result.getResult()), Category.class);
-                LocalStorage.writeObject(LocalStorage.PROFILE_FILE, structure.getJson().toString());
+                LocalStorage.writeObject(LocalStorage.PROFILE_FILE, "categories", result.getResult());
             }
 
             @Override
@@ -96,10 +96,8 @@ public class ProfileController implements Initializable {
                     logger.log(Level.SEVERE, exception.getMessage(), exception);
                     AsyncConnectionCall.super.onFailure(exception);
                 }
-                List<Object> result = LocalStorage.readObject(LocalStorage.PROFILE_FILE);
-                if (result != null && result.size() > 0) {
-                    structure = SerialTreeItem.fromJson(((String) result.get(0)), Category.class);
-                }
+                structure = SerialTreeItem.fromJson((String) LocalStorage.readObject(LocalStorage.PROFILE_FILE, "categories"),
+                        Category.class);
             }
 
             @Override
@@ -161,7 +159,7 @@ public class ProfileController implements Initializable {
     }
 
     public void handleEditCategory() {
-        if(this.categoriesTreeView.getSelectionModel().getSelectedItem() != null) {
+        if (this.categoriesTreeView.getSelectionModel().getSelectedItem() != null) {
             Category category = this.categoriesTreeView.getSelectionModel().getSelectedItem().getValue();
             String categoryName = new FinancerTextInputDialog(I18N.get("enterCategoryName"), category.getName())
                     .showAndGetResult();
@@ -176,7 +174,8 @@ public class ProfileController implements Initializable {
 
         this.executor.execute(new ServerRequestHandler("updateCategory", parameters, new AsyncConnectionCall() {
             @Override
-            public void onSuccess(ConnectionResult result) { }
+            public void onSuccess(ConnectionResult result) {
+            }
 
             @Override
             public void onFailure(Exception exception) {
@@ -262,7 +261,7 @@ public class ProfileController implements Initializable {
         @Override
         public void updateItem(Category item, boolean empty) {
             super.updateItem(item, empty);
-             if (item != null && !isEditing() && getParent() != null) {
+            if (item != null && !isEditing() && getParent() != null) {
                 if (item.isKey() && !item.getName().equals(I18N.get("categories"))) {
                     setContextMenu(this.contextMenu);
                 } else if (!item.isKey()) {

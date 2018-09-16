@@ -4,7 +4,9 @@ import de.raphaelmuesseler.financer.shared.model.User;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class LocalStorage {
 
@@ -25,16 +27,12 @@ public class LocalStorage {
 
 
     public static User getLoggedInUser() {
-        try (ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream(USERDATA_FILE))) {
-            return (User) inputStream.readObject();
-        } catch (IOException | ClassNotFoundException ignored) { }
-
-        return null;
+        return (User) readObject(USERDATA_FILE, "user");
     }
 
     public static boolean writeUser(User user) {
         USERDATA_FILE.getParentFile().mkdirs();
-        return writeObject(USERDATA_FILE, user);
+        return writeObject(USERDATA_FILE, "user", user);
     }
 
     public static boolean logUserOut() {
@@ -42,39 +40,39 @@ public class LocalStorage {
     }
 
     public static Settings getSettings() {
-        try (ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream(SETTINGS_FILE))) {
-            return (Settings) inputStream.readObject();
-        } catch (IOException | ClassNotFoundException ignored) { }
-
-        return null;
+        return (Settings) readObject(SETTINGS_FILE, "settings");
     }
 
     public static boolean writeSettings(Settings settings) {
-        return writeObject(SETTINGS_FILE, settings);
+        return writeObject(SETTINGS_FILE, "settings", settings);
     }
 
-    public static boolean writeObject(File file, Object object) {
+    public static boolean writeObject(File file, String key, Object object) {
         file.getParentFile().mkdirs();
-        boolean result = false;
         try {
             ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream(file));
-            outputStream.writeObject(object);
-            result = true;
+            Map<String, Object> map = readFile(file);
+            if (map == null) {
+                map = new HashMap<>();
+            }
+            map.put(key, object);
+            outputStream.writeObject(map);
             outputStream.close();
+            return true;
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return result;
+        return false;
     }
 
-    public static List<Object> readObject(File file) {
-        List<Object> result = new ArrayList<>();
+    public static Object readObject(File file, String key) {
+        return readFile(file) == null ? null : readFile(file).get(key);
+    }
+
+    private static Map<String, Object> readFile(File file) {
         try (FileInputStream fileInputStream = new FileInputStream(file)) {
             ObjectInputStream inputStream = new ObjectInputStream(fileInputStream);
-            while (fileInputStream.available() > 0) {
-                result.add(inputStream.readObject());
-            }
-            return result;
+            return (Map<String, Object>) inputStream.readObject();
         } catch (IOException | ClassNotFoundException ignored) { }
 
         return null;

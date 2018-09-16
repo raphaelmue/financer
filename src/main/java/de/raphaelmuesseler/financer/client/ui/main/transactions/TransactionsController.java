@@ -141,12 +141,12 @@ public class TransactionsController implements Initializable {
     }
 
     private void loadFixedTransactionsTable() {
-        if (LocalStorage.readObject(LocalStorage.PROFILE_FILE) != null) {
-            SerialTreeItem<Category> tree = SerialTreeItem.fromJson((String) LocalStorage.readObject(LocalStorage.PROFILE_FILE).get(0),
+        if (LocalStorage.readObject(LocalStorage.PROFILE_FILE, "categories") != null) {
+            SerialTreeItem<Category> tree = SerialTreeItem.fromJson((String) LocalStorage.readObject(LocalStorage.PROFILE_FILE, "categories"),
                     Category.class);
 
             for (TreeItem<Category> subTree : tree.getChildren()) {
-                SerialTreeItem<Category> serialSubTree = (SerialTreeItem) subTree;
+                SerialTreeItem<Category> serialSubTree = (SerialTreeItem<Category>) subTree;
                 if ((serialSubTree.getValue().getRootId() != -1 && (serialSubTree.getValue().getRootId() % 2) == 0) ||
                         (serialSubTree.getValue().getRootId() == -1 && (serialSubTree.getValue().getParentId() % 2) == 0)) {
                     serialSubTree.numberItemsByValue((result, prefix) -> {
@@ -186,7 +186,7 @@ public class TransactionsController implements Initializable {
             @Override
             public void onSuccess(ConnectionResult result) {
                 transactions = FXCollections.observableArrayList((List<Transaction>) result.getResult());
-                LocalStorage.writeObject(LocalStorage.TRANSACTIONS_FILE, result.getResult());
+                LocalStorage.writeObject(LocalStorage.TRANSACTIONS_FILE, "transactions", result.getResult());
             }
 
             @Override
@@ -197,9 +197,10 @@ public class TransactionsController implements Initializable {
                     logger.log(Level.SEVERE, exception.getMessage(), exception);
                     AsyncConnectionCall.super.onFailure(exception);
                 }
-                List<Object> result = LocalStorage.readObject(LocalStorage.TRANSACTIONS_FILE);
+                List<Object> result = ((List<Object>) LocalStorage.readObject(
+                        LocalStorage.TRANSACTIONS_FILE, "transactions"));
                 if (result != null && result.size() > 0) {
-                    transactions = CollectionUtil.castObjectListToObservable((List<Object>) result.get(0));
+                    transactions = CollectionUtil.castObjectListToObservable(result);
                 }
             }
 
@@ -294,7 +295,7 @@ public class TransactionsController implements Initializable {
             @Override
             public void onSuccess(ConnectionResult result) {
                 fixedTransactions = FXCollections.observableArrayList((List<FixedTransaction>) result.getResult());
-                LocalStorage.writeObject(LocalStorage.TRANSACTIONS_FILE, result.getResult());
+                LocalStorage.writeObject(LocalStorage.TRANSACTIONS_FILE, "fixedTransactions", result.getResult());
             }
 
             @Override
@@ -305,9 +306,10 @@ public class TransactionsController implements Initializable {
                     logger.log(Level.SEVERE, exception.getMessage(), exception);
                     AsyncConnectionCall.super.onFailure(exception);
                 }
-                List<Object> result = LocalStorage.readObject(LocalStorage.TRANSACTIONS_FILE);
-                if (result != null && result.size() > 1) {
-                    fixedTransactions = CollectionUtil.castObjectListToObservable((List<Object>) result.get(1));
+                List<Object> result = (List<Object>) LocalStorage.readObject(
+                        LocalStorage.TRANSACTIONS_FILE, "fixedTransactions");
+                if (result != null && result.size() > 0) {
+                    fixedTransactions = CollectionUtil.castObjectListToObservable(result);
                 }
             }
 
