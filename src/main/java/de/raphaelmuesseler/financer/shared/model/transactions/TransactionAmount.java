@@ -5,9 +5,9 @@ import java.time.LocalDate;
 
 public class TransactionAmount implements Serializable {
     private static final long serialVersionUID = -6751558797407170754L;
-    private final int id;
-    private final double amount;
-    private final LocalDate valueDate;
+    private int id;
+    private double amount;
+    private LocalDate valueDate;
 
     public TransactionAmount(int id, double amount, LocalDate valueDate) {
         this.id = id;
@@ -25,6 +25,18 @@ public class TransactionAmount implements Serializable {
 
     public LocalDate getValueDate() {
         return valueDate;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setAmount(double amount) {
+        this.amount = amount;
+    }
+
+    public void setValueDate(LocalDate valueDate) {
+        this.valueDate = valueDate;
     }
 
     @Override

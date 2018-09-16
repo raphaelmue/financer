@@ -1,11 +1,12 @@
 package de.raphaelmuesseler.financer.client.ui.main.transactions;
 
+import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXDatePicker;
 import com.jfoenix.controls.JFXListView;
 import com.sun.javafx.scene.control.IntegerField;
-import de.raphaelmuesseler.financer.client.local.LocalStorage;
 import de.raphaelmuesseler.financer.client.ui.I18N;
 import de.raphaelmuesseler.financer.client.ui.components.DoubleField;
+import de.raphaelmuesseler.financer.client.ui.dialogs.FinancerConfirmDialog;
 import de.raphaelmuesseler.financer.client.ui.dialogs.FinancerDialog;
 import de.raphaelmuesseler.financer.shared.model.Category;
 import de.raphaelmuesseler.financer.shared.model.transactions.FixedTransaction;
@@ -15,10 +16,10 @@ import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 import java.time.LocalDate;
-import java.util.Comparator;
 
 public class FixedTransactionDialog extends FinancerDialog<FixedTransaction> {
 
@@ -84,7 +85,49 @@ public class FixedTransactionDialog extends FinancerDialog<FixedTransaction> {
 
         this.transactionAmountContainer = new VBox();
         this.transactionAmountContainer.setPrefHeight(200);
-        this.transactionAmountContainer.getChildren().add(new Label());
+        this.transactionAmountContainer.getChildren().add(new Label(I18N.get("transactionAmounts")));
+
+        JFXButton newTransactionAmountBtn = new JFXButton(I18N.get("new"));
+        JFXButton editTransactionAmountBtn = new JFXButton(I18N.get("edit"));
+        JFXButton deleteTransactionAmountBtn = new JFXButton(I18N.get("delete"));
+
+        newTransactionAmountBtn.setOnAction(event -> {
+            TransactionAmount transactionAmount = new TransactionAmountDialog(null).showAndGetResult();
+            if (transactionAmount != null) {
+                transactionAmountListView.getItems().add(transactionAmount);
+                getValue().getTransactionAmounts().add(transactionAmount);
+            }
+        });
+        editTransactionAmountBtn.setOnAction(event -> {
+            if (transactionAmountListView.getSelectionModel().getSelectedItem() != null) {
+                TransactionAmount transactionAmount = new TransactionAmountDialog(transactionAmountListView.getSelectionModel().getSelectedItem())
+                        .showAndGetResult();
+                if (transactionAmount != null) {
+
+                    for (int i = 0; i < getValue().getTransactionAmounts().size(); i++) {
+                        if (transactionAmount.getId() == getValue().getTransactionAmounts().get(i).getId()) {
+                            getValue().getTransactionAmounts().get(i).setValueDate(transactionAmount.getValueDate());
+                            getValue().getTransactionAmounts().get(i).setAmount(transactionAmount.getAmount());
+                            break;
+                        }
+                    }
+                }
+            }
+        });
+        deleteTransactionAmountBtn.setOnAction(event -> {
+            if (transactionAmountListView.getSelectionModel().getSelectedItem() != null) {
+                transactionAmountListView.getItems().remove(transactionAmountListView.getSelectionModel().getSelectedItem());
+                getValue().getTransactionAmounts().remove(transactionAmountListView.getSelectionModel().getSelectedItem());
+            }
+        });
+
+        HBox toolBox = new HBox();
+        toolBox.getChildren().add(newTransactionAmountBtn);
+        toolBox.getChildren().add(editTransactionAmountBtn);
+        toolBox.getChildren().add(deleteTransactionAmountBtn);
+
+        this.transactionAmountContainer.getChildren().add(toolBox);
+
         this.transactionAmountListView = new JFXListView<>();
         this.transactionAmountListView.setCellFactory(param -> new ListCell<TransactionAmount>() {
             @Override

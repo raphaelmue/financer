@@ -330,12 +330,11 @@ public class FinancerService {
 
         for (TransactionAmount transactionAmount : fixedTransaction.getTransactionAmounts()) {
             whereParameters.put("id", transactionAmount.getId());
-            JSONObject jsonObject = this.database.get(Database.Table.FIXED_TRANSACTIONS_AMOUNTS, whereParameters).getJSONObject(0);
 
             values.put("fixed_transaction_id", fixedTransaction.getId());
             values.put("value_date", transactionAmount.getValueDate());
             values.put("amount", transactionAmount.getAmount());
-            if (jsonObject.isEmpty()) {
+            if (transactionAmount.getId() < 0) {
                 this.database.insert(Database.Table.FIXED_TRANSACTIONS_AMOUNTS, values);
             } else {
                 this.database.update(Database.Table.FIXED_TRANSACTIONS_AMOUNTS, whereParameters, values);

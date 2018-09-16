@@ -117,7 +117,7 @@ public class TransactionsController implements Initializable {
     }
 
     private void loadFixedTransactionsTable() {
-        if( LocalStorage.readObject(LocalStorage.PROFILE_FILE) != null) {
+        if (LocalStorage.readObject(LocalStorage.PROFILE_FILE) != null) {
             SerialTreeItem<Category> tree = SerialTreeItem.fromJson((String) LocalStorage.readObject(LocalStorage.PROFILE_FILE).get(0),
                     Category.class);
             tree.numberItemsByValue((result, prefix) -> {
@@ -313,7 +313,8 @@ public class TransactionsController implements Initializable {
 
             this.executor.execute(new ServerRequestHandler("updateFixedTransaction", parameters, new AsyncConnectionCall() {
                 @Override
-                public void onSuccess(ConnectionResult result) { }
+                public void onSuccess(ConnectionResult result) {
+                }
 
                 @Override
                 public void onFailure(Exception exception) {
@@ -337,7 +338,8 @@ public class TransactionsController implements Initializable {
 
             this.executor.execute(new ServerRequestHandler("deleteFixedTransaction", parameters, new AsyncConnectionCall() {
                 @Override
-                public void onSuccess(ConnectionResult result) { }
+                public void onSuccess(ConnectionResult result) {
+                }
 
                 @Override
                 public void onFailure(Exception exception) {
