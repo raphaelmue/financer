@@ -50,6 +50,11 @@ public class TransactionAmountDialog extends FinancerDialog<TransactionAmount> {
     }
 
     @Override
+    protected boolean checkConsistency() {
+        return true;
+    }
+
+    @Override
     protected TransactionAmount onConfirm() {
         if (this.getValue() == null) {
             this.setValue(new TransactionAmount(-1, Double.valueOf(this.amountField.getText()),

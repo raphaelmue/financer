@@ -38,6 +38,11 @@ public final class FinancerTextInputDialog extends FinancerDialog<String> {
     }
 
     @Override
+    protected boolean checkConsistency() {
+        return true;
+    }
+
+    @Override
     protected String onConfirm() {
         this.setValue(this.textField.getText());
         return super.onConfirm();

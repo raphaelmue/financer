@@ -30,6 +30,11 @@ public class FinancerConfirmDialog extends FinancerDialog<Boolean> {
     }
 
     @Override
+    protected boolean checkConsistency() {
+        return true;
+    }
+
+    @Override
     protected Boolean onConfirm() {
         return true;
     }

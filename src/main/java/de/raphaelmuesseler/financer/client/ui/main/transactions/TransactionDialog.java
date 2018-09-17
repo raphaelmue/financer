@@ -12,6 +12,7 @@ import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 
+import java.time.LocalDate;
 import java.util.Comparator;
 
 class TransactionDialog extends FinancerDialog<Transaction> {
@@ -96,6 +97,23 @@ class TransactionDialog extends FinancerDialog<Transaction> {
             this.shopField.setText(this.getValue().getShop());
             this.valueDateField.setValue(this.getValue().getValueDate());
         }
+    }
+
+    @Override
+    protected boolean checkConsistency() {
+        boolean result = true;
+
+        if (this.categoryComboBox.getSelectionModel().getSelectedItem() == null) {
+            setErrorMessage(I18N.get("selectCategory"));
+            result = false;
+        }
+
+        if (Double.valueOf(this.amountField.getText()) == 0) {
+            setErrorMessage(I18N.get("selectValidAmount"));
+            result = false;
+        }
+
+        return result;
     }
 
     @Override

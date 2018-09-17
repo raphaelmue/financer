@@ -184,6 +184,11 @@ public class FixedTransactionDialog extends FinancerDialog<FixedTransaction> {
     }
 
     @Override
+    protected boolean checkConsistency() {
+        return true;
+    }
+
+    @Override
     protected FixedTransaction onConfirm() {
         if (this.getValue() == null) {
             this.setValue(new FixedTransaction(-1,

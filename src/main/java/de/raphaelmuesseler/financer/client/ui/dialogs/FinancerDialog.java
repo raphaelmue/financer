@@ -5,13 +5,17 @@ import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.util.Optional;
 
 public abstract class FinancerDialog<T> extends Dialog<T> {
     private T value;
+    private Label errorMessageLabel;
+    private String errorMessage;
 
     public FinancerDialog(T value) {
         super();
@@ -25,17 +29,31 @@ public abstract class FinancerDialog<T> extends Dialog<T> {
                     new Image(LoginApplication.class.getResourceAsStream("/images/icons/financer-icon.png")));
         });
 
-        this.getDialogPane().setContent(this.setDialogContent());
+        VBox vBox = new VBox();
+        this.errorMessageLabel = new Label();
+        this.errorMessageLabel.setStyle("-fx-text-fill: #ff4a39;" +
+                "    -fx-padding: 15 0;" +
+                "    -fx-font-weight: 700;");
+        vBox.getChildren().add(this.errorMessageLabel);
+        vBox.getChildren().add(this.setDialogContent());
+        this.getDialogPane().setContent(vBox);
     }
 
     public T showAndGetResult() {
         Optional<T> result = this.showAndWait();
         if (result.isPresent() && result.get() == ButtonType.OK) {
-            return this.onConfirm();
+            if (this.checkConsistency()) {
+                return this.onConfirm();
+            } else {
+                this.errorMessageLabel.setText(this.getErrorMessage());
+                return this.showAndGetResult();
+            }
         } else {
             return this.onCancel();
         }
     }
+
+    protected abstract boolean checkConsistency();
 
     protected abstract Node setDialogContent();
 
@@ -45,8 +63,16 @@ public abstract class FinancerDialog<T> extends Dialog<T> {
         return value;
     }
 
+    public String getErrorMessage() {
+        return errorMessage;
+    }
+
     protected void setValue(T value) {
         this.value = value;
+    }
+
+    public void setErrorMessage(String errorMessage) {
+        this.errorMessage = errorMessage;
     }
 
     protected T onCancel() {
