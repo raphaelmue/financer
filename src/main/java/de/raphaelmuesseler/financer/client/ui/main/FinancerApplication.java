@@ -53,6 +53,7 @@ public class FinancerApplication extends Application {
             scene.getStylesheets().add(getClass().getResource("colors.style.css").toExternalForm());
             scene.getStylesheets().add(getClass().getResource("main.style.css").toExternalForm());
             scene.getStylesheets().add(getClass().getResource("transactions.style.css").toExternalForm());
+            scene.getStylesheets().add(getClass().getResource("overview.style.css").toExternalForm());
             primaryStage.getIcons().add(new Image(FinancerApplication.class.getResourceAsStream("/images/icons/financer-icon.png")));
 
             Font.loadFont(getClass().getResource("/fonts/Roboto-Regular.ttf").toExternalForm(), 12);

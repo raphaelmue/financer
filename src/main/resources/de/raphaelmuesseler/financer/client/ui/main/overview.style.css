@@ -1,0 +1,9 @@
+#balance-label {
+    -fx-font-weight: 700;
+    -fx-padding: 15 0;
+}
+
+#balance-amount {
+    -fx-font-weight: 700;
+    -fx-padding: 15 0;
+}
