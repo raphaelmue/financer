@@ -219,6 +219,12 @@ public class TransactionsController implements Initializable {
     public void handleNewTransaction() {
         Transaction transaction = new TransactionDialog(null).showAndGetResult();
         if (transaction != null) {
+
+            if ((transaction.getCategory().getRootId() == 1 && transaction.getAmount() < 0) ||
+                    (transaction.getCategory().getRootId() == 3 && transaction.getAmount() >= 0)) {
+                transaction.setAmount(transaction.getAmount() * (-1));
+            }
+
             Map<String, Object> parameters = new HashMap<>();
             parameters.put("user", this.user);
             parameters.put("transaction", transaction);
@@ -247,6 +253,12 @@ public class TransactionsController implements Initializable {
         Transaction transaction = new TransactionDialog(this.transactionsTableView.getSelectionModel().getSelectedItem())
                 .showAndGetResult();
         if (transaction != null) {
+
+            if ((transaction.getCategory().getRootId() == 1 && transaction.getAmount() < 0) ||
+                    (transaction.getCategory().getRootId() == 3 && transaction.getAmount() >= 0)) {
+                transaction.setAmount(transaction.getAmount() * (-1));
+            }
+
             Map<String, Object> parameters = new HashMap<>();
             parameters.put("user", this.user);
             parameters.put("transaction", transaction);
@@ -329,6 +341,12 @@ public class TransactionsController implements Initializable {
                 ((Category) this.categoriesListView.getSelectionModel().getSelectedItem()))
                 .showAndGetResult();
         if (fixedTransaction != null) {
+
+            if ((fixedTransaction.getCategory().getRootId() == 0 && fixedTransaction.getAmount() < 0) ||
+                    (fixedTransaction.getCategory().getRootId() == 2 && fixedTransaction.getAmount() >= 0)) {
+                fixedTransaction.setAmount(fixedTransaction.getAmount() * (-1));
+            }
+
             Map<String, Object> parameters = new HashMap<>();
             parameters.put("user", this.user);
             parameters.put("fixedTransaction", fixedTransaction);
@@ -354,6 +372,12 @@ public class TransactionsController implements Initializable {
                 ((Category) this.categoriesListView.getSelectionModel().getSelectedItem()))
                 .showAndGetResult();
         if (fixedTransaction != null) {
+
+            if ((fixedTransaction.getCategory().getRootId() == 0 && fixedTransaction.getAmount() < 0) ||
+                    (fixedTransaction.getCategory().getRootId() == 2 && fixedTransaction.getAmount() >= 0)) {
+                fixedTransaction.setAmount(fixedTransaction.getAmount() * (-1));
+            }
+
             Map<String, Object> parameters = new HashMap<>();
             parameters.put("fixedTransaction", fixedTransaction);
 

@@ -162,8 +162,11 @@ public class FinancerService {
 
             whereClause.put("id", jsonObjectTransaction.getInt("cat_id"));
             JSONObject jsonObjectCategory = this.database.get(Database.Table.USERS_CATEGORIES, whereClause).getJSONObject(0);
-            Category category = new Category(jsonObjectCategory.getInt("id"), jsonObjectCategory.getInt("parent_id"),
-                    jsonObjectCategory.getInt("cat_id"), jsonObjectCategory.getString("name"), false);
+            Category category = new Category(jsonObjectCategory.getInt("id"),
+                    (jsonObjectCategory.get("parent_id") == "null" ? -1 : jsonObjectCategory.getInt("parent_id")),
+                    jsonObjectCategory.getInt("cat_id"),
+                    jsonObjectCategory.getString("name"),
+                    false);
 
             transactions.add(new Transaction(jsonObjectTransaction.getInt("id"), jsonObjectTransaction.getDouble("amount"), category,
                     jsonObjectTransaction.getString("product"), jsonObjectTransaction.getString("purpose"),
