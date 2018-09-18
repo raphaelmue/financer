@@ -207,10 +207,10 @@ public class FixedTransactionDialog extends FinancerDialog<FixedTransaction> {
         this.transactionAmountContainer.setVisible(!this.transactionAmountContainer.isVisible());
     }
 
-    private void toggleTransactionAmountContainer(boolean visible) { {
+    private void toggleTransactionAmountContainer(boolean visible) {
         this.transactionAmountContainer.setManaged(visible);
         this.transactionAmountContainer.setVisible(visible);
-    }}
+    }
 
     @Override
     protected boolean checkConsistency() {
