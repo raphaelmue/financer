@@ -10,12 +10,17 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 
+import java.util.List;
+
 public class TransactionAmountDialog extends FinancerDialog<TransactionAmount> {
     private JFXDatePicker valueDateField;
     private DoubleField amountField;
+    private List<TransactionAmount> transactionAmounts;
 
-    public TransactionAmountDialog(TransactionAmount value) {
+    public TransactionAmountDialog(TransactionAmount value, List<TransactionAmount> transactionAmounts) {
         super(value);
+        this.transactionAmounts = transactionAmounts;
+
         this.setHeaderText(I18N.get("transactionAmounts"));
 
         this.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
@@ -51,7 +56,18 @@ public class TransactionAmountDialog extends FinancerDialog<TransactionAmount> {
 
     @Override
     protected boolean checkConsistency() {
-        return true;
+        boolean result = true;
+
+        for (TransactionAmount transactionAmount : this.transactionAmounts) {
+            if (transactionAmount.getValueDate().getMonth() == this.valueDateField.getValue().getMonth() &&
+                    transactionAmount.getValueDate().getYear() == this.valueDateField.getValue().getYear()) {
+                this.setErrorMessage(I18N.get("errTransactionAmountExists"));
+                result = false;
+                break;
+            }
+        }
+
+        return result;
     }
 
     @Override

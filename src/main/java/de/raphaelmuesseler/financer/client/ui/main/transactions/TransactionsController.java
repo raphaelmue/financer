@@ -453,7 +453,8 @@ public class TransactionsController implements Initializable {
                 if (fixedTransactions != null && fixedTransactions.size() > 0) {
                     for (FixedTransaction fixedTransaction : fixedTransactions) {
                         if (fixedTransaction.getCategory().getId() == item.getId() && !item.isKey()) {
-                            if (fixedTransaction.getAmount() == 0) {
+                            if (fixedTransaction.isVariable() && fixedTransaction.getTransactionAmounts() != null &&
+                                    fixedTransaction.getTransactionAmounts().size() > 0) {
                                 this.amountLabel.setText(String.valueOf(fixedTransaction.getTransactionAmounts().get(
                                         fixedTransaction.getTransactionAmounts().size() - 1
                                 ).getAmount()));
@@ -513,7 +514,8 @@ public class TransactionsController implements Initializable {
                     this.dateLabel.setText(item.getStartDate() + " - " + item.getEndDate());
                 }
 
-                if (item.isVariable()) {
+                if (item.isVariable() && item.getTransactionAmounts() != null &&
+                        item.getTransactionAmounts().size() > 0) {
                     this.amountLabel.setText(String.valueOf(item.getTransactionAmounts().get(0).getAmount()));
                     if (item.getTransactionAmounts().size() > 1) {
                         this.lastAmountLabel.setText(String.valueOf(item.getTransactionAmounts().get(1).getAmount()));

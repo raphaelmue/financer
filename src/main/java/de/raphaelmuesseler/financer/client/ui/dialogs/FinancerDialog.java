@@ -32,8 +32,9 @@ public abstract class FinancerDialog<T> extends Dialog<T> {
         VBox vBox = new VBox();
         this.errorMessageLabel = new Label();
         this.errorMessageLabel.setStyle("-fx-text-fill: #ff4a39;" +
-                "    -fx-padding: 15 0;" +
+                "    -fx-padding: 5 0 15 0;" +
                 "    -fx-font-weight: 700;");
+        this.errorMessageLabel.setManaged(false);
         vBox.getChildren().add(this.errorMessageLabel);
         vBox.getChildren().add(this.setDialogContent());
         this.getDialogPane().setContent(vBox);
@@ -45,12 +46,17 @@ public abstract class FinancerDialog<T> extends Dialog<T> {
             if (this.checkConsistency()) {
                 return this.onConfirm();
             } else {
-                this.errorMessageLabel.setText(this.getErrorMessage());
+                this.showErrorMessage();
                 return this.showAndGetResult();
             }
         } else {
             return this.onCancel();
         }
+    }
+
+    private final void showErrorMessage() {
+        this.errorMessageLabel.setText(this.getErrorMessage());
+        this.errorMessageLabel.setManaged(true);
     }
 
     protected abstract boolean checkConsistency();

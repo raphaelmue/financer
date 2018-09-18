@@ -12,12 +12,16 @@ import de.raphaelmuesseler.financer.shared.model.Category;
 import de.raphaelmuesseler.financer.shared.model.transactions.FixedTransaction;
 import de.raphaelmuesseler.financer.shared.model.transactions.TransactionAmount;
 import de.raphaelmuesseler.financer.shared.util.collections.SerialTreeItem;
+import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import org.controlsfx.glyphfont.FontAwesome;
+import org.controlsfx.glyphfont.GlyphFont;
+import org.controlsfx.glyphfont.GlyphFontRegistry;
 
 import java.time.LocalDate;
 
@@ -48,6 +52,9 @@ public class FixedTransactionDialog extends FinancerDialog<FixedTransaction> {
 
     @Override
     protected Node setDialogContent() {
+        HBox hBox = new HBox();
+        hBox.setSpacing(15);
+
         GridPane gridPane = new GridPane();
         gridPane.setHgap(120);
         gridPane.setVgap(10);
@@ -76,6 +83,12 @@ public class FixedTransactionDialog extends FinancerDialog<FixedTransaction> {
             if (this.amountField != null) {
                 this.amountField.setDisable(newValue);
             }
+            if (this.getDialogPane() != null) {
+                Platform.runLater(() -> {
+                    toggleTransactionAmountContainer();
+                    getDialogPane().getScene().getWindow().sizeToScene();
+                });
+            }
         });
         gridPane.add(this.isVariableCheckbox, 1, 4);
 
@@ -83,16 +96,20 @@ public class FixedTransactionDialog extends FinancerDialog<FixedTransaction> {
         this.amountField = new DoubleField();
         gridPane.add(this.amountField, 1, 5);
 
+        hBox.getChildren().add(gridPane);
+
         this.transactionAmountContainer = new VBox();
+        this.transactionAmountContainer.setSpacing(10);
         this.transactionAmountContainer.setPrefHeight(200);
         this.transactionAmountContainer.getChildren().add(new Label(I18N.get("transactionAmounts")));
 
-        JFXButton newTransactionAmountBtn = new JFXButton(I18N.get("new"));
-        JFXButton editTransactionAmountBtn = new JFXButton(I18N.get("edit"));
-        JFXButton deleteTransactionAmountBtn = new JFXButton(I18N.get("delete"));
+        GlyphFont fontAwesome = GlyphFontRegistry.font("FontAwesome");
+        JFXButton newTransactionAmountBtn = new JFXButton(I18N.get("new"), fontAwesome.create(FontAwesome.Glyph.PLUS));
+        JFXButton editTransactionAmountBtn = new JFXButton(I18N.get("edit"), fontAwesome.create(FontAwesome.Glyph.EDIT));
+        JFXButton deleteTransactionAmountBtn = new JFXButton(I18N.get("delete"), fontAwesome.create(FontAwesome.Glyph.TRASH));
 
         newTransactionAmountBtn.setOnAction(event -> {
-            TransactionAmount transactionAmount = new TransactionAmountDialog(null).showAndGetResult();
+            TransactionAmount transactionAmount = new TransactionAmountDialog(null, getValue().getTransactionAmounts()).showAndGetResult();
             if (transactionAmount != null) {
                 transactionAmountListView.getItems().add(transactionAmount);
                 getValue().getTransactionAmounts().add(transactionAmount);
@@ -101,7 +118,8 @@ public class FixedTransactionDialog extends FinancerDialog<FixedTransaction> {
         });
         editTransactionAmountBtn.setOnAction(event -> {
             if (transactionAmountListView.getSelectionModel().getSelectedItem() != null) {
-                TransactionAmount transactionAmount = new TransactionAmountDialog(transactionAmountListView.getSelectionModel().getSelectedItem())
+                TransactionAmount transactionAmount = new TransactionAmountDialog(transactionAmountListView.getSelectionModel().getSelectedItem(),
+                        getValue().getTransactionAmounts())
                         .showAndGetResult();
                 if (transactionAmount != null) {
 
@@ -124,6 +142,7 @@ public class FixedTransactionDialog extends FinancerDialog<FixedTransaction> {
         });
 
         HBox toolBox = new HBox();
+        toolBox.setSpacing(8);
         toolBox.getChildren().add(newTransactionAmountBtn);
         toolBox.getChildren().add(editTransactionAmountBtn);
         toolBox.getChildren().add(deleteTransactionAmountBtn);
@@ -154,9 +173,9 @@ public class FixedTransactionDialog extends FinancerDialog<FixedTransaction> {
             }
         });
         this.transactionAmountContainer.getChildren().add(this.transactionAmountListView);
-        gridPane.add(this.transactionAmountContainer, 0, 6, 2, 1);
+        hBox.getChildren().add(this.transactionAmountContainer);
 
-        return gridPane;
+        return hBox;
     }
 
     @Override
@@ -166,22 +185,32 @@ public class FixedTransactionDialog extends FinancerDialog<FixedTransaction> {
             this.dayField.setValue(this.getValue().getDay());
             this.startDateField.setValue(this.getValue().getStartDate());
             this.endDateField.setValue(this.getValue().getEndDate());
-            this.isVariableCheckbox.setSelected(this.getValue().isVariable());
             if (this.getValue().isVariable()) {
-                this.transactionAmountListView.getItems().addAll(this.getValue().getTransactionAmounts());
+                this.isVariableCheckbox.setSelected(this.getValue().isVariable());
+                this.toggleTransactionAmountContainer(false);
+
+                if (this.getValue().getTransactionAmounts() != null && this.getValue().getTransactionAmounts().size() > 0) {
+                    this.transactionAmountListView.getItems().addAll(this.getValue().getTransactionAmounts());
+                }
                 this.amountField.setDisable(true);
             } else {
                 this.amountField.setText(Double.toString(this.getValue().getAmount()));
-                this.transactionAmountContainer.setPrefHeight(0);
-                this.transactionAmountContainer.setVisible(false);
-                this.transactionAmountContainer.setDisable(true);
+                this.toggleTransactionAmountContainer(false);
             }
         } else {
-            this.transactionAmountContainer.setPrefHeight(0);
-            this.transactionAmountContainer.setVisible(false);
-            this.transactionAmountContainer.setDisable(true);
+            this.toggleTransactionAmountContainer(false);
         }
     }
+
+    private void toggleTransactionAmountContainer() {
+        this.transactionAmountContainer.setManaged(!this.transactionAmountContainer.isManaged());
+        this.transactionAmountContainer.setVisible(!this.transactionAmountContainer.isVisible());
+    }
+
+    private void toggleTransactionAmountContainer(boolean visible) { {
+        this.transactionAmountContainer.setManaged(visible);
+        this.transactionAmountContainer.setVisible(visible);
+    }}
 
     @Override
     protected boolean checkConsistency() {
