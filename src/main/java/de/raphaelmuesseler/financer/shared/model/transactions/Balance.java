@@ -34,10 +34,12 @@ public class Balance {
 
     public List<FixedTransaction> getFixedTransactionsByMonth(LocalDate localDate) {
         List<FixedTransaction> result = new ArrayList<>();
-        for (FixedTransaction fixedTransaction : this.fixedTransactions) {
-            if (fixedTransaction.getEndDate() == null && (fixedTransaction.getDay() == 0 ||
-                    fixedTransaction.getDay() > 0 &&  fixedTransaction.getDay() <= localDate.getDayOfMonth())) {
-                result.add(fixedTransaction);
+        if (this.fixedTransactions != null) {
+            for (FixedTransaction fixedTransaction : this.fixedTransactions) {
+                if (fixedTransaction.getEndDate() == null && (fixedTransaction.getDay() == 0 ||
+                        fixedTransaction.getDay() > 0 && fixedTransaction.getDay() <= localDate.getDayOfMonth())) {
+                    result.add(fixedTransaction);
+                }
             }
         }
         return result;

@@ -2,6 +2,7 @@ package de.raphaelmuesseler.financer.client.ui.main.transactions;
 
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXListView;
+import com.sun.imageio.plugins.gif.GIFImageReader;
 import de.raphaelmuesseler.financer.client.connection.ServerRequestHandler;
 import de.raphaelmuesseler.financer.client.local.LocalStorage;
 import de.raphaelmuesseler.financer.client.ui.I18N;
@@ -15,6 +16,7 @@ import de.raphaelmuesseler.financer.shared.model.transactions.FixedTransaction;
 import de.raphaelmuesseler.financer.shared.model.transactions.Transaction;
 import de.raphaelmuesseler.financer.shared.util.collections.CollectionUtil;
 import de.raphaelmuesseler.financer.shared.util.collections.SerialTreeItem;
+import de.raphaelmuesseler.financer.shared.util.date.DateUtil;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -24,6 +26,8 @@ import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.TextAlignment;
 import org.controlsfx.glyphfont.FontAwesome;
@@ -33,9 +37,11 @@ import org.controlsfx.glyphfont.GlyphFontRegistry;
 import java.net.ConnectException;
 import java.net.URL;
 import java.time.LocalDate;
+import java.time.Period;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -63,12 +69,14 @@ public class TransactionsController implements Initializable {
     public JFXListView categoriesListView;
     @FXML
     public JFXListView fixedTransactionsListView;
+    public GridPane transactionsOverviewGridPane;
 
     private User user;
     private Logger logger = Logger.getLogger("FinancerApplication");
     private ExecutorService executor = Executors.newCachedThreadPool();
     private ObservableList<Transaction> transactions;
     private ObservableList<FixedTransaction> fixedTransactions;
+    private SerialTreeItem<Category> tree;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -100,10 +108,87 @@ public class TransactionsController implements Initializable {
         this.deleteFixedTransactionBtn.setGraphicTextGap(8);
         this.deleteFixedTransactionBtn.setDisable(true);
 
+        this.tree = SerialTreeItem.fromJson((String) LocalStorage.readObject(LocalStorage.PROFILE_FILE, "categories"),
+                Category.class);
+
 
         Platform.runLater(() -> {
             this.loadTransactionsTable();
             this.loadFixedTransactionsTable();
+        });
+    }
+
+    private void loadTransactionsOverviewTable() {
+        final int numberOfMaxMonths = 6;
+        final Map<Integer, Map<Integer, Double>> amounts = new HashMap<>();
+
+        for (int i = 0; i < numberOfMaxMonths; i++) {
+            LocalDate date = LocalDate.now().minusMonths(i);
+            Label monthLabel = new Label(de.raphaelmuesseler.financer.shared.util.date.Month.getMonthByNumber(date.getMonthValue()).getName());
+            this.transactionsOverviewGridPane.add(monthLabel, i + 1, 0);
+            GridPane.setHgrow(monthLabel, Priority.ALWAYS);
+            GridPane.setVgrow(monthLabel, Priority.ALWAYS);
+        }
+
+        for (Transaction transaction : this.transactions) {
+            if (transaction.getValueDate().plusMonths(numberOfMaxMonths).compareTo(LocalDate.now()) >= 0) {
+                Map<Integer, Double> monthAmounts = amounts.get(transaction.getCategory().getId());
+                if (monthAmounts == null) {
+                    monthAmounts = new HashMap<>();
+                }
+                monthAmounts.merge(DateUtil.getMonthDifference(transaction.getValueDate(), LocalDate.now()),
+                        transaction.getAmount(), (a, b) -> a + b);
+                amounts.put(transaction.getCategory().getId(), monthAmounts);
+            }
+        }
+
+        for (FixedTransaction fixedTransaction : this.fixedTransactions) {
+            if (fixedTransaction.getEndDate() == null || fixedTransaction.getEndDate().plusMonths(numberOfMaxMonths).compareTo(LocalDate.now()) >= 0) {
+                Map<Integer, Double> monthAmounts = amounts.get(fixedTransaction.getCategory().getId());
+                if (monthAmounts == null) {
+                    monthAmounts = new HashMap<>();
+                }
+                if (fixedTransaction.isVariable() && fixedTransaction.getTransactionAmounts().size() > 1) {
+                    for (int i = 0; i < Math.min(numberOfMaxMonths, fixedTransaction.getTransactionAmounts().size()); i++) {
+                        monthAmounts.put(DateUtil.getMonthDifference(fixedTransaction.getTransactionAmounts().get(i).getValueDate(),
+                                LocalDate.now()), fixedTransaction.getTransactionAmounts().get(i).getAmount());
+                    }
+                } else {
+                    int start = 0;
+                    if (fixedTransaction.getEndDate() != null) {
+                        start = Period.between(fixedTransaction.getEndDate().withDayOfMonth(1), LocalDate.now().withDayOfMonth(1)).getMonths();
+                        if (start == DateUtil.getMonthDifference(fixedTransaction.getStartDate(), LocalDate.now())) {
+                            monthAmounts.put(start, fixedTransaction.getAmount());
+                        }
+                    } else {
+                        for (int i = start; i <= Math.min(numberOfMaxMonths, DateUtil.getMonthDifference(fixedTransaction.getStartDate(),
+                                LocalDate.now())); i++) {
+                            monthAmounts.put(i, fixedTransaction.getAmount());
+                        }
+                    }
+                }
+                amounts.put(fixedTransaction.getCategory().getId(), monthAmounts);
+            }
+        }
+
+        AtomicInteger row = new AtomicInteger(1);
+        this.tree.traverse((treeItem) -> {
+            Label categoryLabel = new Label(treeItem.getValue().getName());
+            GridPane.setHgrow(categoryLabel, Priority.ALWAYS);
+            GridPane.setVgrow(categoryLabel, Priority.ALWAYS);
+            transactionsOverviewGridPane.add(categoryLabel, 0, row.get());
+
+            if (!treeItem.getValue().isKey()) {
+                for (int i = 0; i < numberOfMaxMonths; i++) {
+                    if (amounts.containsKey(treeItem.getValue().getId()) && amounts.get(treeItem.getValue().getId()).containsKey(i)) {
+                        Label amountLabel = new Label(Double.toString(amounts.get(treeItem.getValue().getId()).get(i)));
+                        transactionsOverviewGridPane.add(amountLabel, i + 1, row.get());
+                        GridPane.setHgrow(amountLabel, Priority.ALWAYS);
+                        GridPane.setVgrow(amountLabel, Priority.ALWAYS);
+                    }
+                }
+            }
+            row.getAndIncrement();
         });
     }
 
@@ -142,18 +227,15 @@ public class TransactionsController implements Initializable {
 
     private void loadFixedTransactionsTable() {
         if (LocalStorage.readObject(LocalStorage.PROFILE_FILE, "categories") != null) {
-            SerialTreeItem<Category> tree = SerialTreeItem.fromJson((String) LocalStorage.readObject(LocalStorage.PROFILE_FILE, "categories"),
-                    Category.class);
-
-            for (TreeItem<Category> subTree : tree.getChildren()) {
+            for (TreeItem<Category> subTree : this.tree.getChildren()) {
                 SerialTreeItem<Category> serialSubTree = (SerialTreeItem<Category>) subTree;
+                serialSubTree.numberItemsByValue((result, prefix) -> {
+                    if (!result.getValue().isKey()) {
+                        result.getValue().setName(prefix + " " + result.getValue().getName());
+                    }
+                });
                 if ((serialSubTree.getValue().getRootId() != -1 && (serialSubTree.getValue().getRootId() % 2) == 0) ||
                         (serialSubTree.getValue().getRootId() == -1 && (serialSubTree.getValue().getParentId() % 2) == 0)) {
-                    serialSubTree.numberItemsByValue((result, prefix) -> {
-                        if (!result.getValue().isKey()) {
-                            result.getValue().setName(prefix + " " + result.getValue().getName());
-                        }
-                    });
                     serialSubTree.traverse(treeItem -> categoriesListView.getItems().add(treeItem.getValue()));
                 }
             }
@@ -331,6 +413,8 @@ public class TransactionsController implements Initializable {
                     showFixedTransactions((Category) categoriesListView.getSelectionModel().getSelectedItem());
                     categoriesListView.setCellFactory(param -> new CategoryListViewImpl());
                     FinancerController.hideLoadingBox();
+
+                    loadTransactionsOverviewTable();
                 });
             }
         }));
