@@ -14,7 +14,7 @@ public class Category implements Serializable {
     };
 
     private int id, parentId, rootId;
-    private String name;
+    private String name, prefix = null;
     private boolean isKey;
 
     public Category(String name) {
@@ -46,7 +46,15 @@ public class Category implements Serializable {
     }
 
     public String getName() {
-        return isKey ? I18N.get(this.name) : name;
+        if (this.prefix != null) {
+            return this.prefix + " " + (isKey ? I18N.get(this.name) : name);
+        } else {
+            return (isKey ? I18N.get(this.name) : name);
+        }
+    }
+
+    public String getPrefix() {
+        return prefix;
     }
 
     public String getKey() {
@@ -79,6 +87,10 @@ public class Category implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public void setPrefix(String prefix) {
+        this.prefix = prefix;
     }
 
     public void setParentId(int parentId) {

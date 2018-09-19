@@ -111,6 +111,9 @@ public class TransactionsController implements Initializable {
         this.tree = SerialTreeItem.fromJson((String) LocalStorage.readObject(LocalStorage.PROFILE_FILE, "categories"),
                 Category.class);
 
+        this.tree.numberItemsByValue((result, prefix) -> {
+            result.getValue().setPrefix(prefix);
+        });
 
         Platform.runLater(() -> {
             this.loadTransactionsTable();
@@ -227,37 +230,31 @@ public class TransactionsController implements Initializable {
 
     private void loadFixedTransactionsTable() {
         if (LocalStorage.readObject(LocalStorage.PROFILE_FILE, "categories") != null) {
-            for (TreeItem<Category> subTree : this.tree.getChildren()) {
-                SerialTreeItem<Category> serialSubTree = (SerialTreeItem<Category>) subTree;
-                serialSubTree.numberItemsByValue((result, prefix) -> {
-                    if (!result.getValue().isKey()) {
-                        result.getValue().setName(prefix + " " + result.getValue().getName());
-                    }
-                });
-                if ((serialSubTree.getValue().getRootId() != -1 && (serialSubTree.getValue().getRootId() % 2) == 0) ||
-                        (serialSubTree.getValue().getRootId() == -1 && (serialSubTree.getValue().getParentId() % 2) == 0)) {
-                    serialSubTree.traverse(treeItem -> categoriesListView.getItems().add(treeItem.getValue()));
+            this.tree.traverse(treeItem -> {
+                if ((treeItem.getValue().getRootId() != -1 && (treeItem.getValue().getRootId() % 2) == 0) ||
+                        (treeItem.getValue().getRootId() == -1 && (treeItem.getValue().getParentId() % 2) == 0)) {
+                    categoriesListView.getItems().add(treeItem.getValue());
                 }
-            }
-
-            this.categoriesListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-                showFixedTransactions((Category) newValue);
-                if (!((Category) newValue).isKey()) {
-                    newFixedTransactionBtn.setDisable(false);
-                } else {
-                    newFixedTransactionBtn.setDisable(true);
-                }
-                editFixedTransactionBtn.setDisable(true);
-                deleteFixedTransactionBtn.setDisable(true);
             });
-
-            this.fixedTransactionsListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-                editFixedTransactionBtn.setDisable(false);
-                deleteFixedTransactionBtn.setDisable(false);
-            });
-
-            this.handleRefreshFixedTransactions();
         }
+
+        this.categoriesListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            showFixedTransactions((Category) newValue);
+            if (!((Category) newValue).isKey()) {
+                newFixedTransactionBtn.setDisable(false);
+            } else {
+                newFixedTransactionBtn.setDisable(true);
+            }
+            editFixedTransactionBtn.setDisable(true);
+            deleteFixedTransactionBtn.setDisable(true);
+        });
+
+        this.fixedTransactionsListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            editFixedTransactionBtn.setDisable(false);
+            deleteFixedTransactionBtn.setDisable(false);
+        });
+
+        this.handleRefreshFixedTransactions();
     }
 
     public void handleRefreshTransactions() {
