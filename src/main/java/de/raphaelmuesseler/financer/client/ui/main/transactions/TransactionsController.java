@@ -192,7 +192,7 @@ public class TransactionsController implements Initializable {
                 }
             }
             row.getAndIncrement();
-        });
+        }, true);
     }
 
     private void loadTransactionsTable() {

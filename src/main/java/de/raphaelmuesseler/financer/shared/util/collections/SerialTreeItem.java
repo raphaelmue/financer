@@ -128,6 +128,17 @@ public class SerialTreeItem<T> extends TreeItem<T> implements Serializable {
         this.traverse(this, action);
     }
 
+    public void traverse(Action<SerialTreeItem<T>> action, boolean ignoreRoot) {
+        if (ignoreRoot) {
+            for (TreeItem<T> item : this.getChildren()) {
+                SerialTreeItem<T> serialTreeItem = (SerialTreeItem<T>) item;
+                this.traverse(serialTreeItem, action);
+            }
+        } else {
+            this.traverse(this, action);
+        }
+    }
+
     private void traverse(SerialTreeItem<T> root, Action<SerialTreeItem<T>> action) {
         action.action(root);
         if (!root.isLeaf()) {
