@@ -2,7 +2,6 @@ package de.raphaelmuesseler.financer.client.ui.main.transactions;
 
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXListView;
-import com.sun.imageio.plugins.gif.GIFImageReader;
 import de.raphaelmuesseler.financer.client.connection.ServerRequestHandler;
 import de.raphaelmuesseler.financer.client.local.LocalStorage;
 import de.raphaelmuesseler.financer.client.ui.I18N;
@@ -18,6 +17,7 @@ import de.raphaelmuesseler.financer.shared.util.collections.CollectionUtil;
 import de.raphaelmuesseler.financer.shared.util.collections.SerialTreeItem;
 import de.raphaelmuesseler.financer.shared.util.date.DateUtil;
 import javafx.application.Platform;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -45,6 +45,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import static de.raphaelmuesseler.financer.shared.util.date.Month.*;
+
 public class TransactionsController implements Initializable {
 
     @FXML
@@ -69,7 +71,7 @@ public class TransactionsController implements Initializable {
     public JFXListView categoriesListView;
     @FXML
     public JFXListView fixedTransactionsListView;
-    public GridPane transactionsOverviewGridPane;
+    public TableView<TransactionOverviewRow> transactionsOverviewTableView;
 
     private User user;
     private Logger logger = Logger.getLogger("FinancerApplication");
@@ -123,76 +125,66 @@ public class TransactionsController implements Initializable {
 
     private void loadTransactionsOverviewTable() {
         final int numberOfMaxMonths = 6;
-        final Map<Integer, Map<Integer, Double>> amounts = new HashMap<>();
+        final List<TableColumn<TransactionOverviewRow, String>> monthColumns = new ArrayList<>(numberOfMaxMonths);
+        final Map<Category, TransactionOverviewRow> rows = new HashMap<>();
+
+        this.tree.traverse(treeItem -> rows.put(treeItem.getValue(), new TransactionOverviewRow(treeItem.getValue())), true);
+
+        TableColumn<TransactionOverviewRow, String> categoryColumn = new TableColumn<>(I18N.get("category"));
+        categoryColumn.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().category.getName()));
 
         for (int i = 0; i < numberOfMaxMonths; i++) {
-            LocalDate date = LocalDate.now().minusMonths(i);
-            Label monthLabel = new Label(de.raphaelmuesseler.financer.shared.util.date.Month.getMonthByNumber(date.getMonthValue()).getName());
-            this.transactionsOverviewGridPane.add(monthLabel, i + 1, 0);
-            GridPane.setHgrow(monthLabel, Priority.ALWAYS);
-            GridPane.setVgrow(monthLabel, Priority.ALWAYS);
+            TableColumn<TransactionOverviewRow, String> column = new TableColumn<>(getMonthByNumber(LocalDate.now().minusMonths(i).getMonthValue()).getName());
+            int index = i;
+            column.setCellValueFactory(param -> new SimpleStringProperty(Double.toString(param.getValue().getAmounts()[index])));
+            monthColumns.add(column);
         }
+        this.transactionsOverviewTableView.getColumns().add(categoryColumn);
+        this.transactionsOverviewTableView.getColumns().addAll(monthColumns);
 
         for (Transaction transaction : this.transactions) {
             if (transaction.getValueDate().plusMonths(numberOfMaxMonths).compareTo(LocalDate.now()) >= 0) {
-                Map<Integer, Double> monthAmounts = amounts.get(transaction.getCategory().getId());
-                if (monthAmounts == null) {
-                    monthAmounts = new HashMap<>();
+                TransactionOverviewRow row = rows.get(transaction.getCategory());
+                if (row == null) {
+                    row = new TransactionOverviewRow(transaction.getCategory());
+                    rows.put(row.getCategory(), row);
                 }
-                monthAmounts.merge(DateUtil.getMonthDifference(transaction.getValueDate(), LocalDate.now()),
-                        transaction.getAmount(), (a, b) -> a + b);
-                amounts.put(transaction.getCategory().getId(), monthAmounts);
+                row.getAmounts()[DateUtil.getMonthDifference(transaction.getValueDate(), LocalDate.now())] += transaction.getAmount();
             }
         }
 
         for (FixedTransaction fixedTransaction : this.fixedTransactions) {
             if (fixedTransaction.getEndDate() == null || fixedTransaction.getEndDate().plusMonths(numberOfMaxMonths).compareTo(LocalDate.now()) >= 0) {
-                Map<Integer, Double> monthAmounts = amounts.get(fixedTransaction.getCategory().getId());
-                if (monthAmounts == null) {
-                    monthAmounts = new HashMap<>();
+                TransactionOverviewRow row = rows.get(fixedTransaction.getCategory());
+                if (row == null) {
+                    row = new TransactionOverviewRow(fixedTransaction.getCategory());
+                    rows.put(row.getCategory(), row);
                 }
                 if (fixedTransaction.isVariable() && fixedTransaction.getTransactionAmounts().size() > 1) {
                     for (int i = 0; i < Math.min(numberOfMaxMonths, fixedTransaction.getTransactionAmounts().size()); i++) {
-                        monthAmounts.put(DateUtil.getMonthDifference(fixedTransaction.getTransactionAmounts().get(i).getValueDate(),
-                                LocalDate.now()), fixedTransaction.getTransactionAmounts().get(i).getAmount());
+                        if (DateUtil.getMonthDifference(fixedTransaction.getTransactionAmounts().get(i).getValueDate(), LocalDate.now()) < 6) {
+                            row.getAmounts()[DateUtil.getMonthDifference(fixedTransaction.getTransactionAmounts().get(i).getValueDate(),
+                                    LocalDate.now())] += fixedTransaction.getTransactionAmounts().get(i).getAmount();
+                        }
                     }
                 } else {
                     int start = 0;
                     if (fixedTransaction.getEndDate() != null) {
                         start = Period.between(fixedTransaction.getEndDate().withDayOfMonth(1), LocalDate.now().withDayOfMonth(1)).getMonths();
                         if (start == DateUtil.getMonthDifference(fixedTransaction.getStartDate(), LocalDate.now())) {
-                            monthAmounts.put(start, fixedTransaction.getAmount());
+                            row.getAmounts()[start] += fixedTransaction.getAmount();
                         }
                     } else {
-                        for (int i = start; i <= Math.min(numberOfMaxMonths, DateUtil.getMonthDifference(fixedTransaction.getStartDate(),
+                        for (int i = start; i < Math.min(numberOfMaxMonths, DateUtil.getMonthDifference(fixedTransaction.getStartDate(),
                                 LocalDate.now())); i++) {
-                            monthAmounts.put(i, fixedTransaction.getAmount());
+                            row.getAmounts()[i] += fixedTransaction.getAmount();
                         }
                     }
                 }
-                amounts.put(fixedTransaction.getCategory().getId(), monthAmounts);
             }
         }
 
-        AtomicInteger row = new AtomicInteger(1);
-        this.tree.traverse((treeItem) -> {
-            Label categoryLabel = new Label(treeItem.getValue().getName());
-            GridPane.setHgrow(categoryLabel, Priority.ALWAYS);
-            GridPane.setVgrow(categoryLabel, Priority.ALWAYS);
-            transactionsOverviewGridPane.add(categoryLabel, 0, row.get());
-
-            if (!treeItem.getValue().isKey()) {
-                for (int i = 0; i < numberOfMaxMonths; i++) {
-                    if (amounts.containsKey(treeItem.getValue().getId()) && amounts.get(treeItem.getValue().getId()).containsKey(i)) {
-                        Label amountLabel = new Label(Double.toString(amounts.get(treeItem.getValue().getId()).get(i)));
-                        transactionsOverviewGridPane.add(amountLabel, i + 1, row.get());
-                        GridPane.setHgrow(amountLabel, Priority.ALWAYS);
-                        GridPane.setVgrow(amountLabel, Priority.ALWAYS);
-                    }
-                }
-            }
-            row.getAndIncrement();
-        }, true);
+        this.transactionsOverviewTableView.getItems().addAll(rows.values());
     }
 
     private void loadTransactionsTable() {
@@ -662,6 +654,23 @@ public class TransactionsController implements Initializable {
             this.borderPane.setRight(vBoxRight);
             BorderPane.setAlignment(this.borderPane.getCenter(), Pos.TOP_CENTER);
             BorderPane.setAlignment(this.borderPane.getRight(), Pos.CENTER_RIGHT);
+        }
+    }
+
+    private class TransactionOverviewRow {
+        private Category category;
+        private double[] amounts = new double[6];
+
+        TransactionOverviewRow(Category category) {
+            this.category = category;
+        }
+
+        public Category getCategory() {
+            return category;
+        }
+
+        public double[] getAmounts() {
+            return amounts;
         }
     }
 }

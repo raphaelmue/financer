@@ -105,5 +105,15 @@ public class Category implements Serializable {
     public String toString() {
         return this.getName();
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        return (obj instanceof Category && this.getId() == ((Category) obj).getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return 548135 + this.getId();
+    }
 }
 

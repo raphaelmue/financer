@@ -13,10 +13,7 @@
                 <Tab text="%overview" closable="false" styleClass="tab">
                     <VBox styleClass="tab-content">
                         <Label text="%overview" styleClass="content-heading"/>
-                        <ScrollPane fitToHeight="true">
-                            <GridPane fx:id="transactionsOverviewGridPane" vgap="8" maxWidth="Infinity"
-                                      maxHeight="Infinity"/>
-                        </ScrollPane>
+                            <TableView fx:id="transactionsOverviewTableView"/>
                     </VBox>
                 </Tab>
                 <Tab text="%transactions" closable="false" styleClass="tab">
