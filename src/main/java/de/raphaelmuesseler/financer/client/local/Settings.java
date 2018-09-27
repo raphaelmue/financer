@@ -1,7 +1,7 @@
 package de.raphaelmuesseler.financer.client.local;
 
-import de.raphaelmuesseler.financer.client.ui.I18N;
 import de.raphaelmuesseler.financer.client.ui.dialogs.FinancerAlert;
+import de.raphaelmuesseler.financer.client.ui.format.I18N;
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
 

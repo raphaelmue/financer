@@ -4,7 +4,8 @@ import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXListView;
 import de.raphaelmuesseler.financer.client.connection.ServerRequestHandler;
 import de.raphaelmuesseler.financer.client.local.LocalStorage;
-import de.raphaelmuesseler.financer.client.ui.I18N;
+import de.raphaelmuesseler.financer.client.ui.format.Formatter;
+import de.raphaelmuesseler.financer.client.ui.format.I18N;
 import de.raphaelmuesseler.financer.client.ui.dialogs.FinancerConfirmDialog;
 import de.raphaelmuesseler.financer.client.ui.main.FinancerController;
 import de.raphaelmuesseler.financer.shared.connection.AsyncConnectionCall;
@@ -18,6 +19,7 @@ import de.raphaelmuesseler.financer.shared.util.collections.SerialTreeItem;
 import de.raphaelmuesseler.financer.shared.util.date.DateUtil;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -26,10 +28,9 @@ import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.TextAlignment;
+import javafx.util.Callback;
 import org.controlsfx.glyphfont.FontAwesome;
 import org.controlsfx.glyphfont.GlyphFont;
 import org.controlsfx.glyphfont.GlyphFontRegistry;
@@ -41,7 +42,6 @@ import java.time.Period;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -135,8 +135,16 @@ public class TransactionsController implements Initializable {
 
         for (int i = 0; i < numberOfMaxMonths; i++) {
             TableColumn<TransactionOverviewRow, String> column = new TableColumn<>(getMonthByNumber(LocalDate.now().minusMonths(i).getMonthValue()).getName());
+            column.setStyle("-fx-alignment: CENTER-RIGHT;");
             int index = i;
-            column.setCellValueFactory(param -> new SimpleStringProperty(Double.toString(param.getValue().getAmounts()[index])));
+            column.setCellValueFactory(param -> new SimpleStringProperty(Double.toString(param.getValue().amounts[index])));
+            column.setCellFactory(param -> new TableCell<TransactionOverviewRow, String>() {
+                @Override
+                protected void updateItem(String item, boolean empty) {
+                    super.updateItem(item, empty);
+                    setGraphic(!empty ? Formatter.formatAmountLabel(Double.valueOf(item)) : null);
+                }
+            });
             monthColumns.add(column);
         }
         this.transactionsOverviewTableView.getColumns().add(categoryColumn);
@@ -197,6 +205,14 @@ public class TransactionsController implements Initializable {
 
         valueDateColumn.setCellValueFactory(new PropertyValueFactory<>("valueDate"));
         amountColumn.setCellValueFactory(new PropertyValueFactory<>("amount"));
+        amountColumn.setStyle("-fx-alignment: CENTER-RIGHT;");
+        amountColumn.setCellFactory(param -> new TableCell<Transaction, Double>(){
+            @Override
+            protected void updateItem(Double item, boolean empty) {
+                super.updateItem(item, empty);
+                setGraphic(!empty ? Formatter.formatAmountLabel(item) : null);
+            }
+        });
         categoryColumn.setCellValueFactory(new PropertyValueFactory<>("category"));
         productColumn.setCellValueFactory(new PropertyValueFactory<>("product"));
         purposeColumn.setCellValueFactory(new PropertyValueFactory<>("purpose"));
@@ -528,16 +544,11 @@ public class TransactionsController implements Initializable {
                         if (fixedTransaction.getCategory().getId() == item.getId() && !item.isKey()) {
                             if (fixedTransaction.isVariable() && fixedTransaction.getTransactionAmounts() != null &&
                                     fixedTransaction.getTransactionAmounts().size() > 0) {
-                                this.amountLabel.setText(String.valueOf(fixedTransaction.getTransactionAmounts().get(
+                                Formatter.formatAmountLabel(this.amountLabel, fixedTransaction.getTransactionAmounts().get(
                                         fixedTransaction.getTransactionAmounts().size() - 1
-                                ).getAmount()));
+                                ).getAmount());
                             } else {
-                                this.amountLabel.setText(String.valueOf(fixedTransaction.getAmount()));
-                            }
-                            if (fixedTransaction.getAmount() < 0) {
-                                this.amountLabel.getStyleClass().add("neg-amount");
-                            } else {
-                                this.amountLabel.getStyleClass().add("pos-amount");
+                                Formatter.formatAmountLabel(this.amountLabel, fixedTransaction.getAmount());
                             }
                             break;
                         }
@@ -589,20 +600,15 @@ public class TransactionsController implements Initializable {
 
                 if (item.isVariable() && item.getTransactionAmounts() != null &&
                         item.getTransactionAmounts().size() > 0) {
-                    this.amountLabel.setText(String.valueOf(item.getTransactionAmounts().get(0).getAmount()));
+                    Formatter.formatAmountLabel(this.amountLabel, item.getTransactionAmounts().get(0).getAmount());
                     if (item.getTransactionAmounts().size() > 1) {
-                        this.lastAmountLabel.setText(String.valueOf(item.getTransactionAmounts().get(1).getAmount()));
+                        Formatter.formatAmountLabel(this.lastAmountLabel, item.getTransactionAmounts().get(1).getAmount());
                         if (item.getTransactionAmounts().size() > 2) {
-                            this.preLastAmountLabel.setText(String.valueOf(item.getTransactionAmounts().get(2).getAmount()));
+                            Formatter.formatAmountLabel(this.preLastAmountLabel, item.getTransactionAmounts().get(2).getAmount());
                         }
                     }
                 } else {
-                    this.amountLabel.setText(String.valueOf(item.getAmount()));
-                }
-                if (item.getAmount() < 0) {
-                    this.amountLabel.getStyleClass().add("neg-amount");
-                } else {
-                    this.amountLabel.getStyleClass().add("pos-amount");
+                    Formatter.formatAmountLabel(this.amountLabel, item.getAmount());
                 }
 
                 this.isVariableLabel.setText(I18N.get("isVariable") + ": " +

@@ -1,4 +1,4 @@
-package de.raphaelmuesseler.financer.client.ui;
+package de.raphaelmuesseler.financer.client.ui.format;
 
 import de.raphaelmuesseler.financer.client.local.LocalStorage;
 import javafx.beans.binding.Bindings;

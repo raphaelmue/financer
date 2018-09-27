@@ -1,7 +1,8 @@
 package de.raphaelmuesseler.financer.client.ui.main.overview;
 
 import de.raphaelmuesseler.financer.client.local.LocalStorage;
-import de.raphaelmuesseler.financer.client.ui.I18N;
+import de.raphaelmuesseler.financer.client.ui.format.Formatter;
+import de.raphaelmuesseler.financer.client.ui.format.I18N;
 import de.raphaelmuesseler.financer.client.ui.main.FinancerController;
 import de.raphaelmuesseler.financer.shared.model.User;
 import de.raphaelmuesseler.financer.shared.model.transactions.Balance;
@@ -47,12 +48,7 @@ public class OverviewController implements Initializable {
                 this.lastTransactionsGridPane.add(new Label(transaction.getPurpose() + " (" + transaction.getProduct() + ")"),
                         0, counter);
 
-                Label amountLabel = new Label(Double.toString(transaction.getAmount()));
-                if (transaction.getAmount() < 0) {
-                    amountLabel.getStyleClass().add("neg-amount");
-                } else {
-                    amountLabel.getStyleClass().add("pos-amount");
-                }
+                Label amountLabel = Formatter.formatAmountLabel(transaction.getAmount());
                 this.lastTransactionsGridPane.add(amountLabel, 1, counter);
                 GridPane.setHalignment(amountLabel, HPos.RIGHT);
                 GridPane.setHgrow(amountLabel, Priority.ALWAYS);
@@ -66,32 +62,28 @@ public class OverviewController implements Initializable {
         Balance balance = new Balance(LocalDate.now());
 
         this.balanceGridPane.add(new Label(I18N.get("fixedRevenue")), 0, 0);
-        Label fixedRevenueLabel = new Label(Double.toString(balance.getFixedRevenueAmount()));
-        fixedRevenueLabel.getStyleClass().add("pos-amount");
+        Label fixedRevenueLabel = Formatter.formatAmountLabel(balance.getFixedRevenueAmount());
         GridPane.setHalignment(fixedRevenueLabel, HPos.RIGHT);
         GridPane.setHgrow(fixedRevenueLabel, Priority.ALWAYS);
         GridPane.setVgrow(fixedRevenueLabel, Priority.ALWAYS);
         this.balanceGridPane.add(fixedRevenueLabel, 1, 0);
 
         this.balanceGridPane.add(new Label(I18N.get("variableRevenue")), 0, 1);
-        Label variableRevenueLabel = new Label(Double.toString(balance.getVariableRevenueAmount()));
-        variableRevenueLabel.getStyleClass().add("pos-amount");
+        Label variableRevenueLabel = Formatter.formatAmountLabel(balance.getVariableRevenueAmount());
         GridPane.setHalignment(variableRevenueLabel, HPos.RIGHT);
         GridPane.setHgrow(variableRevenueLabel, Priority.ALWAYS);
         GridPane.setVgrow(variableRevenueLabel, Priority.ALWAYS);
         this.balanceGridPane.add(variableRevenueLabel, 1, 1);
 
         this.balanceGridPane.add(new Label(I18N.get("fixedExpenses")), 0, 2);
-        Label fixedExpensesLabel = new Label(Double.toString(balance.getFixedExpensesAmount()));
-        fixedExpensesLabel.getStyleClass().add("neg-amount");
+        Label fixedExpensesLabel = Formatter.formatAmountLabel(balance.getFixedExpensesAmount());
         GridPane.setHalignment(fixedExpensesLabel, HPos.RIGHT);
         GridPane.setHgrow(fixedExpensesLabel, Priority.ALWAYS);
         GridPane.setVgrow(fixedExpensesLabel, Priority.ALWAYS);
         this.balanceGridPane.add(fixedExpensesLabel, 1, 2);
 
         this.balanceGridPane.add(new Label(I18N.get("variableExpenses")), 0, 3);
-        Label variableExpensesLabel = new Label(Double.toString(balance.getVariableExpensesAmount()));
-        variableExpensesLabel.getStyleClass().add("neg-amount");
+        Label variableExpensesLabel = Formatter.formatAmountLabel(balance.getVariableExpensesAmount());
         GridPane.setHalignment(variableExpensesLabel, HPos.RIGHT);
         GridPane.setHgrow(variableExpensesLabel, Priority.ALWAYS);
         GridPane.setVgrow(variableExpensesLabel, Priority.ALWAYS);
@@ -100,9 +92,8 @@ public class OverviewController implements Initializable {
         Label balanceTextLabel = new Label(I18N.get("balance"));
         balanceTextLabel.setId("balance-label");
         this.balanceGridPane.add(balanceTextLabel, 0, 4);
-        Label balanceLabel = new Label(Double.toString(balance.getBalance()));
+        Label balanceLabel = Formatter.formatAmountLabel(balance.getBalance());
         balanceLabel.setId("balance-amount");
-        balanceLabel.getStyleClass().add(balance.getBalance() < 0 ? "neg-amount" : "pos-amount");
         GridPane.setHalignment(balanceLabel, HPos.RIGHT);
         GridPane.setHgrow(balanceLabel, Priority.ALWAYS);
         GridPane.setVgrow(balanceLabel, Priority.ALWAYS);

@@ -3,7 +3,7 @@ package de.raphaelmuesseler.financer.client.ui.login;
 import de.raphaelmuesseler.financer.client.connection.ServerRequestHandler;
 import de.raphaelmuesseler.financer.client.local.LocalStorage;
 import de.raphaelmuesseler.financer.client.local.Settings;
-import de.raphaelmuesseler.financer.client.ui.I18N;
+import de.raphaelmuesseler.financer.client.ui.format.I18N;
 import de.raphaelmuesseler.financer.client.ui.dialogs.FinancerAlert;
 import de.raphaelmuesseler.financer.client.ui.dialogs.FinancerExceptionDialog;
 import de.raphaelmuesseler.financer.client.ui.main.FinancerApplication;

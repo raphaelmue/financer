@@ -1,7 +1,7 @@
 package de.raphaelmuesseler.financer.client.ui.main.settings;
 
 import de.raphaelmuesseler.financer.client.local.Settings;
-import de.raphaelmuesseler.financer.client.ui.I18N;
+import de.raphaelmuesseler.financer.client.ui.format.I18N;
 import javafx.fxml.Initializable;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;

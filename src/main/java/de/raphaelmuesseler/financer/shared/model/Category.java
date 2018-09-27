@@ -1,6 +1,6 @@
 package de.raphaelmuesseler.financer.shared.model;
 
-import de.raphaelmuesseler.financer.client.ui.I18N;
+import de.raphaelmuesseler.financer.client.ui.format.I18N;
 
 import java.io.Serializable;
 

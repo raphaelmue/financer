@@ -1,6 +1,6 @@
 package de.raphaelmuesseler.financer.shared.util.date;
 
-import de.raphaelmuesseler.financer.client.ui.I18N;
+import de.raphaelmuesseler.financer.client.ui.format.I18N;
 
 public enum Month {
     JANUARY(1, "january"),

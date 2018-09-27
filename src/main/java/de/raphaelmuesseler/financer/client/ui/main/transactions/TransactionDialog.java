@@ -2,7 +2,7 @@ package de.raphaelmuesseler.financer.client.ui.main.transactions;
 
 import com.jfoenix.controls.JFXDatePicker;
 import de.raphaelmuesseler.financer.client.local.LocalStorage;
-import de.raphaelmuesseler.financer.client.ui.I18N;
+import de.raphaelmuesseler.financer.client.ui.format.I18N;
 import de.raphaelmuesseler.financer.client.ui.components.DoubleField;
 import de.raphaelmuesseler.financer.client.ui.dialogs.FinancerDialog;
 import de.raphaelmuesseler.financer.shared.model.Category;
@@ -12,7 +12,6 @@ import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 
-import java.time.LocalDate;
 import java.util.Comparator;
 
 class TransactionDialog extends FinancerDialog<Transaction> {

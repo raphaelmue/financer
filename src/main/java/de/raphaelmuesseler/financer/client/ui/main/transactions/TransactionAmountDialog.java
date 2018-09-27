@@ -1,7 +1,7 @@
 package de.raphaelmuesseler.financer.client.ui.main.transactions;
 
 import com.jfoenix.controls.JFXDatePicker;
-import de.raphaelmuesseler.financer.client.ui.I18N;
+import de.raphaelmuesseler.financer.client.ui.format.I18N;
 import de.raphaelmuesseler.financer.client.ui.components.DoubleField;
 import de.raphaelmuesseler.financer.client.ui.dialogs.FinancerDialog;
 import de.raphaelmuesseler.financer.shared.model.transactions.TransactionAmount;
