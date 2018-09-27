@@ -3,7 +3,7 @@ package de.raphaelmuesseler.financer.server.db;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParseException;
-import util.Converter;
+import de.raphaelmuesseler.financer.server.util.Converter;
 import org.json.JSONArray;
 import org.json.JSONObject;
 

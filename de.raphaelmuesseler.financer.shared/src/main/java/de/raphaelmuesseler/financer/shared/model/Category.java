@@ -46,6 +46,7 @@ public class Category implements Serializable {
     }
 
     public String getName() {
+        return name;
         if (this.prefix != null) {
             return this.prefix + " " + (isKey ? I18N.get(this.name) : name);
         } else {

@@ -3,7 +3,7 @@
 <?import com.jfoenix.controls.JFXMasonryPane?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<VBox fx:controller="de.raphaelmuesseler.financer.client.ui.main.overview.OverviewController"
+<VBox fx:controller="de.raphaelmuesseler.financer.server.main.overview.OverviewController"
       xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" styleClass="content">
     <JFXMasonryPane>
         <VBox styleClass="content-box" prefWidth="250" prefHeight="250"

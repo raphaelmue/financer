@@ -1,6 +1,6 @@
-package de.raphaelmuesseler.financer.client.ui.format;
+package de.raphaelmuesseler.financer.client.format;
 
-import de.raphaelmuesseler.financer.client.local.LocalStorage;
+import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.StringBinding;
 import javafx.beans.property.ObjectProperty;
@@ -8,7 +8,6 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
-import jdk.internal.reflect.LangReflectAccess;
 
 import java.text.MessageFormat;
 import java.util.*;
@@ -87,8 +86,8 @@ public final class I18N {
         return getSupportedLocales().contains(sysDefault) ? sysDefault : Locale.ENGLISH;
     }
     public static Locale getLocale() {
-        if (LocalStorage.getSettings() != null) {
-            return LocalStorage.getSettings().getLanguage();
+        if (LocalStorageImpl.getInstance().getSettings() != null) {
+            return LocalStorageImpl.getInstance().getSettings().getLanguage();
         } else {
             return Locale.ENGLISH;
         }

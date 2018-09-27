@@ -1,6 +1,5 @@
-package connection;
+package de.raphaelmuesseler.financer.client.connection;
 
-import de.raphaelmuesseler.financer.shared.connection.AsyncConnectionCall;
 import de.raphaelmuesseler.financer.shared.connection.ConnectionResult;
 
 import java.util.Map;

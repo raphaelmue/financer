@@ -3,7 +3,7 @@
 <?import com.jfoenix.controls.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<VBox fx:controller="de.raphaelmuesseler.financer.client.ui.main.transactions.TransactionsController"
+<VBox fx:controller="de.raphaelmuesseler.financer.server.main.transactions.TransactionsController"
       xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" styleClass="content">
 
     <GridPane hgap="20" vgap="20" maxHeight="Infinity" maxWidth="Infinity">

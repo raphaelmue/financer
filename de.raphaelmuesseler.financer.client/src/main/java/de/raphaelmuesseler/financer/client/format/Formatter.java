@@ -1,6 +1,6 @@
-package de.raphaelmuesseler.financer.client.ui.format;
+package de.raphaelmuesseler.financer.client.format;
 
-import de.raphaelmuesseler.financer.client.local.LocalStorage;
+import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
 import de.raphaelmuesseler.financer.client.local.Settings;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
@@ -9,7 +9,7 @@ import javafx.scene.text.TextAlignment;
 import java.util.Locale;
 
 public class Formatter {
-    private static final Settings SETTINGS = LocalStorage.getSettings();
+    private static final Settings SETTINGS = LocalStorageImpl.getInstance().getSettings();
 
     public static String formatCurrency(Double amount) {
         return (SETTINGS.getLanguage() == Locale.GERMAN ? Double.toString(amount).replace(".", ",") : Double.toString(amount)) +

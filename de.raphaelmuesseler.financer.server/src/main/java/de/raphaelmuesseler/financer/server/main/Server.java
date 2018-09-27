@@ -1,7 +1,6 @@
-package de.raphaelmuesseler.financer.shared.server.main;
+package de.raphaelmuesseler.financer.server.main;
 
 import de.raphaelmuesseler.financer.server.service.FinancerService;
-import de.raphaelmuesseler.financer.shared.server.service.FinancerService;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;

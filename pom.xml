@@ -13,6 +13,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.1</version>
                 <configuration>
                     <source>8</source>
                     <target>8</target>
@@ -21,10 +22,10 @@
         </plugins>
     </build>
     <modules>
-        <module>de.raphaelmuesseler.financer.server</module>
-        <module>de.raphaelmuesseler.financer.shared</module>
         <module>de.raphaelmuesseler.financer.client</module>
         <module>de.raphaelmuesseler.financer.client.javafx</module>
+        <module>de.raphaelmuesseler.financer.server</module>
+        <module>de.raphaelmuesseler.financer.shared</module>
     </modules>
     <dependencies>
         <dependency>
@@ -54,5 +55,35 @@
         </dependency>
 
     </dependencies>
+
+    <profiles>
+        <profile>
+            <id>backend</id>
+            <modules>
+                <module>de.raphaelmuesseler.financer.server</module>
+                <module>de.raphaelmuesseler.financer.shared</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>frontend</id>
+            <modules>
+                <module>de.raphaelmuesseler.financer.client</module>
+                <module>de.raphaelmuesseler.financer.client.javafx</module>
+                <module>de.raphaelmuesseler.financer.shared</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>all</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <modules>
+                <module>de.raphaelmuesseler.financer.client</module>
+                <module>de.raphaelmuesseler.financer.client.javafx</module>
+                <module>de.raphaelmuesseler.financer.shared</module>
+                <module>de.raphaelmuesseler.financer.server</module>
+            </modules>
+        </profile>
+    </profiles>
 
 </project>

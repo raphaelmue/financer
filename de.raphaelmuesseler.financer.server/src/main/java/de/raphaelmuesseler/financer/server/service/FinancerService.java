@@ -7,7 +7,7 @@ import de.raphaelmuesseler.financer.shared.model.User;
 import de.raphaelmuesseler.financer.shared.model.transactions.FixedTransaction;
 import de.raphaelmuesseler.financer.shared.model.transactions.Transaction;
 import de.raphaelmuesseler.financer.shared.model.transactions.TransactionAmount;
-import de.raphaelmuesseler.financer.shared.util.Hash;
+import de.raphaelmuesseler.financer.server.util.Hash;
 import de.raphaelmuesseler.financer.shared.util.collections.SerialTreeItem;
 import org.json.JSONArray;
 import org.json.JSONObject;

@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import com.jfoenix.controls.JFXHamburger?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.text.Font?>
-<?import com.jfoenix.controls.JFXHamburger?>
 <StackPane alignment="center" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1"
-           fx:controller="de.raphaelmuesseler.financer.client.ui.main.FinancerController">
+           fx:controller="de.raphaelmuesseler.financer.server.main.FinancerController">
     <BorderPane fx:id="rootLayout">
         <center>
             <fx:include fx:id="overviewContent" source="overview.fxml"/>
