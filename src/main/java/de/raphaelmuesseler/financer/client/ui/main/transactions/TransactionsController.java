@@ -124,6 +124,7 @@ public class TransactionsController implements Initializable {
     }
 
     private void loadTransactionsOverviewTable() {
+
         final int numberOfMaxMonths = 6;
         final List<TableColumn<TransactionOverviewRow, String>> monthColumns = new ArrayList<>(numberOfMaxMonths);
         final Map<Category, TransactionOverviewRow> rows = new HashMap<>();
@@ -132,10 +133,14 @@ public class TransactionsController implements Initializable {
 
         TableColumn<TransactionOverviewRow, String> categoryColumn = new TableColumn<>(I18N.get("category"));
         categoryColumn.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().category.getName()));
+        categoryColumn.prefWidthProperty().bind(this.transactionsOverviewTableView.widthProperty().divide(8/2).add(-3));
+        categoryColumn.setSortable(false);
 
         for (int i = 0; i < numberOfMaxMonths; i++) {
             TableColumn<TransactionOverviewRow, String> column = new TableColumn<>(getMonthByNumber(LocalDate.now().minusMonths(i).getMonthValue()).getName());
+            column.prefWidthProperty().bind(this.transactionsOverviewTableView.widthProperty().divide(8).add(-3));
             column.setStyle("-fx-alignment: CENTER-RIGHT;");
+            column.setSortable(false);
             int index = i;
             column.setCellValueFactory(param -> new SimpleStringProperty(Double.toString(param.getValue().amounts[index])));
             column.setCellFactory(param -> new TableCell<TransactionOverviewRow, String>() {
@@ -192,7 +197,10 @@ public class TransactionsController implements Initializable {
             }
         }
 
-        this.transactionsOverviewTableView.getItems().addAll(rows.values());
+        List<TransactionOverviewRow> items = new ArrayList<>(rows.values());
+        Collections.sort(items, (o1, o2) ->
+                String.CASE_INSENSITIVE_ORDER.compare(o1.getCategory().getName(), o2.getCategory().getName()));
+        this.transactionsOverviewTableView.getItems().addAll(items);
     }
 
     private void loadTransactionsTable() {
@@ -219,12 +227,12 @@ public class TransactionsController implements Initializable {
         shopColumn.setCellValueFactory(new PropertyValueFactory<>("shop"));
 
 
-        valueDateColumn.prefWidthProperty().bind(this.transactionsTableView.widthProperty().divide(6));
-        amountColumn.prefWidthProperty().bind(this.transactionsTableView.widthProperty().divide(6));
-        categoryColumn.prefWidthProperty().bind(this.transactionsTableView.widthProperty().divide(6));
-        productColumn.prefWidthProperty().bind(this.transactionsTableView.widthProperty().divide(6));
-        purposeColumn.prefWidthProperty().bind(this.transactionsTableView.widthProperty().divide(6));
-        shopColumn.prefWidthProperty().bind(this.transactionsTableView.widthProperty().divide(6));
+        valueDateColumn.prefWidthProperty().bind(this.transactionsTableView.widthProperty().divide(6).add(-3));
+        amountColumn.prefWidthProperty().bind(this.transactionsTableView.widthProperty().divide(6).add(-3));
+        categoryColumn.prefWidthProperty().bind(this.transactionsTableView.widthProperty().divide(6).add(-3));
+        productColumn.prefWidthProperty().bind(this.transactionsTableView.widthProperty().divide(6).add(-3));
+        purposeColumn.prefWidthProperty().bind(this.transactionsTableView.widthProperty().divide(6).add(-3));
+        shopColumn.prefWidthProperty().bind(this.transactionsTableView.widthProperty().divide(6).add(-3));
 
         this.transactionsTableView.getColumns().addAll(categoryColumn, valueDateColumn, amountColumn, productColumn, purposeColumn, shopColumn);
 
