@@ -8,6 +8,8 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
+import jdk.internal.reflect.LangReflectAccess;
+
 import java.text.MessageFormat;
 import java.util.*;
 import java.util.concurrent.Callable;
@@ -27,6 +29,45 @@ public final class I18N {
         LANGUAGES = new HashMap<>();
         LANGUAGES.put("English", Locale.ENGLISH);
         LANGUAGES.put("German", Locale.GERMAN);
+    }
+
+    public enum Language {
+        ENGLISH("English", Locale.ENGLISH),
+        GERMAN("German", Locale.GERMAN);
+
+        private final String name;
+        private final Locale locale;
+
+        Language(String name, Locale locale) {
+            this.name = name;
+            this.locale = locale;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public Locale getLocale() {
+            return locale;
+        }
+
+        public static List<Language> getAll() {
+            return Arrays.asList(values());
+        }
+
+        public static Language getLanguageByLocale(Locale locale) {
+            for (Language language : values()) {
+                if (language.getLocale().equals(locale)) {
+                    return language;
+                }
+            }
+            return null;
+        }
+
+        @Override
+        public String toString() {
+            return this.name;
+        }
     }
     /**
      * getObject the supported Locales.

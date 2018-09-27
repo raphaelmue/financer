@@ -1,44 +1,45 @@
 package de.raphaelmuesseler.financer.client.ui.main.settings;
 
-import de.raphaelmuesseler.financer.client.local.LocalStorage;
 import de.raphaelmuesseler.financer.client.local.Settings;
 import de.raphaelmuesseler.financer.client.ui.I18N;
-import de.raphaelmuesseler.financer.client.ui.dialogs.FinancerAlert;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Alert;
-import javafx.scene.control.MenuButton;
-import javafx.scene.control.MenuItem;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
 
 import java.net.URL;
-import java.util.*;
+import java.util.Currency;
+import java.util.ResourceBundle;
 
 public class SettingsController implements Initializable {
-    public MenuButton languageMenuBtn;
+    public ComboBox<I18N.Language> languageMenuComboBox;
+    public ComboBox<Currency> currencyComboBox;
+    public CheckBox showSignCheckbox;
+
+    private Settings settings;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        this.languageMenuBtn.setText(I18N.get("language"));
+        this.settings = Settings.getSettings();
 
-        List<MenuItem> menuItems = new ArrayList<>();
-        for (Map.Entry<String, Locale> entry : I18N.LANGUAGES.entrySet()) {
-            MenuItem menuItem = new MenuItem(entry.getKey());
-            menuItem.setOnAction(event -> {
-                changeSettings(entry.getValue());
+        this.languageMenuComboBox.getItems().addAll(I18N.Language.getAll());
+        this.languageMenuComboBox.getSelectionModel().select(I18N.Language.getLanguageByLocale(this.settings.getLanguage()));
+        this.languageMenuComboBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+                settings.setLanguage(newValue.getLocale());
+                settings.save();
             });
-            menuItems.add(menuItem);
-        }
-        this.languageMenuBtn.getItems().addAll(menuItems);
+
+        this.currencyComboBox.getItems().addAll(Currency.getAvailableCurrencies());
+        this.currencyComboBox.getItems().sort((o1, o2) -> String.CASE_INSENSITIVE_ORDER.compare(o1.toString(), o2.toString()));
+        this.currencyComboBox.getSelectionModel().select(this.settings.getCurrency());
+        this.currencyComboBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            settings.setCurrency(newValue);
+            settings.save();
+        });
+
+        this.showSignCheckbox.setSelected(this.settings.isShowCurrencySign());
+        this.showSignCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+            settings.setShowCurrencySign(newValue);
+            settings.save();
+        });
     }
-
-    private void changeSettings(Locale locale) {
-        Settings settings = LocalStorage.getSettings();
-        if (settings == null) {
-            settings = new Settings();
-        }
-        settings.setLanguage(locale);
-        LocalStorage.writeSettings(settings);
-
-        new FinancerAlert(Alert.AlertType.INFORMATION, I18N.get("language"), I18N.get("warnChangesAfterRestart")).showAndWait();
-    }
-
 }

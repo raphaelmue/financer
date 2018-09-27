@@ -11,9 +11,18 @@
               GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS">
             <Label text="%settings" styleClass="content-heading"/>
 
-            <GridPane hgap="300" vgap="20">
-                <Label text="%language" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
-                <MenuButton fx:id="languageMenuBtn" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+            <GridPane maxWidth="Infinity" maxHeight="Infinity" vgap="8">
+                <Label text="%language" GridPane.columnIndex="0" GridPane.rowIndex="0" GridPane.hgrow="ALWAYS"
+                       VBox.vgrow="ALWAYS"/>
+                <ComboBox fx:id="languageMenuComboBox" promptText="%language" GridPane.columnIndex="1"
+                          GridPane.rowIndex="0" GridPane.hgrow="ALWAYS" VBox.vgrow="ALWAYS"/>
+
+                <Label text="%currency" GridPane.columnIndex="0" GridPane.rowIndex="1" GridPane.hgrow="ALWAYS"
+                       VBox.vgrow="ALWAYS"/>
+                <ComboBox fx:id="currencyComboBox" promptText="%currency" GridPane.columnIndex="1" GridPane.rowIndex="1"
+                          GridPane.hgrow="ALWAYS" VBox.vgrow="ALWAYS"/>
+                <CheckBox fx:id="showSignCheckbox" text="%showCurrencySign" GridPane.columnIndex="2"
+                          GridPane.rowIndex="1" GridPane.hgrow="ALWAYS" VBox.vgrow="ALWAYS"/>
             </GridPane>
         </VBox>
     </GridPane>
