@@ -1,5 +1,6 @@
 package de.raphaelmuesseler.financer.client.javafx.local;
 
+import de.raphaelmuesseler.financer.client.format.Formatter;
 import de.raphaelmuesseler.financer.client.local.AbstractLocalStorage;
 import de.raphaelmuesseler.financer.client.local.Settings;
 import de.raphaelmuesseler.financer.shared.model.User;
@@ -43,7 +44,11 @@ public class LocalStorageImpl extends AbstractLocalStorage {
     }
 
     public boolean logUserOut() {
-        return USERDATA_FILE.delete();
+        boolean result = true;
+        if (!USERDATA_FILE.delete() || !SETTINGS_FILE.delete() || !PROFILE_FILE.delete() || !TRANSACTIONS_FILE.delete()) {
+            result = false;
+        }
+        return result;
     }
 
     public Settings getSettings() {
@@ -51,6 +56,7 @@ public class LocalStorageImpl extends AbstractLocalStorage {
     }
 
     public boolean writeSettings(Settings settings) {
+        Formatter.setSettings(settings);
         return writeObject(SETTINGS_FILE, "settings", settings);
     }
 
@@ -79,8 +85,9 @@ public class LocalStorageImpl extends AbstractLocalStorage {
     protected Map<String, Object> readFile(File file) {
         Map<String, Object> result = null;
         try (ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream(file))) {
-            result =  (Map<String, Object>) inputStream.readObject();
-        } catch (IOException | ClassNotFoundException ignored) { }
+            result = (Map<String, Object>) inputStream.readObject();
+        } catch (IOException | ClassNotFoundException ignored) {
+        }
 
         return result;
     }

@@ -21,8 +21,12 @@ public class Formatter {
     }
 
     public static String formatCurrency(Double amount) {
-        return (SETTINGS.getLanguage() == Locale.GERMAN ? Double.toString(amount).replace(".", ",") : Double.toString(amount)) +
-                " " + (SETTINGS.isShowCurrencySign() ? SETTINGS.getCurrency().getSymbol() : SETTINGS.getCurrency());
+        if (SETTINGS != null) {
+            return (SETTINGS.getLanguage() == Locale.GERMAN ? Double.toString(amount).replace(".", ",") : Double.toString(amount)) +
+                    " " + (SETTINGS.isShowCurrencySign() ? SETTINGS.getCurrency().getSymbol() : SETTINGS.getCurrency());
+        } else {
+            return Double.toString(amount);
+        }
     }
 
     public static Label formatAmountLabel(Double amount) {

@@ -112,9 +112,11 @@ public class TransactionsController implements Initializable {
         this.tree = SerialTreeItem.fromJson((String) this.localStorage.readObject(LocalStorageImpl.PROFILE_FILE, "categories"),
                 Category.class);
 
-        this.tree.numberItemsByValue((result, prefix) -> {
-            result.getValue().setPrefix(prefix);
-        });
+        if (this.tree != null) {
+            this.tree.numberItemsByValue((result, prefix) -> {
+                result.getValue().setPrefix(prefix);
+            });
+        }
 
         Platform.runLater(() -> {
             this.loadTransactionsTable();
@@ -128,7 +130,9 @@ public class TransactionsController implements Initializable {
         final List<TableColumn<TransactionOverviewRow, String>> monthColumns = new ArrayList<>(numberOfMaxMonths);
         final Map<Category, TransactionOverviewRow> rows = new HashMap<>();
 
-        this.tree.traverse(treeItem -> rows.put(treeItem.getValue(), new TransactionOverviewRow(treeItem.getValue())), true);
+        if (this.tree != null) {
+            this.tree.traverse(treeItem -> rows.put(treeItem.getValue(), new TransactionOverviewRow(treeItem.getValue())), true);
+        }
 
         TableColumn<TransactionOverviewRow, String> categoryColumn = new TableColumn<>(I18N.get("category"));
         categoryColumn.setCellValueFactory(param -> new SimpleStringProperty(Formatter.formatCategoryName(param.getValue().category)));

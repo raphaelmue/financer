@@ -21,6 +21,9 @@ public class SettingsController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         this.settings = LocalStorageImpl.getInstance().getSettings();
+        if (this.settings == null) {
+            this.settings = new Settings();
+        }
 
         this.languageMenuComboBox.getItems().addAll(I18N.Language.getAll());
         this.languageMenuComboBox.getSelectionModel().select(I18N.Language.getLanguageByLocale(this.settings.getLanguage()));

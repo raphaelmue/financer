@@ -47,6 +47,9 @@ public class SerialTreeItem<T> extends TreeItem<T> implements Serializable {
     }
 
     public static <T> SerialTreeItem<T> fromJson(String jsonString, Type type) {
+        if (jsonString == null) {
+            return null;
+        }
         return fromJson(null, jsonString, type);
     }
 
