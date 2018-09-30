@@ -57,6 +57,18 @@ public class RegisterDialog extends FinancerDialog<User> {
     protected boolean checkConsistency() {
         boolean result = true;
 
+        if (this.nameField.getText().isEmpty() || this.surnameField.getText().isEmpty() ||
+                this.emailField.getText().isEmpty() || this.passwordField.getText().isEmpty() ||
+                this.passwordRepeatField.getText().isEmpty()) {
+            this.setErrorMessage(I18N.get("errFillRequiredFields"));
+            result = false;
+        }
+
+        if (this.passwordField.getText().length() < 8) {
+            this.setErrorMessage(I18N.get("errInvalidPasswordLength"));
+            result = false;
+        }
+
         if (!this.passwordField.getText().equals(this.passwordRepeatField.getText())) {
             this.setErrorMessage(I18N.get("errPasswordsDoNotMatch"));
             result = false;
