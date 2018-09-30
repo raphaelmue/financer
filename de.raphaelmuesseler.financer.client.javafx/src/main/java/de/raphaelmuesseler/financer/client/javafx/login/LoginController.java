@@ -116,7 +116,7 @@ public class LoginController implements Initializable {
             Map<String, Object> parameters = new HashMap<>();
             parameters.put("user", user);
 
-            this.executor.execute(new ServerRequestHandler("registerUser", parameters, new AsyncConnectionCall() {
+            this.executor.execute(new ServerRequestHandler("registerUser", parameters, new JavaFXAsyncConnectionCall() {
                 @Override
                 public void onSuccess(ConnectionResult result) {
                     Platform.runLater(() -> loginUser((User) result.getResult()));
@@ -125,8 +125,7 @@ public class LoginController implements Initializable {
                 @Override
                 public void onFailure(Exception exception) {
                     logger.log(Level.SEVERE, exception.getMessage(), exception);
-                    AsyncConnectionCall.super.onFailure(exception);
-                    Platform.runLater(() -> handleOpenRegisterDialog());
+                    JavaFXAsyncConnectionCall.super.onFailure(exception, () -> handleOpenRegisterDialog());
                 }
 
                 @Override

@@ -6,6 +6,7 @@ import de.raphaelmuesseler.financer.client.connection.AsyncConnectionCall;
 import de.raphaelmuesseler.financer.client.connection.ServerRequestHandler;
 import de.raphaelmuesseler.financer.client.format.Formatter;
 import de.raphaelmuesseler.financer.client.format.I18N;
+import de.raphaelmuesseler.financer.client.javafx.connection.JavaFXAsyncConnectionCall;
 import de.raphaelmuesseler.financer.client.javafx.dialogs.FinancerConfirmDialog;
 import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
 import de.raphaelmuesseler.financer.client.javafx.main.FinancerController;
@@ -136,7 +137,7 @@ public class TransactionsController implements Initializable {
 
         TableColumn<TransactionOverviewRow, String> categoryColumn = new TableColumn<>(I18N.get("category"));
         categoryColumn.setCellValueFactory(param -> new SimpleStringProperty(Formatter.formatCategoryName(param.getValue().category)));
-        categoryColumn.prefWidthProperty().bind(this.transactionsOverviewTableView.widthProperty().divide(8/2).add(-3));
+        categoryColumn.prefWidthProperty().bind(this.transactionsOverviewTableView.widthProperty().divide(8 / 2).add(-3));
         categoryColumn.setSortable(false);
 
         for (int i = 0; i < numberOfMaxMonths; i++) {
@@ -158,42 +159,46 @@ public class TransactionsController implements Initializable {
         this.transactionsOverviewTableView.getColumns().add(categoryColumn);
         this.transactionsOverviewTableView.getColumns().addAll(monthColumns);
 
-        for (Transaction transaction : this.transactions) {
-            if (transaction.getValueDate().plusMonths(numberOfMaxMonths).compareTo(LocalDate.now()) >= 0) {
-                TransactionOverviewRow row = rows.get(transaction.getCategory());
-                if (row == null) {
-                    row = new TransactionOverviewRow(transaction.getCategory());
-                    rows.put(row.getCategory(), row);
+        if (this.transactions != null && this.transactions.size() > 0) {
+            for (Transaction transaction : this.transactions) {
+                if (transaction.getValueDate().plusMonths(numberOfMaxMonths).compareTo(LocalDate.now()) >= 0) {
+                    TransactionOverviewRow row = rows.get(transaction.getCategory());
+                    if (row == null) {
+                        row = new TransactionOverviewRow(transaction.getCategory());
+                        rows.put(row.getCategory(), row);
+                    }
+                    row.getAmounts()[DateUtil.getMonthDifference(transaction.getValueDate(), LocalDate.now())] += transaction.getAmount();
                 }
-                row.getAmounts()[DateUtil.getMonthDifference(transaction.getValueDate(), LocalDate.now())] += transaction.getAmount();
             }
         }
 
-        for (FixedTransaction fixedTransaction : this.fixedTransactions) {
-            if (fixedTransaction.getEndDate() == null || fixedTransaction.getEndDate().plusMonths(numberOfMaxMonths).compareTo(LocalDate.now()) >= 0) {
-                TransactionOverviewRow row = rows.get(fixedTransaction.getCategory());
-                if (row == null) {
-                    row = new TransactionOverviewRow(fixedTransaction.getCategory());
-                    rows.put(row.getCategory(), row);
-                }
-                if (fixedTransaction.isVariable() && fixedTransaction.getTransactionAmounts().size() > 1) {
-                    for (int i = 0; i < Math.min(numberOfMaxMonths, fixedTransaction.getTransactionAmounts().size()); i++) {
-                        if (DateUtil.getMonthDifference(fixedTransaction.getTransactionAmounts().get(i).getValueDate(), LocalDate.now()) < 6) {
-                            row.getAmounts()[DateUtil.getMonthDifference(fixedTransaction.getTransactionAmounts().get(i).getValueDate(),
-                                    LocalDate.now())] += fixedTransaction.getTransactionAmounts().get(i).getAmount();
-                        }
+        if (this.fixedTransactions != null && this.fixedTransactions.size() > 0) {
+            for (FixedTransaction fixedTransaction : this.fixedTransactions) {
+                if (fixedTransaction.getEndDate() == null || fixedTransaction.getEndDate().plusMonths(numberOfMaxMonths).compareTo(LocalDate.now()) >= 0) {
+                    TransactionOverviewRow row = rows.get(fixedTransaction.getCategory());
+                    if (row == null) {
+                        row = new TransactionOverviewRow(fixedTransaction.getCategory());
+                        rows.put(row.getCategory(), row);
                     }
-                } else {
-                    int start = 0;
-                    if (fixedTransaction.getEndDate() != null) {
-                        start = Period.between(fixedTransaction.getEndDate().withDayOfMonth(1), LocalDate.now().withDayOfMonth(1)).getMonths();
-                        if (start == DateUtil.getMonthDifference(fixedTransaction.getStartDate(), LocalDate.now())) {
-                            row.getAmounts()[start] += fixedTransaction.getAmount();
+                    if (fixedTransaction.isVariable() && fixedTransaction.getTransactionAmounts().size() > 1) {
+                        for (int i = 0; i < Math.min(numberOfMaxMonths, fixedTransaction.getTransactionAmounts().size()); i++) {
+                            if (DateUtil.getMonthDifference(fixedTransaction.getTransactionAmounts().get(i).getValueDate(), LocalDate.now()) < 6) {
+                                row.getAmounts()[DateUtil.getMonthDifference(fixedTransaction.getTransactionAmounts().get(i).getValueDate(),
+                                        LocalDate.now())] += fixedTransaction.getTransactionAmounts().get(i).getAmount();
+                            }
                         }
                     } else {
-                        for (int i = start; i < Math.min(numberOfMaxMonths, DateUtil.getMonthDifference(fixedTransaction.getStartDate(),
-                                LocalDate.now())); i++) {
-                            row.getAmounts()[i] += fixedTransaction.getAmount();
+                        int start = 0;
+                        if (fixedTransaction.getEndDate() != null) {
+                            start = Period.between(fixedTransaction.getEndDate().withDayOfMonth(1), LocalDate.now().withDayOfMonth(1)).getMonths();
+                            if (start == DateUtil.getMonthDifference(fixedTransaction.getStartDate(), LocalDate.now())) {
+                                row.getAmounts()[start] += fixedTransaction.getAmount();
+                            }
+                        } else {
+                            for (int i = start; i < Math.min(numberOfMaxMonths, DateUtil.getMonthDifference(fixedTransaction.getStartDate(),
+                                    LocalDate.now())); i++) {
+                                row.getAmounts()[i] += fixedTransaction.getAmount();
+                            }
                         }
                     }
                 }
@@ -218,7 +223,7 @@ public class TransactionsController implements Initializable {
         valueDateColumn.setCellValueFactory(new PropertyValueFactory<>("valueDate"));
         amountColumn.setCellValueFactory(new PropertyValueFactory<>("amount"));
         amountColumn.setStyle("-fx-alignment: CENTER-RIGHT;");
-        amountColumn.setCellFactory(param -> new TableCell<Transaction, Double>(){
+        amountColumn.setCellFactory(param -> new TableCell<Transaction, Double>() {
             @Override
             protected void updateItem(Double item, boolean empty) {
                 super.updateItem(item, empty);
@@ -281,7 +286,7 @@ public class TransactionsController implements Initializable {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("user", this.user);
 
-        this.executor.execute(new ServerRequestHandler("getTransactions", parameters, new AsyncConnectionCall() {
+        this.executor.execute(new ServerRequestHandler("getTransactions", parameters, new JavaFXAsyncConnectionCall() {
             @Override
             public void onSuccess(ConnectionResult result) {
                 transactions = FXCollections.observableArrayList((List<Transaction>) result.getResult());
@@ -294,7 +299,7 @@ public class TransactionsController implements Initializable {
                     // TODO set offline
                 } else {
                     logger.log(Level.SEVERE, exception.getMessage(), exception);
-                    AsyncConnectionCall.super.onFailure(exception);
+                    JavaFXAsyncConnectionCall.super.onFailure(exception);
                 }
                 List<Object> result = ((List<Object>) localStorage.readObject(
                         LocalStorageImpl.TRANSACTIONS_FILE, "transactions"));
@@ -328,7 +333,7 @@ public class TransactionsController implements Initializable {
             parameters.put("user", this.user);
             parameters.put("transaction", transaction);
 
-            this.executor.execute(new ServerRequestHandler("addTransaction", parameters, new AsyncConnectionCall() {
+            this.executor.execute(new ServerRequestHandler("addTransaction", parameters, new JavaFXAsyncConnectionCall() {
                 @Override
                 public void onSuccess(ConnectionResult result) {
                     Platform.runLater(() -> {
@@ -340,7 +345,7 @@ public class TransactionsController implements Initializable {
                 @Override
                 public void onFailure(Exception exception) {
                     logger.log(Level.SEVERE, exception.getMessage(), exception);
-                    AsyncConnectionCall.super.onFailure(exception);
+                    JavaFXAsyncConnectionCall.super.onFailure(exception);
                 }
             }));
         }
@@ -360,7 +365,7 @@ public class TransactionsController implements Initializable {
             parameters.put("user", this.user);
             parameters.put("transaction", transaction);
 
-            this.executor.execute(new ServerRequestHandler("updateTransaction", parameters, new AsyncConnectionCall() {
+            this.executor.execute(new ServerRequestHandler("updateTransaction", parameters, new JavaFXAsyncConnectionCall() {
                 @Override
                 public void onSuccess(ConnectionResult result) {
                     handleRefreshTransactions();
@@ -369,7 +374,7 @@ public class TransactionsController implements Initializable {
                 @Override
                 public void onFailure(Exception exception) {
                     logger.log(Level.SEVERE, exception.getMessage(), exception);
-                    AsyncConnectionCall.super.onFailure(exception);
+                    JavaFXAsyncConnectionCall.super.onFailure(exception);
                 }
             }));
         }
@@ -381,7 +386,7 @@ public class TransactionsController implements Initializable {
             Map<String, Object> parameters = new HashMap<>();
             parameters.put("transaction", transaction);
 
-            this.executor.execute(new ServerRequestHandler("deleteTransaction", parameters, new AsyncConnectionCall() {
+            this.executor.execute(new ServerRequestHandler("deleteTransaction", parameters, new JavaFXAsyncConnectionCall() {
                 @Override
                 public void onSuccess(ConnectionResult result) {
                     Platform.runLater(() -> transactionsTableView.getItems().remove(transaction));
@@ -390,7 +395,7 @@ public class TransactionsController implements Initializable {
                 @Override
                 public void onFailure(Exception exception) {
                     logger.log(Level.SEVERE, exception.getMessage(), exception);
-                    AsyncConnectionCall.super.onFailure(exception);
+                    JavaFXAsyncConnectionCall.super.onFailure(exception);
                 }
             }));
         }
@@ -400,7 +405,7 @@ public class TransactionsController implements Initializable {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("user", this.user);
 
-        this.executor.execute(new ServerRequestHandler("getFixedTransactions", parameters, new AsyncConnectionCall() {
+        this.executor.execute(new ServerRequestHandler("getFixedTransactions", parameters, new JavaFXAsyncConnectionCall() {
             @Override
             public void onSuccess(ConnectionResult result) {
                 fixedTransactions = FXCollections.observableArrayList((List<FixedTransaction>) result.getResult());
@@ -413,7 +418,7 @@ public class TransactionsController implements Initializable {
                     // TODO set offline
                 } else {
                     logger.log(Level.SEVERE, exception.getMessage(), exception);
-                    AsyncConnectionCall.super.onFailure(exception);
+                    JavaFXAsyncConnectionCall.super.onFailure(exception);
                 }
                 List<Object> result = (List<Object>) localStorage.readObject(
                         LocalStorageImpl.TRANSACTIONS_FILE, "fixedTransactions");
@@ -450,7 +455,7 @@ public class TransactionsController implements Initializable {
             parameters.put("user", this.user);
             parameters.put("fixedTransaction", fixedTransaction);
 
-            this.executor.execute(new ServerRequestHandler("addFixedTransactions", parameters, new AsyncConnectionCall() {
+            this.executor.execute(new ServerRequestHandler("addFixedTransactions", parameters, new JavaFXAsyncConnectionCall() {
                 @Override
                 public void onSuccess(ConnectionResult result) {
                     handleRefreshFixedTransactions();
@@ -459,7 +464,7 @@ public class TransactionsController implements Initializable {
                 @Override
                 public void onFailure(Exception exception) {
                     logger.log(Level.SEVERE, exception.getMessage(), exception);
-                    AsyncConnectionCall.super.onFailure(exception);
+                    JavaFXAsyncConnectionCall.super.onFailure(exception);
                 }
             }));
         }
@@ -480,7 +485,7 @@ public class TransactionsController implements Initializable {
             Map<String, Object> parameters = new HashMap<>();
             parameters.put("fixedTransaction", fixedTransaction);
 
-            this.executor.execute(new ServerRequestHandler("updateFixedTransaction", parameters, new AsyncConnectionCall() {
+            this.executor.execute(new ServerRequestHandler("updateFixedTransaction", parameters, new JavaFXAsyncConnectionCall() {
                 @Override
                 public void onSuccess(ConnectionResult result) {
                 }
@@ -488,7 +493,7 @@ public class TransactionsController implements Initializable {
                 @Override
                 public void onFailure(Exception exception) {
                     logger.log(Level.SEVERE, exception.getMessage(), exception);
-                    AsyncConnectionCall.super.onFailure(exception);
+                    JavaFXAsyncConnectionCall.super.onFailure(exception);
                 }
 
                 @Override
@@ -505,7 +510,7 @@ public class TransactionsController implements Initializable {
             Map<String, Object> parameters = new HashMap<>();
             parameters.put("fixedTransaction", this.fixedTransactionsListView.getSelectionModel().getSelectedItem());
 
-            this.executor.execute(new ServerRequestHandler("deleteFixedTransaction", parameters, new AsyncConnectionCall() {
+            this.executor.execute(new ServerRequestHandler("deleteFixedTransaction", parameters, new JavaFXAsyncConnectionCall() {
                 @Override
                 public void onSuccess(ConnectionResult result) {
                 }
@@ -513,7 +518,7 @@ public class TransactionsController implements Initializable {
                 @Override
                 public void onFailure(Exception exception) {
                     logger.log(Level.SEVERE, exception.getMessage(), exception);
-                    AsyncConnectionCall.super.onFailure(exception);
+                    JavaFXAsyncConnectionCall.super.onFailure(exception);
                 }
 
                 @Override
@@ -527,9 +532,11 @@ public class TransactionsController implements Initializable {
     private void showFixedTransactions(Category category) {
         if (category != null) {
             this.fixedTransactionsListView.getItems().clear();
-            for (FixedTransaction transaction : this.fixedTransactions) {
-                if (transaction.getCategory().getId() == category.getId()) {
-                    this.fixedTransactionsListView.getItems().add(transaction);
+            if (this.fixedTransactions != null) {
+                for (FixedTransaction transaction : this.fixedTransactions) {
+                    if (transaction.getCategory().getId() == category.getId()) {
+                        this.fixedTransactionsListView.getItems().add(transaction);
+                    }
                 }
             }
         }

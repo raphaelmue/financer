@@ -14,14 +14,14 @@ public class FinancerExceptionDialog extends FinancerAlert {
 
         String message = "Something went wrong. Please try again later.";
         try {
-            throw exception;
+            throw exception.getCause();
         } catch (UnknownHostException e) {
             message = "The database is not available at the moment. Please try again later";
         } catch (ConnectException connectException) {
             message = "Server is currently not available. Please try again later.";
         } catch (FinancerException financerException) {
             message = Formatter.formatExceptionMessage(financerException);
-        } catch (Exception ignored) {
+        } catch (Throwable throwable) {
         } finally {
             this.setContentText(message);
         }

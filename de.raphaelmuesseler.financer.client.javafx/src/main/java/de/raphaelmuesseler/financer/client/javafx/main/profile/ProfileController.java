@@ -5,6 +5,7 @@ import de.raphaelmuesseler.financer.client.connection.ServerRequestHandler;
 import de.raphaelmuesseler.financer.client.format.Formatter;
 import de.raphaelmuesseler.financer.client.format.I18N;
 import de.raphaelmuesseler.financer.client.connection.AsyncConnectionCall;
+import de.raphaelmuesseler.financer.client.javafx.connection.JavaFXAsyncConnectionCall;
 import de.raphaelmuesseler.financer.client.javafx.dialogs.FinancerTextInputDialog;
 import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
 import de.raphaelmuesseler.financer.shared.connection.ConnectionResult;
@@ -81,7 +82,7 @@ public class ProfileController implements Initializable {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("user", this.user);
 
-        this.executor.execute(new ServerRequestHandler("getUsersCategories", parameters, new AsyncConnectionCall() {
+        this.executor.execute(new ServerRequestHandler("getUsersCategories", parameters, new JavaFXAsyncConnectionCall() {
             @Override
             public void onSuccess(ConnectionResult result) {
                 structure = SerialTreeItem.fromJson(((String) result.getResult()), Category.class);
@@ -94,7 +95,7 @@ public class ProfileController implements Initializable {
                     // TODO set offline
                 } else {
                     logger.log(Level.SEVERE, exception.getMessage(), exception);
-                    AsyncConnectionCall.super.onFailure(exception);
+                    JavaFXAsyncConnectionCall.super.onFailure(exception);
                 }
                 structure = SerialTreeItem.fromJson((String) localStorage.readObject(LocalStorageImpl.PROFILE_FILE, "categories"),
                         Category.class);
@@ -137,7 +138,7 @@ public class ProfileController implements Initializable {
                 parameters.put("user", this.user);
                 parameters.put("category", category);
 
-                this.executor.execute(new ServerRequestHandler("addCategory", parameters, new AsyncConnectionCall() {
+                this.executor.execute(new ServerRequestHandler("addCategory", parameters, new JavaFXAsyncConnectionCall() {
                     @Override
                     public void onSuccess(ConnectionResult result) {
                         Platform.runLater(() -> {
@@ -149,7 +150,7 @@ public class ProfileController implements Initializable {
 
                     @Override
                     public void onFailure(Exception exception) {
-                        AsyncConnectionCall.super.onFailure(exception);
+                        JavaFXAsyncConnectionCall.super.onFailure(exception);
                         logger.log(Level.SEVERE, exception.getMessage(), exception);
                         handleRefreshCategories();
                     }
@@ -172,14 +173,14 @@ public class ProfileController implements Initializable {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("category", category);
 
-        this.executor.execute(new ServerRequestHandler("updateCategory", parameters, new AsyncConnectionCall() {
+        this.executor.execute(new ServerRequestHandler("updateCategory", parameters, new JavaFXAsyncConnectionCall() {
             @Override
             public void onSuccess(ConnectionResult result) {
             }
 
             @Override
             public void onFailure(Exception exception) {
-                AsyncConnectionCall.super.onFailure(exception);
+                JavaFXAsyncConnectionCall.super.onFailure(exception);
                 logger.log(Level.SEVERE, exception.getMessage(), exception);
                 handleRefreshCategories();
             }
@@ -193,14 +194,14 @@ public class ProfileController implements Initializable {
             parameters.put("category", this.categoriesTreeView.getSelectionModel()
                     .getSelectedItem().getValue());
 
-            this.executor.execute(new ServerRequestHandler("deleteCategory", parameters, new AsyncConnectionCall() {
+            this.executor.execute(new ServerRequestHandler("deleteCategory", parameters, new JavaFXAsyncConnectionCall() {
                 @Override
                 public void onSuccess(ConnectionResult result) {
                 }
 
                 @Override
                 public void onFailure(Exception exception) {
-                    AsyncConnectionCall.super.onFailure(exception);
+                    JavaFXAsyncConnectionCall.super.onFailure(exception);
                     logger.log(Level.SEVERE, exception.getMessage(), exception);
                 }
             }));
