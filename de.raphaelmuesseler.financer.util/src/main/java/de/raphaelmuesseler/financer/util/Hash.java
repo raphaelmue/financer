@@ -1,4 +1,4 @@
-package de.raphaelmuesseler.financer.server.util;
+package de.raphaelmuesseler.financer.util;
 
 import java.math.BigInteger;
 import java.security.MessageDigest;

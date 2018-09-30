@@ -26,6 +26,7 @@
         <module>de.raphaelmuesseler.financer.client.javafx</module>
         <module>de.raphaelmuesseler.financer.server</module>
         <module>de.raphaelmuesseler.financer.shared</module>
+        <module>de.raphaelmuesseler.financer.util</module>
     </modules>
     <dependencies>
         <dependency>

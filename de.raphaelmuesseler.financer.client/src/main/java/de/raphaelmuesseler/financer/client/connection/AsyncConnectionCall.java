@@ -9,12 +9,7 @@ public interface AsyncConnectionCall extends AsyncCall<ConnectionResult> {
     void onSuccess(ConnectionResult result);
 
     @Override
-    default void onFailure(Exception exception) {
-        Platform.runLater(() -> {
-//            FinancerExceptionDialog dialog = new FinancerExceptionDialog("Login", exception);
-//            dialog.showAndWait();
-        });
-    }
+    default void onFailure(Exception exception) {}
 
     default void onBefore() {};
     default void onAfter() {};

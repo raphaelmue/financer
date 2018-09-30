@@ -2,13 +2,14 @@ package de.raphaelmuesseler.financer.server.service;
 
 import de.raphaelmuesseler.financer.server.db.Database;
 import de.raphaelmuesseler.financer.shared.connection.ConnectionResult;
+import de.raphaelmuesseler.financer.shared.exceptions.EmailAlreadyInUseException;
 import de.raphaelmuesseler.financer.shared.model.Category;
 import de.raphaelmuesseler.financer.shared.model.User;
 import de.raphaelmuesseler.financer.shared.model.transactions.FixedTransaction;
 import de.raphaelmuesseler.financer.shared.model.transactions.Transaction;
 import de.raphaelmuesseler.financer.shared.model.transactions.TransactionAmount;
-import de.raphaelmuesseler.financer.server.util.Hash;
 import de.raphaelmuesseler.financer.shared.util.collections.SerialTreeItem;
+import de.raphaelmuesseler.financer.util.Hash;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -64,6 +65,28 @@ public class FinancerService {
         if (user == null) {
             logger.log(Level.INFO, "Credentials are incorrect.");
         }
+
+        return new ConnectionResult<>(user);
+    }
+
+    public ConnectionResult<User> registerUser(Logger logger, Map<String, Object> parameters) throws Exception {
+        logger.log(Level.INFO, "Registering new user ...");
+        User user = (User) parameters.get("user");
+
+        Map<String, Object> values = new HashMap<>();
+        values.put("email", user.getEmail());
+
+        List<Object> result = this.database.getObject(Database.Table.USERS, User.class, values);
+        if (result.size() > 0) {
+            throw new EmailAlreadyInUseException((User) result.get(0));
+        }
+
+        values.put("password", user.getPassword());
+        values.put("salt", user.getSalt());
+        values.put("name", user.getName());
+        values.put("surname", user.getSurname());
+
+        this.database.insert(Database.Table.USERS, values);
 
         return new ConnectionResult<>(user);
     }

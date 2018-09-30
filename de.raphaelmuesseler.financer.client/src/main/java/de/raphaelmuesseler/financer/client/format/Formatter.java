@@ -1,6 +1,7 @@
 package de.raphaelmuesseler.financer.client.format;
 
 import de.raphaelmuesseler.financer.client.local.Settings;
+import de.raphaelmuesseler.financer.shared.exceptions.FinancerException;
 import de.raphaelmuesseler.financer.shared.model.Category;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
@@ -13,6 +14,10 @@ public class Formatter {
 
     public static void setSettings(Settings SETTINGS) {
         Formatter.SETTINGS = SETTINGS;
+    }
+
+    public static String formatExceptionMessage(FinancerException exception) {
+        return I18N.get(exception.getDisplayMessage());
     }
 
     public static String formatCurrency(Double amount) {

@@ -1,5 +1,8 @@
 package de.raphaelmuesseler.financer.client.javafx.dialogs;
 
+import de.raphaelmuesseler.financer.client.format.Formatter;
+import de.raphaelmuesseler.financer.shared.exceptions.FinancerException;
+
 import java.net.ConnectException;
 import java.net.UnknownHostException;
 
@@ -16,6 +19,8 @@ public class FinancerExceptionDialog extends FinancerAlert {
             message = "The database is not available at the moment. Please try again later";
         } catch (ConnectException connectException) {
             message = "Server is currently not available. Please try again later.";
+        } catch (FinancerException financerException) {
+            message = Formatter.formatExceptionMessage(financerException);
         } catch (Exception ignored) {
         } finally {
             this.setContentText(message);

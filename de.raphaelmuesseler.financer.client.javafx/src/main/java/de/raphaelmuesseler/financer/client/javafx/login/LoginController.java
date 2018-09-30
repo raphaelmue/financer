@@ -4,6 +4,7 @@ import de.raphaelmuesseler.financer.client.connection.AsyncConnectionCall;
 import de.raphaelmuesseler.financer.client.connection.ServerRequestHandler;
 import de.raphaelmuesseler.financer.client.format.Formatter;
 import de.raphaelmuesseler.financer.client.format.I18N;
+import de.raphaelmuesseler.financer.client.javafx.connection.JavaFXAsyncConnectionCall;
 import de.raphaelmuesseler.financer.client.javafx.dialogs.FinancerAlert;
 import de.raphaelmuesseler.financer.client.javafx.dialogs.FinancerExceptionDialog;
 import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
@@ -64,34 +65,11 @@ public class LoginController implements Initializable {
         parameters.put("email", this.emailTextField.getText());
         parameters.put("password", this.passwordField.getText());
         logger.log(Level.INFO, "User's credentials will be checked ...");
-        this.executor.execute(new ServerRequestHandler("checkCredentials", parameters, new AsyncConnectionCall() {
+        this.executor.execute(new ServerRequestHandler("checkCredentials", parameters, new JavaFXAsyncConnectionCall() {
             @Override
             public void onSuccess(ConnectionResult result) {
                 if (result.getResult() != null) {
-                    logger.log(Level.INFO, "User's credentials are correct.");
-                    errorLabel.setVisible(false);
-
-                    // storing user data
-                    if (!localStorage.writeUser((User) result.getResult())) {
-                        Alert alert = new Alert(Alert.AlertType.ERROR);
-                        alert.setTitle("Financer");
-                        alert.setHeaderText("Login");
-                        alert.setContentText("Something went wrong storing your personal information. Please try again later.");
-                        alert.showAndWait();
-                        return;
-                    }
-
-                    Platform.runLater(() -> {
-                        // open main application
-                        Stage stage = (Stage) gridPane.getScene().getWindow();
-                        stage.close();
-
-                        try {
-                            new FinancerApplication().start(new Stage());
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    });
+                    Platform.runLater(() -> loginUser((User) result.getResult()));
                 } else {
                     logger.log(Level.INFO, "User's credentials are incorrect.");
                     errorLabel.setVisible(true);
@@ -128,5 +106,60 @@ public class LoginController implements Initializable {
 
         localStorage.getSettings().setLanguage(locale);
         localStorage.writeSettings(localStorage.getSettings());
+    }
+
+    public void handleOpenRegisterDialog() {
+        User user = new RegisterDialog().showAndGetResult();
+
+        if (user != null) {
+            this.progressIndicatorBox.setVisible(true);
+            Map<String, Object> parameters = new HashMap<>();
+            parameters.put("user", user);
+
+            this.executor.execute(new ServerRequestHandler("registerUser", parameters, new AsyncConnectionCall() {
+                @Override
+                public void onSuccess(ConnectionResult result) {
+                    Platform.runLater(() -> loginUser((User) result.getResult()));
+                }
+
+                @Override
+                public void onFailure(Exception exception) {
+                    logger.log(Level.SEVERE, exception.getMessage(), exception);
+                    AsyncConnectionCall.super.onFailure(exception);
+                    Platform.runLater(() -> handleOpenRegisterDialog());
+                }
+
+                @Override
+                public void onAfter() {
+                    gridPane.setDisable(false);
+                    progressIndicatorBox.setVisible(false);
+                }
+            }));
+        }
+    }
+
+    private void loginUser(User user) {
+        this.logger.log(Level.INFO, "User's credentials are correct.");
+        this.errorLabel.setVisible(false);
+
+        // storing user data
+        if (!this.localStorage.writeUser(user)) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Financer");
+            alert.setHeaderText("Login");
+            alert.setContentText("Something went wrong storing your personal information. Please try again later.");
+            alert.showAndWait();
+            return;
+        }
+
+        // open main application
+        Stage stage = (Stage) this.gridPane.getScene().getWindow();
+        stage.close();
+
+        try {
+            new FinancerApplication().start(new Stage());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

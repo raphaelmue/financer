@@ -51,6 +51,8 @@
                 <Label text="%password" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
                 <PasswordField fx:id="passwordField" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
 
+                <Hyperlink text="%notRegisteredYet" onAction="#handleOpenRegisterDialog" />
+
                 <HBox alignment="bottom_right" spacing="10" GridPane.columnIndex="1" GridPane.rowIndex="5">
                     <Button onAction="#handleSignInButtonAction" text="%signIn"/>
                 </HBox>

@@ -7,6 +7,14 @@ public class User implements Serializable {
     private int id;
     private String email, password, salt, name, surname;
 
+    public User(String email, String password, String salt, String name, String surname) {
+        this.email = email;
+        this.password = password;
+        this.salt = salt;
+        this.name = name;
+        this.surname = surname;
+    }
+
     public int getId() {
         return id;
     }
