@@ -1,12 +1,13 @@
 package de.raphaelmuesseler.financer.client.javafx.login;
 
-import de.raphaelmuesseler.financer.client.connection.ServerRequestHandler;
-import de.raphaelmuesseler.financer.client.format.I18N;
 import de.raphaelmuesseler.financer.client.connection.AsyncConnectionCall;
+import de.raphaelmuesseler.financer.client.connection.ServerRequestHandler;
+import de.raphaelmuesseler.financer.client.format.Formatter;
+import de.raphaelmuesseler.financer.client.format.I18N;
 import de.raphaelmuesseler.financer.client.javafx.dialogs.FinancerAlert;
 import de.raphaelmuesseler.financer.client.javafx.dialogs.FinancerExceptionDialog;
 import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
-import de.raphaelmuesseler.financer.server.main.FinancerApplication;
+import de.raphaelmuesseler.financer.client.javafx.main.FinancerApplication;
 import de.raphaelmuesseler.financer.shared.connection.ConnectionResult;
 import de.raphaelmuesseler.financer.shared.model.User;
 import javafx.application.Platform;
@@ -51,6 +52,8 @@ public class LoginController implements Initializable {
                 }
             }
         }
+        I18N.setLocalStorage(this.localStorage);
+        Formatter.setSettings(this.localStorage.getSettings());
     }
 
     public void handleSignInButtonAction() {
@@ -124,6 +127,6 @@ public class LoginController implements Initializable {
         new FinancerAlert(Alert.AlertType.INFORMATION, I18N.get("language"), I18N.get("warnChangesAfterRestart")).showAndWait();
 
         localStorage.getSettings().setLanguage(locale);
-        localStorage.getSettings().save();
+        localStorage.writeSettings(localStorage.getSettings());
     }
 }

@@ -2,7 +2,7 @@
 
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.*?>
-<VBox fx:controller="de.raphaelmuesseler.financer.server.main.statistics.StatisticsController"
+<VBox fx:controller="de.raphaelmuesseler.financer.client.javafx.main.statistics.StatisticsController"
       xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" styleClass="content">
 
     <GridPane hgap="20" vgap="20" maxHeight="Infinity" maxWidth="Infinity">

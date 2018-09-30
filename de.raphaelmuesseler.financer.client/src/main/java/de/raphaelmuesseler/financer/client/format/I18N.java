@@ -1,6 +1,6 @@
 package de.raphaelmuesseler.financer.client.format;
 
-import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
+import de.raphaelmuesseler.financer.client.local.LocalStorage;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.StringBinding;
 import javafx.beans.property.ObjectProperty;
@@ -19,6 +19,7 @@ import java.util.concurrent.Callable;
  */
 public final class I18N {
     /** the current selected Locale. */
+    private static LocalStorage localStorage;
     private static final ObjectProperty<Locale> locale;
     public static final Map<String, Locale> LANGUAGES;
     static {
@@ -28,6 +29,10 @@ public final class I18N {
         LANGUAGES = new HashMap<>();
         LANGUAGES.put("English", Locale.ENGLISH);
         LANGUAGES.put("German", Locale.GERMAN);
+    }
+
+    public static void setLocalStorage(LocalStorage localStorage) {
+        I18N.localStorage = localStorage;
     }
 
     public enum Language {
@@ -86,8 +91,8 @@ public final class I18N {
         return getSupportedLocales().contains(sysDefault) ? sysDefault : Locale.ENGLISH;
     }
     public static Locale getLocale() {
-        if (LocalStorageImpl.getInstance().getSettings() != null) {
-            return LocalStorageImpl.getInstance().getSettings().getLanguage();
+        if (I18N.localStorage.getSettings() != null) {
+            return I18N.localStorage.getSettings().getLanguage();
         } else {
             return Locale.ENGLISH;
         }

@@ -1,7 +1,8 @@
-package de.raphaelmuesseler.financer.server.main.profile;
+package de.raphaelmuesseler.financer.client.javafx.main.profile;
 
 import com.jfoenix.controls.JFXButton;
 import de.raphaelmuesseler.financer.client.connection.ServerRequestHandler;
+import de.raphaelmuesseler.financer.client.format.Formatter;
 import de.raphaelmuesseler.financer.client.format.I18N;
 import de.raphaelmuesseler.financer.client.connection.AsyncConnectionCall;
 import de.raphaelmuesseler.financer.client.javafx.dialogs.FinancerTextInputDialog;
@@ -160,7 +161,7 @@ public class ProfileController implements Initializable {
     public void handleEditCategory() {
         if (this.categoriesTreeView.getSelectionModel().getSelectedItem() != null) {
             Category category = this.categoriesTreeView.getSelectionModel().getSelectedItem().getValue();
-            String categoryName = new FinancerTextInputDialog(I18N.get("enterCategoryName"), category.getName())
+            String categoryName = new FinancerTextInputDialog(I18N.get("enterCategoryName"), Formatter.formatCategoryName(category))
                     .showAndGetResult();
             category.setName(categoryName);
             this.handleUpdateCategory(category);
@@ -261,7 +262,7 @@ public class ProfileController implements Initializable {
         public void updateItem(Category item, boolean empty) {
             super.updateItem(item, empty);
             if (item != null && !isEditing() && getParent() != null) {
-                if (item.isKey() && !item.getName().equals(I18N.get("categories"))) {
+                if (item.isKey() && !Formatter.formatCategoryName(item).equals(I18N.get("categories"))) {
                     setContextMenu(this.contextMenu);
                 } else if (!item.isKey()) {
                     setContextMenu(this.deleteContextMenu);

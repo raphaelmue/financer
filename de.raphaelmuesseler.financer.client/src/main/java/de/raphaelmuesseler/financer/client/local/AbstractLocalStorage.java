@@ -5,7 +5,7 @@ import de.raphaelmuesseler.financer.shared.model.User;
 import java.io.File;
 import java.util.Map;
 
-public abstract class AbstractLocalStorage {
+public abstract class AbstractLocalStorage implements LocalStorage {
     public abstract User getLoggedInUser();
 
     public abstract boolean writeUser(User user);

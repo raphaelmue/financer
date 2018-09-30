@@ -1,4 +1,4 @@
-package de.raphaelmuesseler.financer.server.main;
+package de.raphaelmuesseler.financer.client.javafx.main;
 
 import com.jfoenix.controls.JFXHamburger;
 import com.jfoenix.transitions.hamburger.HamburgerSlideCloseTransition;
@@ -60,7 +60,7 @@ public class FinancerController implements Initializable {
         this.resourceBundle = ResourceBundle.getBundle("Financer", locale);
 
         try {
-            loadingBox = FXMLLoader.load(getClass().getResource("/views/loading.fxml"), this.resourceBundle);
+            loadingBox = FXMLLoader.load(getClass().getResource("/de/raphaelmuesseler/financer/client/javafx/main/views/loading.fxml"), this.resourceBundle);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -112,7 +112,7 @@ public class FinancerController implements Initializable {
     }
 
     public void handleShowOverviewContent(ActionEvent actionEvent) {
-        this.loadFXML(getClass().getResource("/views/overview.fxml"));
+        this.loadFXML(getClass().getResource("/de/raphaelmuesseler/financer/client/javafx/main/views/overview.fxml"));
         this.removeSelectedStyleClass();
         this.overviewTabBtn.getStyleClass().add("selected");
         this.contentLabel.setText(I18N.get("overview"));
@@ -120,28 +120,28 @@ public class FinancerController implements Initializable {
 
 
     public void handleShowTransactionsContent(ActionEvent actionEvent) {
-        this.loadFXML(getClass().getResource("/views/transactions.fxml"));
+        this.loadFXML(getClass().getResource("/de/raphaelmuesseler/financer/client/javafx/main/views/transactions.fxml"));
         this.removeSelectedStyleClass();
         this.transactionsTabBtn.getStyleClass().add("selected");
         this.contentLabel.setText(I18N.get("transactions"));
     }
 
     public void handleShowStatisticsContent(ActionEvent actionEvent) {
-        this.loadFXML(getClass().getResource("/views/statistics.fxml"));
+        this.loadFXML(getClass().getResource("/de/raphaelmuesseler/financer/client/javafx/main/views/statistics.fxml"));
         this.removeSelectedStyleClass();
         this.statisticsTabBtn.getStyleClass().add("selected");
         this.contentLabel.setText(I18N.get("statistics"));
     }
 
     public void handleShowProfileContent(ActionEvent actionEvent) {
-        this.loadFXML(getClass().getResource("/views/profile.fxml"));
+        this.loadFXML(getClass().getResource("/de/raphaelmuesseler/financer/client/javafx/main/views/profile.fxml"));
         this.removeSelectedStyleClass();
         this.profileTabBtn.getStyleClass().add("selected");
         this.contentLabel.setText(I18N.get("profile"));
     }
 
     public void handleShowSettingsContent(ActionEvent actionEvent) {
-        this.loadFXML(getClass().getResource("/views/settings.fxml"));
+        this.loadFXML(getClass().getResource("/de/raphaelmuesseler/financer/client/javafx/main/views/settings.fxml"));
         this.removeSelectedStyleClass();
         this.settingTabBtn.getStyleClass().add("selected");
         this.contentLabel.setText(I18N.get("settings"));

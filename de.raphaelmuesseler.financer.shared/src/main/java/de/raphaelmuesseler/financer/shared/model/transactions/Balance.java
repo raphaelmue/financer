@@ -1,7 +1,5 @@
 package de.raphaelmuesseler.financer.shared.model.transactions;
 
-import de.raphaelmuesseler.financer.client.local.AbstractLocalStorage;
-
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,9 +9,9 @@ public class Balance {
     private List<FixedTransaction> fixedTransactions;
     private double fixedRevenueAmount, variableRevenueAmount, fixedExpensesAmount, variableExpensesAmount;
 
-    public Balance(LocalDate localDate) {
-        this.transactions = (List<Transaction>) AbstractLocalStorage.readObject(AbstractLocalStorage.TRANSACTIONS_FILE, "transactions");
-        this.fixedTransactions = (List<FixedTransaction>) AbstractLocalStorage.readObject(AbstractLocalStorage.TRANSACTIONS_FILE, "fixedTransactions");
+    public Balance(LocalDate localDate, List<Transaction> transactions, List<FixedTransaction> fixedTransactions) {
+        this.transactions = transactions;
+        this.fixedTransactions = fixedTransactions;
 
         for (Transaction transaction : this.getTransactionsByMonth(localDate)) {
             if (transaction.getAmount() < 0) {

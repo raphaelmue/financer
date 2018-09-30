@@ -1,9 +1,10 @@
-package de.raphaelmuesseler.financer.server.main.transactions;
+package de.raphaelmuesseler.financer.client.javafx.main.transactions;
 
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXDatePicker;
 import com.jfoenix.controls.JFXListView;
 import com.sun.javafx.scene.control.IntegerField;
+import de.raphaelmuesseler.financer.client.format.Formatter;
 import de.raphaelmuesseler.financer.client.format.I18N;
 import de.raphaelmuesseler.financer.client.javafx.components.DoubleField;
 import de.raphaelmuesseler.financer.client.javafx.dialogs.FinancerDialog;
@@ -182,7 +183,7 @@ public class FixedTransactionDialog extends FinancerDialog<FixedTransaction> {
 
     @Override
     protected void prepareDialogContent() {
-        this.categoryLabel.setText(this.category.getName());
+        this.categoryLabel.setText(Formatter.formatCategoryName(this.category));
         if (this.getValue() != null) {
             this.dayField.setValue(this.getValue().getDay());
             this.startDateField.setValue(this.getValue().getStartDate());

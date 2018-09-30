@@ -1,11 +1,12 @@
-package de.raphaelmuesseler.financer.server.main.overview;
+package de.raphaelmuesseler.financer.client.javafx.main.overview;
 
 import de.raphaelmuesseler.financer.client.format.Formatter;
 import de.raphaelmuesseler.financer.client.format.I18N;
 import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
-import de.raphaelmuesseler.financer.server.main.FinancerController;
+import de.raphaelmuesseler.financer.client.javafx.main.FinancerController;
 import de.raphaelmuesseler.financer.shared.model.User;
 import de.raphaelmuesseler.financer.shared.model.transactions.Balance;
+import de.raphaelmuesseler.financer.shared.model.transactions.FixedTransaction;
 import de.raphaelmuesseler.financer.shared.model.transactions.Transaction;
 import javafx.fxml.Initializable;
 import javafx.geometry.HPos;
@@ -60,7 +61,8 @@ public class OverviewController implements Initializable {
             this.lastTransactionsGridPane.add(new Label(I18N.get("noRecentTransactions")), 0, 0);
         }
 
-        Balance balance = new Balance(LocalDate.now());
+        Balance balance = new Balance(LocalDate.now(), this.transactions,
+                (List<FixedTransaction>) LocalStorageImpl.getInstance().readObject(LocalStorageImpl.TRANSACTIONS_FILE, "fixedTransactions"));
 
         this.balanceGridPane.add(new Label(I18N.get("fixedRevenue")), 0, 0);
         Label fixedRevenueLabel = Formatter.formatAmountLabel(balance.getFixedRevenueAmount());

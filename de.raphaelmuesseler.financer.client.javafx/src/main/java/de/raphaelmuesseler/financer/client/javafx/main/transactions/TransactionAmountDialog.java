@@ -1,4 +1,4 @@
-package de.raphaelmuesseler.financer.server.main.transactions;
+package de.raphaelmuesseler.financer.client.javafx.main.transactions;
 
 import com.jfoenix.controls.JFXDatePicker;
 import de.raphaelmuesseler.financer.client.format.I18N;

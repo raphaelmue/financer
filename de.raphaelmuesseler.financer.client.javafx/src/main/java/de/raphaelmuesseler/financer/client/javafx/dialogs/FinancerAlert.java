@@ -1,6 +1,6 @@
 package de.raphaelmuesseler.financer.client.javafx.dialogs;
 
-import de.raphaelmuesseler.financer.server.main.FinancerApplication;
+import de.raphaelmuesseler.financer.client.javafx.main.FinancerApplication;
 import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;

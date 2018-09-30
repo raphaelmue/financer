@@ -7,7 +7,7 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
 <StackPane alignment="center" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1"
-           fx:controller="de.raphaelmuesseler.financer.server.main.FinancerController">
+           fx:controller="de.raphaelmuesseler.financer.client.javafx.main.FinancerController">
     <BorderPane fx:id="rootLayout">
         <center>
             <fx:include fx:id="overviewContent" source="overview.fxml"/>

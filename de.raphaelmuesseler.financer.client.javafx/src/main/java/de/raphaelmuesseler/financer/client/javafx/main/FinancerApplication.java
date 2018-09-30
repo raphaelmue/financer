@@ -1,5 +1,7 @@
-package de.raphaelmuesseler.financer.server.main;
+package de.raphaelmuesseler.financer.client.javafx.main;
 
+import de.raphaelmuesseler.financer.client.format.Formatter;
+import de.raphaelmuesseler.financer.client.format.I18N;
 import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
 import de.raphaelmuesseler.financer.client.javafx.login.LoginApplication;
 import javafx.application.Application;
@@ -41,19 +43,21 @@ public class FinancerApplication extends Application {
             } else {
                 locale = Locale.ENGLISH;
             }
+            I18N.setLocalStorage(LocalStorageImpl.getInstance());
+            Formatter.setSettings(LocalStorageImpl.getInstance().getSettings());
             ResourceBundle resourceBundle = ResourceBundle.getBundle("Financer", locale);
 
-            Parent root = FXMLLoader.load(getClass().getResource("/views/financer.fxml"), resourceBundle);
+            Parent root = FXMLLoader.load(getClass().getResource("views/financer.fxml"), resourceBundle);
 
             Scene scene = new Scene(root, 1200, 650);
 
-            scene.getStylesheets().add(getClass().getResource("navbar.style.css").toExternalForm());
-            scene.getStylesheets().add(getClass().getResource("footer.style.css").toExternalForm());
-            scene.getStylesheets().add(getClass().getResource("header.style.css").toExternalForm());
-            scene.getStylesheets().add(getClass().getResource("colors.style.css").toExternalForm());
-            scene.getStylesheets().add(getClass().getResource("main.style.css").toExternalForm());
-            scene.getStylesheets().add(getClass().getResource("transactions.style.css").toExternalForm());
-            scene.getStylesheets().add(getClass().getResource("overview.style.css").toExternalForm());
+            scene.getStylesheets().add(getClass().getResource("style/navbar.style.css").toExternalForm());
+            scene.getStylesheets().add(getClass().getResource("style/footer.style.css").toExternalForm());
+            scene.getStylesheets().add(getClass().getResource("style/header.style.css").toExternalForm());
+            scene.getStylesheets().add(getClass().getResource("style/colors.style.css").toExternalForm());
+            scene.getStylesheets().add(getClass().getResource("style/main.style.css").toExternalForm());
+            scene.getStylesheets().add(getClass().getResource("style/transactions.style.css").toExternalForm());
+            scene.getStylesheets().add(getClass().getResource("style/overview.style.css").toExternalForm());
             primaryStage.getIcons().add(new Image(FinancerApplication.class.getResourceAsStream("/images/icons/financer-icon.png")));
 
             Font.loadFont(getClass().getResource("/fonts/Roboto-Regular.ttf").toExternalForm(), 12);

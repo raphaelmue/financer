@@ -1,14 +1,14 @@
-package de.raphaelmuesseler.financer.server.main.transactions;
+package de.raphaelmuesseler.financer.client.javafx.main.transactions;
 
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXListView;
+import de.raphaelmuesseler.financer.client.connection.AsyncConnectionCall;
 import de.raphaelmuesseler.financer.client.connection.ServerRequestHandler;
 import de.raphaelmuesseler.financer.client.format.Formatter;
 import de.raphaelmuesseler.financer.client.format.I18N;
-import de.raphaelmuesseler.financer.client.connection.AsyncConnectionCall;
 import de.raphaelmuesseler.financer.client.javafx.dialogs.FinancerConfirmDialog;
 import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
-import de.raphaelmuesseler.financer.server.main.FinancerController;
+import de.raphaelmuesseler.financer.client.javafx.main.FinancerController;
 import de.raphaelmuesseler.financer.shared.connection.ConnectionResult;
 import de.raphaelmuesseler.financer.shared.date.DateUtil;
 import de.raphaelmuesseler.financer.shared.model.Category;
@@ -131,12 +131,12 @@ public class TransactionsController implements Initializable {
         this.tree.traverse(treeItem -> rows.put(treeItem.getValue(), new TransactionOverviewRow(treeItem.getValue())), true);
 
         TableColumn<TransactionOverviewRow, String> categoryColumn = new TableColumn<>(I18N.get("category"));
-        categoryColumn.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().category.getName()));
+        categoryColumn.setCellValueFactory(param -> new SimpleStringProperty(Formatter.formatCategoryName(param.getValue().category)));
         categoryColumn.prefWidthProperty().bind(this.transactionsOverviewTableView.widthProperty().divide(8/2).add(-3));
         categoryColumn.setSortable(false);
 
         for (int i = 0; i < numberOfMaxMonths; i++) {
-            TableColumn<TransactionOverviewRow, String> column = new TableColumn<>(getMonthByNumber(LocalDate.now().minusMonths(i).getMonthValue()).getName());
+            TableColumn<TransactionOverviewRow, String> column = new TableColumn<>(I18N.get(getMonthByNumber(LocalDate.now().minusMonths(i).getMonthValue()).getName()));
             column.prefWidthProperty().bind(this.transactionsOverviewTableView.widthProperty().divide(8).add(-3));
             column.setStyle("-fx-alignment: CENTER-RIGHT;");
             column.setSortable(false);
@@ -198,7 +198,8 @@ public class TransactionsController implements Initializable {
 
         List<TransactionOverviewRow> items = new ArrayList<>(rows.values());
         Collections.sort(items, (o1, o2) ->
-                String.CASE_INSENSITIVE_ORDER.compare(o1.getCategory().getName(), o2.getCategory().getName()));
+                String.CASE_INSENSITIVE_ORDER.compare(Formatter.formatCategoryName(o1.getCategory()),
+                        Formatter.formatCategoryName(o2.getCategory())));
         this.transactionsOverviewTableView.getItems().addAll(items);
     }
 
@@ -328,8 +329,6 @@ public class TransactionsController implements Initializable {
                 public void onSuccess(ConnectionResult result) {
                     Platform.runLater(() -> {
                         // removing numbers in category's name
-                        transaction.getCategory().setName(transaction.getCategory().getName().substring(
-                                transaction.getCategory().getName().indexOf(" ") + 1));
                         transactionsTableView.getItems().add(transaction);
                     });
                 }
@@ -545,7 +544,7 @@ public class TransactionsController implements Initializable {
                 setGraphic(null);
             } else {
                 this.initListCell();
-                this.categoryLabel.setText(item.getName());
+                this.categoryLabel.setText(Formatter.formatCategoryName(item));
                 if (fixedTransactions != null && fixedTransactions.size() > 0) {
                     for (FixedTransaction fixedTransaction : fixedTransactions) {
                         if (fixedTransaction.getCategory().getId() == item.getId() && !item.isKey()) {

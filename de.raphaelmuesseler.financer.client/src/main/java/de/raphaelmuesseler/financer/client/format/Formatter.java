@@ -1,7 +1,7 @@
 package de.raphaelmuesseler.financer.client.format;
 
-import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
 import de.raphaelmuesseler.financer.client.local.Settings;
+import de.raphaelmuesseler.financer.shared.model.Category;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.text.TextAlignment;
@@ -9,7 +9,11 @@ import javafx.scene.text.TextAlignment;
 import java.util.Locale;
 
 public class Formatter {
-    private static final Settings SETTINGS = LocalStorageImpl.getInstance().getSettings();
+    private static Settings SETTINGS;
+
+    public static void setSettings(Settings SETTINGS) {
+        Formatter.SETTINGS = SETTINGS;
+    }
 
     public static String formatCurrency(Double amount) {
         return (SETTINGS.getLanguage() == Locale.GERMAN ? Double.toString(amount).replace(".", ",") : Double.toString(amount)) +
@@ -26,5 +30,13 @@ public class Formatter {
         amountLabel.setAlignment(Pos.CENTER_RIGHT);
         amountLabel.getStyleClass().add(amount < 0 ? "neg-amount" : "pos-amount");
         return amountLabel;
+    }
+
+    public static String formatCategoryName(Category category) {
+        if (category.getPrefix() != null) {
+            return category.getPrefix() + " " + (category.isKey() ? I18N.get(category.getName()) : category.getName());
+        } else {
+            return (category.isKey() ? I18N.get(category.getName()) : category.getName());
+        }
     }
 }

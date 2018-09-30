@@ -35,7 +35,7 @@
                 <Insets top="50"/>
             </padding>
             <ImageView fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true">
-                <Image url="/icons/financer-icon.png"/>
+                <Image url="/images/icons/financer-icon.png"/>
             </ImageView>
             <Label text="%welcome">
                 <font>

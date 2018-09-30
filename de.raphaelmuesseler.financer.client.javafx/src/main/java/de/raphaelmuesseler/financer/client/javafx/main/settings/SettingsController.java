@@ -6,7 +6,6 @@ import de.raphaelmuesseler.financer.client.local.Settings;
 import javafx.fxml.Initializable;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
-import jdk.vm.ci.meta.Local;
 
 import java.net.URL;
 import java.util.Currency;

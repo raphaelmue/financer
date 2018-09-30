@@ -1,4 +1,4 @@
-package de.raphaelmuesseler.financer.server.main.statistics;
+package de.raphaelmuesseler.financer.client.javafx.main.statistics;
 
 public class StatisticsController {
 }

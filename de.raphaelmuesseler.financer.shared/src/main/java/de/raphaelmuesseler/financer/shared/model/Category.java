@@ -1,7 +1,5 @@
 package de.raphaelmuesseler.financer.shared.model;
 
-import de.raphaelmuesseler.financer.client.format.I18N;
-
 import java.io.Serializable;
 
 public class Category implements Serializable {
@@ -47,11 +45,6 @@ public class Category implements Serializable {
 
     public String getName() {
         return name;
-        if (this.prefix != null) {
-            return this.prefix + " " + (isKey ? I18N.get(this.name) : name);
-        } else {
-            return (isKey ? I18N.get(this.name) : name);
-        }
     }
 
     public String getPrefix() {

@@ -6,7 +6,9 @@
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/src/main/java" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/main/resources" type="java-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/src/test/java" isTestSource="true" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
+      <excludeFolder url="file://$MODULE_DIR$/../de.raphaelmuesseler.shared.client/target" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
@@ -15,7 +17,5 @@
     <orderEntry type="library" name="Maven: org.json:json:20180813" level="project" />
     <orderEntry type="library" name="Maven: org.controlsfx:controlsfx:9.0.0" level="project" />
     <orderEntry type="library" name="Maven: com.jfoenix:jfoenix:9.0.4" level="project" />
-    <orderEntry type="library" name="Maven: mysql:mysql-connector-java:8.0.12" level="project" />
-    <orderEntry type="library" name="Maven: com.google.protobuf:protobuf-java:2.6.0" level="project" />
   </component>
 </module>

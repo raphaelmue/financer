@@ -1,7 +1,5 @@
 package de.raphaelmuesseler.financer.shared.date;
 
-import de.raphaelmuesseler.financer.client.format.I18N;
-
 public enum Month {
     JANUARY(1, "january"),
     FEBRUARY(2, "february"),
@@ -17,11 +15,11 @@ public enum Month {
     DECEMBER(12, "december");
 
     private final int number;
-    private final String key;
+    private final String name;
 
     Month(int number, String key) {
         this.number = number;
-        this.key = key;
+        this.name = key;
     }
 
     public static Month getMonthByNumber(int number) {
@@ -37,12 +35,8 @@ public enum Month {
         return number;
     }
 
-    public String getKey() {
-        return key;
-    }
-
     public String getName() {
-        return I18N.get(this.key);
+        return name;
     }
 
     @Override

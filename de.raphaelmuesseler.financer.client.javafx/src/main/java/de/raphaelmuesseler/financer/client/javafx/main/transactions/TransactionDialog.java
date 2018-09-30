@@ -1,6 +1,7 @@
-package de.raphaelmuesseler.financer.server.main.transactions;
+package de.raphaelmuesseler.financer.client.javafx.main.transactions;
 
 import com.jfoenix.controls.JFXDatePicker;
+import de.raphaelmuesseler.financer.client.format.Formatter;
 import de.raphaelmuesseler.financer.client.format.I18N;
 import de.raphaelmuesseler.financer.client.javafx.components.DoubleField;
 import de.raphaelmuesseler.financer.client.javafx.dialogs.FinancerDialog;
@@ -9,10 +10,7 @@ import de.raphaelmuesseler.financer.shared.model.Category;
 import de.raphaelmuesseler.financer.shared.model.transactions.Transaction;
 import de.raphaelmuesseler.financer.shared.util.collections.SerialTreeItem;
 import javafx.scene.Node;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 
 import java.util.Comparator;
@@ -55,8 +53,7 @@ class TransactionDialog extends FinancerDialog<Transaction> {
                 Category.class);
 
         this.tree.numberItemsByValue((result, prefix) -> {
-            result.getValue().setName(prefix + " " + result.getValue().getName());
-            result.getValue().setKey(false);
+            result.getValue().setPrefix(prefix);
         });
 
         tree.traverse(treeItem -> {
@@ -64,6 +61,17 @@ class TransactionDialog extends FinancerDialog<Transaction> {
             if ((treeItem.getValue().getRootId() != -1 && (treeItem.getValue().getRootId() % 2) == 1) ||
                     (treeItem.getValue().getRootId() == -1 && (treeItem.getValue().getParentId() % 2) == 1)) {
                 categoryComboBox.getItems().add(treeItem.getValue());
+            }
+        });
+        this.categoryComboBox.setCellFactory(param -> new ListCell<Category>(){
+            @Override
+            protected void updateItem(Category item, boolean empty) {
+                super.updateItem(item, empty);
+                if (!empty) {
+                    setText(Formatter.formatCategoryName(item));
+                } else {
+                    setText(null);
+                }
             }
         });
         gridPane.add(this.categoryComboBox, 1, 1);

@@ -1,7 +1,7 @@
 package de.raphaelmuesseler.financer.client.javafx.login;
 
 import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
-import de.raphaelmuesseler.financer.server.main.FinancerApplication;
+import de.raphaelmuesseler.financer.client.javafx.main.FinancerApplication;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -43,7 +43,7 @@ public class LoginApplication extends Application {
             ResourceBundle resourceBundle = ResourceBundle.getBundle("Financer", locale);
 
             // loading FXML file
-            Parent root = FXMLLoader.load(getClass().getResource("/views/login.fxml"), resourceBundle);
+            Parent root = FXMLLoader.load(getClass().getResource("/de/raphaelmuesseler/financer/client/javafx/main/views/login.fxml"), resourceBundle);
             Scene scene = new Scene(root, 500, 575);
 
             primaryStage.getIcons().add(new Image(LoginApplication.class.getResourceAsStream("/images/icons/financer-icon.png")));
