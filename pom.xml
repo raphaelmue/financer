@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
@@ -22,11 +21,7 @@
         </plugins>
     </build>
     <modules>
-        <module>de.raphaelmuesseler.financer.client</module>
-        <module>de.raphaelmuesseler.financer.client.javafx</module>
-        <module>de.raphaelmuesseler.financer.server</module>
         <module>de.raphaelmuesseler.financer.shared</module>
-        <module>de.raphaelmuesseler.financer.util</module>
     </modules>
     <dependencies>
         <dependency>
@@ -47,7 +42,7 @@
         <dependency>
             <groupId>com.jfoenix</groupId>
             <artifactId>jfoenix</artifactId>
-            <version>9.0.4</version>
+            <version>9.0.6</version>
         </dependency>
     </dependencies>
 
@@ -68,15 +63,35 @@
             </modules>
         </profile>
         <profile>
-            <id>all</id>
+            <id>java</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
             <modules>
                 <module>de.raphaelmuesseler.financer.client</module>
                 <module>de.raphaelmuesseler.financer.client.javafx</module>
-                <module>de.raphaelmuesseler.financer.shared</module>
                 <module>de.raphaelmuesseler.financer.server</module>
+                <module>de.raphaelmuesseler.financer.shared</module>
+                <module>de.raphaelmuesseler.financer.util</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>mobile</id>
+            <modules>
+                <module>de.raphaelmuesseler.financer.client</module>
+                <module>de.raphaelmuesseler.financer.shared</module>
+                <module>android/de.raphaelmuesseler.financer.client.app</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>all</id>
+            <modules>
+                <module>de.raphaelmuesseler.financer.client</module>
+                <module>android/de.raphaelmuesseler.financer.client.app</module>
+                <module>de.raphaelmuesseler.financer.client.javafx</module>
+                <module>de.raphaelmuesseler.financer.server</module>
+                <module>de.raphaelmuesseler.financer.shared</module>
+                <module>de.raphaelmuesseler.financer.util</module>
             </modules>
         </profile>
     </profiles>
