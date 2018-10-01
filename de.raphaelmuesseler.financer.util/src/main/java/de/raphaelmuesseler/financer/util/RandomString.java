@@ -45,6 +45,10 @@ public class RandomString {
         this(length, random, alphanum);
     }
 
+    public RandomString(int length, String symbols) {
+        this(length, new SecureRandom(), symbols);
+    }
+
     /**
      * Create an alphanumeric strings from a secure generator.
      */
