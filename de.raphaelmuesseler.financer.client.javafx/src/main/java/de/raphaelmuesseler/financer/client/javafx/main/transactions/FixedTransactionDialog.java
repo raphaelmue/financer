@@ -11,7 +11,7 @@ import de.raphaelmuesseler.financer.client.javafx.dialogs.FinancerDialog;
 import de.raphaelmuesseler.financer.shared.model.Category;
 import de.raphaelmuesseler.financer.shared.model.transactions.FixedTransaction;
 import de.raphaelmuesseler.financer.shared.model.transactions.TransactionAmount;
-import de.raphaelmuesseler.financer.shared.util.collections.SerialTreeItem;
+import de.raphaelmuesseler.financer.util.collections.SerialTreeItem;
 import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.control.ButtonType;
