@@ -10,6 +10,10 @@ android {
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
     buildTypes {
         release {
             minifyEnabled false
@@ -21,6 +25,9 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation 'de.raphaelmuesseler.financer:de.raphaelmuesseler.financer.client:1.0-SNAPSHOT'
+    implementation 'de.raphaelmuesseler.financer:de.raphaelmuesseler.financer.shared:1.0-SNAPSHOT'
+    implementation 'de.raphaelmuesseler.financer:de.raphaelmuesseler.financer.util:1.0-SNAPSHOT'
     implementation 'com.android.support:design:28.0.0'
     implementation 'com.android.support.constraint:constraint-layout:1.1.3'
     testImplementation 'junit:junit:4.12'

@@ -3,7 +3,7 @@ package de.raphaelmuesseler.financer.client.javafx.main.transactions;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXDatePicker;
 import com.jfoenix.controls.JFXListView;
-import com.sun.javafx.scene.control.IntegerField;
+import com.sun.javafx.scene.control .IntegerField;
 import de.raphaelmuesseler.financer.client.format.Formatter;
 import de.raphaelmuesseler.financer.client.format.I18N;
 import de.raphaelmuesseler.financer.client.javafx.components.DoubleField;
