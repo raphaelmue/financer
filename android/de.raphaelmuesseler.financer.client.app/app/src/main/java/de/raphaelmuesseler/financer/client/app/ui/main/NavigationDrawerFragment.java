@@ -1,4 +1,4 @@
-package de.raphaelmuesseler.financer.client.app;
+package de.raphaelmuesseler.financer.client.app.ui.main;
 
 import android.app.Activity;
 import android.support.v7.app.ActionBar;
@@ -21,6 +21,8 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
+
+import de.raphaelmuesseler.financer.client.app.R;
 
 /**
  * Fragment used for managing interactions for and presentation of a navigation drawer.
