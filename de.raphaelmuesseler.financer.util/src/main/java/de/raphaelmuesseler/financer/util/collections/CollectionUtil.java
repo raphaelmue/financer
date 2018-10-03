@@ -1,4 +1,4 @@
-package de.raphaelmuesseler.financer.shared.util.collections;
+package de.raphaelmuesseler.financer.util.collections;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
