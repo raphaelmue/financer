@@ -1,5 +1,6 @@
 package de.raphaelmuesseler.financer.server.main;
 
+import de.raphaelmuesseler.financer.server.db.Database;
 import de.raphaelmuesseler.financer.server.service.FinancerService;
 
 import java.io.DataInputStream;
@@ -33,6 +34,13 @@ public class Server {
             } else {
                 port = PORT;
             }
+
+            if (args.length > 1 && args[1] != null && args[1].equals("local")) {
+                Database.setHost(true);
+            } else {
+                Database.setHost(false);
+            }
+
             Server server = new Server(port);
             server.run();
         } catch (NumberFormatException e) {

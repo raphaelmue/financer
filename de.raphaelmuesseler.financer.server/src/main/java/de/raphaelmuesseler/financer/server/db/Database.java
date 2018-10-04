@@ -19,10 +19,12 @@ public class Database {
     private static final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
 
     // for testing:
-    // private static final String HOST = "localhost";
+    private static final String HOST_LOCAL = "localhost";
 
     // for deployment:
-    private static final String HOST = "raphael-muesseler.de";
+    private static final String HOST_DEPLOY = "raphael-muesseler.de";
+
+    private static String HOST;
     private static final String DB_NAME = "financer_dev";
     // for production:
     // private static final String DB_NAME     = "financer_prod";
@@ -71,6 +73,10 @@ public class Database {
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
+    }
+
+    public static void setHost(boolean local) {
+        Database.HOST = local ? Database.HOST_LOCAL : Database.HOST_DEPLOY;
     }
 
     /**
