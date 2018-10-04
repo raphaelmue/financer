@@ -18,9 +18,11 @@ public class Database {
 
     private static final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
 
-    // for production:
-    // private static final String HOST = "raphael-muesseler.de";
-    private static final String HOST = "localhost";
+    // for testing:
+    // private static final String HOST = "localhost";
+
+    // for deployment:
+    private static final String HOST = "raphael-muesseler.de";
     private static final String DB_NAME = "financer_dev";
     // for production:
     // private static final String DB_NAME     = "financer_prod";
