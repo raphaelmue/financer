@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Financer</string>
+    <string name="action_settings">Einstellungen</string>
+    <string name="action_sign_in">Anmelden</string>
+    <string name="error_field_required">Dieses Feld ist obligatorisch.</string>
+    <string name="error_incorrect_password">Das Password ist falsch.</string>
+    <string name="error_invalid_email">Die Email Adresse ist ungültig.</string>
+    <string name="error_invalid_password">Das Passwort ist zu kurz.</string>
+    <string name="navigation_drawer_close">Navigation schließen</string>
+    <string name="navigation_drawer_open">Navigation öffnen</string>
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Passwort</string>
+    <string name="title_activity_login">Anmelden</string>
+    <string name="permission_rationale">"Für die Bereitstellung von E-Mail-Vervollständigungen sind Kontaktberechtigungen erforderlich.    "</string>
+</resources>
