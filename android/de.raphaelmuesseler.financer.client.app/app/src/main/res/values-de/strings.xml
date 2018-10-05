@@ -13,4 +13,10 @@
     <string name="prompt_password">Passwort</string>
     <string name="title_activity_login">Anmelden</string>
     <string name="permission_rationale">"Für die Bereitstellung von E-Mail-Vervollständigungen sind Kontaktberechtigungen erforderlich.    "</string>
+    <string name="overview">Überblick</string>
+    <string name="transactions">Transaktionen</string>
+    <string name="statistics">Statistiken</string>
+    <string name="settings">Einstellungen</string>
+    <string name="profile">Profil</string>
+    <string name="logout">Abmelden</string>
 </resources>
