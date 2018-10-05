@@ -7,9 +7,11 @@ import java.io.*;
 import java.net.Socket;
 import java.util.Map;
 
-class ServerRequest {
+public class ServerRequest {
 
-    private final static String HOST = "localhost";
+    private final static String HOST_LOCAL = "localhost";
+    private final static String HOST_DEPLOY = "raphael-muesseler.de";
+    private static String HOST;
     private final static int PORT = 3500;
 
     private final ConnectionCall connectionCall;
@@ -20,6 +22,10 @@ class ServerRequest {
 
     ServerRequest(ConnectionCall connectionCall) {
         this.connectionCall = connectionCall;
+    }
+
+    public static void setHost(boolean local) {
+        ServerRequest.HOST = local ? ServerRequest.HOST_LOCAL : ServerRequest.HOST_DEPLOY;
     }
 
     ConnectionResult make() throws IOException, ClassNotFoundException {

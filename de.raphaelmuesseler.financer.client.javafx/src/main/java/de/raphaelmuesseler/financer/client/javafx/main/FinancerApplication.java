@@ -1,5 +1,6 @@
 package de.raphaelmuesseler.financer.client.javafx.main;
 
+import de.raphaelmuesseler.financer.client.connection.ServerRequest;
 import de.raphaelmuesseler.financer.client.format.Formatter;
 import de.raphaelmuesseler.financer.client.format.I18N;
 import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
@@ -23,6 +24,11 @@ public class FinancerApplication extends Application {
     private Logger logger = Logger.getLogger("FinancerApplication");
 
     public static void main(String[] args) {
+        if (args.length > 0 && args[0] != null && args[0].equals("local")) {
+            ServerRequest.setHost(true);
+        } else {
+            ServerRequest.setHost(false);
+        }
         launch(args);
     }
 
