@@ -1,4 +1,4 @@
-package de.raphaelmuesseler.financer.shared.util.collections;
+package de.raphaelmuesseler.financer.util.collections;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

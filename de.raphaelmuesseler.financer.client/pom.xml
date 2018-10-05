@@ -10,7 +10,6 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>de.raphaelmuesseler.financer.client</artifactId>
-    <packaging>pom</packaging>
     <build>
         <resources>
             <resource>

@@ -3,15 +3,15 @@ package de.raphaelmuesseler.financer.client.javafx.main.transactions;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXDatePicker;
 import com.jfoenix.controls.JFXListView;
-import com.sun.javafx.scene.control.IntegerField;
 import de.raphaelmuesseler.financer.client.format.Formatter;
 import de.raphaelmuesseler.financer.client.format.I18N;
 import de.raphaelmuesseler.financer.client.javafx.components.DoubleField;
+import de.raphaelmuesseler.financer.client.javafx.components.IntegerField;
 import de.raphaelmuesseler.financer.client.javafx.dialogs.FinancerDialog;
 import de.raphaelmuesseler.financer.shared.model.Category;
 import de.raphaelmuesseler.financer.shared.model.transactions.FixedTransaction;
 import de.raphaelmuesseler.financer.shared.model.transactions.TransactionAmount;
-import de.raphaelmuesseler.financer.shared.util.collections.SerialTreeItem;
+import de.raphaelmuesseler.financer.util.collections.SerialTreeItem;
 import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.control.ButtonType;
@@ -67,8 +67,7 @@ public class FixedTransactionDialog extends FinancerDialog<FixedTransaction> {
         gridPane.add(this.categoryLabel, 1, 0);
 
         gridPane.add(new Label(I18N.get("valueDate")), 0, 1);
-        this.dayField = new IntegerField();
-        this.dayField.setMaxValue(30);
+        this.dayField = new IntegerField(0, 30);
         gridPane.add(this.dayField, 1, 1);
 
         gridPane.add(new Label(I18N.get("startDate")), 0, 2);

@@ -2,7 +2,6 @@ package de.raphaelmuesseler.financer.client.javafx.main.transactions;
 
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXListView;
-import de.raphaelmuesseler.financer.client.connection.AsyncConnectionCall;
 import de.raphaelmuesseler.financer.client.connection.ServerRequestHandler;
 import de.raphaelmuesseler.financer.client.format.Formatter;
 import de.raphaelmuesseler.financer.client.format.I18N;
@@ -16,8 +15,8 @@ import de.raphaelmuesseler.financer.shared.model.Category;
 import de.raphaelmuesseler.financer.shared.model.User;
 import de.raphaelmuesseler.financer.shared.model.transactions.FixedTransaction;
 import de.raphaelmuesseler.financer.shared.model.transactions.Transaction;
-import de.raphaelmuesseler.financer.shared.util.collections.CollectionUtil;
-import de.raphaelmuesseler.financer.shared.util.collections.SerialTreeItem;
+import de.raphaelmuesseler.financer.util.collections.CollectionUtil;
+import de.raphaelmuesseler.financer.util.collections.SerialTreeItem;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
