@@ -12,13 +12,17 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import de.raphaelmuesseler.financer.client.app.R;
 import de.raphaelmuesseler.financer.client.app.local.LocalStorageImpl;
 import de.raphaelmuesseler.financer.client.app.ui.login.LoginActivity;
+import de.raphaelmuesseler.financer.shared.model.User;
 
 public class FinancerActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    private User user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,7 +30,8 @@ public class FinancerActivity extends AppCompatActivity
 
         LocalStorageImpl.setContext(this);
 
-        if (LocalStorageImpl.getInstance().getLoggedInUser() == null) {
+        this.user = LocalStorageImpl.getInstance().getLoggedInUser();
+        if (this.user == null) {
             this.openLoginActivity();
         } else {
             setContentView(R.layout.activity_financer);
@@ -45,6 +50,11 @@ public class FinancerActivity extends AppCompatActivity
 
             NavigationView navigationView = findViewById(R.id.nav_view);
             navigationView.setNavigationItemSelectedListener(this);
+
+            TextView tvUserEmail = navigationView.getHeaderView(0).findViewById(R.id.tvUserEmail);
+            tvUserEmail.setText(this.user.getEmail());
+            TextView tvUserFullName = navigationView.getHeaderView(0).findViewById(R.id.tvUserFullName);
+            tvUserFullName.setText(this.user.getFullName());
         }
     }
 
