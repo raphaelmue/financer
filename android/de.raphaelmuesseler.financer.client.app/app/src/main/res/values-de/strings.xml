@@ -19,4 +19,5 @@
     <string name="settings">Einstellungen</string>
     <string name="profile">Profil</string>
     <string name="logout">Abmelden</string>
+    <string name="fixed_transactions">Feste Transaktionen</string>
 </resources>
