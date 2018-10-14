@@ -7,26 +7,16 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CategoryTree implements Serializable, AmountProvider, Tree<CategoryTree.Category> {
+public class CategoryTree implements Serializable, AmountProvider, Tree<Category> {
     private static final long serialVersionUID = -5848321222290793608L;
 
     private final Category category;
     private final List<CategoryTree> children = new ArrayList<>();
     private final BaseCategory.CategoryClass categoryClass;
-    private final CategoryTree parent;
+    private CategoryTree parent;
 
-    public CategoryTree(BaseCategory.CategoryClass categoryClass, String name) {
-        this(categoryClass, null, -1, name);
-    }
-
-    public CategoryTree(BaseCategory.CategoryClass categoryClass, int id, String name) {
-        this(categoryClass, null, id, name);
-    }
-
-    public CategoryTree(BaseCategory.CategoryClass categoryClass, CategoryTree parent, int id, String name) {
-        this.categoryClass = categoryClass;
-        this.parent = parent;
-        this.category = new Category(id, name);
+    public CategoryTree(BaseCategory.CategoryClass categoryClass, Category category) {
+        this(categoryClass, null, category);
     }
 
     public CategoryTree(BaseCategory.CategoryClass categoryClass, CategoryTree parent, Category category) {
@@ -66,7 +56,7 @@ public class CategoryTree implements Serializable, AmountProvider, Tree<Category
     }
 
     @Override
-    public Category getCategory() {
+    public Category getValue() {
         return this.category;
     }
 
@@ -76,35 +66,17 @@ public class CategoryTree implements Serializable, AmountProvider, Tree<Category
     }
 
     @Override
-    public List<? extends Tree<Category>> getChildren() {
-        return this.children;
+    public List<Tree<Category>> getChildren() {
+        return new ArrayList<>(this.children);
     }
 
-    public class Category {
-        private final int id;
-        private final String name;
-        private String prefix = null;
+    /**
+     * SETTER
+     */
 
-        public Category(int id, String name) {
-            this.id = id;
-            this.name = name;
-        }
-
-        public int getId() {
-            return id;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public String getPrefix() {
-            return prefix;
-        }
-
-        public void setPrefix(String prefix) {
-            this.prefix = prefix;
-        }
+    @Override
+    public void setParent(Tree<Category> parent) {
+        this.parent = (CategoryTree) parent;
     }
 }
 

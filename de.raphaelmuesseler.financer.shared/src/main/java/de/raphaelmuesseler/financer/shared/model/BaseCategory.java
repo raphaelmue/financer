@@ -30,8 +30,21 @@ public class BaseCategory implements Serializable, AmountProvider {
             return index;
         }
 
+        public int getDatabaseIndex() {
+            return index + 1;
+        }
+
         public String getName() {
             return name;
+        }
+
+        public static CategoryClass getCategoryClassByIndex(int index) {
+            for (CategoryClass categoryClass : values()) {
+                if (categoryClass.getIndex() == index) {
+                    return categoryClass;
+                }
+            }
+            return null;
         }
     }
 

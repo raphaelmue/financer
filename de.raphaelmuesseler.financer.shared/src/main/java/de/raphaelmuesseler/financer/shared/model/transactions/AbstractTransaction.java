@@ -10,13 +10,13 @@ abstract class AbstractTransaction implements Serializable, AmountProvider {
 
     private int id;
     private double amount;
-    private CategoryTree category;
+    private CategoryTree categoryTree;
     private String product, purpose;
 
     AbstractTransaction(int id, double amount, CategoryTree category, String product, String purpose) {
         this.id = id;
         this.amount = amount;
-        this.category = category;
+        this.categoryTree = category;
         this.product = product;
         this.purpose = purpose;
     }
@@ -29,8 +29,8 @@ abstract class AbstractTransaction implements Serializable, AmountProvider {
         return amount;
     }
 
-    public CategoryTree getCategory() {
-        return category;
+    public CategoryTree getCategoryTree() {
+        return categoryTree;
     }
 
     public String getProduct() {
@@ -49,8 +49,8 @@ abstract class AbstractTransaction implements Serializable, AmountProvider {
         this.amount = amount;
     }
 
-    public void setCategory(CategoryTree category) {
-        this.category = category;
+    public void setCategoryTree(CategoryTree categoryTree) {
+        this.categoryTree = categoryTree;
     }
 
     public void setProduct(String product) {

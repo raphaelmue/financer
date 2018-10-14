@@ -3,13 +3,15 @@ package de.raphaelmuesseler.financer.server.service;
 import de.raphaelmuesseler.financer.server.db.Database;
 import de.raphaelmuesseler.financer.shared.connection.ConnectionResult;
 import de.raphaelmuesseler.financer.shared.exceptions.EmailAlreadyInUseException;
+import de.raphaelmuesseler.financer.shared.model.BaseCategory;
 import de.raphaelmuesseler.financer.shared.model.Category;
+import de.raphaelmuesseler.financer.shared.model.CategoryTree;
 import de.raphaelmuesseler.financer.shared.model.User;
 import de.raphaelmuesseler.financer.shared.model.transactions.FixedTransaction;
 import de.raphaelmuesseler.financer.shared.model.transactions.Transaction;
 import de.raphaelmuesseler.financer.shared.model.transactions.TransactionAmount;
-import de.raphaelmuesseler.financer.util.collections.SerialTreeItem;
 import de.raphaelmuesseler.financer.util.Hash;
+import de.raphaelmuesseler.financer.util.collections.TreeUtil;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -91,39 +93,43 @@ public class FinancerService {
         return new ConnectionResult<>(user);
     }
 
-    public ConnectionResult<String> getUsersCategories(Logger logger, Map<String, Object> parameters) throws Exception {
+    public ConnectionResult<BaseCategory> getUsersCategories(Logger logger, Map<String, Object> parameters) throws Exception {
         logger.log(Level.INFO, "Fetching users categories ...");
 
         Map<String, Object> whereClause = new HashMap<>();
         whereClause.put("user_id", ((User) parameters.get("user")).getId());
 
-        SerialTreeItem<Category> tree = new SerialTreeItem<>(new Category("categories", true));
+        BaseCategory baseCategory = new BaseCategory();
 
-        for (int i = 0; i < 4; i++) {
-            whereClause.put("cat_id", i);
+        for (BaseCategory.CategoryClass categoryClass : BaseCategory.CategoryClass.values()) {
+            whereClause.put("cat_id", categoryClass.getDatabaseIndex());
             JSONArray jsonArray = this.database.get(Database.Table.USERS_CATEGORIES, whereClause,
                     "cat_id ASC, parent_id ASC");
 
-            SerialTreeItem<Category> subTree = new SerialTreeItem<>(new Category(i, -1, i, Category.CATEGORIES[i], true));
+            List<CategoryTree> subTree = new ArrayList<>();
 
             for (int j = 0; j < jsonArray.length(); j++) {
                 JSONObject jsonObject = jsonArray.getJSONObject(j);
 
                 if (jsonObject.get("parent_id").equals("null")) {
-                    subTree.getChildren().add(new SerialTreeItem<>(new Category(jsonObject.getInt("id"), -1, i,
-                            jsonObject.getString("name"), false)));
+                    subTree.add(new CategoryTree(categoryClass, null, new Category(jsonObject.getInt("id"),
+                            jsonObject.getString("name"),
+                            jsonObject.getInt("parent_id"),
+                            jsonObject.getInt("cat_id"))));
                 } else {
-                    subTree.insertByValue(new SerialTreeItem<>(new Category(jsonObject.getInt("id"),
-                                    (jsonObject.getInt("parent_id")), i,
-                                    jsonObject.getString("name"), false)),
+                    TreeUtil.insertByValue(subTree, new CategoryTree(categoryClass, null,
+                                    new Category(jsonObject.getInt("id"),
+                                            jsonObject.getString("name"),
+                                            jsonObject.getInt("parent_id"),
+                                            jsonObject.getInt("cat_id"))),
                             (o1, o2) -> Integer.compare(o1.getParentId(), o2.getId()));
                 }
             }
 
-            tree.getChildren().add(subTree);
+            baseCategory.getCategories().put(categoryClass, subTree);
 
         }
-        return new ConnectionResult<>(tree.getJson().toString());
+        return new ConnectionResult<>(baseCategory);
     }
 
     public ConnectionResult<Category> addCategory(Logger logger, Map<String, Object> parameters) throws Exception {
@@ -186,13 +192,16 @@ public class FinancerService {
             whereClause.put("id", jsonObjectTransaction.getInt("cat_id"));
             JSONObject jsonObjectCategory = this.database.get(Database.Table.USERS_CATEGORIES, whereClause).getJSONObject(0);
             Category category = new Category(jsonObjectCategory.getInt("id"),
-                    (jsonObjectCategory.get("parent_id") == "null" ? -1 : jsonObjectCategory.getInt("parent_id")),
-                    jsonObjectCategory.getInt("cat_id"),
                     jsonObjectCategory.getString("name"),
-                    false);
+                    (jsonObjectCategory.get("parent_id") == "null" ? -1 : jsonObjectCategory.getInt("parent_id")),
+                    jsonObjectCategory.getInt("cat_id"));
 
-            transactions.add(new Transaction(jsonObjectTransaction.getInt("id"), jsonObjectTransaction.getDouble("amount"), category,
-                    jsonObjectTransaction.getString("product"), jsonObjectTransaction.getString("purpose"),
+            // TODO get real CategoryTree instance
+            transactions.add(new Transaction(jsonObjectTransaction.getInt("id"),
+                    jsonObjectTransaction.getDouble("amount"),
+                    new CategoryTree(BaseCategory.CategoryClass.getCategoryClassByIndex(category.getRootId() - 1), null, category),
+                    jsonObjectTransaction.getString("product"),
+                    jsonObjectTransaction.getString("purpose"),
                     ((Date) jsonObjectTransaction.get("value_date")).toLocalDate(),
                     jsonObjectTransaction.getString("shop")));
         }
@@ -211,7 +220,7 @@ public class FinancerService {
         values.put("product", transaction.getProduct());
         values.put("purpose", transaction.getPurpose());
         values.put("shop", transaction.getShop());
-        values.put("cat_id", transaction.getCategory().getId());
+        values.put("cat_id", transaction.getCategoryTree().getValue().getId());
 
         this.database.insert(Database.Table.TRANSACTIONS, values);
 
@@ -232,7 +241,7 @@ public class FinancerService {
         values.put("product", transaction.getProduct());
         values.put("purpose", transaction.getPurpose());
         values.put("shop", transaction.getShop());
-        values.put("cat_id", transaction.getCategory().getId());
+        values.put("cat_id", transaction.getCategoryTree().getValue().getId());
 
         this.database.update(Database.Table.TRANSACTIONS, where, values);
 
@@ -270,9 +279,9 @@ public class FinancerService {
             JSONObject jsonObjectCategory = this.database.get(Database.Table.USERS_CATEGORIES, whereClause).getJSONObject(0);
             whereClause.clear();
             Category category = new Category(jsonObjectCategory.getInt("id"),
+                    jsonObjectCategory.getString("name"),
                     (jsonObjectCategory.get("parent_id") == "null" ? -1 : jsonObjectCategory.getInt("parent_id")),
-                    jsonObjectCategory.getInt("cat_id"),
-                    jsonObjectCategory.getString("name"), false);
+                    jsonObjectCategory.getInt("cat_id"));
 
             // fetching respective transaction amounts if the flag "is_variable" is true
             List<TransactionAmount> transactionAmounts = new ArrayList<>();
@@ -291,9 +300,10 @@ public class FinancerService {
 
             transactionAmounts.sort(Comparator.comparing(TransactionAmount::getValueDate).reversed());
 
+            // TODO get real CategoryTree instance
             fixedTransactions.add(new FixedTransaction(jsonObjectTransaction.getInt("id"),
                     (jsonObjectTransaction.get("amount") == "null" ? 0 : jsonObjectTransaction.getDouble("amount")),
-                    category,
+                    new CategoryTree(BaseCategory.CategoryClass.getCategoryClassByIndex(category.getRootId() - 1), null, category),
                     (jsonObjectTransaction.get("product") == "null" ? null : jsonObjectTransaction.getString("product")),
                     (jsonObjectTransaction.get("purpose") == "null" ? null : jsonObjectTransaction.getString("purpose")),
                     ((Date) jsonObjectTransaction.get("start_date")).toLocalDate(),
@@ -313,7 +323,7 @@ public class FinancerService {
 
         Map<String, Object> whereParameters = new HashMap<>();
         whereParameters.put("user_id", user.getId());
-        whereParameters.put("cat_id", fixedTransaction.getCategory().getId());
+        whereParameters.put("cat_id", fixedTransaction.getCategoryTree().getValue().getId());
         whereParameters.put("end_date", null);
 
         Map<String, Object> values = new HashMap<>();
@@ -324,7 +334,7 @@ public class FinancerService {
         values.clear();
         values.put("user_id", user.getId());
         values.put("amount", (fixedTransaction.isVariable() ? null : fixedTransaction.getAmount()));
-        values.put("cat_id", fixedTransaction.getCategory().getId());
+        values.put("cat_id", fixedTransaction.getCategoryTree().getValue().getId());
         values.put("start_date", fixedTransaction.getStartDate());
         values.put("end_date", fixedTransaction.getEndDate());
         values.put("is_variable", (fixedTransaction.isVariable() ? 1 : 0));

@@ -1,11 +1,13 @@
 package de.raphaelmuesseler.financer.util.collections;
 
 import java.util.Comparator;
+import java.util.List;
 
 public class TreeUtil {
     public static <T> boolean insertByValue(Tree<T> root, Tree<T> treeItem, Comparator<T> comparator) {
         for (Tree<T> item : root.getChildren()) {
-            if (comparator.compare(treeItem.getCategory(), item.getCategory()) == 0) {
+            if (comparator.compare(treeItem.getValue(), item.getValue()) == 0) {
+                treeItem.setParent(root);
                 item.getChildren().add(treeItem);
                 return true;
             } else {
@@ -17,9 +19,18 @@ public class TreeUtil {
         return false;
     }
 
+    public static <T> boolean insertByValue(List<? extends Tree<T>> roots, Tree<T> treeItem, Comparator<T> comparator) {
+        for (Tree<T> root : roots) {
+            if (insertByValue(root, treeItem, comparator)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public static <T> boolean deleteByValue(Tree<T> root, Tree<T> treeItem, Comparator<T> comparator) {
         for (Tree<T> item : root.getChildren()) {
-            if (comparator.compare(treeItem.getCategory(), item.getCategory()) == 0) {
+            if (comparator.compare(treeItem.getValue(), item.getValue()) == 0) {
                 item.getChildren().remove(treeItem);
                 return true;
             } else {
@@ -33,10 +44,12 @@ public class TreeUtil {
 
     public static <T> Tree<T> getByValue(Tree<T> root, Tree<T> treeItem, Comparator<T> comparator) {
         for (Tree<T> item : root.getChildren()) {
-            if (comparator.compare(treeItem.getCategory(), item.getCategory()) == 0) {
+            if (comparator.compare(treeItem.getValue(), item.getValue()) == 0) {
                 return item;
             } else {
-                return TreeUtil.getByValue(item, treeItem, comparator);
+                if (TreeUtil.getByValue(item, treeItem, comparator) != null) {
+                    return TreeUtil.getByValue(item, treeItem, comparator);
+                }
             }
         }
         return null;
@@ -52,7 +65,7 @@ public class TreeUtil {
     }
 
     public static <T> void traverseValue(Tree<T> root, Action<T> action) {
-        action.action(root.getCategory());
+        action.action(root.getValue());
         if (!root.isLeaf()) {
             for (Tree<T> item : root.getChildren()) {
                 TreeUtil.traverseValue(item, action);
