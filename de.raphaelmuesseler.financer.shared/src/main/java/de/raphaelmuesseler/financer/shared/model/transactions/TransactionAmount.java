@@ -1,9 +1,12 @@
 package de.raphaelmuesseler.financer.shared.model.transactions;
 
+import de.raphaelmuesseler.financer.shared.model.AmountProvider;
+import de.raphaelmuesseler.financer.util.date.DateUtil;
+
 import java.io.Serializable;
 import java.time.LocalDate;
 
-public class TransactionAmount implements Serializable {
+public class TransactionAmount implements Serializable, AmountProvider {
     private static final long serialVersionUID = -6751558797407170754L;
     private int id;
     private double amount;
@@ -19,8 +22,14 @@ public class TransactionAmount implements Serializable {
         return id;
     }
 
+    @Override
     public double getAmount() {
         return amount;
+    }
+
+    @Override
+    public double getAmount(LocalDate localDate) {
+        return (DateUtil.checkIfMonthsAreEqual(localDate, this.valueDate) ? this.getAmount() : 0);
     }
 
     public LocalDate getValueDate() {

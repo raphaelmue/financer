@@ -1,7 +1,8 @@
 package de.raphaelmuesseler.financer.shared.model.transactions;
 
+import de.raphaelmuesseler.financer.shared.model.AmountProvider;
 import de.raphaelmuesseler.financer.shared.model.Category;
-import de.raphaelmuesseler.financer.shared.date.Month;
+import de.raphaelmuesseler.financer.util.date.Month;
 
 import java.time.LocalDate;
 import java.util.Comparator;
@@ -15,7 +16,7 @@ public class FixedTransaction extends AbstractTransaction {
     private final List<TransactionAmount> transactionAmounts;
 
     public FixedTransaction(int id, double amount, Category category, String product, String purpose, LocalDate startDate,
-                     LocalDate endDate, boolean isVariable, int day, List<TransactionAmount> transactionAmounts) {
+                            LocalDate endDate, boolean isVariable, int day, List<TransactionAmount> transactionAmounts) {
         super(id, amount, category, product, purpose);
         this.startDate = startDate;
         this.endDate = endDate;
@@ -28,8 +29,26 @@ public class FixedTransaction extends AbstractTransaction {
         this.getTransactionAmounts().sort(Comparator.comparing(TransactionAmount::getValueDate).reversed());
     }
 
-    public TransactionAmount getAmountByMonth(Month month) {
-        return null;
+    @Override
+    public double getAmount(LocalDate localDate) {
+        double amount = 0;
+
+        for (AmountProvider amountProvider : this.transactionAmounts) {
+            amount += amountProvider.getAmount(localDate);
+        }
+
+        return amount;
+    }
+
+    @Override
+    public double getAmount() {
+        double amount = 0;
+
+        for (AmountProvider amountProvider : this.transactionAmounts) {
+            amount += amountProvider.getAmount();
+        }
+
+        return amount;
     }
 
     public LocalDate getStartDate() {

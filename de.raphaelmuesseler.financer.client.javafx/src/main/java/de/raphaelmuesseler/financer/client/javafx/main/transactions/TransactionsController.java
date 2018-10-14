@@ -10,7 +10,7 @@ import de.raphaelmuesseler.financer.client.javafx.dialogs.FinancerConfirmDialog;
 import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
 import de.raphaelmuesseler.financer.client.javafx.main.FinancerController;
 import de.raphaelmuesseler.financer.shared.connection.ConnectionResult;
-import de.raphaelmuesseler.financer.shared.date.DateUtil;
+import de.raphaelmuesseler.financer.util.date.DateUtil;
 import de.raphaelmuesseler.financer.shared.model.Category;
 import de.raphaelmuesseler.financer.shared.model.User;
 import de.raphaelmuesseler.financer.shared.model.transactions.FixedTransaction;
@@ -43,7 +43,7 @@ import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static de.raphaelmuesseler.financer.shared.date.Month.getMonthByNumber;
+import static de.raphaelmuesseler.financer.util.date.Month.getMonthByNumber;
 
 public class TransactionsController implements Initializable {
 

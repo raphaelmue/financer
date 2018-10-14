@@ -1,46 +1,64 @@
 package de.raphaelmuesseler.financer.shared.model;
 
 import java.io.Serializable;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
-public class Category implements Serializable {
+public class Category implements Serializable, AmountProvider {
     private static final long serialVersionUID = -5848321222290793608L;
-    public static final String[] CATEGORIES = {
-            "fixedRevenue",
-            "variableRevenue",
-            "fixedExpenses",
-            "variableExpenses"
-    };
 
-    private int id, parentId, rootId;
-    private String name, prefix = null;
-    private boolean isKey;
+    private int id;
+    private final String name;
+    private String prefix = null;
 
-    public Category(String name) {
-        this(-1, -1, -1, name, false);
+    private final List<AmountProvider> children = new ArrayList<>();
+    private final BaseCategory.CategoryClass categoryClass;
+    private final AmountProvider parent;
+
+    public Category(BaseCategory.CategoryClass categoryClass, String name) {
+        this(categoryClass, null, -1, name);
     }
 
-    public Category(int id, String name) {
-        this(id, -1, -1, name, false);
+    public Category(BaseCategory.CategoryClass categoryClass, int id, String name) {
+        this(categoryClass, null, id, name);
     }
 
-    public Category(int id, int parentId, String name) {
-        this(id, parentId, -1, name, false);
-    }
-
-    public Category(String name, boolean isKey) {
-        this(-1, -1, -1, name, isKey);
-    }
-
-    public Category(int id, String name, boolean isKey) {
-        this(id, -1, -1, name, isKey);
-    }
-
-    public Category(int id, int parentId, int rootId, String name, boolean isKey) {
+    public Category(BaseCategory.CategoryClass categoryClass, AmountProvider parent, int id, String name) {
+        this.categoryClass = categoryClass;
+        this.parent = parent;
         this.id = id;
-        this.parentId = parentId;
-        this.rootId = rootId;
         this.name = name;
-        this.isKey = isKey;
+    }
+
+    @Override
+    public double getAmount() {
+        double amount = 0;
+
+        for (AmountProvider amountProvider : this.children) {
+            amount += amountProvider.getAmount();
+        }
+
+        return amount;
+    }
+
+    @Override
+    public double getAmount(LocalDate localDate) {
+        double amount = 0;
+
+        for (AmountProvider amountProvider : this.children) {
+            amount += amountProvider.getAmount(localDate);
+        }
+
+        return amount;
+    }
+
+    /**
+     * GETTER
+     */
+
+    public int getId() {
+        return id;
     }
 
     public String getName() {
@@ -51,48 +69,24 @@ public class Category implements Serializable {
         return prefix;
     }
 
-    public String getKey() {
-        return isKey ? name : null;
+    public BaseCategory.CategoryClass getCategoryClass() {
+        return categoryClass;
     }
 
-    public int getId() {
-        return id;
+    public AmountProvider getParent() {
+        return parent;
     }
 
-    public int getParentId() {
-        return parentId;
+    public List<AmountProvider> getChildren() {
+        return children;
     }
 
-    public int getRootId() {
-        return rootId;
-    }
-
-    public boolean isKey() {
-        return isKey;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public void setKey(boolean key) {
-        isKey = key;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
+    /**
+     * SETTER
+     */
 
     public void setPrefix(String prefix) {
         this.prefix = prefix;
-    }
-
-    public void setParentId(int parentId) {
-        this.parentId = parentId;
-    }
-
-    public void setRootId(int rootId) {
-        this.rootId = rootId;
     }
 
     @Override
@@ -103,11 +97,6 @@ public class Category implements Serializable {
     @Override
     public boolean equals(Object obj) {
         return (obj instanceof Category && this.getId() == ((Category) obj).getId());
-    }
-
-    @Override
-    public int hashCode() {
-        return 548135 + this.getId();
     }
 }
 

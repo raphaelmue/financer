@@ -1,11 +1,12 @@
 package de.raphaelmuesseler.financer.shared.model.transactions;
 
+import de.raphaelmuesseler.financer.shared.model.AmountProvider;
 import de.raphaelmuesseler.financer.shared.model.Category;
 
 import java.io.Serializable;
 import java.time.LocalDate;
 
-abstract class AbstractTransaction implements Serializable {
+abstract class AbstractTransaction implements Serializable, AmountProvider {
     private static final long serialVersionUID = -2425120066992174442L;
 
     private int id;

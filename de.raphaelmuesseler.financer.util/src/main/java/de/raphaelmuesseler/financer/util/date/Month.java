@@ -1,4 +1,4 @@
-package de.raphaelmuesseler.financer.shared.date;
+package de.raphaelmuesseler.financer.util.date;
 
 public enum Month {
     JANUARY(1, "january"),

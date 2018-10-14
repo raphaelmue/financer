@@ -1,6 +1,7 @@
 package de.raphaelmuesseler.financer.shared.model.transactions;
 
 import de.raphaelmuesseler.financer.shared.model.Category;
+import de.raphaelmuesseler.financer.util.date.DateUtil;
 
 import java.time.LocalDate;
 
@@ -29,5 +30,10 @@ public class Transaction extends AbstractTransaction {
 
     public void setValueDate(LocalDate valueDate) {
         this.valueDate = valueDate;
+    }
+
+    @Override
+    public double getAmount(LocalDate localDate) {
+        return (DateUtil.checkIfMonthsAreEqual(localDate, this.valueDate) ? this.getAmount() : 0);
     }
 }
