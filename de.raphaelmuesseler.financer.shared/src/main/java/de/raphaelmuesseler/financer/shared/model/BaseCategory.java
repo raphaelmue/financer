@@ -10,7 +10,7 @@ import java.util.Map;
 public class BaseCategory implements Serializable, AmountProvider {
     private static final long serialVersionUID = 6444376234610401363L;
 
-    private final Map<CategoryClass, List<Category>> categories;
+    private final Map<CategoryClass, List<CategoryTree>> categories;
 
     public enum CategoryClass {
         FIXED_REVENUE(0, "fixedRevenue"),
@@ -44,11 +44,11 @@ public class BaseCategory implements Serializable, AmountProvider {
         }
     }
 
-    public List<Category> getCategoriesByCategoryClass(CategoryClass categoryClass) {
+    public List<CategoryTree> getCategoriesByCategoryClass(CategoryClass categoryClass) {
         return this.categories.get(categoryClass);
     }
 
-    public Map<CategoryClass, List<Category>> getCategories() {
+    public Map<CategoryClass, List<CategoryTree>> getCategories() {
         return categories;
     }
 

@@ -1,20 +1,19 @@
 package de.raphaelmuesseler.financer.shared.model.transactions;
 
 import de.raphaelmuesseler.financer.shared.model.AmountProvider;
-import de.raphaelmuesseler.financer.shared.model.Category;
+import de.raphaelmuesseler.financer.shared.model.CategoryTree;
 
 import java.io.Serializable;
-import java.time.LocalDate;
 
 abstract class AbstractTransaction implements Serializable, AmountProvider {
     private static final long serialVersionUID = -2425120066992174442L;
 
     private int id;
     private double amount;
-    private Category category;
+    private CategoryTree category;
     private String product, purpose;
 
-    AbstractTransaction(int id, double amount, Category category, String product, String purpose) {
+    AbstractTransaction(int id, double amount, CategoryTree category, String product, String purpose) {
         this.id = id;
         this.amount = amount;
         this.category = category;
@@ -30,7 +29,7 @@ abstract class AbstractTransaction implements Serializable, AmountProvider {
         return amount;
     }
 
-    public Category getCategory() {
+    public CategoryTree getCategory() {
         return category;
     }
 
@@ -50,7 +49,7 @@ abstract class AbstractTransaction implements Serializable, AmountProvider {
         this.amount = amount;
     }
 
-    public void setCategory(Category category) {
+    public void setCategory(CategoryTree category) {
         this.category = category;
     }
 
