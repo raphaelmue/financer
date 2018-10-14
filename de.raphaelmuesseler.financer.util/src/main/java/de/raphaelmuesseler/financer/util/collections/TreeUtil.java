@@ -72,4 +72,20 @@ public class TreeUtil {
             }
         }
     }
+
+    public static <T> void numberItemsByValue(Tree<T> root, NumberAction<Tree<T>> action) {
+        TreeUtil.numberItemsByValue(root, action, "");
+    }
+
+    private static <T> void numberItemsByValue(Tree<T> root, NumberAction<Tree<T>> action, String prefix) {
+        int counter = 1;
+        if (!root.isLeaf()) {
+            for (Tree<T> item : root.getChildren()) {
+                String prefixCopy = prefix + counter + ".";
+                action.action(item, prefixCopy);
+                TreeUtil.numberItemsByValue(item, action, prefixCopy);
+                counter++;
+            }
+        }
+    }
 }

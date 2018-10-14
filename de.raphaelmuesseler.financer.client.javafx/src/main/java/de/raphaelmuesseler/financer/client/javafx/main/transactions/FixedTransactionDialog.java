@@ -8,10 +8,9 @@ import de.raphaelmuesseler.financer.client.format.I18N;
 import de.raphaelmuesseler.financer.client.javafx.components.DoubleField;
 import de.raphaelmuesseler.financer.client.javafx.components.IntegerField;
 import de.raphaelmuesseler.financer.client.javafx.dialogs.FinancerDialog;
-import de.raphaelmuesseler.financer.shared.model.Category;
+import de.raphaelmuesseler.financer.shared.model.CategoryTree;
 import de.raphaelmuesseler.financer.shared.model.transactions.FixedTransaction;
 import de.raphaelmuesseler.financer.shared.model.transactions.TransactionAmount;
-import de.raphaelmuesseler.financer.util.collections.SerialTreeItem;
 import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.control.ButtonType;
@@ -30,8 +29,7 @@ import java.time.LocalDate;
 
 public class FixedTransactionDialog extends FinancerDialog<FixedTransaction> {
 
-    private Category category;
-    private SerialTreeItem<Category> tree;
+    private CategoryTree categoryTree;
     private Label categoryLabel;
     private IntegerField dayField;
     private JFXDatePicker startDateField, endDateField;
@@ -40,10 +38,10 @@ public class FixedTransactionDialog extends FinancerDialog<FixedTransaction> {
     private VBox transactionAmountContainer;
     private JFXListView<TransactionAmount> transactionAmountListView;
 
-    public FixedTransactionDialog(FixedTransaction value, Category category) {
+    FixedTransactionDialog(FixedTransaction value, CategoryTree category) {
         super(value);
 
-        this.category = category;
+        this.categoryTree = category;
 
         this.setHeaderText(I18N.get("fixedTransactions"));
 
@@ -182,7 +180,7 @@ public class FixedTransactionDialog extends FinancerDialog<FixedTransaction> {
 
     @Override
     protected void prepareDialogContent() {
-        this.categoryLabel.setText(Formatter.formatCategoryName(this.category));
+        this.categoryLabel.setText(Formatter.formatCategoryName(this.categoryTree.getValue()));
         if (this.getValue() != null) {
             this.dayField.setValue(this.getValue().getDay());
             this.startDateField.setValue(this.getValue().getStartDate());
@@ -224,7 +222,7 @@ public class FixedTransactionDialog extends FinancerDialog<FixedTransaction> {
         if (this.getValue() == null) {
             this.setValue(new FixedTransaction(-1,
                     Double.valueOf(this.amountField.getText()),
-                    this.category,
+                    this.categoryTree,
                     "", "",
                     this.startDateField.getValue(),
                     this.endDateField.getValue(),

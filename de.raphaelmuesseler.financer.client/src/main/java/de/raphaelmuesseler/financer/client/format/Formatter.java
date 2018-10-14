@@ -43,9 +43,9 @@ public class Formatter {
 
     public static String formatCategoryName(Category category) {
         if (category.getPrefix() != null) {
-            return category.getPrefix() + " " + (category.isKey() ? I18N.get(category.getName()) : category.getName());
+            return category.getPrefix() + " " + category.getName();
         } else {
-            return (category.isKey() ? I18N.get(category.getName()) : category.getName());
+            return category.getName();
         }
     }
 }

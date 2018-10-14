@@ -8,9 +8,12 @@ import de.raphaelmuesseler.financer.client.javafx.connection.JavaFXAsyncConnecti
 import de.raphaelmuesseler.financer.client.javafx.dialogs.FinancerTextInputDialog;
 import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
 import de.raphaelmuesseler.financer.shared.connection.ConnectionResult;
+import de.raphaelmuesseler.financer.shared.model.BaseCategory;
 import de.raphaelmuesseler.financer.shared.model.Category;
+import de.raphaelmuesseler.financer.shared.model.CategoryTree;
 import de.raphaelmuesseler.financer.shared.model.User;
 import de.raphaelmuesseler.financer.util.collections.SerialTreeItem;
+import de.raphaelmuesseler.financer.util.collections.Tree;
 import javafx.application.Platform;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -44,9 +47,9 @@ public class ProfileController implements Initializable {
     private User user;
     private Logger logger = Logger.getLogger("FinancerApplication");
     private ExecutorService executor = Executors.newCachedThreadPool();
-    private SerialTreeItem<Category> structure;
+    private BaseCategory categories;
     private LocalStorageImpl localStorage = LocalStorageImpl.getInstance();
-
+    private TreeItem<Category> treeStructure;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -84,8 +87,8 @@ public class ProfileController implements Initializable {
         this.executor.execute(new ServerRequestHandler("getUsersCategories", parameters, new JavaFXAsyncConnectionCall() {
             @Override
             public void onSuccess(ConnectionResult result) {
-                structure = SerialTreeItem.fromJson(((String) result.getResult()), Category.class);
-                localStorage.writeObject(LocalStorageImpl.PROFILE_FILE, "categories", result.getResult());
+                categories = (BaseCategory) localStorage.readObject(LocalStorageImpl.PROFILE_FILE, "categories");
+                localStorage.writeObject(LocalStorageImpl.PROFILE_FILE, "categories", categories);
             }
 
             @Override
@@ -96,16 +99,17 @@ public class ProfileController implements Initializable {
                     logger.log(Level.SEVERE, exception.getMessage(), exception);
                     JavaFXAsyncConnectionCall.super.onFailure(exception);
                 }
-                structure = SerialTreeItem.fromJson((String) localStorage.readObject(LocalStorageImpl.PROFILE_FILE, "categories"),
-                        Category.class);
+                categories = (BaseCategory) localStorage.readObject(LocalStorageImpl.PROFILE_FILE, "categories");
             }
 
             @Override
             public void onAfter() {
                 Platform.runLater(() -> {
+                    createTreeView();
                     categoriesTreeView.setEditable(true);
-                    categoriesTreeView.setRoot(structure);
-                    expandTreeView(structure);
+                    categoriesTreeView.setShowRoot(false);
+                    categoriesTreeView.setRoot(treeStructure);
+                    expandTreeView(treeStructure);
                     categoriesTreeView.setCellFactory(param -> getCellFactory());
                     categoriesTreeView.setOnEditCommit(event -> {
                         event.getNewValue().setId(event.getOldValue().getId());
@@ -207,6 +211,25 @@ public class ProfileController implements Initializable {
 
             this.categoriesTreeView.getSelectionModel().getSelectedItem().getParent().getChildren()
                     .remove(this.categoriesTreeView.getSelectionModel().getSelectedItem());
+        }
+    }
+
+    private void createTreeView() {
+        this.treeStructure = new TreeItem<>(new Category(-1, "root", -1, -1));
+        for (BaseCategory.CategoryClass categoryClass : BaseCategory.CategoryClass.values()) {
+            this.createTreeView(treeStructure, this.categories.getCategoryTreeByCategoryClass(categoryClass));
+        }
+    }
+
+    private void createTreeView(TreeItem<Category> treeItem, CategoryTree root) {
+        if (root.isLeaf()) {
+            treeItem.getChildren().add(new TreeItem<>(root.getValue()));
+        } else {
+            for (Tree<Category> categoryTree : root.getChildren()) {
+                TreeItem<Category> currentTreeItem = new TreeItem<>(categoryTree.getValue());
+                treeItem.getChildren().add(currentTreeItem);
+                createTreeView(currentTreeItem, (CategoryTree) categoryTree);
+            }
         }
     }
 

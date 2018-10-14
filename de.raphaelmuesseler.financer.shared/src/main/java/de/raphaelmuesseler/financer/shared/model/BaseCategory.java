@@ -1,16 +1,41 @@
 package de.raphaelmuesseler.financer.shared.model;
 
+import de.raphaelmuesseler.financer.util.collections.Action;
+import de.raphaelmuesseler.financer.util.collections.Tree;
+import de.raphaelmuesseler.financer.util.collections.TreeUtil;
+
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-public class BaseCategory implements Serializable, AmountProvider {
+public class BaseCategory implements Serializable, AmountProvider, Tree<Category> {
     private static final long serialVersionUID = 6444376234610401363L;
 
-    private final Map<CategoryClass, List<CategoryTree>> categories;
+    private final Map<CategoryClass, CategoryTree> categories;
+
+    @Override
+    public Category getValue() {
+        return null;
+    }
+
+    @Override
+    public Tree<Category> getParent() {
+        return null;
+    }
+
+    @Override
+    public void setParent(Tree<Category> parent) {
+
+    }
+
+    @Override
+    public List<Tree<Category>> getChildren() {
+        List<Tree<Category>> result = new ArrayList<>();
+        for (CategoryClass categoryClass : CategoryClass.values()) {
+            result.add(this.categories.get(categoryClass));
+        }
+        return result;
+    }
 
     public enum CategoryClass {
         FIXED_REVENUE(0, "fixedRevenue"),
@@ -53,15 +78,21 @@ public class BaseCategory implements Serializable, AmountProvider {
         this.categories = new HashMap<>(4);
 
         for (CategoryClass categoryClass : CategoryClass.values()) {
-            this.categories.put(categoryClass, new ArrayList<>());
+            this.categories.put(categoryClass, new CategoryTree(categoryClass, null, new Category(-1, categoryClass.getName(), -1, -1)));
         }
     }
 
-    public List<CategoryTree> getCategoriesByCategoryClass(CategoryClass categoryClass) {
+    public CategoryTree getCategoryTreeByCategoryClass(CategoryClass categoryClass) {
         return this.categories.get(categoryClass);
     }
 
-    public Map<CategoryClass, List<CategoryTree>> getCategories() {
+    public void traverse(Action<Tree<Category>> action) {
+        for (CategoryTree categoryTree : this.categories.values()) {
+                TreeUtil.traverse(categoryTree, action);
+        }
+    }
+
+    public Map<CategoryClass, CategoryTree> getCategories() {
         return categories;
     }
 

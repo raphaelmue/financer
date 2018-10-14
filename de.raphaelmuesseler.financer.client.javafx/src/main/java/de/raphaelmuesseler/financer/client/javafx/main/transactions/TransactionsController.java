@@ -10,13 +10,13 @@ import de.raphaelmuesseler.financer.client.javafx.dialogs.FinancerConfirmDialog;
 import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
 import de.raphaelmuesseler.financer.client.javafx.main.FinancerController;
 import de.raphaelmuesseler.financer.shared.connection.ConnectionResult;
-import de.raphaelmuesseler.financer.util.date.DateUtil;
+import de.raphaelmuesseler.financer.shared.model.BaseCategory;
 import de.raphaelmuesseler.financer.shared.model.Category;
+import de.raphaelmuesseler.financer.shared.model.CategoryTree;
 import de.raphaelmuesseler.financer.shared.model.User;
 import de.raphaelmuesseler.financer.shared.model.transactions.FixedTransaction;
 import de.raphaelmuesseler.financer.shared.model.transactions.Transaction;
 import de.raphaelmuesseler.financer.util.collections.CollectionUtil;
-import de.raphaelmuesseler.financer.util.collections.SerialTreeItem;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -36,7 +36,6 @@ import org.controlsfx.glyphfont.GlyphFontRegistry;
 import java.net.ConnectException;
 import java.net.URL;
 import java.time.LocalDate;
-import java.time.Period;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -66,9 +65,9 @@ public class TransactionsController implements Initializable {
     @FXML
     public JFXButton deleteFixedTransactionBtn;
     @FXML
-    public JFXListView categoriesListView;
+    public JFXListView<CategoryTree> categoriesListView;
     @FXML
-    public JFXListView fixedTransactionsListView;
+    public JFXListView<FixedTransaction> fixedTransactionsListView;
     public TableView<TransactionOverviewRow> transactionsOverviewTableView;
 
     private User user;
@@ -77,7 +76,7 @@ public class TransactionsController implements Initializable {
     private LocalStorageImpl localStorage = LocalStorageImpl.getInstance();
     private ObservableList<Transaction> transactions;
     private ObservableList<FixedTransaction> fixedTransactions;
-    private SerialTreeItem<Category> tree;
+    private BaseCategory categories;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -109,13 +108,13 @@ public class TransactionsController implements Initializable {
         this.deleteFixedTransactionBtn.setGraphicTextGap(8);
         this.deleteFixedTransactionBtn.setDisable(true);
 
-        this.tree = SerialTreeItem.fromJson((String) this.localStorage.readObject(LocalStorageImpl.PROFILE_FILE, "categories"),
-                Category.class);
+        this.categories = (BaseCategory) this.localStorage.readObject(LocalStorageImpl.PROFILE_FILE, "categories");
 
-        if (this.tree != null) {
-            this.tree.numberItemsByValue((result, prefix) -> {
-                result.getValue().setPrefix(prefix);
-            });
+        if (this.categories != null) {
+            // TODO set prefixes
+//            TreeUtil.numberItemsByValue(this.categories, (result, prefix) -> {
+//
+//            });
         }
 
         Platform.runLater(() -> {
@@ -130,8 +129,16 @@ public class TransactionsController implements Initializable {
         final List<TableColumn<TransactionOverviewRow, String>> monthColumns = new ArrayList<>(numberOfMaxMonths);
         final Map<Category, TransactionOverviewRow> rows = new HashMap<>();
 
-        if (this.tree != null) {
-            this.tree.traverse(treeItem -> rows.put(treeItem.getValue(), new TransactionOverviewRow(treeItem.getValue())), true);
+        if (this.categories != null) {
+            this.categories.traverse(categoryTree -> {
+                if (categoryTree.isLeaf()) {
+                    TransactionOverviewRow transactionOverviewRow = new TransactionOverviewRow(categoryTree.getValue());
+                    for (int i = 0; i < 6; i++) {
+                        transactionOverviewRow.getAmounts()[i] = ((CategoryTree) categoryTree).getAmount(LocalDate.now().minusMonths(i));
+                    }
+                    rows.put(categoryTree.getValue(), transactionOverviewRow);
+                }
+            });
         }
 
         TableColumn<TransactionOverviewRow, String> categoryColumn = new TableColumn<>(I18N.get("category"));
@@ -158,54 +165,8 @@ public class TransactionsController implements Initializable {
         this.transactionsOverviewTableView.getColumns().add(categoryColumn);
         this.transactionsOverviewTableView.getColumns().addAll(monthColumns);
 
-        if (this.transactions != null && this.transactions.size() > 0) {
-            for (Transaction transaction : this.transactions) {
-                if (transaction.getValueDate().plusMonths(numberOfMaxMonths).compareTo(LocalDate.now()) >= 0) {
-                    TransactionOverviewRow row = rows.get(transaction.getCategory());
-                    if (row == null) {
-                        row = new TransactionOverviewRow(transaction.getCategory());
-                        rows.put(row.getCategory(), row);
-                    }
-                    row.getAmounts()[DateUtil.getMonthDifference(transaction.getValueDate(), LocalDate.now())] += transaction.getAmount();
-                }
-            }
-        }
-
-        if (this.fixedTransactions != null && this.fixedTransactions.size() > 0) {
-            for (FixedTransaction fixedTransaction : this.fixedTransactions) {
-                if (fixedTransaction.getEndDate() == null || fixedTransaction.getEndDate().plusMonths(numberOfMaxMonths).compareTo(LocalDate.now()) >= 0) {
-                    TransactionOverviewRow row = rows.get(fixedTransaction.getCategory());
-                    if (row == null) {
-                        row = new TransactionOverviewRow(fixedTransaction.getCategory());
-                        rows.put(row.getCategory(), row);
-                    }
-                    if (fixedTransaction.isVariable() && fixedTransaction.getTransactionAmounts().size() > 1) {
-                        for (int i = 0; i < Math.min(numberOfMaxMonths, fixedTransaction.getTransactionAmounts().size()); i++) {
-                            if (DateUtil.getMonthDifference(fixedTransaction.getTransactionAmounts().get(i).getValueDate(), LocalDate.now()) < 6) {
-                                row.getAmounts()[DateUtil.getMonthDifference(fixedTransaction.getTransactionAmounts().get(i).getValueDate(),
-                                        LocalDate.now())] += fixedTransaction.getTransactionAmounts().get(i).getAmount();
-                            }
-                        }
-                    } else {
-                        int start = 0;
-                        if (fixedTransaction.getEndDate() != null) {
-                            start = Period.between(fixedTransaction.getEndDate().withDayOfMonth(1), LocalDate.now().withDayOfMonth(1)).getMonths();
-                            if (start == DateUtil.getMonthDifference(fixedTransaction.getStartDate(), LocalDate.now())) {
-                                row.getAmounts()[start] += fixedTransaction.getAmount();
-                            }
-                        } else {
-                            for (int i = start; i < Math.min(numberOfMaxMonths, DateUtil.getMonthDifference(fixedTransaction.getStartDate(),
-                                    LocalDate.now())); i++) {
-                                row.getAmounts()[i] += fixedTransaction.getAmount();
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
         List<TransactionOverviewRow> items = new ArrayList<>(rows.values());
-        Collections.sort(items, (o1, o2) ->
+        items.sort((o1, o2) ->
                 String.CASE_INSENSITIVE_ORDER.compare(Formatter.formatCategoryName(o1.getCategory()),
                         Formatter.formatCategoryName(o2.getCategory())));
         this.transactionsOverviewTableView.getItems().addAll(items);
@@ -254,17 +215,17 @@ public class TransactionsController implements Initializable {
 
     private void loadFixedTransactionsTable() {
         if (this.localStorage.readObject(LocalStorageImpl.PROFILE_FILE, "categories") != null) {
-            this.tree.traverse(treeItem -> {
+            this.categories.traverse(treeItem -> {
                 if ((treeItem.getValue().getRootId() != -1 && (treeItem.getValue().getRootId() % 2) == 0) ||
                         (treeItem.getValue().getRootId() == -1 && (treeItem.getValue().getParentId() % 2) == 0)) {
-                    categoriesListView.getItems().add(treeItem.getValue());
+                    categoriesListView.getItems().add((CategoryTree) treeItem);
                 }
             });
         }
 
         this.categoriesListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            showFixedTransactions((Category) newValue);
-            if (!((Category) newValue).isKey()) {
+            showFixedTransactions(newValue);
+            if (!newValue.isRoot()) {
                 newFixedTransactionBtn.setDisable(false);
             } else {
                 newFixedTransactionBtn.setDisable(true);
@@ -320,11 +281,11 @@ public class TransactionsController implements Initializable {
     }
 
     public void handleNewTransaction() {
-        Transaction transaction = new TransactionDialog(null).showAndGetResult();
+        Transaction transaction = new TransactionDialog(null, this.categories).showAndGetResult();
         if (transaction != null) {
 
-            if ((transaction.getCategory().getRootId() == 1 && transaction.getAmount() < 0) ||
-                    (transaction.getCategory().getRootId() == 3 && transaction.getAmount() >= 0)) {
+            if ((transaction.getCategoryTree().getValue().getRootId() == 1 && transaction.getAmount() < 0) ||
+                    (transaction.getCategoryTree().getValue().getRootId() == 3 && transaction.getAmount() >= 0)) {
                 transaction.setAmount(transaction.getAmount() * (-1));
             }
 
@@ -351,12 +312,12 @@ public class TransactionsController implements Initializable {
     }
 
     public void handleEditTransaction() {
-        Transaction transaction = new TransactionDialog(this.transactionsTableView.getSelectionModel().getSelectedItem())
-                .showAndGetResult();
+        Transaction transaction = new TransactionDialog(this.transactionsTableView.getSelectionModel().getSelectedItem(),
+                this.categories).showAndGetResult();
         if (transaction != null) {
 
-            if ((transaction.getCategory().getRootId() == 1 && transaction.getAmount() < 0) ||
-                    (transaction.getCategory().getRootId() == 3 && transaction.getAmount() >= 0)) {
+            if ((transaction.getCategoryTree().getValue().getRootId() == 1 && transaction.getAmount() < 0) ||
+                    (transaction.getCategoryTree().getValue().getRootId() == 3 && transaction.getAmount() >= 0)) {
                 transaction.setAmount(transaction.getAmount() * (-1));
             }
 
@@ -429,7 +390,7 @@ public class TransactionsController implements Initializable {
             @Override
             public void onAfter() {
                 Platform.runLater(() -> {
-                    showFixedTransactions((Category) categoriesListView.getSelectionModel().getSelectedItem());
+                    showFixedTransactions(categoriesListView.getSelectionModel().getSelectedItem());
                     categoriesListView.setCellFactory(param -> new CategoryListViewImpl());
                     FinancerController.hideLoadingBox();
 
@@ -441,12 +402,12 @@ public class TransactionsController implements Initializable {
 
     public void handleNewFixedTransaction() {
         FixedTransaction fixedTransaction = new FixedTransactionDialog(null,
-                ((Category) this.categoriesListView.getSelectionModel().getSelectedItem()))
+                (this.categoriesListView.getSelectionModel().getSelectedItem()))
                 .showAndGetResult();
         if (fixedTransaction != null) {
 
-            if ((fixedTransaction.getCategory().getRootId() == 0 && fixedTransaction.getAmount() < 0) ||
-                    (fixedTransaction.getCategory().getRootId() == 2 && fixedTransaction.getAmount() >= 0)) {
+            if ((fixedTransaction.getCategoryTree().getValue().getRootId() == 0 && fixedTransaction.getAmount() < 0) ||
+                    (fixedTransaction.getCategoryTree().getValue().getRootId() == 2 && fixedTransaction.getAmount() >= 0)) {
                 fixedTransaction.setAmount(fixedTransaction.getAmount() * (-1));
             }
 
@@ -471,13 +432,13 @@ public class TransactionsController implements Initializable {
 
     public void handleEditFixedTransaction() {
         FixedTransaction fixedTransaction = new FixedTransactionDialog(
-                (FixedTransaction) this.fixedTransactionsListView.getSelectionModel().getSelectedItem(),
-                ((Category) this.categoriesListView.getSelectionModel().getSelectedItem()))
+                this.fixedTransactionsListView.getSelectionModel().getSelectedItem(),
+                this.categoriesListView.getSelectionModel().getSelectedItem())
                 .showAndGetResult();
         if (fixedTransaction != null) {
 
-            if ((fixedTransaction.getCategory().getRootId() == 0 && fixedTransaction.getAmount() < 0) ||
-                    (fixedTransaction.getCategory().getRootId() == 2 && fixedTransaction.getAmount() >= 0)) {
+            if ((fixedTransaction.getCategoryTree().getValue().getRootId() == 0 && fixedTransaction.getAmount() < 0) ||
+                    (fixedTransaction.getCategoryTree().getValue().getRootId() == 2 && fixedTransaction.getAmount() >= 0)) {
                 fixedTransaction.setAmount(fixedTransaction.getAmount() * (-1));
             }
 
@@ -528,12 +489,12 @@ public class TransactionsController implements Initializable {
         }
     }
 
-    private void showFixedTransactions(Category category) {
+    private void showFixedTransactions(CategoryTree category) {
         if (category != null) {
             this.fixedTransactionsListView.getItems().clear();
             if (this.fixedTransactions != null) {
                 for (FixedTransaction transaction : this.fixedTransactions) {
-                    if (transaction.getCategory().getId() == category.getId()) {
+                    if (transaction.getCategoryTree().getValue().getId() == category.getValue().getId()) {
                         this.fixedTransactionsListView.getItems().add(transaction);
                     }
                 }
@@ -542,39 +503,27 @@ public class TransactionsController implements Initializable {
         this.fixedTransactionsListView.setCellFactory(param -> new FixedTransactionListCellImpl());
     }
 
-    private final class CategoryListViewImpl extends ListCell<Category> {
+    private final class CategoryListViewImpl extends ListCell<CategoryTree> {
         private BorderPane borderPane;
         private Label categoryLabel, amountLabel;
 
         @Override
-        protected void updateItem(Category item, boolean empty) {
+        protected void updateItem(CategoryTree item, boolean empty) {
             super.updateItem(item, empty);
 
             if (empty || item == null) {
                 setGraphic(null);
             } else {
                 this.initListCell();
-                this.categoryLabel.setText(Formatter.formatCategoryName(item));
-                if (fixedTransactions != null && fixedTransactions.size() > 0) {
-                    for (FixedTransaction fixedTransaction : fixedTransactions) {
-                        if (fixedTransaction.getCategory().getId() == item.getId() && !item.isKey()) {
-                            if (fixedTransaction.isVariable() && fixedTransaction.getTransactionAmounts() != null &&
-                                    fixedTransaction.getTransactionAmounts().size() > 0) {
-                                Formatter.formatAmountLabel(this.amountLabel, fixedTransaction.getTransactionAmounts().get(
-                                        fixedTransaction.getTransactionAmounts().size() - 1
-                                ).getAmount());
-                            } else {
-                                Formatter.formatAmountLabel(this.amountLabel, fixedTransaction.getAmount());
-                            }
-                            break;
-                        }
-                        if (item.isKey()) {
-                            this.categoryLabel.getStyleClass().add("list-cell-title");
-                        }
-                    }
+                this.categoryLabel.setText(Formatter.formatCategoryName(item.getValue()));
+                Formatter.formatAmountLabel(this.amountLabel, item.getAmount(LocalDate.now()));
+                if (item.isRoot()) {
+                    this.categoryLabel.getStyleClass().add("list-cell-title");
                 }
-                setGraphic(this.borderPane);
             }
+
+            setGraphic(this.borderPane);
+
         }
 
         private void initListCell() {
@@ -687,11 +636,11 @@ public class TransactionsController implements Initializable {
             this.category = category;
         }
 
-        public Category getCategory() {
+        Category getCategory() {
             return category;
         }
 
-        public double[] getAmounts() {
+        double[] getAmounts() {
             return amounts;
         }
     }

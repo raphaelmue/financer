@@ -6,27 +6,33 @@ import de.raphaelmuesseler.financer.client.format.I18N;
 import de.raphaelmuesseler.financer.client.javafx.components.DoubleField;
 import de.raphaelmuesseler.financer.client.javafx.dialogs.FinancerDialog;
 import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
+import de.raphaelmuesseler.financer.shared.model.BaseCategory;
 import de.raphaelmuesseler.financer.shared.model.Category;
+import de.raphaelmuesseler.financer.shared.model.CategoryTree;
 import de.raphaelmuesseler.financer.shared.model.transactions.Transaction;
 import de.raphaelmuesseler.financer.util.collections.SerialTreeItem;
+import de.raphaelmuesseler.financer.util.collections.TreeUtil;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 
 import java.util.Comparator;
+import java.util.Objects;
 
 class TransactionDialog extends FinancerDialog<Transaction> {
 
     private DoubleField amountField;
-    private ComboBox<Category> categoryComboBox;
+    private ComboBox<CategoryTree> categoryComboBox;
     private TextField productField;
     private TextField purposeField;
     private TextField shopField;
     private JFXDatePicker valueDateField;
-    private SerialTreeItem<Category> tree;
+    private BaseCategory categories;
 
-    TransactionDialog(Transaction transaction) {
+    TransactionDialog(Transaction transaction, BaseCategory categories) {
         super(transaction);
+
+        this.categories = categories;
 
         this.setHeaderText(I18N.get("transaction"));
 
@@ -49,26 +55,19 @@ class TransactionDialog extends FinancerDialog<Transaction> {
         gridPane.add(new Label(I18N.get("category")), 0, 1);
         this.categoryComboBox = new ComboBox<>();
         this.categoryComboBox.setPlaceholder(new Label(I18N.get("selectCategory")));
-        this.tree = SerialTreeItem.fromJson((String) LocalStorageImpl.getInstance().readObject(LocalStorageImpl.PROFILE_FILE, "categories"),
-                Category.class);
 
-        this.tree.numberItemsByValue((result, prefix) -> {
-            result.getValue().setPrefix(prefix);
-        });
-
-        tree.traverse(treeItem -> {
-            // selecting only variable revenue (id: 1) and variable expenses (id: 3) => id % 2 == 1
-            if ((treeItem.getValue().getRootId() != -1 && (treeItem.getValue().getRootId() % 2) == 1) ||
-                    (treeItem.getValue().getRootId() == -1 && (treeItem.getValue().getParentId() % 2) == 1)) {
-                categoryComboBox.getItems().add(treeItem.getValue());
+        categories.traverse(treeItem -> {
+            if (!treeItem.isRoot() && ((CategoryTree) treeItem).getCategoryClass() == BaseCategory.CategoryClass.VARIABLE_EXPENSES ||
+                    ((CategoryTree) treeItem).getCategoryClass() == BaseCategory.CategoryClass.VARIABLE_REVENUE) {
+                categoryComboBox.getItems().add((CategoryTree) treeItem);
             }
         });
-        this.categoryComboBox.setCellFactory(param -> new ListCell<Category>(){
+        this.categoryComboBox.setCellFactory(param -> new ListCell<CategoryTree>() {
             @Override
-            protected void updateItem(Category item, boolean empty) {
+            protected void updateItem(CategoryTree item, boolean empty) {
                 super.updateItem(item, empty);
                 if (!empty) {
-                    setText(Formatter.formatCategoryName(item));
+                    setText(Formatter.formatCategoryName(item.getValue()));
                 } else {
                     setText(null);
                 }
@@ -99,9 +98,8 @@ class TransactionDialog extends FinancerDialog<Transaction> {
     protected void prepareDialogContent() {
         if (this.getValue() != null) {
             this.amountField.setText(String.valueOf(this.getValue().getAmount()));
-            tree.getItemByValue(this.getValue().getCategory(), serialTreeItem -> {
-                this.categoryComboBox.getSelectionModel().select(serialTreeItem.getValue());
-            }, Comparator.comparingInt(Category::getId));
+            this.categoryComboBox.getSelectionModel().select((CategoryTree) TreeUtil.getByValue(this.categories,
+                    this.getValue().getCategoryTree(), Comparator.comparingInt(Category::getId)));
             this.productField.setText(this.getValue().getProduct());
             this.purposeField.setText(this.getValue().getPurpose());
             this.shopField.setText(this.getValue().getShop());
@@ -134,7 +132,7 @@ class TransactionDialog extends FinancerDialog<Transaction> {
                     this.purposeField.getText(), this.valueDateField.getValue(), this.shopField.getText()));
         } else {
             this.getValue().setAmount(Double.valueOf(this.amountField.getText()));
-            this.getValue().setCategory(this.categoryComboBox.getSelectionModel().getSelectedItem());
+            this.getValue().setCategoryTree(this.categoryComboBox.getSelectionModel().getSelectedItem());
             this.getValue().setProduct(this.productField.getText());
             this.getValue().setPurpose(this.purposeField.getText());
             this.getValue().setValueDate(this.valueDateField.getValue());

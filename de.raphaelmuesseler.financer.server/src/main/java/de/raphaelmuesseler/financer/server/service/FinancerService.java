@@ -126,7 +126,7 @@ public class FinancerService {
                 }
             }
 
-            baseCategory.getCategories().put(categoryClass, subTree);
+            baseCategory.getCategoryTreeByCategoryClass(categoryClass).getChildren().addAll(subTree);
 
         }
         return new ConnectionResult<>(baseCategory);

@@ -46,7 +46,7 @@ class FormatTest {
 
     @Test
     void testCategoryFormat() {
-        final Category category = new Category("testCategory", false);
+        final Category category = new Category(1, "testCategory", 1, 0);
         category.setPrefix("testPrefix");
 
         String categoryFormate = Formatter.formatCategoryName(category);
