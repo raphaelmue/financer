@@ -8,7 +8,7 @@ public interface Tree<T> {
     Tree<T> getParent();
     void setParent(Tree<T> parent);
 
-    List<Tree<T>> getChildren();
+    List<? extends Tree<T>> getChildren();
 
     default boolean isLeaf() {
         return (getChildren().size() == 0);

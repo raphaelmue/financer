@@ -66,8 +66,8 @@ public class CategoryTree implements Serializable, AmountProvider, Tree<Category
     }
 
     @Override
-    public List<Tree<Category>> getChildren() {
-        return new ArrayList<>(this.children);
+    public List<? extends Tree<Category>> getChildren() {
+        return this.children;
     }
 
     /**
@@ -77,6 +77,11 @@ public class CategoryTree implements Serializable, AmountProvider, Tree<Category
     @Override
     public void setParent(Tree<Category> parent) {
         this.parent = (CategoryTree) parent;
+    }
+
+    @Override
+    public String toString() {
+        return this.getValue().toString();
     }
 }
 

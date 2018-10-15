@@ -1,6 +1,9 @@
 package de.raphaelmuesseler.financer.shared.model;
 
-public class Category {
+import java.io.Serializable;
+
+public class Category implements Serializable {
+    private static final long serialVersionUID = -5776418454648469541L;
     private int id, parentId, rootId;
     private String name, prefix = null;
 
@@ -49,5 +52,10 @@ public class Category {
 
     public void setPrefix(String prefix) {
         this.prefix = prefix;
+    }
+
+    @Override
+    public String toString() {
+        return this.getName();
     }
 }

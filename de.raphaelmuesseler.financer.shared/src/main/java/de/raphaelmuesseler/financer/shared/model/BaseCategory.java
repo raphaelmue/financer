@@ -55,10 +55,6 @@ public class BaseCategory implements Serializable, AmountProvider, Tree<Category
             return index;
         }
 
-        public int getDatabaseIndex() {
-            return index + 1;
-        }
-
         public String getName() {
             return name;
         }

@@ -8,7 +8,7 @@ public class TreeUtil {
         for (Tree<T> item : root.getChildren()) {
             if (comparator.compare(treeItem.getValue(), item.getValue()) == 0) {
                 treeItem.setParent(root);
-                item.getChildren().add(treeItem);
+                ((List<Tree<T>>)item.getChildren()).add(treeItem);
                 return true;
             } else {
                 if (TreeUtil.insertByValue(item, treeItem, comparator)) {

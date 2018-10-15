@@ -11,6 +11,7 @@ import de.raphaelmuesseler.financer.shared.model.transactions.FixedTransaction;
 import de.raphaelmuesseler.financer.shared.model.transactions.Transaction;
 import de.raphaelmuesseler.financer.shared.model.transactions.TransactionAmount;
 import de.raphaelmuesseler.financer.util.Hash;
+import de.raphaelmuesseler.financer.util.collections.Tree;
 import de.raphaelmuesseler.financer.util.collections.TreeUtil;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -102,22 +103,22 @@ public class FinancerService {
         BaseCategory baseCategory = new BaseCategory();
 
         for (BaseCategory.CategoryClass categoryClass : BaseCategory.CategoryClass.values()) {
-            whereClause.put("cat_id", categoryClass.getDatabaseIndex());
+            whereClause.put("cat_id", categoryClass.getIndex());
             JSONArray jsonArray = this.database.get(Database.Table.USERS_CATEGORIES, whereClause,
                     "cat_id ASC, parent_id ASC");
-
-            List<CategoryTree> subTree = new ArrayList<>();
 
             for (int j = 0; j < jsonArray.length(); j++) {
                 JSONObject jsonObject = jsonArray.getJSONObject(j);
 
                 if (jsonObject.get("parent_id").equals("null")) {
-                    subTree.add(new CategoryTree(categoryClass, null, new Category(jsonObject.getInt("id"),
-                            jsonObject.getString("name"),
-                            jsonObject.getInt("parent_id"),
-                            jsonObject.getInt("cat_id"))));
+                    ((List<Tree<Category>>) baseCategory.getCategoryTreeByCategoryClass(categoryClass).getChildren()).add(
+                            new CategoryTree(categoryClass, baseCategory.getCategoryTreeByCategoryClass(categoryClass),
+                                    new Category(jsonObject.getInt("id"),
+                                            jsonObject.getString("name"),
+                                            (jsonObject.get("parent_id") == "null" ? -1 : jsonObject.getInt("parent_id")),
+                                            jsonObject.getInt("cat_id"))));
                 } else {
-                    TreeUtil.insertByValue(subTree, new CategoryTree(categoryClass, null,
+                    TreeUtil.insertByValue(baseCategory.getCategoryTreeByCategoryClass(categoryClass), new CategoryTree(categoryClass, null,
                                     new Category(jsonObject.getInt("id"),
                                             jsonObject.getString("name"),
                                             jsonObject.getInt("parent_id"),
@@ -125,9 +126,6 @@ public class FinancerService {
                             (o1, o2) -> Integer.compare(o1.getParentId(), o2.getId()));
                 }
             }
-
-            baseCategory.getCategoryTreeByCategoryClass(categoryClass).getChildren().addAll(subTree);
-
         }
         return new ConnectionResult<>(baseCategory);
     }

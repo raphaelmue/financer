@@ -26,6 +26,7 @@ import org.controlsfx.glyphfont.GlyphFontRegistry;
 import java.net.ConnectException;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.concurrent.ExecutorService;
@@ -38,7 +39,7 @@ public class ProfileController implements Initializable {
     public Label nameLabel;
     public Label surnameLabel;
     public Label emailLabel;
-    public TreeView<Category> categoriesTreeView;
+    public TreeView<CategoryTree> categoriesTreeView;
     public JFXButton refreshCategoriesBtn;
     public JFXButton newCategoryBtn;
     public JFXButton editCategoryBtn;
@@ -49,7 +50,7 @@ public class ProfileController implements Initializable {
     private ExecutorService executor = Executors.newCachedThreadPool();
     private BaseCategory categories;
     private LocalStorageImpl localStorage = LocalStorageImpl.getInstance();
-    private TreeItem<Category> treeStructure;
+    private TreeItem<CategoryTree> treeStructure;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -87,7 +88,7 @@ public class ProfileController implements Initializable {
         this.executor.execute(new ServerRequestHandler("getUsersCategories", parameters, new JavaFXAsyncConnectionCall() {
             @Override
             public void onSuccess(ConnectionResult result) {
-                categories = (BaseCategory) localStorage.readObject(LocalStorageImpl.PROFILE_FILE, "categories");
+                categories = (BaseCategory) result.getResult();
                 localStorage.writeObject(LocalStorageImpl.PROFILE_FILE, "categories", categories);
             }
 
@@ -112,9 +113,9 @@ public class ProfileController implements Initializable {
                     expandTreeView(treeStructure);
                     categoriesTreeView.setCellFactory(param -> getCellFactory());
                     categoriesTreeView.setOnEditCommit(event -> {
-                        event.getNewValue().setId(event.getOldValue().getId());
-                        event.getNewValue().setParentId(event.getOldValue().getParentId());
-                        event.getNewValue().setRootId(event.getOldValue().getRootId());
+                        event.getNewValue().getValue().setId(event.getOldValue().getValue().getId());
+                        event.getNewValue().getValue().setParentId(event.getOldValue().getValue().getParentId());
+                        event.getNewValue().getValue().setRootId(event.getOldValue().getValue().getRootId());
                         handleUpdateCategory(event.getNewValue());
                     });
                 });
@@ -123,19 +124,15 @@ public class ProfileController implements Initializable {
     }
 
     public void handleNewCategory() {
-        this.handleNewCategory((SerialTreeItem<Category>) this.categoriesTreeView.getSelectionModel().getSelectedItem());
+        this.handleNewCategory(this.categoriesTreeView.getSelectionModel().getSelectedItem());
     }
 
-    private void handleNewCategory(SerialTreeItem<Category> currentItem) {
-        if (currentItem != null && ((currentItem.getValue().getKey() != null && !currentItem.getValue().getKey().equals("categories")) ||
-                currentItem.getValue().getKey() == null)) {
-
+    private void handleNewCategory(TreeItem<CategoryTree> currentItem) {
+        if (currentItem != null) {
             String categoryName = new FinancerTextInputDialog(I18N.get("enterCategoryName"), I18N.get("newCategory"))
                     .showAndGetResult();
             if (categoryName != null) {
-                Category category = new Category(-1, (currentItem.getValue().isKey() ? -1 : currentItem.getValue().getId()),
-                        (currentItem.getValue().isKey() ? currentItem.getValue().getId() : currentItem.getValue().getRootId()),
-                        categoryName, false);
+                Category category = new Category(-1, categoryName, currentItem.getValue().getValue().getId(), currentItem.getValue().getValue().getRootId());
 
                 Map<String, Object> parameters = new HashMap<>();
                 parameters.put("user", this.user);
@@ -146,7 +143,9 @@ public class ProfileController implements Initializable {
                     public void onSuccess(ConnectionResult result) {
                         Platform.runLater(() -> {
                             category.setId(((Category) result.getResult()).getId());
-                            currentItem.getChildren().add(new SerialTreeItem<>(category));
+                            CategoryTree categoryTree = new CategoryTree(currentItem.getValue().getCategoryClass(), currentItem.getValue(), (Category) result.getResult());
+                            currentItem.getChildren().add(new TreeItem<>(categoryTree));
+                            ((List<Tree<Category>>)currentItem.getValue().getChildren()).add(categoryTree);
                             expandTreeView(currentItem);
                         });
                     }
@@ -164,15 +163,15 @@ public class ProfileController implements Initializable {
 
     public void handleEditCategory() {
         if (this.categoriesTreeView.getSelectionModel().getSelectedItem() != null) {
-            Category category = this.categoriesTreeView.getSelectionModel().getSelectedItem().getValue();
-            String categoryName = new FinancerTextInputDialog(I18N.get("enterCategoryName"), Formatter.formatCategoryName(category))
+            CategoryTree category = this.categoriesTreeView.getSelectionModel().getSelectedItem().getValue();
+            String categoryName = new FinancerTextInputDialog(I18N.get("enterCategoryName"), Formatter.formatCategoryName(category.getValue()))
                     .showAndGetResult();
-            category.setName(categoryName);
+            category.getValue().setName(categoryName);
             this.handleUpdateCategory(category);
         }
     }
 
-    private void handleUpdateCategory(Category category) {
+    private void handleUpdateCategory(CategoryTree category) {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("category", category);
 
@@ -192,7 +191,7 @@ public class ProfileController implements Initializable {
 
     public void handleDeleteCategory() {
         if (this.categoriesTreeView.getSelectionModel().getSelectedItem() != null &&
-                !this.categoriesTreeView.getSelectionModel().getSelectedItem().getValue().isKey()) {
+                !this.categoriesTreeView.getSelectionModel().getSelectedItem().getValue().isRoot()) {
             Map<String, Object> parameters = new HashMap<>();
             parameters.put("category", this.categoriesTreeView.getSelectionModel()
                     .getSelectedItem().getValue());
@@ -215,34 +214,33 @@ public class ProfileController implements Initializable {
     }
 
     private void createTreeView() {
-        this.treeStructure = new TreeItem<>(new Category(-1, "root", -1, -1));
+        this.treeStructure = new TreeItem<>(new CategoryTree(null, new Category(-1, "root", -1, -1)));
         for (BaseCategory.CategoryClass categoryClass : BaseCategory.CategoryClass.values()) {
             this.createTreeView(treeStructure, this.categories.getCategoryTreeByCategoryClass(categoryClass));
         }
     }
 
-    private void createTreeView(TreeItem<Category> treeItem, CategoryTree root) {
-        if (root.isLeaf()) {
-            treeItem.getChildren().add(new TreeItem<>(root.getValue()));
-        } else {
+    private void createTreeView(TreeItem<CategoryTree> treeItem, CategoryTree root) {
+        TreeItem<CategoryTree> treeRoot = new TreeItem<>(root);
+        treeItem.getChildren().add(treeRoot);
+        if (!root.isLeaf()) {
             for (Tree<Category> categoryTree : root.getChildren()) {
-                TreeItem<Category> currentTreeItem = new TreeItem<>(categoryTree.getValue());
-                treeItem.getChildren().add(currentTreeItem);
-                createTreeView(currentTreeItem, (CategoryTree) categoryTree);
+                TreeItem<CategoryTree> currentTreeItem = new TreeItem<>((CategoryTree) categoryTree);
+                createTreeView(treeRoot, (CategoryTree) categoryTree);
             }
         }
     }
 
     private TextFieldTreeCellImpl getCellFactory() {
-        return new TextFieldTreeCellImpl(new StringConverter<Category>() {
+        return new TextFieldTreeCellImpl(new StringConverter<CategoryTree>() {
             @Override
-            public String toString(Category object) {
-                return object.toString();
+            public String toString(CategoryTree object) {
+                return object.getValue().getName().equals(object.getCategoryClass().getName()) ? I18N.get(object.toString()) : object.toString();
             }
 
             @Override
-            public Category fromString(String string) {
-                return new Category(string);
+            public CategoryTree fromString(String string) {
+                return new CategoryTree(null, new Category(-1, string, -1, -1));
             }
         });
     }
@@ -256,23 +254,22 @@ public class ProfileController implements Initializable {
         }
     }
 
-    private final class TextFieldTreeCellImpl extends TextFieldTreeCell<Category> {
+    private final class TextFieldTreeCellImpl extends TextFieldTreeCell<CategoryTree> {
         private ContextMenu contextMenu = new ContextMenu();
         private ContextMenu deleteContextMenu = new ContextMenu();
 
-        TextFieldTreeCellImpl(StringConverter<Category> stringConverter) {
+        TextFieldTreeCellImpl(StringConverter<CategoryTree> stringConverter) {
             super(stringConverter);
 
             MenuItem addMenuItem = new MenuItem(I18N.get("new"));
             addMenuItem.setOnAction(t -> {
-                handleNewCategory((SerialTreeItem<Category>) getTreeItem());
+                handleNewCategory(getTreeItem());
             });
             this.contextMenu.getItems().add(addMenuItem);
 
             MenuItem addMenuItemDelete = new MenuItem(I18N.get("new"));
             addMenuItemDelete.setOnAction(t -> {
-                SerialTreeItem<Category> newCategory = new SerialTreeItem<>(new Category("newCategory", true));
-                getTreeItem().getChildren().add(newCategory);
+                getTreeItem().getChildren().add(new TreeItem<>(new CategoryTree(null, new Category(-1, "newCategory", -1, -1))));
             });
             this.deleteContextMenu.getItems().add(addMenuItemDelete);
 
@@ -282,12 +279,12 @@ public class ProfileController implements Initializable {
         }
 
         @Override
-        public void updateItem(Category item, boolean empty) {
+        public void updateItem(CategoryTree item, boolean empty) {
             super.updateItem(item, empty);
             if (item != null && !isEditing() && getParent() != null) {
-                if (item.isKey() && !Formatter.formatCategoryName(item).equals(I18N.get("categories"))) {
+                if (item.isRoot() && !Formatter.formatCategoryName(item.getValue()).equals(I18N.get("categories"))) {
                     setContextMenu(this.contextMenu);
-                } else if (!item.isKey()) {
+                } else if (!item.isRoot()) {
                     setContextMenu(this.deleteContextMenu);
                 }
             }
