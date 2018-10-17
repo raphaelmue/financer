@@ -7,6 +7,7 @@ import de.raphaelmuesseler.financer.client.format.Formatter;
 import de.raphaelmuesseler.financer.client.format.I18N;
 import de.raphaelmuesseler.financer.client.javafx.connection.JavaFXAsyncConnectionCall;
 import de.raphaelmuesseler.financer.client.javafx.dialogs.FinancerConfirmDialog;
+import de.raphaelmuesseler.financer.client.javafx.format.JavaFXFormatter;
 import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
 import de.raphaelmuesseler.financer.client.javafx.main.FinancerController;
 import de.raphaelmuesseler.financer.shared.connection.ConnectionResult;
@@ -17,6 +18,7 @@ import de.raphaelmuesseler.financer.shared.model.User;
 import de.raphaelmuesseler.financer.shared.model.transactions.FixedTransaction;
 import de.raphaelmuesseler.financer.shared.model.transactions.Transaction;
 import de.raphaelmuesseler.financer.util.collections.CollectionUtil;
+import de.raphaelmuesseler.financer.util.collections.TreeUtil;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -112,9 +114,7 @@ public class TransactionsController implements Initializable {
 
         if (this.categories != null) {
             // TODO set prefixes
-//            TreeUtil.numberItemsByValue(this.categories, (result, prefix) -> {
-//
-//            });
+            TreeUtil.numberItemsByValue(this.categories, (result, prefix) -> result.getValue().setPrefix(prefix));
         }
 
         Platform.runLater(() -> {
@@ -131,18 +131,16 @@ public class TransactionsController implements Initializable {
 
         if (this.categories != null) {
             this.categories.traverse(categoryTree -> {
-                if (categoryTree.isLeaf()) {
-                    TransactionOverviewRow transactionOverviewRow = new TransactionOverviewRow(categoryTree.getValue());
-                    for (int i = 0; i < 6; i++) {
-                        transactionOverviewRow.getAmounts()[i] = ((CategoryTree) categoryTree).getAmount(LocalDate.now().minusMonths(i));
-                    }
-                    rows.put(categoryTree.getValue(), transactionOverviewRow);
+                TransactionOverviewRow transactionOverviewRow = new TransactionOverviewRow((CategoryTree) categoryTree);
+                for (int i = 0; i < 6; i++) {
+                    transactionOverviewRow.getAmounts()[i] = ((CategoryTree) categoryTree).getAmount(LocalDate.now().minusMonths(i));
                 }
+                rows.put(categoryTree.getValue(), transactionOverviewRow);
             });
         }
 
         TableColumn<TransactionOverviewRow, String> categoryColumn = new TableColumn<>(I18N.get("category"));
-        categoryColumn.setCellValueFactory(param -> new SimpleStringProperty(Formatter.formatCategoryName(param.getValue().category)));
+        categoryColumn.setCellValueFactory(param -> new SimpleStringProperty(JavaFXFormatter.formatCategoryName(param.getValue().getCategory())));
         categoryColumn.prefWidthProperty().bind(this.transactionsOverviewTableView.widthProperty().divide(8 / 2).add(-3));
         categoryColumn.setSortable(false);
 
@@ -166,9 +164,9 @@ public class TransactionsController implements Initializable {
         this.transactionsOverviewTableView.getColumns().addAll(monthColumns);
 
         List<TransactionOverviewRow> items = new ArrayList<>(rows.values());
-        items.sort((o1, o2) ->
-                String.CASE_INSENSITIVE_ORDER.compare(Formatter.formatCategoryName(o1.getCategory()),
-                        Formatter.formatCategoryName(o2.getCategory())));
+        Collections.sort(items, (o1, o2) ->
+                String.CASE_INSENSITIVE_ORDER.compare(Formatter.formatCategoryName(o1.getCategory().getValue()),
+                        Formatter.formatCategoryName(o2.getCategory().getValue())));
         this.transactionsOverviewTableView.getItems().addAll(items);
     }
 
@@ -190,7 +188,7 @@ public class TransactionsController implements Initializable {
                 setGraphic(!empty ? Formatter.formatAmountLabel(item) : null);
             }
         });
-        categoryColumn.setCellValueFactory(new PropertyValueFactory<>("category"));
+        categoryColumn.setCellValueFactory(new PropertyValueFactory<>("categoryTree"));
         productColumn.setCellValueFactory(new PropertyValueFactory<>("product"));
         purposeColumn.setCellValueFactory(new PropertyValueFactory<>("purpose"));
         shopColumn.setCellValueFactory(new PropertyValueFactory<>("shop"));
@@ -216,12 +214,15 @@ public class TransactionsController implements Initializable {
     private void loadFixedTransactionsTable() {
         if (this.localStorage.readObject(LocalStorageImpl.PROFILE_FILE, "categories") != null) {
             this.categories.traverse(treeItem -> {
-                if ((treeItem.getValue().getRootId() != -1 && (treeItem.getValue().getRootId() % 2) == 0) ||
-                        (treeItem.getValue().getRootId() == -1 && (treeItem.getValue().getParentId() % 2) == 0)) {
+                if ((((CategoryTree) treeItem).getCategoryClass() == BaseCategory.CategoryClass.FIXED_EXPENSES ||
+                        ((CategoryTree) treeItem).getCategoryClass() == BaseCategory.CategoryClass.FIXED_REVENUE)) {
                     categoriesListView.getItems().add((CategoryTree) treeItem);
                 }
             });
         }
+
+        this.categoriesListView.getItems().sort((o1, o2) -> String.CASE_INSENSITIVE_ORDER.compare(JavaFXFormatter.formatCategoryName(o1),
+                JavaFXFormatter.formatCategoryName(o2)));
 
         this.categoriesListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             showFixedTransactions(newValue);
@@ -515,7 +516,7 @@ public class TransactionsController implements Initializable {
                 setGraphic(null);
             } else {
                 this.initListCell();
-                this.categoryLabel.setText(Formatter.formatCategoryName(item.getValue()));
+                this.categoryLabel.setText(JavaFXFormatter.formatCategoryName(item));
                 Formatter.formatAmountLabel(this.amountLabel, item.getAmount(LocalDate.now()));
                 if (item.isRoot()) {
                     this.categoryLabel.getStyleClass().add("list-cell-title");
@@ -629,15 +630,15 @@ public class TransactionsController implements Initializable {
     }
 
     private class TransactionOverviewRow {
-        private Category category;
+        private CategoryTree categoryTree;
         private double[] amounts = new double[6];
 
-        TransactionOverviewRow(Category category) {
-            this.category = category;
+        TransactionOverviewRow(CategoryTree categoryTree) {
+            this.categoryTree = categoryTree;
         }
 
-        Category getCategory() {
-            return category;
+        CategoryTree getCategory() {
+            return categoryTree;
         }
 
         double[] getAmounts() {
