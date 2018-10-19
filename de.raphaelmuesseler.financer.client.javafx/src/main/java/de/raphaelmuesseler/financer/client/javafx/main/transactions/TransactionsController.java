@@ -252,6 +252,14 @@ public class TransactionsController implements Initializable {
             public void onSuccess(ConnectionResult result) {
                 transactions = FXCollections.observableArrayList((List<Transaction>) result.getResult());
                 localStorage.writeObject(LocalStorageImpl.TRANSACTIONS_FILE, "transactions", result.getResult());
+
+                for (Transaction transaction : transactions) {
+                    CategoryTree categoryTree = (CategoryTree) TreeUtil.getByValue(categories, transaction.getCategoryTree(), Comparator.comparingInt(Category::getId));
+                    if (categoryTree != null) {
+                        categoryTree.getTransactions().add(transaction);
+                        transaction.setCategoryTree(categoryTree);
+                    }
+                }
             }
 
             @Override
@@ -371,6 +379,14 @@ public class TransactionsController implements Initializable {
             public void onSuccess(ConnectionResult result) {
                 fixedTransactions = FXCollections.observableArrayList((List<FixedTransaction>) result.getResult());
                 localStorage.writeObject(LocalStorageImpl.TRANSACTIONS_FILE, "fixedTransactions", result.getResult());
+
+                for (FixedTransaction fixedTransaction : fixedTransactions) {
+                    CategoryTree categoryTree = (CategoryTree) TreeUtil.getByValue(categories, fixedTransaction.getCategoryTree(), Comparator.comparingInt(Category::getId));
+                    if (categoryTree != null) {
+                        categoryTree.getTransactions().add(fixedTransaction);
+                        fixedTransaction.setCategoryTree(categoryTree);
+                    }
+                }
             }
 
             @Override

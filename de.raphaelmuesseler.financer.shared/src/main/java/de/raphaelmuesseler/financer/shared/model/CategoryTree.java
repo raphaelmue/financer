@@ -12,6 +12,7 @@ public class CategoryTree implements Serializable, AmountProvider, Tree<Category
 
     private final Category category;
     private final List<CategoryTree> children = new ArrayList<>();
+    private List<AmountProvider> transactions = new ArrayList<>();
     private final BaseCategory.CategoryClass categoryClass;
     private CategoryTree parent;
 
@@ -29,8 +30,14 @@ public class CategoryTree implements Serializable, AmountProvider, Tree<Category
     public double getAmount() {
         double amount = 0;
 
-        for (AmountProvider amountProvider : this.children) {
-            amount += amountProvider.getAmount();
+        if (this.isLeaf()) {
+            for (AmountProvider amountProvider : this.transactions) {
+                amount += amountProvider.getAmount();
+            }
+        } else {
+            for (AmountProvider amountProvider : this.children) {
+                amount += amountProvider.getAmount();
+            }
         }
 
         return amount;
@@ -40,8 +47,16 @@ public class CategoryTree implements Serializable, AmountProvider, Tree<Category
     public double getAmount(LocalDate localDate) {
         double amount = 0;
 
-        for (AmountProvider amountProvider : this.children) {
-            amount += amountProvider.getAmount(localDate);
+        if (this.isLeaf()) {
+            if (this.transactions != null) {
+                for (AmountProvider amountProvider : this.transactions) {
+                    amount += amountProvider.getAmount(localDate);
+                }
+            }
+        } else {
+            for (AmountProvider amountProvider : this.children) {
+                amount += amountProvider.getAmount(localDate);
+            }
         }
 
         return amount;
@@ -68,6 +83,13 @@ public class CategoryTree implements Serializable, AmountProvider, Tree<Category
     @Override
     public List<? extends Tree<Category>> getChildren() {
         return this.children;
+    }
+
+    public List<AmountProvider> getTransactions() {
+        if (this.transactions == null) {
+            this.transactions = new ArrayList<>();
+        }
+        return transactions;
     }
 
     /**
