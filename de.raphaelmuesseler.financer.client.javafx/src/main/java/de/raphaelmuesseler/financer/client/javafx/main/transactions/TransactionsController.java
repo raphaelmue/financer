@@ -251,8 +251,6 @@ public class TransactionsController implements Initializable {
             @Override
             public void onSuccess(ConnectionResult result) {
                 transactions = FXCollections.observableArrayList((List<Transaction>) result.getResult());
-                localStorage.writeObject(LocalStorageImpl.TRANSACTIONS_FILE, "transactions", result.getResult());
-
                 for (Transaction transaction : transactions) {
                     CategoryTree categoryTree = (CategoryTree) TreeUtil.getByValue(categories, transaction.getCategoryTree(), Comparator.comparingInt(Category::getId));
                     if (categoryTree != null) {
@@ -260,6 +258,7 @@ public class TransactionsController implements Initializable {
                         transaction.setCategoryTree(categoryTree);
                     }
                 }
+                localStorage.writeObject(LocalStorageImpl.TRANSACTIONS_FILE, "transactions", result.getResult());
             }
 
             @Override
@@ -378,8 +377,6 @@ public class TransactionsController implements Initializable {
             @Override
             public void onSuccess(ConnectionResult result) {
                 fixedTransactions = FXCollections.observableArrayList((List<FixedTransaction>) result.getResult());
-                localStorage.writeObject(LocalStorageImpl.TRANSACTIONS_FILE, "fixedTransactions", result.getResult());
-
                 for (FixedTransaction fixedTransaction : fixedTransactions) {
                     CategoryTree categoryTree = (CategoryTree) TreeUtil.getByValue(categories, fixedTransaction.getCategoryTree(), Comparator.comparingInt(Category::getId));
                     if (categoryTree != null) {
@@ -387,6 +384,7 @@ public class TransactionsController implements Initializable {
                         fixedTransaction.setCategoryTree(categoryTree);
                     }
                 }
+                localStorage.writeObject(LocalStorageImpl.TRANSACTIONS_FILE, "fixedTransactions", result.getResult());
             }
 
             @Override
