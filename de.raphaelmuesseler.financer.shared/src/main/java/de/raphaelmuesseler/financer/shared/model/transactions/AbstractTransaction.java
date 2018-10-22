@@ -4,8 +4,9 @@ import de.raphaelmuesseler.financer.shared.model.AmountProvider;
 import de.raphaelmuesseler.financer.shared.model.CategoryTree;
 
 import java.io.Serializable;
+import java.util.Objects;
 
-abstract class AbstractTransaction implements Serializable, AmountProvider {
+public abstract class AbstractTransaction implements Serializable, AmountProvider {
     private static final long serialVersionUID = -2425120066992174442L;
 
     private int id;
@@ -64,5 +65,19 @@ abstract class AbstractTransaction implements Serializable, AmountProvider {
     @Override
     public String toString() {
         return this.product + " (" + this.amount + " EUR)[" + this.id + "]";
+    }
+
+    @Override
+    public int hashCode() {
+        if (this.id != -1) {
+            return 1861610686 + this.id;
+        } else {
+            return super.hashCode();
+        }
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return this.id == ((AbstractTransaction) obj).getId();
     }
 }

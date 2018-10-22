@@ -1,18 +1,21 @@
 package de.raphaelmuesseler.financer.shared.model;
 
+import de.raphaelmuesseler.financer.shared.model.transactions.AbstractTransaction;
 import de.raphaelmuesseler.financer.util.collections.Tree;
 
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class CategoryTree implements Serializable, AmountProvider, Tree<Category> {
     private static final long serialVersionUID = -5848321222290793608L;
 
     private final Category category;
     private final List<CategoryTree> children = new ArrayList<>();
-    private List<AmountProvider> transactions = new ArrayList<>();
+    private Set<AbstractTransaction> transactions = new HashSet<>();
     private final BaseCategory.CategoryClass categoryClass;
     private CategoryTree parent;
 
@@ -85,9 +88,9 @@ public class CategoryTree implements Serializable, AmountProvider, Tree<Category
         return this.children;
     }
 
-    public List<AmountProvider> getTransactions() {
+    public Set<AbstractTransaction> getTransactions() {
         if (this.transactions == null) {
-            this.transactions = new ArrayList<>();
+            this.transactions = new HashSet<>();
         }
         return transactions;
     }

@@ -254,11 +254,12 @@ public class TransactionsController implements Initializable {
                 for (Transaction transaction : transactions) {
                     CategoryTree categoryTree = (CategoryTree) TreeUtil.getByValue(categories, transaction.getCategoryTree(), Comparator.comparingInt(Category::getId));
                     if (categoryTree != null) {
-                        categoryTree.getTransactions().add(transaction);
                         transaction.setCategoryTree(categoryTree);
+                        categoryTree.getTransactions().add(transaction);
                     }
                 }
                 localStorage.writeObject(LocalStorageImpl.TRANSACTIONS_FILE, "transactions", result.getResult());
+                localStorage.writeObject(LocalStorageImpl.PROFILE_FILE, "categories", categories);
             }
 
             @Override
@@ -380,11 +381,12 @@ public class TransactionsController implements Initializable {
                 for (FixedTransaction fixedTransaction : fixedTransactions) {
                     CategoryTree categoryTree = (CategoryTree) TreeUtil.getByValue(categories, fixedTransaction.getCategoryTree(), Comparator.comparingInt(Category::getId));
                     if (categoryTree != null) {
-                        categoryTree.getTransactions().add(fixedTransaction);
                         fixedTransaction.setCategoryTree(categoryTree);
+                        categoryTree.getTransactions().add(fixedTransaction);
                     }
                 }
                 localStorage.writeObject(LocalStorageImpl.TRANSACTIONS_FILE, "fixedTransactions", result.getResult());
+                localStorage.writeObject(LocalStorageImpl.PROFILE_FILE, "categories", categories);
             }
 
             @Override
@@ -421,8 +423,8 @@ public class TransactionsController implements Initializable {
                 .showAndGetResult();
         if (fixedTransaction != null) {
 
-            if ((fixedTransaction.getCategoryTree().getValue().getRootId() == 0 && fixedTransaction.getAmount() < 0) ||
-                    (fixedTransaction.getCategoryTree().getValue().getRootId() == 2 && fixedTransaction.getAmount() >= 0)) {
+            if ((fixedTransaction.getCategoryTree().getCategoryClass().isRevenue() && fixedTransaction.getAmount() < 0) ||
+                    (!fixedTransaction.getCategoryTree().getCategoryClass().isRevenue() && fixedTransaction.getAmount() >= 0)) {
                 fixedTransaction.setAmount(fixedTransaction.getAmount() * (-1));
             }
 

@@ -67,6 +67,14 @@ public class BaseCategory implements Serializable, AmountProvider, Tree<Category
             }
             return null;
         }
+
+        public boolean isFixed() {
+            return (this == FIXED_EXPENSES || this == FIXED_REVENUE);
+        }
+
+        public boolean isRevenue() {
+            return (this == VARIABLE_REVENUE || this == FIXED_REVENUE);
+        }
     }
 
 

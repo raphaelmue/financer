@@ -32,8 +32,15 @@ public class FixedTransaction extends AbstractTransaction {
     public double getAmount(LocalDate localDate) {
         double amount = 0;
 
-        for (AmountProvider amountProvider : this.transactionAmounts) {
-            amount += amountProvider.getAmount(localDate);
+        if (this.endDate == null || this.endDate.compareTo(LocalDate.now()) >= 0) {
+            if (this.isVariable && this.transactionAmounts != null) {
+                for (AmountProvider amountProvider : this.transactionAmounts) {
+                    amount += amountProvider.getAmount(localDate);
+                }
+            }
+            if (!this.isVariable) {
+                amount = super.getAmount();
+            }
         }
 
         return amount;
@@ -43,8 +50,15 @@ public class FixedTransaction extends AbstractTransaction {
     public double getAmount() {
         double amount = 0;
 
-        for (AmountProvider amountProvider : this.transactionAmounts) {
-            amount += amountProvider.getAmount();
+        if (this.endDate == null || this.endDate.compareTo(LocalDate.now()) >= 0) {
+            if (this.isVariable && this.transactionAmounts != null) {
+                for (AmountProvider amountProvider : this.transactionAmounts) {
+                    amount += amountProvider.getAmount();
+                }
+            }
+            if (!this.isVariable) {
+                amount = super.getAmount();
+            }
         }
 
         return amount;
