@@ -42,6 +42,10 @@ public class OverviewController implements Initializable {
         this.user = this.localStorage.getLoggedInUser();
         this.categories = (BaseCategory) this.localStorage.readObject(LocalStorageImpl.PROFILE_FILE, "categories");
 
+        if (this.categories == null) {
+            this.categories = new BaseCategory();
+        }
+
         this.transactions = (List<Transaction>) this.localStorage.readObject(LocalStorageImpl.TRANSACTIONS_FILE, "transactions");
         this.lastTransactionsGridPane.setVgap(8);
         if (this.transactions != null && this.transactions.size() > 0) {
