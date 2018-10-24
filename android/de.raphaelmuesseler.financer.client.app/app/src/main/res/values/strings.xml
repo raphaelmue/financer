@@ -13,4 +13,16 @@
     <string name="error_incorrect_password">This password is incorrect.</string>
     <string name="error_field_required">This field is required.</string>
     <string name="permission_rationale">"Contacts permissions are needed for providing email completions.     "</string>
+    <string name="overview">Overview</string>
+    <string name="transactions">Transactions</string>
+    <string name="statistics">Statistics</string>
+    <string name="settings">Settings</string>
+    <string name="profile">Profile</string>
+    <string name="logout">Logout</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="fixed_transactions">Fixed Transactions</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

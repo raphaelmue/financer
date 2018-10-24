@@ -55,7 +55,7 @@ public class LocalStorageImpl extends AbstractLocalStorage {
 
     @Override
     public boolean logUserOut() {
-        return false;
+        return this.sharedPreferences.edit().remove(USER_STORAGE_NAME).commit();
     }
 
     @Override
