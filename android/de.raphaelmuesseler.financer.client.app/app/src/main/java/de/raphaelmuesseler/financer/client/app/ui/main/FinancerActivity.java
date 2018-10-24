@@ -33,7 +33,7 @@ public class FinancerActivity extends AppCompatActivity
 
         LocalStorageImpl.setContext(this);
 
-        this.user = LocalStorageImpl.getInstance().getLoggedInUser();
+        this.user = (User) LocalStorageImpl.getInstance().readObject("user");
         if (this.user == null) {
             this.openLoginActivity();
         } else {
@@ -98,7 +98,7 @@ public class FinancerActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            LocalStorageImpl.getInstance().logUserOut();
+            LocalStorageImpl.getInstance().deleteAllData();
             openLoginActivity();
             return true;
         }

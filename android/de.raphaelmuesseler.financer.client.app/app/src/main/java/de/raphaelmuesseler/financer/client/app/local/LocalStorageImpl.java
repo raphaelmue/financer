@@ -6,15 +6,12 @@ import android.content.SharedPreferences;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import java.io.File;
-import java.util.Map;
+import java.util.Objects;
 
-import de.raphaelmuesseler.financer.client.local.AbstractLocalStorage;
 import de.raphaelmuesseler.financer.client.local.LocalStorage;
-import de.raphaelmuesseler.financer.client.local.Settings;
 import de.raphaelmuesseler.financer.shared.model.User;
 
-public class LocalStorageImpl extends AbstractLocalStorage {
+public class LocalStorageImpl implements LocalStorage {
     private static final String FILE_NAME = "de.raphaelmuesseler.financer.localstorage";
     private static final String USER_STORAGE_NAME = "user";
 
@@ -30,7 +27,7 @@ public class LocalStorageImpl extends AbstractLocalStorage {
         return INSTANCE;
     }
 
-    LocalStorageImpl() {
+    private LocalStorageImpl() {
         sharedPreferences = CONTEXT.getSharedPreferences(FILE_NAME, Context.MODE_PRIVATE);
     }
 
@@ -38,48 +35,29 @@ public class LocalStorageImpl extends AbstractLocalStorage {
         LocalStorageImpl.CONTEXT = CONTEXT;
     }
 
+
     @Override
-    public User getLoggedInUser() {
-        if (this.sharedPreferences.getString(USER_STORAGE_NAME, "").isEmpty()) {
+    public Object readObject(String key) {
+        if (Objects.requireNonNull(this.sharedPreferences.getString(USER_STORAGE_NAME, "")).isEmpty()) {
             return null;
         } else {
-            return new GsonBuilder().create().fromJson(this.sharedPreferences.getString(USER_STORAGE_NAME, ""), User.class);
+            return new GsonBuilder().create().fromJson(this.sharedPreferences.getString(key, ""), User.class);
         }
     }
 
     @Override
-    public boolean writeUser(User user) {
+    public boolean writeObject(String key, Object object) {
         Gson gson = new GsonBuilder().create();
-        return this.sharedPreferences.edit().putString(USER_STORAGE_NAME, gson.toJson(user)).commit();
+        return this.sharedPreferences.edit().putString(key, gson.toJson(object)).commit();
     }
 
     @Override
-    public boolean logUserOut() {
-        return this.sharedPreferences.edit().remove(USER_STORAGE_NAME).commit();
+    public boolean deleteObject(String key) {
+        return this.sharedPreferences.edit().remove(key).commit();
     }
 
     @Override
-    public Settings getSettings() {
-        return null;
-    }
-
-    @Override
-    public boolean writeSettings(Settings settings) {
-        return false;
-    }
-
-    @Override
-    public Object readObject(File file, String s) {
-        return null;
-    }
-
-    @Override
-    protected Map<String, Object> readFile(File file) {
-        return null;
-    }
-
-    @Override
-    public boolean writeObject(File file, String s, Object o) {
-        return false;
+    public boolean deleteAllData() {
+        return this.sharedPreferences.edit().clear().commit();
     }
 }

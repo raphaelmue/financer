@@ -36,7 +36,6 @@ import de.raphaelmuesseler.financer.client.connection.AsyncConnectionCall;
 import de.raphaelmuesseler.financer.client.connection.ServerRequest;
 import de.raphaelmuesseler.financer.client.connection.ServerRequestHandler;
 import de.raphaelmuesseler.financer.shared.connection.ConnectionResult;
-import de.raphaelmuesseler.financer.shared.model.User;
 
 import static android.Manifest.permission.READ_CONTACTS;
 
@@ -187,7 +186,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 @Override
                 public void onSuccess(ConnectionResult connectionResult) {
                     if (connectionResult.getResult() != null) {
-                        LocalStorageImpl.getInstance().writeUser((User) connectionResult.getResult());
+                        LocalStorageImpl.getInstance().writeObject("user", connectionResult.getResult());
                         openFinancerActivity();
                     } else {
                         mPasswordView.setError(getString(R.string.error_incorrect_password));
