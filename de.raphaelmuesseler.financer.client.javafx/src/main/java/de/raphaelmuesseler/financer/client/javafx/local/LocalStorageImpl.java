@@ -1,88 +1,73 @@
 package de.raphaelmuesseler.financer.client.javafx.local;
 
-import de.raphaelmuesseler.financer.client.format.Formatter;
-import de.raphaelmuesseler.financer.client.local.AbstractLocalStorage;
-import de.raphaelmuesseler.financer.client.local.Settings;
-import de.raphaelmuesseler.financer.shared.model.User;
+import de.raphaelmuesseler.financer.client.local.LocalStorage;
 
 import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
-public class LocalStorageImpl extends AbstractLocalStorage {
+public class LocalStorageImpl implements LocalStorage {
     private static LocalStorageImpl INSTANCE = null;
 
-    public static final String LOCATION;
+    public enum LocalStorageFile {
+        USERDATA("/usr/usr.fnc", "user"),
+        SETTINGS("/usr/settings.fnc", "settings"),
+        TRANSACTIONS("/data/transactions.fnc", "transactions", "fixedTransactions"),
+        CATEGORIES("/data/categories.fnc", "categories");
 
-    static {
-        if (System.getenv("APPDATA") != null) {
-            LOCATION = System.getenv("APPDATA") + "/Financer";
-        } else {
-            LOCATION = System.getProperty("user.home") + "/Financer";
+        private final String path;
+        private final File file;
+        private final String[] keys;
+
+
+
+        LocalStorageFile(String path, String... keys) {
+            if (System.getenv("APPDATA") != null) {
+                this.path = System.getenv("APPDATA") + "/Financer" + path;
+            } else {
+                this.path = System.getProperty("user.home") + "/Financer" + path;
+            }
+            this.file = new File(this.path);
+            this.keys = keys;
+        }
+
+        public File getFile() {
+            return this.file;
+        }
+
+        public String[] getKeys() {
+            return keys;
+        }
+
+        public static File getFileByKey(String key) {
+            for (LocalStorageFile localStorageFile : values()) {
+                for (String _key : localStorageFile.getKeys()) {
+                    if (_key.equals(key) && (localStorageFile.getFile().getParentFile().exists() || localStorageFile.getFile().getParentFile().mkdirs())) {
+                        return localStorageFile.getFile();
+                    }
+                }
+            }
+            return null;
         }
     }
 
-    public static final File USERDATA_FILE = new File(LOCATION + "/usr/usr.fnc");
-    public static final File SETTINGS_FILE = new File(LOCATION + "/usr/settings.fnc");
-    public static final File PROFILE_FILE = new File(LOCATION + "/data/profile.fnc");
-    public static final File TRANSACTIONS_FILE = new File(LOCATION + "/data/transactions.fnc");
-
-    public static LocalStorageImpl getInstance() {
+    public static LocalStorage getInstance() {
         if (INSTANCE == null) {
             INSTANCE = new LocalStorageImpl();
         }
         return INSTANCE;
     }
 
-    public User getLoggedInUser() {
-        return (User) readObject(USERDATA_FILE, "user");
-    }
-
-    public boolean writeUser(User user) {
-        USERDATA_FILE.getParentFile().mkdirs();
-        return writeObject(USERDATA_FILE, "user", user);
-    }
-
-    public boolean logUserOut() {
-        boolean result = true;
-        if (!USERDATA_FILE.delete() || !SETTINGS_FILE.delete() || !PROFILE_FILE.delete() || !TRANSACTIONS_FILE.delete()) {
-            result = false;
-        }
-        return result;
-    }
-
-    public Settings getSettings() {
-        return (Settings) readObject(SETTINGS_FILE, "settings");
-    }
-
-    public boolean writeSettings(Settings settings) {
-        Formatter.setSettings(settings);
-        return writeObject(SETTINGS_FILE, "settings", settings);
-    }
-
-    public boolean writeObject(File file, String key, Object object) {
-        file.getParentFile().mkdirs();
-        boolean result = false;
-        Map<String, Object> map = readFile(file);
-        if (map == null) {
-            map = new HashMap<>();
+    @SuppressWarnings("unchecked")
+    private Map<String, Object> readFile(File file) {
+        if (!file.exists()) {
+            try {
+                file.createNewFile();
+                return null;
+            } catch (IOException ignored) {}
         }
 
-        try (ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream(file))) {
-            map.put(key, object);
-            outputStream.writeObject(map);
-            result = true;
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return result;
-    }
-
-    public Object readObject(File file, String key) {
-        return readFile(file) == null ? null : readFile(file).get(key);
-    }
-
-    protected Map<String, Object> readFile(File file) {
         Map<String, Object> result = null;
         try (ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream(file))) {
             result = (Map<String, Object>) inputStream.readObject();
@@ -90,5 +75,57 @@ public class LocalStorageImpl extends AbstractLocalStorage {
         }
 
         return result;
+    }
+
+    private boolean writeFile(File file, Map<String, Object> data) {
+        boolean result = false;
+        try (ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream(file))) {
+            outputStream.writeObject(data);
+            result = true;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    @Override
+    public Object readObject(String key) {
+        return (this.readFile(Objects.requireNonNull(LocalStorageFile.getFileByKey(key))) == null) ?
+                null : Objects.requireNonNull(this.readFile(Objects.requireNonNull(LocalStorageFile.getFileByKey(key)))).get(key);
+    }
+
+    @Override
+    public boolean writeObject(String key, Object object) {
+        Map<String, Object> map = this.readFile(Objects.requireNonNull(LocalStorageFile.getFileByKey(key)));
+        if (map == null) {
+            map = new HashMap<>();
+        }
+
+        map.put(key, object);
+        return this.writeFile(LocalStorageFile.getFileByKey(key), map);
+    }
+
+    @Override
+    public boolean deleteObject(String key) {
+        if (!Objects.requireNonNull(LocalStorageFile.getFileByKey(key)).getParentFile().mkdirs()) {
+            return false;
+        }
+        Map<String, Object> map = this.readFile(Objects.requireNonNull(LocalStorageFile.getFileByKey(key)));
+        if (map == null) {
+            map = new HashMap<>();
+        }
+
+        map.remove(key);
+        return this.writeFile(LocalStorageFile.getFileByKey(key), map);
+    }
+
+    @Override
+    public boolean deleteAllData() {
+        for (LocalStorageFile localStorageFile : LocalStorageFile.values()) {
+            if (!localStorageFile.getFile().delete()) {
+                return false;
+            }
+        }
+        return true;
     }
 }

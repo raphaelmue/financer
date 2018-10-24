@@ -12,7 +12,6 @@ import de.raphaelmuesseler.financer.shared.model.BaseCategory;
 import de.raphaelmuesseler.financer.shared.model.Category;
 import de.raphaelmuesseler.financer.shared.model.CategoryTree;
 import de.raphaelmuesseler.financer.shared.model.User;
-import de.raphaelmuesseler.financer.util.collections.SerialTreeItem;
 import de.raphaelmuesseler.financer.util.collections.Tree;
 import javafx.application.Platform;
 import javafx.fxml.Initializable;
@@ -49,7 +48,7 @@ public class ProfileController implements Initializable {
     private Logger logger = Logger.getLogger("FinancerApplication");
     private ExecutorService executor = Executors.newCachedThreadPool();
     private BaseCategory categories;
-    private LocalStorageImpl localStorage = LocalStorageImpl.getInstance();
+    private LocalStorageImpl localStorage = (LocalStorageImpl) LocalStorageImpl.getInstance();
     private TreeItem<CategoryTree> treeStructure;
 
     @Override
@@ -57,7 +56,7 @@ public class ProfileController implements Initializable {
         /**
          * Personal Information
          */
-        this.user = this.localStorage.getLoggedInUser();
+        this.user = (User) this.localStorage.readObject("user");
         if (user != null) {
             this.nameLabel.setText(user.getName());
             this.surnameLabel.setText(user.getSurname());
@@ -89,7 +88,7 @@ public class ProfileController implements Initializable {
             @Override
             public void onSuccess(ConnectionResult result) {
                 categories = (BaseCategory) result.getResult();
-                localStorage.writeObject(LocalStorageImpl.PROFILE_FILE, "categories", categories);
+                localStorage.writeObject("categories", categories);
             }
 
             @Override
@@ -100,7 +99,7 @@ public class ProfileController implements Initializable {
                     logger.log(Level.SEVERE, exception.getMessage(), exception);
                     JavaFXAsyncConnectionCall.super.onFailure(exception);
                 }
-                categories = (BaseCategory) localStorage.readObject(LocalStorageImpl.PROFILE_FILE, "categories");
+                categories = (BaseCategory) localStorage.readObject("categories");
             }
 
             @Override
@@ -145,7 +144,7 @@ public class ProfileController implements Initializable {
                             category.setId(((Category) result.getResult()).getId());
                             CategoryTree categoryTree = new CategoryTree(currentItem.getValue().getCategoryClass(), currentItem.getValue(), (Category) result.getResult());
                             currentItem.getChildren().add(new TreeItem<>(categoryTree));
-                            ((List<Tree<Category>>)currentItem.getValue().getChildren()).add(categoryTree);
+                            ((List<Tree<Category>>) currentItem.getValue().getChildren()).add(categoryTree);
                             expandTreeView(currentItem);
                         });
                     }
@@ -225,7 +224,6 @@ public class ProfileController implements Initializable {
         treeItem.getChildren().add(treeRoot);
         if (!root.isLeaf()) {
             for (Tree<Category> categoryTree : root.getChildren()) {
-                TreeItem<CategoryTree> currentTreeItem = new TreeItem<>((CategoryTree) categoryTree);
                 createTreeView(treeRoot, (CategoryTree) categoryTree);
             }
         }
@@ -262,15 +260,11 @@ public class ProfileController implements Initializable {
             super(stringConverter);
 
             MenuItem addMenuItem = new MenuItem(I18N.get("new"));
-            addMenuItem.setOnAction(t -> {
-                handleNewCategory(getTreeItem());
-            });
+            addMenuItem.setOnAction(t -> handleNewCategory(getTreeItem()));
             this.contextMenu.getItems().add(addMenuItem);
 
             MenuItem addMenuItemDelete = new MenuItem(I18N.get("new"));
-            addMenuItemDelete.setOnAction(t -> {
-                getTreeItem().getChildren().add(new TreeItem<>(new CategoryTree(null, new Category(-1, "newCategory", -1, -1))));
-            });
+            addMenuItemDelete.setOnAction(t -> getTreeItem().getChildren().add(new TreeItem<>(new CategoryTree(null, new Category(-1, "newCategory", -1, -1)))));
             this.deleteContextMenu.getItems().add(addMenuItemDelete);
 
             MenuItem deleteMenuItem = new MenuItem(I18N.get("delete"));

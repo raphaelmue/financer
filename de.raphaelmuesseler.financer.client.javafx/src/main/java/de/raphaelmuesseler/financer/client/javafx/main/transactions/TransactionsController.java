@@ -75,7 +75,7 @@ public class TransactionsController implements Initializable {
     private User user;
     private Logger logger = Logger.getLogger("FinancerApplication");
     private ExecutorService executor = Executors.newCachedThreadPool();
-    private LocalStorageImpl localStorage = LocalStorageImpl.getInstance();
+    private LocalStorageImpl localStorage = (LocalStorageImpl) LocalStorageImpl.getInstance();
     private ObservableList<Transaction> transactions;
     private ObservableList<FixedTransaction> fixedTransactions;
     private BaseCategory categories;
@@ -84,7 +84,7 @@ public class TransactionsController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         FinancerController.showLoadingBox();
 
-        this.user = this.localStorage.getLoggedInUser();
+        this.user = (User) this.localStorage.readObject("user");
 
         GlyphFont fontAwesome = GlyphFontRegistry.font("FontAwesome");
         this.refreshTransactionsBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.REFRESH));
@@ -110,7 +110,7 @@ public class TransactionsController implements Initializable {
         this.deleteFixedTransactionBtn.setGraphicTextGap(8);
         this.deleteFixedTransactionBtn.setDisable(true);
 
-        this.categories = (BaseCategory) this.localStorage.readObject(LocalStorageImpl.PROFILE_FILE, "categories");
+        this.categories = (BaseCategory) this.localStorage.readObject("categories");
 
         if (this.categories != null) {
             // TODO set prefixes
@@ -212,7 +212,7 @@ public class TransactionsController implements Initializable {
     }
 
     private void loadFixedTransactionsTable() {
-        if (this.localStorage.readObject(LocalStorageImpl.PROFILE_FILE, "categories") != null) {
+        if (this.localStorage.readObject("categories") != null) {
             this.categories.traverse(treeItem -> {
                 if ((((CategoryTree) treeItem).getCategoryClass() == BaseCategory.CategoryClass.FIXED_EXPENSES ||
                         ((CategoryTree) treeItem).getCategoryClass() == BaseCategory.CategoryClass.FIXED_REVENUE)) {
@@ -250,7 +250,7 @@ public class TransactionsController implements Initializable {
         this.executor.execute(new ServerRequestHandler("getTransactions", parameters, new JavaFXAsyncConnectionCall() {
             @Override
             public void onSuccess(ConnectionResult result) {
-                transactions = FXCollections.observableArrayList((List<Transaction>) result.getResult());
+                transactions = CollectionUtil.castListToObserableList((List<Transaction>) result.getResult());
                 for (Transaction transaction : transactions) {
                     CategoryTree categoryTree = (CategoryTree) TreeUtil.getByValue(categories, transaction.getCategoryTree(), Comparator.comparingInt(Category::getId));
                     if (categoryTree != null) {
@@ -258,8 +258,8 @@ public class TransactionsController implements Initializable {
                         categoryTree.getTransactions().add(transaction);
                     }
                 }
-                localStorage.writeObject(LocalStorageImpl.TRANSACTIONS_FILE, "transactions", result.getResult());
-                localStorage.writeObject(LocalStorageImpl.PROFILE_FILE, "categories", categories);
+                localStorage.writeObject("transactions", result.getResult());
+                localStorage.writeObject("categories", categories);
             }
 
             @Override
@@ -270,10 +270,9 @@ public class TransactionsController implements Initializable {
                     logger.log(Level.SEVERE, exception.getMessage(), exception);
                     JavaFXAsyncConnectionCall.super.onFailure(exception);
                 }
-                List<Object> result = ((List<Object>) localStorage.readObject(
-                        LocalStorageImpl.TRANSACTIONS_FILE, "transactions"));
+                List<Transaction> result = localStorage.readList("transactions");
                 if (result != null && result.size() > 0) {
-                    transactions = CollectionUtil.castObjectListToObservable(result);
+                    transactions = CollectionUtil.castListToObserableList(result);
                 }
             }
 
@@ -385,8 +384,8 @@ public class TransactionsController implements Initializable {
                         categoryTree.getTransactions().add(fixedTransaction);
                     }
                 }
-                localStorage.writeObject(LocalStorageImpl.TRANSACTIONS_FILE, "fixedTransactions", result.getResult());
-                localStorage.writeObject(LocalStorageImpl.PROFILE_FILE, "categories", categories);
+                localStorage.writeObject("fixedTransactions", result.getResult());
+                localStorage.writeObject("categories", categories);
             }
 
             @Override
@@ -397,10 +396,9 @@ public class TransactionsController implements Initializable {
                     logger.log(Level.SEVERE, exception.getMessage(), exception);
                     JavaFXAsyncConnectionCall.super.onFailure(exception);
                 }
-                List<Object> result = (List<Object>) localStorage.readObject(
-                        LocalStorageImpl.TRANSACTIONS_FILE, "fixedTransactions");
+                List<FixedTransaction> result = localStorage.readList("fixedTransactions");
                 if (result != null && result.size() > 0) {
-                    fixedTransactions = CollectionUtil.castObjectListToObservable(result);
+                    fixedTransactions = CollectionUtil.castListToObserableList(result);
                 }
             }
 

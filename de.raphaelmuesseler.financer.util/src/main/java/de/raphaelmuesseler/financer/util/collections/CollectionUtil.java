@@ -13,4 +13,11 @@ public class CollectionUtil {
         }
         return result;
     }
+
+
+    public static <T> ObservableList<T> castListToObserableList(List<T> list) {
+        ObservableList<T> result = FXCollections.observableArrayList();
+        result.addAll(list);
+        return result;
+    }
 }
