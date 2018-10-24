@@ -7,7 +7,6 @@ import de.raphaelmuesseler.financer.client.javafx.main.FinancerController;
 import de.raphaelmuesseler.financer.shared.model.BaseCategory;
 import de.raphaelmuesseler.financer.shared.model.Category;
 import de.raphaelmuesseler.financer.shared.model.CategoryTree;
-import de.raphaelmuesseler.financer.shared.model.User;
 import de.raphaelmuesseler.financer.shared.model.transactions.Transaction;
 import de.raphaelmuesseler.financer.util.collections.Tree;
 import javafx.fxml.Initializable;
@@ -20,37 +19,28 @@ import java.net.URL;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.logging.Logger;
 
 public class OverviewController implements Initializable {
     public GridPane lastTransactionsGridPane;
     public GridPane balanceGridPane;
 
-    private User user;
-    private Logger logger = Logger.getLogger("FinancerApplication");
-    private ExecutorService executor = Executors.newCachedThreadPool();
-    private List<Transaction> transactions;
-    private LocalStorageImpl localStorage = LocalStorageImpl.getInstance();
-    private BaseCategory categories;
+    private LocalStorageImpl localStorage = (LocalStorageImpl) LocalStorageImpl.getInstance();
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         FinancerController.showLoadingBox();
 
-        this.user = this.localStorage.getLoggedInUser();
-        this.categories = (BaseCategory) this.localStorage.readObject(LocalStorageImpl.PROFILE_FILE, "categories");
+        BaseCategory categories = (BaseCategory) this.localStorage.readObject("categories");
 
-        if (this.categories == null) {
-            this.categories = new BaseCategory();
+        if (categories == null) {
+            categories = new BaseCategory();
         }
 
-        this.transactions = (List<Transaction>) this.localStorage.readObject(LocalStorageImpl.TRANSACTIONS_FILE, "transactions");
+        List<Transaction> transactions = this.localStorage.readList("transactions");
         this.lastTransactionsGridPane.setVgap(8);
-        if (this.transactions != null && this.transactions.size() > 0) {
+        if (transactions != null && transactions.size() > 0) {
             int counter = 0;
-            for (Transaction transaction : this.transactions) {
+            for (Transaction transaction : transactions) {
                 // LAST TRANSACTIONS
                 if (counter > 5) {
                     break;
@@ -71,7 +61,7 @@ public class OverviewController implements Initializable {
 
         double balanceAmount = 0;
         int counter = 0;
-        for (Tree<Category> root : this.categories.getChildren()) {
+        for (Tree<Category> root : categories.getChildren()) {
             this.balanceGridPane.add(new Label(I18N.get(((CategoryTree) root).getCategoryClass().getName())), 0, counter);
             Label baseCategoryLabel = Formatter.formatAmountLabel(((CategoryTree) root).getAmount(LocalDate.now()));
             balanceAmount += ((CategoryTree) root).getAmount(LocalDate.now());

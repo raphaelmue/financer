@@ -1,9 +1,18 @@
 package de.raphaelmuesseler.financer.client.local;
 
-import java.io.File;
+import java.util.List;
 
 public interface LocalStorage {
-    Settings getSettings();
-    Object readObject(File file, String key);
-    boolean writeObject(File file, String key, Object object);
+    Object readObject(String key);
+
+    @SuppressWarnings("unchecked")
+    default <T> List<T> readList(String key) {
+        return (List<T>) this.readObject(key);
+    }
+
+    boolean writeObject(String key, Object object);
+
+    boolean deleteObject(String key);
+
+    boolean deleteAllData();
 }

@@ -20,7 +20,7 @@ public class SettingsController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        this.settings = LocalStorageImpl.getInstance().getSettings();
+        this.settings = (Settings) LocalStorageImpl.getInstance().readObject("settings");
         if (this.settings == null) {
             this.settings = new Settings();
         }
@@ -29,7 +29,7 @@ public class SettingsController implements Initializable {
         this.languageMenuComboBox.getSelectionModel().select(I18N.Language.getLanguageByLocale(this.settings.getLanguage()));
         this.languageMenuComboBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
                 settings.setLanguage(newValue.getLocale());
-                LocalStorageImpl.getInstance().writeSettings(settings);
+                LocalStorageImpl.getInstance().writeObject("settings", settings);
             });
 
         this.currencyComboBox.getItems().addAll(Currency.getAvailableCurrencies());
@@ -37,13 +37,13 @@ public class SettingsController implements Initializable {
         this.currencyComboBox.getSelectionModel().select(this.settings.getCurrency());
         this.currencyComboBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             settings.setCurrency(newValue);
-            LocalStorageImpl.getInstance().writeSettings(settings);
+            LocalStorageImpl.getInstance().writeObject("settings", settings);
         });
 
         this.showSignCheckbox.setSelected(this.settings.isShowCurrencySign());
         this.showSignCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
             settings.setShowCurrencySign(newValue);
-            LocalStorageImpl.getInstance().writeSettings(settings);
+            LocalStorageImpl.getInstance().writeObject("settings", settings);
         });
     }
 }

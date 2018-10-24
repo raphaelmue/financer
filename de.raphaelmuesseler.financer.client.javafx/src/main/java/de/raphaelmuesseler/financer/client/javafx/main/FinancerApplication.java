@@ -5,6 +5,7 @@ import de.raphaelmuesseler.financer.client.format.Formatter;
 import de.raphaelmuesseler.financer.client.format.I18N;
 import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
 import de.raphaelmuesseler.financer.client.javafx.login.LoginApplication;
+import de.raphaelmuesseler.financer.client.local.Settings;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -34,7 +35,7 @@ public class FinancerApplication extends Application {
 
     @Override
     public void start(Stage primaryStage) throws IOException {
-        if (LocalStorageImpl.getInstance().getLoggedInUser() == null) {
+        if (LocalStorageImpl.getInstance().readObject("user") == null) {
             // open de.raphaelmuesseler.financer.client.javafx.login application
             try {
                 new LoginApplication().start(new Stage());
@@ -44,13 +45,13 @@ public class FinancerApplication extends Application {
         } else {
             // setting up language
             Locale locale;
-            if (LocalStorageImpl.getInstance().getSettings() != null) {
-                locale = LocalStorageImpl.getInstance().getSettings().getLanguage();
+            if (LocalStorageImpl.getInstance().readObject("settings") != null) {
+                locale = ((Settings) LocalStorageImpl.getInstance().readObject("settings")).getLanguage();
             } else {
                 locale = Locale.ENGLISH;
             }
             I18N.setLocalStorage(LocalStorageImpl.getInstance());
-            Formatter.setSettings(LocalStorageImpl.getInstance().getSettings());
+            Formatter.setSettings((Settings) LocalStorageImpl.getInstance().readObject("settings"));
             ResourceBundle resourceBundle = ResourceBundle.getBundle("Financer", locale);
 
             Parent root = FXMLLoader.load(getClass().getResource("views/financer.fxml"), resourceBundle);

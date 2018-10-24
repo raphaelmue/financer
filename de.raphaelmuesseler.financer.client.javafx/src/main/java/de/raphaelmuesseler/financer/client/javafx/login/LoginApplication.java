@@ -2,6 +2,7 @@ package de.raphaelmuesseler.financer.client.javafx.login;
 
 import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
 import de.raphaelmuesseler.financer.client.javafx.main.FinancerApplication;
+import de.raphaelmuesseler.financer.client.local.Settings;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -25,7 +26,7 @@ public class LoginApplication extends Application {
 
     @Override
     public void start(Stage primaryStage) throws IOException {
-        if (LocalStorageImpl.getInstance().getLoggedInUser() != null) {
+        if (LocalStorageImpl.getInstance().readObject("user") != null) {
             // open main application
             try {
                 new FinancerApplication().start(new Stage());
@@ -35,8 +36,8 @@ public class LoginApplication extends Application {
         } else {
             // setting up language
             Locale locale;
-            if (LocalStorageImpl.getInstance().getSettings() != null) {
-                locale = LocalStorageImpl.getInstance().getSettings().getLanguage();
+            if (LocalStorageImpl.getInstance().readObject("settings") != null) {
+                locale = ((Settings) LocalStorageImpl.getInstance().readObject("settings")).getLanguage();
             } else {
                 locale = Locale.ENGLISH;
             }

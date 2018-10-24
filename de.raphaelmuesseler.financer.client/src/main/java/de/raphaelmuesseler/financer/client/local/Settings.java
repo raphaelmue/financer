@@ -9,7 +9,7 @@ public class Settings implements Serializable {
     private Locale language = Locale.ENGLISH;
     private Currency currency;
     private boolean showCurrencySign;
-    private AbstractLocalStorage localStorage;
+    private LocalStorage localStorage;
     private String theme = "Main Theme";
 
     public Locale getLanguage() {
