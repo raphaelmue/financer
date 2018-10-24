@@ -7,6 +7,8 @@
 3. [On Boarding](#3-on-boarding)
 4. [Functionality](#4-functionality)
 5. [Development](#5-development)
+6. [Authors](#6-authors)
+7. [License](#7-license)
 
 ## 1 Overview
 
@@ -50,8 +52,8 @@ First of all, please make sure, you have the following IDE, tools and frameworks
     2. On Linux / MacOS you need to download the OpenJFX library from [here](https://openjfx.io/) and include it.
 3. Import all Run Configurations (you find them in the directory: .idea/runConfigurations)
 4. [Optional] You can your IntelliJ IDEA use the database tool, so that you do not have to access via [PHPMyAdmin](https://phpmyadmin.raphael-muesseler.de). 
-    1. Open the Database panel (if this is not shown on the right toolbar, you can open it via: View -> Tool Window -> Database).
-    2. Add a new Database (via the + Button) and select Data Source -> MariaDB.
+    1. Open the Database panel (if this is not shown on the right toolbar, you can open it via: **View -> Tool Window -> Database**).
+    2. Add a new Database (via the **+** Button) and select **Data Source -> MariaDB**.
     3. You can change the name of that connection. Host is "raphael-muesseler.de" and enter database credentials. 
     
 ### 3.3 Build
