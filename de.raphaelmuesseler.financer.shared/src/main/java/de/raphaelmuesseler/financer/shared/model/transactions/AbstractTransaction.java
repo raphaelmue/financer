@@ -78,6 +78,6 @@ public abstract class AbstractTransaction implements Serializable, AmountProvide
 
     @Override
     public boolean equals(Object obj) {
-        return this.id == ((AbstractTransaction) obj).getId();
+        return obj instanceof AbstractTransaction && this.id == ((AbstractTransaction) obj).getId();
     }
 }

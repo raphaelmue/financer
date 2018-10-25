@@ -23,7 +23,6 @@ import de.raphaelmuesseler.financer.util.collections.CollectionUtil;
 import de.raphaelmuesseler.financer.util.collections.TreeUtil;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -37,7 +36,6 @@ import org.controlsfx.glyphfont.FontAwesome;
 import org.controlsfx.glyphfont.GlyphFont;
 import org.controlsfx.glyphfont.GlyphFontRegistry;
 
-import java.net.ConnectException;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.*;
@@ -330,23 +328,25 @@ public class TransactionsController implements Initializable {
     }
 
     public void handleDeleteTransaction() {
-        Transaction transaction = this.transactionsTableView.getSelectionModel().getSelectedItem();
-        if (transaction != null) {
-            Map<String, Object> parameters = new HashMap<>();
-            parameters.put("transaction", transaction);
+        if (new FinancerConfirmDialog(I18N.get("confirmDeleteTransaction")).showAndGetResult()) {
+            Transaction transaction = this.transactionsTableView.getSelectionModel().getSelectedItem();
+            if (transaction != null) {
+                Map<String, Object> parameters = new HashMap<>();
+                parameters.put("transaction", transaction);
 
-            this.executor.execute(new ServerRequestHandler("deleteTransaction", parameters, new JavaFXAsyncConnectionCall() {
-                @Override
-                public void onSuccess(ConnectionResult result) {
-                    Platform.runLater(() -> transactionsTableView.getItems().remove(transaction));
-                }
+                this.executor.execute(new ServerRequestHandler("deleteTransaction", parameters, new JavaFXAsyncConnectionCall() {
+                    @Override
+                    public void onSuccess(ConnectionResult result) {
+                        Platform.runLater(() -> transactionsTableView.getItems().remove(transaction));
+                    }
 
-                @Override
-                public void onFailure(Exception exception) {
-                    logger.log(Level.SEVERE, exception.getMessage(), exception);
-                    JavaFXAsyncConnectionCall.super.onFailure(exception);
-                }
-            }));
+                    @Override
+                    public void onFailure(Exception exception) {
+                        logger.log(Level.SEVERE, exception.getMessage(), exception);
+                        JavaFXAsyncConnectionCall.super.onFailure(exception);
+                    }
+                }));
+            }
         }
     }
 
