@@ -6,10 +6,12 @@ import de.raphaelmuesseler.financer.client.connection.ServerRequestHandler;
 import de.raphaelmuesseler.financer.client.format.Formatter;
 import de.raphaelmuesseler.financer.client.format.I18N;
 import de.raphaelmuesseler.financer.client.javafx.connection.JavaFXAsyncConnectionCall;
+import de.raphaelmuesseler.financer.client.javafx.connection.RetrievalServiceImpl;
 import de.raphaelmuesseler.financer.client.javafx.dialogs.FinancerConfirmDialog;
 import de.raphaelmuesseler.financer.client.javafx.format.JavaFXFormatter;
 import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
 import de.raphaelmuesseler.financer.client.javafx.main.FinancerController;
+import de.raphaelmuesseler.financer.shared.connection.AsyncCall;
 import de.raphaelmuesseler.financer.shared.connection.ConnectionResult;
 import de.raphaelmuesseler.financer.shared.model.BaseCategory;
 import de.raphaelmuesseler.financer.shared.model.Category;
@@ -244,40 +246,11 @@ public class TransactionsController implements Initializable {
     }
 
     public void handleRefreshTransactions() {
-        Map<String, Object> parameters = new HashMap<>();
-        parameters.put("user", this.user);
-
-        this.executor.execute(new ServerRequestHandler("getTransactions", parameters, new JavaFXAsyncConnectionCall() {
+        RetrievalServiceImpl.getInstance().fetchTransactions(this.user, new AsyncCall<List<Transaction>>() {
             @Override
-            public void onSuccess(ConnectionResult result) {
-                transactions = CollectionUtil.castListToObserableList((List<Transaction>) result.getResult());
-                for (Transaction transaction : transactions) {
-                    CategoryTree categoryTree = (CategoryTree) TreeUtil.getByValue(categories, transaction.getCategoryTree(), Comparator.comparingInt(Category::getId));
-                    if (categoryTree != null) {
-                        transaction.setCategoryTree(categoryTree);
-                        categoryTree.getTransactions().add(transaction);
-                    }
-                }
-                localStorage.writeObject("transactions", result.getResult());
-                localStorage.writeObject("categories", categories);
-            }
+            public void onSuccess(List<Transaction> result) {
+                transactions = CollectionUtil.castListToObserableList(result);
 
-            @Override
-            public void onFailure(Exception exception) {
-                if (exception instanceof ConnectException) {
-                    // TODO set offline
-                } else {
-                    logger.log(Level.SEVERE, exception.getMessage(), exception);
-                    JavaFXAsyncConnectionCall.super.onFailure(exception);
-                }
-                List<Transaction> result = localStorage.readList("transactions");
-                if (result != null && result.size() > 0) {
-                    transactions = CollectionUtil.castListToObserableList(result);
-                }
-            }
-
-            @Override
-            public void onAfter() {
                 Platform.runLater(() -> {
                     transactionsTableView.setItems(transactions);
                     transactionsTableView.getColumns().get(1).setSortType(TableColumn.SortType.DESCENDING);
@@ -285,7 +258,15 @@ public class TransactionsController implements Initializable {
                     FinancerController.hideLoadingBox();
                 });
             }
-        }));
+
+            @Override
+            public void onFailure(Exception exception) {
+                List<Transaction> result = localStorage.readList("transactions");
+                if (result != null && result.size() > 0) {
+                    transactions = CollectionUtil.castListToObserableList(result);
+                }
+            }
+        });
     }
 
     public void handleNewTransaction() {
@@ -370,49 +351,28 @@ public class TransactionsController implements Initializable {
     }
 
     public void handleRefreshFixedTransactions() {
-        Map<String, Object> parameters = new HashMap<>();
-        parameters.put("user", this.user);
-
-        this.executor.execute(new ServerRequestHandler("getFixedTransactions", parameters, new JavaFXAsyncConnectionCall() {
+        RetrievalServiceImpl.getInstance().fetchFixedTransactions(this.user, new AsyncCall<List<FixedTransaction>>() {
             @Override
-            public void onSuccess(ConnectionResult result) {
-                fixedTransactions = FXCollections.observableArrayList((List<FixedTransaction>) result.getResult());
-                for (FixedTransaction fixedTransaction : fixedTransactions) {
-                    CategoryTree categoryTree = (CategoryTree) TreeUtil.getByValue(categories, fixedTransaction.getCategoryTree(), Comparator.comparingInt(Category::getId));
-                    if (categoryTree != null) {
-                        fixedTransaction.setCategoryTree(categoryTree);
-                        categoryTree.getTransactions().add(fixedTransaction);
-                    }
-                }
-                localStorage.writeObject("fixedTransactions", result.getResult());
-                localStorage.writeObject("categories", categories);
-            }
+            public void onSuccess(List<FixedTransaction> result) {
+                fixedTransactions = CollectionUtil.castListToObserableList(result);
 
-            @Override
-            public void onFailure(Exception exception) {
-                if (exception instanceof ConnectException) {
-                    // TODO set offline
-                } else {
-                    logger.log(Level.SEVERE, exception.getMessage(), exception);
-                    JavaFXAsyncConnectionCall.super.onFailure(exception);
-                }
-                List<FixedTransaction> result = localStorage.readList("fixedTransactions");
-                if (result != null && result.size() > 0) {
-                    fixedTransactions = CollectionUtil.castListToObserableList(result);
-                }
-            }
-
-            @Override
-            public void onAfter() {
                 Platform.runLater(() -> {
                     showFixedTransactions(categoriesListView.getSelectionModel().getSelectedItem());
-                    categoriesListView.setCellFactory(param -> new CategoryListViewImpl());
+                    categoriesListView.setCellFactory(param -> new TransactionsController.CategoryListViewImpl());
                     FinancerController.hideLoadingBox();
 
                     loadTransactionsOverviewTable();
                 });
             }
-        }));
+
+            @Override
+            public void onFailure(Exception exception) {
+                List<FixedTransaction> result = localStorage.readList("fixedTransactions");
+                if (result != null && result.size() > 0) {
+                    fixedTransactions = CollectionUtil.castListToObserableList(result);
+                }
+            }
+        });
     }
 
     public void handleNewFixedTransaction() {

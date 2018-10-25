@@ -7,6 +7,7 @@ import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
 import de.raphaelmuesseler.financer.client.javafx.login.LoginApplication;
 import de.raphaelmuesseler.financer.client.local.Settings;
 import de.raphaelmuesseler.financer.shared.model.User;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -172,10 +173,10 @@ public class FinancerController implements Initializable {
     }
 
     public void handleLogout() {
-        this.localStorage.deleteAllData();
-
         Stage stage = (Stage) this.accountMenuBtn.getScene().getWindow();
         stage.close();
+
+        this.localStorage.deleteAllData();
 
         try {
             new LoginApplication().start(new Stage());

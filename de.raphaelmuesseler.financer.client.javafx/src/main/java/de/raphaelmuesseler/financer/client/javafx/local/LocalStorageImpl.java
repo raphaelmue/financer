@@ -20,8 +20,6 @@ public class LocalStorageImpl implements LocalStorage {
         private final File file;
         private final String[] keys;
 
-
-
         LocalStorageFile(String path, String... keys) {
             if (System.getenv("APPDATA") != null) {
                 this.path = System.getenv("APPDATA") + "/Financer" + path;
@@ -122,7 +120,7 @@ public class LocalStorageImpl implements LocalStorage {
     @Override
     public boolean deleteAllData() {
         for (LocalStorageFile localStorageFile : LocalStorageFile.values()) {
-            if (!localStorageFile.getFile().delete()) {
+            if (!this.writeFile(localStorageFile.getFile(), null)) {
                 return false;
             }
         }
