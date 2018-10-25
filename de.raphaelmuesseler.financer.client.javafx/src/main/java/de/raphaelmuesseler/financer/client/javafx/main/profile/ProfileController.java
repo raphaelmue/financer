@@ -122,20 +122,13 @@ public class ProfileController implements Initializable {
                 this.executor.execute(new ServerRequestHandler("addCategory", parameters, new JavaFXAsyncConnectionCall() {
                     @Override
                     public void onSuccess(ConnectionResult result) {
-                        Platform.runLater(() -> {
-                            category.setId(((Category) result.getResult()).getId());
-                            CategoryTree categoryTree = new CategoryTree(currentItem.getValue().getCategoryClass(), currentItem.getValue(), (Category) result.getResult());
-                            currentItem.getChildren().add(new TreeItem<>(categoryTree));
-                            ((List<Tree<Category>>) currentItem.getValue().getChildren()).add(categoryTree);
-                            expandTreeView(currentItem);
-                        });
+                        handleRefreshCategories();
                     }
 
                     @Override
                     public void onFailure(Exception exception) {
                         JavaFXAsyncConnectionCall.super.onFailure(exception);
                         logger.log(Level.SEVERE, exception.getMessage(), exception);
-                        handleRefreshCategories();
                     }
                 }));
             }
@@ -160,13 +153,13 @@ public class ProfileController implements Initializable {
         this.executor.execute(new ServerRequestHandler("updateCategory", parameters, new JavaFXAsyncConnectionCall() {
             @Override
             public void onSuccess(ConnectionResult result) {
+                handleRefreshCategories();
             }
 
             @Override
             public void onFailure(Exception exception) {
                 JavaFXAsyncConnectionCall.super.onFailure(exception);
                 logger.log(Level.SEVERE, exception.getMessage(), exception);
-                handleRefreshCategories();
             }
         }));
     }
@@ -187,6 +180,7 @@ public class ProfileController implements Initializable {
                 this.executor.execute(new ServerRequestHandler("deleteCategory", parameters, new JavaFXAsyncConnectionCall() {
                     @Override
                     public void onSuccess(ConnectionResult result) {
+                        handleRefreshCategories();
                     }
 
                     @Override
@@ -195,9 +189,6 @@ public class ProfileController implements Initializable {
                         logger.log(Level.SEVERE, exception.getMessage(), exception);
                     }
                 }));
-
-                this.categoriesTreeView.getSelectionModel().getSelectedItem().getParent().getChildren()
-                        .remove(this.categoriesTreeView.getSelectionModel().getSelectedItem());
             }
         }
     }
