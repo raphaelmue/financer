@@ -56,23 +56,6 @@ class TransactionDialog extends FinancerDialog<Transaction> {
         this.categoryComboBox = new ComboBox<>();
         this.categoryComboBox.setPlaceholder(new Label(I18N.get("selectCategory")));
 
-        categories.traverse(treeItem -> {
-            if (!treeItem.isRoot() && ((CategoryTree) treeItem).getCategoryClass() == BaseCategory.CategoryClass.VARIABLE_EXPENSES ||
-                    ((CategoryTree) treeItem).getCategoryClass() == BaseCategory.CategoryClass.VARIABLE_REVENUE) {
-                categoryComboBox.getItems().add((CategoryTree) treeItem);
-            }
-        });
-        this.categoryComboBox.setCellFactory(param -> new ListCell<CategoryTree>() {
-            @Override
-            protected void updateItem(CategoryTree item, boolean empty) {
-                super.updateItem(item, empty);
-                if (!empty) {
-                    setText(Formatter.formatCategoryName(item.getValue()));
-                } else {
-                    setText(null);
-                }
-            }
-        });
         gridPane.add(this.categoryComboBox, 1, 1);
 
         gridPane.add(new Label(I18N.get("product")), 0, 2);
@@ -96,6 +79,24 @@ class TransactionDialog extends FinancerDialog<Transaction> {
 
     @Override
     protected void prepareDialogContent() {
+        categories.traverse(treeItem -> {
+            if (!treeItem.isRoot() && (((CategoryTree) treeItem).getCategoryClass() == BaseCategory.CategoryClass.VARIABLE_EXPENSES ||
+                    ((CategoryTree) treeItem).getCategoryClass() == BaseCategory.CategoryClass.VARIABLE_REVENUE)) {
+                categoryComboBox.getItems().add((CategoryTree) treeItem);
+            }
+        });
+        this.categoryComboBox.setCellFactory(param -> new ListCell<CategoryTree>() {
+            @Override
+            protected void updateItem(CategoryTree item, boolean empty) {
+                super.updateItem(item, empty);
+                if (!empty) {
+                    setText(Formatter.formatCategoryName(item.getValue()));
+                } else {
+                    setText(null);
+                }
+            }
+        });
+
         if (this.getValue() != null) {
             this.amountField.setText(String.valueOf(this.getValue().getAmount()));
             this.categoryComboBox.getSelectionModel().select((CategoryTree) TreeUtil.getByValue(this.categories,
