@@ -169,8 +169,19 @@ public class FinancerService {
 
         Map<String, Object> where = new HashMap<>();
         where.put("id", category.getValue().getId());
-
         this.database.delete(Database.Table.USERS_CATEGORIES, where);
+
+        where.clear();
+        where.put("parent_id", category.getValue().getId());
+        this.database.delete(Database.Table.USERS_CATEGORIES, where);
+
+        where.clear();
+        where.put("cat_id", category.getValue().getId());
+        if (category.getCategoryClass().isFixed()) {
+            this.database.delete(Database.Table.FIXED_TRANSACTIONS, where);
+        } else {
+            this.database.delete(Database.Table.TRANSACTIONS, where);
+        }
 
         return new ConnectionResult<>(null);
     }
