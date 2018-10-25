@@ -111,7 +111,8 @@ public class ProfileController implements Initializable {
             String categoryName = new FinancerTextInputDialog(I18N.get("enterCategoryName"), I18N.get("newCategory"))
                     .showAndGetResult();
             if (categoryName != null) {
-                Category category = new Category(-1, categoryName, currentItem.getValue().getValue().getId(), currentItem.getValue().getValue().getRootId());
+                Category category = new Category(-1, categoryName, currentItem.getValue().getValue().getId(),
+                        currentItem.getValue().getCategoryClass().getIndex());
 
                 Map<String, Object> parameters = new HashMap<>();
                 parameters.put("user", this.user);
@@ -146,6 +147,7 @@ public class ProfileController implements Initializable {
             String categoryName = new FinancerTextInputDialog(I18N.get("enterCategoryName"), Formatter.formatCategoryName(category.getValue()))
                     .showAndGetResult();
             category.getValue().setName(categoryName);
+            this.categoriesTreeView.refresh();
             this.handleUpdateCategory(category);
         }
     }

@@ -150,13 +150,13 @@ public class FinancerService {
 
     public ConnectionResult<Void> updateCategory(Logger logger, Map<String, Object> parameters) throws Exception {
         logger.log(Level.INFO, "Updating users categories ...");
-        Category category = (Category) parameters.get("category");
+        CategoryTree category = (CategoryTree) parameters.get("category");
 
         Map<String, Object> where = new HashMap<>();
-        where.put("id", category.getId());
+        where.put("id", category.getValue().getId());
 
         Map<String, Object> values = new HashMap<>();
-        values.put("name", category.getName());
+        values.put("name", category.getValue().getName());
 
         this.database.update(Database.Table.USERS_CATEGORIES, where, values);
 
@@ -165,10 +165,10 @@ public class FinancerService {
 
     public ConnectionResult<Void> deleteCategory(Logger logger, Map<String, Object> parameters) throws Exception {
         logger.log(Level.INFO, "Deleting category ...");
-        Category category = (Category) parameters.get("category");
+        CategoryTree category = (CategoryTree) parameters.get("category");
 
         Map<String, Object> where = new HashMap<>();
-        where.put("id", category.getId());
+        where.put("id", category.getValue().getId());
 
         this.database.delete(Database.Table.USERS_CATEGORIES, where);
 
