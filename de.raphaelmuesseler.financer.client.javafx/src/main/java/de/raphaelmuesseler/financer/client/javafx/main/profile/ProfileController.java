@@ -6,6 +6,7 @@ import de.raphaelmuesseler.financer.client.format.Formatter;
 import de.raphaelmuesseler.financer.client.format.I18N;
 import de.raphaelmuesseler.financer.client.javafx.connection.JavaFXAsyncConnectionCall;
 import de.raphaelmuesseler.financer.client.javafx.connection.RetrievalServiceImpl;
+import de.raphaelmuesseler.financer.client.javafx.dialogs.FinancerConfirmDialog;
 import de.raphaelmuesseler.financer.client.javafx.dialogs.FinancerTextInputDialog;
 import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
 import de.raphaelmuesseler.financer.shared.connection.AsyncCall;
@@ -176,24 +177,28 @@ public class ProfileController implements Initializable {
 
     private void handleDeleteCategory(CategoryTree categoryTree) {
         if (categoryTree != null && !categoryTree.isRoot()) {
-            Map<String, Object> parameters = new HashMap<>();
-            parameters.put("category", this.categoriesTreeView.getSelectionModel()
-                    .getSelectedItem().getValue());
 
-            this.executor.execute(new ServerRequestHandler("deleteCategory", parameters, new JavaFXAsyncConnectionCall() {
-                @Override
-                public void onSuccess(ConnectionResult result) {
-                }
+            if (new FinancerConfirmDialog(I18N.get("confirmDeleteCategory")).showAndGetResult()) {
 
-                @Override
-                public void onFailure(Exception exception) {
-                    JavaFXAsyncConnectionCall.super.onFailure(exception);
-                    logger.log(Level.SEVERE, exception.getMessage(), exception);
-                }
-            }));
+                Map<String, Object> parameters = new HashMap<>();
+                parameters.put("category", this.categoriesTreeView.getSelectionModel()
+                        .getSelectedItem().getValue());
 
-            this.categoriesTreeView.getSelectionModel().getSelectedItem().getParent().getChildren()
-                    .remove(this.categoriesTreeView.getSelectionModel().getSelectedItem());
+                this.executor.execute(new ServerRequestHandler("deleteCategory", parameters, new JavaFXAsyncConnectionCall() {
+                    @Override
+                    public void onSuccess(ConnectionResult result) {
+                    }
+
+                    @Override
+                    public void onFailure(Exception exception) {
+                        JavaFXAsyncConnectionCall.super.onFailure(exception);
+                        logger.log(Level.SEVERE, exception.getMessage(), exception);
+                    }
+                }));
+
+                this.categoriesTreeView.getSelectionModel().getSelectedItem().getParent().getChildren()
+                        .remove(this.categoriesTreeView.getSelectionModel().getSelectedItem());
+            }
         }
     }
 
