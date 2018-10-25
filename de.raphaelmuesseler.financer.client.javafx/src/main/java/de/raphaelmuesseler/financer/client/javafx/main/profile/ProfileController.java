@@ -82,7 +82,7 @@ public class ProfileController implements Initializable {
                 categories = result;
                 Platform.runLater(() -> {
                     createTreeView();
-                    categoriesTreeView.setEditable(true);
+                    categoriesTreeView.setEditable(false);
                     categoriesTreeView.setShowRoot(false);
                     categoriesTreeView.setRoot(treeStructure);
                     expandTreeView(treeStructure);
