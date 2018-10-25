@@ -1,7 +1,6 @@
 package de.raphaelmuesseler.financer.server.main;
 
 import de.raphaelmuesseler.financer.server.db.Database;
-import de.raphaelmuesseler.financer.server.service.FinancerService;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -19,7 +18,6 @@ public class Server {
 
     private Logger logger = Logger.getLogger("Server");
     private ServerSocket serverSocket;
-    private FinancerService service = FinancerService.getInstance();
     private ExecutorService executor = Executors.newCachedThreadPool();
 
     public static void main(String[] args) {
@@ -50,11 +48,20 @@ public class Server {
         }
     }
 
+    /**
+     * Instantiates a new multi threaded socket server.
+     *
+     * @param port port, on which the server runs
+     * @throws IOException thrown, when something went wrong creating the SocketServer
+     */
     private Server(int port) throws IOException {
         this.serverSocket = new ServerSocket(port);
         this.logger.log(Level.INFO, "Java Server started and is running on port " + port);
     }
 
+    /**
+     * Runs the server until the server application is stopped.
+     */
     private void run() {
         while (true) {
             this.logger.log(Level.INFO, "Waiting for client ...");
