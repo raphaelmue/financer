@@ -4,6 +4,7 @@ import de.raphaelmuesseler.financer.client.connection.ServerRequestHandler;
 import de.raphaelmuesseler.financer.client.format.Formatter;
 import de.raphaelmuesseler.financer.client.format.I18N;
 import de.raphaelmuesseler.financer.client.javafx.connection.JavaFXAsyncConnectionCall;
+import de.raphaelmuesseler.financer.client.javafx.connection.RetrievalServiceImpl;
 import de.raphaelmuesseler.financer.client.javafx.dialogs.FinancerAlert;
 import de.raphaelmuesseler.financer.client.javafx.dialogs.FinancerExceptionDialog;
 import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
@@ -74,6 +75,8 @@ public class LoginController implements Initializable {
                 } else {
                     logger.log(Level.INFO, "User's credentials are incorrect.");
                     errorLabel.setVisible(true);
+                    gridPane.setDisable(false);
+                    progressIndicatorBox.setVisible(false);
                 }
             }
 
@@ -83,13 +86,9 @@ public class LoginController implements Initializable {
                 Platform.runLater(() -> {
                     FinancerExceptionDialog dialog = new FinancerExceptionDialog("Login", exception);
                     dialog.showAndWait();
+                    gridPane.setDisable(false);
+                    progressIndicatorBox.setVisible(false);
                 });
-            }
-
-            @Override
-            public void onAfter() {
-                gridPane.setDisable(false);
-                progressIndicatorBox.setVisible(false);
             }
         }));
     }
@@ -153,14 +152,17 @@ public class LoginController implements Initializable {
             return;
         }
 
-        // open main application
-        Stage stage = (Stage) this.gridPane.getScene().getWindow();
-        stage.close();
+        // fetching data
+        RetrievalServiceImpl.getInstance().fetchAllData(user, object -> Platform.runLater(() -> {
+            // open main application
+            Stage stage = (Stage) this.gridPane.getScene().getWindow();
+            stage.close();
 
-        try {
-            new FinancerApplication().start(new Stage());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+            try {
+                new FinancerApplication().start(new Stage());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }));
     }
 }

@@ -5,8 +5,10 @@ import de.raphaelmuesseler.financer.client.connection.ServerRequestHandler;
 import de.raphaelmuesseler.financer.client.format.Formatter;
 import de.raphaelmuesseler.financer.client.format.I18N;
 import de.raphaelmuesseler.financer.client.javafx.connection.JavaFXAsyncConnectionCall;
+import de.raphaelmuesseler.financer.client.javafx.connection.RetrievalServiceImpl;
 import de.raphaelmuesseler.financer.client.javafx.dialogs.FinancerTextInputDialog;
 import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
+import de.raphaelmuesseler.financer.shared.connection.AsyncCall;
 import de.raphaelmuesseler.financer.shared.connection.ConnectionResult;
 import de.raphaelmuesseler.financer.shared.model.BaseCategory;
 import de.raphaelmuesseler.financer.shared.model.Category;
@@ -22,7 +24,6 @@ import org.controlsfx.glyphfont.FontAwesome;
 import org.controlsfx.glyphfont.GlyphFont;
 import org.controlsfx.glyphfont.GlyphFontRegistry;
 
-import java.net.ConnectException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
@@ -53,19 +54,12 @@ public class ProfileController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        /**
-         * Personal Information
-         */
         this.user = (User) this.localStorage.readObject("user");
         if (user != null) {
             this.nameLabel.setText(user.getName());
             this.surnameLabel.setText(user.getSurname());
             this.emailLabel.setText(user.getEmail());
         }
-
-        /**
-         * Categories
-         */
 
         GlyphFont fontAwesome = GlyphFontRegistry.font("FontAwesome");
         this.refreshCategoriesBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.REFRESH));
@@ -81,29 +75,10 @@ public class ProfileController implements Initializable {
     }
 
     public void handleRefreshCategories() {
-        Map<String, Object> parameters = new HashMap<>();
-        parameters.put("user", this.user);
-
-        this.executor.execute(new ServerRequestHandler("getUsersCategories", parameters, new JavaFXAsyncConnectionCall() {
+        RetrievalServiceImpl.getInstance().fetchCategories(this.user, new AsyncCall<BaseCategory>() {
             @Override
-            public void onSuccess(ConnectionResult result) {
-                categories = (BaseCategory) result.getResult();
-                localStorage.writeObject("categories", categories);
-            }
-
-            @Override
-            public void onFailure(Exception exception) {
-                if (exception instanceof ConnectException) {
-                    // TODO set offline
-                } else {
-                    logger.log(Level.SEVERE, exception.getMessage(), exception);
-                    JavaFXAsyncConnectionCall.super.onFailure(exception);
-                }
-                categories = (BaseCategory) localStorage.readObject("categories");
-            }
-
-            @Override
-            public void onAfter() {
+            public void onSuccess(BaseCategory result) {
+                categories = result;
                 Platform.runLater(() -> {
                     createTreeView();
                     categoriesTreeView.setEditable(true);
@@ -119,7 +94,12 @@ public class ProfileController implements Initializable {
                     });
                 });
             }
-        }));
+
+            @Override
+            public void onFailure(Exception exception) {
+                categories = (BaseCategory) localStorage.readObject("categories");
+            }
+        });
     }
 
     public void handleNewCategory() {
