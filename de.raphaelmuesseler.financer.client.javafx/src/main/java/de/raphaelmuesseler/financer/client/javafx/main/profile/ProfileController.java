@@ -171,8 +171,11 @@ public class ProfileController implements Initializable {
     }
 
     public void handleDeleteCategory() {
-        if (this.categoriesTreeView.getSelectionModel().getSelectedItem() != null &&
-                !this.categoriesTreeView.getSelectionModel().getSelectedItem().getValue().isRoot()) {
+        this.handleDeleteCategory(this.categoriesTreeView.getSelectionModel().getSelectedItem().getValue());
+    }
+
+    private void handleDeleteCategory(CategoryTree categoryTree) {
+        if (categoryTree != null && !categoryTree.isRoot()) {
             Map<String, Object> parameters = new HashMap<>();
             parameters.put("category", this.categoriesTreeView.getSelectionModel()
                     .getSelectedItem().getValue());
@@ -251,7 +254,7 @@ public class ProfileController implements Initializable {
 
             MenuItem deleteMenuItem = new MenuItem(I18N.get("delete"));
             this.deleteContextMenu.getItems().add(deleteMenuItem);
-            deleteMenuItem.setOnAction(t -> getTreeItem().getParent().getChildren().remove(getTreeItem()));
+            deleteMenuItem.setOnAction(t -> handleDeleteCategory(getTreeItem().getValue()));
         }
 
         @Override
