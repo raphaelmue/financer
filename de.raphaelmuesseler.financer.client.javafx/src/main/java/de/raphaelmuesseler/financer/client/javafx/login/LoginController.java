@@ -153,7 +153,7 @@ public class LoginController implements Initializable {
         }
 
         // fetching data
-        RetrievalServiceImpl.getInstance().fetchAllData(user, object -> Platform.runLater(() -> {
+        RetrievalServiceImpl.getInstance().fetchAllData(user, aVoid -> Platform.runLater(() -> {
             // open main application
             Stage stage = (Stage) this.gridPane.getScene().getWindow();
             stage.close();

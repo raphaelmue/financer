@@ -1,6 +1,7 @@
 package de.raphaelmuesseler.financer.client.connection;
 
 import de.raphaelmuesseler.financer.shared.connection.ConnectionResult;
+import de.raphaelmuesseler.financer.shared.model.User;
 
 import java.util.Map;
 
@@ -11,6 +12,10 @@ public class ServerRequestHandler implements Runnable {
 
     public ServerRequestHandler(String methodName, Map<String, Object> parameters, AsyncConnectionCall asyncCall) {
         this(new ServerRequest(methodName, parameters), asyncCall);
+    }
+
+    public ServerRequestHandler(User user, String methodName, Map<String, Object> parameters, AsyncConnectionCall asyncCall) {
+        this(new ServerRequest(user, methodName, parameters), asyncCall);
     }
 
     private ServerRequestHandler(ServerRequest serverRequest, AsyncConnectionCall asyncCall) {

@@ -10,7 +10,7 @@ import de.raphaelmuesseler.financer.util.collections.Action;
 import java.util.List;
 
 public interface RetrievalService {
-    void fetchAllData(User user, Action action);
+    void fetchAllData(User user, Action<Void> action);
 
     void fetchCategories(User user, AsyncCall<BaseCategory> asyncConnectionCall);
     void fetchTransactions(User user, AsyncCall<List<Transaction>> asyncConnectionCall);

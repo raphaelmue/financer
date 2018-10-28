@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParseException;
 import de.raphaelmuesseler.financer.server.util.Converter;
+import de.raphaelmuesseler.financer.shared.model.db.DatabaseObject;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -39,7 +40,8 @@ public class Database {
         FIXED_TRANSACTIONS_AMOUNTS("fixed_transactions_amounts"),
         TRANSACTIONS("transactions"),
         USERS("users"),
-        USERS_CATEGORIES("users_categories");
+        USERS_CATEGORIES("users_categories"),
+        USERS_TOKENS("users_tokens");
 
         private String tableName;
 
@@ -103,16 +105,13 @@ public class Database {
      * @return Object with fetched data
      * @throws SQLException thrown, when something went wrong executing the SQL statement
      */
-    public List<Object> getObject(Table table, Type resultType, Map<String, Object> whereParameters) throws SQLException {
+    public List<DatabaseObject> getObject(Table table, Type resultType, Map<String, Object> whereParameters) throws SQLException, JsonParseException {
         Gson gson = new GsonBuilder().create();
         JSONArray jsonArray = this.get(table, whereParameters);
-        List<Object> result = new ArrayList<>();
+        List<DatabaseObject> result = new ArrayList<>();
         for (int i = 0; i < jsonArray.length(); i++) {
             JSONObject jsonObject = jsonArray.getJSONObject(i);
-            try {
-                result.add(gson.fromJson(jsonObject.toString(), resultType));
-            } catch (JsonParseException ignored) {
-            }
+            result.add(gson.fromJson(jsonObject.toString(), resultType));
         }
         return result;
     }

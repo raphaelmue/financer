@@ -1,45 +1,37 @@
 package de.raphaelmuesseler.financer.shared.model;
 
-import java.io.Serializable;
+import de.raphaelmuesseler.financer.shared.model.db.DatabaseObject;
+import de.raphaelmuesseler.financer.shared.model.db.DatabaseUser;
 
-public class User implements Serializable {
-    private static final long serialVersionUID = 4469731095492349222L;
-    private int id;
-    private String email, password, salt, name, surname;
+public class User extends DatabaseUser {
+    private String token = "";
+
+    public User() {
+        super();
+    }
 
     public User(String email, String password, String salt, String name, String surname) {
-        this.email = email;
-        this.password = password;
-        this.salt = salt;
-        this.name = name;
-        this.surname = surname;
+        super(email, password, salt, name, surname);
     }
 
-    public int getId() {
-        return id;
+    @Override
+    public DatabaseObject fromDatabaseObject(DatabaseObject databaseObject) {
+        if (databaseObject instanceof DatabaseUser) {
+            this.setId(databaseObject.getId());
+            this.setName(((DatabaseUser) databaseObject).getName());
+            this.setSurname(((DatabaseUser) databaseObject).getSurname());
+            this.setEmail(((DatabaseUser) databaseObject).getEmail());
+            this.setPassword(((DatabaseUser) databaseObject).getPassword());
+            this.setSalt(((DatabaseUser) databaseObject).getSalt());
+        }
+        return this;
     }
 
-    public String getEmail() {
-        return email;
+    public String getToken() {
+        return token;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public String getSalt() {
-        return salt;
-    }
-
-    public String getSurname() {
-        return surname;
-    }
-
-    public String getFullName() {
-        return this.name + " " + this.surname;
+    public void setToken(String token) {
+        this.token = token;
     }
 }

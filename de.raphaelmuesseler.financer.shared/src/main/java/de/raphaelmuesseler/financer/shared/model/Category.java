@@ -1,8 +1,10 @@
 package de.raphaelmuesseler.financer.shared.model;
 
+import de.raphaelmuesseler.financer.shared.model.db.DatabaseObject;
+
 import java.io.Serializable;
 
-public class Category implements Serializable {
+public class Category implements Serializable, DatabaseObject {
     private static final long serialVersionUID = -5776418454648469541L;
     private int id, parentId, rootId;
     private String name, prefix = null;
@@ -14,6 +16,7 @@ public class Category implements Serializable {
         this.rootId = rootId;
     }
 
+    @Override
     public int getId() {
         return id;
     }

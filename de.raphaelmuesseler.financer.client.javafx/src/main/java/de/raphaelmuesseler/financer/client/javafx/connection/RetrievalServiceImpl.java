@@ -41,8 +41,8 @@ public class RetrievalServiceImpl implements RetrievalService {
     }
 
     @Override
-    public void fetchAllData(User user, Action action) {
-        this.fetchCategories(user, result -> fetchTransactions(user, transactions -> fetchFixedTransactions(user, fixedTransactions -> {action.action(null);})));
+    public void fetchAllData(User user, Action<Void> action) {
+        this.fetchCategories(user, result -> fetchTransactions(user, transactions -> fetchFixedTransactions(user, fixedTransactions -> action.action(null))));
     }
 
     @Override
@@ -50,7 +50,7 @@ public class RetrievalServiceImpl implements RetrievalService {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("user", user);
 
-        this.executor.execute(new ServerRequestHandler("getUsersCategories", parameters, new JavaFXAsyncConnectionCall() {
+        this.executor.execute(new ServerRequestHandler(user, "getUsersCategories", parameters, new JavaFXAsyncConnectionCall() {
             @Override
             public void onSuccess(ConnectionResult result) {
                 BaseCategory categories = (BaseCategory) result.getResult();
@@ -75,7 +75,7 @@ public class RetrievalServiceImpl implements RetrievalService {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("user", user);
 
-        this.executor.execute(new ServerRequestHandler("getTransactions", parameters, new JavaFXAsyncConnectionCall() {
+        this.executor.execute(new ServerRequestHandler(user, "getTransactions", parameters, new JavaFXAsyncConnectionCall() {
             @Override
             public void onSuccess(ConnectionResult result) {
                 List<Transaction> transactions = (List<Transaction>) result.getResult();
@@ -110,7 +110,7 @@ public class RetrievalServiceImpl implements RetrievalService {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("user", user);
 
-        this.executor.execute(new ServerRequestHandler("getFixedTransactions", parameters, new JavaFXAsyncConnectionCall() {
+        this.executor.execute(new ServerRequestHandler(user, "getFixedTransactions", parameters, new JavaFXAsyncConnectionCall() {
             @Override
             public void onSuccess(ConnectionResult result) {
                 List<FixedTransaction> fixedTransactions = (List<FixedTransaction>) result.getResult();

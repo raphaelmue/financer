@@ -27,7 +27,6 @@ import org.controlsfx.glyphfont.GlyphFontRegistry;
 
 import java.net.URL;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.concurrent.ExecutorService;
@@ -119,7 +118,7 @@ public class ProfileController implements Initializable {
                 parameters.put("user", this.user);
                 parameters.put("category", category);
 
-                this.executor.execute(new ServerRequestHandler("addCategory", parameters, new JavaFXAsyncConnectionCall() {
+                this.executor.execute(new ServerRequestHandler(this.user, "addCategory", parameters, new JavaFXAsyncConnectionCall() {
                     @Override
                     public void onSuccess(ConnectionResult result) {
                         handleRefreshCategories();
@@ -150,7 +149,7 @@ public class ProfileController implements Initializable {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("category", category);
 
-        this.executor.execute(new ServerRequestHandler("updateCategory", parameters, new JavaFXAsyncConnectionCall() {
+        this.executor.execute(new ServerRequestHandler(this.user, "updateCategory", parameters, new JavaFXAsyncConnectionCall() {
             @Override
             public void onSuccess(ConnectionResult result) {
                 handleRefreshCategories();
@@ -177,7 +176,7 @@ public class ProfileController implements Initializable {
                 parameters.put("category", this.categoriesTreeView.getSelectionModel()
                         .getSelectedItem().getValue());
 
-                this.executor.execute(new ServerRequestHandler("deleteCategory", parameters, new JavaFXAsyncConnectionCall() {
+                this.executor.execute(new ServerRequestHandler(this.user, "deleteCategory", parameters, new JavaFXAsyncConnectionCall() {
                     @Override
                     public void onSuccess(ConnectionResult result) {
                         handleRefreshCategories();

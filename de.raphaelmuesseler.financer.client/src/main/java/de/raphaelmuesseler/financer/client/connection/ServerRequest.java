@@ -2,6 +2,7 @@ package de.raphaelmuesseler.financer.client.connection;
 
 import de.raphaelmuesseler.financer.shared.connection.ConnectionCall;
 import de.raphaelmuesseler.financer.shared.connection.ConnectionResult;
+import de.raphaelmuesseler.financer.shared.model.User;
 
 import java.io.*;
 import java.net.Socket;
@@ -20,8 +21,9 @@ public class ServerRequest {
         this.connectionCall = new ConnectionCall(methodName, parameters);
     }
 
-    ServerRequest(ConnectionCall connectionCall) {
-        this.connectionCall = connectionCall;
+    ServerRequest(User user, String methodName, Map<String, Object> parameters) {
+        parameters.put("token", user.getToken());
+         this.connectionCall = new ConnectionCall(methodName, parameters);
     }
 
     public static void setHost(boolean local) {

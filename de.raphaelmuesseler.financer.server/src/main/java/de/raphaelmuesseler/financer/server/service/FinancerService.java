@@ -7,10 +7,13 @@ import de.raphaelmuesseler.financer.shared.model.BaseCategory;
 import de.raphaelmuesseler.financer.shared.model.Category;
 import de.raphaelmuesseler.financer.shared.model.CategoryTree;
 import de.raphaelmuesseler.financer.shared.model.User;
+import de.raphaelmuesseler.financer.shared.model.db.DatabaseUser;
+import de.raphaelmuesseler.financer.shared.model.db.DatabaseObject;
 import de.raphaelmuesseler.financer.shared.model.transactions.FixedTransaction;
 import de.raphaelmuesseler.financer.shared.model.transactions.Transaction;
 import de.raphaelmuesseler.financer.shared.model.transactions.TransactionAmount;
 import de.raphaelmuesseler.financer.util.Hash;
+import de.raphaelmuesseler.financer.util.RandomString;
 import de.raphaelmuesseler.financer.util.collections.Tree;
 import de.raphaelmuesseler.financer.util.collections.TreeUtil;
 import org.json.JSONArray;
@@ -44,22 +47,61 @@ public class FinancerService {
     }
 
     /**
+     * Checks, whether the token is valid and not expired and returns the corresponding user.
+     *
+     * @param token token string
+     * @return User that has this token
+     * @throws SQLException thrown, when something went wrong executing the SQL statement
+     */
+    public User checkUsersToken(Logger logger, String token) throws SQLException {
+        logger.log(Level.INFO, "Checking users token ...");
+
+        Map<String, Object> whereParameters = new HashMap<>();
+        whereParameters.put("token", token);
+
+        JSONArray jsonArray = this.database.get(Database.Table.USERS_TOKENS, whereParameters);
+
+        if (jsonArray.length() == 1) {
+            whereParameters.clear();
+            whereParameters.put("id", jsonArray.getJSONObject(0).get("user_id"));
+
+            User user = (User) new User().fromDatabaseObject(this.database.getObject(Database.Table.USERS, DatabaseUser.class, whereParameters).get(0));
+            if (user != null) {
+                logger.log(Level.INFO, "Token of user '" + user.getFullName() + "' is approved");
+                return user;
+            }
+        }
+        logger.log(Level.INFO, "Token is invalid");
+
+        return null;
+    }
+
+    /**
      * Checks, if the users credentials are correct
      *
      * @param parameters [email, password]
      * @return true, if credentials are correct
      */
     public ConnectionResult<User> checkCredentials(Logger logger, Map<String, Object> parameters) throws Exception {
-        logger.log(Level.INFO, "Checking credetials ...");
+        logger.log(Level.INFO, "Checking credentials ...");
 
         Map<String, Object> whereEmail = new HashMap<>();
         whereEmail.put("email", parameters.get("email"));
 
-        User user = (User) this.database.getObject(Database.Table.USERS, User.class, whereEmail).get(0);
+        User user = (User) new User().fromDatabaseObject(this.database.getObject(Database.Table.USERS, DatabaseUser.class, whereEmail).get(0));
         if (user != null) {
             String password = Hash.create((String) parameters.get("password"), user.getSalt());
             if (password.equals(user.getPassword())) {
                 logger.log(Level.INFO, "Credentials of user '" + user.getFullName() + "' are approved.");
+
+                String token = new RandomString(64).nextString();
+                Map<String, Object> values = new HashMap<>();
+                values.put("user_id", user.getId());
+                values.put("token", token);
+                values.put("expire_date", LocalDate.now().plusMonths(1));
+                this.database.insert(Database.Table.USERS_TOKENS, values);
+
+                user.setToken(token);
             } else {
                 user = null;
             }
@@ -79,7 +121,7 @@ public class FinancerService {
         Map<String, Object> values = new HashMap<>();
         values.put("email", user.getEmail());
 
-        List<Object> result = this.database.getObject(Database.Table.USERS, User.class, values);
+        List<? extends DatabaseObject> result = this.database.getObject(Database.Table.USERS, User.class, values);
         if (result.size() > 0) {
             throw new EmailAlreadyInUseException((User) result.get(0));
         }
