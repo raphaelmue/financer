@@ -68,6 +68,16 @@ public class FinancerService {
             User user = (User) new User().fromDatabaseObject(this.database.getObject(Database.Table.USERS, DatabaseUser.class, whereParameters).get(0));
             if (user != null) {
                 logger.log(Level.INFO, "Token of user '" + user.getFullName() + "' is approved");
+
+                // update expire date
+                whereParameters.clear();
+                whereParameters.put("token", token);
+
+                Map<String, Object> values = new HashMap<>();
+                values.put("expire_date", LocalDate.now().plusMonths(1));
+
+                this.database.update(Database.Table.USERS_TOKENS, whereParameters, values);
+
                 return user;
             }
         }
