@@ -4,7 +4,6 @@ import de.raphaelmuesseler.financer.shared.model.AmountProvider;
 import de.raphaelmuesseler.financer.shared.model.CategoryTree;
 
 import java.io.Serializable;
-import java.util.Objects;
 
 public abstract class AbstractTransaction implements Serializable, AmountProvider {
     private static final long serialVersionUID = -2425120066992174442L;

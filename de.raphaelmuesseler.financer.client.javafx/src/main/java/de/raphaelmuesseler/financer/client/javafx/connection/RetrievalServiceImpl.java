@@ -42,7 +42,7 @@ public class RetrievalServiceImpl implements RetrievalService {
 
     @Override
     public void fetchAllData(User user, Action action) {
-        this.fetchCategories(user, result -> fetchTransactions(user, transactions -> fetchFixedTransactions(user, fixedTransactions -> {action.action(null);})));
+        this.fetchCategories(user, result -> fetchTransactions(user, transactions -> fetchFixedTransactions(user, fixedTransactions -> action.action(null))));
     }
 
     @Override

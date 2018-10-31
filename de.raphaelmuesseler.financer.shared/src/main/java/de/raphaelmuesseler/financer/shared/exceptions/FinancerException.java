@@ -5,7 +5,7 @@ public abstract class FinancerException extends Exception {
 
     FinancerException() {
         super();
-    };
+    }
 
     FinancerException(String message) {
         super(message);

@@ -145,7 +145,7 @@ public class TransactionsController implements Initializable {
         categoryColumn.setSortable(false);
 
         for (int i = 0; i < numberOfMaxMonths; i++) {
-            TableColumn<TransactionOverviewRow, String> column = new TableColumn<>(I18N.get(getMonthByNumber(LocalDate.now().minusMonths(i).getMonthValue()).getName()));
+            TableColumn<TransactionOverviewRow, String> column = new TableColumn<>(I18N.get(Objects.requireNonNull(getMonthByNumber(LocalDate.now().minusMonths(i).getMonthValue())).getName()));
             column.prefWidthProperty().bind(this.transactionsOverviewTableView.widthProperty().divide(8).add(-3));
             column.setStyle("-fx-alignment: CENTER-RIGHT;");
             column.setSortable(false);
