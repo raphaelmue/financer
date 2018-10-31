@@ -61,7 +61,7 @@ public class FinancerService {
 
         JSONArray jsonArray = this.database.get(Database.Table.USERS_TOKENS, whereParameters);
 
-        if (jsonArray.length() == 1) {
+        if (jsonArray.length() == 1 && ((Date) jsonArray.getJSONObject(0).get("expire_date")).toLocalDate().compareTo(LocalDate.now()) >= 0) {
             whereParameters.clear();
             whereParameters.put("id", jsonArray.getJSONObject(0).get("user_id"));
 
