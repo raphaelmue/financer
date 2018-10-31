@@ -1,4 +1,5 @@
-import de.raphaelmuesseler.financer.util.RandomString;
+package de.raphaelmuesseler.financer.util;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

@@ -17,5 +17,5 @@ public interface JavaFXAsyncConnectionCall extends AsyncConnectionCall {
             runnable.run();
         });
 
-    };
+    }
 }

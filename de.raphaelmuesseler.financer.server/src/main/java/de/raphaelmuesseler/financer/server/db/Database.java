@@ -10,6 +10,7 @@ import org.json.JSONObject;
 
 import java.lang.reflect.Type;
 import java.sql.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -235,7 +236,11 @@ public class Database {
 
     private PreparedStatement preparedStatement(PreparedStatement statement, Map<String, Object> values, int index) throws SQLException {
         for (Map.Entry<String, Object> entry : values.entrySet()) {
-            statement.setObject(index, entry.getValue());
+            if (entry.getValue() instanceof LocalDate) {
+                statement.setObject(index, Date.valueOf((LocalDate) entry.getValue()).toString());
+            } else {
+                statement.setObject(index, entry.getValue());
+            }
             index++;
         }
         return statement;

@@ -2,7 +2,6 @@ package de.raphaelmuesseler.financer.client.connection;
 
 import de.raphaelmuesseler.financer.shared.connection.AsyncCall;
 import de.raphaelmuesseler.financer.shared.connection.ConnectionResult;
-import javafx.application.Platform;
 
 public interface AsyncConnectionCall extends AsyncCall<ConnectionResult> {
     @Override
@@ -11,6 +10,7 @@ public interface AsyncConnectionCall extends AsyncCall<ConnectionResult> {
     @Override
     default void onFailure(Exception exception) {}
 
-    default void onBefore() {};
-    default void onAfter() {};
+    default void onBefore() {}
+
+    default void onAfter() {}
 }

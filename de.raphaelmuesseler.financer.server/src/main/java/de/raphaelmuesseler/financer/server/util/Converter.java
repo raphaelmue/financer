@@ -10,9 +10,9 @@ public class Converter {
     /**
      * Convert a result set into a JSON Array
      *
-     * @param resultSet
+     * @param resultSet result set that is returned by a MySQL GET command
      * @return a JSONArray
-     * @throws SQLException
+     * @throws SQLException thrown, if something went wrong with the result set
      */
     public static JSONArray convertResultSetIntoJSON(ResultSet resultSet) throws SQLException {
         JSONArray jsonArray = new JSONArray();
