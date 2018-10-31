@@ -10,7 +10,7 @@
            fx:controller="de.raphaelmuesseler.financer.client.javafx.main.FinancerController">
     <BorderPane fx:id="rootLayout">
         <center>
-            <fx:include source="overview.fxml"/>
+            <fx:include fx:id="overviewContent" source="overview.fxml"/>
         </center>
         <!--<bottom>-->
         <!--<HBox alignment="CENTER" styleClass="footer" spacing="200">-->
@@ -23,13 +23,13 @@
         <!--</HBox>-->
         <!--</bottom>-->
         <left>
-            <VBox prefWidth="250" spacing="30" alignment="TOP_CENTER">
+            <VBox fx:id="navigationBox" prefWidth="250" spacing="30" alignment="TOP_CENTER">
 
-                <VBox>
+                <VBox fx:id="imageContainer">
                     <VBox alignment="CENTER">
-                    <ImageView fitHeight="150.0" pickOnBounds="true" preserveRatio="true">
-                        <Image url="/images/icons/financer-icon.png"/>
-                    </ImageView>
+                        <ImageView fitHeight="150.0" pickOnBounds="true" preserveRatio="true">
+                            <Image url="/images/icons/financer-icon.png"/>
+                        </ImageView>
                     </VBox>
                     <Label fx:id="userNameLabel" />
                 </VBox>
@@ -56,7 +56,7 @@
                 <left>
                     <HBox>
                         <JFXHamburger fx:id="hamburgerBtn" onMouseClicked="#onToggleNavigationBar" alignment="CENTER_LEFT"/>
-                        <Label text="F I N A N C E R" alignment="CENTER"/>
+                        <Label fx:id="financerLabel" text="F I N A N C E R" alignment="CENTER"/>
                     </HBox>
                 </left>
                 <center>
