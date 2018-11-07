@@ -3,6 +3,9 @@ package de.raphaelmuesseler.financer.shared.model;
 import de.raphaelmuesseler.financer.shared.model.db.DatabaseObject;
 import de.raphaelmuesseler.financer.shared.model.db.DatabaseUser;
 
+import java.sql.Date;
+import java.time.LocalDate;
+
 public class User extends DatabaseUser {
     private String token = "";
 
@@ -10,8 +13,8 @@ public class User extends DatabaseUser {
         super();
     }
 
-    public User(String email, String password, String salt, String name, String surname) {
-        super(email, password, salt, name, surname);
+    public User(String email, String password, String salt, String name, String surname, LocalDate birthDate) {
+        super(email, password, salt, name, surname, Date.valueOf(birthDate));
     }
 
     @Override
@@ -33,5 +36,13 @@ public class User extends DatabaseUser {
 
     public void setToken(String token) {
         this.token = token;
+    }
+
+    public LocalDate getBirthDateAsLocalDate() {
+        return super.getBirthDate().toLocalDate();
+    }
+
+    public void setBirthDate(LocalDate birthDate) {
+        super.setBirthDate(Date.valueOf(birthDate));
     }
 }

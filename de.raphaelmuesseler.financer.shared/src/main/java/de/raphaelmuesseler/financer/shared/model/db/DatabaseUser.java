@@ -1,22 +1,25 @@
 package de.raphaelmuesseler.financer.shared.model.db;
 
 import java.io.Serializable;
+import java.sql.Date;
 
 public class DatabaseUser implements DatabaseObject, Serializable {
     private static final long serialVersionUID = 8551108621522985674L;
-    protected int id;
-    protected String email, password, salt, name, surname;
+    private int id;
+    private String email, password, salt, name, surname;
+    private Date birthDate;
 
     public DatabaseUser() {
 
     }
 
-    public DatabaseUser(String email, String password, String salt, String name, String surname) {
+    public DatabaseUser(String email, String password, String salt, String name, String surname, Date birthDate) {
         this.email = email;
         this.password = password;
         this.salt = salt;
         this.name = name;
         this.surname = surname;
+        this.birthDate = birthDate;
     }
 
     @Override
@@ -48,6 +51,10 @@ public class DatabaseUser implements DatabaseObject, Serializable {
         return this.name + " " + this.surname;
     }
 
+    public Date getBirthDate() {
+        return birthDate;
+    }
+
     public void setId(int id) {
         this.id = id;
     }
@@ -70,5 +77,9 @@ public class DatabaseUser implements DatabaseObject, Serializable {
 
     public void setSurname(String surname) {
         this.surname = surname;
+    }
+
+    public void setBirthDate(Date birthDate) {
+        this.birthDate = birthDate;
     }
 }

@@ -1,5 +1,6 @@
 package de.raphaelmuesseler.financer.client.javafx.login;
 
+import com.jfoenix.controls.JFXDatePicker;
 import de.raphaelmuesseler.financer.client.format.I18N;
 import de.raphaelmuesseler.financer.client.javafx.dialogs.FinancerDialog;
 import de.raphaelmuesseler.financer.shared.model.User;
@@ -16,8 +17,9 @@ import javafx.scene.layout.GridPane;
 public class RegisterDialog extends FinancerDialog<User> {
     private TextField nameField, surnameField, emailField;
     private PasswordField passwordField, passwordRepeatField;
+    private JFXDatePicker birthDatePicker;
 
-    public RegisterDialog() {
+    RegisterDialog() {
         super(null);
 
         this.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
@@ -42,13 +44,17 @@ public class RegisterDialog extends FinancerDialog<User> {
         this.emailField = new TextField();
         gridPane.add(this.emailField, 1, 2);
 
-        gridPane.add(new Label(I18N.get("password")), 0, 3);
-        this.passwordField = new PasswordField();
-        gridPane.add(this.passwordField, 1, 3);
+        gridPane.add(new Label(I18N.get("birthDate")), 0, 3);
+        this.birthDatePicker = new JFXDatePicker();
+        gridPane.add(this.birthDatePicker, 1, 3);
 
-        gridPane.add(new Label(I18N.get("repeatPassword")), 0, 4);
+        gridPane.add(new Label(I18N.get("password")), 0, 4);
+        this.passwordField = new PasswordField();
+        gridPane.add(this.passwordField, 1, 4);
+
+        gridPane.add(new Label(I18N.get("repeatPassword")), 0, 5);
         this.passwordRepeatField = new PasswordField();
-        gridPane.add(this.passwordRepeatField, 1, 4);
+        gridPane.add(this.passwordRepeatField, 1, 5);
 
         return gridPane;
     }
@@ -86,7 +92,8 @@ public class RegisterDialog extends FinancerDialog<User> {
                 password,
                 salt,
                 this.nameField.getText(),
-                this.surnameField.getText()));
+                this.surnameField.getText(),
+                this.birthDatePicker.getValue()));
 
         return super.onConfirm();
     }

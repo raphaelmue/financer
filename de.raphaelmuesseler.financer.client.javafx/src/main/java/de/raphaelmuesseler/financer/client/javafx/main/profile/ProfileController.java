@@ -39,6 +39,7 @@ public class ProfileController implements Initializable {
     public Label nameLabel;
     public Label surnameLabel;
     public Label emailLabel;
+    public Label birthDateLabel;
     public TreeView<CategoryTree> categoriesTreeView;
     public JFXButton refreshCategoriesBtn;
     public JFXButton newCategoryBtn;
@@ -59,6 +60,7 @@ public class ProfileController implements Initializable {
             this.nameLabel.setText(user.getName());
             this.surnameLabel.setText(user.getSurname());
             this.emailLabel.setText(user.getEmail());
+            this.birthDateLabel.setText(this.user.getBirthDateAsLocalDate().toString());
         }
 
         GlyphFont fontAwesome = GlyphFontRegistry.font("FontAwesome");
