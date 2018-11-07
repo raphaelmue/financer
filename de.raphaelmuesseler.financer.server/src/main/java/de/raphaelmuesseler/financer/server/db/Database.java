@@ -201,7 +201,7 @@ public class Database {
     /**
      * Deletes one or multiple data rows that matches the where condition.
      *
-     * @param table           database table to obe updated
+     * @param table           database table to be updated
      * @param whereParameters where condition to delete specific data rows
      * @throws SQLException thrown, when something went wrong executing the SQL statement
      */
@@ -211,6 +211,20 @@ public class Database {
                 this.getClause(whereParameters, "WHERE", " AND ");
         statement = this.preparedStatement(connection.prepareStatement(query), whereParameters);
         statement.execute();
+    }
+
+    /**
+     * Returns the latest id that was inserted into the table.
+     * @param table database table that will be requested
+     * @return the latest id in the table
+     * @throws SQLException thrown, when something went wrong executing the SQL statement
+     */
+    public int getLatestId(Table table) throws SQLException {
+        PreparedStatement statement = connection.prepareStatement("SELECT id FROM " +
+                table.getTableName() +
+                " ORDER BY id DESC LIMIT 1");
+        ResultSet result = statement.executeQuery();
+        return Converter.convertResultSetIntoJSON(result).getJSONObject(0).getInt("id");
     }
 
     private String getClause(Map<String, Object> values, String operation, String separator) {

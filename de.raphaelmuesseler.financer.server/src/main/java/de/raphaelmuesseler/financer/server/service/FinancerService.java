@@ -7,8 +7,8 @@ import de.raphaelmuesseler.financer.shared.model.BaseCategory;
 import de.raphaelmuesseler.financer.shared.model.Category;
 import de.raphaelmuesseler.financer.shared.model.CategoryTree;
 import de.raphaelmuesseler.financer.shared.model.User;
-import de.raphaelmuesseler.financer.shared.model.db.DatabaseUser;
 import de.raphaelmuesseler.financer.shared.model.db.DatabaseObject;
+import de.raphaelmuesseler.financer.shared.model.db.DatabaseUser;
 import de.raphaelmuesseler.financer.shared.model.transactions.FixedTransaction;
 import de.raphaelmuesseler.financer.shared.model.transactions.Transaction;
 import de.raphaelmuesseler.financer.shared.model.transactions.TransactionAmount;
@@ -30,6 +30,7 @@ public class FinancerService {
 
     private static FinancerService INSTANCE = null;
     private Database database;
+    private RandomString tokenGenerator = new RandomString(64);
 
     private FinancerService() {
         try {
@@ -104,7 +105,7 @@ public class FinancerService {
             if (password.equals(user.getPassword())) {
                 logger.log(Level.INFO, "Credentials of user '" + user.getFullName() + "' are approved.");
 
-                String token = new RandomString(64).nextString();
+                String token = this.tokenGenerator.nextString();
                 Map<String, Object> values = new HashMap<>();
                 values.put("user_id", user.getId());
                 values.put("token", token);
@@ -142,6 +143,18 @@ public class FinancerService {
         values.put("surname", user.getSurname());
 
         this.database.insert(Database.Table.USERS, values);
+
+        user.setId(this.database.getLatestId(Database.Table.USERS));
+
+        // creating new token and inserting it to database
+        String token = this.tokenGenerator.nextString();
+        values.clear();
+        values.put("user_id", user.getId());
+        values.put("token", token);
+        values.put("expire_date", LocalDate.now().plusMonths(1));
+        this.database.insert(Database.Table.USERS_TOKENS, values);
+
+        user.setToken(token);
 
         return new ConnectionResult<>(user);
     }
