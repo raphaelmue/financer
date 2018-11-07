@@ -99,22 +99,27 @@ public class FinancerService {
         Map<String, Object> whereEmail = new HashMap<>();
         whereEmail.put("email", parameters.get("email"));
 
-        User user = (User) new User().fromDatabaseObject(this.database.getObject(Database.Table.USERS, DatabaseUser.class, whereEmail).get(0));
-        if (user != null) {
-            String password = Hash.create((String) parameters.get("password"), user.getSalt());
-            if (password.equals(user.getPassword())) {
-                logger.log(Level.INFO, "Credentials of user '" + user.getFullName() + "' are approved.");
+        User user = null;
 
-                String token = this.tokenGenerator.nextString();
-                Map<String, Object> values = new HashMap<>();
-                values.put("user_id", user.getId());
-                values.put("token", token);
-                values.put("expire_date", LocalDate.now().plusMonths(1));
-                this.database.insert(Database.Table.USERS_TOKENS, values);
+        List<DatabaseObject> result = this.database.getObject(Database.Table.USERS, DatabaseUser.class, whereEmail);
+        if (result != null && result.size() == 1) {
+            user = (User) new User().fromDatabaseObject(result.get(0));
+            if (user != null) {
+                String password = Hash.create((String) parameters.get("password"), user.getSalt());
+                if (password.equals(user.getPassword())) {
+                    logger.log(Level.INFO, "Credentials of user '" + user.getFullName() + "' are approved.");
 
-                user.setToken(token);
-            } else {
-                user = null;
+                    String token = this.tokenGenerator.nextString();
+                    Map<String, Object> values = new HashMap<>();
+                    values.put("user_id", user.getId());
+                    values.put("token", token);
+                    values.put("expire_date", LocalDate.now().plusMonths(1));
+                    this.database.insert(Database.Table.USERS_TOKENS, values);
+
+                    user.setToken(token);
+                } else {
+                    user = null;
+                }
             }
         }
 

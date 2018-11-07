@@ -26,7 +26,9 @@ public class Database {
     private static final String HOST_DEPLOY = "raphael-muesseler.de";
 
     private static String HOST;
-    private static final String DB_NAME = "financer_dev";
+
+    private static DatabaseName DB_NAME;
+
     // for production:
     // private static final String DB_NAME     = "financer_prod";
     private static final String DB_USER = "financer_admin";
@@ -60,13 +62,41 @@ public class Database {
         }
     }
 
+    public enum DatabaseName {
+        DEV("financer_dev"),
+        TEST("financer_test"),
+        PROD("financer_prod");
+
+        private final String name;
+
+        DatabaseName(String name) {
+            this.name = name;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public static DatabaseName getByShortCut(String shortcut) {
+            switch (shortcut) {
+                case "dev":
+                    return DEV;
+                case "test":
+                    return TEST;
+                case "prod":
+                    return PROD;
+            }
+            return null;
+        }
+    }
+
     private Database() throws SQLException {
         try {
             // loading database driver
             Class.forName(JDBC_DRIVER);
 
             // initializing DB access
-            this.connection = DriverManager.getConnection("jdbc:mysql://" + HOST + ":3306/" + DB_NAME +
+            this.connection = DriverManager.getConnection("jdbc:mysql://" + HOST + ":3306/" + DB_NAME.getName() +
                             "?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&" +
                             "serverTimezone=UTC&autoReconnect=true",
                     DB_USER, DB_PASSWORD);
@@ -83,6 +113,10 @@ public class Database {
      */
     public static void setHost(boolean local) {
         Database.HOST = local ? Database.HOST_LOCAL : Database.HOST_DEPLOY;
+    }
+
+    public static void setDbName(DatabaseName databaseName) {
+        DB_NAME = databaseName;
     }
 
     /**
@@ -225,6 +259,18 @@ public class Database {
                 " ORDER BY id DESC LIMIT 1");
         ResultSet result = statement.executeQuery();
         return Converter.convertResultSetIntoJSON(result).getJSONObject(0).getInt("id");
+    }
+
+    /**
+     * Clears all data in the database. Only possible if server is in test mode.
+     * @throws SQLException thrown, when something went wrong executing the SQL statement
+     */
+    public void clearDatabase() throws SQLException {
+        if (DB_NAME == DatabaseName.TEST) {
+            for (Table table : Table.values()) {
+                this.connection.prepareStatement("TRUNCATE TABLE " + table.getTableName()).execute();
+            }
+        }
     }
 
     private String getClause(Map<String, Object> values, String operation, String separator) {

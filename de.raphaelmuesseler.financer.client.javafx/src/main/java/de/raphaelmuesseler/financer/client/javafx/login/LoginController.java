@@ -32,9 +32,9 @@ import java.util.logging.Logger;
 
 public class LoginController implements Initializable {
 
-    public TextField emailTextField;
-    public PasswordField passwordField;
-    public Label errorLabel;
+    public TextField loginEmailTextField;
+    public PasswordField loginPasswordField;
+    public Label loginErrorLabel;
     public GridPane gridPane;
     public VBox progressIndicatorBox;
     public Menu languageMenu;
@@ -64,8 +64,8 @@ public class LoginController implements Initializable {
         this.progressIndicatorBox.setVisible(true);
 
         Map<String, Object> parameters = new HashMap<>();
-        parameters.put("email", this.emailTextField.getText());
-        parameters.put("password", this.passwordField.getText());
+        parameters.put("email", this.loginEmailTextField.getText());
+        parameters.put("password", this.loginPasswordField.getText());
         logger.log(Level.INFO, "User's credentials will be checked ...");
         this.executor.execute(new ServerRequestHandler("checkCredentials", parameters, new JavaFXAsyncConnectionCall() {
             @Override
@@ -74,7 +74,7 @@ public class LoginController implements Initializable {
                     Platform.runLater(() -> loginUser((User) result.getResult()));
                 } else {
                     logger.log(Level.INFO, "User's credentials are incorrect.");
-                    errorLabel.setVisible(true);
+                    loginErrorLabel.setVisible(true);
                     gridPane.setDisable(false);
                     progressIndicatorBox.setVisible(false);
                 }
@@ -140,7 +140,7 @@ public class LoginController implements Initializable {
 
     private void loginUser(User user) {
         this.logger.log(Level.INFO, "User's credentials are correct.");
-        this.errorLabel.setVisible(false);
+        this.loginErrorLabel.setVisible(false);
 
         // storing user data
         if (!this.localStorage.writeObject("user", user)) {

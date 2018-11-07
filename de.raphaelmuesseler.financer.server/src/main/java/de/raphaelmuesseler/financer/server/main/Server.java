@@ -20,23 +20,36 @@ public class Server {
     private ServerSocket serverSocket;
     private ExecutorService executor = Executors.newCachedThreadPool();
 
+    private static boolean stop = false;
+
     public static void main(String[] args) {
-        int port;
+        int port = -1;
+        Database.DatabaseName databaseName = null;
         try {
-            if (args.length > 0) {
-                port = Integer.parseInt(args[0]);
-                if (port < 1000 || port > 5000) {
-                    System.out.println("Please enter a port number between 1000 and 5000");
-                    return;
+            for (String arg : args) {
+                if (arg.contains("--port=")) {
+                    port = Integer.parseInt(arg.substring(7));
+                    if (port < 1000 || port > 5000) {
+                        System.out.println("Please enter a port number between 1000 and 5000");
+                        return;
+                    }
+                } else if (arg.contains("--db-host=")) {
+                    Database.setHost(arg.substring(10).equals("local"));
+                } else if (arg.contains("--database=")) {
+                    if (Database.DatabaseName.getByShortCut(arg.substring(11)) != null) {
+                        databaseName = Database.DatabaseName.getByShortCut(arg.substring(11));
+                    }
                 }
-            } else {
+            }
+
+            if (port == -1) {
                 port = PORT;
             }
 
-            if (args.length > 1 && args[1] != null && args[1].equals("local")) {
-                Database.setHost(true);
+            if (databaseName != null) {
+                Database.setDbName(databaseName);
             } else {
-                Database.setHost(false);
+                Database.setDbName(Database.DatabaseName.DEV);
             }
 
             Server server = new Server(port);
@@ -54,7 +67,7 @@ public class Server {
      * @param port port, on which the server runs
      * @throws IOException thrown, when something went wrong creating the SocketServer
      */
-    private Server(int port) throws IOException {
+    public Server(int port) throws IOException {
         this.serverSocket = new ServerSocket(port);
         this.logger.log(Level.INFO, "Java Server started and is running on port " + port);
     }
@@ -62,8 +75,8 @@ public class Server {
     /**
      * Runs the server until the server application is stopped.
      */
-    private void run() {
-        while (true) {
+    public void run() {
+        while (!stop) {
             this.logger.log(Level.INFO, "Waiting for client ...");
             try {
                 Socket client = this.serverSocket.accept();
@@ -75,5 +88,12 @@ public class Server {
                 break;
             }
         }
+    }
+
+    /**
+     * Stops the server after the next client that will be handled.
+     */
+    public static void stop() {
+        Server.stop = true;
     }
 }

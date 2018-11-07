@@ -20,6 +20,8 @@ public class LoginApplication extends Application {
 
     private Logger logger = Logger.getLogger("LoginApplication");
 
+    private Scene scene;
+
     public static void main(String[] args) {
         launch(args);
     }
@@ -45,7 +47,7 @@ public class LoginApplication extends Application {
 
             // loading FXML file
             Parent root = FXMLLoader.load(getClass().getResource("/de/raphaelmuesseler/financer/client/javafx/main/views/login.fxml"), resourceBundle);
-            Scene scene = new Scene(root, 500, 575);
+            this.scene = new Scene(root, 500, 575);
 
             primaryStage.getIcons().add(new Image(LoginApplication.class.getResourceAsStream("/images/icons/financer-icon.png")));
 
@@ -55,5 +57,9 @@ public class LoginApplication extends Application {
 
             this.logger.log(Level.INFO, "Login Application has started.");
         }
+    }
+
+    public Scene getScene() {
+        return scene;
     }
 }

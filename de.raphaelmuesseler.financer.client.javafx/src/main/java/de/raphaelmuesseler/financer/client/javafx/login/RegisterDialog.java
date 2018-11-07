@@ -34,26 +34,32 @@ public class RegisterDialog extends FinancerDialog<User> {
 
         gridPane.add(new Label(I18N.get("name")), 0, 0);
         this.nameField = new TextField();
+        this.nameField.setId("registerNameTextField");
         gridPane.add(this.nameField, 1, 0);
 
         gridPane.add(new Label(I18N.get("surname")), 0, 1);
         this.surnameField = new TextField();
+        this.surnameField.setId("registerSurnameTextField");
         gridPane.add(this.surnameField, 1, 1);
 
         gridPane.add(new Label(I18N.get("email")), 0, 2);
         this.emailField = new TextField();
+        this.emailField.setId("registerEmailTextField");
         gridPane.add(this.emailField, 1, 2);
 
         gridPane.add(new Label(I18N.get("birthDate")), 0, 3);
         this.birthDatePicker = new JFXDatePicker();
+        this.birthDatePicker.setId("registerBirthDatePicker");
         gridPane.add(this.birthDatePicker, 1, 3);
 
         gridPane.add(new Label(I18N.get("password")), 0, 4);
         this.passwordField = new PasswordField();
+        this.passwordField.setId("registerPasswordTextField");
         gridPane.add(this.passwordField, 1, 4);
 
         gridPane.add(new Label(I18N.get("repeatPassword")), 0, 5);
         this.passwordRepeatField = new PasswordField();
+        this.passwordRepeatField.setId("registerRepeatPasswordTextField");
         gridPane.add(this.passwordRepeatField, 1, 5);
 
         return gridPane;
