@@ -8,18 +8,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.testfx.framework.junit5.ApplicationTest;
 
-import java.time.LocalDate;
-
 class LoginApplicationTest extends AbstractFinancerApplicationTest {
-
-    private final User user = new User(
-            "max@mustermann.com",
-            "6406b2e97a97f64910aca76370ee35a92087806da1aa878e8a9ae0f4dc3949af",
-            "I2HoOYJmqKfGboyJAdCEQwulUkxmhVH5",
-            "Max",
-            "Mustermann",
-            LocalDate.of(1989, 5, 28));
-    private final String password = "password";
 
     @BeforeEach
     void setUpEach() throws Exception {

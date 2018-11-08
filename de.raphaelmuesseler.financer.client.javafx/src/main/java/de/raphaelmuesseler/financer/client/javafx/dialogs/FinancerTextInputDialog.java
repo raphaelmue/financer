@@ -29,6 +29,7 @@ public final class FinancerTextInputDialog extends FinancerDialog<String> {
     @Override
     protected Node setDialogContent() {
         this.textField = new JFXTextField();
+        this.textField.setId("inputDialogTextField");
         return this.textField;
     }
 

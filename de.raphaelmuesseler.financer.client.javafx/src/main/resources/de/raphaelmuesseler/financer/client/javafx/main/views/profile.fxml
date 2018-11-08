@@ -25,7 +25,7 @@
                         </GridPane>
                     </VBox>
                 </Tab>
-                <Tab text="%categories" closable="false">
+                <Tab fx:id="categoriesTab" text="%categories" closable="false">
                     <VBox styleClass="tab-content">
                         <Label text="%categories" styleClass="content-heading"/>
                         <HBox styleClass="tool-btn-bar">
