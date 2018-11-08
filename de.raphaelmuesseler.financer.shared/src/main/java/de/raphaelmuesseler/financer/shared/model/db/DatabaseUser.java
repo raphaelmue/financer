@@ -7,19 +7,19 @@ public class DatabaseUser implements DatabaseObject, Serializable {
     private static final long serialVersionUID = 8551108621522985674L;
     private int id;
     private String email, password, salt, name, surname;
-    private Date birthDate;
+    private String birthdate;
 
     public DatabaseUser() {
 
     }
 
-    public DatabaseUser(String email, String password, String salt, String name, String surname, Date birthDate) {
+    public DatabaseUser(String email, String password, String salt, String name, String surname, String birthDate) {
         this.email = email;
         this.password = password;
         this.salt = salt;
         this.name = name;
         this.surname = surname;
-        this.birthDate = birthDate;
+        this.birthdate = birthDate;
     }
 
     @Override
@@ -51,8 +51,8 @@ public class DatabaseUser implements DatabaseObject, Serializable {
         return this.name + " " + this.surname;
     }
 
-    public Date getBirthDate() {
-        return birthDate;
+    public String getBirthdate() {
+        return birthdate;
     }
 
     public void setId(int id) {
@@ -79,7 +79,7 @@ public class DatabaseUser implements DatabaseObject, Serializable {
         this.surname = surname;
     }
 
-    public void setBirthDate(Date birthDate) {
-        this.birthDate = birthDate;
+    public void setBirthdate(String birthdate) {
+        this.birthdate = birthdate;
     }
 }

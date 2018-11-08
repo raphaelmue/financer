@@ -14,7 +14,7 @@ public class User extends DatabaseUser {
     }
 
     public User(String email, String password, String salt, String name, String surname, LocalDate birthDate) {
-        super(email, password, salt, name, surname, Date.valueOf(birthDate));
+        super(email, password, salt, name, surname, birthDate.toString());
     }
 
     @Override
@@ -26,6 +26,7 @@ public class User extends DatabaseUser {
             this.setEmail(((DatabaseUser) databaseObject).getEmail());
             this.setPassword(((DatabaseUser) databaseObject).getPassword());
             this.setSalt(((DatabaseUser) databaseObject).getSalt());
+            this.setBirthdate(((DatabaseUser) databaseObject).getBirthdate());
         }
         return this;
     }
@@ -39,10 +40,10 @@ public class User extends DatabaseUser {
     }
 
     public LocalDate getBirthDateAsLocalDate() {
-        return super.getBirthDate().toLocalDate();
+        return LocalDate.parse(super.getBirthdate());
     }
 
     public void setBirthDate(LocalDate birthDate) {
-        super.setBirthDate(Date.valueOf(birthDate));
+        super.setBirthdate(birthDate.toString());
     }
 }
