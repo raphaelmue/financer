@@ -1,25 +1,16 @@
 package de.raphaelmuesseler.financer.client.javafx.main;
 
-import com.jfoenix.controls.JFXDatePicker;
 import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
 import de.raphaelmuesseler.financer.client.javafx.login.LoginApplication;
-import de.raphaelmuesseler.financer.server.db.Database;
-import de.raphaelmuesseler.financer.server.main.Server;
 import de.raphaelmuesseler.financer.shared.model.User;
-import javafx.scene.Node;
-import javafx.scene.control.*;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.MouseButton;
-import org.junit.jupiter.api.*;
-import org.testfx.api.FxToolkit;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.testfx.framework.junit5.ApplicationTest;
-import org.testfx.framework.junit5.Start;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.concurrent.TimeoutException;
 
-class LoginApplicationTest extends ApplicationTest {
+class LoginApplicationTest extends AbstractFinancerApplicationTest {
 
     private final User user = new User(
             "max@mustermann.com",
@@ -30,80 +21,46 @@ class LoginApplicationTest extends ApplicationTest {
             LocalDate.of(1989, 5, 28));
     private final String password = "password";
 
-    @BeforeAll
-    static void setUp() throws Exception {
-        Server server = new Server(3500);
-        new Thread(server::run).start();
-
-        LocalStorageImpl.getInstance().deleteAllData();
-
-        Database.setDbName(Database.DatabaseName.TEST);
-        Database.setHost(true);
-        Database.getInstance().clearDatabase();
-    }
-
     @BeforeEach
     void setUpEach() throws Exception {
-        LocalStorageImpl.getInstance().deleteAllData();
+        super.setUpEach();
         ApplicationTest.launch(LoginApplication.class);
-    }
-
-    private <T extends Node> T find(final String query) {
-        return lookup(query).query();
     }
 
     @Test
     void testInvalidLogin() {
-        clickOn((TextField) find("#loginEmailTextField"));
-        write(this.user.getEmail());
-        clickOn((TextField) find("#loginPasswordField"));
-        write("wrong");
-        clickOn((Button) find("#loginBtn"));
-
+        login(this.user, password);
         Assertions.assertTrue(find("#loginErrorLabel").isVisible());
     }
 
     @Test
     void testRegisterUser() {
-        clickOn((Hyperlink) find("#openRegisterDialogLink"));
-
-        clickOn((TextField) find("#registerNameTextField"));
-        write(this.user.getName());
-        clickOn((TextField) find("#registerSurnameTextField"));
-        write(this.user.getSurname());
-        clickOn((TextField) find("#registerEmailTextField"));
-        write(this.user.getEmail());
-        clickOn((JFXDatePicker) find("#registerBirthDatePicker"));
-        write(this.user.getBirthDateAsLocalDate().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
-        clickOn((PasswordField) find("#registerPasswordTextField"));
-        write(this.password);
-        clickOn((PasswordField) find("#registerRepeatPasswordTextField"));
-        write(this.password);
-        press(KeyCode.TAB).release(KeyCode.TAB);
-        press(KeyCode.ENTER).release(KeyCode.ENTER);
+        register(this.user, password);
+        User user = (User) LocalStorageImpl.getInstance().readObject("user");
+        Assertions.assertEquals(this.user.getEmail(), user.getEmail());
+        Assertions.assertEquals(this.user.getName(), user.getName());
+        Assertions.assertEquals(this.user.getSurname(), user.getSurname());
+        Assertions.assertEquals(1, user.getId());
     }
 
     @Test
-    void testLogin() {
-        clickOn((TextField) find("#loginEmailTextField"));
-        write(this.user.getEmail());
-        clickOn((TextField) find("#loginPasswordField"));
-        write(this.password);
-        clickOn((Button) find("#loginBtn"));
+    void testLogin() throws Exception {
+        register(this.user, password);
+        logout();
+        login(this.user, password);
 
-        Assertions.assertTrue(find("#loginErrorLabel").isVisible());
+        Assertions.assertFalse(find("#loginErrorLabel").isVisible());
     }
 
-    @AfterEach
-    void tearDownEach() throws TimeoutException {
-        /* Close the window. It will be re-opened at the next test. */
-        FxToolkit.hideStage();
-        release(new KeyCode[]{});
-        release(new MouseButton[]{});
-    }
+    @Test
+    void testLogout() throws Exception {
+        register(this.user, password);
+        logout();
 
-    @AfterAll
-    static void tearDown() {
-        Server.stop();
+        for (LocalStorageImpl.LocalStorageFile file : LocalStorageImpl.LocalStorageFile.values()) {
+            for (String key : file.getKeys()) {
+                Assertions.assertNull(LocalStorageImpl.getInstance().readObject(key));
+            }
+        }
     }
 }
