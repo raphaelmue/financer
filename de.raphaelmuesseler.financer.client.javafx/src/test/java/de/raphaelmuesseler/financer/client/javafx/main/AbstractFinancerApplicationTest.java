@@ -7,27 +7,29 @@ import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
 import de.raphaelmuesseler.financer.client.javafx.login.LoginApplication;
 import de.raphaelmuesseler.financer.server.db.Database;
 import de.raphaelmuesseler.financer.server.main.Server;
-import de.raphaelmuesseler.financer.shared.model.BaseCategory;
 import de.raphaelmuesseler.financer.shared.model.Category;
-import de.raphaelmuesseler.financer.shared.model.CategoryTree;
 import de.raphaelmuesseler.financer.shared.model.User;
-import de.raphaelmuesseler.financer.util.collections.Tree;
-import de.raphaelmuesseler.financer.util.collections.TreeUtil;
 import javafx.scene.Node;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Hyperlink;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.testfx.api.FxToolkit;
 import org.testfx.framework.junit5.ApplicationTest;
 
+import java.io.IOException;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.concurrent.TimeoutException;
 
-import static java.lang.String.CASE_INSENSITIVE_ORDER;
-
-abstract class AbstractFinancerApplicationTest extends ApplicationTest {
+public class AbstractFinancerApplicationTest extends ApplicationTest {
 
     final User user = new User(
             "max@mustermann.com",
@@ -37,10 +39,11 @@ abstract class AbstractFinancerApplicationTest extends ApplicationTest {
             "Mustermann",
             LocalDate.of(1989, 5, 28));
     final String password = "password";
+    private static Server server;
 
     @BeforeAll
-    static void setUp() throws Exception {
-        Server server = new Server(3500);
+    static void setUp() throws SQLException, IOException {
+        server = new Server(3500);
         new Thread(server::run).start();
 
         LocalStorageImpl.getInstance().deleteAllData();
@@ -127,6 +130,6 @@ abstract class AbstractFinancerApplicationTest extends ApplicationTest {
 
     @AfterAll
     static void tearDown() {
-        Server.stop();
+        server.stop();
     }
 }

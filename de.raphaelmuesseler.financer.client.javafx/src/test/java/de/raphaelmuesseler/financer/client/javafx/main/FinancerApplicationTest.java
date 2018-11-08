@@ -16,10 +16,10 @@ import org.testfx.framework.junit5.ApplicationTest;
 
 import static java.lang.String.CASE_INSENSITIVE_ORDER;
 
-class FinancerApplicationTest extends AbstractFinancerApplicationTest {
+public class FinancerApplicationTest extends AbstractFinancerApplicationTest {
 
     @BeforeEach
-    void setUpEach() throws Exception {
+    public void setUpEach() throws Exception {
         super.setUpEach();
         ApplicationTest.launch(FinancerApplication.class);
     }
@@ -29,7 +29,7 @@ class FinancerApplicationTest extends AbstractFinancerApplicationTest {
     private final Category category = new Category(-1, "TestCategory", -1, -1);
 
     @Test
-    void testCreateCategory() {
+    public void testCreateCategory() {
         addCategory(category);
         Tree<Category> categoryTree = TreeUtil.getByValue(((BaseCategory) LocalStorageImpl.getInstance().readObject("categories")),
                 new CategoryTree(BaseCategory.CategoryClass.FIXED_EXPENSES, category),
@@ -38,7 +38,7 @@ class FinancerApplicationTest extends AbstractFinancerApplicationTest {
     }
 
     @Test
-    void testEditCategory() {
+    public void testEditCategory() {
         addCategory(category);
         sleep(500);
         clickOn(category.getName());
@@ -58,7 +58,7 @@ class FinancerApplicationTest extends AbstractFinancerApplicationTest {
     }
 
     @Test
-    void testDeleteCategory() {
+    public void testDeleteCategory() {
         addCategory(category);
         sleep(500);
         clickOn(category.getName());

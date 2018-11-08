@@ -10,11 +10,11 @@ import org.junit.jupiter.api.Test;
 import java.util.Currency;
 import java.util.Locale;
 
-class FormatTest {
+public class FormatTest {
     private static Settings settings;
 
     @BeforeAll
-    static void init() {
+    public static void init() {
         settings = new Settings();
         settings.setCurrency(Currency.getInstance("USD"));
         settings.setLanguage(Locale.ENGLISH);
@@ -24,28 +24,28 @@ class FormatTest {
     }
 
     @Test
-    void testCurrencyFormat() {
+    public void testCurrencyFormat() {
         final double amount = 5.387;
 
         String currencyFormat = Formatter.formatCurrency(amount);
-        Assertions.assertEquals(Double.toString(amount) + " " + Currency.getInstance("USD").getCurrencyCode(), currencyFormat);
+        Assertions.assertEquals(String.format("%.2f", amount) + " " + Currency.getInstance("USD").getCurrencyCode(), currencyFormat);
 
         settings.setShowCurrencySign(true);
         Formatter.setSettings(settings);
 
         currencyFormat = Formatter.formatCurrency(amount);
-        Assertions.assertEquals(Double.toString(amount) + " " + Currency.getInstance("USD").getSymbol(), currencyFormat);
+        Assertions.assertEquals(String.format("%.2f", amount) + " " + Currency.getInstance("USD").getSymbol(), currencyFormat);
 
         settings.setLanguage(Locale.GERMAN);
         Formatter.setSettings(settings);
 
         currencyFormat = Formatter.formatCurrency(amount);
-        Assertions.assertEquals(Double.toString(amount).replace(".", ",") + " " +
+        Assertions.assertEquals(String.format("%.2f", amount).replace(".", ",") + " " +
                 Currency.getInstance("USD").getSymbol(), currencyFormat);
     }
 
     @Test
-    void testCategoryFormat() {
+    public void testCategoryFormat() {
         final Category category = new Category(1, "testCategory", 1, 0);
         category.setPrefix("testPrefix");
 

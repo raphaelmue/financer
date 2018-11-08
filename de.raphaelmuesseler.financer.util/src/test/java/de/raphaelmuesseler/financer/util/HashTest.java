@@ -3,16 +3,16 @@ package de.raphaelmuesseler.financer.util;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-class HashTest {
+public class HashTest {
     @Test
-    void testHashWithoutSalt() {
+    public void testHashWithoutSalt() {
         String plain = "abcdefghijklmnopqrstuvwxyz";
         Assertions.assertEquals(Hash.create(plain),
                 "71C480DF93D6AE2F1EFAD1447C66C9525E316218CF51FC8D9ED832F2DAF18B73".toLowerCase());
     }
 
     @Test
-    void testHashWithSalt() {
+    public void testHashWithSalt() {
         String plain = "abcdefghijklmnopqrstuvwxyz";
         String salt = "zyxwvutsrqponmlkjihgfedcba";
         Assertions.assertEquals(Hash.create(plain, salt),

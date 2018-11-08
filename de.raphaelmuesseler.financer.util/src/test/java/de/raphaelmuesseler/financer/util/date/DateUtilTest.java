@@ -5,9 +5,9 @@ import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
 
-class DateUtilTest {
+public class DateUtilTest {
     @Test
-    void testMonthDifference() {
+    public void testMonthDifference() {
         LocalDate localDate1 = LocalDate.of(2018, 5, 7);
         LocalDate localDate2 = LocalDate.of(2017, 9, 30);
 
@@ -25,7 +25,7 @@ class DateUtilTest {
     }
 
     @Test
-    void testMonthEquality() {
+    public void testMonthEquality() {
         LocalDate localDate1 = LocalDate.of(2018, 5, 7);
         LocalDate localDate2 = LocalDate.of(2017, 9, 30);
 

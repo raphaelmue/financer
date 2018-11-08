@@ -20,8 +20,6 @@ public class Server {
     private ServerSocket serverSocket;
     private ExecutorService executor = Executors.newCachedThreadPool();
 
-    private static boolean stop = false;
-
     public static void main(String[] args) {
         int port = -1;
         Database.DatabaseName databaseName = null;
@@ -76,15 +74,14 @@ public class Server {
      * Runs the server until the server application is stopped.
      */
     public void run() {
-        while (!stop) {
+        while (true) {
             this.logger.log(Level.INFO, "Waiting for client ...");
             try {
                 Socket client = this.serverSocket.accept();
                 DataInputStream input = new DataInputStream(client.getInputStream());
                 DataOutputStream output = new DataOutputStream(client.getOutputStream());
                 this.executor.execute(new ClientHandler(client, input, output));
-            } catch (IOException e) {
-                e.printStackTrace();
+            } catch (Exception e) {
                 break;
             }
         }
@@ -93,7 +90,10 @@ public class Server {
     /**
      * Stops the server after the next client that will be handled.
      */
-    public static void stop() {
-        Server.stop = true;
+    public void stop() {
+        this.logger.log(Level.INFO, "Server will be stopped.");
+        try {
+            serverSocket.close();
+        } catch (IOException ignored) { }
     }
 }

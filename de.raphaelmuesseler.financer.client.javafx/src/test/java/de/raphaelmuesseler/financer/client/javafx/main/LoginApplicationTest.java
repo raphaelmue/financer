@@ -8,24 +8,26 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.testfx.framework.junit5.ApplicationTest;
 
-class LoginApplicationTest extends AbstractFinancerApplicationTest {
+public class LoginApplicationTest extends AbstractFinancerApplicationTest {
 
     @BeforeEach
-    void setUpEach() throws Exception {
+    public void setUpEach() throws Exception {
         super.setUpEach();
         ApplicationTest.launch(LoginApplication.class);
     }
 
     @Test
-    void testInvalidLogin() {
-        login(this.user, password);
+    public void testInvalidLogin() {
+        login(this.user, "wrong");
+        sleep(1000);
         Assertions.assertTrue(find("#loginErrorLabel").isVisible());
     }
 
     @Test
-    void testRegisterUser() {
+    public void testRegisterUser() {
         register(this.user, password);
         User user = (User) LocalStorageImpl.getInstance().readObject("user");
+        sleep(1000);
         Assertions.assertEquals(this.user.getEmail(), user.getEmail());
         Assertions.assertEquals(this.user.getName(), user.getName());
         Assertions.assertEquals(this.user.getSurname(), user.getSurname());
@@ -33,7 +35,7 @@ class LoginApplicationTest extends AbstractFinancerApplicationTest {
     }
 
     @Test
-    void testLogin() throws Exception {
+    public void testLogin() throws Exception {
         register(this.user, password);
         logout();
         login(this.user, password);
@@ -42,7 +44,7 @@ class LoginApplicationTest extends AbstractFinancerApplicationTest {
     }
 
     @Test
-    void testLogout() throws Exception {
+    public void testLogout() throws Exception {
         register(this.user, password);
         logout();
 

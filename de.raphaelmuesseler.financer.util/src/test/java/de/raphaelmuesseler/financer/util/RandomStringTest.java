@@ -3,9 +3,9 @@ package de.raphaelmuesseler.financer.util;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-class RandomStringTest {
+public class RandomStringTest {
     @Test
-    void testRandomStringLength() {
+    public void testRandomStringLength() {
         final int length = 32;
         final RandomString randomString = new RandomString(length);
 
@@ -13,7 +13,7 @@ class RandomStringTest {
     }
 
     @Test
-    void testRandomStringAlphabet() {
+    public void testRandomStringAlphabet() {
         final int length = 32;
         final RandomString randomString = new RandomString(length, RandomString.digits);
 
