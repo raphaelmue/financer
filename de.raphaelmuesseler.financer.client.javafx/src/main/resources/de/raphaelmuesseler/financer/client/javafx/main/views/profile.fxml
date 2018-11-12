@@ -20,7 +20,7 @@
                             <Label fx:id="surnameLabel" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
                             <Label text="%email" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
                             <Label fx:id="emailLabel" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
-                            <Label text="%birthDate" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                            <Label text="%birthdate" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
                             <Label fx:id="birthDateLabel" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
                         </GridPane>
                     </VBox>
