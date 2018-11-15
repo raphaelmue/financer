@@ -137,7 +137,7 @@ public class ProfileController implements Initializable {
                         JavaFXAsyncConnectionCall.super.onFailure(exception);
                         logger.log(Level.SEVERE, exception.getMessage(), exception);
                     }
-                }));
+                }, true));
             }
         }
     }
@@ -168,7 +168,7 @@ public class ProfileController implements Initializable {
                 JavaFXAsyncConnectionCall.super.onFailure(exception);
                 logger.log(Level.SEVERE, exception.getMessage(), exception);
             }
-        }));
+        }, true));
     }
 
     public void handleDeleteCategory() {
@@ -195,7 +195,7 @@ public class ProfileController implements Initializable {
                         JavaFXAsyncConnectionCall.super.onFailure(exception);
                         logger.log(Level.SEVERE, exception.getMessage(), exception);
                     }
-                }));
+                }, true));
             }
         }
     }

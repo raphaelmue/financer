@@ -12,7 +12,7 @@ public class LocalStorageImpl implements LocalStorage {
 
     public enum LocalStorageFile {
         USERDATA("/usr/usr.fnc", "user"),
-        SETTINGS("/usr/settings.fnc", "settings"),
+        SETTINGS("/usr/settings.fnc", "settings", "requests"),
         TRANSACTIONS("/data/transactions.fnc", "transactions", "fixedTransactions"),
         CATEGORIES("/data/categories.fnc", "categories");
 

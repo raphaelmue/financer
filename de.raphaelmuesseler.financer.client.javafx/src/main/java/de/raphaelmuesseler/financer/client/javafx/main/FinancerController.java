@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Locale;
 import java.util.ResourceBundle;
+import java.util.concurrent.Executors;
 
 public class FinancerController implements Initializable, Application {
     public BorderPane rootLayout;
@@ -52,6 +53,12 @@ public class FinancerController implements Initializable, Application {
     @FXML
     public void initialize(URL location, ResourceBundle resources) {
         ServerRequestHandler.setApplication(this);
+
+        try {
+            ServerRequestHandler.makeRequests(Executors.newCachedThreadPool());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         // setting up language
         Locale locale;

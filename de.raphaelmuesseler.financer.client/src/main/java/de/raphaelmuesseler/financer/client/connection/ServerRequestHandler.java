@@ -13,6 +13,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 public class ServerRequestHandler implements Runnable {
 
@@ -57,6 +58,7 @@ public class ServerRequestHandler implements Runnable {
             if (result.getException() == null) {
                 this.asyncCall.onSuccess(result);
                 application.setOnline();
+                makeRequests(Executors.newCachedThreadPool());
             }
         } catch (Exception e) {
             this.asyncCall.onFailure(e);
@@ -69,7 +71,7 @@ public class ServerRequestHandler implements Runnable {
                     calls = new ArrayList<>();
                 }
                 calls.add(this.serverRequest.getConnectionCall());
-                localStorage.writeObject("requests", Collections.singleton(calls));
+                localStorage.writeObject("requests", calls);
             }
         } finally {
             this.asyncCall.onAfter();

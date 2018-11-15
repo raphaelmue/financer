@@ -295,7 +295,7 @@ public class TransactionsController implements Initializable {
                     logger.log(Level.SEVERE, exception.getMessage(), exception);
                     JavaFXAsyncConnectionCall.super.onFailure(exception);
                 }
-            }));
+            }, true));
         }
     }
 
@@ -324,7 +324,7 @@ public class TransactionsController implements Initializable {
                     logger.log(Level.SEVERE, exception.getMessage(), exception);
                     JavaFXAsyncConnectionCall.super.onFailure(exception);
                 }
-            }));
+            }, true));
         }
     }
 
@@ -346,7 +346,7 @@ public class TransactionsController implements Initializable {
                         logger.log(Level.SEVERE, exception.getMessage(), exception);
                         JavaFXAsyncConnectionCall.super.onFailure(exception);
                     }
-                }));
+                }, true));
             }
         }
     }
@@ -403,7 +403,7 @@ public class TransactionsController implements Initializable {
                     logger.log(Level.SEVERE, exception.getMessage(), exception);
                     JavaFXAsyncConnectionCall.super.onFailure(exception);
                 }
-            }));
+            }, true));
         }
     }
 
@@ -437,7 +437,7 @@ public class TransactionsController implements Initializable {
                 public void onAfter() {
                     handleRefreshFixedTransactions();
                 }
-            }));
+            }, true));
         }
     }
 
@@ -462,7 +462,7 @@ public class TransactionsController implements Initializable {
                 public void onAfter() {
                     handleRefreshFixedTransactions();
                 }
-            }));
+            }, true));
         }
     }
 
