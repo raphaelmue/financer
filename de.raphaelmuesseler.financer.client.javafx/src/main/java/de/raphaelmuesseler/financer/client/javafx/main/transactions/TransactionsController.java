@@ -286,6 +286,8 @@ public class TransactionsController implements Initializable {
                     Platform.runLater(() -> {
                         // removing numbers in category's name
                         transactionsTableView.getItems().add(transaction);
+                        transactionsTableView.getColumns().get(1).setSortType(TableColumn.SortType.DESCENDING);
+                        transactionsTableView.getSortOrder().add(transactionsTableView.getColumns().get(1));
                     });
                 }
 
