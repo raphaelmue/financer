@@ -2,9 +2,11 @@ package de.raphaelmuesseler.financer.client.javafx.main;
 
 import com.jfoenix.controls.JFXHamburger;
 import com.jfoenix.transitions.hamburger.HamburgerSlideCloseTransition;
+import de.raphaelmuesseler.financer.client.connection.ServerRequestHandler;
 import de.raphaelmuesseler.financer.client.format.I18N;
 import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
 import de.raphaelmuesseler.financer.client.javafx.login.LoginApplication;
+import de.raphaelmuesseler.financer.client.local.Application;
 import de.raphaelmuesseler.financer.client.local.Settings;
 import de.raphaelmuesseler.financer.shared.model.User;
 import javafx.fxml.FXML;
@@ -28,8 +30,9 @@ import java.net.URL;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
-public class FinancerController implements Initializable {
+public class FinancerController implements Initializable, Application {
     public BorderPane rootLayout;
+    public BorderPane header;
     private static VBox loadingBox;
     public Button overviewTabBtn;
     public Button transactionsTabBtn;
@@ -41,13 +44,14 @@ public class FinancerController implements Initializable {
     public MenuItem logoutBtn;
     public JFXHamburger hamburgerBtn;
     public Label contentLabel;
+    public Label offlineLabel;
 
     private ResourceBundle resourceBundle;
     private LocalStorageImpl localStorage = (LocalStorageImpl) LocalStorageImpl.getInstance();
 
     @FXML
     public void initialize(URL location, ResourceBundle resources) {
-
+        ServerRequestHandler.setApplication(this);
 
         // setting up language
         Locale locale;
@@ -104,6 +108,18 @@ public class FinancerController implements Initializable {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public void setOffline() {
+        this.header.setStyle("-fx-background-color: #909ca8");
+        this.offlineLabel.setVisible(true);
+    }
+
+    @Override
+    public void setOnline() {
+        this.header.setStyle("-fx-background-color: #92cab1");
+        this.offlineLabel.setVisible(false);
     }
 
     public BorderPane getRootLayout() {

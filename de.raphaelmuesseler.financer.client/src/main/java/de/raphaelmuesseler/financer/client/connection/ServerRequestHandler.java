@@ -1,5 +1,6 @@
 package de.raphaelmuesseler.financer.client.connection;
 
+import de.raphaelmuesseler.financer.client.local.Application;
 import de.raphaelmuesseler.financer.client.local.LocalStorage;
 import de.raphaelmuesseler.financer.shared.connection.ConnectionCall;
 import de.raphaelmuesseler.financer.shared.connection.ConnectionResult;
@@ -19,6 +20,7 @@ public class ServerRequestHandler implements Runnable {
     private AsyncConnectionCall asyncCall;
     private boolean runLater;
     private static LocalStorage localStorage;
+    private static Application application;
 
     public ServerRequestHandler(User user, String methodName, Map<String, Object> parameters, AsyncConnectionCall asyncCall) {
         this(new ServerRequest(user, methodName, parameters), asyncCall, false);
@@ -42,6 +44,14 @@ public class ServerRequestHandler implements Runnable {
         this.runLater = runLater;
     }
 
+    public static void setLocalStorage(LocalStorage localStorage) {
+        ServerRequestHandler.localStorage = localStorage;
+    }
+
+    public static void setApplication(Application application) {
+        ServerRequestHandler.application = application;
+    }
+
     @Override
     public void run() {
         this.asyncCall.onBefore();
@@ -49,9 +59,11 @@ public class ServerRequestHandler implements Runnable {
             ConnectionResult result = this.serverRequest.make();
             if (result.getException() == null) {
                 this.asyncCall.onSuccess(result);
+                application.setOnline();
             }
         } catch (Exception e) {
             this.asyncCall.onFailure(e);
+            application.setOffline();
             if (e instanceof ConnectException && runLater) {
                 List<Object> calls;
                 if (localStorage.readObject("requests") != null) {

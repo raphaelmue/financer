@@ -1,6 +1,7 @@
 package de.raphaelmuesseler.financer.client.javafx.main;
 
 import de.raphaelmuesseler.financer.client.connection.ServerRequest;
+import de.raphaelmuesseler.financer.client.connection.ServerRequestHandler;
 import de.raphaelmuesseler.financer.client.format.Formatter;
 import de.raphaelmuesseler.financer.client.format.I18N;
 import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
@@ -50,6 +51,7 @@ public class FinancerApplication extends Application {
             } else {
                 locale = Locale.ENGLISH;
             }
+            ServerRequestHandler.setLocalStorage(LocalStorageImpl.getInstance());
             I18N.setLocalStorage(LocalStorageImpl.getInstance());
             Formatter.setSettings((Settings) LocalStorageImpl.getInstance().readObject("settings"));
             ResourceBundle resourceBundle = ResourceBundle.getBundle("Financer", locale);
