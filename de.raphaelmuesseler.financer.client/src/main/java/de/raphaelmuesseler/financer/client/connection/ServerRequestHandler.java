@@ -9,7 +9,6 @@ import de.raphaelmuesseler.financer.shared.model.User;
 import java.io.IOException;
 import java.net.ConnectException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executor;

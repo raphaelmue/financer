@@ -6,7 +6,6 @@ import de.raphaelmuesseler.financer.shared.model.User;
 
 import java.io.*;
 import java.net.Socket;
-import java.sql.Connection;
 import java.util.Map;
 
 public class ServerRequest {
