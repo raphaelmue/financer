@@ -34,10 +34,6 @@ public class ServerRequestHandler implements Runnable {
         this(new ServerRequest(user, methodName, parameters), asyncCall, runLater);
     }
 
-    private ServerRequestHandler(ServerRequest serverRequest, AsyncConnectionCall asyncCall) {
-        this(serverRequest, asyncCall, false);
-    }
-
     private ServerRequestHandler(ServerRequest serverRequest, AsyncConnectionCall asyncCall, boolean runLater) {
         this.serverRequest = serverRequest;
         this.asyncCall = asyncCall;
@@ -56,6 +52,7 @@ public class ServerRequestHandler implements Runnable {
     public void run() {
         this.asyncCall.onBefore();
         try {
+            application.showLoadingBox();
             ConnectionResult result = this.serverRequest.make();
             if (result.getException() == null) {
                 this.asyncCall.onSuccess(result);
@@ -76,6 +73,7 @@ public class ServerRequestHandler implements Runnable {
             }
         } finally {
             this.asyncCall.onAfter();
+            application.hideLoadingBox();
         }
     }
 

@@ -94,20 +94,18 @@ public class FinancerController implements Initializable, Application {
         });
     }
 
-    public static boolean showLoadingBox() {
+    @Override
+    public void showLoadingBox() {
         if (loadingBox != null) {
             loadingBox.setVisible(true);
-            return true;
         }
-        return false;
     }
 
-    public static boolean hideLoadingBox() {
+    @Override
+    public void hideLoadingBox() {
         if (loadingBox != null && loadingBox.isVisible()) {
             loadingBox.setVisible(false);
-            return true;
         }
-        return false;
     }
 
     @Override

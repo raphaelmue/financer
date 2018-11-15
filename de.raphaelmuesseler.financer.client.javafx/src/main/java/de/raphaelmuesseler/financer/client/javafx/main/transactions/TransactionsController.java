@@ -10,7 +10,6 @@ import de.raphaelmuesseler.financer.client.javafx.connection.RetrievalServiceImp
 import de.raphaelmuesseler.financer.client.javafx.dialogs.FinancerConfirmDialog;
 import de.raphaelmuesseler.financer.client.javafx.format.JavaFXFormatter;
 import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
-import de.raphaelmuesseler.financer.client.javafx.main.FinancerController;
 import de.raphaelmuesseler.financer.shared.connection.AsyncCall;
 import de.raphaelmuesseler.financer.shared.connection.ConnectionResult;
 import de.raphaelmuesseler.financer.shared.model.BaseCategory;
@@ -82,8 +81,6 @@ public class TransactionsController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        FinancerController.showLoadingBox();
-
         this.user = (User) this.localStorage.readObject("user");
 
         GlyphFont fontAwesome = GlyphFontRegistry.font("FontAwesome");
@@ -253,7 +250,6 @@ public class TransactionsController implements Initializable {
                     transactionsTableView.setItems(transactions);
                     transactionsTableView.getColumns().get(1).setSortType(TableColumn.SortType.DESCENDING);
                     transactionsTableView.getSortOrder().add(transactionsTableView.getColumns().get(1));
-                    FinancerController.hideLoadingBox();
                 });
             }
 
@@ -353,7 +349,7 @@ public class TransactionsController implements Initializable {
     }
 
     public void handleRefreshFixedTransactions() {
-        RetrievalServiceImpl.getInstance().fetchFixedTransactions(this.user, new AsyncCall<List<FixedTransaction>>() {
+        RetrievalServiceImpl.getInstance().fetchFixedTransactions(this.user, new AsyncCall<>() {
             @Override
             public void onSuccess(List<FixedTransaction> result) {
                 fixedTransactions = CollectionUtil.castListToObserableList(result);
@@ -361,8 +357,6 @@ public class TransactionsController implements Initializable {
                 Platform.runLater(() -> {
                     showFixedTransactions(categoriesListView.getSelectionModel().getSelectedItem());
                     categoriesListView.setCellFactory(param -> new TransactionsController.CategoryListViewImpl());
-                    FinancerController.hideLoadingBox();
-
                     loadTransactionsOverviewTable();
                 });
             }
