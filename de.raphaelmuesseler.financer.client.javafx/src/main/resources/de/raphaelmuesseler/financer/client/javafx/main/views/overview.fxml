@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXMasonryPane?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<VBox fx:controller="de.raphaelmuesseler.financer.client.javafx.main.overview.OverviewController"
+      xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" styleClass="content">
+    <JFXMasonryPane>
+        <VBox styleClass="content-box" prefWidth="250" prefHeight="250"
+              GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS">
+            <Label text="%lastTransactions" styleClass="content-heading"/>
+            <GridPane fx:id="lastTransactionsGridPane" maxWidth="Infinity" maxHeight="Infinity" />
+        </VBox>
+        <VBox styleClass="content-box" prefWidth="250" prefHeight="250"
+              GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS">
+            <Label text="%balance" styleClass="content-heading"/>
+            <GridPane fx:id="balanceGridPane" maxWidth="Infinity" maxHeight="Infinity" vgap="8"/>
+        </VBox>
+        <VBox styleClass="content-box" prefWidth="250" prefHeight="250"
+              GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS">
+            <Label text="%upcomingFixedTransactions" styleClass="content-heading"/>
+        </VBox>
+
+        <VBox styleClass="content-box" prefWidth="540" prefHeight="750"
+              GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS">
+            <Label text="%variableExpenses" styleClass="content-heading"/>
+        </VBox>
+        <VBox styleClass="content-box" prefWidth="250" prefHeight="250"
+              GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS">
+            <Label text="%overview" styleClass="content-heading"/>
+        </VBox>
+        <VBox styleClass="content-box" prefWidth="250" prefHeight="250"
+              GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS">
+            <Label text="%overview" styleClass="content-heading"/>
+        </VBox>
+    </JFXMasonryPane>
+</VBox>

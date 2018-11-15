@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox fx:controller="de.raphaelmuesseler.financer.client.javafx.main.settings.SettingsController"
+      xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" styleClass="content">
+
+    <GridPane hgap="20" vgap="20" maxHeight="Infinity" maxWidth="Infinity">
+        <VBox styleClass="content-box" GridPane.columnIndex="0" GridPane.rowIndex="0"
+              GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS">
+            <Label text="%settings" styleClass="content-heading"/>
+
+            <GridPane maxWidth="Infinity" maxHeight="Infinity" vgap="8">
+                <Label text="%language" GridPane.columnIndex="0" GridPane.rowIndex="0" GridPane.hgrow="ALWAYS"
+                       VBox.vgrow="ALWAYS"/>
+                <ComboBox fx:id="languageMenuComboBox" promptText="%language" GridPane.columnIndex="1"
+                          GridPane.rowIndex="0" GridPane.hgrow="ALWAYS" VBox.vgrow="ALWAYS"/>
+
+                <Label text="%currency" GridPane.columnIndex="0" GridPane.rowIndex="1" GridPane.hgrow="ALWAYS"
+                       VBox.vgrow="ALWAYS"/>
+                <ComboBox fx:id="currencyComboBox" promptText="%currency" GridPane.columnIndex="1" GridPane.rowIndex="1"
+                          GridPane.hgrow="ALWAYS" VBox.vgrow="ALWAYS"/>
+                <CheckBox fx:id="showSignCheckbox" text="%showCurrencySign" GridPane.columnIndex="2"
+                          GridPane.rowIndex="1" GridPane.hgrow="ALWAYS" VBox.vgrow="ALWAYS"/>
+            </GridPane>
+        </VBox>
+    </GridPane>
+
+</VBox>

@@ -1,0 +1,26 @@
+.categories-list-item {
+    -fx-padding: 8 10;
+}
+
+.transactions-list-item {
+    -fx-padding: 8 10;
+}
+
+.list-cell-title {
+    -fx-font-weight: 700;
+    -fx-font-size: 14;
+    -fx-padding: 0 0 5 0;
+}
+
+.amount-label {
+    -fx-font-weight: 700;
+    -fx-font-size: 12;
+}
+
+.pos-amount {
+    -fx-text-fill: #92cab1;
+}
+
+.neg-amount {
+    -fx-text-fill: #ff4a39;
+}

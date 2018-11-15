@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.VBox?>
+<?import com.jfoenix.controls.JFXSpinner?>
+<?import javafx.scene.control.Label?>
+<VBox xmlns="http://javafx.com/javafx" alignment="CENTER" visible="false" styleClass="loading-box">
+
+    <JFXSpinner />
+    <Label text="%loading" alignment="CENTER" textAlignment="CENTER"/>
+
+</VBox>
