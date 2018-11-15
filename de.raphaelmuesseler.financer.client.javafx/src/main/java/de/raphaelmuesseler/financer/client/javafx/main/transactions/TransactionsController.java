@@ -241,16 +241,10 @@ public class TransactionsController implements Initializable {
     }
 
     public void handleRefreshTransactions() {
-        RetrievalServiceImpl.getInstance().fetchTransactions(this.user, new AsyncCall<List<Transaction>>() {
+        RetrievalServiceImpl.getInstance().fetchTransactions(this.user, new AsyncCall<>() {
             @Override
             public void onSuccess(List<Transaction> result) {
                 transactions = CollectionUtil.castListToObserableList(result);
-
-                Platform.runLater(() -> {
-                    transactionsTableView.setItems(transactions);
-                    transactionsTableView.getColumns().get(1).setSortType(TableColumn.SortType.DESCENDING);
-                    transactionsTableView.getSortOrder().add(transactionsTableView.getColumns().get(1));
-                });
             }
 
             @Override
@@ -259,6 +253,15 @@ public class TransactionsController implements Initializable {
                 if (result != null && result.size() > 0) {
                     transactions = CollectionUtil.castListToObserableList(result);
                 }
+            }
+
+            @Override
+            public void onAfter() {
+                Platform.runLater(() -> {
+                    transactionsTableView.setItems(transactions);
+                    transactionsTableView.getColumns().get(1).setSortType(TableColumn.SortType.DESCENDING);
+                    transactionsTableView.getSortOrder().add(transactionsTableView.getColumns().get(1));
+                });
             }
         });
     }
@@ -353,12 +356,6 @@ public class TransactionsController implements Initializable {
             @Override
             public void onSuccess(List<FixedTransaction> result) {
                 fixedTransactions = CollectionUtil.castListToObserableList(result);
-
-                Platform.runLater(() -> {
-                    showFixedTransactions(categoriesListView.getSelectionModel().getSelectedItem());
-                    categoriesListView.setCellFactory(param -> new TransactionsController.CategoryListViewImpl());
-                    loadTransactionsOverviewTable();
-                });
             }
 
             @Override
@@ -367,6 +364,15 @@ public class TransactionsController implements Initializable {
                 if (result != null && result.size() > 0) {
                     fixedTransactions = CollectionUtil.castListToObserableList(result);
                 }
+            }
+
+            @Override
+            public void onAfter() {
+                Platform.runLater(() -> {
+                    showFixedTransactions(categoriesListView.getSelectionModel().getSelectedItem());
+                    categoriesListView.setCellFactory(param -> new TransactionsController.CategoryListViewImpl());
+                    loadTransactionsOverviewTable();
+                });
             }
         });
     }

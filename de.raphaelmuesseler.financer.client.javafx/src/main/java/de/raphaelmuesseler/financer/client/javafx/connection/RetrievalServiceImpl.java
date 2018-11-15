@@ -61,11 +61,15 @@ public class RetrievalServiceImpl implements RetrievalService {
 
             @Override
             public void onFailure(Exception exception) {
-                if (exception instanceof ConnectException) {
-                    // TODO set offline
-                } else {
+                asyncCall.onFailure(exception);
+                if (!(exception instanceof ConnectException)) {
                     JavaFXAsyncConnectionCall.super.onFailure(exception);
                 }
+            }
+
+            @Override
+            public void onAfter() {
+                asyncCall.onAfter();
             }
         }));
     }
@@ -96,11 +100,15 @@ public class RetrievalServiceImpl implements RetrievalService {
 
             @Override
             public void onFailure(Exception exception) {
-                if (exception instanceof ConnectException) {
-                    // TODO set offline
-                } else {
+                asyncCall.onFailure(exception);
+                if (!(exception instanceof ConnectException)) {
                     JavaFXAsyncConnectionCall.super.onFailure(exception);
                 }
+            }
+
+            @Override
+            public void onAfter() {
+                asyncCall.onAfter();
             }
         }));
     }
@@ -130,13 +138,15 @@ public class RetrievalServiceImpl implements RetrievalService {
 
             @Override
             public void onFailure(Exception exception) {
-                if (exception instanceof ConnectException) {
-                    // TODO set offline
-                } else {
+                asyncConnectionCall.onFailure(exception);
+                if (!(exception instanceof ConnectException)) {
                     JavaFXAsyncConnectionCall.super.onFailure(exception);
-                    asyncConnectionCall.onFailure(exception);
                 }
+            }
 
+            @Override
+            public void onAfter() {
+                asyncConnectionCall.onAfter();
             }
         }));
     }

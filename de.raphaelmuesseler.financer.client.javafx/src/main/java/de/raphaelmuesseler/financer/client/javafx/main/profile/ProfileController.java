@@ -81,25 +81,31 @@ public class ProfileController implements Initializable {
             @Override
             public void onSuccess(BaseCategory result) {
                 categories = result;
-                Platform.runLater(() -> {
-                    createTreeView();
-                    categoriesTreeView.setEditable(false);
-                    categoriesTreeView.setShowRoot(false);
-                    categoriesTreeView.setRoot(treeStructure);
-                    expandTreeView(treeStructure);
-                    categoriesTreeView.setCellFactory(param -> getCellFactory());
-                    categoriesTreeView.setOnEditCommit(event -> {
-                        event.getNewValue().getValue().setId(event.getOldValue().getValue().getId());
-                        event.getNewValue().getValue().setParentId(event.getOldValue().getValue().getParentId());
-                        event.getNewValue().getValue().setRootId(event.getOldValue().getValue().getRootId());
-                        handleUpdateCategory(event.getNewValue());
-                    });
-                });
             }
 
             @Override
             public void onFailure(Exception exception) {
                 categories = (BaseCategory) localStorage.readObject("categories");
+            }
+
+            @Override
+            public void onAfter() {
+                if (categories != null) {
+                    Platform.runLater(() -> {
+                        createTreeView();
+                        categoriesTreeView.setEditable(false);
+                        categoriesTreeView.setShowRoot(false);
+                        categoriesTreeView.setRoot(treeStructure);
+                        expandTreeView(treeStructure);
+                        categoriesTreeView.setCellFactory(param -> getCellFactory());
+                        categoriesTreeView.setOnEditCommit(event -> {
+                            event.getNewValue().getValue().setId(event.getOldValue().getValue().getId());
+                            event.getNewValue().getValue().setParentId(event.getOldValue().getValue().getParentId());
+                            event.getNewValue().getValue().setRootId(event.getOldValue().getValue().getRootId());
+                            handleUpdateCategory(event.getNewValue());
+                        });
+                    });
+                }
             }
         });
     }
