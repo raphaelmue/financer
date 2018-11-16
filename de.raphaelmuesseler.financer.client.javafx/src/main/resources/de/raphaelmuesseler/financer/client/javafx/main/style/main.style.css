@@ -1,6 +1,6 @@
 .content {
     -fx-background-color: #f5f5f5;
-    -fx-padding: 20;
+    -fx-padding: 0;
     -fx-text-overrun: scroll;
 }
 

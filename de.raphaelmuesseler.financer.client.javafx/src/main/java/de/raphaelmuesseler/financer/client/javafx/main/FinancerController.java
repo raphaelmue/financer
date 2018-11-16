@@ -12,6 +12,7 @@ import de.raphaelmuesseler.financer.shared.model.User;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuButton;
@@ -99,6 +100,8 @@ public class FinancerController implements Initializable, Application {
             burgerTask.setRate(burgerTask.getRate() * -1);
             burgerTask.play();
         });
+
+        handleShowOverviewContent();
     }
 
     @Override
@@ -186,6 +189,7 @@ public class FinancerController implements Initializable, Application {
             stackPane.getChildren().add(FXMLLoader.load(url, this.resourceBundle));
             stackPane.getChildren().add(loadingBox);
             this.rootLayout.setCenter(stackPane);
+            BorderPane.setMargin(stackPane, new Insets(20));
             // TODO bring center to back
         } catch (IOException e) {
             e.printStackTrace();
