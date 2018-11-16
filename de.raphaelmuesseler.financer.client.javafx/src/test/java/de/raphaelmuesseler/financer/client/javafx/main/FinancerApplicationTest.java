@@ -31,6 +31,7 @@ public class FinancerApplicationTest extends AbstractFinancerApplicationTest {
     @Test
     public void testCreateCategory() {
         addCategory(category);
+        sleep(500);
         Tree<Category> categoryTree = TreeUtil.getByValue(((BaseCategory) LocalStorageImpl.getInstance().readObject("categories")),
                 new CategoryTree(BaseCategory.CategoryClass.FIXED_EXPENSES, category),
                 (o1, o2) -> CASE_INSENSITIVE_ORDER.compare(o1.getName(), o2.getName()));

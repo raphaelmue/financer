@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import com.jfoenix.controls.JFXSpinner?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.Image?>
@@ -61,7 +62,7 @@
     </VBox>
     <VBox fx:id="progressIndicatorBox" alignment="CENTER" spacing="20"
           style="-fx-background-color: rgba(255, 255, 255, 0.6);" visible="false">
-        <ProgressIndicator/>
-        <Label text="Please wait ..." textAlignment="CENTER"/>
+        <JFXSpinner/>
+        <Label text="%loading" textAlignment="CENTER"/>
     </VBox>
 </StackPane>
