@@ -146,7 +146,7 @@ public class FinancerService {
         values.put("salt", user.getSalt());
         values.put("name", user.getName());
         values.put("surname", user.getSurname());
-        values.put("birthdate", user.getBirthdate());
+        values.put("birthDate", user.getBirthdate());
 
         this.database.insert(Database.Table.USERS, values);
 

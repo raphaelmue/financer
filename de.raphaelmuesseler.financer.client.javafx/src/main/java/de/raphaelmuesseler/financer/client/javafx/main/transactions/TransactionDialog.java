@@ -47,28 +47,34 @@ class TransactionDialog extends FinancerDialog<Transaction> {
 
         gridPane.add(new Label(I18N.get("amount")), 0, 0);
         this.amountField = new DoubleField();
+        this.amountField.setId("amountTextField");
         gridPane.add(this.amountField, 1, 0);
 
         gridPane.add(new Label(I18N.get("category")), 0, 1);
         this.categoryComboBox = new ComboBox<>();
+        this.categoryComboBox.setId("categoryComboBox");
         this.categoryComboBox.setPlaceholder(new Label(I18N.get("selectCategory")));
 
         gridPane.add(this.categoryComboBox, 1, 1);
 
         gridPane.add(new Label(I18N.get("product")), 0, 2);
         this.productField = new TextField();
+        this.productField.setId("productTextField");
         gridPane.add(this.productField, 1, 2);
 
         gridPane.add(new Label(I18N.get("purpose")), 0, 3);
         this.purposeField = new TextField();
+        this.purposeField.setId("purposeTextField");
         gridPane.add(purposeField, 1, 3);
 
         gridPane.add(new Label(I18N.get("shop")), 0, 4);
         this.shopField = new TextField();
+        this.shopField.setId("shopTextField");
         gridPane.add(this.shopField, 1, 4);
 
         gridPane.add(new Label(I18N.get("product")), 0, 5);
         this.valueDateField = new JFXDatePicker();
+        this.valueDateField.setId("valueDatePicker");
         gridPane.add(this.valueDateField, 1, 5);
 
         return gridPane;

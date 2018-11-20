@@ -7,13 +7,12 @@ import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
 import de.raphaelmuesseler.financer.client.javafx.login.LoginApplication;
 import de.raphaelmuesseler.financer.server.db.Database;
 import de.raphaelmuesseler.financer.server.main.Server;
+import de.raphaelmuesseler.financer.shared.model.BaseCategory;
 import de.raphaelmuesseler.financer.shared.model.Category;
 import de.raphaelmuesseler.financer.shared.model.User;
+import de.raphaelmuesseler.financer.shared.model.transactions.Transaction;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.Hyperlink;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import org.junit.jupiter.api.AfterAll;
@@ -97,20 +96,49 @@ public class AbstractFinancerApplicationTest extends ApplicationTest {
         ApplicationTest.launch(LoginApplication.class);
     }
 
-    void addCategory(Category category) {
+    void addCategory(Category category, BaseCategory.CategoryClass categoryClass) {
         register(this.user, this.password);
         clickOn((Button) find("#profileTabBtn"));
         press(KeyCode.RIGHT).release(KeyCode.RIGHT);
         press(KeyCode.RIGHT).release(KeyCode.RIGHT);
 
         Button newCategoryBtn = find("#newCategoryBtn");
-        clickOn(I18N.get("fixedExpenses"));
+        clickOn(I18N.get(categoryClass.getName()));
         clickOn(newCategoryBtn);
 
         JFXTextField categoryNameField = find("#inputDialogTextField");
         categoryNameField.setText("");
         clickOn(categoryNameField);
         write(category.getName());
+
+        confirmDialog();
+    }
+
+    void addTransaction(Transaction transaction) {
+        addCategory(transaction.getCategoryTree().getValue(), BaseCategory.CategoryClass.VARIABLE_EXPENSES);
+        clickOn((Button) find("#transactionsTabBtn"));
+        press(KeyCode.RIGHT).release(KeyCode.RIGHT);
+        press(KeyCode.RIGHT).release(KeyCode.RIGHT);
+
+        clickOn((Button) find("#newTransactionBtn"));
+        sleep(500);
+        TextField amountTextField = find("#amountTextField");
+        clickOn(amountTextField);
+        press(KeyCode.BACK_SPACE).release(KeyCode.BACK_SPACE);
+        press(KeyCode.BACK_SPACE).release(KeyCode.BACK_SPACE);
+        press(KeyCode.BACK_SPACE).release(KeyCode.BACK_SPACE);
+        write(Double.toString(transaction.getAmount()));
+        clickOn((ComboBox) find("#categoryComboBox"));
+        press(KeyCode.DOWN).release(KeyCode.DOWN);
+        press(KeyCode.ENTER).release(KeyCode.ENTER);
+        clickOn((TextField) find("#productTextField"));
+        write(transaction.getProduct());
+        clickOn((TextField) find("#purposeTextField"));
+        write(transaction.getPurpose());
+        clickOn((TextField) find("#shopTextField"));
+        write(transaction.getShop());
+        clickOn((JFXDatePicker) find("#valueDatePicker"));
+        write(transaction.getValueDate().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
 
         confirmDialog();
     }
