@@ -144,8 +144,7 @@ public class AbstractFinancerApplicationTest extends ApplicationTest {
     }
 
     final void confirmDialog() {
-        press(KeyCode.TAB).release(KeyCode.TAB);
-        press(KeyCode.ENTER).release(KeyCode.ENTER);
+        clickOn("OK");
     }
 
     @AfterEach

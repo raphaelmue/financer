@@ -10,7 +10,7 @@
         <VBox styleClass="tab-box" GridPane.columnIndex="0" GridPane.rowIndex="0"
               GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS">
             <JFXTabPane styleClass="tab-container">
-                <Tab text="%overview" closable="false" styleClass="tab">
+                <Tab fx:id="transactionOverviewTab" text="%overview" closable="false" styleClass="tab">
                     <VBox styleClass="tab-content">
                         <Label text="%overview" styleClass="content-heading"/>
                             <TableView fx:id="transactionsOverviewTableView"/>
