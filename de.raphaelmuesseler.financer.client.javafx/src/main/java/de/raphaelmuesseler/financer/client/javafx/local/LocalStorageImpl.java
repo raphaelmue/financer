@@ -61,9 +61,10 @@ public class LocalStorageImpl implements LocalStorage {
     private Map<String, Object> readFile(File file) {
         if (!file.exists()) {
             try {
-                file.createNewFile();
-                return null;
-            } catch (IOException ignored) {}
+                return file.getParentFile().mkdirs() && file.createNewFile() ? null : null;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
         Map<String, Object> result = null;
@@ -77,6 +78,13 @@ public class LocalStorageImpl implements LocalStorage {
 
     private boolean writeFile(File file, Map<String, Object> data) {
         boolean result = false;
+        if (!file.exists()) {
+            try {
+                return file.getParentFile().mkdirs() && file.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
         try (ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream(file))) {
             outputStream.writeObject(data);
             result = true;
@@ -100,7 +108,7 @@ public class LocalStorageImpl implements LocalStorage {
         }
 
         map.put(key, object);
-        return this.writeFile(LocalStorageFile.getFileByKey(key), map);
+        return this.writeFile(Objects.requireNonNull(LocalStorageFile.getFileByKey(key)), map);
     }
 
     @Override
@@ -114,7 +122,7 @@ public class LocalStorageImpl implements LocalStorage {
         }
 
         map.remove(key);
-        return this.writeFile(LocalStorageFile.getFileByKey(key), map);
+        return this.writeFile(Objects.requireNonNull(LocalStorageFile.getFileByKey(key)), map);
     }
 
     @Override
