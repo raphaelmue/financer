@@ -43,12 +43,14 @@ public class TreeUtil {
     }
 
     public static <T> Tree<T> getByValue(Tree<T> root, Tree<T> treeItem, Comparator<T> comparator) {
-        for (Tree<T> item : root.getChildren()) {
-            if (comparator.compare(treeItem.getValue(), item.getValue()) == 0) {
-                return item;
-            } else {
-                if (TreeUtil.getByValue(item, treeItem, comparator) != null) {
-                    return TreeUtil.getByValue(item, treeItem, comparator);
+        if (root != null) {
+            for (Tree<T> item : root.getChildren()) {
+                if (comparator.compare(treeItem.getValue(), item.getValue()) == 0) {
+                    return item;
+                } else {
+                    if (TreeUtil.getByValue(item, treeItem, comparator) != null) {
+                        return TreeUtil.getByValue(item, treeItem, comparator);
+                    }
                 }
             }
         }

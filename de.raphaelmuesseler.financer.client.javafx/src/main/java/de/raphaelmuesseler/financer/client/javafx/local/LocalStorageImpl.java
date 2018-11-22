@@ -80,7 +80,8 @@ public class LocalStorageImpl implements LocalStorage {
         boolean result = false;
         if (!file.exists()) {
             try {
-                return file.getParentFile().mkdirs() && file.createNewFile();
+                file.getParentFile().mkdirs();
+                file.createNewFile();
             } catch (IOException e) {
                 e.printStackTrace();
             }

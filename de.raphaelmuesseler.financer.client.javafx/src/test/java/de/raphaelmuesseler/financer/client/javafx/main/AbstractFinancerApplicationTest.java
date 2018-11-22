@@ -71,15 +71,15 @@ public class AbstractFinancerApplicationTest extends ApplicationTest {
         write(user.getSurname());
         clickOn((TextField) find("#registerEmailTextField"));
         write(user.getEmail());
-        clickOn((JFXDatePicker) find("#registerBirthDatePicker"));
-        write(user.getBirthDateAsLocalDate().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
+        JFXDatePicker birthDatePicker = find("#registerBirthDatePicker");
+        birthDatePicker.setValue(user.getBirthDateAsLocalDate());
         clickOn((PasswordField) find("#registerPasswordTextField"));
         write(password);
         clickOn((PasswordField) find("#registerRepeatPasswordTextField"));
         write(password);
         confirmDialog();
 
-        sleep(2000);
+        sleep(500);
     }
 
     void login(User user, String password) {
@@ -116,6 +116,7 @@ public class AbstractFinancerApplicationTest extends ApplicationTest {
 
     void addTransaction(Transaction transaction) {
         addCategory(transaction.getCategoryTree().getValue(), BaseCategory.CategoryClass.VARIABLE_EXPENSES);
+        sleep(500);
         clickOn((Button) find("#transactionsTabBtn"));
         press(KeyCode.RIGHT).release(KeyCode.RIGHT);
         press(KeyCode.RIGHT).release(KeyCode.RIGHT);
@@ -137,8 +138,8 @@ public class AbstractFinancerApplicationTest extends ApplicationTest {
         write(transaction.getPurpose());
         clickOn((TextField) find("#shopTextField"));
         write(transaction.getShop());
-        clickOn((JFXDatePicker) find("#valueDatePicker"));
-        write(transaction.getValueDate().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
+        JFXDatePicker valueDatePicker = find("#valueDatePicker");
+        valueDatePicker.setValue(transaction.getValueDate());
 
         confirmDialog();
     }
