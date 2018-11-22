@@ -41,6 +41,13 @@
         <module>de.raphaelmuesseler.financer.shared</module>
     </modules>
 
+    <properties>
+        <java.version>11</java.version>
+
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
+    </properties>
+
     <profiles>
         <profile>
             <id>backend</id>

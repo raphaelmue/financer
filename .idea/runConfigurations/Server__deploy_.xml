@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Server (deploy)" type="Application" factoryName="Application">
+  <configuration default="false" name="Server (deploy)" type="Application" factoryName="Application" singleton="true">
     <option name="MAIN_CLASS_NAME" value="de.raphaelmuesseler.financer.server.main.Server" />
     <module name="de.raphaelmuesseler.financer.server" />
     <extension name="coverage">
