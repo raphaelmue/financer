@@ -9,7 +9,6 @@ import de.raphaelmuesseler.financer.client.javafx.connection.RetrievalServiceImp
 import de.raphaelmuesseler.financer.client.javafx.dialogs.FinancerConfirmDialog;
 import de.raphaelmuesseler.financer.client.javafx.dialogs.FinancerTextInputDialog;
 import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
-import de.raphaelmuesseler.financer.shared.connection.AsyncCall;
 import de.raphaelmuesseler.financer.shared.connection.ConnectionResult;
 import de.raphaelmuesseler.financer.shared.model.BaseCategory;
 import de.raphaelmuesseler.financer.shared.model.Category;
@@ -77,30 +76,22 @@ public class ProfileController implements Initializable {
     }
 
     public void handleRefreshCategories() {
-        RetrievalServiceImpl.getInstance().fetchCategories(this.user, new AsyncCall<BaseCategory>() {
-            @Override
-            public void onSuccess(BaseCategory result) {
-                categories = result;
-                Platform.runLater(() -> {
-                    createTreeView();
-                    categoriesTreeView.setEditable(false);
-                    categoriesTreeView.setShowRoot(false);
-                    categoriesTreeView.setRoot(treeStructure);
-                    expandTreeView(treeStructure);
-                    categoriesTreeView.setCellFactory(param -> getCellFactory());
-                    categoriesTreeView.setOnEditCommit(event -> {
-                        event.getNewValue().getValue().setId(event.getOldValue().getValue().getId());
-                        event.getNewValue().getValue().setParentId(event.getOldValue().getValue().getParentId());
-                        event.getNewValue().getValue().setRootId(event.getOldValue().getValue().getRootId());
-                        handleUpdateCategory(event.getNewValue());
-                    });
+        RetrievalServiceImpl.getInstance().fetchAllData(this.user, object -> {
+            categories = (BaseCategory) localStorage.readObject("categories");
+            Platform.runLater(() -> {
+                createTreeView();
+                categoriesTreeView.setEditable(false);
+                categoriesTreeView.setShowRoot(false);
+                categoriesTreeView.setRoot(treeStructure);
+                expandTreeView(treeStructure);
+                categoriesTreeView.setCellFactory(param -> getCellFactory());
+                categoriesTreeView.setOnEditCommit(event -> {
+                    event.getNewValue().getValue().setId(event.getOldValue().getValue().getId());
+                    event.getNewValue().getValue().setParentId(event.getOldValue().getValue().getParentId());
+                    event.getNewValue().getValue().setRootId(event.getOldValue().getValue().getRootId());
+                    handleUpdateCategory(event.getNewValue());
                 });
-            }
-
-            @Override
-            public void onFailure(Exception exception) {
-                categories = (BaseCategory) localStorage.readObject("categories");
-            }
+            });
         });
     }
 
