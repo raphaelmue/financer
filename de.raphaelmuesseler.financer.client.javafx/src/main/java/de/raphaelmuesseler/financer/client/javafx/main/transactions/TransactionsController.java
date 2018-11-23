@@ -117,14 +117,11 @@ public class TransactionsController implements Initializable {
             TreeUtil.numberItemsByValue(this.categories, (result, prefix) -> result.getValue().setPrefix(prefix));
         }
 
-        Platform.runLater(() -> {
-            this.loadTransactionsTable();
-            this.loadFixedTransactionsTable();
-        });
+        this.loadTransactionsTable();
+        this.loadFixedTransactionsTable();
     }
 
     private void loadTransactionsOverviewTable() {
-
         final int numberOfMaxMonths = 6;
         final List<TableColumn<TransactionOverviewRow, String>> monthColumns = new ArrayList<>(numberOfMaxMonths);
         final Map<Category, TransactionOverviewRow> rows = new HashMap<>();
