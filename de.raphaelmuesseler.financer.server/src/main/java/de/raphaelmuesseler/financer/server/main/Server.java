@@ -23,6 +23,7 @@ public class Server {
     public static void main(String[] args) {
         int port = -1;
         Database.DatabaseName databaseName = null;
+        Database.setHost(false);
         try {
             for (String arg : args) {
                 if (arg.contains("--port=")) {
