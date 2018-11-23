@@ -32,6 +32,11 @@ public class TransactionAmount implements Serializable, AmountProvider {
         return (DateUtil.checkIfMonthsAreEqual(localDate, this.valueDate) ? this.getAmount() : 0);
     }
 
+    @Override
+    public double getAmount(LocalDate startDate, LocalDate endDate) {
+        return (startDate.compareTo(this.valueDate) <= 0 && endDate.compareTo(this.valueDate) >= 0 ? this.getAmount() : 0);
+    }
+
     public LocalDate getValueDate() {
         return valueDate;
     }

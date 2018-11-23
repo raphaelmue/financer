@@ -4,13 +4,20 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.chart.PieChart?>
+<?import com.jfoenix.controls.JFXDatePicker?>
 <VBox fx:controller="de.raphaelmuesseler.financer.client.javafx.main.statistics.StatisticsController"
       xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" styleClass="content">
 
     <JFXMasonryPane>
-        <VBox styleClass="content-box" prefWidth="250" prefHeight="250">
+        <VBox styleClass="content-box" prefWidth="500" prefHeight="250">
             <Label text="%variableExpensesDistribution" styleClass="content-heading"/>
-            <PieChart fx:id="variableExpensesDistributionChart" labelsVisible="false"/>
+            <HBox spacing="10" prefWidth="Infinity" alignment="CENTER">
+                <Label text="%from" />
+                <JFXDatePicker fx:id="fromDatePicker" />
+                <Label text="%to" />
+                <JFXDatePicker fx:id="toDatePicker" />
+            </HBox>
+            <PieChart fx:id="variableExpensesDistributionChart" labelsVisible="false"  legendSide="LEFT"/>
             <Label fx:id="variableExpensesNoDataLabel" styleClass="warning-label" text="%noData" managed="false" />
         </VBox>
     </JFXMasonryPane>
