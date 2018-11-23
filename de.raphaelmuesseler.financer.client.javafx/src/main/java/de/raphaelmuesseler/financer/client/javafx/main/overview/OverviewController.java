@@ -39,13 +39,13 @@ public class OverviewController implements Initializable {
         List<Transaction> transactions = this.localStorage.readList("transactions");
         this.lastTransactionsGridPane.setVgap(8);
         if (transactions != null && transactions.size() > 0) {
-            int counter = 0;
+            int counter = 5;
             for (Transaction transaction : transactions) {
                 // LAST TRANSACTIONS
-                if (counter > 5) {
+                if (counter < 0) {
                     break;
                 }
-                this.lastTransactionsGridPane.add(new Label(transaction.getPurpose() + " (" + transaction.getProduct() + ")"),
+                this.lastTransactionsGridPane.add(new Label(transaction.getCategoryTree().getValue().getName()),
                         0, counter);
 
                 Label amountLabel = Formatter.formatAmountLabel(transaction.getAmount());
@@ -53,7 +53,7 @@ public class OverviewController implements Initializable {
                 GridPane.setHalignment(amountLabel, HPos.RIGHT);
                 GridPane.setHgrow(amountLabel, Priority.ALWAYS);
                 GridPane.setVgrow(amountLabel, Priority.ALWAYS);
-                counter++;
+                counter--;
             }
         } else {
             this.lastTransactionsGridPane.add(new Label(I18N.get("noRecentTransactions")), 0, 0);
