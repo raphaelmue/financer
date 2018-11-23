@@ -30,7 +30,7 @@ public class StatisticsController implements Initializable {
                 BaseCategory.CategoryClass.VARIABLE_EXPENSES).getChildren()) {
             double amount = ((CategoryTree) categoryTree).getAmount(LocalDate.of(2018, 9, 10));
             if (amount != 0) {
-                variableExpensesData.add(new PieChart.Data(categoryTree.getValue().getName(), amount));
+                variableExpensesData.add(new PieChart.Data(categoryTree.getValue().getName(), Math.abs(amount)));
             }
         }
 
