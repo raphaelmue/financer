@@ -148,7 +148,7 @@ public class TransactionsController implements Initializable {
             column.setSortable(false);
             int index = i;
             column.setCellValueFactory(param -> new SimpleStringProperty(Double.toString(param.getValue().amounts[index])));
-            column.setCellFactory(param -> new TableCell<TransactionOverviewRow, String>() {
+            column.setCellFactory(param -> new TableCell<>() {
                 @Override
                 protected void updateItem(String item, boolean empty) {
                     super.updateItem(item, empty);
@@ -161,8 +161,7 @@ public class TransactionsController implements Initializable {
         this.transactionsOverviewTableView.getColumns().addAll(monthColumns);
 
         List<TransactionOverviewRow> items = new ArrayList<>(rows.values());
-        Collections.sort(items, (o1, o2) ->
-                String.CASE_INSENSITIVE_ORDER.compare(Formatter.formatCategoryName(o1.getCategory().getValue()),
+        items.sort((o1, o2) -> String.CASE_INSENSITIVE_ORDER.compare(Formatter.formatCategoryName(o1.getCategory().getValue()),
                         Formatter.formatCategoryName(o2.getCategory().getValue())));
         this.transactionsOverviewTableView.getItems().addAll(items);
     }
@@ -178,7 +177,7 @@ public class TransactionsController implements Initializable {
         valueDateColumn.setCellValueFactory(new PropertyValueFactory<>("valueDate"));
         amountColumn.setCellValueFactory(new PropertyValueFactory<>("amount"));
         amountColumn.setStyle("-fx-alignment: CENTER-RIGHT;");
-        amountColumn.setCellFactory(param -> new TableCell<Transaction, Double>() {
+        amountColumn.setCellFactory(param -> new TableCell<>() {
             @Override
             protected void updateItem(Double item, boolean empty) {
                 super.updateItem(item, empty);
@@ -241,7 +240,7 @@ public class TransactionsController implements Initializable {
     }
 
     public void handleRefreshTransactions() {
-        RetrievalServiceImpl.getInstance().fetchTransactions(this.user, new AsyncCall<List<Transaction>>() {
+        RetrievalServiceImpl.getInstance().fetchTransactions(this.user, new AsyncCall<>() {
             @Override
             public void onSuccess(List<Transaction> result) {
                 transactions = CollectionUtil.castListToObserableList(result);
@@ -350,7 +349,7 @@ public class TransactionsController implements Initializable {
     }
 
     public void handleRefreshFixedTransactions() {
-        RetrievalServiceImpl.getInstance().fetchFixedTransactions(this.user, new AsyncCall<List<FixedTransaction>>() {
+        RetrievalServiceImpl.getInstance().fetchFixedTransactions(this.user, new AsyncCall<>() {
             @Override
             public void onSuccess(List<FixedTransaction> result) {
                 fixedTransactions = CollectionUtil.castListToObserableList(result);
@@ -552,7 +551,7 @@ public class TransactionsController implements Initializable {
 
                 this.isVariableLabel.setText(I18N.get("isVariable") + ": " +
                         (item.isVariable() ? I18N.get("yes") : I18N.get("no")));
-                this.dayLabel.setText(I18N.get("valueDate") + ": " + Integer.toString(item.getDay()));
+                this.dayLabel.setText(I18N.get("valueDate") + ": " + item.getDay());
 
 
                 setGraphic(this.borderPane);
