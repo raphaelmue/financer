@@ -17,6 +17,7 @@ import de.raphaelmuesseler.financer.shared.model.BaseCategory;
 import de.raphaelmuesseler.financer.shared.model.Category;
 import de.raphaelmuesseler.financer.shared.model.CategoryTree;
 import de.raphaelmuesseler.financer.shared.model.User;
+import de.raphaelmuesseler.financer.shared.model.transactions.AbstractTransaction;
 import de.raphaelmuesseler.financer.shared.model.transactions.FixedTransaction;
 import de.raphaelmuesseler.financer.shared.model.transactions.Transaction;
 import de.raphaelmuesseler.financer.util.collections.CollectionUtil;
@@ -24,7 +25,6 @@ import de.raphaelmuesseler.financer.util.collections.TreeUtil;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.ObservableList;
-import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
@@ -48,27 +48,16 @@ import static de.raphaelmuesseler.financer.util.date.Month.getMonthByNumber;
 
 public class TransactionsController implements Initializable {
 
-    @FXML
     public JFXButton refreshTransactionsBtn;
-    @FXML
     public JFXButton newTransactionBtn;
-    @FXML
     public JFXButton editTransactionBtn;
-    @FXML
     public JFXButton deleteTransactionBtn;
-    @FXML
     public TableView<Transaction> transactionsTableView;
-    @FXML
     public JFXButton refreshFixedTransactionsBtn;
-    @FXML
     public JFXButton newFixedTransactionBtn;
-    @FXML
     public JFXButton editFixedTransactionBtn;
-    @FXML
     public JFXButton deleteFixedTransactionBtn;
-    @FXML
     public JFXListView<CategoryTree> categoriesListView;
-    @FXML
     public JFXListView<FixedTransaction> fixedTransactionsListView;
     public TableView<TransactionOverviewRow> transactionsOverviewTableView;
 
@@ -138,17 +127,17 @@ public class TransactionsController implements Initializable {
 
         TableColumn<TransactionOverviewRow, String> categoryColumn = new TableColumn<>(I18N.get("category"));
         categoryColumn.setCellValueFactory(param -> new SimpleStringProperty(JavaFXFormatter.formatCategoryName(param.getValue().getCategory())));
-        categoryColumn.prefWidthProperty().bind(this.transactionsOverviewTableView.widthProperty().divide(8 / 2).add(-3));
+        this.adjustColumnWidth(categoryColumn, this.transactionsOverviewTableView, 4);
         categoryColumn.setSortable(false);
 
         for (int i = 0; i < numberOfMaxMonths; i++) {
             TableColumn<TransactionOverviewRow, String> column = new TableColumn<>(I18N.get(Objects.requireNonNull(getMonthByNumber(LocalDate.now().minusMonths(i).getMonthValue())).getName()));
-            column.prefWidthProperty().bind(this.transactionsOverviewTableView.widthProperty().divide(8).add(-3));
+            this.adjustColumnWidth(column, this.transactionsOverviewTableView, 8);
             column.setStyle("-fx-alignment: CENTER-RIGHT;");
             column.setSortable(false);
             int index = i;
             column.setCellValueFactory(param -> new SimpleStringProperty(Double.toString(param.getValue().amounts[index])));
-            column.setCellFactory(param -> new TableCell<TransactionOverviewRow, String>() {
+            column.setCellFactory(param -> new TableCell<>() {
                 @Override
                 protected void updateItem(String item, boolean empty) {
                     super.updateItem(item, empty);
@@ -161,9 +150,8 @@ public class TransactionsController implements Initializable {
         this.transactionsOverviewTableView.getColumns().addAll(monthColumns);
 
         List<TransactionOverviewRow> items = new ArrayList<>(rows.values());
-        Collections.sort(items, (o1, o2) ->
-                String.CASE_INSENSITIVE_ORDER.compare(Formatter.formatCategoryName(o1.getCategory().getValue()),
-                        Formatter.formatCategoryName(o2.getCategory().getValue())));
+        items.sort((o1, o2) -> String.CASE_INSENSITIVE_ORDER.compare(Formatter.formatCategoryName(o1.getCategory().getValue()),
+                Formatter.formatCategoryName(o2.getCategory().getValue())));
         this.transactionsOverviewTableView.getItems().addAll(items);
     }
 
@@ -178,7 +166,7 @@ public class TransactionsController implements Initializable {
         valueDateColumn.setCellValueFactory(new PropertyValueFactory<>("valueDate"));
         amountColumn.setCellValueFactory(new PropertyValueFactory<>("amount"));
         amountColumn.setStyle("-fx-alignment: CENTER-RIGHT;");
-        amountColumn.setCellFactory(param -> new TableCell<Transaction, Double>() {
+        amountColumn.setCellFactory(param -> new TableCell<>() {
             @Override
             protected void updateItem(Double item, boolean empty) {
                 super.updateItem(item, empty);
@@ -191,14 +179,19 @@ public class TransactionsController implements Initializable {
         shopColumn.setCellValueFactory(new PropertyValueFactory<>("shop"));
 
 
-        valueDateColumn.prefWidthProperty().bind(this.transactionsTableView.widthProperty().divide(6).add(-3));
-        amountColumn.prefWidthProperty().bind(this.transactionsTableView.widthProperty().divide(6).add(-3));
-        categoryColumn.prefWidthProperty().bind(this.transactionsTableView.widthProperty().divide(6).add(-3));
-        productColumn.prefWidthProperty().bind(this.transactionsTableView.widthProperty().divide(6).add(-3));
-        purposeColumn.prefWidthProperty().bind(this.transactionsTableView.widthProperty().divide(6).add(-3));
-        shopColumn.prefWidthProperty().bind(this.transactionsTableView.widthProperty().divide(6).add(-3));
+        this.adjustColumnWidth(valueDateColumn, this.transactionsTableView, 6);
+        this.adjustColumnWidth(amountColumn, this.transactionsTableView, 6);
+        this.adjustColumnWidth(categoryColumn, this.transactionsTableView, 6);
+        this.adjustColumnWidth(productColumn, this.transactionsTableView, 6);
+        this.adjustColumnWidth(purposeColumn, this.transactionsTableView, 6);
+        this.adjustColumnWidth(shopColumn, this.transactionsTableView, 6);
 
-        this.transactionsTableView.getColumns().addAll(categoryColumn, valueDateColumn, amountColumn, productColumn, purposeColumn, shopColumn);
+        this.transactionsTableView.getColumns().add(categoryColumn);
+        this.transactionsTableView.getColumns().add(valueDateColumn);
+        this.transactionsTableView.getColumns().add(amountColumn);
+        this.transactionsTableView.getColumns().add(productColumn);
+        this.transactionsTableView.getColumns().add(purposeColumn);
+        this.transactionsTableView.getColumns().add(shopColumn);
 
         this.transactionsTableView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             editTransactionBtn.setDisable(false);
@@ -241,7 +234,7 @@ public class TransactionsController implements Initializable {
     }
 
     public void handleRefreshTransactions() {
-        RetrievalServiceImpl.getInstance().fetchTransactions(this.user, new AsyncCall<List<Transaction>>() {
+        RetrievalServiceImpl.getInstance().fetchTransactions(this.user, new AsyncCall<>() {
             @Override
             public void onSuccess(List<Transaction> result) {
                 transactions = CollectionUtil.castListToObserableList(result);
@@ -268,10 +261,7 @@ public class TransactionsController implements Initializable {
         Transaction transaction = new TransactionDialog(null, this.categories).showAndGetResult();
         if (transaction != null) {
 
-            if ((transaction.getCategoryTree().getValue().getRootId() == 1 && transaction.getAmount() < 0) ||
-                    (transaction.getCategoryTree().getValue().getRootId() == 3 && transaction.getAmount() >= 0)) {
-                transaction.setAmount(transaction.getAmount() * (-1));
-            }
+            this.correctTransactionAmount(transaction);
 
             Map<String, Object> parameters = new HashMap<>();
             parameters.put("user", this.user);
@@ -302,10 +292,7 @@ public class TransactionsController implements Initializable {
                 this.categories).showAndGetResult();
         if (transaction != null) {
 
-            if ((transaction.getCategoryTree().getValue().getRootId() == 1 && transaction.getAmount() < 0) ||
-                    (transaction.getCategoryTree().getValue().getRootId() == 3 && transaction.getAmount() >= 0)) {
-                transaction.setAmount(transaction.getAmount() * (-1));
-            }
+            this.correctTransactionAmount(transaction);
 
             Map<String, Object> parameters = new HashMap<>();
             parameters.put("user", this.user);
@@ -350,7 +337,7 @@ public class TransactionsController implements Initializable {
     }
 
     public void handleRefreshFixedTransactions() {
-        RetrievalServiceImpl.getInstance().fetchFixedTransactions(this.user, new AsyncCall<List<FixedTransaction>>() {
+        RetrievalServiceImpl.getInstance().fetchFixedTransactions(this.user, new AsyncCall<>() {
             @Override
             public void onSuccess(List<FixedTransaction> result) {
                 fixedTransactions = CollectionUtil.castListToObserableList(result);
@@ -419,22 +406,8 @@ public class TransactionsController implements Initializable {
             Map<String, Object> parameters = new HashMap<>();
             parameters.put("fixedTransaction", fixedTransaction);
 
-            this.executor.execute(new ServerRequestHandler(this.user, "updateFixedTransaction", parameters, new JavaFXAsyncConnectionCall() {
-                @Override
-                public void onSuccess(ConnectionResult result) {
-                }
-
-                @Override
-                public void onFailure(Exception exception) {
-                    logger.log(Level.SEVERE, exception.getMessage(), exception);
-                    JavaFXAsyncConnectionCall.super.onFailure(exception);
-                }
-
-                @Override
-                public void onAfter() {
-                    handleRefreshFixedTransactions();
-                }
-            }));
+            this.executor.execute(new ServerRequestHandler(this.user, "updateFixedTransaction", parameters,
+                    this.getFixedTransactionCallback()));
         }
     }
 
@@ -444,23 +417,28 @@ public class TransactionsController implements Initializable {
             Map<String, Object> parameters = new HashMap<>();
             parameters.put("fixedTransaction", this.fixedTransactionsListView.getSelectionModel().getSelectedItem());
 
-            this.executor.execute(new ServerRequestHandler(this.user, "deleteFixedTransaction", parameters, new JavaFXAsyncConnectionCall() {
-                @Override
-                public void onSuccess(ConnectionResult result) {
-                }
-
-                @Override
-                public void onFailure(Exception exception) {
-                    logger.log(Level.SEVERE, exception.getMessage(), exception);
-                    JavaFXAsyncConnectionCall.super.onFailure(exception);
-                }
-
-                @Override
-                public void onAfter() {
-                    handleRefreshFixedTransactions();
-                }
-            }));
+            this.executor.execute(new ServerRequestHandler(this.user, "deleteFixedTransaction", parameters,
+                    this.getFixedTransactionCallback()));
         }
+    }
+
+    private JavaFXAsyncConnectionCall getFixedTransactionCallback() {
+        return new JavaFXAsyncConnectionCall() {
+            @Override
+            public void onSuccess(ConnectionResult result) {
+            }
+
+            @Override
+            public void onFailure(Exception exception) {
+                logger.log(Level.SEVERE, exception.getMessage(), exception);
+                JavaFXAsyncConnectionCall.super.onFailure(exception);
+            }
+
+            @Override
+            public void onAfter() {
+                handleRefreshFixedTransactions();
+            }
+        };
     }
 
     private void showFixedTransactions(CategoryTree category) {
@@ -475,6 +453,18 @@ public class TransactionsController implements Initializable {
             }
         }
         this.fixedTransactionsListView.setCellFactory(param -> new FixedTransactionListCellImpl());
+    }
+
+
+    private void correctTransactionAmount(AbstractTransaction transaction) {
+        if ((transaction.getCategoryTree().getValue().getRootId() == 1 && transaction.getAmount() < 0) ||
+                (transaction.getCategoryTree().getValue().getRootId() == 3 && transaction.getAmount() >= 0)) {
+            transaction.setAmount(transaction.getAmount() * (-1));
+        }
+    }
+
+    private <S, T> void adjustColumnWidth(TableColumn<S, T> column, TableView<S> tableView, double ratio) {
+        column.prefWidthProperty().bind(tableView.widthProperty().divide(ratio).add(-3));
     }
 
     private final class CategoryListViewImpl extends ListCell<CategoryTree> {
@@ -552,7 +542,7 @@ public class TransactionsController implements Initializable {
 
                 this.isVariableLabel.setText(I18N.get("isVariable") + ": " +
                         (item.isVariable() ? I18N.get("yes") : I18N.get("no")));
-                this.dayLabel.setText(I18N.get("valueDate") + ": " + Integer.toString(item.getDay()));
+                this.dayLabel.setText(I18N.get("valueDate") + ": " + item.getDay());
 
 
                 setGraphic(this.borderPane);
