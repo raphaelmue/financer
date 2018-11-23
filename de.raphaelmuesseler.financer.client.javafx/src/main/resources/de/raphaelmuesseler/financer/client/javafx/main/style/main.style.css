@@ -83,9 +83,19 @@
 }
 
 .error-label {
-    -fx-text-fill: #ff4a39;
-    -fx-padding: 8 0;
-    -fx-font-weight: 700;
+    -fx-label-padding: 10px 15px;
+    -fx-border-color: #fc3b37;
+    -fx-border-width: 0 0 0 3px;
+    -fx-background-color: rgba(252, 59, 55, 0.4);
+    -fx-pref-width: infinity;
+}
+
+.warning-label {
+    -fx-label-padding: 10px 15px;
+    -fx-border-color: #ffc200;
+    -fx-border-width: 0 0 0 3px;
+    -fx-background-color: rgba(255, 194, 0, 0.4);
+    -fx-pref-width: infinity;
 }
 
 .default-color0.chart-pie { -fx-pie-color: #ffc200; }
