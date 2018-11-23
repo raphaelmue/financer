@@ -10,15 +10,27 @@
 
     <JFXMasonryPane>
         <VBox styleClass="content-box" prefWidth="500" prefHeight="250">
-            <Label text="%variableExpensesDistribution" styleClass="content-heading"/>
+            <Label text="%variableTransactionsDistribution" styleClass="content-heading"/>
             <HBox spacing="10" prefWidth="Infinity" alignment="CENTER">
                 <Label text="%from" />
-                <JFXDatePicker fx:id="fromDatePicker" />
+                <JFXDatePicker fx:id="variableExpensesFromDatePicker"/>
                 <Label text="%to" />
-                <JFXDatePicker fx:id="toDatePicker" />
+                <JFXDatePicker fx:id="variableExpensesToDatePicker"/>
             </HBox>
             <PieChart fx:id="variableExpensesDistributionChart" labelsVisible="false"  legendSide="LEFT"/>
             <Label fx:id="variableExpensesNoDataLabel" styleClass="warning-label" text="%noData" managed="false" />
+        </VBox>
+
+        <VBox styleClass="content-box" prefWidth="500" prefHeight="250">
+            <Label text="%variableTransactionsDistribution" styleClass="content-heading"/>
+            <HBox spacing="10" prefWidth="Infinity" alignment="CENTER">
+                <Label text="%from" />
+                <JFXDatePicker fx:id="fixedExpensesFromDatePicker" />
+                <Label text="%to" />
+                <JFXDatePicker fx:id="fixedExpensesToDatePicker" />
+            </HBox>
+            <PieChart fx:id="fixedExpensesDistributionChart" labelsVisible="false"  legendSide="LEFT"/>
+            <Label fx:id="fixedExpensesNoDataLabel" styleClass="warning-label" text="%noData" managed="false" />
         </VBox>
     </JFXMasonryPane>
 

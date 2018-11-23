@@ -56,7 +56,7 @@ public class FinancerApplication extends Application {
 
             Parent root = FXMLLoader.load(getClass().getResource("views/financer.fxml"), resourceBundle);
 
-            Scene scene = new Scene(root, 1200, 650);
+            Scene scene = new Scene(root, 1340, 700);
 
             scene.getStylesheets().add(getClass().getResource("style/navbar.style.css").toExternalForm());
             scene.getStylesheets().add(getClass().getResource("style/footer.style.css").toExternalForm());
