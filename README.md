@@ -108,11 +108,40 @@ Try to keep the workspace warning-free. In some cases, there is no other way tha
 
 ### 5.2 Module Structure
 
-tbd
+The maven module structure is defined as follows:
+
+```
+|-- financer
+|   |-- client
+|   |   |-- javafx
+|   |   |-- app
+|   |-- server
+|   |-- shared
+|   |-- util
+```
+
+#### 5.2.1 Client
+
+The client modules are organized in such a way that the main ```de.raphaelmuesseler.financer.client``` module contains all classes that each specific client application (such as android app or JavaFX application) can use, to connect to the server. 
+
+Each submodule represents a specific client application, which contains only the client handling (like controllers and UI tests).
+
+#### 5.2.2 Server
+
+The module ```de.raphaelmuesseler.financer.server``` contains all the classes for the server. This is where all the backend logic and database handling takes place. 
+
+#### 5.2.3 Shared
+
+In the module ```de.raphaelmuesseler.financer.shared``` are all the classes that define the model of Financer and they are used by the client as well as by the server.
+
+#### 5.2.4 Util
+
+This module contains only utility classes that are used on client-side as well as on server-side. Examples for utility classes are collection or string utilities.
 
 ## 6 Authors
 
-- Raphael Müßeler (Email: [raphael@muesseler.de](mailto:raphael@muesseler.de); GitHub: [raphaelmue](https://github.com/raphaelmue)) 
+- Raphael Müßeler (Email: [raphael@muesseler.de](mailto:raphael@muesseler.de); GitHub: [raphaelmue](https://github.com/raphaelmue))
+- Joshua Schulz (Email: [jschulz99@web.de](mailto:jschulz99@web.de); GitHub: [joshuaschu](https://github.com/joshuaschu)) 
 - Robin Kuck (Email: [](); GitHub: [kucki99](https://github.com/Kucki99))
 
 ## 7 License
