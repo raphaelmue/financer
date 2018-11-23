@@ -97,9 +97,3 @@
     -fx-background-color: rgba(255, 194, 0, 0.4);
     -fx-pref-width: infinity;
 }
-
-.default-color0.chart-pie { -fx-pie-color: #ffc200; }
-.default-color1.chart-pie { -fx-pie-color: #92cab1; }
-.default-color2.chart-pie { -fx-pie-color: #fc3b37; }
-.default-color3.chart-pie { -fx-pie-color: #00b557; }
-.default-color4.chart-pie { -fx-pie-color: #00FFFF; }

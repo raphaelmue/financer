@@ -30,32 +30,33 @@ public class StatisticsController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         this.categories = (BaseCategory) localStorage.readObject("categories");
 
+        this.fromDatePicker.setValue(LocalDate.now().minusMonths(1));
         this.fromDatePicker.valueProperty().addListener((observable, oldValue, newValue) ->
                 this.loadVariableExpensesDistributionChart(newValue, toDatePicker.getValue()));
+        this.toDatePicker.setValue(LocalDate.now());
         this.toDatePicker.valueProperty().addListener((observable, oldValue, newValue) ->
                 this.loadVariableExpensesDistributionChart(fromDatePicker.getValue(), newValue));
-        this.fromDatePicker.setValue(LocalDate.now().minusMonths(1));
-        this.toDatePicker.setValue(LocalDate.now());
-        this.loadVariableExpensesDistributionChart(LocalDate.now().minusMonths(1), LocalDate.now());
+
+        this.loadVariableExpensesDistributionChart(this.fromDatePicker.getValue(), this.toDatePicker.getValue());
     }
 
     private void loadVariableExpensesDistributionChart(LocalDate startDate, LocalDate endDate) {
-        ObservableList<PieChart.Data> variableExpensesData = FXCollections.observableArrayList();
-        for (Tree<Category> categoryTree : this.categories.getCategoryTreeByCategoryClass(
-                BaseCategory.CategoryClass.VARIABLE_EXPENSES).getChildren()) {
-            double amount = ((CategoryTree) categoryTree).getAmount(startDate, endDate);
-            if (amount != 0) {
-                variableExpensesData.add(new PieChart.Data(categoryTree.getValue().getName(), Math.abs(amount)));
+            ObservableList<PieChart.Data> variableExpensesData = FXCollections.observableArrayList();
+            for (Tree<Category> categoryTree : this.categories.getCategoryTreeByCategoryClass(
+                    BaseCategory.CategoryClass.VARIABLE_EXPENSES).getChildren()) {
+                double amount = ((CategoryTree) categoryTree).getAmount(startDate, endDate);
+                if (amount != 0) {
+                    variableExpensesData.add(new PieChart.Data(categoryTree.getValue().getName(), Math.abs(amount)));
+                }
             }
-        }
 
-        if (variableExpensesData.size() > 0) {
-            this.variableExpensesDistributionChart.setManaged(true);
-            this.variableExpensesNoDataLabel.setManaged(false);
-            this.variableExpensesDistributionChart.setData(variableExpensesData);
-        } else {
-            this.variableExpensesDistributionChart.setManaged(false);
-            this.variableExpensesNoDataLabel.setManaged(true);
-        }
+            if (variableExpensesData.size() > 0) {
+                this.variableExpensesDistributionChart.setManaged(true);
+                this.variableExpensesNoDataLabel.setManaged(false);
+                this.variableExpensesDistributionChart.setData(variableExpensesData);
+            } else {
+                this.variableExpensesDistributionChart.setManaged(false);
+                this.variableExpensesNoDataLabel.setManaged(true);
+            }
     }
 }
