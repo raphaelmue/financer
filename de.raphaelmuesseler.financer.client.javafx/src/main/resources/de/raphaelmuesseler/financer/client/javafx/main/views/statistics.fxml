@@ -10,7 +10,7 @@
 
     <JFXMasonryPane>
         <VBox styleClass="content-box" prefWidth="500" prefHeight="250">
-            <Label text="%variableTransactionsDistribution" styleClass="content-heading"/>
+            <Label text="%variableExpensesDistribution" styleClass="content-heading"/>
             <HBox spacing="10" prefWidth="Infinity" alignment="CENTER">
                 <Label text="%from" />
                 <JFXDatePicker fx:id="variableExpensesFromDatePicker"/>
@@ -22,7 +22,7 @@
         </VBox>
 
         <VBox styleClass="content-box" prefWidth="500" prefHeight="250">
-            <Label text="%variableTransactionsDistribution" styleClass="content-heading"/>
+            <Label text="%variableExpensesDistribution" styleClass="content-heading"/>
             <HBox spacing="10" prefWidth="Infinity" alignment="CENTER">
                 <Label text="%from" />
                 <JFXDatePicker fx:id="fixedExpensesFromDatePicker" />
