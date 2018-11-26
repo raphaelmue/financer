@@ -66,10 +66,12 @@ public class StatisticsController implements Initializable {
         if (variableExpensesData.size() > 0) {
             this.variableExpensesDistributionChart.setManaged(true);
             this.variableExpensesNoDataLabel.setManaged(false);
+            this.variableExpensesNoDataLabel.setVisible(false);
             this.variableExpensesDistributionChart.setData(variableExpensesData);
         } else {
             this.variableExpensesDistributionChart.setManaged(false);
             this.variableExpensesNoDataLabel.setManaged(true);
+            this.variableExpensesNoDataLabel.setVisible(true);
         }
     }
 
@@ -86,10 +88,12 @@ public class StatisticsController implements Initializable {
         if (variableExpensesData.size() > 0) {
             this.fixedExpensesDistributionChart.setManaged(true);
             this.fixedExpensesNoDataLabel.setManaged(false);
+            this.fixedExpensesNoDataLabel.setVisible(false);
             this.fixedExpensesDistributionChart.setData(variableExpensesData);
         } else {
             this.fixedExpensesDistributionChart.setManaged(false);
             this.fixedExpensesNoDataLabel.setManaged(true);
+            this.fixedExpensesNoDataLabel.setVisible(true);
         }
     }
 }
