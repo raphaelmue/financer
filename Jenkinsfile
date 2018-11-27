@@ -24,9 +24,9 @@ pipeline {
         }
         stage('Deploy') {
             steps {
-                sh 'pkill -f "java -jar"
-                    cd /home/raphael/.m2/repository/de/raphaelmuesseler/financer/de.raphaelmuesseler.financer.server/1.0-SNAPSHOT
-                    java -jar de.raphaelmuesseler.financer.server-1.0-SNAPSHOT-jar-with-dependencies.jar &'
+                sh 'pkill -f "java -jar"'
+                sh 'cd /home/raphael/.m2/repository/de/raphaelmuesseler/financer/de.raphaelmuesseler.financer.server/1.0-SNAPSHOT'
+                sh 'java -jar de.raphaelmuesseler.financer.server-1.0-SNAPSHOT-jar-with-dependencies.jar &'
             }
         }
     }
