@@ -11,7 +11,7 @@ pipeline {
                 stage('JUnit Tests') {
                     steps {
                         sh 'mvn clean compile'
-                        sh 'test -pl de.raphaelmuesseler.financer.util,de.raphaelmuesseler.financer.shared,de.raphaelmuesseler.financer.server,de.raphaelmuesseler.financer.client'
+                        sh 'mvn test -pl de.raphaelmuesseler.financer.util,de.raphaelmuesseler.financer.shared,de.raphaelmuesseler.financer.server,de.raphaelmuesseler.financer.client'
                     }
                 }
                 stage('JavaFX Tests') {
