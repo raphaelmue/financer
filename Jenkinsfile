@@ -3,20 +3,18 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                sh 'mvn clean compile'
+                sh 'mvn clean install -DskipTests'
             }
         }
         stage('Test') {
             parallel {
                 stage('JUnit Tests') {
                     steps {
-                        sh 'mvn clean compile'
                         sh 'mvn test -pl de.raphaelmuesseler.financer.util,de.raphaelmuesseler.financer.shared,de.raphaelmuesseler.financer.server,de.raphaelmuesseler.financer.client'
                     }
                 }
                 stage('JavaFX Tests') {
                     steps {
-                        sh 'mvn clean compile'
                         sh 'mvn test -pl de.raphaelmuesseler.financer.client.javafx'
                     }
                 }
