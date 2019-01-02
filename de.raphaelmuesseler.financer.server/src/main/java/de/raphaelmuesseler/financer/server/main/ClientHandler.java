@@ -1,6 +1,7 @@
 package de.raphaelmuesseler.financer.server.main;
 
 import de.raphaelmuesseler.financer.server.service.FinancerService;
+import de.raphaelmuesseler.financer.server.util.Converter;
 import de.raphaelmuesseler.financer.shared.connection.ConnectionCall;
 import de.raphaelmuesseler.financer.shared.connection.ConnectionResult;
 import de.raphaelmuesseler.financer.shared.exceptions.NotAuthorizedException;
@@ -39,7 +40,7 @@ public class ClientHandler implements Runnable {
 
             try {
                 if (!connectionCall.getMethodName().equals("checkCredentials") && !connectionCall.getMethodName().equals("registerUser")) {
-                    User user = FinancerService.getInstance().checkUsersToken(this.logger, (String) connectionCall.getParameters().get("token"));
+                    User user = FinancerService.getInstance().checkUsersToken(this.logger, connectionCall.getParameters());
                     if (user == null) {
                         throw new NotAuthorizedException("Token '" + connectionCall.getParameters().get("token") + "' is invalid.");
                     }

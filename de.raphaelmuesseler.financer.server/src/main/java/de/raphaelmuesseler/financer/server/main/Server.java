@@ -1,8 +1,10 @@
 package de.raphaelmuesseler.financer.server.main;
 
+import com.sun.istack.Nullable;
 import de.raphaelmuesseler.financer.server.db.Database;
-import org.glassfish.grizzly.http.server.HttpServer;
+import de.raphaelmuesseler.financer.server.service.FinancerRestService;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
+import org.glassfish.jersey.internal.inject.AbstractBinder;
 import org.glassfish.jersey.server.ResourceConfig;
 
 import java.io.DataInputStream;
@@ -97,10 +99,10 @@ public class Server {
     public void startHttpServer() {
         // create a resource config that scans for JAX-RS resources and providers
         // in packages
-        final ResourceConfig rc = new ResourceConfig().packages("de.raphaelmuesseler.financer.server");
+        final ResourceConfig rc = new ResourceConfig().register(new FinancerRestService(executor));
 
         // create and start a new instance of grizzly http server
-        final HttpServer server = GrizzlyHttpServerFactory.createHttpServer(URI.create("http://localhost:" + REST_PORT + "/test/"), rc);
+        GrizzlyHttpServerFactory.createHttpServer(URI.create("http://localhost:" + REST_PORT + "/"), rc);
     }
 
     /**
@@ -110,6 +112,7 @@ public class Server {
         this.logger.log(Level.INFO, "Server will be stopped.");
         try {
             serverSocket.close();
-        } catch (IOException ignored) { }
+        } catch (IOException ignored) {
+        }
     }
 }
