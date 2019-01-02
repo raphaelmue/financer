@@ -19,6 +19,11 @@ import de.raphaelmuesseler.financer.util.collections.TreeUtil;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import javax.ws.rs.Consumes;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -50,15 +55,15 @@ public class FinancerService {
     /**
      * Checks, whether the token is valid and not expired and returns the corresponding user.
      *
-     * @param token token string
+     * @param parameters [token]
      * @return User that has this token
      * @throws SQLException thrown, when something went wrong executing the SQL statement
      */
-    public User checkUsersToken(Logger logger, String token) throws SQLException {
+    public User checkUsersToken(Logger logger, Map<String, Object> parameters) throws SQLException {
         logger.log(Level.INFO, "Checking users token ...");
 
         Map<String, Object> whereParameters = new HashMap<>();
-        whereParameters.put("token", token);
+        whereParameters.put("token", parameters.get("token"));
 
         JSONArray jsonArray = this.database.get(Database.Table.USERS_TOKENS, whereParameters);
 
@@ -72,7 +77,7 @@ public class FinancerService {
 
                 // update expire date
                 whereParameters.clear();
-                whereParameters.put("token", token);
+                whereParameters.put("token", parameters.get("token"));
 
                 Map<String, Object> values = new HashMap<>();
                 values.put("expire_date", LocalDate.now().plusMonths(1));

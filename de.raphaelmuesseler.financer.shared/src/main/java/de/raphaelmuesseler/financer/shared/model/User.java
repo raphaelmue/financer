@@ -1,11 +1,12 @@
 package de.raphaelmuesseler.financer.shared.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import de.raphaelmuesseler.financer.shared.model.db.DatabaseObject;
 import de.raphaelmuesseler.financer.shared.model.db.DatabaseUser;
 
-import java.sql.Date;
 import java.time.LocalDate;
 
+@JsonIgnoreProperties(ignoreUnknown = true, value = { "birthDateAsLocalDate" })
 public class User extends DatabaseUser {
     private String token = "";
 
