@@ -117,6 +117,7 @@ public class Database {
         if (local) {
             HOST = "localhost";
             DB_USER = "root";
+            DB_PASSWORD = "";
         } else {
             try (BufferedReader fileReader = new BufferedReader(new InputStreamReader(
                     Database.class.getResourceAsStream("config/database.conf")))) {
