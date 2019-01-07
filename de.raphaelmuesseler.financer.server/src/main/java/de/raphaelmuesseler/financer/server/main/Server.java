@@ -1,10 +1,8 @@
 package de.raphaelmuesseler.financer.server.main;
 
-import com.sun.istack.Nullable;
 import de.raphaelmuesseler.financer.server.db.Database;
 import de.raphaelmuesseler.financer.server.service.FinancerRestService;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
-import org.glassfish.jersey.internal.inject.AbstractBinder;
 import org.glassfish.jersey.server.ResourceConfig;
 
 import java.io.DataInputStream;

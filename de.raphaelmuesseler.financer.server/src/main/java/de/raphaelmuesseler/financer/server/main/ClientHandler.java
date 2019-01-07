@@ -1,7 +1,6 @@
 package de.raphaelmuesseler.financer.server.main;
 
 import de.raphaelmuesseler.financer.server.service.FinancerService;
-import de.raphaelmuesseler.financer.server.util.Converter;
 import de.raphaelmuesseler.financer.shared.connection.ConnectionCall;
 import de.raphaelmuesseler.financer.shared.connection.ConnectionResult;
 import de.raphaelmuesseler.financer.shared.exceptions.NotAuthorizedException;

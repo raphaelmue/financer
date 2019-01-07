@@ -120,7 +120,7 @@ class TransactionDialog extends FinancerDialog<Transaction> {
             result = false;
         }
 
-        if (Double.valueOf(this.amountField.getText()) == 0) {
+        if (Double.valueOf(this.amountField.getText()).equals(0)) {
             setErrorMessage(I18N.get("selectValidAmount"));
             result = false;
         }

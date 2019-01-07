@@ -1,7 +1,6 @@
 package de.raphaelmuesseler.financer.shared.model.db;
 
 import java.io.Serializable;
-import java.sql.Date;
 
 public class DatabaseUser implements DatabaseObject, Serializable {
     private static final long serialVersionUID = 8551108621522985674L;

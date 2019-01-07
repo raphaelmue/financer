@@ -25,7 +25,6 @@ import org.testfx.framework.junit5.ApplicationTest;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.concurrent.TimeoutException;
 
 public class AbstractFinancerApplicationTest extends ApplicationTest {
