@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.URI;
+import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
@@ -50,11 +51,7 @@ public class Server {
                 port = PORT;
             }
 
-            if (databaseName != null) {
-                Database.setDbName(databaseName);
-            } else {
-                Database.setDbName(Database.DatabaseName.DEV);
-            }
+            Database.setDbName(Objects.requireNonNullElse(databaseName, Database.DatabaseName.DEV));
 
             Server server = new Server(port);
             server.startHttpServer();
