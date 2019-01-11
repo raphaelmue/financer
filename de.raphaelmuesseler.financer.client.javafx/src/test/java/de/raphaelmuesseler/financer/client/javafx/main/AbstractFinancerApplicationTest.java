@@ -78,7 +78,7 @@ public class AbstractFinancerApplicationTest extends ApplicationTest {
         write(password);
         confirmDialog();
 
-        sleep(500);
+        sleep(1000);
     }
 
     void login(User user, String password) {
