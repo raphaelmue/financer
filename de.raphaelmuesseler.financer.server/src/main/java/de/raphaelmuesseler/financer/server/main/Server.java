@@ -87,6 +87,7 @@ public class Server {
                 this.executor.execute(new ClientHandler(client, input, output));
             } catch (Exception e) {
                 this.logger.log(Level.SEVERE, e.getMessage());
+                break;
             }
         }
     }
