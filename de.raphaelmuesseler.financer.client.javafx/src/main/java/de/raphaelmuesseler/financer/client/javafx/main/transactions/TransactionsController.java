@@ -2,6 +2,7 @@ package de.raphaelmuesseler.financer.client.javafx.main.transactions;
 
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXListView;
+import com.jfoenix.controls.JFXTextField;
 import de.raphaelmuesseler.financer.client.connection.ServerRequestHandler;
 import de.raphaelmuesseler.financer.client.format.Formatter;
 import de.raphaelmuesseler.financer.client.format.I18N;
@@ -25,6 +26,7 @@ import de.raphaelmuesseler.financer.util.collections.TreeUtil;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
@@ -53,6 +55,7 @@ public class TransactionsController implements Initializable {
     public JFXButton editTransactionBtn;
     public JFXButton deleteTransactionBtn;
     public TableView<Transaction> transactionsTableView;
+    public JFXTextField filterTransactionsTextField;
     public JFXButton refreshFixedTransactionsBtn;
     public JFXButton newFixedTransactionBtn;
     public JFXButton editFixedTransactionBtn;
@@ -240,7 +243,21 @@ public class TransactionsController implements Initializable {
                 transactions = CollectionUtil.castListToObserableList(result);
 
                 Platform.runLater(() -> {
-                    transactionsTableView.setItems(transactions);
+                    FilteredList<Transaction> filteredData = new FilteredList<>(transactions, transaction -> true);
+
+
+                    filterTransactionsTextField.textProperty().addListener((observable, oldValue, newValue) ->
+                            filteredData.setPredicate(transaction -> {
+                                if (newValue == null || newValue.isEmpty()) {
+                                    return true;
+                                }
+
+                                return transaction.getShop().toLowerCase().contains(newValue.toLowerCase()) ||
+                                        transaction.getCategoryTree().getValue().getName().toLowerCase().contains(newValue.toLowerCase()) ||
+                                        transaction.getProduct().toLowerCase().contains(newValue.toLowerCase()) ||
+                                        transaction.getPurpose().toLowerCase().contains(newValue.toLowerCase());
+                            }));
+                    transactionsTableView.setItems(filteredData);
                     transactionsTableView.getColumns().get(1).setSortType(TableColumn.SortType.DESCENDING);
                     transactionsTableView.getSortOrder().add(transactionsTableView.getColumns().get(1));
                     FinancerController.hideLoadingBox();
