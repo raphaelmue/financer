@@ -47,7 +47,7 @@ public class AbstractFinancerApplicationTest extends ApplicationTest {
         LocalStorageImpl.getInstance().deleteAllData();
 
         Database.setDbName(Database.DatabaseName.TEST);
-        Database.setHost(true);
+        Database.setHost(false);
         Database.getInstance().clearDatabase();
     }
 
