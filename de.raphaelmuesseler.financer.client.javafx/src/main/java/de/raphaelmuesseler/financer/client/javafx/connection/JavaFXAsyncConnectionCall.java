@@ -12,7 +12,7 @@ public interface JavaFXAsyncConnectionCall extends AsyncConnectionCall {
 
     default void onFailure(Exception exception, Runnable runnable) {
         Platform.runLater(() -> {
-            FinancerExceptionDialog dialog = new FinancerExceptionDialog("Login", exception);
+            FinancerExceptionDialog dialog = new FinancerExceptionDialog("Financer", exception);
             dialog.showAndWait();
             runnable.run();
         });

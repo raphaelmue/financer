@@ -4,6 +4,8 @@ import de.raphaelmuesseler.financer.shared.model.AmountProvider;
 import de.raphaelmuesseler.financer.shared.model.CategoryTree;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class AbstractTransaction implements Serializable, AmountProvider {
     private static final long serialVersionUID = -2425120066992174442L;
@@ -12,8 +14,11 @@ public abstract class AbstractTransaction implements Serializable, AmountProvide
     private double amount;
     private CategoryTree categoryTree;
     private String product, purpose;
+    private final List<Attachment> attachments;
+
 
     AbstractTransaction(int id, double amount, CategoryTree category, String product, String purpose) {
+        this.attachments = new ArrayList<>();
         this.id = id;
         this.amount = amount;
         this.categoryTree = category;
@@ -39,6 +44,10 @@ public abstract class AbstractTransaction implements Serializable, AmountProvide
 
     public String getPurpose() {
         return purpose;
+    }
+
+    public List<Attachment> getAttachments() {
+        return attachments;
     }
 
     public void setId(int id) {

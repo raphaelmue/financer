@@ -9,6 +9,7 @@ import de.raphaelmuesseler.financer.shared.model.CategoryTree;
 import de.raphaelmuesseler.financer.shared.model.User;
 import de.raphaelmuesseler.financer.shared.model.db.DatabaseObject;
 import de.raphaelmuesseler.financer.shared.model.db.DatabaseUser;
+import de.raphaelmuesseler.financer.shared.model.transactions.Attachment;
 import de.raphaelmuesseler.financer.shared.model.transactions.FixedTransaction;
 import de.raphaelmuesseler.financer.shared.model.transactions.Transaction;
 import de.raphaelmuesseler.financer.shared.model.transactions.TransactionAmount;
@@ -19,6 +20,7 @@ import de.raphaelmuesseler.financer.util.collections.TreeUtil;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -326,6 +328,26 @@ public class FinancerService {
         this.database.update(Database.Table.TRANSACTIONS, where, values);
 
         return new ConnectionResult<>(null);
+    }
+
+    public ConnectionResult<Attachment> uploadTransactionAttachment(Logger logger, Map<String, Object> parameters) throws Exception {
+        logger.log(Level.INFO, "Uploading Attachment ...");
+        Attachment result = new Attachment();
+        File attachmentFile = (File) parameters.get("attachmentFile");
+
+        Map<String, Object> values = new HashMap<>();
+        values.put("transaction_id", ((Transaction) parameters.get("transaction")).getId());
+        values.put("name", attachmentFile.getName());
+        values.put("upload_date", LocalDate.now().toString());
+        values.put("content", parameters.get("content"));
+
+        this.database.insert(Database.Table.TRANSACTIONS_ATTACHMENTS, values);
+
+        result.setId(this.database.getLatestId(Database.Table.TRANSACTIONS_ATTACHMENTS));
+        result.setName(attachmentFile.getName());
+        //result.setContent((byte[]) parameters.get("content"));
+
+        return new ConnectionResult<>(result);
     }
 
     public ConnectionResult<Void> deleteTransaction(Logger logger, Map<String, Object> parameters) throws Exception {

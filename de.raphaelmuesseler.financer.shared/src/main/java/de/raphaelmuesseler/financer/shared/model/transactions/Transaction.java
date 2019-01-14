@@ -4,6 +4,7 @@ import de.raphaelmuesseler.financer.shared.model.CategoryTree;
 import de.raphaelmuesseler.financer.util.date.DateUtil;
 
 import java.time.LocalDate;
+import java.util.List;
 
 public class Transaction extends AbstractTransaction {
     private String shop;
