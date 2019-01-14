@@ -15,7 +15,7 @@ pipeline {
                 }
                 stage('JavaFX Tests') {
                     steps {
-                        sh 'mvn test -pl de.raphaelmuesseler.financer.client.javafx'
+                        sh 'mvn test -pl de.raphaelmuesseler.financer.client.javafx -Dtestfx.robot=glass -Dglass.platform=Monocle -Dmonocle.platform=Headless'
                     }
                 }
             }
