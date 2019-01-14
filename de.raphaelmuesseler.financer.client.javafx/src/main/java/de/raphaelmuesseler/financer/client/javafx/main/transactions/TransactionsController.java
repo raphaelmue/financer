@@ -241,25 +241,8 @@ public class TransactionsController implements Initializable {
             @Override
             public void onSuccess(List<Transaction> result) {
                 transactions = CollectionUtil.castListToObserableList(result);
-
                 Platform.runLater(() -> {
-                    FilteredList<Transaction> filteredData = new FilteredList<>(transactions, transaction -> true);
-
-
-                    filterTransactionsTextField.textProperty().addListener((observable, oldValue, newValue) ->
-                            filteredData.setPredicate(transaction -> {
-                                if (newValue == null || newValue.isEmpty()) {
-                                    return true;
-                                }
-
-                                return transaction.getShop().toLowerCase().contains(newValue.toLowerCase()) ||
-                                        transaction.getCategoryTree().getValue().getName().toLowerCase().contains(newValue.toLowerCase()) ||
-                                        transaction.getProduct().toLowerCase().contains(newValue.toLowerCase()) ||
-                                        transaction.getPurpose().toLowerCase().contains(newValue.toLowerCase());
-                            }));
-                    transactionsTableView.setItems(filteredData);
-                    transactionsTableView.getColumns().get(1).setSortType(TableColumn.SortType.DESCENDING);
-                    transactionsTableView.getSortOrder().add(transactionsTableView.getColumns().get(1));
+                    loadTransactionTableItems();
                     FinancerController.hideLoadingBox();
                 });
             }
@@ -289,9 +272,8 @@ public class TransactionsController implements Initializable {
                 public void onSuccess(ConnectionResult result) {
                     Platform.runLater(() -> {
                         // removing numbers in category's name
-                        transactionsTableView.getItems().add(transaction);
-                        transactionsTableView.getColumns().get(1).setSortType(TableColumn.SortType.DESCENDING);
-                        transactionsTableView.getSortOrder().add(transactionsTableView.getColumns().get(1));
+                        transactions.add(transaction);
+                        loadTransactionTableItems();
                     });
                 }
 
@@ -302,6 +284,24 @@ public class TransactionsController implements Initializable {
                 }
             }));
         }
+    }
+
+    private void loadTransactionTableItems() {
+        FilteredList<Transaction> filteredData = new FilteredList<>(transactions, transaction -> true);
+        filterTransactionsTextField.textProperty().addListener((observable, oldValue, newValue) ->
+                filteredData.setPredicate(transaction -> {
+                    if (newValue == null || newValue.isEmpty()) {
+                        return true;
+                    }
+
+                    return transaction.getShop().toLowerCase().contains(newValue.toLowerCase()) ||
+                            transaction.getCategoryTree().getValue().getName().toLowerCase().contains(newValue.toLowerCase()) ||
+                            transaction.getProduct().toLowerCase().contains(newValue.toLowerCase()) ||
+                            transaction.getPurpose().toLowerCase().contains(newValue.toLowerCase());
+                }));
+        transactionsTableView.setItems(filteredData);
+        transactionsTableView.getColumns().get(1).setSortType(TableColumn.SortType.DESCENDING);
+        transactionsTableView.getSortOrder().add(transactionsTableView.getColumns().get(1));
     }
 
     public void handleEditTransaction() {
