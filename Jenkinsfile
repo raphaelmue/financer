@@ -15,7 +15,6 @@ pipeline {
                 }
                 stage('JavaFX Tests') {
                     steps {
-                        sh 'pkill -f \"java -jar\"'
                         sh 'mkdir ./de.raphaelmuesseler.financer.server/src/main/resources'
                         sh 'mkdir ./de.raphaelmuesseler.financer.server/src/main/resources/de'
                         sh 'mkdir ./de.raphaelmuesseler.financer.server/src/main/resources/de/raphaelmuesseler'
@@ -33,8 +32,7 @@ pipeline {
         }
         stage('Deploy') {
             steps {
-                sh 'cd /home/raphael/.m2/repository/de/raphaelmuesseler/financer/de.raphaelmuesseler.financer.server/1.0-SNAPSHOT'
-                sh 'java -jar de.raphaelmuesseler.financer.server-1.0-SNAPSHOT-jar-with-dependencies.jar --database=prod &'
+                sh 'systemctl restart financer-server.service'
             }
         }
     }
