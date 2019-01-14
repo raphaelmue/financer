@@ -15,7 +15,7 @@ pipeline {
                 }
                 stage('JavaFX Tests') {
                     steps {
-                        sh 'pkill -f "java -jar"'
+                        sh 'pkill -f \"java -jar\"'
                         sh 'mkdir ./de.raphaelmuesseler.financer.server/src/main/resources'
                         sh 'mkdir ./de.raphaelmuesseler.financer.server/src/main/resources/de'
                         sh 'mkdir ./de.raphaelmuesseler.financer.server/src/main/resources/de/raphaelmuesseler'
