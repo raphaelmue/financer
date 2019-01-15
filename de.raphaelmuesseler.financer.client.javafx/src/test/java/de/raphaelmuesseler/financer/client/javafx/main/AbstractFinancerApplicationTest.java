@@ -2,6 +2,7 @@ package de.raphaelmuesseler.financer.client.javafx.main;
 
 import com.jfoenix.controls.JFXDatePicker;
 import com.jfoenix.controls.JFXTextField;
+import de.raphaelmuesseler.financer.client.connection.ServerRequest;
 import de.raphaelmuesseler.financer.client.format.I18N;
 import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
 import de.raphaelmuesseler.financer.client.javafx.login.LoginApplication;
@@ -41,7 +42,8 @@ public class AbstractFinancerApplicationTest extends ApplicationTest {
 
     @BeforeAll
     static void setUp() throws SQLException, IOException {
-        server = new Server(3500);
+        server = new Server(3505);
+        ServerRequest.setPort(3505);
         new Thread(server::run).start();
 
         LocalStorageImpl.getInstance().deleteAllData();

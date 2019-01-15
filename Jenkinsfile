@@ -1,11 +1,6 @@
 pipeline {
     agent any
     stages {
-        stage('Preparing...') {
-            steps {
-                sh 'sudo systemctl stop financer-server.service'
-            }
-        }
         stage('Build') {
             steps {
                 sh 'mvn clean install -DskipTests'

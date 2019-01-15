@@ -13,7 +13,7 @@ public class ServerRequest {
     private final static String HOST_LOCAL = "localhost";
     private final static String HOST_DEPLOY = "raphael-muesseler.de";
     private static String HOST;
-    private final static int PORT = 3500;
+    private static int PORT = 3500;
 
     private final ConnectionCall connectionCall;
 
@@ -28,6 +28,10 @@ public class ServerRequest {
 
     public static void setHost(boolean local) {
         ServerRequest.HOST = local ? ServerRequest.HOST_LOCAL : ServerRequest.HOST_DEPLOY;
+    }
+
+    public static void setPort(int port) {
+        ServerRequest.PORT = port;
     }
 
     ConnectionResult make() throws IOException, ClassNotFoundException {
