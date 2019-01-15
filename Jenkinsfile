@@ -3,7 +3,7 @@ pipeline {
     stages {
         stage('Preparing...') {
             steps {
-                sh 'systemctl stop financer-server.service'
+                sh 'sudo systemctl stop financer-server.service'
             }
         }
         stage('Build') {
