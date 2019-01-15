@@ -88,7 +88,7 @@ class TransactionDialog extends FinancerDialog<Transaction> {
                 categoryComboBox.getItems().add((CategoryTree) treeItem);
             }
         });
-        this.categoryComboBox.setCellFactory(param -> new ListCell<CategoryTree>() {
+        this.categoryComboBox.setCellFactory(param -> new ListCell<>() {
             @Override
             protected void updateItem(CategoryTree item, boolean empty) {
                 super.updateItem(item, empty);
@@ -120,7 +120,7 @@ class TransactionDialog extends FinancerDialog<Transaction> {
             result = false;
         }
 
-        if (Double.valueOf(this.amountField.getText()).equals(0)) {
+        if (Double.valueOf(this.amountField.getText()).equals(0.0)) {
             setErrorMessage(I18N.get("selectValidAmount"));
             result = false;
         }
