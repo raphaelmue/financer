@@ -30,10 +30,10 @@ pipeline {
                 }
             }
         }
-        stage('Deploy') {
+        /*stage('Deploy') {
             steps {
                 sh 'systemctl restart financer-server.service'
             }
-        }
+        }*/
     }
 }
