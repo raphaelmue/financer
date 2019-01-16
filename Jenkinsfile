@@ -6,7 +6,7 @@ pipeline {
                 sh 'mvn clean install -DskipTests'
             }
         }
-        stage('Test') {
+        stage('Preparing tests') {
             steps {
                 sh 'mkdir ./de.raphaelmuesseler.financer.server/src/main/resources'
                 sh 'mkdir ./de.raphaelmuesseler.financer.server/src/main/resources/de'
