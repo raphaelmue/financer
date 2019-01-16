@@ -15,17 +15,25 @@ pipeline {
                 }
                 stage('JavaFX Tests') {
                     steps {
-                        sh 'mvn test -pl de.raphaelmuesseler.financer.client.javafx'
+                        sh 'mkdir ./de.raphaelmuesseler.financer.server/src/main/resources'
+                        sh 'mkdir ./de.raphaelmuesseler.financer.server/src/main/resources/de'
+                        sh 'mkdir ./de.raphaelmuesseler.financer.server/src/main/resources/de/raphaelmuesseler'
+                        sh 'mkdir ./de.raphaelmuesseler.financer.server/src/main/resources/de/raphaelmuesseler/financer'
+                        sh 'mkdir ./de.raphaelmuesseler.financer.server/src/main/resources/de/raphaelmuesseler/financer/server'
+                        sh 'mkdir ./de.raphaelmuesseler.financer.server/src/main/resources/de/raphaelmuesseler/financer/server/db'
+                        sh 'mkdir ./de.raphaelmuesseler.financer.server/src/main/resources/de/raphaelmuesseler/financer/server/db/config'
+                        sh 'cp /var/lib/jenkins/workspace/database.conf ./de.raphaelmuesseler.financer.server/src/main/resources/de/raphaelmuesseler/financer/server/db/config/'
+                        sh 'mvn clean install -DskipTests'
+                        sh 'mvn test -pl de.raphaelmuesseler.financer.client.javafx -Dtestfx.robot=glass -Dglass.platform=Monocle -Dmonocle.platform=Headless'
+                        sh 'rm ./de.raphaelmuesseler.financer.server/src/main/resources/de/raphaelmuesseler/financer/server/db/config/database.conf'
                     }
                 }
             }
         }
-        stage('Deploy') {
+        /*stage('Deploy') {
             steps {
-                sh 'pkill -f "java -jar"'
-                sh 'cd /home/raphael/.m2/repository/de/raphaelmuesseler/financer/de.raphaelmuesseler.financer.server/1.0-SNAPSHOT'
-                sh 'java -jar de.raphaelmuesseler.financer.server-1.0-SNAPSHOT-jar-with-dependencies.jar &'
+                sh 'systemctl restart financer-server.service'
             }
-        }
+        }*/
     }
 }
