@@ -218,6 +218,16 @@ public class FinancerService {
         return new ConnectionResult<>(result);
     }
 
+    public ConnectionResult<Void> deleteToken(Logger logger, Map<String, Object> parameters) throws Exception {
+        logger.log(Level.INFO, "Deleting users token ...");
+
+        Map<String, Object> whereParameters = new HashMap<>();
+        whereParameters.put("id", parameters.get("tokenId"));
+        this.database.delete(Database.Table.USERS_TOKENS, whereParameters);
+
+        return new ConnectionResult<>(null);
+    }
+
     public ConnectionResult<BaseCategory> getUsersCategories(Logger logger, Map<String, Object> parameters) throws Exception {
         logger.log(Level.INFO, "Fetching users categories ...");
 
@@ -266,6 +276,7 @@ public class FinancerService {
             values.put("parent_id", category.getParentId());
         }
         values.put("name", category.getName());
+
 
         this.database.insert(Database.Table.USERS_CATEGORIES, values);
 

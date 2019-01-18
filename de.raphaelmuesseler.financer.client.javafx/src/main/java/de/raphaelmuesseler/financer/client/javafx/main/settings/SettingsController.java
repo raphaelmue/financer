@@ -86,7 +86,8 @@ public class SettingsController implements Initializable {
     }
 
     private void loadTokenListView() {
-        this.devicesListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> logoutFromDeviceBtn.setDisable(false));
+        this.devicesListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) ->
+                logoutFromDeviceBtn.setDisable(false));
 
         HashMap<String, Object> paramters = new HashMap<>();
         paramters.put("user", this.user);
@@ -107,6 +108,22 @@ public class SettingsController implements Initializable {
             }
         }));
 
+    }
+
+    public void handleLogoutFromDevice() {
+        HashMap<String, Object> parameters = new HashMap<>();
+        parameters.put("tokenId", this.devicesListView.getSelectionModel().getSelectedItem().getId());
+        this.executor.execute(new ServerRequestHandler(this.user, "deleteToken", parameters, new JavaFXAsyncConnectionCall() {
+            @Override
+            public void onSuccess(ConnectionResult result) {
+                Platform.runLater(() -> devicesListView.getItems().remove(devicesListView.getSelectionModel().getSelectedItem()));
+            }
+
+            @Override
+            public void onFailure(Exception exception) {
+                JavaFXAsyncConnectionCall.super.onFailure(exception);
+            }
+        }));
     }
 
     private final class TokenListViewImpl extends ListCell<Token> {
