@@ -19,6 +19,7 @@ import de.raphaelmuesseler.financer.util.collections.Tree;
 import de.raphaelmuesseler.financer.util.collections.TreeUtil;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.json.JSONPropertyName;
 
 import java.sql.Date;
 import java.sql.SQLException;
@@ -89,26 +90,47 @@ public class FinancerService {
     }
 
     /**
-     * Generates a new token and stores it in the database
+     * Generates a new token (or updates the token, if the IP address is already store in the database)
+     * and stores it in the database
      *
-     * @param user user
+     * @param user      user
      * @param ipAddress ip address of client
-     * @param system operating system
+     * @param system    operating system
      * @throws SQLException thrown, when something went wrong executing the SQL statement
      */
     private void generateToken(User user, String ipAddress, String system, boolean isMobile) throws SQLException {
-        String tokenString = this.tokenGenerator.nextString();
-        Map<String, Object> values = new HashMap<>();
-        values.put("user_id", user.getId());
-        values.put("token", tokenString);
-        values.put("expire_date", LocalDate.now().plusMonths(1));
-        values.put("ip_address", ipAddress);
-        values.put("system", system);
-        values.put("is_mobile", Boolean.toString(isMobile));
-        this.database.insert(Database.Table.USERS_TOKENS, values);
+        Token token;
+        Map<String, Object> whereParameters = new HashMap<>();
+        whereParameters.put("user_id", user.getId());
+        whereParameters.put("ip_address", ipAddress);
 
-        Token token = new Token(this.database.getLatestId(Database.Table.USERS_TOKENS),
-                tokenString, ipAddress, system, LocalDate.now().plusMonths(1), isMobile);
+        JSONArray result = this.database.get(Database.Table.USERS_TOKENS, whereParameters);
+        String tokenString = this.tokenGenerator.nextString();
+
+        Map<String, Object> values = new HashMap<>();
+        if (result.length() > 0) {
+            whereParameters.clear();
+            whereParameters.put("id", result.getJSONObject(0).get("id"));
+
+            values.put("token", tokenString);
+            values.put("expire_date", LocalDate.now().plusMonths(1));
+            this.database.update(Database.Table.USERS_TOKENS, whereParameters, values);
+
+            token = new Token(result.getJSONObject(0).getInt("id"),
+                    tokenString, ipAddress, system, LocalDate.now().plusMonths(1), isMobile);
+        } else {
+            values.put("user_id", user.getId());
+            values.put("token", tokenString);
+            values.put("expire_date", LocalDate.now().plusMonths(1));
+            values.put("ip_address", ipAddress);
+            values.put("system", system);
+            values.put("is_mobile", Boolean.toString(isMobile));
+            this.database.insert(Database.Table.USERS_TOKENS, values);
+
+            token = new Token(this.database.getLatestId(Database.Table.USERS_TOKENS),
+                    tokenString, ipAddress, system, LocalDate.now().plusMonths(1), isMobile);
+
+        }
 
         user.setToken(token);
     }
@@ -172,8 +194,8 @@ public class FinancerService {
         user.setId(this.database.getLatestId(Database.Table.USERS));
 
         // creating new token and inserting it to database
-       this.generateToken(user, (String) parameters.get("ipAddress"), (String) parameters.get("system"),
-               parameters.containsKey("isMobile") && (boolean) parameters.get("isMobile"));
+        this.generateToken(user, (String) parameters.get("ipAddress"), (String) parameters.get("system"),
+                parameters.containsKey("isMobile") && (boolean) parameters.get("isMobile"));
 
         return new ConnectionResult<>(user);
     }
@@ -189,7 +211,9 @@ public class FinancerService {
         List<Token> result = new ArrayList<>();
 
         for (DatabaseObject databaseObject : databaseObjects) {
-            result.add((Token) databaseObject);
+            if (((Token) databaseObject).getExpireDate().compareTo(LocalDate.now()) >= 0) {
+                result.add((Token) databaseObject);
+            }
         }
 
         return new ConnectionResult<>(result);
