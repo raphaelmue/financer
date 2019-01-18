@@ -19,7 +19,6 @@ import de.raphaelmuesseler.financer.util.collections.Tree;
 import de.raphaelmuesseler.financer.util.collections.TreeUtil;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.json.JSONPropertyName;
 
 import java.sql.Date;
 import java.sql.SQLException;
