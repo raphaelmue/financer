@@ -18,12 +18,15 @@ public class ServerRequest {
     private final ConnectionCall connectionCall;
 
     ServerRequest(String methodName, Map<String, Object> parameters) {
+        parameters.put("system", System.getProperty("os.name"));
         this.connectionCall = new ConnectionCall(methodName, parameters);
     }
 
     ServerRequest(User user, String methodName, Map<String, Object> parameters) {
         parameters.put("token", user.getToken());
-         this.connectionCall = new ConnectionCall(methodName, parameters);
+        parameters.put("system", System.getProperty("os.name"));
+
+        this.connectionCall = new ConnectionCall(methodName, parameters);
     }
 
     public static void setHost(boolean local) {

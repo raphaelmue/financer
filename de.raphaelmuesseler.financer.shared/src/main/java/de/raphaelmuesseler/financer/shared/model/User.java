@@ -3,12 +3,13 @@ package de.raphaelmuesseler.financer.shared.model;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import de.raphaelmuesseler.financer.shared.model.db.DatabaseObject;
 import de.raphaelmuesseler.financer.shared.model.db.DatabaseUser;
+import de.raphaelmuesseler.financer.shared.model.db.Token;
 
 import java.time.LocalDate;
 
 @JsonIgnoreProperties(ignoreUnknown = true, value = { "birthDateAsLocalDate" })
 public class User extends DatabaseUser {
-    private String token = "";
+    private Token token;
 
     public User() {
         super();
@@ -32,11 +33,11 @@ public class User extends DatabaseUser {
         return this;
     }
 
-    public String getToken() {
+    public Token getToken() {
         return token;
     }
 
-    public void setToken(String token) {
+    public void setToken(Token token) {
         this.token = token;
     }
 
