@@ -90,9 +90,9 @@ public class SettingsController implements Initializable {
         this.devicesListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) ->
                 logoutFromDeviceBtn.setDisable(false));
 
-        HashMap<String, Object> paramters = new HashMap<>();
-        paramters.put("user", this.user);
-        this.executor.execute(new ServerRequestHandler(this.user, "getUsersTokens", paramters, new JavaFXAsyncConnectionCall() {
+        HashMap<String, Object> parameters = new HashMap<>();
+        parameters.put("user", this.user);
+        this.executor.execute(new ServerRequestHandler(this.user, "getUsersTokens", parameters, new JavaFXAsyncConnectionCall() {
             @Override
             public void onSuccess(ConnectionResult result) {
                 tokens = CollectionUtil.castObjectListToObservable((List<Object>) result.getResult());
