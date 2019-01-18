@@ -23,6 +23,7 @@ import de.raphaelmuesseler.financer.shared.model.transactions.FixedTransaction;
 import de.raphaelmuesseler.financer.shared.model.transactions.Transaction;
 import de.raphaelmuesseler.financer.util.collections.CollectionUtil;
 import de.raphaelmuesseler.financer.util.collections.TreeUtil;
+import de.raphaelmuesseler.financer.util.concurrency.FinancerExecutor;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.ObservableList;
@@ -267,7 +268,7 @@ public class TransactionsController implements Initializable {
             parameters.put("user", this.user);
             parameters.put("transaction", transaction);
 
-            this.executor.execute(new ServerRequestHandler(this.user, "addTransaction", parameters, new JavaFXAsyncConnectionCall() {
+            FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "addTransaction", parameters, new JavaFXAsyncConnectionCall() {
                 @Override
                 public void onSuccess(ConnectionResult result) {
                     Platform.runLater(() -> {
@@ -315,7 +316,7 @@ public class TransactionsController implements Initializable {
             parameters.put("user", this.user);
             parameters.put("transaction", transaction);
 
-            this.executor.execute(new ServerRequestHandler(this.user, "updateTransaction", parameters, new JavaFXAsyncConnectionCall() {
+            FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "updateTransaction", parameters, new JavaFXAsyncConnectionCall() {
                 @Override
                 public void onSuccess(ConnectionResult result) {
                     handleRefreshTransactions();
@@ -337,7 +338,7 @@ public class TransactionsController implements Initializable {
                 Map<String, Object> parameters = new HashMap<>();
                 parameters.put("transaction", transaction);
 
-                this.executor.execute(new ServerRequestHandler(this.user, "deleteTransaction", parameters, new JavaFXAsyncConnectionCall() {
+                FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "deleteTransaction", parameters, new JavaFXAsyncConnectionCall() {
                     @Override
                     public void onSuccess(ConnectionResult result) {
                         Platform.runLater(() -> transactionsTableView.getItems().remove(transaction));
@@ -393,7 +394,7 @@ public class TransactionsController implements Initializable {
             parameters.put("user", this.user);
             parameters.put("fixedTransaction", fixedTransaction);
 
-            this.executor.execute(new ServerRequestHandler(this.user, "addFixedTransactions", parameters, new JavaFXAsyncConnectionCall() {
+            FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "addFixedTransactions", parameters, new JavaFXAsyncConnectionCall() {
                 @Override
                 public void onSuccess(ConnectionResult result) {
                     handleRefreshFixedTransactions();
@@ -423,7 +424,7 @@ public class TransactionsController implements Initializable {
             Map<String, Object> parameters = new HashMap<>();
             parameters.put("fixedTransaction", fixedTransaction);
 
-            this.executor.execute(new ServerRequestHandler(this.user, "updateFixedTransaction", parameters,
+            FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "updateFixedTransaction", parameters,
                     this.getFixedTransactionCallback()));
         }
     }
@@ -434,7 +435,7 @@ public class TransactionsController implements Initializable {
             Map<String, Object> parameters = new HashMap<>();
             parameters.put("fixedTransaction", this.fixedTransactionsListView.getSelectionModel().getSelectedItem());
 
-            this.executor.execute(new ServerRequestHandler(this.user, "deleteFixedTransaction", parameters,
+            FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "deleteFixedTransaction", parameters,
                     this.getFixedTransactionCallback()));
         }
     }
