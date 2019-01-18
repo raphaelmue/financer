@@ -14,6 +14,7 @@ import de.raphaelmuesseler.financer.shared.model.transactions.FixedTransaction;
 import de.raphaelmuesseler.financer.shared.model.transactions.Transaction;
 import de.raphaelmuesseler.financer.util.collections.Action;
 import de.raphaelmuesseler.financer.util.collections.TreeUtil;
+import de.raphaelmuesseler.financer.util.concurrency.FinancerExecutor;
 
 import java.net.ConnectException;
 import java.util.Comparator;
@@ -50,7 +51,7 @@ public class RetrievalServiceImpl implements RetrievalService {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("user", user);
 
-        this.executor.execute(new ServerRequestHandler(user, "getUsersCategories", parameters, new JavaFXAsyncConnectionCall() {
+        FinancerExecutor.getExecutor().execute(new ServerRequestHandler(user, "getUsersCategories", parameters, new JavaFXAsyncConnectionCall() {
             @Override
             public void onSuccess(ConnectionResult result) {
                 BaseCategory categories = (BaseCategory) result.getResult();
@@ -75,7 +76,7 @@ public class RetrievalServiceImpl implements RetrievalService {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("user", user);
 
-        this.executor.execute(new ServerRequestHandler(user, "getTransactions", parameters, new JavaFXAsyncConnectionCall() {
+        FinancerExecutor.getExecutor().execute(new ServerRequestHandler(user, "getTransactions", parameters, new JavaFXAsyncConnectionCall() {
             @Override
             public void onSuccess(ConnectionResult result) {
                 List<Transaction> transactions = (List<Transaction>) result.getResult();
@@ -110,7 +111,7 @@ public class RetrievalServiceImpl implements RetrievalService {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("user", user);
 
-        this.executor.execute(new ServerRequestHandler(user, "getFixedTransactions", parameters, new JavaFXAsyncConnectionCall() {
+        FinancerExecutor.getExecutor().execute(new ServerRequestHandler(user, "getFixedTransactions", parameters, new JavaFXAsyncConnectionCall() {
             @Override
             public void onSuccess(ConnectionResult result) {
                 List<FixedTransaction> fixedTransactions = (List<FixedTransaction>) result.getResult();
