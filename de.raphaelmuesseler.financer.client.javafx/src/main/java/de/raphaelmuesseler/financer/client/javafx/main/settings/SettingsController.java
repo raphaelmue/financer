@@ -5,6 +5,7 @@ import com.jfoenix.controls.JFXListView;
 import de.raphaelmuesseler.financer.client.connection.ServerRequestHandler;
 import de.raphaelmuesseler.financer.client.format.I18N;
 import de.raphaelmuesseler.financer.client.javafx.connection.JavaFXAsyncConnectionCall;
+import de.raphaelmuesseler.financer.client.javafx.dialogs.FinancerConfirmDialog;
 import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
 import de.raphaelmuesseler.financer.client.javafx.main.FinancerController;
 import de.raphaelmuesseler.financer.client.local.Settings;
@@ -111,19 +112,21 @@ public class SettingsController implements Initializable {
     }
 
     public void handleLogoutFromDevice() {
-        HashMap<String, Object> parameters = new HashMap<>();
-        parameters.put("tokenId", this.devicesListView.getSelectionModel().getSelectedItem().getId());
-        this.executor.execute(new ServerRequestHandler(this.user, "deleteToken", parameters, new JavaFXAsyncConnectionCall() {
-            @Override
-            public void onSuccess(ConnectionResult result) {
-                Platform.runLater(() -> devicesListView.getItems().remove(devicesListView.getSelectionModel().getSelectedItem()));
-            }
+        if (new FinancerConfirmDialog(I18N.get("confirmLogDeviceOut")).showAndGetResult()) {
+            HashMap<String, Object> parameters = new HashMap<>();
+            parameters.put("tokenId", this.devicesListView.getSelectionModel().getSelectedItem().getId());
+            this.executor.execute(new ServerRequestHandler(this.user, "deleteToken", parameters, new JavaFXAsyncConnectionCall() {
+                @Override
+                public void onSuccess(ConnectionResult result) {
+                    Platform.runLater(() -> devicesListView.getItems().remove(devicesListView.getSelectionModel().getSelectedItem()));
+                }
 
-            @Override
-            public void onFailure(Exception exception) {
-                JavaFXAsyncConnectionCall.super.onFailure(exception);
-            }
-        }));
+                @Override
+                public void onFailure(Exception exception) {
+                    JavaFXAsyncConnectionCall.super.onFailure(exception);
+                }
+            }));
+        }
     }
 
     private final class TokenListViewImpl extends ListCell<Token> {
