@@ -5,6 +5,7 @@ import de.raphaelmuesseler.financer.client.javafx.dialogs.FinancerExceptionDialo
 import javafx.application.Platform;
 
 public interface JavaFXAsyncConnectionCall extends AsyncConnectionCall {
+
     @Override
     default void onFailure(Exception exception) {
         onFailure(exception, () -> {});

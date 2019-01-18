@@ -1,5 +1,7 @@
 package de.raphaelmuesseler.financer.shared.model.db;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.io.Serializable;
 import java.time.LocalDate;
 
@@ -7,15 +9,22 @@ public class Token implements DatabaseObject, Serializable {
     private static final long serialVersionUID = -769078637730799395L;
 
     private int id;
-    private String token, ipAddress, system;
-    private LocalDate expireDate;
+    private String token, system;
 
-    public Token(int id, String token, String ipAddress, String system, LocalDate expireDate) {
+    @SerializedName("ip_address")
+    private String ipAddress;
+    @SerializedName("expire_date")
+    private String expireDate;
+    @SerializedName("is_mobile")
+    private boolean isMobile;
+
+    public Token(int id, String token, String ipAddress, String system, LocalDate expireDate, boolean isMobile) {
         this.id = id;
         this.token = token;
         this.ipAddress = ipAddress;
         this.system = system;
-        this.expireDate = expireDate;
+        this.expireDate = expireDate.toString();
+        this.isMobile = isMobile;
     }
 
     @Override
@@ -36,7 +45,11 @@ public class Token implements DatabaseObject, Serializable {
     }
 
     public LocalDate getExpireDate() {
-        return expireDate;
+        return LocalDate.parse(expireDate);
+    }
+
+    public boolean isMobile() {
+        return isMobile;
     }
 
     public void setId(int id) {
@@ -56,7 +69,11 @@ public class Token implements DatabaseObject, Serializable {
     }
 
     public void setExpireDate(LocalDate expireDate) {
-        this.expireDate = expireDate;
+        this.expireDate = expireDate.toString();
+    }
+
+    public void setMobile(boolean mobile) {
+        isMobile = mobile;
     }
 
     @Override

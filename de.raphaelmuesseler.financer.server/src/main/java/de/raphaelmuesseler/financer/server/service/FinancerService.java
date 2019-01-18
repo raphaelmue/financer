@@ -96,7 +96,7 @@ public class FinancerService {
      * @param system operating system
      * @throws SQLException thrown, when something went wrong executing the SQL statement
      */
-    private void generateToken(User user, String ipAddress, String system) throws SQLException {
+    private void generateToken(User user, String ipAddress, String system, boolean isMobile) throws SQLException {
         String tokenString = this.tokenGenerator.nextString();
         Map<String, Object> values = new HashMap<>();
         values.put("user_id", user.getId());
@@ -104,10 +104,11 @@ public class FinancerService {
         values.put("expire_date", LocalDate.now().plusMonths(1));
         values.put("ip_address", ipAddress);
         values.put("system", system);
+        values.put("is_mobile", Boolean.toString(isMobile));
         this.database.insert(Database.Table.USERS_TOKENS, values);
 
         Token token = new Token(this.database.getLatestId(Database.Table.USERS_TOKENS),
-                tokenString, ipAddress, system, LocalDate.now().plusMonths(1));
+                tokenString, ipAddress, system, LocalDate.now().plusMonths(1), isMobile);
 
         user.setToken(token);
     }
@@ -133,7 +134,8 @@ public class FinancerService {
                 String password = Hash.create((String) parameters.get("password"), user.getSalt());
                 if (password.equals(user.getPassword())) {
                     logger.log(Level.INFO, "Credentials of user '" + user.getFullName() + "' are approved.");
-                    this.generateToken(user, (String) parameters.get("ipAddress"), (String) parameters.get("system"));
+                    this.generateToken(user, (String) parameters.get("ipAddress"), (String) parameters.get("system"),
+                            parameters.containsKey("isMobile") && (boolean) parameters.get("isMobile"));
                 } else {
                     user = null;
                 }
@@ -163,16 +165,34 @@ public class FinancerService {
         values.put("salt", user.getSalt());
         values.put("name", user.getName());
         values.put("surname", user.getSurname());
-        values.put("birthDate", user.getBirthdate());
+        values.put("birthDate", user.getBirthDate());
 
         this.database.insert(Database.Table.USERS, values);
 
         user.setId(this.database.getLatestId(Database.Table.USERS));
 
         // creating new token and inserting it to database
-       this.generateToken(user, (String) parameters.get("ipAddress"), (String) parameters.get("system"));
+       this.generateToken(user, (String) parameters.get("ipAddress"), (String) parameters.get("system"),
+               parameters.containsKey("isMobile") && (boolean) parameters.get("isMobile"));
 
         return new ConnectionResult<>(user);
+    }
+
+    public ConnectionResult<List<Token>> getUsersTokens(Logger logger, Map<String, Object> parameters) throws Exception {
+        logger.log(Level.INFO, "Fetching all tokens of user ...");
+        User user = (User) parameters.get("user");
+
+        Map<String, Object> whereParameters = new HashMap<>();
+        whereParameters.put("user_id", user.getId());
+
+        List<DatabaseObject> databaseObjects = this.database.getObject(Database.Table.USERS_TOKENS, Token.class, whereParameters);
+        List<Token> result = new ArrayList<>();
+
+        for (DatabaseObject databaseObject : databaseObjects) {
+            result.add((Token) databaseObject);
+        }
+
+        return new ConnectionResult<>(result);
     }
 
     public ConnectionResult<BaseCategory> getUsersCategories(Logger logger, Map<String, Object> parameters) throws Exception {

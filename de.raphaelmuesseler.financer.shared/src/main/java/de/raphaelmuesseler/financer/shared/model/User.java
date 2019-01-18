@@ -28,7 +28,7 @@ public class User extends DatabaseUser {
             this.setEmail(((DatabaseUser) databaseObject).getEmail());
             this.setPassword(((DatabaseUser) databaseObject).getPassword());
             this.setSalt(((DatabaseUser) databaseObject).getSalt());
-            this.setBirthdate(((DatabaseUser) databaseObject).getBirthdate());
+            this.setBirthDate(((DatabaseUser) databaseObject).getBirthDate());
         }
         return this;
     }
@@ -42,10 +42,10 @@ public class User extends DatabaseUser {
     }
 
     public LocalDate getBirthDateAsLocalDate() {
-        return LocalDate.parse(super.getBirthdate());
+        return LocalDate.parse(super.getBirthDate());
     }
 
     public void setBirthDate(LocalDate birthDate) {
-        super.setBirthdate(birthDate.toString());
+        super.setBirthDate(birthDate.toString());
     }
 }
