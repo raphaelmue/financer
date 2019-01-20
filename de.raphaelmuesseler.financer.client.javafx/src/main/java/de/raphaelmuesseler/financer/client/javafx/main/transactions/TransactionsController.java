@@ -42,8 +42,6 @@ import org.controlsfx.glyphfont.GlyphFontRegistry;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -330,11 +328,6 @@ public class TransactionsController implements Initializable {
                 @Override
                 public void onSuccess(ConnectionResult result) {
                     Platform.runLater(() -> {
-//                        transactionsTableView.getItems().forEach(transaction1 -> {
-//                            if (transaction1.getId() == transaction.getId()) {
-////                                transaction1 = transaction;
-//                            }
-//                        });
                         transactionsTableView.refresh();
                     });
                 }
@@ -461,17 +454,13 @@ public class TransactionsController implements Initializable {
         return new JavaFXAsyncConnectionCall() {
             @Override
             public void onSuccess(ConnectionResult result) {
+                fixedTransactionsListView.refresh();
             }
 
             @Override
             public void onFailure(Exception exception) {
                 logger.log(Level.SEVERE, exception.getMessage(), exception);
                 JavaFXAsyncConnectionCall.super.onFailure(exception);
-            }
-
-            @Override
-            public void onAfter() {
-                handleRefreshFixedTransactions();
             }
         };
     }
