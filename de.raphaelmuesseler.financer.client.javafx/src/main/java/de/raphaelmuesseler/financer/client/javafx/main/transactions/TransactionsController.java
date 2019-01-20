@@ -326,10 +326,18 @@ public class TransactionsController implements Initializable {
             parameters.put("user", this.user);
             parameters.put("transaction", transaction);
 
-            FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "updateTransaction", parameters, new JavaFXAsyncConnectionCall() {
+            FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "updateTransaction",
+                    parameters, new JavaFXAsyncConnectionCall() {
                 @Override
                 public void onSuccess(ConnectionResult result) {
-                    handleRefreshTransactions();
+                    Platform.runLater(() -> {
+//                        transactionsTableView.getItems().forEach(transaction1 -> {
+//                            if (transaction1.getId() == transaction.getId()) {
+////                                transaction1 = transaction;
+//                            }
+//                        });
+                        transactionsTableView.refresh();
+                    });
                 }
 
                 @Override
