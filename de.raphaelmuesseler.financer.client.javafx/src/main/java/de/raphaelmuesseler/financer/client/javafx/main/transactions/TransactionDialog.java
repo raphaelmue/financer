@@ -7,6 +7,7 @@ import de.raphaelmuesseler.financer.client.format.Formatter;
 import de.raphaelmuesseler.financer.client.format.I18N;
 import de.raphaelmuesseler.financer.client.javafx.components.DoubleField;
 import de.raphaelmuesseler.financer.client.javafx.connection.JavaFXAsyncConnectionCall;
+import de.raphaelmuesseler.financer.client.javafx.dialogs.FinancerConfirmDialog;
 import de.raphaelmuesseler.financer.client.javafx.dialogs.FinancerDialog;
 import de.raphaelmuesseler.financer.client.javafx.dialogs.FinancerExceptionDialog;
 import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
@@ -35,6 +36,7 @@ import java.awt.*;
 import java.io.*;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.Executors;
 
 class TransactionDialog extends FinancerDialog<Transaction> {
@@ -122,14 +124,12 @@ class TransactionDialog extends FinancerDialog<Transaction> {
                     new FileChooser.ExtensionFilter(I18N.get("documents"), "*.jpg", "*.png", "*.doc", "*.docx", "*.pdf")
             );
             File attachmentFile = fileChooser.showOpenDialog(uploadAttachmentBtn.getContextMenu());
-            onUploadFile(attachmentFile);
+            onUploadAttachment(attachmentFile);
         });
 
-        openFileBtn.setOnAction(event -> onOpenFile());
+        openFileBtn.setOnAction(event -> onOpenAttachment());
 
-        deleteAttachmentBtn.setOnAction(event -> {
-
-        });
+        deleteAttachmentBtn.setOnAction(event -> onDeleteAttachment());
 
         HBox toolBox = new HBox();
         toolBox.setSpacing(8);
@@ -227,10 +227,10 @@ class TransactionDialog extends FinancerDialog<Transaction> {
         return super.onConfirm();
     }
 
-    private void onUploadFile(File attachmentFile) {
+    private void onUploadAttachment(File attachmentFile) {
 
         if (attachmentFile != null) {
-            HashMap<String, Object> parameters = new HashMap<>();
+            Map<String, Object> parameters = new HashMap<>();
             parameters.put("transaction", this.getValue());
             parameters.put("attachmentFile", attachmentFile);
 
@@ -258,7 +258,7 @@ class TransactionDialog extends FinancerDialog<Transaction> {
         }
     }
 
-    private void onOpenFile() {
+    private void onOpenAttachment() {
         File file = new File(LocalStorageImpl.LocalStorageFile.TRANSACTIONS.getFile().getParent() +
                 "/transactions/" + this.getValue().getId() + "/attachments/" +
                 this.attachmentListView.getSelectionModel().getSelectedItem().getName());
@@ -274,7 +274,7 @@ class TransactionDialog extends FinancerDialog<Transaction> {
                 file.getParentFile().mkdirs();
             }
 
-            HashMap<String, Object> parameters = new HashMap<>();
+            Map<String, Object> parameters = new HashMap<>();
             parameters.put("id", this.attachmentListView.getSelectionModel().getSelectedItem().getId());
 
             FinancerExecutor.getExecutor().execute(new ServerRequestHandler(
@@ -289,6 +289,27 @@ class TransactionDialog extends FinancerDialog<Transaction> {
                         new FinancerExceptionDialog("Financer", e).showAndWait();
                         e.printStackTrace();
                     }
+                }
+
+                @Override
+                public void onFailure(Exception exception) {
+                    JavaFXAsyncConnectionCall.super.onFailure(exception);
+                }
+            }));
+        }
+    }
+
+    private void onDeleteAttachment() {
+        if (new FinancerConfirmDialog(I18N.get("confirmDeleteAttachment")).showAndGetResult()) {
+            Map<String, Object> parameters = new HashMap<>();
+            parameters.put("id", this.attachmentListView.getSelectionModel().getSelectedItem().getId());
+
+            FinancerExecutor.getExecutor().execute(new ServerRequestHandler(
+                    (User) LocalStorageImpl.getInstance().readObject("user"), "deleteAttachment",
+                    parameters, new JavaFXAsyncConnectionCall() {
+                @Override
+                public void onSuccess(ConnectionResult result) {
+                    attachmentListView.getItems().remove(attachmentListView.getSelectionModel().getSelectedItem());
                 }
 
                 @Override

@@ -440,6 +440,16 @@ public class FinancerService {
         return new ConnectionResult<>(null);
     }
 
+    public ConnectionResult<Void> deleteAttachment(Logger logger, Map<String, Object> parameters) throws Exception {
+        logger.log(Level.INFO, "Deleting attachment ...");
+        Map<String, Object> whereParamters = new HashMap<>();
+        whereParamters.put("id", parameters.get("id"));
+
+        this.database.delete(Database.Table.TRANSACTIONS_ATTACHMENTS, whereParamters);
+
+        return new ConnectionResult<>(null);
+    }
+
     public ConnectionResult<Void> deleteTransaction(Logger logger, Map<String, Object> parameters) throws Exception {
         logger.log(Level.INFO, "Adding transaction ...");
         Transaction transaction = (Transaction) parameters.get("transaction");
