@@ -14,7 +14,7 @@ public abstract class AbstractTransaction implements Serializable, AmountProvide
     private double amount;
     private CategoryTree categoryTree;
     private String product, purpose;
-    private final List<Attachment> attachments;
+    private final List<AttachmentWithContent> attachments;
 
 
     AbstractTransaction(int id, double amount, CategoryTree category, String product, String purpose) {
@@ -46,7 +46,7 @@ public abstract class AbstractTransaction implements Serializable, AmountProvide
         return purpose;
     }
 
-    public List<Attachment> getAttachments() {
+    public List<AttachmentWithContent> getAttachments() {
         return attachments;
     }
 

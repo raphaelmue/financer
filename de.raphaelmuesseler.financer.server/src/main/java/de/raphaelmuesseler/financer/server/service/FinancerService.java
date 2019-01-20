@@ -7,10 +7,11 @@ import de.raphaelmuesseler.financer.shared.model.BaseCategory;
 import de.raphaelmuesseler.financer.shared.model.Category;
 import de.raphaelmuesseler.financer.shared.model.CategoryTree;
 import de.raphaelmuesseler.financer.shared.model.User;
+import de.raphaelmuesseler.financer.shared.model.db.Attachment;
 import de.raphaelmuesseler.financer.shared.model.db.DatabaseObject;
 import de.raphaelmuesseler.financer.shared.model.db.DatabaseUser;
 import de.raphaelmuesseler.financer.shared.model.db.Token;
-import de.raphaelmuesseler.financer.shared.model.transactions.Attachment;
+import de.raphaelmuesseler.financer.shared.model.transactions.AttachmentWithContent;
 import de.raphaelmuesseler.financer.shared.model.transactions.FixedTransaction;
 import de.raphaelmuesseler.financer.shared.model.transactions.Transaction;
 import de.raphaelmuesseler.financer.shared.model.transactions.TransactionAmount;
@@ -343,13 +344,24 @@ public class FinancerService {
                     jsonObjectCategory.getInt("cat_id"));
 
             // TODO get real CategoryTree instance
-            transactions.add(new Transaction(jsonObjectTransaction.getInt("id"),
+            Transaction transaction = new Transaction(jsonObjectTransaction.getInt("id"),
                     jsonObjectTransaction.getDouble("amount"),
                     new CategoryTree(BaseCategory.CategoryClass.getCategoryClassByIndex(category.getRootId() - 1), null, category),
                     jsonObjectTransaction.getString("product"),
                     jsonObjectTransaction.getString("purpose"),
                     ((Date) jsonObjectTransaction.get("value_date")).toLocalDate(),
-                    jsonObjectTransaction.getString("shop")));
+                    jsonObjectTransaction.getString("shop"));
+
+            whereClause.clear();
+            whereClause.put("transaction_id", transaction.getId());
+            for (DatabaseObject databaseObject : this.database.getObject(Database.Table.TRANSACTIONS_ATTACHMENTS,
+                    Attachment.class, whereClause)) {
+                transaction.getAttachments().add((AttachmentWithContent) new AttachmentWithContent().fromDatabaseObject(databaseObject));
+            }
+
+            transactions.add(transaction);
+
+            whereClause.clear();
         }
         return new ConnectionResult<>(transactions);
     }
@@ -394,9 +406,9 @@ public class FinancerService {
         return new ConnectionResult<>(null);
     }
 
-    public ConnectionResult<Attachment> uploadTransactionAttachment(Logger logger, Map<String, Object> parameters) throws Exception {
-        logger.log(Level.INFO, "Uploading Attachment ...");
-        Attachment result = new Attachment();
+    public ConnectionResult<AttachmentWithContent> uploadTransactionAttachment(Logger logger, Map<String, Object> parameters) throws Exception {
+        logger.log(Level.INFO, "Uploading AttachmentWithContent ...");
+        AttachmentWithContent result = new AttachmentWithContent();
         File attachmentFile = (File) parameters.get("attachmentFile");
 
         Map<String, Object> values = new HashMap<>();
@@ -409,9 +421,23 @@ public class FinancerService {
 
         result.setId(this.database.getLatestId(Database.Table.TRANSACTIONS_ATTACHMENTS));
         result.setName(attachmentFile.getName());
+        result.setUploadDate(LocalDate.now());
         //result.setContent((byte[]) parameters.get("content"));
 
         return new ConnectionResult<>(result);
+    }
+
+    public ConnectionResult<AttachmentWithContent> getAttachment(Logger logger, Map<String, Object> parameters) throws Exception {
+        logger.log(Level.INFO, "Fetching attachment ...");
+        Map<String, Object> whereParameters = new HashMap<>();
+        whereParameters.put("id", parameters.get("id"));
+
+        List<DatabaseObject> result = this.database.getObject(Database.Table.TRANSACTIONS_ATTACHMENTS, AttachmentWithContent.class, whereParameters);
+        if (result != null && result.size() > 0) {
+            return new ConnectionResult<>((AttachmentWithContent) result.get(0));
+        }
+
+        return new ConnectionResult<>(null);
     }
 
     public ConnectionResult<Void> deleteTransaction(Logger logger, Map<String, Object> parameters) throws Exception {
