@@ -200,7 +200,9 @@ public class TransactionsController implements Initializable {
         this.transactionsTableView.setRowFactory(param -> {
             TableRow<Transaction> row = new TableRow<>();
             row.setOnMouseClicked(event -> {
-                handleEditTransaction();
+                if (event.getClickCount() == 2 && (! row.isEmpty()) ) {
+                    handleEditTransaction();
+                }
             });
             return row;
         });
