@@ -16,6 +16,7 @@ import de.raphaelmuesseler.financer.util.concurrency.FinancerExecutor;
 import javafx.application.Platform;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -58,6 +59,14 @@ public class LoginController implements Initializable {
         }
         I18N.setLocalStorage(this.localStorage);
         Formatter.setSettings(settings);
+
+        Platform.runLater(() -> {
+            this.gridPane.getScene().setOnKeyPressed(e -> {
+                if (e.getCode() == KeyCode.ENTER) {
+                    handleSignInButtonAction();
+                }
+            });
+        });
     }
 
     public void handleSignInButtonAction() {
