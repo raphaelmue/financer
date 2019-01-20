@@ -22,7 +22,6 @@ import de.raphaelmuesseler.financer.shared.model.transactions.AbstractTransactio
 import de.raphaelmuesseler.financer.shared.model.transactions.FixedTransaction;
 import de.raphaelmuesseler.financer.shared.model.transactions.Transaction;
 import de.raphaelmuesseler.financer.util.collections.CollectionUtil;
-import de.raphaelmuesseler.financer.util.collections.TreeUtil;
 import de.raphaelmuesseler.financer.util.concurrency.FinancerExecutor;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
@@ -67,7 +66,6 @@ public class TransactionsController implements Initializable {
     private Logger logger = Logger.getLogger("FinancerApplication");
     private LocalStorageImpl localStorage = (LocalStorageImpl) LocalStorageImpl.getInstance();
     private ObservableList<Transaction> transactions;
-    private ObservableList<FixedTransaction> fixedTransactions;
     private BaseCategory categories;
 
     @Override
@@ -102,13 +100,10 @@ public class TransactionsController implements Initializable {
 
         this.categories = (BaseCategory) this.localStorage.readObject("categories");
 
-        if (this.categories != null) {
-            // TODO set prefixes
-            TreeUtil.numberItemsByValue(this.categories, (result, prefix) -> result.getValue().setPrefix(prefix));
-        }
-
         this.loadTransactionsTable();
         this.loadFixedTransactionsTable();
+        this.loadTransactionsOverviewTable();
+
     }
 
     private void loadTransactionsOverviewTable() {
@@ -241,6 +236,8 @@ public class TransactionsController implements Initializable {
             deleteFixedTransactionBtn.setDisable(false);
         });
 
+        categoriesListView.setCellFactory(param -> new CategoryListViewImpl());
+
         this.handleRefreshFixedTransactions();
     }
 
@@ -251,6 +248,7 @@ public class TransactionsController implements Initializable {
                 transactions = CollectionUtil.castListToObservableList(result);
                 Platform.runLater(() -> {
                     loadTransactionTableItems();
+                    transactionsTableView.refresh();
                     FinancerController.hideLoadingBox();
                 });
             }
@@ -365,28 +363,15 @@ public class TransactionsController implements Initializable {
     }
 
     public void handleRefreshFixedTransactions() {
-        RetrievalServiceImpl.getInstance().fetchFixedTransactions(this.user, new AsyncCall<>() {
-            @Override
-            public void onSuccess(List<FixedTransaction> result) {
-                fixedTransactions = CollectionUtil.castListToObservableList(result);
+        RetrievalServiceImpl.getInstance().fetchFixedTransactions(this.user, result -> Platform.runLater(() -> {
+            this.categories = (BaseCategory) this.localStorage.readObject("categories");
 
-                Platform.runLater(() -> {
-                    showFixedTransactions(categoriesListView.getSelectionModel().getSelectedItem());
-                    categoriesListView.setCellFactory(param -> new TransactionsController.CategoryListViewImpl());
-                    FinancerController.hideLoadingBox();
-
-                    loadTransactionsOverviewTable();
-                });
-            }
-
-            @Override
-            public void onFailure(Exception exception) {
-                List<FixedTransaction> result = localStorage.readList("fixedTransactions");
-                if (result != null && result.size() > 0) {
-                    fixedTransactions = CollectionUtil.castListToObservableList(result);
-                }
-            }
-        });
+            fixedTransactionsListView.refresh();
+            categoriesListView.refresh();
+            categoriesListView.setCellFactory(param -> new CategoryListViewImpl());
+            showFixedTransactions(categoriesListView.getSelectionModel().getSelectedItem());
+            FinancerController.hideLoadingBox();
+        }));
     }
 
     public void handleNewFixedTransaction() {
@@ -455,6 +440,7 @@ public class TransactionsController implements Initializable {
             @Override
             public void onSuccess(ConnectionResult result) {
                 fixedTransactionsListView.refresh();
+                categoriesListView.refresh();
             }
 
             @Override
@@ -468,11 +454,9 @@ public class TransactionsController implements Initializable {
     private void showFixedTransactions(CategoryTree category) {
         if (category != null) {
             this.fixedTransactionsListView.getItems().clear();
-            if (this.fixedTransactions != null) {
-                for (FixedTransaction transaction : this.fixedTransactions) {
-                    if (transaction.getCategoryTree().getValue().getId() == category.getValue().getId()) {
-                        this.fixedTransactionsListView.getItems().add(transaction);
-                    }
+            for (AbstractTransaction abstractTransaction : category.getTransactions()) {
+                if (abstractTransaction instanceof FixedTransaction) {
+                    this.fixedTransactionsListView.getItems().add((FixedTransaction) abstractTransaction);
                 }
             }
         }

@@ -21,8 +21,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public class RetrievalServiceImpl implements RetrievalService {
 
@@ -54,6 +52,7 @@ public class RetrievalServiceImpl implements RetrievalService {
             @Override
             public void onSuccess(ConnectionResult result) {
                 BaseCategory categories = (BaseCategory) result.getResult();
+                TreeUtil.numberItemsByValue(categories, (categoryTree, prefix) -> categoryTree.getValue().setPrefix(prefix));
                 localStorage.writeObject("categories", categories);
 
                 asyncCall.onSuccess(categories);
@@ -116,11 +115,14 @@ public class RetrievalServiceImpl implements RetrievalService {
                 List<FixedTransaction> fixedTransactions = (List<FixedTransaction>) result.getResult();
                 BaseCategory categories = (BaseCategory) localStorage.readObject("categories");
                 for (FixedTransaction fixedTransaction : fixedTransactions) {
-                    CategoryTree categoryTree = (CategoryTree) TreeUtil.getByValue(categories, fixedTransaction.getCategoryTree(), Comparator.comparingInt(Category::getId));
+                    CategoryTree categoryTree = (CategoryTree) TreeUtil.getByValue(categories, fixedTransaction.getCategoryTree(),
+                            Comparator.comparingInt(Category::getId));
                     if (categoryTree != null) {
                         fixedTransaction.setCategoryTree(categoryTree);
+                        categoryTree.getTransactions().remove(fixedTransaction);
                         categoryTree.getTransactions().add(fixedTransaction);
                     }
+                    System.out.println(categoryTree);
                 }
                 localStorage.writeObject("fixedTransactions", result.getResult());
                 localStorage.writeObject("categories", categories);
