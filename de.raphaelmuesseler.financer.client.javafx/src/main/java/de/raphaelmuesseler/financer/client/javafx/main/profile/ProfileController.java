@@ -48,7 +48,6 @@ public class ProfileController implements Initializable {
 
     private User user;
     private Logger logger = Logger.getLogger("FinancerApplication");
-    private ExecutorService executor = Executors.newCachedThreadPool();
     private BaseCategory categories;
     private LocalStorageImpl localStorage = (LocalStorageImpl) LocalStorageImpl.getInstance();
     private TreeItem<CategoryTree> treeStructure;

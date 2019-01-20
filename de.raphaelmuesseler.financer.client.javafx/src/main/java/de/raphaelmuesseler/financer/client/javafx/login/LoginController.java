@@ -42,7 +42,6 @@ public class LoginController implements Initializable {
     public Menu languageMenu;
 
     private Logger logger = Logger.getLogger("LoginApplication");
-    private ExecutorService executor = Executors.newCachedThreadPool();
     private LocalStorageImpl localStorage = (LocalStorageImpl) LocalStorageImpl.getInstance();
 
     @Override

@@ -64,7 +64,6 @@ public class TransactionsController implements Initializable {
 
     private User user;
     private Logger logger = Logger.getLogger("FinancerApplication");
-    private ExecutorService executor = Executors.newCachedThreadPool();
     private LocalStorageImpl localStorage = (LocalStorageImpl) LocalStorageImpl.getInstance();
     private ObservableList<Transaction> transactions;
     private ObservableList<FixedTransaction> fixedTransactions;
