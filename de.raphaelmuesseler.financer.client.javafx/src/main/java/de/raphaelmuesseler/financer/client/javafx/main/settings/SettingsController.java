@@ -13,6 +13,7 @@ import de.raphaelmuesseler.financer.shared.connection.ConnectionResult;
 import de.raphaelmuesseler.financer.shared.model.User;
 import de.raphaelmuesseler.financer.shared.model.db.Token;
 import de.raphaelmuesseler.financer.util.collections.CollectionUtil;
+import de.raphaelmuesseler.financer.util.concurrency.FinancerExecutor;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.fxml.Initializable;
@@ -42,7 +43,6 @@ public class SettingsController implements Initializable {
     public JFXListView<Token> devicesListView;
 
     private Settings settings;
-    private ExecutorService executor = Executors.newCachedThreadPool();
     private User user = (User) LocalStorageImpl.getInstance().readObject("user");
     private ObservableList<Token> tokens;
 
@@ -92,7 +92,7 @@ public class SettingsController implements Initializable {
 
         HashMap<String, Object> parameters = new HashMap<>();
         parameters.put("user", this.user);
-        this.executor.execute(new ServerRequestHandler(this.user, "getUsersTokens", parameters, new JavaFXAsyncConnectionCall() {
+        FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "getUsersTokens", parameters, new JavaFXAsyncConnectionCall() {
             @Override
             public void onSuccess(ConnectionResult result) {
                 tokens = CollectionUtil.castObjectListToObservable((List<Object>) result.getResult());
@@ -115,7 +115,7 @@ public class SettingsController implements Initializable {
         if (new FinancerConfirmDialog(I18N.get("confirmLogDeviceOut")).showAndGetResult()) {
             HashMap<String, Object> parameters = new HashMap<>();
             parameters.put("tokenId", this.devicesListView.getSelectionModel().getSelectedItem().getId());
-            this.executor.execute(new ServerRequestHandler(this.user, "deleteToken", parameters, new JavaFXAsyncConnectionCall() {
+            FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "deleteToken", parameters, new JavaFXAsyncConnectionCall() {
                 @Override
                 public void onSuccess(ConnectionResult result) {
                     Platform.runLater(() -> devicesListView.getItems().remove(devicesListView.getSelectionModel().getSelectedItem()));

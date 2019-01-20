@@ -27,7 +27,6 @@ import java.util.concurrent.Executors;
 public class RetrievalServiceImpl implements RetrievalService {
 
     private static RetrievalService INSTANCE = null;
-    private ExecutorService executor = Executors.newCachedThreadPool();
     private final LocalStorage localStorage = LocalStorageImpl.getInstance();
 
 
