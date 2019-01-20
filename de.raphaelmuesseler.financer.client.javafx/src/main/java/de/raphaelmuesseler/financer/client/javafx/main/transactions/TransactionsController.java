@@ -241,7 +241,7 @@ public class TransactionsController implements Initializable {
         RetrievalServiceImpl.getInstance().fetchTransactions(this.user, new AsyncCall<>() {
             @Override
             public void onSuccess(List<Transaction> result) {
-                transactions = CollectionUtil.castListToObserableList(result);
+                transactions = CollectionUtil.castListToObservableList(result);
                 Platform.runLater(() -> {
                     loadTransactionTableItems();
                     FinancerController.hideLoadingBox();
@@ -252,7 +252,7 @@ public class TransactionsController implements Initializable {
             public void onFailure(Exception exception) {
                 List<Transaction> result = localStorage.readList("transactions");
                 if (result != null && result.size() > 0) {
-                    transactions = CollectionUtil.castListToObserableList(result);
+                    transactions = CollectionUtil.castListToObservableList(result);
                 }
             }
         });
@@ -358,7 +358,7 @@ public class TransactionsController implements Initializable {
         RetrievalServiceImpl.getInstance().fetchFixedTransactions(this.user, new AsyncCall<>() {
             @Override
             public void onSuccess(List<FixedTransaction> result) {
-                fixedTransactions = CollectionUtil.castListToObserableList(result);
+                fixedTransactions = CollectionUtil.castListToObservableList(result);
 
                 Platform.runLater(() -> {
                     showFixedTransactions(categoriesListView.getSelectionModel().getSelectedItem());
@@ -373,7 +373,7 @@ public class TransactionsController implements Initializable {
             public void onFailure(Exception exception) {
                 List<FixedTransaction> result = localStorage.readList("fixedTransactions");
                 if (result != null && result.size() > 0) {
-                    fixedTransactions = CollectionUtil.castListToObserableList(result);
+                    fixedTransactions = CollectionUtil.castListToObservableList(result);
                 }
             }
         });

@@ -9,6 +9,7 @@ import de.raphaelmuesseler.financer.shared.model.CategoryTree;
 import de.raphaelmuesseler.financer.shared.model.User;
 import de.raphaelmuesseler.financer.shared.model.db.DatabaseObject;
 import de.raphaelmuesseler.financer.shared.model.db.DatabaseUser;
+import de.raphaelmuesseler.financer.shared.model.db.Token;
 import de.raphaelmuesseler.financer.shared.model.transactions.Attachment;
 import de.raphaelmuesseler.financer.shared.model.transactions.FixedTransaction;
 import de.raphaelmuesseler.financer.shared.model.transactions.Transaction;
@@ -60,7 +61,7 @@ public class FinancerService {
         logger.log(Level.INFO, "Checking users token ...");
 
         Map<String, Object> whereParameters = new HashMap<>();
-        whereParameters.put("token", parameters.get("token"));
+        whereParameters.put("token", ((Token) parameters.get("token")).getToken());
 
         JSONArray jsonArray = this.database.get(Database.Table.USERS_TOKENS, whereParameters);
 
@@ -90,6 +91,52 @@ public class FinancerService {
     }
 
     /**
+     * Generates a new token (or updates the token, if the IP address is already store in the database)
+     * and stores it in the database
+     *
+     * @param user      user
+     * @param ipAddress ip address of client
+     * @param system    operating system
+     * @throws SQLException thrown, when something went wrong executing the SQL statement
+     */
+    private void generateToken(User user, String ipAddress, String system, boolean isMobile) throws SQLException {
+        Token token;
+        Map<String, Object> whereParameters = new HashMap<>();
+        whereParameters.put("user_id", user.getId());
+        whereParameters.put("ip_address", ipAddress);
+
+        JSONArray result = this.database.get(Database.Table.USERS_TOKENS, whereParameters);
+        String tokenString = this.tokenGenerator.nextString();
+
+        Map<String, Object> values = new HashMap<>();
+        if (result.length() > 0) {
+            whereParameters.clear();
+            whereParameters.put("id", result.getJSONObject(0).get("id"));
+
+            values.put("token", tokenString);
+            values.put("expire_date", LocalDate.now().plusMonths(1));
+            this.database.update(Database.Table.USERS_TOKENS, whereParameters, values);
+
+            token = new Token(result.getJSONObject(0).getInt("id"),
+                    tokenString, ipAddress, system, LocalDate.now().plusMonths(1), isMobile);
+        } else {
+            values.put("user_id", user.getId());
+            values.put("token", tokenString);
+            values.put("expire_date", LocalDate.now().plusMonths(1));
+            values.put("ip_address", ipAddress);
+            values.put("system", system);
+            values.put("is_mobile", Boolean.toString(isMobile));
+            this.database.insert(Database.Table.USERS_TOKENS, values);
+
+            token = new Token(this.database.getLatestId(Database.Table.USERS_TOKENS),
+                    tokenString, ipAddress, system, LocalDate.now().plusMonths(1), isMobile);
+
+        }
+
+        user.setToken(token);
+    }
+
+    /**
      * Checks, if the users credentials are correct
      *
      * @param parameters [email, password]
@@ -110,15 +157,8 @@ public class FinancerService {
                 String password = Hash.create((String) parameters.get("password"), user.getSalt());
                 if (password.equals(user.getPassword())) {
                     logger.log(Level.INFO, "Credentials of user '" + user.getFullName() + "' are approved.");
-
-                    String token = this.tokenGenerator.nextString();
-                    Map<String, Object> values = new HashMap<>();
-                    values.put("user_id", user.getId());
-                    values.put("token", token);
-                    values.put("expire_date", LocalDate.now().plusMonths(1));
-                    this.database.insert(Database.Table.USERS_TOKENS, values);
-
-                    user.setToken(token);
+                    this.generateToken(user, (String) parameters.get("ipAddress"), (String) parameters.get("system"),
+                            parameters.containsKey("isMobile") && (boolean) parameters.get("isMobile"));
                 } else {
                     user = null;
                 }
@@ -148,23 +188,46 @@ public class FinancerService {
         values.put("salt", user.getSalt());
         values.put("name", user.getName());
         values.put("surname", user.getSurname());
-        values.put("birthDate", user.getBirthdate());
+        values.put("birthDate", user.getBirthDate());
 
         this.database.insert(Database.Table.USERS, values);
 
         user.setId(this.database.getLatestId(Database.Table.USERS));
 
         // creating new token and inserting it to database
-        String token = this.tokenGenerator.nextString();
-        values.clear();
-        values.put("user_id", user.getId());
-        values.put("token", token);
-        values.put("expire_date", LocalDate.now().plusMonths(1));
-        this.database.insert(Database.Table.USERS_TOKENS, values);
-
-        user.setToken(token);
+        this.generateToken(user, (String) parameters.get("ipAddress"), (String) parameters.get("system"),
+                parameters.containsKey("isMobile") && (boolean) parameters.get("isMobile"));
 
         return new ConnectionResult<>(user);
+    }
+
+    public ConnectionResult<List<Token>> getUsersTokens(Logger logger, Map<String, Object> parameters) throws Exception {
+        logger.log(Level.INFO, "Fetching all tokens of user ...");
+        User user = (User) parameters.get("user");
+
+        Map<String, Object> whereParameters = new HashMap<>();
+        whereParameters.put("user_id", user.getId());
+
+        List<DatabaseObject> databaseObjects = this.database.getObject(Database.Table.USERS_TOKENS, Token.class, whereParameters);
+        List<Token> result = new ArrayList<>();
+
+        for (DatabaseObject databaseObject : databaseObjects) {
+            if (((Token) databaseObject).getExpireDate().compareTo(LocalDate.now()) >= 0) {
+                result.add((Token) databaseObject);
+            }
+        }
+
+        return new ConnectionResult<>(result);
+    }
+
+    public ConnectionResult<Void> deleteToken(Logger logger, Map<String, Object> parameters) throws Exception {
+        logger.log(Level.INFO, "Deleting users token ...");
+
+        Map<String, Object> whereParameters = new HashMap<>();
+        whereParameters.put("id", parameters.get("tokenId"));
+        this.database.delete(Database.Table.USERS_TOKENS, whereParameters);
+
+        return new ConnectionResult<>(null);
     }
 
     public ConnectionResult<BaseCategory> getUsersCategories(Logger logger, Map<String, Object> parameters) throws Exception {
@@ -215,6 +278,7 @@ public class FinancerService {
             values.put("parent_id", category.getParentId());
         }
         values.put("name", category.getName());
+
 
         this.database.insert(Database.Table.USERS_CATEGORIES, values);
 
