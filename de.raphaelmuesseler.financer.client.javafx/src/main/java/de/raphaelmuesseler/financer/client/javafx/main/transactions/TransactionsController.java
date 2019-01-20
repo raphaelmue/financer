@@ -197,6 +197,14 @@ public class TransactionsController implements Initializable {
         this.transactionsTableView.getColumns().add(purposeColumn);
         this.transactionsTableView.getColumns().add(shopColumn);
 
+        this.transactionsTableView.setRowFactory(param -> {
+            TableRow<Transaction> row = new TableRow<>();
+            row.setOnMouseClicked(event -> {
+                handleEditTransaction();
+            });
+            return row;
+        });
+
         this.transactionsTableView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             editTransactionBtn.setDisable(false);
             deleteTransactionBtn.setDisable(false);
