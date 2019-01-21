@@ -72,38 +72,40 @@ public class TransactionsController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         FinancerController.showLoadingBox();
 
-        this.user = (User) this.localStorage.readObject("user");
+        Platform.runLater(() -> {
+            this.user = (User) this.localStorage.readObject("user");
 
-        GlyphFont fontAwesome = GlyphFontRegistry.font("FontAwesome");
-        this.refreshTransactionsBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.REFRESH));
-        this.refreshTransactionsBtn.setGraphicTextGap(8);
-        this.newTransactionBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.PLUS));
-        this.newTransactionBtn.setGraphicTextGap(8);
-        this.editTransactionBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.EDIT));
-        this.editTransactionBtn.setGraphicTextGap(8);
-        this.editTransactionBtn.setDisable(true);
-        this.deleteTransactionBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.TRASH));
-        this.deleteTransactionBtn.setGraphicTextGap(8);
-        this.deleteTransactionBtn.setDisable(true);
+            GlyphFont fontAwesome = GlyphFontRegistry.font("FontAwesome");
+            this.refreshTransactionsBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.REFRESH));
+            this.refreshTransactionsBtn.setGraphicTextGap(8);
+            this.newTransactionBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.PLUS));
+            this.newTransactionBtn.setGraphicTextGap(8);
+            this.editTransactionBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.EDIT));
+            this.editTransactionBtn.setGraphicTextGap(8);
+            this.editTransactionBtn.setDisable(true);
+            this.deleteTransactionBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.TRASH));
+            this.deleteTransactionBtn.setGraphicTextGap(8);
+            this.deleteTransactionBtn.setDisable(true);
 
-        this.refreshFixedTransactionsBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.REFRESH));
-        this.refreshFixedTransactionsBtn.setGraphicTextGap(8);
-        this.newFixedTransactionBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.PLUS));
-        this.newFixedTransactionBtn.setGraphicTextGap(8);
-        this.newFixedTransactionBtn.setDisable(true);
-        this.editFixedTransactionBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.EDIT));
-        this.editFixedTransactionBtn.setGraphicTextGap(8);
-        this.editFixedTransactionBtn.setDisable(true);
-        this.deleteFixedTransactionBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.TRASH));
-        this.deleteFixedTransactionBtn.setGraphicTextGap(8);
-        this.deleteFixedTransactionBtn.setDisable(true);
+            this.refreshFixedTransactionsBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.REFRESH));
+            this.refreshFixedTransactionsBtn.setGraphicTextGap(8);
+            this.newFixedTransactionBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.PLUS));
+            this.newFixedTransactionBtn.setGraphicTextGap(8);
+            this.newFixedTransactionBtn.setDisable(true);
+            this.editFixedTransactionBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.EDIT));
+            this.editFixedTransactionBtn.setGraphicTextGap(8);
+            this.editFixedTransactionBtn.setDisable(true);
+            this.deleteFixedTransactionBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.TRASH));
+            this.deleteFixedTransactionBtn.setGraphicTextGap(8);
+            this.deleteFixedTransactionBtn.setDisable(true);
 
-        this.categories = (BaseCategory) this.localStorage.readObject("categories");
+            this.categories = (BaseCategory) this.localStorage.readObject("categories");
 
-        this.loadTransactionsTable();
-        this.loadFixedTransactionsTable();
-        this.loadTransactionsOverviewTable();
+            this.loadTransactionsTable();
+            this.loadFixedTransactionTable();
+            this.loadTransactionsOverviewTable();
 
+        });
     }
 
     private void loadTransactionsOverviewTable() {
@@ -192,7 +194,7 @@ public class TransactionsController implements Initializable {
         this.transactionsTableView.setRowFactory(param -> {
             TableRow<Transaction> row = new TableRow<>();
             row.setOnMouseClicked(event -> {
-                if (event.getClickCount() == 2 && (! row.isEmpty()) ) {
+                if (event.getClickCount() == 2 && (!row.isEmpty())) {
                     handleEditTransaction();
                 }
             });
@@ -207,22 +209,12 @@ public class TransactionsController implements Initializable {
         this.handleRefreshTransactions();
     }
 
-    private void loadFixedTransactionsTable() {
-        if (this.localStorage.readObject("categories") != null) {
-            this.categories.traverse(treeItem -> {
-                if ((((CategoryTree) treeItem).getCategoryClass() == BaseCategory.CategoryClass.FIXED_EXPENSES ||
-                        ((CategoryTree) treeItem).getCategoryClass() == BaseCategory.CategoryClass.FIXED_REVENUE)) {
-                    categoriesListView.getItems().add((CategoryTree) treeItem);
-                }
-            });
-        }
-
-        this.categoriesListView.getItems().sort((o1, o2) -> String.CASE_INSENSITIVE_ORDER.compare(JavaFXFormatter.formatCategoryName(o1),
-                JavaFXFormatter.formatCategoryName(o2)));
+    private void loadFixedTransactionTable() {
+        this.handleRefreshFixedTransactions();
 
         this.categoriesListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             showFixedTransactions(newValue);
-            if (!newValue.isRoot()) {
+            if (newValue != null && !newValue.isRoot()) {
                 newFixedTransactionBtn.setDisable(false);
             } else {
                 newFixedTransactionBtn.setDisable(true);
@@ -237,8 +229,21 @@ public class TransactionsController implements Initializable {
         });
 
         categoriesListView.setCellFactory(param -> new CategoryListViewImpl());
+    }
 
-        this.handleRefreshFixedTransactions();
+    private void loadFixedTransactionTableItems() {
+        if (this.categories != null) {
+            categoriesListView.getItems().clear();
+            this.categories.traverse(treeItem -> {
+                if ((((CategoryTree) treeItem).getCategoryClass() == BaseCategory.CategoryClass.FIXED_EXPENSES ||
+                        ((CategoryTree) treeItem).getCategoryClass() == BaseCategory.CategoryClass.FIXED_REVENUE)) {
+                    categoriesListView.getItems().add((CategoryTree) treeItem);
+                }
+            });
+        }
+
+        this.categoriesListView.getItems().sort((o1, o2) -> String.CASE_INSENSITIVE_ORDER.compare(JavaFXFormatter.formatCategoryName(o1),
+                JavaFXFormatter.formatCategoryName(o2)));
     }
 
     public void handleRefreshTransactions() {
@@ -364,13 +369,10 @@ public class TransactionsController implements Initializable {
 
     public void handleRefreshFixedTransactions() {
         RetrievalServiceImpl.getInstance().fetchFixedTransactions(this.user, result -> Platform.runLater(() -> {
-            this.categories = (BaseCategory) this.localStorage.readObject("categories");
+            categories = (BaseCategory) localStorage.readObject("categories");
 
-            fixedTransactionsListView.refresh();
-            categoriesListView.refresh();
-            categoriesListView.setCellFactory(param -> new CategoryListViewImpl());
-            showFixedTransactions(categoriesListView.getSelectionModel().getSelectedItem());
-            FinancerController.hideLoadingBox();
+            loadFixedTransactionTableItems();
+            fixedTransactionsListView.getItems().clear();
         }));
     }
 

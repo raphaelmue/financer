@@ -122,7 +122,6 @@ public class RetrievalServiceImpl implements RetrievalService {
                         categoryTree.getTransactions().remove(fixedTransaction);
                         categoryTree.getTransactions().add(fixedTransaction);
                     }
-                    System.out.println(categoryTree);
                 }
                 localStorage.writeObject("fixedTransactions", result.getResult());
                 localStorage.writeObject("categories", categories);
