@@ -366,7 +366,7 @@ public class FinancerService {
         return new ConnectionResult<>(transactions);
     }
 
-    public ConnectionResult<Void> addTransaction(Logger logger, Map<String, Object> parameters) throws Exception {
+    public ConnectionResult<Transaction> addTransaction(Logger logger, Map<String, Object> parameters) throws Exception {
         logger.log(Level.INFO, "Adding transaction ...");
         User user = (User) parameters.get("user");
         Transaction transaction = (Transaction) parameters.get("transaction");
@@ -382,7 +382,9 @@ public class FinancerService {
 
         this.database.insert(Database.Table.TRANSACTIONS, values);
 
-        return new ConnectionResult<>(null);
+        transaction.setId(this.database.getLatestId(Database.Table.TRANSACTIONS));
+
+        return new ConnectionResult<>(transaction);
     }
 
 

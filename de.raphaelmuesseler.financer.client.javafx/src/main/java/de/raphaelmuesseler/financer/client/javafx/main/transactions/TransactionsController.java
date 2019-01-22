@@ -283,7 +283,7 @@ public class TransactionsController implements Initializable {
                 public void onSuccess(ConnectionResult result) {
                     Platform.runLater(() -> {
                         // removing numbers in category's name
-                        transactions.add(transaction);
+                        transactions.add((Transaction) result.getResult());
                         loadTransactionTableItems();
                     });
                 }
