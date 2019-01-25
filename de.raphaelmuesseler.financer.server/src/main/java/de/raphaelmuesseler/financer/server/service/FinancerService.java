@@ -531,7 +531,7 @@ public class FinancerService {
         whereParameters.put("end_date", null);
 
         Map<String, Object> values = new HashMap<>();
-        values.put("end_date", LocalDate.now().toString());
+        values.put("end_date", fixedTransaction.getStartDate());
 
         this.database.update(Database.Table.FIXED_TRANSACTIONS, whereParameters, values);
 
@@ -546,7 +546,10 @@ public class FinancerService {
 
         this.database.insert(Database.Table.FIXED_TRANSACTIONS, values);
 
-        return new ConnectionResult<>(null);
+        fixedTransaction.setId(this.database.getLatestId(Database.Table.FIXED_TRANSACTIONS));
+        this.updateOrCreateTransactionAmounts(fixedTransaction);
+
+        return new ConnectionResult<>(fixedTransaction);
     }
 
 
@@ -565,21 +568,8 @@ public class FinancerService {
         values.put("day", fixedTransaction.getDay());
 
         this.database.update(Database.Table.FIXED_TRANSACTIONS, whereParameters, values);
-        whereParameters.clear();
-        values.clear();
 
-        for (TransactionAmount transactionAmount : fixedTransaction.getTransactionAmounts()) {
-            whereParameters.put("id", transactionAmount.getId());
-
-            values.put("fixed_transaction_id", fixedTransaction.getId());
-            values.put("value_date", transactionAmount.getValueDate());
-            values.put("amount", transactionAmount.getAmount());
-            if (transactionAmount.getId() < 0) {
-                this.database.insert(Database.Table.FIXED_TRANSACTIONS_AMOUNTS, values);
-            } else {
-                this.database.update(Database.Table.FIXED_TRANSACTIONS_AMOUNTS, whereParameters, values);
-            }
-        }
+        this.updateOrCreateTransactionAmounts(fixedTransaction);
 
         return new ConnectionResult<>(null);
     }
@@ -594,5 +584,25 @@ public class FinancerService {
         whereParameters.put("fixed_transaction_id", ((FixedTransaction) parameters.get("fixedTransaction")).getId());
         this.database.delete(Database.Table.FIXED_TRANSACTIONS_AMOUNTS, whereParameters);
         return new ConnectionResult<>(null);
+    }
+
+    private void updateOrCreateTransactionAmounts(FixedTransaction fixedTransaction) throws SQLException {
+        Map<String, Object> whereParameters = new HashMap<>();
+        Map<String, Object> values = new HashMap<>();
+
+        if (fixedTransaction.isVariable() && fixedTransaction.getTransactionAmounts() != null) {
+            for (TransactionAmount transactionAmount : fixedTransaction.getTransactionAmounts()) {
+                whereParameters.put("id", transactionAmount.getId());
+
+                values.put("fixed_transaction_id", fixedTransaction.getId());
+                values.put("value_date", transactionAmount.getValueDate());
+                values.put("amount", transactionAmount.getAmount());
+                if (transactionAmount.getId() < 0) {
+                    this.database.insert(Database.Table.FIXED_TRANSACTIONS_AMOUNTS, values);
+                } else {
+                    this.database.update(Database.Table.FIXED_TRANSACTIONS_AMOUNTS, whereParameters, values);
+                }
+            }
+        }
     }
 }

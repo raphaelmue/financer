@@ -421,8 +421,21 @@ public class TransactionsController implements Initializable {
             Map<String, Object> parameters = new HashMap<>();
             parameters.put("fixedTransaction", fixedTransaction);
 
-            FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "updateFixedTransaction", parameters,
-                    this.getFixedTransactionCallback()));
+            FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "updateFixedTransaction", parameters, new JavaFXAsyncConnectionCall() {
+                @Override
+                public void onSuccess(ConnectionResult result) {
+                    localStorage.writeObject("categories", categories);
+
+                    fixedTransactionsListView.refresh();
+                    categoriesListView.refresh();
+                }
+
+                @Override
+                public void onFailure(Exception exception) {
+                    logger.log(Level.SEVERE, exception.getMessage(), exception);
+                    JavaFXAsyncConnectionCall.super.onFailure(exception);
+                }
+            }));
         }
     }
 
@@ -432,25 +445,27 @@ public class TransactionsController implements Initializable {
             Map<String, Object> parameters = new HashMap<>();
             parameters.put("fixedTransaction", this.fixedTransactionsListView.getSelectionModel().getSelectedItem());
 
-            FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "deleteFixedTransaction", parameters,
-                    this.getFixedTransactionCallback()));
+            this.fixedTransactionsListView.getItems().remove(this.fixedTransactionsListView.getSelectionModel().getSelectedItem());
+
+            FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "deleteFixedTransaction",
+                    parameters, new JavaFXAsyncConnectionCall() {
+                @Override
+                public void onSuccess(ConnectionResult result) {
+                    fixedTransactionsListView.getSelectionModel().getSelectedItem().getCategoryTree().getTransactions().remove(
+                            fixedTransactionsListView.getSelectionModel().getSelectedItem());
+                    localStorage.writeObject("categories", categories);
+
+                    fixedTransactionsListView.refresh();
+                    categoriesListView.refresh();
+                }
+
+                @Override
+                public void onFailure(Exception exception) {
+                    logger.log(Level.SEVERE, exception.getMessage(), exception);
+                    JavaFXAsyncConnectionCall.super.onFailure(exception);
+                }
+            }));
         }
-    }
-
-    private JavaFXAsyncConnectionCall getFixedTransactionCallback() {
-        return new JavaFXAsyncConnectionCall() {
-            @Override
-            public void onSuccess(ConnectionResult result) {
-                fixedTransactionsListView.refresh();
-                categoriesListView.refresh();
-            }
-
-            @Override
-            public void onFailure(Exception exception) {
-                logger.log(Level.SEVERE, exception.getMessage(), exception);
-                JavaFXAsyncConnectionCall.super.onFailure(exception);
-            }
-        };
     }
 
     private void showFixedTransactions(CategoryTree category) {
@@ -462,7 +477,9 @@ public class TransactionsController implements Initializable {
                 }
             }
         }
+
         this.fixedTransactionsListView.setCellFactory(param -> new FixedTransactionListCellImpl());
+        fixedTransactionsListView.getItems().sort(Comparator.comparing(FixedTransaction::getStartDate).reversed());
     }
 
 
@@ -524,7 +541,7 @@ public class TransactionsController implements Initializable {
                 setGraphic(null);
             } else {
                 this.initListCell(item);
-                if (item.getEndDate() == null || (item.getEndDate() != null && item.getEndDate().compareTo(LocalDate.now()) >= 0)) {
+                if (item.getEndDate() == null || (item.getEndDate() != null && item.getEndDate().compareTo(LocalDate.now()) > 0)) {
                     this.activeLabel.setText(I18N.get("active"));
                     this.activeLabel.getStyleClass().add("pos-amount");
                 } else {
