@@ -101,6 +101,8 @@ public class TransactionsController implements Initializable {
 
             this.categories = (BaseCategory) this.localStorage.readObject("categories");
 
+            this.categoriesListView.setId("categoriesListView");
+
             this.loadTransactionsTable();
             this.loadFixedTransactionTable();
             this.loadTransactionsOverviewTable();
@@ -210,7 +212,7 @@ public class TransactionsController implements Initializable {
     }
 
     private void loadFixedTransactionTable() {
-        this.handleRefreshFixedTransactions();
+        this.categoriesListView.setCellFactory(param -> new CategoryListViewImpl());
 
         this.categoriesListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             showFixedTransactions(newValue);
@@ -228,7 +230,7 @@ public class TransactionsController implements Initializable {
             deleteFixedTransactionBtn.setDisable(false);
         });
 
-        categoriesListView.setCellFactory(param -> new CategoryListViewImpl());
+        this.handleRefreshFixedTransactions();
     }
 
     private void loadFixedTransactionTableItems() {
@@ -244,6 +246,8 @@ public class TransactionsController implements Initializable {
 
         this.categoriesListView.getItems().sort((o1, o2) -> String.CASE_INSENSITIVE_ORDER.compare(JavaFXFormatter.formatCategoryName(o1),
                 JavaFXFormatter.formatCategoryName(o2)));
+
+        this.categoriesListView.refresh();
     }
 
     public void handleRefreshTransactions() {
