@@ -101,8 +101,6 @@ public class TransactionsController implements Initializable {
 
             this.categories = (BaseCategory) this.localStorage.readObject("categories");
 
-            this.categoriesListView.setId("categoriesListView");
-
             this.loadTransactionsTable();
             this.loadFixedTransactionTable();
             this.loadTransactionsOverviewTable();
@@ -358,7 +356,11 @@ public class TransactionsController implements Initializable {
                 FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "deleteTransaction", parameters, new JavaFXAsyncConnectionCall() {
                     @Override
                     public void onSuccess(ConnectionResult result) {
-                        Platform.runLater(() -> transactionsTableView.getItems().remove(transaction));
+                        Platform.runLater(() -> {
+                            transactions.remove(transaction);
+                            localStorage.writeObject("categories", categories);
+                            transactionsTableView.refresh();
+                        });
                     }
 
                     @Override

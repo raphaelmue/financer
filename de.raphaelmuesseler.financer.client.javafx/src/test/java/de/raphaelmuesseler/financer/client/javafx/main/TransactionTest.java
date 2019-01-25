@@ -1,15 +1,23 @@
 package de.raphaelmuesseler.financer.client.javafx.main;
 
+import com.jfoenix.controls.JFXButton;
 import de.raphaelmuesseler.financer.client.format.Formatter;
 import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
+import de.raphaelmuesseler.financer.shared.model.BaseCategory;
+import de.raphaelmuesseler.financer.shared.model.Category;
+import de.raphaelmuesseler.financer.shared.model.CategoryTree;
 import de.raphaelmuesseler.financer.shared.model.transactions.Transaction;
+import de.raphaelmuesseler.financer.util.collections.TreeUtil;
 import javafx.scene.control.Button;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.testfx.framework.junit5.ApplicationTest;
+
+import java.util.Comparator;
 
 public class TransactionTest extends AbstractFinancerApplicationTest {
 
@@ -59,7 +67,7 @@ public class TransactionTest extends AbstractFinancerApplicationTest {
         press(KeyCode.BACK_SPACE).release(KeyCode.BACK_SPACE);
         write(Double.toString(amount));
 
-        clickOn("OK");
+        confirmDialog();
         sleep(500);
         clickOn((Button) find("#refreshTransactionsBtn"));
         sleep(500);
@@ -70,5 +78,25 @@ public class TransactionTest extends AbstractFinancerApplicationTest {
 
         Transaction insertedTransaction = (Transaction) LocalStorageImpl.getInstance().readList("transactions").get(0);
         Assertions.assertEquals(-transaction.getAmount() / 2, insertedTransaction.getAmount());
+    }
+
+    @Test
+    public void testDeleteTransaction() {
+        register(this.user, this.password);
+        addCategory(this.category);
+        addTransaction(this.transaction);
+        clickOn((Button) find("#refreshTransactionsBtn"));
+        sleep(500);
+
+        clickOn(transaction.getProduct());
+        clickOn((JFXButton) find("#deleteTransactionBtn"));
+        confirmDialog();
+
+        sleep(500);
+        Assertions.assertEquals(0, ((TableView) find("#transactionsTableView")).getItems().size());
+
+        BaseCategory baseCategory = (BaseCategory) LocalStorageImpl.getInstance().readObject("categories");
+        Assertions.assertEquals(0, ((CategoryTree)TreeUtil.getByValue(baseCategory, transaction.getCategoryTree(),
+                Comparator.comparingInt(Category::getId))).getTransactions().size());
     }
 }
