@@ -125,10 +125,10 @@ public class FinancerApplicationTest extends AbstractFinancerApplicationTest {
         sleep(500);
 
         // uncomment when issue is fixed
-        // Assertions.assertNotNull(clickOn("-" + Formatter.formatCurrency(amount)));
+        Assertions.assertNotNull(clickOn("-" + Formatter.formatCurrency(amount)));
         Assertions.assertEquals(1, LocalStorageImpl.getInstance().readList("transactions").size());
 
-        //Transaction insertedTransaction = (Transaction) LocalStorageImpl.getInstance().readList("transactions").get(0);
-        //Assertions.assertEquals(-transaction.getAmount(), insertedTransaction.getAmount());
+        Transaction insertedTransaction = (Transaction) LocalStorageImpl.getInstance().readList("transactions").get(0);
+        Assertions.assertEquals(-transaction.getAmount() / 2, insertedTransaction.getAmount());
     }
 }

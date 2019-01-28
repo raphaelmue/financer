@@ -15,6 +15,7 @@ import de.raphaelmuesseler.financer.shared.model.Category;
 import de.raphaelmuesseler.financer.shared.model.CategoryTree;
 import de.raphaelmuesseler.financer.shared.model.User;
 import de.raphaelmuesseler.financer.util.collections.Tree;
+import de.raphaelmuesseler.financer.util.concurrency.FinancerExecutor;
 import javafx.application.Platform;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -47,7 +48,6 @@ public class ProfileController implements Initializable {
 
     private User user;
     private Logger logger = Logger.getLogger("FinancerApplication");
-    private ExecutorService executor = Executors.newCachedThreadPool();
     private BaseCategory categories;
     private LocalStorageImpl localStorage = (LocalStorageImpl) LocalStorageImpl.getInstance();
     private TreeItem<CategoryTree> treeStructure;
@@ -111,7 +111,7 @@ public class ProfileController implements Initializable {
                 parameters.put("user", this.user);
                 parameters.put("category", category);
 
-                this.executor.execute(new ServerRequestHandler(this.user, "addCategory", parameters, new JavaFXAsyncConnectionCall() {
+                FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "addCategory", parameters, new JavaFXAsyncConnectionCall() {
                     @Override
                     public void onSuccess(ConnectionResult result) {
                         handleRefreshCategories();
@@ -142,7 +142,7 @@ public class ProfileController implements Initializable {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("category", category);
 
-        this.executor.execute(new ServerRequestHandler(this.user, "updateCategory", parameters, new JavaFXAsyncConnectionCall() {
+        FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "updateCategory", parameters, new JavaFXAsyncConnectionCall() {
             @Override
             public void onSuccess(ConnectionResult result) {
                 handleRefreshCategories();
@@ -169,7 +169,7 @@ public class ProfileController implements Initializable {
                 parameters.put("category", this.categoriesTreeView.getSelectionModel()
                         .getSelectedItem().getValue());
 
-                this.executor.execute(new ServerRequestHandler(this.user, "deleteCategory", parameters, new JavaFXAsyncConnectionCall() {
+                FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "deleteCategory", parameters, new JavaFXAsyncConnectionCall() {
                     @Override
                     public void onSuccess(ConnectionResult result) {
                         handleRefreshCategories();

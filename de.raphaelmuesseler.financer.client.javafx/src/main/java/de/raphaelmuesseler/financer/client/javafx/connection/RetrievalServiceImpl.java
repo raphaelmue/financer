@@ -14,19 +14,17 @@ import de.raphaelmuesseler.financer.shared.model.transactions.FixedTransaction;
 import de.raphaelmuesseler.financer.shared.model.transactions.Transaction;
 import de.raphaelmuesseler.financer.util.collections.Action;
 import de.raphaelmuesseler.financer.util.collections.TreeUtil;
+import de.raphaelmuesseler.financer.util.concurrency.FinancerExecutor;
 
 import java.net.ConnectException;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public class RetrievalServiceImpl implements RetrievalService {
 
     private static RetrievalService INSTANCE = null;
-    private ExecutorService executor = Executors.newCachedThreadPool();
     private final LocalStorage localStorage = LocalStorageImpl.getInstance();
 
 
@@ -50,10 +48,11 @@ public class RetrievalServiceImpl implements RetrievalService {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("user", user);
 
-        this.executor.execute(new ServerRequestHandler(user, "getUsersCategories", parameters, new JavaFXAsyncConnectionCall() {
+        FinancerExecutor.getExecutor().execute(new ServerRequestHandler(user, "getUsersCategories", parameters, new JavaFXAsyncConnectionCall() {
             @Override
             public void onSuccess(ConnectionResult result) {
                 BaseCategory categories = (BaseCategory) result.getResult();
+                TreeUtil.numberItemsByValue(categories, (categoryTree, prefix) -> categoryTree.getValue().setPrefix(prefix));
                 localStorage.writeObject("categories", categories);
 
                 asyncCall.onSuccess(categories);
@@ -75,7 +74,7 @@ public class RetrievalServiceImpl implements RetrievalService {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("user", user);
 
-        this.executor.execute(new ServerRequestHandler(user, "getTransactions", parameters, new JavaFXAsyncConnectionCall() {
+        FinancerExecutor.getExecutor().execute(new ServerRequestHandler(user, "getTransactions", parameters, new JavaFXAsyncConnectionCall() {
             @Override
             public void onSuccess(ConnectionResult result) {
                 List<Transaction> transactions = (List<Transaction>) result.getResult();
@@ -110,15 +109,17 @@ public class RetrievalServiceImpl implements RetrievalService {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("user", user);
 
-        this.executor.execute(new ServerRequestHandler(user, "getFixedTransactions", parameters, new JavaFXAsyncConnectionCall() {
+        FinancerExecutor.getExecutor().execute(new ServerRequestHandler(user, "getFixedTransactions", parameters, new JavaFXAsyncConnectionCall() {
             @Override
             public void onSuccess(ConnectionResult result) {
                 List<FixedTransaction> fixedTransactions = (List<FixedTransaction>) result.getResult();
                 BaseCategory categories = (BaseCategory) localStorage.readObject("categories");
                 for (FixedTransaction fixedTransaction : fixedTransactions) {
-                    CategoryTree categoryTree = (CategoryTree) TreeUtil.getByValue(categories, fixedTransaction.getCategoryTree(), Comparator.comparingInt(Category::getId));
+                    CategoryTree categoryTree = (CategoryTree) TreeUtil.getByValue(categories, fixedTransaction.getCategoryTree(),
+                            Comparator.comparingInt(Category::getId));
                     if (categoryTree != null) {
                         fixedTransaction.setCategoryTree(categoryTree);
+                        categoryTree.getTransactions().remove(fixedTransaction);
                         categoryTree.getTransactions().add(fixedTransaction);
                     }
                 }

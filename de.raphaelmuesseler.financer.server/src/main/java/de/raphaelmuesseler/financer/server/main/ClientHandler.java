@@ -39,7 +39,7 @@ public class ClientHandler implements Runnable {
 
             try {
                 if (!connectionCall.getMethodName().equals("checkCredentials") && !connectionCall.getMethodName().equals("registerUser")) {
-                    User user = FinancerService.getInstance().checkUsersToken(this.logger, (String) connectionCall.getParameters().get("token"));
+                    User user = FinancerService.getInstance().checkUsersToken(this.logger, connectionCall.getParameters());
                     if (user == null) {
                         throw new NotAuthorizedException("Token '" + connectionCall.getParameters().get("token") + "' is invalid.");
                     }
@@ -48,6 +48,7 @@ public class ClientHandler implements Runnable {
                 Method method;
                 try {
                     method = FinancerService.class.getMethod(connectionCall.getMethodName(), Logger.class, Map.class);
+                    connectionCall.getParameters().put("ipAddress", client.getInetAddress().toString());
                     result = (ConnectionResult<Object>) method.invoke(this.service, this.logger, connectionCall.getParameters());
                     this.logger.log(Level.INFO, "Request has been successfully handled.");
                 } catch (Exception exception) {

@@ -2,6 +2,7 @@ package de.raphaelmuesseler.financer.client.javafx.main;
 
 import com.jfoenix.controls.JFXDatePicker;
 import com.jfoenix.controls.JFXTextField;
+import de.raphaelmuesseler.financer.client.connection.ServerRequest;
 import de.raphaelmuesseler.financer.client.format.I18N;
 import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
 import de.raphaelmuesseler.financer.client.javafx.login.LoginApplication;
@@ -25,7 +26,6 @@ import org.testfx.framework.junit5.ApplicationTest;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.concurrent.TimeoutException;
 
 public class AbstractFinancerApplicationTest extends ApplicationTest {
@@ -42,13 +42,14 @@ public class AbstractFinancerApplicationTest extends ApplicationTest {
 
     @BeforeAll
     static void setUp() throws SQLException, IOException {
-        server = new Server(3500);
+        server = new Server(3505);
+        ServerRequest.setPort(3505);
         new Thread(server::run).start();
 
         LocalStorageImpl.getInstance().deleteAllData();
 
         Database.setDbName(Database.DatabaseName.TEST);
-        Database.setHost(true);
+        Database.setHost(false);
         Database.getInstance().clearDatabase();
     }
 
@@ -79,7 +80,7 @@ public class AbstractFinancerApplicationTest extends ApplicationTest {
         write(password);
         confirmDialog();
 
-        sleep(500);
+        sleep(1000);
     }
 
     void login(User user, String password) {
