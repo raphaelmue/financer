@@ -1,9 +1,11 @@
 package de.raphaelmuesseler.financer.client.javafx.main;
 
+import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXDatePicker;
 import com.jfoenix.controls.JFXTextField;
 import de.raphaelmuesseler.financer.client.connection.ServerRequest;
 import de.raphaelmuesseler.financer.client.format.I18N;
+import de.raphaelmuesseler.financer.client.javafx.components.DoubleField;
 import de.raphaelmuesseler.financer.client.javafx.components.IntegerField;
 import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
 import de.raphaelmuesseler.financer.client.javafx.login.LoginApplication;
@@ -15,6 +17,7 @@ import de.raphaelmuesseler.financer.shared.model.CategoryTree;
 import de.raphaelmuesseler.financer.shared.model.User;
 import de.raphaelmuesseler.financer.shared.model.transactions.FixedTransaction;
 import de.raphaelmuesseler.financer.shared.model.transactions.Transaction;
+import de.raphaelmuesseler.financer.shared.model.transactions.TransactionAmount;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
@@ -29,6 +32,7 @@ import org.testfx.framework.junit5.ApplicationTest;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Predicate;
 
@@ -49,7 +53,7 @@ public class AbstractFinancerApplicationTest extends ApplicationTest {
             "Purpose", LocalDate.of(2018, 5, 19), "Shop");
     final FixedTransaction fixedTransaction = new FixedTransaction(-1, 570.0, category, "TestProduct",
             "TestPurpose", LocalDate.of(2018, 2, 5), null, false, 3,
-            null);
+            new ArrayList<>());
 
     @BeforeAll
     static void setUp() throws SQLException, IOException {
@@ -173,7 +177,17 @@ public class AbstractFinancerApplicationTest extends ApplicationTest {
         JFXDatePicker datePicker = find("#startDateDatePicker");
         datePicker.setValue(fixedTransaction.getStartDate());
         if (fixedTransaction.isVariable()) {
-            clickOn((CheckBox) find("#isVariableCheckBox"));
+            clickOn((CheckBox) find("#isVariableCheckbox"));
+
+            for (TransactionAmount transactionAmount : fixedTransaction.getTransactionAmounts()) {
+                clickOn((JFXButton) find("#newTransactionAmountBtn"));
+
+                ((JFXDatePicker) find("#valueDatePicker")).setValue(transactionAmount.getValueDate());
+                clickOn((DoubleField) find("#amountTextField"));
+                eraseText(3);
+                write(Double.toString(transactionAmount.getAmount()));
+                confirmDialog();
+            }
         } else {
             clickOn((TextField) find("#amountTextField"));
             eraseText(3);

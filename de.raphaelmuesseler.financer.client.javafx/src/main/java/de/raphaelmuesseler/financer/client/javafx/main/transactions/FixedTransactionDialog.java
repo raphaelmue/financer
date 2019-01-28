@@ -112,8 +112,11 @@ public class FixedTransactionDialog extends FinancerDialog<FixedTransaction> {
 
         GlyphFont fontAwesome = GlyphFontRegistry.font("FontAwesome");
         JFXButton newTransactionAmountBtn = new JFXButton(I18N.get("new"), fontAwesome.create(FontAwesome.Glyph.PLUS));
+        newTransactionAmountBtn.setId("newTransactionAmountBtn");
         JFXButton editTransactionAmountBtn = new JFXButton(I18N.get("edit"), fontAwesome.create(FontAwesome.Glyph.EDIT));
+        editTransactionAmountBtn.setId("editTransactionAmountBtn");
         JFXButton deleteTransactionAmountBtn = new JFXButton(I18N.get("delete"), fontAwesome.create(FontAwesome.Glyph.TRASH));
+        deleteTransactionAmountBtn.setId("deleteTransactionAmountBtn");
 
         newTransactionAmountBtn.setOnAction(event -> {
             TransactionAmount transactionAmount = new TransactionAmountDialog(null, transactionAmountListView.getItems()).showAndGetResult();

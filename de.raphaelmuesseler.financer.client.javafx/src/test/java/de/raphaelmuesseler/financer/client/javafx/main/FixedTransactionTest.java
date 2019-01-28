@@ -3,6 +3,7 @@ package de.raphaelmuesseler.financer.client.javafx.main;
 import com.jfoenix.controls.JFXListView;
 import de.raphaelmuesseler.financer.client.format.I18N;
 import de.raphaelmuesseler.financer.shared.model.BaseCategory;
+import de.raphaelmuesseler.financer.shared.model.transactions.TransactionAmount;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
 import org.junit.jupiter.api.Assertions;
@@ -40,5 +41,27 @@ public class FixedTransactionTest extends AbstractFinancerApplicationTest {
                 .replace(".", ","))));
         Assertions.assertNotNull(find((Label label) -> label.getText().contains(I18N.get("since") + " " +
                 fixedTransaction.getStartDate().toString())));
+    }
+
+    @Test
+    public void testAddFixedVariableTransaction() {
+        fixedTransaction.setVariable(true);
+        fixedTransaction.getTransactionAmounts().add(new TransactionAmount(-1, 450.0, fixedTransaction.getStartDate().withDayOfMonth(1)));
+
+        register(user, password);
+        category.setCategoryClass(BaseCategory.CategoryClass.FIXED_EXPENSES);
+        addCategory(category);
+        addFixedTransaction(fixedTransaction);
+
+        sleep(500);
+
+        clickOn((JFXListView) find("#categoriesListView"));
+        press(KeyCode.DOWN).release(KeyCode.DOWN);
+        press(KeyCode.DOWN).release(KeyCode.DOWN);
+        press(KeyCode.DOWN).release(KeyCode.DOWN);
+
+        Assertions.assertNotNull(find((Label label) -> label.getText().contains(I18N.get("active"))));
+        Assertions.assertNotNull(find((Label label) -> label.getText().contains((fixedTransaction.getTransactionAmounts().get(0).getAmount() + "0")
+                .replace(".", ","))));
     }
 }
