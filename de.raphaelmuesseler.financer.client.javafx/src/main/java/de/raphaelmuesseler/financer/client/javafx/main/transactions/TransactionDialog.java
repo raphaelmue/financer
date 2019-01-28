@@ -99,7 +99,7 @@ class TransactionDialog extends FinancerDialog<Transaction> {
         this.shopField.setId("shopTextField");
         gridPane.add(this.shopField, 1, 4);
 
-        gridPane.add(new Label(I18N.get("product")), 0, 5);
+        gridPane.add(new Label(I18N.get("valueDate")), 0, 5);
         this.valueDateField = new JFXDatePicker();
         this.valueDateField.setId("valueDatePicker");
         gridPane.add(this.valueDateField, 1, 5);
