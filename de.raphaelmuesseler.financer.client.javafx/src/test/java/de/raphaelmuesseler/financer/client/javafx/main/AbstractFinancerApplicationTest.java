@@ -179,6 +179,8 @@ public class AbstractFinancerApplicationTest extends ApplicationTest {
         if (fixedTransaction.isVariable()) {
             clickOn((CheckBox) find("#isVariableCheckbox"));
 
+            sleep(100);
+
             for (TransactionAmount transactionAmount : fixedTransaction.getTransactionAmounts()) {
                 clickOn((JFXButton) find("#newTransactionAmountBtn"));
 

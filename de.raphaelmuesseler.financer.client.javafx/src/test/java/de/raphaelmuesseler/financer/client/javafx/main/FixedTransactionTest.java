@@ -60,6 +60,8 @@ public class FixedTransactionTest extends AbstractFinancerApplicationTest {
         press(KeyCode.DOWN).release(KeyCode.DOWN);
         press(KeyCode.DOWN).release(KeyCode.DOWN);
 
+        sleep(500);
+
         Assertions.assertNotNull(find((Label label) -> label.getText().contains(I18N.get("active"))));
         Assertions.assertNotNull(find((Label label) -> label.getText().contains((fixedTransaction.getTransactionAmounts().get(0).getAmount() + "0")
                 .replace(".", ","))));
