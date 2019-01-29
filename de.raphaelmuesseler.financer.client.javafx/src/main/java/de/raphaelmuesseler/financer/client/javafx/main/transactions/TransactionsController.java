@@ -228,6 +228,12 @@ public class TransactionsController implements Initializable {
             deleteFixedTransactionBtn.setDisable(false);
         });
 
+        this.fixedTransactionsListView.setOnMouseClicked(mouseEvent -> {
+            if (mouseEvent.getClickCount() == 2) {
+                handleEditFixedTransaction();
+            }
+        });
+
         categoriesListView.setCellFactory(param -> new CategoryListViewImpl());
     }
 
