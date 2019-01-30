@@ -99,7 +99,7 @@ class AbstractFinancerApplicationTest extends ApplicationTest {
         write(password);
         confirmDialog();
 
-        sleep(1000);
+        sleep(2000);
     }
 
     void login(User user, String password) {
@@ -121,6 +121,8 @@ class AbstractFinancerApplicationTest extends ApplicationTest {
         press(KeyCode.RIGHT).release(KeyCode.RIGHT);
         press(KeyCode.RIGHT).release(KeyCode.RIGHT);
 
+        sleep(250);
+
         Button newCategoryBtn = find("#newCategoryBtn");
         clickOn(I18N.get(category.getCategoryClass().getName()));
         clickOn(newCategoryBtn);
@@ -131,6 +133,8 @@ class AbstractFinancerApplicationTest extends ApplicationTest {
         write(category.getValue().getName());
 
         confirmDialog();
+
+        sleep(500);
     }
 
     void addTransaction(Transaction transaction) {
@@ -159,6 +163,8 @@ class AbstractFinancerApplicationTest extends ApplicationTest {
         valueDatePicker.setValue(transaction.getValueDate());
 
         confirmDialog();
+
+        sleep(500);
     }
 
     void addFixedTransaction(FixedTransaction fixedTransaction) {

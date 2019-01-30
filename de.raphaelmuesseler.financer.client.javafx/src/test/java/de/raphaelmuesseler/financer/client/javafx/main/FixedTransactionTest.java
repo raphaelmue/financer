@@ -2,6 +2,7 @@ package de.raphaelmuesseler.financer.client.javafx.main;
 
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXListView;
+import de.raphaelmuesseler.financer.client.format.Formatter;
 import de.raphaelmuesseler.financer.client.format.I18N;
 import de.raphaelmuesseler.financer.shared.model.BaseCategory;
 import de.raphaelmuesseler.financer.shared.model.transactions.TransactionAmount;
@@ -38,8 +39,7 @@ public class FixedTransactionTest extends AbstractFinancerApplicationTest {
         press(KeyCode.DOWN).release(KeyCode.DOWN);
 
         Assertions.assertNotNull(find((Label label) -> label.getText().contains(I18N.get("active"))));
-        Assertions.assertNotNull(find((Label label) -> label.getText().contains((-fixedTransaction.getAmount() + "0")
-                .replace(".", ","))));
+        Assertions.assertNotNull(find((Label label) -> label.getText().contains(Formatter.formatCurrency(fixedTransaction.getAmount()))));
         Assertions.assertNotNull(find((Label label) -> label.getText().contains(I18N.get("since") + " " +
                 fixedTransaction.getStartDate().toString())));
     }
@@ -68,7 +68,7 @@ public class FixedTransactionTest extends AbstractFinancerApplicationTest {
         press(KeyCode.DOWN).release(KeyCode.DOWN);
 
         Assertions.assertEquals(0, ((JFXListView) find("#fixedTransactionsListView")).getItems().size());
-        Assertions.assertNotNull(find((Label label) -> label.getText().contains("0,00")));
+        Assertions.assertNotNull(find((Label label) -> label.getText().contains(Formatter.formatCurrency(0.0))));
     }
 
 
@@ -91,10 +91,10 @@ public class FixedTransactionTest extends AbstractFinancerApplicationTest {
         press(KeyCode.DOWN).release(KeyCode.DOWN);
         press(KeyCode.DOWN).release(KeyCode.DOWN);
 
-        sleep(500);
+        sleep(2000);
 
         Assertions.assertNotNull(find((Label label) -> label.getText().contains(I18N.get("active"))));
-        Assertions.assertNotNull(find((Label label) -> label.getText().contains((fixedTransaction.getTransactionAmounts().get(0).getAmount() + "0")
-                .replace(".", ","))));
+        Assertions.assertNotNull(find((Label label) -> label.getText().contains(Formatter.formatCurrency(
+                fixedTransaction.getTransactionAmounts().get(0).getAmount()))));
     }
 }
