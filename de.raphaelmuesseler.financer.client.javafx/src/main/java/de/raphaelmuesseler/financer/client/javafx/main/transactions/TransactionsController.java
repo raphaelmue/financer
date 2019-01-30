@@ -24,6 +24,7 @@ import de.raphaelmuesseler.financer.shared.model.transactions.Transaction;
 import de.raphaelmuesseler.financer.util.collections.CollectionUtil;
 import de.raphaelmuesseler.financer.util.concurrency.FinancerExecutor;
 import javafx.application.Platform;
+import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -111,7 +112,7 @@ public class TransactionsController implements Initializable {
     private void loadTransactionsOverviewTable() {
         final int numberOfMaxMonths = 6;
         final List<TableColumn<TransactionOverviewRow, String>> monthColumns = new ArrayList<>(numberOfMaxMonths);
-        final Map<Category, TransactionOverviewRow> rows = new HashMap<>();
+        final Map<CategoryTree, TransactionOverviewRow> rows = new HashMap<>();
 
         if (this.categories != null) {
             this.categories.traverse(categoryTree -> {
@@ -119,12 +120,31 @@ public class TransactionsController implements Initializable {
                 for (int i = 0; i < 6; i++) {
                     transactionOverviewRow.getAmounts()[i] = ((CategoryTree) categoryTree).getAmount(LocalDate.now().minusMonths(i));
                 }
-                rows.put(categoryTree.getValue(), transactionOverviewRow);
+                rows.put((CategoryTree) categoryTree, transactionOverviewRow);
             });
         }
 
-        TableColumn<TransactionOverviewRow, String> categoryColumn = new TableColumn<>(I18N.get("category"));
-        categoryColumn.setCellValueFactory(param -> new SimpleStringProperty(JavaFXFormatter.formatCategoryName(param.getValue().getCategory())));
+        TableColumn<TransactionOverviewRow, CategoryTree> categoryColumn = new TableColumn<>(I18N.get("category"));
+        categoryColumn.setCellValueFactory(param -> new ReadOnlyObjectWrapper<>(param.getValue().getCategory()));
+        categoryColumn.setCellFactory(param -> new TableCell<>() {
+            @Override
+            protected void updateItem(CategoryTree item, boolean empty) {
+                super.updateItem(item, empty);
+
+                if (empty || item == null) {
+                    setGraphic(null);
+                } else {
+                    Label categoryLabel;
+                    if (item.isRoot()) {
+                        categoryLabel = new Label((item.getCategoryClass().getIndex() + 1) + ". " + I18N.get(item.getCategoryClass().getName()));
+                        categoryLabel.setStyle("-fx-font-weight: 700");
+                    } else {
+                        categoryLabel = new Label(JavaFXFormatter.formatCategoryName(item.getValue()));
+                    }
+                    setGraphic(categoryLabel);
+                }
+            }
+        });
         this.adjustColumnWidth(categoryColumn, this.transactionsOverviewTableView, 4);
         categoryColumn.setSortable(false);
 
