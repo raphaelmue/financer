@@ -190,11 +190,12 @@ class AbstractFinancerApplicationTest extends ApplicationTest {
             for (TransactionAmount transactionAmount : fixedTransaction.getTransactionAmounts()) {
                 clickOn((JFXButton) find("#newTransactionAmountBtn"));
 
-                ((JFXDatePicker) find("#valueDatePicker")).setValue(transactionAmount.getValueDate());
-                clickOn((DoubleField) find("#amountTextField"));
+                ((JFXDatePicker) find("#transactionAmountValueDatePicker")).setValue(transactionAmount.getValueDate());
+                clickOn((DoubleField) find("#transactionAmountTextField"));
                 eraseText(3);
                 write(Double.toString(transactionAmount.getAmount()));
-                confirmDialog();
+                press(KeyCode.TAB).release(KeyCode.TAB);
+                press(KeyCode.ENTER).release(KeyCode.ENTER);
             }
         } else {
             clickOn((TextField) find("#amountTextField"));
