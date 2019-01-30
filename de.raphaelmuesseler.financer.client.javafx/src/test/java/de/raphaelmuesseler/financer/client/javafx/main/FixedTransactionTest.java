@@ -1,5 +1,6 @@
 package de.raphaelmuesseler.financer.client.javafx.main;
 
+import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXListView;
 import de.raphaelmuesseler.financer.client.format.I18N;
 import de.raphaelmuesseler.financer.shared.model.BaseCategory;
@@ -28,8 +29,8 @@ public class FixedTransactionTest extends AbstractFinancerApplicationTest {
 
         sleep(500);
         // TODO: related to issue #14
-//        clickOn(find((Label label) -> label.getText().contains(fixedTransaction.getCategoryTree().getValue().getName())));
-//        sleep(500);
+        // clickOn(find((Label label) -> label.getText().contains(fixedTransaction.getCategoryTree().getValue().getName())));
+        // sleep(500);
 
         clickOn((JFXListView) find("#categoriesListView"));
         press(KeyCode.DOWN).release(KeyCode.DOWN);
@@ -42,6 +43,36 @@ public class FixedTransactionTest extends AbstractFinancerApplicationTest {
         Assertions.assertNotNull(find((Label label) -> label.getText().contains(I18N.get("since") + " " +
                 fixedTransaction.getStartDate().toString())));
     }
+
+    @Test
+    public void testDeleteFixedTransaction() {
+        register(user, password);
+        category.setCategoryClass(BaseCategory.CategoryClass.FIXED_EXPENSES);
+        addCategory(category);
+        addFixedTransaction(fixedTransaction);
+
+        sleep(500);
+
+        clickOn((JFXListView) find("#categoriesListView"));
+        press(KeyCode.DOWN).release(KeyCode.DOWN);
+        press(KeyCode.DOWN).release(KeyCode.DOWN);
+        press(KeyCode.DOWN).release(KeyCode.DOWN);
+
+        clickOn(find((Label label) -> label.getText().contains(I18N.get("active"))));
+        clickOn((JFXButton) find("#deleteFixedTransactionBtn"));
+        confirmDialog();
+
+        clickOn((JFXListView) find("#categoriesListView"));
+        press(KeyCode.DOWN).release(KeyCode.DOWN);
+        press(KeyCode.DOWN).release(KeyCode.DOWN);
+        press(KeyCode.DOWN).release(KeyCode.DOWN);
+
+        Assertions.assertEquals(0, ((JFXListView) find("#fixedTransactionsListView")).getItems().size());
+        Assertions.assertNotNull(find((Label label) -> label.getText().contains("0,00")));
+    }
+
+
+    // ------------------ VARIABLE ------------------ \\
 
     @Test
     public void testAddFixedVariableTransaction() {

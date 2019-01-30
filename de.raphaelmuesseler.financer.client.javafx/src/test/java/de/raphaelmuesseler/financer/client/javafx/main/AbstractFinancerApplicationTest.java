@@ -36,7 +36,7 @@ import java.util.ArrayList;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Predicate;
 
-public class AbstractFinancerApplicationTest extends ApplicationTest {
+class AbstractFinancerApplicationTest extends ApplicationTest {
     private static Server server;
 
     final String password = "password";
