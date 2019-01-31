@@ -4,7 +4,6 @@ import com.jfoenix.controls.JFXButton;
 import de.raphaelmuesseler.financer.client.connection.ServerRequestHandler;
 import de.raphaelmuesseler.financer.client.format.Formatter;
 import de.raphaelmuesseler.financer.client.format.I18N;
-import de.raphaelmuesseler.financer.client.javafx.components.IntegerField;
 import de.raphaelmuesseler.financer.client.javafx.connection.JavaFXAsyncConnectionCall;
 import de.raphaelmuesseler.financer.client.javafx.connection.RetrievalServiceImpl;
 import de.raphaelmuesseler.financer.client.javafx.dialogs.FinancerConfirmDialog;
