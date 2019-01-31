@@ -67,10 +67,13 @@ public class ProfileController implements Initializable {
         this.refreshCategoriesBtn.setGraphicTextGap(8);
         this.newCategoryBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.PLUS));
         this.newCategoryBtn.setGraphicTextGap(8);
+        this.newCategoryBtn.setDisable(true);
         this.editCategoryBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.EDIT));
         this.editCategoryBtn.setGraphicTextGap(8);
+        this.editCategoryBtn.setDisable(true);
         this.deleteCategoryBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.TRASH));
         this.deleteCategoryBtn.setGraphicTextGap(8);
+        this.deleteCategoryBtn.setDisable(true);
 
         this.handleRefreshCategories();
     }
@@ -80,6 +83,14 @@ public class ProfileController implements Initializable {
             categories = (BaseCategory) localStorage.readObject("categories");
             Platform.runLater(() -> {
                 createTreeView();
+                categoriesTreeView.getSelectionModel().selectedItemProperty().addListener((observableValue, oldValue, newValue) -> {
+                    if (newValue != null) {
+                        newCategoryBtn.setDisable(false);
+
+                        editCategoryBtn.setDisable(newValue.getValue().isRoot());
+                        deleteCategoryBtn.setDisable(newValue.getValue().isRoot());
+                    }
+                });
                 categoriesTreeView.setEditable(false);
                 categoriesTreeView.setShowRoot(false);
                 categoriesTreeView.setRoot(treeStructure);
