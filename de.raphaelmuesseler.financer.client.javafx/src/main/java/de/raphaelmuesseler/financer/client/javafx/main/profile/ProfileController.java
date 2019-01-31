@@ -116,7 +116,7 @@ public class ProfileController implements Initializable {
                     .showAndGetResult();
             if (categoryName != null) {
                 CategoryTree categoryTree = new CategoryTree(categoriesTreeView.getSelectionModel().getSelectedItem().getValue().getCategoryClass(),
-                        (CategoryTree) categoriesTreeView.getSelectionModel().getSelectedItem().getValue().getParent(),
+                        categoriesTreeView.getSelectionModel().getSelectedItem().getValue(),
                         new Category(-1, categoryName, currentItem.getValue().getValue().getId(), currentItem.getValue().getCategoryClass().getIndex()));
 
                 Map<String, Object> parameters = new HashMap<>();
@@ -126,8 +126,13 @@ public class ProfileController implements Initializable {
                 FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "addCategory", parameters, new JavaFXAsyncConnectionCall() {
                     @Override
                     public void onSuccess(ConnectionResult result) {
+                        categoriesTreeView.getSelectionModel().getSelectedItem().setExpanded(true);
                         categoryTree.getValue().setId(((Category) result.getResult()).getId());
-                        TreeUtil.insertByValue(categories.getCategoryTreeByCategoryClass(categoryTree.getCategoryClass()), categoryTree, Comparator.comparingInt(Category::getId));
+                        if (categoriesTreeView.getSelectionModel().getSelectedItem().getValue().isRoot()) {
+                            categories.getCategoryTreeByCategoryClass(categoriesTreeView.getSelectionModel().getSelectedItem().getValue().getCategoryClass()).getChildren().add(categoryTree);
+                        } else {
+                            TreeUtil.insertByValue(categories.getCategoryTreeByCategoryClass(categoryTree.getCategoryClass()), categoryTree, (o1, o2) -> Integer.compare(o1.getParentId(), o2.getId()));
+                        }
                         localStorage.writeObject("categories", categories);
 
                         Platform.runLater(() -> {
@@ -167,8 +172,6 @@ public class ProfileController implements Initializable {
             @Override
             public void onSuccess(ConnectionResult result) {
                 categoriesTreeView.getSelectionModel().getSelectedItem().getValue().getValue().setName(category.getValue().getName());
-                TreeUtil.getByValue(categories.getCategoryTreeByCategoryClass(category.getCategoryClass()), category, Comparator.comparingInt(Category::getId))
-                        .getValue().setName(category.getValue().getName());
                 localStorage.writeObject("categories", categories);
             }
 
@@ -196,7 +199,11 @@ public class ProfileController implements Initializable {
                 FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "deleteCategory", parameters, new JavaFXAsyncConnectionCall() {
                     @Override
                     public void onSuccess(ConnectionResult result) {
-                        categoriesTreeView.getSelectionModel().getSelectedItem().getParent().getChildren().remove(categoriesTreeView.getSelectionModel().getSelectedItem());
+                        TreeUtil.deleteByValue(categories,
+                                categoriesTreeView.getSelectionModel().getSelectedItem().getValue(), Comparator.comparingInt(Category::getId));
+                        localStorage.writeObject("categories", categories);
+
+                        Platform.runLater(() -> categoriesTreeView.getSelectionModel().getSelectedItem().getParent().getChildren().remove(categoriesTreeView.getSelectionModel().getSelectedItem()));
                     }
 
                     @Override
@@ -257,7 +264,7 @@ public class ProfileController implements Initializable {
             super(stringConverter);
 
             MenuItem addMenuItem = new MenuItem(I18N.get("new"));
-            addMenuItem.setOnAction(t -> handleNewCategory(getTreeItem()));
+            addMenuItem.setOnAction(t -> handleNewCategory());
             this.contextMenu.getItems().add(addMenuItem);
 
             MenuItem addMenuItemDelete = new MenuItem(I18N.get("new"));
