@@ -128,6 +128,7 @@ public class ProfileController implements Initializable {
                     public void onSuccess(ConnectionResult result) {
                         categoriesTreeView.getSelectionModel().getSelectedItem().setExpanded(true);
                         categoryTree.getValue().setId(((Category) result.getResult()).getId());
+                        categoryTree.getValue().setPrefix(categoryTree.getParent().getValue().getPrefix() + (categoryTree.getParent().getChildren().size() + 1) + ".");
                         if (categoriesTreeView.getSelectionModel().getSelectedItem().getValue().isRoot()) {
                             categories.getCategoryTreeByCategoryClass(categoriesTreeView.getSelectionModel().getSelectedItem().getValue().getCategoryClass()).getChildren().add(categoryTree);
                         } else {
