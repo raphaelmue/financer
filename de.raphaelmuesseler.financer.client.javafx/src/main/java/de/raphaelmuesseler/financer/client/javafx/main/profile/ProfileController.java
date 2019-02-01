@@ -79,8 +79,8 @@ public class ProfileController implements Initializable {
     }
 
     public void handleRefreshCategories() {
-        RetrievalServiceImpl.getInstance().fetchAllData(this.user, object -> {
-            categories = (BaseCategory) localStorage.readObject("categories");
+        RetrievalServiceImpl.getInstance().fetchCategories(this.user, baseCategory -> {
+            categories = baseCategory;
             Platform.runLater(() -> {
                 createTreeView();
                 categoriesTreeView.getSelectionModel().selectedItemProperty().addListener((observableValue, oldValue, newValue) -> {
