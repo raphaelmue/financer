@@ -109,4 +109,9 @@ public class BaseCategory implements Serializable, AmountProvider, Tree<Category
     public double getAmount(LocalDate localDate) {
         return 0;
     }
+
+    @Override
+    public double getAmount(LocalDate startDate, LocalDate endDate) {
+        return 0;
+    }
 }

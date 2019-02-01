@@ -37,21 +37,19 @@ The On Boarding guide helps you as a developer to create your workspace and run 
 First of all, please make sure, you have the following IDE, tools and frameworks installed: 
 
 1. IntelliJ IDEA Ultimate (latest version)
-2. Android Studio for Android development (latest version)
-3. Git (latest version)
-4. Maven (latest version)
-5. MySQL database (only needed for offline development)
+1. Android Studio for Android development (latest version)
+1. JavaFX (OpenJFX) (latest version)
+1. Git (latest version)
+1. Maven (latest version)
+1. MySQL database (only needed for offline development)
     1. For Windows you can install XAMPP, which provides you the possibility to have a MySQL database on your localhost.
     1. For a Linux distribution you just need to install the mysql-package (there are different tutorials online).
 
 ### 3.2 Configuring your IDE
 
-1. Download JDK 10.0.2 and set it as default.
-2. Check that you have included the JavaFX libraries (else you cannot execute the Desktop application).
-    1. On Windows, the JavaFX library is already included.
-    2. On Linux / MacOS you need to download the OpenJFX library from [here](https://openjfx.io/) and include it.
-3. Import all Run Configurations (you find them in the directory: .idea/runConfigurations)
-4. [Optional] You can your IntelliJ IDEA use the database tool, so that you do not have to access via [PHPMyAdmin](https://phpmyadmin.raphael-muesseler.de). 
+1. Download JDK 11 (or JDK 11.0.1) and set it as default.
+1. Import all Run Configurations (you find them in the directory: .idea/runConfigurations)
+1. [Optional] You can your IntelliJ IDEA use the database tool, so that you do not have to access via [PHPMyAdmin](https://phpmyadmin.raphael-muesseler.de). 
     1. Open the Database panel (if this is not shown on the right toolbar, you can open it via: **View -> Tool Window -> Database**).
     2. Add a new Database (via the **+** Button) and select **Data Source -> MariaDB**.
     3. You can change the name of that connection. Host is "raphael-muesseler.de" and enter database credentials. 
@@ -68,7 +66,7 @@ It is also useful to build the whole project by either pressing **Ctrl + F9** or
 
 ### 3.4 Execution
 
-Please make sure, when you execute "FinancerApplication (deploy)" that the port 3500 is not blocked by your system firewall or your network firewall.  
+Please make sure, when you execute the Financer Server run configuration that the port 3500 is not blocked by your system firewall or your network firewall.  
     
 ## 4 Functionality
 
@@ -110,11 +108,40 @@ Try to keep the workspace warning-free. In some cases, there is no other way tha
 
 ### 5.2 Module Structure
 
-tbd
+The maven module structure is defined as follows:
+
+```
+|-- financer
+|   |-- client
+|   |   |-- javafx
+|   |   |-- app
+|   |-- server
+|   |-- shared
+|   |-- util
+```
+
+#### 5.2.1 Client
+
+The client modules are organized in such a way that the main ```de.raphaelmuesseler.financer.client``` module contains all classes that each specific client application (such as android app or JavaFX application) can use, to connect to the server. 
+
+Each submodule represents a specific client application, which contains only the client handling (like controllers and UI tests).
+
+#### 5.2.2 Server
+
+The module ```de.raphaelmuesseler.financer.server``` contains all the classes for the server. This is where all the backend logic and database handling takes place. 
+
+#### 5.2.3 Shared
+
+In the module ```de.raphaelmuesseler.financer.shared``` are all the classes that define the model of Financer and they are used by the client as well as by the server.
+
+#### 5.2.4 Util
+
+This module contains only utility classes that are used on client-side as well as on server-side. Examples for utility classes are collection or string utilities.
 
 ## 6 Authors
 
-- Raphael Müßeler (Email: [raphael@muesseler.de](mailto:raphael@muesseler.de); GitHub: [raphaelmue](https://github.com/raphaelmue)) 
+- Raphael Müßeler (Email: [raphael@muesseler.de](mailto:raphael@muesseler.de); GitHub: [raphaelmue](https://github.com/raphaelmue))
+- Joshua Schulz (Email: [jschulz99@web.de](mailto:jschulz99@web.de); GitHub: [joshuaschu](https://github.com/joshuaschu)) 
 - Robin Kuck (Email: [](); GitHub: [kucki99](https://github.com/Kucki99))
 
 ## 7 License

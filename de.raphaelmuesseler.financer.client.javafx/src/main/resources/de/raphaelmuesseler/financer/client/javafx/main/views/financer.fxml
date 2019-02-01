@@ -55,7 +55,7 @@
                 <right>
                     <MenuButton fx:id="accountMenuBtn" text="Account">
                         <items>
-                            <MenuItem fx:id="logoutBtn" text="Logout" onAction="#handleLogout" />
+                            <MenuItem fx:id="logoutBtn" text="Logout" onAction="#handleLogoutBtn" />
                         </items>
                     </MenuButton>
                 </right>

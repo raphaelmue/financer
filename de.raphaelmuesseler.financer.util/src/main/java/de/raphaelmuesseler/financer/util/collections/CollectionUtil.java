@@ -15,7 +15,7 @@ public class CollectionUtil {
     }
 
 
-    public static <T> ObservableList<T> castListToObserableList(List<T> list) {
+    public static <T> ObservableList<T> castListToObservableList(List<T> list) {
         ObservableList<T> result = FXCollections.observableArrayList();
         result.addAll(list);
         return result;

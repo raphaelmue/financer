@@ -1,28 +1,35 @@
 package de.raphaelmuesseler.financer.server.main;
 
 import de.raphaelmuesseler.financer.server.db.Database;
+import de.raphaelmuesseler.financer.server.service.FinancerRestService;
+import de.raphaelmuesseler.financer.util.concurrency.FinancerExecutor;
+import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
+import org.glassfish.jersey.server.ResourceConfig;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.URI;
+import java.util.Objects;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class Server {
 
     private static final int PORT = 3500;
+    private static final int REST_PORT = 3501;
 
     private Logger logger = Logger.getLogger("Server");
     private ServerSocket serverSocket;
-    private ExecutorService executor = Executors.newCachedThreadPool();
+    private ExecutorService executor = FinancerExecutor.getExecutor();
 
     public static void main(String[] args) {
         int port = -1;
         Database.DatabaseName databaseName = null;
+        Database.setHost(false);
         try {
             for (String arg : args) {
                 if (arg.contains("--port=")) {
@@ -44,13 +51,10 @@ public class Server {
                 port = PORT;
             }
 
-            if (databaseName != null) {
-                Database.setDbName(databaseName);
-            } else {
-                Database.setDbName(Database.DatabaseName.DEV);
-            }
+            Database.setDbName(Objects.requireNonNullElse(databaseName, Database.DatabaseName.DEV));
 
             Server server = new Server(port);
+            server.startHttpServer();
             server.run();
         } catch (NumberFormatException e) {
             System.out.println("Please enter a real port!");
@@ -67,7 +71,7 @@ public class Server {
      */
     public Server(int port) throws IOException {
         this.serverSocket = new ServerSocket(port);
-        this.logger.log(Level.INFO, "Java Server started and is running on port " + port);
+        this.logger.log(Level.INFO, "Java Socket Server started and is running on port " + port);
     }
 
     /**
@@ -80,11 +84,21 @@ public class Server {
                 Socket client = this.serverSocket.accept();
                 DataInputStream input = new DataInputStream(client.getInputStream());
                 DataOutputStream output = new DataOutputStream(client.getOutputStream());
-                this.executor.execute(new ClientHandler(client, input, output));
+                FinancerExecutor.getExecutor().execute(new ClientHandler(client, input, output));
             } catch (Exception e) {
+                this.logger.log(Level.SEVERE, e.getMessage());
                 break;
             }
         }
+    }
+
+    public void startHttpServer() {
+        // create a resource config that scans for JAX-RS resources and providers
+        // in packages
+        final ResourceConfig rc = new ResourceConfig().register(new FinancerRestService(executor));
+
+        // create and start a new instance of grizzly http server
+        GrizzlyHttpServerFactory.createHttpServer(URI.create("http://localhost:" + REST_PORT + "/"), rc);
     }
 
     /**
@@ -94,6 +108,7 @@ public class Server {
         this.logger.log(Level.INFO, "Server will be stopped.");
         try {
             serverSocket.close();
-        } catch (IOException ignored) { }
+        } catch (IOException ignored) {
+        }
     }
 }

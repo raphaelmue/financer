@@ -1,15 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import com.jfoenix.controls.JFXMasonryPane?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.chart.PieChart?>
+<?import com.jfoenix.controls.JFXDatePicker?>
 <VBox fx:controller="de.raphaelmuesseler.financer.client.javafx.main.statistics.StatisticsController"
       xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" styleClass="content">
 
-    <GridPane hgap="20" vgap="20" maxHeight="Infinity" maxWidth="Infinity">
-        <VBox styleClass="content-box" GridPane.columnIndex="0" GridPane.rowIndex="0"
-              GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS">
-            <Label text="%statistics" styleClass="content-heading"/>
+    <JFXMasonryPane>
+        <VBox styleClass="content-box" prefWidth="500" prefHeight="250">
+            <Label text="%variableTransactionsDistribution" styleClass="content-heading"/>
+            <HBox spacing="10" prefWidth="Infinity" alignment="CENTER">
+                <Label text="%from" />
+                <JFXDatePicker fx:id="variableExpensesFromDatePicker"/>
+                <Label text="%to" />
+                <JFXDatePicker fx:id="variableExpensesToDatePicker"/>
+            </HBox>
+            <PieChart fx:id="variableExpensesDistributionChart" labelsVisible="false"  legendSide="LEFT"/>
+            <Label fx:id="variableExpensesNoDataLabel" styleClass="warning-label" text="%noData" managed="false" />
         </VBox>
-    </GridPane>
+
+        <VBox styleClass="content-box" prefWidth="500" prefHeight="250">
+            <Label text="%variableTransactionsDistribution" styleClass="content-heading"/>
+            <HBox spacing="10" prefWidth="Infinity" alignment="CENTER">
+                <Label text="%from" />
+                <JFXDatePicker fx:id="fixedExpensesFromDatePicker" />
+                <Label text="%to" />
+                <JFXDatePicker fx:id="fixedExpensesToDatePicker" />
+            </HBox>
+            <PieChart fx:id="fixedExpensesDistributionChart" labelsVisible="false"  legendSide="LEFT"/>
+            <Label fx:id="fixedExpensesNoDataLabel" styleClass="warning-label" text="%noData" managed="false" />
+        </VBox>
+    </JFXMasonryPane>
 
 </VBox>

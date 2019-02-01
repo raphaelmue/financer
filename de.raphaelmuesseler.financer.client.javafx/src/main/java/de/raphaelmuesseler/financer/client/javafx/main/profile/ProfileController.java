@@ -9,13 +9,13 @@ import de.raphaelmuesseler.financer.client.javafx.connection.RetrievalServiceImp
 import de.raphaelmuesseler.financer.client.javafx.dialogs.FinancerConfirmDialog;
 import de.raphaelmuesseler.financer.client.javafx.dialogs.FinancerTextInputDialog;
 import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
-import de.raphaelmuesseler.financer.shared.connection.AsyncCall;
 import de.raphaelmuesseler.financer.shared.connection.ConnectionResult;
 import de.raphaelmuesseler.financer.shared.model.BaseCategory;
 import de.raphaelmuesseler.financer.shared.model.Category;
 import de.raphaelmuesseler.financer.shared.model.CategoryTree;
 import de.raphaelmuesseler.financer.shared.model.User;
 import de.raphaelmuesseler.financer.util.collections.Tree;
+import de.raphaelmuesseler.financer.util.concurrency.FinancerExecutor;
 import javafx.application.Platform;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -29,8 +29,6 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -48,7 +46,6 @@ public class ProfileController implements Initializable {
 
     private User user;
     private Logger logger = Logger.getLogger("FinancerApplication");
-    private ExecutorService executor = Executors.newCachedThreadPool();
     private BaseCategory categories;
     private LocalStorageImpl localStorage = (LocalStorageImpl) LocalStorageImpl.getInstance();
     private TreeItem<CategoryTree> treeStructure;
@@ -77,36 +74,22 @@ public class ProfileController implements Initializable {
     }
 
     public void handleRefreshCategories() {
-        RetrievalServiceImpl.getInstance().fetchCategories(this.user, new AsyncCall<BaseCategory>() {
-            @Override
-            public void onSuccess(BaseCategory result) {
-                categories = result;
-            }
-
-            @Override
-            public void onFailure(Exception exception) {
-                categories = (BaseCategory) localStorage.readObject("categories");
-            }
-
-            @Override
-            public void onAfter() {
-                if (categories != null) {
-                    Platform.runLater(() -> {
-                        createTreeView();
-                        categoriesTreeView.setEditable(false);
-                        categoriesTreeView.setShowRoot(false);
-                        categoriesTreeView.setRoot(treeStructure);
-                        expandTreeView(treeStructure);
-                        categoriesTreeView.setCellFactory(param -> getCellFactory());
-                        categoriesTreeView.setOnEditCommit(event -> {
-                            event.getNewValue().getValue().setId(event.getOldValue().getValue().getId());
-                            event.getNewValue().getValue().setParentId(event.getOldValue().getValue().getParentId());
-                            event.getNewValue().getValue().setRootId(event.getOldValue().getValue().getRootId());
-                            handleUpdateCategory(event.getNewValue());
-                        });
-                    });
-                }
-            }
+        RetrievalServiceImpl.getInstance().fetchAllData(this.user, object -> {
+            categories = (BaseCategory) localStorage.readObject("categories");
+            Platform.runLater(() -> {
+                createTreeView();
+                categoriesTreeView.setEditable(false);
+                categoriesTreeView.setShowRoot(false);
+                categoriesTreeView.setRoot(treeStructure);
+                expandTreeView(treeStructure);
+                categoriesTreeView.setCellFactory(param -> getCellFactory());
+                categoriesTreeView.setOnEditCommit(event -> {
+                    event.getNewValue().getValue().setId(event.getOldValue().getValue().getId());
+                    event.getNewValue().getValue().setParentId(event.getOldValue().getValue().getParentId());
+                    event.getNewValue().getValue().setRootId(event.getOldValue().getValue().getRootId());
+                    handleUpdateCategory(event.getNewValue());
+                });
+            });
         });
     }
 
@@ -126,7 +109,7 @@ public class ProfileController implements Initializable {
                 parameters.put("user", this.user);
                 parameters.put("category", category);
 
-                this.executor.execute(new ServerRequestHandler(this.user, "addCategory", parameters, new JavaFXAsyncConnectionCall() {
+                FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "addCategory", parameters, new JavaFXAsyncConnectionCall() {
                     @Override
                     public void onSuccess(ConnectionResult result) {
                         handleRefreshCategories();
@@ -157,7 +140,7 @@ public class ProfileController implements Initializable {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("category", category);
 
-        this.executor.execute(new ServerRequestHandler(this.user, "updateCategory", parameters, new JavaFXAsyncConnectionCall() {
+        FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "updateCategory", parameters, new JavaFXAsyncConnectionCall() {
             @Override
             public void onSuccess(ConnectionResult result) {
                 handleRefreshCategories();
@@ -184,7 +167,7 @@ public class ProfileController implements Initializable {
                 parameters.put("category", this.categoriesTreeView.getSelectionModel()
                         .getSelectedItem().getValue());
 
-                this.executor.execute(new ServerRequestHandler(this.user, "deleteCategory", parameters, new JavaFXAsyncConnectionCall() {
+                FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "deleteCategory", parameters, new JavaFXAsyncConnectionCall() {
                     @Override
                     public void onSuccess(ConnectionResult result) {
                         handleRefreshCategories();

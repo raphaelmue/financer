@@ -196,11 +196,15 @@ public class FinancerController implements Initializable, Application {
         }
     }
 
-    public void handleLogout() {
-        Stage stage = (Stage) this.accountMenuBtn.getScene().getWindow();
+    public void handleLogoutBtn() {
+        handleLogout();
+    }
+
+    public static void handleLogout() {
+        Stage stage = (Stage) loadingBox.getScene().getWindow();
         stage.close();
 
-        this.localStorage.deleteAllData();
+        LocalStorageImpl.getInstance().deleteAllData();
 
         try {
             new LoginApplication().start(new Stage());

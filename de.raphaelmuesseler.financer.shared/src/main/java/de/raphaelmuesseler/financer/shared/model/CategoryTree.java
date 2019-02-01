@@ -65,6 +65,25 @@ public class CategoryTree implements Serializable, AmountProvider, Tree<Category
         return amount;
     }
 
+    @Override
+    public double getAmount(LocalDate startDate, LocalDate endDate) {
+        double amount = 0;
+
+        if (this.isLeaf()) {
+            if (this.transactions != null) {
+                for (AmountProvider amountProvider : this.transactions) {
+                    amount += amountProvider.getAmount(startDate, endDate);
+                }
+            }
+        } else {
+            for (AmountProvider amountProvider : this.children) {
+                amount += amountProvider.getAmount(startDate, endDate);
+            }
+        }
+
+        return amount;
+    }
+
     /**
      * GETTER
      */

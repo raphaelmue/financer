@@ -40,7 +40,10 @@ public class LoginApplicationTest extends AbstractFinancerApplicationTest {
         logout();
         login(this.user, password);
 
-        Assertions.assertFalse(find("#loginErrorLabel").isVisible());
+        sleep(500);
+        User loggedInUser = (User) LocalStorageImpl.getInstance().readObject("user");
+        Assertions.assertNotNull(loggedInUser);
+        Assertions.assertEquals(this.user.getEmail(), loggedInUser.getEmail());
     }
 
     @Test

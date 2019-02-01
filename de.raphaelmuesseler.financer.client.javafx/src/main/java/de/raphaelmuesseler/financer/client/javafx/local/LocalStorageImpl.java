@@ -50,7 +50,7 @@ public class LocalStorageImpl implements LocalStorage {
         }
     }
 
-    public static LocalStorage getInstance() {
+    public synchronized static LocalStorage getInstance() {
         if (INSTANCE == null) {
             INSTANCE = new LocalStorageImpl();
         }
@@ -58,12 +58,13 @@ public class LocalStorageImpl implements LocalStorage {
     }
 
     @SuppressWarnings("unchecked")
-    private Map<String, Object> readFile(File file) {
+    private synchronized Map<String, Object> readFile(File file) {
         if (!file.exists()) {
             try {
-                file.createNewFile();
-                return null;
-            } catch (IOException ignored) {}
+                return file.getParentFile().mkdirs() && file.createNewFile() ? null : null;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
         Map<String, Object> result = null;
@@ -75,8 +76,16 @@ public class LocalStorageImpl implements LocalStorage {
         return result;
     }
 
-    private boolean writeFile(File file, Map<String, Object> data) {
+    private synchronized boolean writeFile(File file, Map<String, Object> data) {
         boolean result = false;
+        if (!file.exists()) {
+            try {
+                file.getParentFile().mkdirs();
+                file.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
         try (ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream(file))) {
             outputStream.writeObject(data);
             result = true;
@@ -87,24 +96,24 @@ public class LocalStorageImpl implements LocalStorage {
     }
 
     @Override
-    public Object readObject(String key) {
+    public synchronized Object readObject(String key) {
         return (this.readFile(Objects.requireNonNull(LocalStorageFile.getFileByKey(key))) == null) ?
                 null : Objects.requireNonNull(this.readFile(Objects.requireNonNull(LocalStorageFile.getFileByKey(key)))).get(key);
     }
 
     @Override
-    public boolean writeObject(String key, Object object) {
+    public synchronized boolean writeObject(String key, Object object) {
         Map<String, Object> map = this.readFile(Objects.requireNonNull(LocalStorageFile.getFileByKey(key)));
         if (map == null) {
             map = new HashMap<>();
         }
 
         map.put(key, object);
-        return this.writeFile(LocalStorageFile.getFileByKey(key), map);
+        return this.writeFile(Objects.requireNonNull(LocalStorageFile.getFileByKey(key)), map);
     }
 
     @Override
-    public boolean deleteObject(String key) {
+    public synchronized boolean deleteObject(String key) {
         if (!Objects.requireNonNull(LocalStorageFile.getFileByKey(key)).getParentFile().mkdirs()) {
             return false;
         }
@@ -114,11 +123,11 @@ public class LocalStorageImpl implements LocalStorage {
         }
 
         map.remove(key);
-        return this.writeFile(LocalStorageFile.getFileByKey(key), map);
+        return this.writeFile(Objects.requireNonNull(LocalStorageFile.getFileByKey(key)), map);
     }
 
     @Override
-    public boolean deleteAllData() {
+    public synchronized boolean deleteAllData() {
         for (LocalStorageFile localStorageFile : LocalStorageFile.values()) {
             if (!this.writeFile(localStorageFile.getFile(), null)) {
                 return false;

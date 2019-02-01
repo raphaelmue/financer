@@ -6,5 +6,6 @@ public interface AmountProvider {
 
     double getAmount();
     double getAmount(LocalDate localDate);
+    double getAmount(LocalDate startDate, LocalDate endDate);
 
 }

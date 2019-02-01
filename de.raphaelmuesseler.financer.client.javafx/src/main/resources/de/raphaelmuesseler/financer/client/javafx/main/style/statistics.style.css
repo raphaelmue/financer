@@ -1,0 +1,15 @@
+.default-color0.chart-pie { -fx-pie-color: #ffc200; }
+.default-color1.chart-pie { -fx-pie-color: #92cab1; }
+.default-color2.chart-pie { -fx-pie-color: #fc3b37; }
+.default-color3.chart-pie { -fx-pie-color: #00b557; }
+.default-color4.chart-pie { -fx-pie-color: #00FFFF; }
+
+.chart-legend {
+    -fx-background-color: transparent;
+}
+
+.chart-legend-item-symbol{
+    -fx-effect: none;
+    -fx-background-radius: 5px;
+    -fx-padding: 5px 12px;
+}

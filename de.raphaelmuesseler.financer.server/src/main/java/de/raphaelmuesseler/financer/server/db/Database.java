@@ -8,6 +8,9 @@ import de.raphaelmuesseler.financer.shared.model.db.DatabaseObject;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.lang.reflect.Type;
 import java.sql.*;
 import java.time.LocalDate;
@@ -19,20 +22,11 @@ public class Database {
 
     private static final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
 
-    // for testing:
-    private static final String HOST_LOCAL = "localhost";
-
-    // for deployment:
-    private static final String HOST_DEPLOY = "raphael-muesseler.de";
-
     private static String HOST;
-
     private static DatabaseName DB_NAME;
 
-    // for production:
-    // private static final String DB_NAME     = "financer_prod";
-    private static final String DB_USER = "financer_admin";
-    private static final String DB_PASSWORD = "XTS0NvvNlZ3roWqY";
+    private static String DB_USER;
+    private static String DB_PASSWORD;
 
     private Connection connection;
 
@@ -42,6 +36,7 @@ public class Database {
         FIXED_TRANSACTIONS("fixed_transactions"),
         FIXED_TRANSACTIONS_AMOUNTS("fixed_transactions_amounts"),
         TRANSACTIONS("transactions"),
+        TRANSACTIONS_ATTACHMENTS("transactions_attachments"),
         USERS("users"),
         USERS_CATEGORIES("users_categories"),
         USERS_TOKENS("users_tokens");
@@ -95,6 +90,14 @@ public class Database {
             // loading database driver
             Class.forName(JDBC_DRIVER);
 
+            if (HOST == null) {
+                throw new IllegalArgumentException("Database: No host is defined!");
+            }
+
+            if (DB_USER == null || DB_PASSWORD == null) {
+                throw new IllegalArgumentException("Database: No user or password is defined!");
+            }
+
             // initializing DB access
             this.connection = DriverManager.getConnection("jdbc:mysql://" + HOST + ":3306/" + DB_NAME.getName() +
                             "?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&" +
@@ -107,14 +110,32 @@ public class Database {
     }
 
     /**
-     * Sets the static host. This method should be called before the first call of getInstance.
+     * Sets the static host. This method has to be called before the first call of getInstance.
      *
-     * @param local sets the host to 'localhost' if true
+     * @param local sets the host to 'localhost' if true, else the database config file will be read.
      */
     public static void setHost(boolean local) {
-        Database.HOST = local ? Database.HOST_LOCAL : Database.HOST_DEPLOY;
+        if (local) {
+            HOST = "localhost";
+            DB_USER = "root";
+            DB_PASSWORD = "";
+        } else {
+            try (BufferedReader fileReader = new BufferedReader(new InputStreamReader(
+                    Database.class.getResourceAsStream("config/database.conf")))) {
+                HOST = fileReader.readLine();
+                DB_USER = fileReader.readLine();
+                DB_PASSWORD = fileReader.readLine();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
+    /**
+     * Sets the name of the database
+     *
+     * @param databaseName DatabaseName Object
+     */
     public static void setDbName(DatabaseName databaseName) {
         DB_NAME = databaseName;
     }
@@ -167,12 +188,10 @@ public class Database {
      * @return JSONArray that contains
      * @throws SQLException thrown, when something went wrong executing the SQL statement
      */
-    // TODO select specific fields
-    // TODO escape strings
     public JSONArray get(Table tableName, Map<String, Object> whereParameters, String orderByClause) throws SQLException {
         PreparedStatement statement;
         String query = "SELECT * FROM " + tableName.getTableName() +
-                this.getClause(whereParameters, "WHERE", " AND ") +
+                this.getClause(whereParameters, "WHERE", " AND ", true) +
                 this.getOrderByClause(orderByClause);
 
         statement = connection.prepareStatement(query);
@@ -222,8 +241,8 @@ public class Database {
     public void update(Table tableName, Map<String, Object> whereParameters, Map<String, Object> values) throws SQLException {
         PreparedStatement statement;
         String query = "UPDATE " + tableName.getTableName() +
-                this.getClause(values, "SET", ", ") +
-                this.getClause(whereParameters, "WHERE", " AND ");
+                this.getClause(values, "SET", ", ", false) +
+                this.getClause(whereParameters, "WHERE", " AND ", true);
 
         statement = connection.prepareStatement(query);
         this.preparedStatement(statement, values);
@@ -242,13 +261,14 @@ public class Database {
     public void delete(Table table, Map<String, Object> whereParameters) throws SQLException {
         PreparedStatement statement;
         String query = "DELETE FROM " + table.getTableName() + " " +
-                this.getClause(whereParameters, "WHERE", " AND ");
+                this.getClause(whereParameters, "WHERE", " AND ", true);
         statement = this.preparedStatement(connection.prepareStatement(query), whereParameters);
         statement.execute();
     }
 
     /**
      * Returns the latest id that was inserted into the table.
+     *
      * @param table database table that will be requested
      * @return the latest id in the table
      * @throws SQLException thrown, when something went wrong executing the SQL statement
@@ -263,6 +283,7 @@ public class Database {
 
     /**
      * Clears all data in the database. Only possible if server is in test mode.
+     *
      * @throws SQLException thrown, when something went wrong executing the SQL statement
      */
     public void clearDatabase() throws SQLException {
@@ -273,7 +294,7 @@ public class Database {
         }
     }
 
-    private String getClause(Map<String, Object> values, String operation, String separator) {
+    private String getClause(Map<String, Object> values, String operation, String separator, boolean isWhereClause) {
         StringBuilder whereClauseString = new StringBuilder();
         if (values.size() > 0) {
             whereClauseString.append(" ").append(operation).append(" ");
@@ -284,8 +305,16 @@ public class Database {
                 } else {
                     whereClauseString.append(separator);
                 }
-                whereClauseString.append(entry.getKey()).append(" = ?");
+
+                if (entry.getValue() == null) {
+                    whereClauseString.append(entry.getKey());
+                    whereClauseString.append(isWhereClause ? " IS " : " = ");
+                    whereClauseString.append(" NULL");
+                } else {
+                    whereClauseString.append(entry.getKey()).append(" = ?");
+                }
             }
+            values.entrySet().removeIf(entry -> entry.getValue() == null);
         }
         return whereClauseString.toString();
     }
