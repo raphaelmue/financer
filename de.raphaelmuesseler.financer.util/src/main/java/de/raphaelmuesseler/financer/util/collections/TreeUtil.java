@@ -31,7 +31,7 @@ public class TreeUtil {
     public static <T> boolean deleteByValue(Tree<T> root, Tree<T> treeItem, Comparator<T> comparator) {
         for (Tree<T> item : root.getChildren()) {
             if (comparator.compare(treeItem.getValue(), item.getValue()) == 0) {
-                item.getChildren().remove(treeItem);
+                item.getParent().getChildren().remove(treeItem);
                 return true;
             } else {
                 if (TreeUtil.deleteByValue(item, treeItem, comparator)) {
