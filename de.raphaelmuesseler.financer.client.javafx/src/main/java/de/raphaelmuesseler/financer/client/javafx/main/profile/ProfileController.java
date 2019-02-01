@@ -15,6 +15,7 @@ import de.raphaelmuesseler.financer.shared.model.Category;
 import de.raphaelmuesseler.financer.shared.model.CategoryTree;
 import de.raphaelmuesseler.financer.shared.model.User;
 import de.raphaelmuesseler.financer.util.collections.Tree;
+import de.raphaelmuesseler.financer.util.collections.TreeUtil;
 import de.raphaelmuesseler.financer.util.concurrency.FinancerExecutor;
 import javafx.application.Platform;
 import javafx.fxml.Initializable;
@@ -26,11 +27,10 @@ import org.controlsfx.glyphfont.GlyphFont;
 import org.controlsfx.glyphfont.GlyphFontRegistry;
 
 import java.net.URL;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -67,19 +67,30 @@ public class ProfileController implements Initializable {
         this.refreshCategoriesBtn.setGraphicTextGap(8);
         this.newCategoryBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.PLUS));
         this.newCategoryBtn.setGraphicTextGap(8);
+        this.newCategoryBtn.setDisable(true);
         this.editCategoryBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.EDIT));
         this.editCategoryBtn.setGraphicTextGap(8);
+        this.editCategoryBtn.setDisable(true);
         this.deleteCategoryBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.TRASH));
         this.deleteCategoryBtn.setGraphicTextGap(8);
+        this.deleteCategoryBtn.setDisable(true);
 
         this.handleRefreshCategories();
     }
 
     public void handleRefreshCategories() {
-        RetrievalServiceImpl.getInstance().fetchAllData(this.user, object -> {
-            categories = (BaseCategory) localStorage.readObject("categories");
+        RetrievalServiceImpl.getInstance().fetchCategories(this.user, baseCategory -> {
+            categories = baseCategory;
             Platform.runLater(() -> {
                 createTreeView();
+                categoriesTreeView.getSelectionModel().selectedItemProperty().addListener((observableValue, oldValue, newValue) -> {
+                    if (newValue != null) {
+                        newCategoryBtn.setDisable(false);
+
+                        editCategoryBtn.setDisable(newValue.getValue().isRoot());
+                        deleteCategoryBtn.setDisable(newValue.getValue().isRoot());
+                    }
+                });
                 categoriesTreeView.setEditable(false);
                 categoriesTreeView.setShowRoot(false);
                 categoriesTreeView.setRoot(treeStructure);
@@ -104,17 +115,31 @@ public class ProfileController implements Initializable {
             String categoryName = new FinancerTextInputDialog(I18N.get("enterCategoryName"), I18N.get("newCategory"))
                     .showAndGetResult();
             if (categoryName != null) {
-                Category category = new Category(-1, categoryName, currentItem.getValue().getValue().getId(),
-                        currentItem.getValue().getCategoryClass().getIndex());
+                CategoryTree categoryTree = new CategoryTree(categoriesTreeView.getSelectionModel().getSelectedItem().getValue().getCategoryClass(),
+                        categoriesTreeView.getSelectionModel().getSelectedItem().getValue(),
+                        new Category(-1, categoryName, currentItem.getValue().getValue().getId(), currentItem.getValue().getCategoryClass().getIndex()));
 
                 Map<String, Object> parameters = new HashMap<>();
                 parameters.put("user", this.user);
-                parameters.put("category", category);
+                parameters.put("category", categoryTree.getValue());
 
                 FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "addCategory", parameters, new JavaFXAsyncConnectionCall() {
                     @Override
                     public void onSuccess(ConnectionResult result) {
-                        handleRefreshCategories();
+                        categoriesTreeView.getSelectionModel().getSelectedItem().setExpanded(true);
+                        categoryTree.getValue().setId(((Category) result.getResult()).getId());
+                        categoryTree.getValue().setPrefix(categoryTree.getParent().getValue().getPrefix() + (categoryTree.getParent().getChildren().size() + 1) + ".");
+                        if (categoriesTreeView.getSelectionModel().getSelectedItem().getValue().isRoot()) {
+                            categories.getCategoryTreeByCategoryClass(categoriesTreeView.getSelectionModel().getSelectedItem().getValue().getCategoryClass()).getChildren().add(categoryTree);
+                        } else {
+                            TreeUtil.insertByValue(categories.getCategoryTreeByCategoryClass(categoryTree.getCategoryClass()), categoryTree, (o1, o2) -> Integer.compare(o1.getParentId(), o2.getId()));
+                        }
+                        localStorage.writeObject("categories", categories);
+
+                        Platform.runLater(() -> {
+                            categoriesTreeView.getSelectionModel().getSelectedItem().getChildren().add(new TreeItem<>(categoryTree));
+                            categoriesTreeView.refresh();
+                        });
                     }
 
                     @Override
@@ -130,11 +155,13 @@ public class ProfileController implements Initializable {
     public void handleEditCategory() {
         if (this.categoriesTreeView.getSelectionModel().getSelectedItem() != null) {
             CategoryTree category = this.categoriesTreeView.getSelectionModel().getSelectedItem().getValue();
-            String categoryName = new FinancerTextInputDialog(I18N.get("enterCategoryName"), Formatter.formatCategoryName(category.getValue()))
+            String categoryName = new FinancerTextInputDialog(I18N.get("enterCategoryName"), category.getValue().getName())
                     .showAndGetResult();
-            category.getValue().setName(categoryName);
-            this.categoriesTreeView.refresh();
-            this.handleUpdateCategory(category);
+            if (categoryName != null) {
+                category.getValue().setName(categoryName);
+                this.categoriesTreeView.refresh();
+                this.handleUpdateCategory(category);
+            }
         }
     }
 
@@ -145,7 +172,8 @@ public class ProfileController implements Initializable {
         FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "updateCategory", parameters, new JavaFXAsyncConnectionCall() {
             @Override
             public void onSuccess(ConnectionResult result) {
-                handleRefreshCategories();
+                categoriesTreeView.getSelectionModel().getSelectedItem().getValue().getValue().setName(category.getValue().getName());
+                localStorage.writeObject("categories", categories);
             }
 
             @Override
@@ -172,7 +200,11 @@ public class ProfileController implements Initializable {
                 FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "deleteCategory", parameters, new JavaFXAsyncConnectionCall() {
                     @Override
                     public void onSuccess(ConnectionResult result) {
-                        handleRefreshCategories();
+                        TreeUtil.deleteByValue(categories,
+                                categoriesTreeView.getSelectionModel().getSelectedItem().getValue(), Comparator.comparingInt(Category::getId));
+                        localStorage.writeObject("categories", categories);
+
+                        Platform.runLater(() -> categoriesTreeView.getSelectionModel().getSelectedItem().getParent().getChildren().remove(categoriesTreeView.getSelectionModel().getSelectedItem()));
                     }
 
                     @Override
@@ -203,7 +235,7 @@ public class ProfileController implements Initializable {
     }
 
     private TextFieldTreeCellImpl getCellFactory() {
-        return new TextFieldTreeCellImpl(new StringConverter<CategoryTree>() {
+        return new TextFieldTreeCellImpl(new StringConverter<>() {
             @Override
             public String toString(CategoryTree object) {
                 return object.getValue().getName().equals(object.getCategoryClass().getName()) ? I18N.get(object.toString()) : object.toString();
@@ -233,7 +265,7 @@ public class ProfileController implements Initializable {
             super(stringConverter);
 
             MenuItem addMenuItem = new MenuItem(I18N.get("new"));
-            addMenuItem.setOnAction(t -> handleNewCategory(getTreeItem()));
+            addMenuItem.setOnAction(t -> handleNewCategory());
             this.contextMenu.getItems().add(addMenuItem);
 
             MenuItem addMenuItemDelete = new MenuItem(I18N.get("new"));

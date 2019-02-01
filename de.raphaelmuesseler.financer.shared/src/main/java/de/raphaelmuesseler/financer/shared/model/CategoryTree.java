@@ -98,12 +98,12 @@ public class CategoryTree implements Serializable, AmountProvider, Tree<Category
     }
 
     @Override
-    public Tree<Category> getParent() {
+    public CategoryTree getParent() {
         return this.parent;
     }
 
     @Override
-    public List<? extends Tree<Category>> getChildren() {
+    public List<CategoryTree> getChildren() {
         return this.children;
     }
 

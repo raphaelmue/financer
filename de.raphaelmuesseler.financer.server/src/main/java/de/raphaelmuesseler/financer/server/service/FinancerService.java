@@ -248,7 +248,7 @@ public class FinancerService {
                 JSONObject jsonObject = jsonArray.getJSONObject(j);
 
                 if (jsonObject.get("parent_id").equals("null")) {
-                    ((List<Tree<Category>>) baseCategory.getCategoryTreeByCategoryClass(categoryClass).getChildren()).add(
+                    baseCategory.getCategoryTreeByCategoryClass(categoryClass).getChildren().add(
                             new CategoryTree(categoryClass, baseCategory.getCategoryTreeByCategoryClass(categoryClass),
                                     new Category(jsonObject.getInt("id"),
                                             jsonObject.getString("name"),
