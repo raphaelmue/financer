@@ -13,6 +13,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.testfx.framework.junit5.ApplicationTest;
 
+import java.time.LocalDate;
+
 public class FixedTransactionTest extends AbstractFinancerApplicationTest {
 
     @BeforeEach
@@ -77,7 +79,7 @@ public class FixedTransactionTest extends AbstractFinancerApplicationTest {
     @Test
     public void testAddFixedVariableTransaction() {
         fixedTransaction.setVariable(true);
-        fixedTransaction.getTransactionAmounts().add(new TransactionAmount(-1, 450.0, fixedTransaction.getStartDate().withDayOfMonth(1)));
+        fixedTransaction.getTransactionAmounts().add(new TransactionAmount(-1, 450.0, LocalDate.now().withDayOfMonth(1)));
 
         register(user, password);
         category.setCategoryClass(BaseCategory.CategoryClass.FIXED_EXPENSES);
@@ -86,15 +88,15 @@ public class FixedTransactionTest extends AbstractFinancerApplicationTest {
 
         sleep(500);
 
+        clickOn((JFXButton) find("#refreshFixedTransactionsBtn"));
         clickOn((JFXListView) find("#categoriesListView"));
         press(KeyCode.DOWN).release(KeyCode.DOWN);
         press(KeyCode.DOWN).release(KeyCode.DOWN);
         press(KeyCode.DOWN).release(KeyCode.DOWN);
 
-        sleep(2000);
+        sleep(500);
 
         Assertions.assertNotNull(find((Label label) -> label.getText().contains(I18N.get("active"))));
-        sleep(500);
         Assertions.assertNotNull(find((Label label) -> label.getText().contains(Formatter.formatCurrency(
                 fixedTransaction.getTransactionAmounts().get(0).getAmount()))));
     }
