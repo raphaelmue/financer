@@ -94,6 +94,7 @@ public class FixedTransactionTest extends AbstractFinancerApplicationTest {
         sleep(2000);
 
         Assertions.assertNotNull(find((Label label) -> label.getText().contains(I18N.get("active"))));
+        sleep(500);
         Assertions.assertNotNull(find((Label label) -> label.getText().contains(Formatter.formatCurrency(
                 fixedTransaction.getTransactionAmounts().get(0).getAmount()))));
     }
