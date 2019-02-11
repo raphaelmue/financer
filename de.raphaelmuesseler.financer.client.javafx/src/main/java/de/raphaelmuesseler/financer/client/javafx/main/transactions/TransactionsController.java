@@ -377,12 +377,25 @@ public class TransactionsController implements Initializable {
     }
 
     public void handleRefreshFixedTransactions() {
-        RetrievalServiceImpl.getInstance().fetchFixedTransactions(this.user, result -> Platform.runLater(() -> {
-            categories = (BaseCategory) localStorage.readObject("categories");
+        RetrievalServiceImpl.getInstance().fetchFixedTransactions(this.user, new AsyncCall<>() {
+            @Override
+            public void onSuccess(List<FixedTransaction> result) { }
 
-            loadFixedTransactionTableItems();
-            fixedTransactionsListView.getItems().clear();
-        }));
+            @Override
+            public void onFailure(Exception exception) {
+                logger.log(Level.SEVERE, exception.getMessage(), exception);
+            }
+
+            @Override
+            public void onAfter() {
+                Platform.runLater(() -> {
+                    categories = (BaseCategory) localStorage.readObject("categories");
+
+                    loadFixedTransactionTableItems();
+                    fixedTransactionsListView.getItems().clear();
+                });
+            }
+        });
     }
 
     public void handleNewFixedTransaction() {
