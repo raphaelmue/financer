@@ -108,7 +108,9 @@ public class FixedTransactionDialog extends FinancerDialog<FixedTransaction> {
         GlyphFont fontAwesome = GlyphFontRegistry.font("FontAwesome");
         JFXButton newTransactionAmountBtn = new JFXButton(I18N.get("new"), fontAwesome.create(FontAwesome.Glyph.PLUS));
         JFXButton editTransactionAmountBtn = new JFXButton(I18N.get("edit"), fontAwesome.create(FontAwesome.Glyph.EDIT));
+        editTransactionAmountBtn.setDisable(true);
         JFXButton deleteTransactionAmountBtn = new JFXButton(I18N.get("delete"), fontAwesome.create(FontAwesome.Glyph.TRASH));
+        deleteTransactionAmountBtn.setDisable(true);
 
         newTransactionAmountBtn.setOnAction(event -> {
             TransactionAmount transactionAmount = new TransactionAmountDialog(null, transactionAmountListView.getItems()).showAndGetResult();
@@ -119,20 +121,10 @@ public class FixedTransactionDialog extends FinancerDialog<FixedTransaction> {
         });
         editTransactionAmountBtn.setOnAction(event -> {
             if (transactionAmountListView.getSelectionModel().getSelectedItem() != null) {
-                TransactionAmount transactionAmount = new TransactionAmountDialog(transactionAmountListView.getSelectionModel().getSelectedItem(),
+                new TransactionAmountDialog(transactionAmountListView.getSelectionModel().getSelectedItem(),
                         transactionAmountListView.getItems())
                         .showAndGetResult();
-                if (transactionAmount != null) {
-
-                    for (int i = 0; i < transactionAmountListView.getItems().size(); i++) {
-                        if (transactionAmount.getId() == transactionAmountListView.getItems().get(i).getId()) {
-                            transactionAmountListView.getItems().get(i).setValueDate(transactionAmount.getValueDate());
-                            transactionAmountListView.getItems().get(i).setAmount(transactionAmount.getAmount());
-                            getValue().sortTransactionAmounts();
-                            break;
-                        }
-                    }
-                }
+                transactionAmountListView.refresh();
             }
         });
         deleteTransactionAmountBtn.setOnAction(event -> {
@@ -150,6 +142,15 @@ public class FixedTransactionDialog extends FinancerDialog<FixedTransaction> {
         this.transactionAmountContainer.getChildren().add(toolBox);
 
         this.transactionAmountListView = new JFXListView<>();
+        this.transactionAmountListView.getSelectionModel().selectedItemProperty().addListener((observableValue, oldValue, newValue) -> {
+            if (newValue != null) {
+                editTransactionAmountBtn.setDisable(false);
+                deleteTransactionAmountBtn.setDisable(false);
+            } else {
+                editTransactionAmountBtn.setDisable(true);
+                deleteTransactionAmountBtn.setDisable(true);
+            }
+        });
         this.transactionAmountListView.setCellFactory(param -> new ListCell<>() {
             @Override
             protected void updateItem(TransactionAmount item, boolean empty) {

@@ -58,12 +58,14 @@ public class TransactionAmountDialog extends FinancerDialog<TransactionAmount> {
     protected boolean checkConsistency() {
         boolean result = true;
 
-        for (TransactionAmount transactionAmount : this.transactionAmounts) {
-            if (transactionAmount.getValueDate().getMonth() == this.valueDateField.getValue().getMonth() &&
-                    transactionAmount.getValueDate().getYear() == this.valueDateField.getValue().getYear()) {
-                this.setErrorMessage(I18N.get("errTransactionAmountExists"));
-                result = false;
-                break;
+        if (this.getValue() == null) {
+            for (TransactionAmount transactionAmount : this.transactionAmounts) {
+                if (transactionAmount.getValueDate().getMonth() == this.valueDateField.getValue().getMonth() &&
+                        transactionAmount.getValueDate().getYear() == this.valueDateField.getValue().getYear()) {
+                    this.setErrorMessage(I18N.get("errTransactionAmountExists"));
+                    result = false;
+                    break;
+                }
             }
         }
 
