@@ -21,11 +21,14 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class RetrievalServiceImpl implements RetrievalService {
 
     private static RetrievalService INSTANCE = null;
     private final LocalStorage localStorage = LocalStorageImpl.getInstance();
+    private final Logger logger = Logger.getLogger("FinancerApplication");
 
 
     public static RetrievalService getInstance() {
@@ -63,6 +66,7 @@ public class RetrievalServiceImpl implements RetrievalService {
                 asyncCall.onFailure(exception);
                 if (!(exception instanceof ConnectException)) {
                     JavaFXAsyncConnectionCall.super.onFailure(exception);
+                    logger.log(Level.SEVERE, exception.getMessage(), exception);
                 }
             }
 

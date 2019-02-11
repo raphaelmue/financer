@@ -215,6 +215,7 @@ class TransactionDialog extends FinancerDialog<Transaction> {
             this.setValue(new Transaction(-1, Double.valueOf(this.amountField.getText()),
                     this.categoryComboBox.getSelectionModel().getSelectedItem(), this.productField.getText(),
                     this.purposeField.getText(), this.valueDateField.getValue(), this.shopField.getText()));
+            this.getValue().getCategoryTree().getTransactions().add(this.getValue());
         } else {
             this.getValue().setAmount(Double.valueOf(this.amountField.getText()));
             this.getValue().setCategoryTree(this.categoryComboBox.getSelectionModel().getSelectedItem());
