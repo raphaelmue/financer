@@ -4,8 +4,12 @@ import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXListView;
 import de.raphaelmuesseler.financer.client.format.Formatter;
 import de.raphaelmuesseler.financer.client.format.I18N;
+import de.raphaelmuesseler.financer.client.javafx.components.DoubleField;
+import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
 import de.raphaelmuesseler.financer.shared.model.BaseCategory;
+import de.raphaelmuesseler.financer.shared.model.CategoryTree;
 import de.raphaelmuesseler.financer.shared.model.transactions.TransactionAmount;
+import de.raphaelmuesseler.financer.util.collections.TreeUtil;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
 import org.junit.jupiter.api.Assertions;
@@ -44,6 +48,38 @@ public class FixedTransactionTest extends AbstractFinancerApplicationTest {
         Assertions.assertNotNull(find((Label label) -> label.getText().contains(Formatter.formatCurrency(fixedTransaction.getAmount()))));
         Assertions.assertNotNull(find((Label label) -> label.getText().contains(I18N.get("since") + " " +
                 fixedTransaction.getStartDate().toString())));
+    }
+
+    @Test
+    public void testEditFixedTransaction() {
+        register(user, password);
+        category.setCategoryClass(BaseCategory.CategoryClass.FIXED_EXPENSES);
+        addCategory(category);
+        addFixedTransaction(fixedTransaction);
+
+        final double amount = fixedTransaction.getAmount() / 2;
+
+        sleep(500);
+
+        clickOn((JFXListView) find("#categoriesListView"));
+        press(KeyCode.DOWN).release(KeyCode.DOWN);
+        press(KeyCode.DOWN).release(KeyCode.DOWN);
+        press(KeyCode.DOWN).release(KeyCode.DOWN);
+
+        clickOn(find((Label label) -> label.getText().contains(I18N.get("active"))));
+        clickOn((JFXButton) find("#editFixedTransactionBtn"));
+
+        clickOn((DoubleField) find("#amountTextField"));
+        eraseText(6);
+        write(Double.toString(amount));
+        confirmDialog();
+
+        sleep(500);
+
+        Assertions.assertNotNull(find((Label label) -> label.getText().contains(Formatter.formatCurrency(amount))));
+        Assertions.assertEquals(1, ((CategoryTree) TreeUtil.getByValue(((BaseCategory) LocalStorageImpl.getInstance().readObject("categories"))
+                        .getCategoryTreeByCategoryClass(fixedTransaction.getCategoryTree().getCategoryClass()),
+                fixedTransaction.getCategoryTree(), (o1, o2) -> String.CASE_INSENSITIVE_ORDER.compare(o1.getName(), o2.getName()))).getTransactions().size());
     }
 
     @Test
