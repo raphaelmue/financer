@@ -48,6 +48,7 @@ public class ClientHandler implements Runnable {
                 Method method;
                 try {
                     method = FinancerService.class.getMethod(connectionCall.getMethodName(), Logger.class, Map.class);
+                    connectionCall.getParameters().put("ipAddress", client.getInetAddress().toString());
                     result = (ConnectionResult<Object>) method.invoke(this.service, this.logger, connectionCall.getParameters());
                     this.logger.log(Level.INFO, "Request has been successfully handled.");
                 } catch (Exception exception) {

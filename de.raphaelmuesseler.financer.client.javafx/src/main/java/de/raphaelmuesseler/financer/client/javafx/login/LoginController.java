@@ -12,9 +12,11 @@ import de.raphaelmuesseler.financer.client.javafx.main.FinancerApplication;
 import de.raphaelmuesseler.financer.client.local.Settings;
 import de.raphaelmuesseler.financer.shared.connection.ConnectionResult;
 import de.raphaelmuesseler.financer.shared.model.User;
+import de.raphaelmuesseler.financer.util.concurrency.FinancerExecutor;
 import javafx.application.Platform;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -40,7 +42,6 @@ public class LoginController implements Initializable {
     public Menu languageMenu;
 
     private Logger logger = Logger.getLogger("LoginApplication");
-    private ExecutorService executor = Executors.newCachedThreadPool();
     private LocalStorageImpl localStorage = (LocalStorageImpl) LocalStorageImpl.getInstance();
 
     @Override
@@ -57,6 +58,14 @@ public class LoginController implements Initializable {
         }
         I18N.setLocalStorage(this.localStorage);
         Formatter.setSettings(settings);
+
+        Platform.runLater(() -> {
+            this.gridPane.getScene().setOnKeyPressed(e -> {
+                if (e.getCode() == KeyCode.ENTER) {
+                    handleSignInButtonAction();
+                }
+            });
+        });
     }
 
     public void handleSignInButtonAction() {
@@ -67,7 +76,7 @@ public class LoginController implements Initializable {
         parameters.put("email", this.loginEmailTextField.getText());
         parameters.put("password", this.loginPasswordField.getText());
         logger.log(Level.INFO, "User's credentials will be checked ...");
-        this.executor.execute(new ServerRequestHandler("checkCredentials", parameters, new JavaFXAsyncConnectionCall() {
+        FinancerExecutor.getExecutor().execute(new ServerRequestHandler("checkCredentials", parameters, new JavaFXAsyncConnectionCall() {
             @Override
             public void onSuccess(ConnectionResult result) {
                 if (result.getResult() != null) {
@@ -117,7 +126,7 @@ public class LoginController implements Initializable {
             Map<String, Object> parameters = new HashMap<>();
             parameters.put("user", user);
 
-            this.executor.execute(new ServerRequestHandler("registerUser", parameters, new JavaFXAsyncConnectionCall() {
+            FinancerExecutor.getExecutor().execute(new ServerRequestHandler("registerUser", parameters, new JavaFXAsyncConnectionCall() {
                 @Override
                 public void onSuccess(ConnectionResult result) {
                     Platform.runLater(() -> loginUser((User) result.getResult()));

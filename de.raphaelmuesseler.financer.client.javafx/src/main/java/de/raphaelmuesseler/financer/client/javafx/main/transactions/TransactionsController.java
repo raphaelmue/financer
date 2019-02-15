@@ -2,6 +2,7 @@ package de.raphaelmuesseler.financer.client.javafx.main.transactions;
 
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXListView;
+import com.jfoenix.controls.JFXTextField;
 import de.raphaelmuesseler.financer.client.connection.ServerRequestHandler;
 import de.raphaelmuesseler.financer.client.format.Formatter;
 import de.raphaelmuesseler.financer.client.format.I18N;
@@ -21,10 +22,12 @@ import de.raphaelmuesseler.financer.shared.model.transactions.AbstractTransactio
 import de.raphaelmuesseler.financer.shared.model.transactions.FixedTransaction;
 import de.raphaelmuesseler.financer.shared.model.transactions.Transaction;
 import de.raphaelmuesseler.financer.util.collections.CollectionUtil;
-import de.raphaelmuesseler.financer.util.collections.TreeUtil;
+import de.raphaelmuesseler.financer.util.concurrency.FinancerExecutor;
 import javafx.application.Platform;
+import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
@@ -39,8 +42,6 @@ import org.controlsfx.glyphfont.GlyphFontRegistry;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -53,6 +54,7 @@ public class TransactionsController implements Initializable {
     public JFXButton editTransactionBtn;
     public JFXButton deleteTransactionBtn;
     public TableView<Transaction> transactionsTableView;
+    public JFXTextField filterTransactionsTextField;
     public JFXButton refreshFixedTransactionsBtn;
     public JFXButton newFixedTransactionBtn;
     public JFXButton editFixedTransactionBtn;
@@ -63,57 +65,54 @@ public class TransactionsController implements Initializable {
 
     private User user;
     private Logger logger = Logger.getLogger("FinancerApplication");
-    private ExecutorService executor = Executors.newCachedThreadPool();
     private LocalStorageImpl localStorage = (LocalStorageImpl) LocalStorageImpl.getInstance();
     private ObservableList<Transaction> transactions;
-    private ObservableList<FixedTransaction> fixedTransactions;
     private BaseCategory categories;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         FinancerController.showLoadingBox();
 
-        this.user = (User) this.localStorage.readObject("user");
+        Platform.runLater(() -> {
+            this.user = (User) this.localStorage.readObject("user");
 
-        GlyphFont fontAwesome = GlyphFontRegistry.font("FontAwesome");
-        this.refreshTransactionsBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.REFRESH));
-        this.refreshTransactionsBtn.setGraphicTextGap(8);
-        this.newTransactionBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.PLUS));
-        this.newTransactionBtn.setGraphicTextGap(8);
-        this.editTransactionBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.EDIT));
-        this.editTransactionBtn.setGraphicTextGap(8);
-        this.editTransactionBtn.setDisable(true);
-        this.deleteTransactionBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.TRASH));
-        this.deleteTransactionBtn.setGraphicTextGap(8);
-        this.deleteTransactionBtn.setDisable(true);
+            GlyphFont fontAwesome = GlyphFontRegistry.font("FontAwesome");
+            this.refreshTransactionsBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.REFRESH));
+            this.refreshTransactionsBtn.setGraphicTextGap(8);
+            this.newTransactionBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.PLUS));
+            this.newTransactionBtn.setGraphicTextGap(8);
+            this.editTransactionBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.EDIT));
+            this.editTransactionBtn.setGraphicTextGap(8);
+            this.editTransactionBtn.setDisable(true);
+            this.deleteTransactionBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.TRASH));
+            this.deleteTransactionBtn.setGraphicTextGap(8);
+            this.deleteTransactionBtn.setDisable(true);
 
-        this.refreshFixedTransactionsBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.REFRESH));
-        this.refreshFixedTransactionsBtn.setGraphicTextGap(8);
-        this.newFixedTransactionBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.PLUS));
-        this.newFixedTransactionBtn.setGraphicTextGap(8);
-        this.newFixedTransactionBtn.setDisable(true);
-        this.editFixedTransactionBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.EDIT));
-        this.editFixedTransactionBtn.setGraphicTextGap(8);
-        this.editFixedTransactionBtn.setDisable(true);
-        this.deleteFixedTransactionBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.TRASH));
-        this.deleteFixedTransactionBtn.setGraphicTextGap(8);
-        this.deleteFixedTransactionBtn.setDisable(true);
+            this.refreshFixedTransactionsBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.REFRESH));
+            this.refreshFixedTransactionsBtn.setGraphicTextGap(8);
+            this.newFixedTransactionBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.PLUS));
+            this.newFixedTransactionBtn.setGraphicTextGap(8);
+            this.newFixedTransactionBtn.setDisable(true);
+            this.editFixedTransactionBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.EDIT));
+            this.editFixedTransactionBtn.setGraphicTextGap(8);
+            this.editFixedTransactionBtn.setDisable(true);
+            this.deleteFixedTransactionBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.TRASH));
+            this.deleteFixedTransactionBtn.setGraphicTextGap(8);
+            this.deleteFixedTransactionBtn.setDisable(true);
 
-        this.categories = (BaseCategory) this.localStorage.readObject("categories");
+            this.categories = (BaseCategory) this.localStorage.readObject("categories");
 
-        if (this.categories != null) {
-            // TODO set prefixes
-            TreeUtil.numberItemsByValue(this.categories, (result, prefix) -> result.getValue().setPrefix(prefix));
-        }
+            this.loadTransactionsTable();
+            this.loadFixedTransactionTable();
+            this.loadTransactionsOverviewTable();
 
-        this.loadTransactionsTable();
-        this.loadFixedTransactionsTable();
+        });
     }
 
     private void loadTransactionsOverviewTable() {
         final int numberOfMaxMonths = 6;
         final List<TableColumn<TransactionOverviewRow, String>> monthColumns = new ArrayList<>(numberOfMaxMonths);
-        final Map<Category, TransactionOverviewRow> rows = new HashMap<>();
+        final Map<CategoryTree, TransactionOverviewRow> rows = new HashMap<>();
 
         if (this.categories != null) {
             this.categories.traverse(categoryTree -> {
@@ -121,12 +120,31 @@ public class TransactionsController implements Initializable {
                 for (int i = 0; i < 6; i++) {
                     transactionOverviewRow.getAmounts()[i] = ((CategoryTree) categoryTree).getAmount(LocalDate.now().minusMonths(i));
                 }
-                rows.put(categoryTree.getValue(), transactionOverviewRow);
+                rows.put((CategoryTree) categoryTree, transactionOverviewRow);
             });
         }
 
-        TableColumn<TransactionOverviewRow, String> categoryColumn = new TableColumn<>(I18N.get("category"));
-        categoryColumn.setCellValueFactory(param -> new SimpleStringProperty(JavaFXFormatter.formatCategoryName(param.getValue().getCategory())));
+        TableColumn<TransactionOverviewRow, CategoryTree> categoryColumn = new TableColumn<>(I18N.get("category"));
+        categoryColumn.setCellValueFactory(param -> new ReadOnlyObjectWrapper<>(param.getValue().getCategory()));
+        categoryColumn.setCellFactory(param -> new TableCell<>() {
+            @Override
+            protected void updateItem(CategoryTree item, boolean empty) {
+                super.updateItem(item, empty);
+
+                if (empty || item == null) {
+                    setGraphic(null);
+                } else {
+                    Label categoryLabel;
+                    if (item.isRoot()) {
+                        categoryLabel = new Label((item.getCategoryClass().getIndex() + 1) + ". " + I18N.get(item.getCategoryClass().getName()));
+                        categoryLabel.setStyle("-fx-font-weight: 700");
+                    } else {
+                        categoryLabel = new Label(JavaFXFormatter.formatCategoryName(item.getValue()));
+                    }
+                    setGraphic(categoryLabel);
+                }
+            }
+        });
         this.adjustColumnWidth(categoryColumn, this.transactionsOverviewTableView, 4);
         categoryColumn.setSortable(false);
 
@@ -193,6 +211,16 @@ public class TransactionsController implements Initializable {
         this.transactionsTableView.getColumns().add(purposeColumn);
         this.transactionsTableView.getColumns().add(shopColumn);
 
+        this.transactionsTableView.setRowFactory(param -> {
+            TableRow<Transaction> row = new TableRow<>();
+            row.setOnMouseClicked(event -> {
+                if (event.getClickCount() == 2 && (!row.isEmpty())) {
+                    handleEditTransaction();
+                }
+            });
+            return row;
+        });
+
         this.transactionsTableView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             editTransactionBtn.setDisable(false);
             deleteTransactionBtn.setDisable(false);
@@ -201,22 +229,12 @@ public class TransactionsController implements Initializable {
         this.handleRefreshTransactions();
     }
 
-    private void loadFixedTransactionsTable() {
-        if (this.localStorage.readObject("categories") != null) {
-            this.categories.traverse(treeItem -> {
-                if ((((CategoryTree) treeItem).getCategoryClass() == BaseCategory.CategoryClass.FIXED_EXPENSES ||
-                        ((CategoryTree) treeItem).getCategoryClass() == BaseCategory.CategoryClass.FIXED_REVENUE)) {
-                    categoriesListView.getItems().add((CategoryTree) treeItem);
-                }
-            });
-        }
-
-        this.categoriesListView.getItems().sort((o1, o2) -> String.CASE_INSENSITIVE_ORDER.compare(JavaFXFormatter.formatCategoryName(o1),
-                JavaFXFormatter.formatCategoryName(o2)));
+    private void loadFixedTransactionTable() {
+        this.handleRefreshFixedTransactions();
 
         this.categoriesListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             showFixedTransactions(newValue);
-            if (!newValue.isRoot()) {
+            if (newValue != null && !newValue.isRoot()) {
                 newFixedTransactionBtn.setDisable(false);
             } else {
                 newFixedTransactionBtn.setDisable(true);
@@ -230,19 +248,38 @@ public class TransactionsController implements Initializable {
             deleteFixedTransactionBtn.setDisable(false);
         });
 
-        this.handleRefreshFixedTransactions();
+        this.fixedTransactionsListView.setOnMouseClicked(mouseEvent -> {
+            if (mouseEvent.getClickCount() == 2) {
+                handleEditFixedTransaction();
+            }
+        });
+
+        categoriesListView.setCellFactory(param -> new CategoryListViewImpl());
+    }
+
+    private void loadFixedTransactionTableItems() {
+        if (this.categories != null) {
+            categoriesListView.getItems().clear();
+            this.categories.traverse(treeItem -> {
+                if ((((CategoryTree) treeItem).getCategoryClass() == BaseCategory.CategoryClass.FIXED_EXPENSES ||
+                        ((CategoryTree) treeItem).getCategoryClass() == BaseCategory.CategoryClass.FIXED_REVENUE)) {
+                    categoriesListView.getItems().add((CategoryTree) treeItem);
+                }
+            });
+        }
+
+        this.categoriesListView.getItems().sort((o1, o2) -> String.CASE_INSENSITIVE_ORDER.compare(JavaFXFormatter.formatCategoryName(o1),
+                JavaFXFormatter.formatCategoryName(o2)));
     }
 
     public void handleRefreshTransactions() {
         RetrievalServiceImpl.getInstance().fetchTransactions(this.user, new AsyncCall<>() {
             @Override
             public void onSuccess(List<Transaction> result) {
-                transactions = CollectionUtil.castListToObserableList(result);
-
+                transactions = CollectionUtil.castListToObservableList(result);
                 Platform.runLater(() -> {
-                    transactionsTableView.setItems(transactions);
-                    transactionsTableView.getColumns().get(1).setSortType(TableColumn.SortType.DESCENDING);
-                    transactionsTableView.getSortOrder().add(transactionsTableView.getColumns().get(1));
+                    loadTransactionTableItems();
+                    transactionsTableView.refresh();
                     FinancerController.hideLoadingBox();
                 });
             }
@@ -251,7 +288,7 @@ public class TransactionsController implements Initializable {
             public void onFailure(Exception exception) {
                 List<Transaction> result = localStorage.readList("transactions");
                 if (result != null && result.size() > 0) {
-                    transactions = CollectionUtil.castListToObserableList(result);
+                    transactions = CollectionUtil.castListToObservableList(result);
                 }
             }
         });
@@ -267,14 +304,13 @@ public class TransactionsController implements Initializable {
             parameters.put("user", this.user);
             parameters.put("transaction", transaction);
 
-            this.executor.execute(new ServerRequestHandler(this.user, "addTransaction", parameters, new JavaFXAsyncConnectionCall() {
+            FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "addTransaction", parameters, new JavaFXAsyncConnectionCall() {
                 @Override
                 public void onSuccess(ConnectionResult result) {
                     Platform.runLater(() -> {
                         // removing numbers in category's name
-                        transactionsTableView.getItems().add(transaction);
-                        transactionsTableView.getColumns().get(1).setSortType(TableColumn.SortType.DESCENDING);
-                        transactionsTableView.getSortOrder().add(transactionsTableView.getColumns().get(1));
+                        transactions.add((Transaction) result.getResult());
+                        loadTransactionTableItems();
                     });
                 }
 
@@ -285,6 +321,24 @@ public class TransactionsController implements Initializable {
                 }
             }));
         }
+    }
+
+    private void loadTransactionTableItems() {
+        FilteredList<Transaction> filteredData = new FilteredList<>(transactions, transaction -> true);
+        filterTransactionsTextField.textProperty().addListener((observable, oldValue, newValue) ->
+                filteredData.setPredicate(transaction -> {
+                    if (newValue == null || newValue.isEmpty()) {
+                        return true;
+                    }
+
+                    return transaction.getShop().toLowerCase().contains(newValue.toLowerCase()) ||
+                            transaction.getCategoryTree().getValue().getName().toLowerCase().contains(newValue.toLowerCase()) ||
+                            transaction.getProduct().toLowerCase().contains(newValue.toLowerCase()) ||
+                            transaction.getPurpose().toLowerCase().contains(newValue.toLowerCase());
+                }));
+        transactionsTableView.setItems(filteredData);
+        transactionsTableView.getColumns().get(1).setSortType(TableColumn.SortType.DESCENDING);
+        transactionsTableView.getSortOrder().add(transactionsTableView.getColumns().get(1));
     }
 
     public void handleEditTransaction() {
@@ -298,10 +352,13 @@ public class TransactionsController implements Initializable {
             parameters.put("user", this.user);
             parameters.put("transaction", transaction);
 
-            this.executor.execute(new ServerRequestHandler(this.user, "updateTransaction", parameters, new JavaFXAsyncConnectionCall() {
+            FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "updateTransaction",
+                    parameters, new JavaFXAsyncConnectionCall() {
                 @Override
                 public void onSuccess(ConnectionResult result) {
-                    handleRefreshTransactions();
+                    Platform.runLater(() -> {
+                        transactionsTableView.refresh();
+                    });
                 }
 
                 @Override
@@ -320,7 +377,7 @@ public class TransactionsController implements Initializable {
                 Map<String, Object> parameters = new HashMap<>();
                 parameters.put("transaction", transaction);
 
-                this.executor.execute(new ServerRequestHandler(this.user, "deleteTransaction", parameters, new JavaFXAsyncConnectionCall() {
+                FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "deleteTransaction", parameters, new JavaFXAsyncConnectionCall() {
                     @Override
                     public void onSuccess(ConnectionResult result) {
                         Platform.runLater(() -> transactionsTableView.getItems().remove(transaction));
@@ -337,28 +394,12 @@ public class TransactionsController implements Initializable {
     }
 
     public void handleRefreshFixedTransactions() {
-        RetrievalServiceImpl.getInstance().fetchFixedTransactions(this.user, new AsyncCall<>() {
-            @Override
-            public void onSuccess(List<FixedTransaction> result) {
-                fixedTransactions = CollectionUtil.castListToObserableList(result);
+        RetrievalServiceImpl.getInstance().fetchFixedTransactions(this.user, result -> Platform.runLater(() -> {
+            categories = (BaseCategory) localStorage.readObject("categories");
 
-                Platform.runLater(() -> {
-                    showFixedTransactions(categoriesListView.getSelectionModel().getSelectedItem());
-                    categoriesListView.setCellFactory(param -> new TransactionsController.CategoryListViewImpl());
-                    FinancerController.hideLoadingBox();
-
-                    loadTransactionsOverviewTable();
-                });
-            }
-
-            @Override
-            public void onFailure(Exception exception) {
-                List<FixedTransaction> result = localStorage.readList("fixedTransactions");
-                if (result != null && result.size() > 0) {
-                    fixedTransactions = CollectionUtil.castListToObserableList(result);
-                }
-            }
-        });
+            loadFixedTransactionTableItems();
+            fixedTransactionsListView.getItems().clear();
+        }));
     }
 
     public void handleNewFixedTransaction() {
@@ -376,7 +417,7 @@ public class TransactionsController implements Initializable {
             parameters.put("user", this.user);
             parameters.put("fixedTransaction", fixedTransaction);
 
-            this.executor.execute(new ServerRequestHandler(this.user, "addFixedTransactions", parameters, new JavaFXAsyncConnectionCall() {
+            FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "addFixedTransactions", parameters, new JavaFXAsyncConnectionCall() {
                 @Override
                 public void onSuccess(ConnectionResult result) {
                     handleRefreshFixedTransactions();
@@ -406,8 +447,21 @@ public class TransactionsController implements Initializable {
             Map<String, Object> parameters = new HashMap<>();
             parameters.put("fixedTransaction", fixedTransaction);
 
-            this.executor.execute(new ServerRequestHandler(this.user, "updateFixedTransaction", parameters,
-                    this.getFixedTransactionCallback()));
+            FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "updateFixedTransaction", parameters, new JavaFXAsyncConnectionCall() {
+                @Override
+                public void onSuccess(ConnectionResult result) {
+                    localStorage.writeObject("categories", categories);
+
+                    fixedTransactionsListView.refresh();
+                    categoriesListView.refresh();
+                }
+
+                @Override
+                public void onFailure(Exception exception) {
+                    logger.log(Level.SEVERE, exception.getMessage(), exception);
+                    JavaFXAsyncConnectionCall.super.onFailure(exception);
+                }
+            }));
         }
     }
 
@@ -417,42 +471,41 @@ public class TransactionsController implements Initializable {
             Map<String, Object> parameters = new HashMap<>();
             parameters.put("fixedTransaction", this.fixedTransactionsListView.getSelectionModel().getSelectedItem());
 
-            this.executor.execute(new ServerRequestHandler(this.user, "deleteFixedTransaction", parameters,
-                    this.getFixedTransactionCallback()));
+            this.fixedTransactionsListView.getItems().remove(this.fixedTransactionsListView.getSelectionModel().getSelectedItem());
+
+            FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "deleteFixedTransaction",
+                    parameters, new JavaFXAsyncConnectionCall() {
+                @Override
+                public void onSuccess(ConnectionResult result) {
+                    fixedTransactionsListView.getSelectionModel().getSelectedItem().getCategoryTree().getTransactions().remove(
+                            fixedTransactionsListView.getSelectionModel().getSelectedItem());
+                    localStorage.writeObject("categories", categories);
+
+                    fixedTransactionsListView.refresh();
+                    categoriesListView.refresh();
+                }
+
+                @Override
+                public void onFailure(Exception exception) {
+                    logger.log(Level.SEVERE, exception.getMessage(), exception);
+                    JavaFXAsyncConnectionCall.super.onFailure(exception);
+                }
+            }));
         }
-    }
-
-    private JavaFXAsyncConnectionCall getFixedTransactionCallback() {
-        return new JavaFXAsyncConnectionCall() {
-            @Override
-            public void onSuccess(ConnectionResult result) {
-            }
-
-            @Override
-            public void onFailure(Exception exception) {
-                logger.log(Level.SEVERE, exception.getMessage(), exception);
-                JavaFXAsyncConnectionCall.super.onFailure(exception);
-            }
-
-            @Override
-            public void onAfter() {
-                handleRefreshFixedTransactions();
-            }
-        };
     }
 
     private void showFixedTransactions(CategoryTree category) {
         if (category != null) {
             this.fixedTransactionsListView.getItems().clear();
-            if (this.fixedTransactions != null) {
-                for (FixedTransaction transaction : this.fixedTransactions) {
-                    if (transaction.getCategoryTree().getValue().getId() == category.getValue().getId()) {
-                        this.fixedTransactionsListView.getItems().add(transaction);
-                    }
+            for (AbstractTransaction abstractTransaction : category.getTransactions()) {
+                if (abstractTransaction instanceof FixedTransaction) {
+                    this.fixedTransactionsListView.getItems().add((FixedTransaction) abstractTransaction);
                 }
             }
         }
+
         this.fixedTransactionsListView.setCellFactory(param -> new FixedTransactionListCellImpl());
+        fixedTransactionsListView.getItems().sort(Comparator.comparing(FixedTransaction::getStartDate).reversed());
     }
 
 
@@ -514,7 +567,7 @@ public class TransactionsController implements Initializable {
                 setGraphic(null);
             } else {
                 this.initListCell(item);
-                if (item.getEndDate() == null || (item.getEndDate() != null && item.getEndDate().compareTo(LocalDate.now()) >= 0)) {
+                if (item.getEndDate() == null || (item.getEndDate() != null && item.getEndDate().compareTo(LocalDate.now()) > 0)) {
                     this.activeLabel.setText(I18N.get("active"));
                     this.activeLabel.getStyleClass().add("pos-amount");
                 } else {

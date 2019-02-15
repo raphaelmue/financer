@@ -20,6 +20,7 @@
                     <VBox styleClass="tab-content">
                         <Label text="%transactions" styleClass="content-heading"/>
                         <HBox styleClass="tool-btn-bar">
+                            <JFXTextField fx:id="filterTransactionsTextField" promptText="%search"/>
                             <JFXButton fx:id="refreshTransactionsBtn" text="%refresh"
                                        onAction="#handleRefreshTransactions"/>
                             <JFXButton fx:id="newTransactionBtn" text="%new" onAction="#handleNewTransaction"/>

@@ -26,6 +26,8 @@ import org.controlsfx.glyphfont.GlyphFont;
 import org.controlsfx.glyphfont.GlyphFontRegistry;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Comparator;
 
 public class FixedTransactionDialog extends FinancerDialog<FixedTransaction> {
 
@@ -106,38 +108,28 @@ public class FixedTransactionDialog extends FinancerDialog<FixedTransaction> {
         GlyphFont fontAwesome = GlyphFontRegistry.font("FontAwesome");
         JFXButton newTransactionAmountBtn = new JFXButton(I18N.get("new"), fontAwesome.create(FontAwesome.Glyph.PLUS));
         JFXButton editTransactionAmountBtn = new JFXButton(I18N.get("edit"), fontAwesome.create(FontAwesome.Glyph.EDIT));
+        editTransactionAmountBtn.setDisable(true);
         JFXButton deleteTransactionAmountBtn = new JFXButton(I18N.get("delete"), fontAwesome.create(FontAwesome.Glyph.TRASH));
+        deleteTransactionAmountBtn.setDisable(true);
 
         newTransactionAmountBtn.setOnAction(event -> {
-            TransactionAmount transactionAmount = new TransactionAmountDialog(null, getValue().getTransactionAmounts()).showAndGetResult();
+            TransactionAmount transactionAmount = new TransactionAmountDialog(null, transactionAmountListView.getItems()).showAndGetResult();
             if (transactionAmount != null) {
                 transactionAmountListView.getItems().add(transactionAmount);
-                getValue().getTransactionAmounts().add(transactionAmount);
-                getValue().sortTransactionAmounts();
+                transactionAmountListView.getItems().sort(Comparator.comparing(TransactionAmount::getValueDate).reversed());
             }
         });
         editTransactionAmountBtn.setOnAction(event -> {
             if (transactionAmountListView.getSelectionModel().getSelectedItem() != null) {
-                TransactionAmount transactionAmount = new TransactionAmountDialog(transactionAmountListView.getSelectionModel().getSelectedItem(),
-                        getValue().getTransactionAmounts())
+                new TransactionAmountDialog(transactionAmountListView.getSelectionModel().getSelectedItem(),
+                        transactionAmountListView.getItems())
                         .showAndGetResult();
-                if (transactionAmount != null) {
-
-                    for (int i = 0; i < getValue().getTransactionAmounts().size(); i++) {
-                        if (transactionAmount.getId() == getValue().getTransactionAmounts().get(i).getId()) {
-                            getValue().getTransactionAmounts().get(i).setValueDate(transactionAmount.getValueDate());
-                            getValue().getTransactionAmounts().get(i).setAmount(transactionAmount.getAmount());
-                            getValue().sortTransactionAmounts();
-                            break;
-                        }
-                    }
-                }
+                transactionAmountListView.refresh();
             }
         });
         deleteTransactionAmountBtn.setOnAction(event -> {
             if (transactionAmountListView.getSelectionModel().getSelectedItem() != null) {
                 transactionAmountListView.getItems().remove(transactionAmountListView.getSelectionModel().getSelectedItem());
-                getValue().getTransactionAmounts().remove(transactionAmountListView.getSelectionModel().getSelectedItem());
             }
         });
 
@@ -150,7 +142,16 @@ public class FixedTransactionDialog extends FinancerDialog<FixedTransaction> {
         this.transactionAmountContainer.getChildren().add(toolBox);
 
         this.transactionAmountListView = new JFXListView<>();
-        this.transactionAmountListView.setCellFactory(param -> new ListCell<TransactionAmount>() {
+        this.transactionAmountListView.getSelectionModel().selectedItemProperty().addListener((observableValue, oldValue, newValue) -> {
+            if (newValue != null) {
+                editTransactionAmountBtn.setDisable(false);
+                deleteTransactionAmountBtn.setDisable(false);
+            } else {
+                editTransactionAmountBtn.setDisable(true);
+                deleteTransactionAmountBtn.setDisable(true);
+            }
+        });
+        this.transactionAmountListView.setCellFactory(param -> new ListCell<>() {
             @Override
             protected void updateItem(TransactionAmount item, boolean empty) {
                 super.updateItem(item, empty);
@@ -228,8 +229,10 @@ public class FixedTransactionDialog extends FinancerDialog<FixedTransaction> {
                     this.endDateField.getValue(),
                     this.isVariableCheckbox.isSelected(),
                     this.dayField.getValue(),
-                    (this.isVariableCheckbox.isSelected() ? this.getValue().getTransactionAmounts() : null)));
+                    (this.isVariableCheckbox.isSelected() ? new ArrayList<>(transactionAmountListView.getItems()) : null)));
         } else {
+            this.getValue().getTransactionAmounts().clear();
+            this.getValue().getTransactionAmounts().addAll(new ArrayList<>(this.transactionAmountListView.getItems()));
             this.getValue().setStartDate(this.startDateField.getValue());
             this.getValue().setEndDate(this.endDateField.getValue());
             this.getValue().setVariable(this.isVariableCheckbox.isSelected());
