@@ -126,7 +126,6 @@ public class ProfileController implements Initializable {
                 FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "addCategory", parameters, new JavaFXAsyncConnectionCall() {
                     @Override
                     public void onSuccess(ConnectionResult result) {
-                        categoriesTreeView.getSelectionModel().getSelectedItem().setExpanded(true);
                         categoryTree.getValue().setId(((Category) result.getResult()).getId());
                         categoryTree.getValue().setPrefix(categoryTree.getParent().getValue().getPrefix() + (categoryTree.getParent().getChildren().size() + 1) + ".");
                         if (categoriesTreeView.getSelectionModel().getSelectedItem().getValue().isRoot()) {
@@ -137,6 +136,7 @@ public class ProfileController implements Initializable {
                         localStorage.writeObject("categories", categories);
 
                         Platform.runLater(() -> {
+                            categoriesTreeView.getSelectionModel().getSelectedItem().setExpanded(true);
                             categoriesTreeView.getSelectionModel().getSelectedItem().getChildren().add(new TreeItem<>(categoryTree));
                             categoriesTreeView.refresh();
                         });
