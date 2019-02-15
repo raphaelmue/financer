@@ -8,10 +8,10 @@ import de.raphaelmuesseler.financer.client.javafx.connection.JavaFXAsyncConnecti
 import de.raphaelmuesseler.financer.client.javafx.dialogs.FinancerConfirmDialog;
 import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
 import de.raphaelmuesseler.financer.client.javafx.main.FinancerController;
-import de.raphaelmuesseler.financer.client.local.Settings;
+import de.raphaelmuesseler.financer.client.local.LocalSettings;
 import de.raphaelmuesseler.financer.shared.connection.ConnectionResult;
-import de.raphaelmuesseler.financer.shared.model.User;
 import de.raphaelmuesseler.financer.shared.model.db.Token;
+import de.raphaelmuesseler.financer.shared.model.user.User;
 import de.raphaelmuesseler.financer.util.collections.CollectionUtil;
 import de.raphaelmuesseler.financer.util.concurrency.FinancerExecutor;
 import javafx.application.Platform;
@@ -32,8 +32,6 @@ import java.util.Currency;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public class SettingsController implements Initializable {
     public ComboBox<I18N.Language> languageMenuComboBox;
@@ -42,10 +40,9 @@ public class SettingsController implements Initializable {
     public JFXButton logoutFromDeviceBtn;
     public JFXListView<Token> devicesListView;
 
-    private Settings settings;
     private User user = (User) LocalStorageImpl.getInstance().readObject("user");
+    private LocalSettings localSettings = (LocalSettings) LocalStorageImpl.getInstance().readObject("localSettings");
     private ObservableList<Token> tokens;
-
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -55,30 +52,22 @@ public class SettingsController implements Initializable {
         this.logoutFromDeviceBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.SIGN_OUT));
 
 
-        this.settings = (Settings) LocalStorageImpl.getInstance().readObject("settings");
-        if (this.settings == null) {
-            this.settings = new Settings();
-        }
-
         this.languageMenuComboBox.getItems().addAll(I18N.Language.getAll());
-        this.languageMenuComboBox.getSelectionModel().select(I18N.Language.getLanguageByLocale(this.settings.getLanguage()));
+        this.languageMenuComboBox.getSelectionModel().select(I18N.Language.getLanguageByLocale(this.localSettings.getLanguage()));
         this.languageMenuComboBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            settings.setLanguage(newValue.getLocale());
-            LocalStorageImpl.getInstance().writeObject("settings", settings);
+            localSettings.setLanguage(newValue.getLocale());
         });
 
         this.currencyComboBox.getItems().addAll(Currency.getAvailableCurrencies());
         this.currencyComboBox.getItems().sort((o1, o2) -> String.CASE_INSENSITIVE_ORDER.compare(o1.toString(), o2.toString()));
-        this.currencyComboBox.getSelectionModel().select(this.settings.getCurrency());
+        this.currencyComboBox.getSelectionModel().select(this.user.getSettings().getCurrency());
         this.currencyComboBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            settings.setCurrency(newValue);
-            LocalStorageImpl.getInstance().writeObject("settings", settings);
+            user.getSettings().setCurrency(newValue);
         });
 
-        this.showSignCheckbox.setSelected(this.settings.isShowCurrencySign());
+        this.showSignCheckbox.setSelected(this.user.getSettings().isShowCurrencySign());
         this.showSignCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
-            settings.setShowCurrencySign(newValue);
-            LocalStorageImpl.getInstance().writeObject("settings", settings);
+            user.getSettings().setShowCurrencySign(newValue);
         });
 
         this.loadTokenListView();

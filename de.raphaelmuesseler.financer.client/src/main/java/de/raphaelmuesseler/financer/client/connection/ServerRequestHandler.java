@@ -1,7 +1,7 @@
 package de.raphaelmuesseler.financer.client.connection;
 
 import de.raphaelmuesseler.financer.shared.connection.ConnectionResult;
-import de.raphaelmuesseler.financer.shared.model.User;
+import de.raphaelmuesseler.financer.shared.model.user.User;
 
 import java.util.Map;
 

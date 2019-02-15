@@ -1,7 +1,8 @@
 package de.raphaelmuesseler.financer.client.javafx.dialogs;
 
-import de.raphaelmuesseler.financer.client.format.Formatter;
+import de.raphaelmuesseler.financer.client.format.FormatterImpl;
 import de.raphaelmuesseler.financer.client.format.I18N;
+import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
 import de.raphaelmuesseler.financer.shared.exceptions.FinancerException;
 import de.raphaelmuesseler.financer.shared.exceptions.NotAuthorizedException;
 
@@ -24,7 +25,7 @@ public class FinancerExceptionDialog extends FinancerAlert {
         } catch (ConnectException connectException) {
             message = "Server is currently not available. Please try again later.";
         } catch (FinancerException financerException) {
-            message = Formatter.formatExceptionMessage(financerException);
+            message = new FormatterImpl(LocalStorageImpl.getInstance()).formatExceptionMessage(financerException);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {

@@ -1,7 +1,6 @@
 package de.raphaelmuesseler.financer.client.javafx.main;
 
 import com.jfoenix.controls.JFXTextField;
-import de.raphaelmuesseler.financer.client.format.Formatter;
 import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
 import de.raphaelmuesseler.financer.shared.model.BaseCategory;
 import de.raphaelmuesseler.financer.shared.model.Category;
@@ -89,7 +88,7 @@ public class FinancerApplicationTest extends AbstractFinancerApplicationTest {
         clickOn((Button) find("#refreshTransactionsBtn"));
         sleep(500);
 
-        Assertions.assertNotNull(clickOn("-" + Formatter.formatCurrency(transaction.getAmount())));
+        Assertions.assertNotNull(clickOn("-" + formatter.formatCurrency(transaction.getAmount())));
         Assertions.assertEquals(1, LocalStorageImpl.getInstance().readList("transactions").size());
 
         Transaction insertedTransaction = (Transaction) LocalStorageImpl.getInstance().readList("transactions").get(0);
@@ -125,7 +124,8 @@ public class FinancerApplicationTest extends AbstractFinancerApplicationTest {
         sleep(500);
 
         // uncomment when issue is fixed
-        Assertions.assertNotNull(clickOn("-" + Formatter.formatCurrency(amount)));
+        System.out.println(formatter.formatCurrency(amount));
+        Assertions.assertNotNull(clickOn("-" + formatter.formatCurrency(amount)));
         Assertions.assertEquals(1, LocalStorageImpl.getInstance().readList("transactions").size());
 
         Transaction insertedTransaction = (Transaction) LocalStorageImpl.getInstance().readList("transactions").get(0);

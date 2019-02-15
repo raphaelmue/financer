@@ -3,11 +3,12 @@ package de.raphaelmuesseler.financer.client.javafx.main.transactions;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXDatePicker;
 import com.jfoenix.controls.JFXListView;
-import de.raphaelmuesseler.financer.client.format.Formatter;
 import de.raphaelmuesseler.financer.client.format.I18N;
 import de.raphaelmuesseler.financer.client.javafx.components.DoubleField;
 import de.raphaelmuesseler.financer.client.javafx.components.IntegerField;
 import de.raphaelmuesseler.financer.client.javafx.dialogs.FinancerDialog;
+import de.raphaelmuesseler.financer.client.javafx.format.JavaFXFormatter;
+import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
 import de.raphaelmuesseler.financer.shared.model.CategoryTree;
 import de.raphaelmuesseler.financer.shared.model.transactions.FixedTransaction;
 import de.raphaelmuesseler.financer.shared.model.transactions.TransactionAmount;
@@ -181,7 +182,7 @@ public class FixedTransactionDialog extends FinancerDialog<FixedTransaction> {
 
     @Override
     protected void prepareDialogContent() {
-        this.categoryLabel.setText(Formatter.formatCategoryName(this.categoryTree.getValue()));
+        this.categoryLabel.setText(new JavaFXFormatter(LocalStorageImpl.getInstance()).formatCategoryName(this.categoryTree.getValue()));
         if (this.getValue() != null) {
             this.dayField.setValue(this.getValue().getDay());
             this.startDateField.setValue(this.getValue().getStartDate());

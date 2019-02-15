@@ -1,20 +1,26 @@
 package de.raphaelmuesseler.financer.client.javafx.format;
 
-import de.raphaelmuesseler.financer.client.format.Formatter;
-import de.raphaelmuesseler.financer.client.format.I18N;
-import de.raphaelmuesseler.financer.shared.model.CategoryTree;
+import de.raphaelmuesseler.financer.client.format.FormatterImpl;
+import de.raphaelmuesseler.financer.client.local.LocalStorage;
+import javafx.geometry.Pos;
+import javafx.scene.control.Label;
+import javafx.scene.text.TextAlignment;
 
-public class JavaFXFormatter extends Formatter {
+public class JavaFXFormatter extends FormatterImpl {
 
-    public static String formatCategoryName(CategoryTree categoryTree) {
-        if (categoryTree.getValue().getPrefix() != null) {
-            return categoryTree.getValue().getPrefix() + " " +
-                    (categoryTree.getValue().getName().equals(categoryTree.getCategoryClass().getName()) ?
-                            I18N.get(categoryTree.getValue().getName()) : categoryTree.getValue().getName());
-        } else {
-            return (categoryTree.getValue().getName().equals(categoryTree.getCategoryClass().getName()) ?
-                    I18N.get(categoryTree.getValue().getName()) : categoryTree.getValue().getName());
-        }
+    public JavaFXFormatter(LocalStorage localStorage) {
+        super(localStorage);
     }
 
+    public Label formatAmountLabel(Double amount) {
+        return formatAmountLabel(new Label(), amount);
+    }
+
+    public Label formatAmountLabel(Label amountLabel, Double amount) {
+        amountLabel.setText(formatCurrency(amount));
+        amountLabel.setTextAlignment(TextAlignment.RIGHT);
+        amountLabel.setAlignment(Pos.CENTER_RIGHT);
+        amountLabel.getStyleClass().add(amount < 0 ? "neg-amount" : "pos-amount");
+        return amountLabel;
+    }
 }

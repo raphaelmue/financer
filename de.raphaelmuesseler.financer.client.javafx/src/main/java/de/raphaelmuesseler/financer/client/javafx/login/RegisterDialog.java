@@ -3,7 +3,7 @@ package de.raphaelmuesseler.financer.client.javafx.login;
 import com.jfoenix.controls.JFXDatePicker;
 import de.raphaelmuesseler.financer.client.format.I18N;
 import de.raphaelmuesseler.financer.client.javafx.dialogs.FinancerDialog;
-import de.raphaelmuesseler.financer.shared.model.User;
+import de.raphaelmuesseler.financer.shared.model.user.User;
 import de.raphaelmuesseler.financer.util.Hash;
 import de.raphaelmuesseler.financer.util.RandomString;
 import javafx.scene.Node;

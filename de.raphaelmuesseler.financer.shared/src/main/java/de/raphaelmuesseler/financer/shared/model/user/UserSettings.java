@@ -1,20 +1,14 @@
-package de.raphaelmuesseler.financer.client.local;
+package de.raphaelmuesseler.financer.shared.model.user;
 
 import java.io.Serializable;
 import java.util.Currency;
 import java.util.Locale;
 
-public class Settings implements Serializable {
+public class UserSettings implements Serializable {
     private static final long serialVersionUID = 2201611667506790486L;
-    private Locale language = Locale.ENGLISH;
     private Currency currency;
     private boolean showCurrencySign;
-    private LocalStorage localStorage;
     private String theme = "Main Theme";
-
-    public Locale getLanguage() {
-        return language;
-    }
 
     public Currency getCurrency() {
         return currency;
@@ -26,10 +20,6 @@ public class Settings implements Serializable {
 
     public boolean isShowCurrencySign() {
         return showCurrencySign;
-    }
-
-    public void setLanguage(Locale language) {
-        this.language = language;
     }
 
     public void setCurrency(Currency currency) {

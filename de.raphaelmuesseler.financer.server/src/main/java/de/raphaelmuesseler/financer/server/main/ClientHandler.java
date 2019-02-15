@@ -4,7 +4,7 @@ import de.raphaelmuesseler.financer.server.service.FinancerService;
 import de.raphaelmuesseler.financer.shared.connection.ConnectionCall;
 import de.raphaelmuesseler.financer.shared.connection.ConnectionResult;
 import de.raphaelmuesseler.financer.shared.exceptions.NotAuthorizedException;
-import de.raphaelmuesseler.financer.shared.model.User;
+import de.raphaelmuesseler.financer.shared.model.user.User;
 
 import java.io.*;
 import java.lang.reflect.Method;

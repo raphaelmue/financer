@@ -4,7 +4,7 @@ import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXListView;
 import com.jfoenix.controls.JFXTextField;
 import de.raphaelmuesseler.financer.client.connection.ServerRequestHandler;
-import de.raphaelmuesseler.financer.client.format.Formatter;
+import de.raphaelmuesseler.financer.client.format.FormatterImpl;
 import de.raphaelmuesseler.financer.client.format.I18N;
 import de.raphaelmuesseler.financer.client.javafx.connection.JavaFXAsyncConnectionCall;
 import de.raphaelmuesseler.financer.client.javafx.connection.RetrievalServiceImpl;
@@ -17,7 +17,7 @@ import de.raphaelmuesseler.financer.shared.connection.ConnectionResult;
 import de.raphaelmuesseler.financer.shared.model.BaseCategory;
 import de.raphaelmuesseler.financer.shared.model.Category;
 import de.raphaelmuesseler.financer.shared.model.CategoryTree;
-import de.raphaelmuesseler.financer.shared.model.User;
+import de.raphaelmuesseler.financer.shared.model.user.User;
 import de.raphaelmuesseler.financer.shared.model.transactions.AbstractTransaction;
 import de.raphaelmuesseler.financer.shared.model.transactions.FixedTransaction;
 import de.raphaelmuesseler.financer.shared.model.transactions.Transaction;
@@ -68,6 +68,7 @@ public class TransactionsController implements Initializable {
     private LocalStorageImpl localStorage = (LocalStorageImpl) LocalStorageImpl.getInstance();
     private ObservableList<Transaction> transactions;
     private BaseCategory categories;
+    private JavaFXFormatter formatter = new JavaFXFormatter(localStorage);
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -139,7 +140,7 @@ public class TransactionsController implements Initializable {
                         categoryLabel = new Label((item.getCategoryClass().getIndex() + 1) + ". " + I18N.get(item.getCategoryClass().getName()));
                         categoryLabel.setStyle("-fx-font-weight: 700");
                     } else {
-                        categoryLabel = new Label(JavaFXFormatter.formatCategoryName(item.getValue()));
+                        categoryLabel = new Label(formatter.formatCategoryName(item.getValue()));
                     }
                     setGraphic(categoryLabel);
                 }
@@ -159,7 +160,7 @@ public class TransactionsController implements Initializable {
                 @Override
                 protected void updateItem(String item, boolean empty) {
                     super.updateItem(item, empty);
-                    setGraphic(!empty ? Formatter.formatAmountLabel(Double.valueOf(item)) : null);
+                    setGraphic(!empty ? formatter.formatAmountLabel(Double.valueOf(item)) : null);
                 }
             });
             monthColumns.add(column);
@@ -168,8 +169,8 @@ public class TransactionsController implements Initializable {
         this.transactionsOverviewTableView.getColumns().addAll(monthColumns);
 
         List<TransactionOverviewRow> items = new ArrayList<>(rows.values());
-        items.sort((o1, o2) -> String.CASE_INSENSITIVE_ORDER.compare(Formatter.formatCategoryName(o1.getCategory().getValue()),
-                Formatter.formatCategoryName(o2.getCategory().getValue())));
+        items.sort((o1, o2) -> String.CASE_INSENSITIVE_ORDER.compare(formatter.formatCategoryName(o1.getCategory().getValue()),
+                formatter.formatCategoryName(o2.getCategory().getValue())));
         this.transactionsOverviewTableView.getItems().addAll(items);
     }
 
@@ -188,7 +189,7 @@ public class TransactionsController implements Initializable {
             @Override
             protected void updateItem(Double item, boolean empty) {
                 super.updateItem(item, empty);
-                setGraphic(!empty ? Formatter.formatAmountLabel(item) : null);
+                setGraphic(!empty ? formatter.formatAmountLabel(item) : null);
             }
         });
         categoryColumn.setCellValueFactory(new PropertyValueFactory<>("categoryTree"));
@@ -268,8 +269,8 @@ public class TransactionsController implements Initializable {
             });
         }
 
-        this.categoriesListView.getItems().sort((o1, o2) -> String.CASE_INSENSITIVE_ORDER.compare(JavaFXFormatter.formatCategoryName(o1),
-                JavaFXFormatter.formatCategoryName(o2)));
+        this.categoriesListView.getItems().sort((o1, o2) -> String.CASE_INSENSITIVE_ORDER.compare(formatter.formatCategoryName(o1),
+                formatter.formatCategoryName(o2)));
     }
 
     public void handleRefreshTransactions() {
@@ -532,8 +533,8 @@ public class TransactionsController implements Initializable {
                 setGraphic(null);
             } else {
                 this.initListCell();
-                this.categoryLabel.setText(JavaFXFormatter.formatCategoryName(item));
-                Formatter.formatAmountLabel(this.amountLabel, item.getAmount(LocalDate.now()));
+                this.categoryLabel.setText(formatter.formatCategoryName(item));
+                formatter.formatAmountLabel(this.amountLabel, item.getAmount(LocalDate.now()));
                 if (item.isRoot()) {
                     this.categoryLabel.getStyleClass().add("list-cell-title");
                 }
@@ -582,15 +583,15 @@ public class TransactionsController implements Initializable {
 
                 if (item.isVariable() && item.getTransactionAmounts() != null &&
                         item.getTransactionAmounts().size() > 0) {
-                    Formatter.formatAmountLabel(this.amountLabel, item.getTransactionAmounts().get(0).getAmount());
+                    formatter.formatAmountLabel(this.amountLabel, item.getTransactionAmounts().get(0).getAmount());
                     if (item.getTransactionAmounts().size() > 1) {
-                        Formatter.formatAmountLabel(this.lastAmountLabel, item.getTransactionAmounts().get(1).getAmount());
+                        formatter.formatAmountLabel(this.lastAmountLabel, item.getTransactionAmounts().get(1).getAmount());
                         if (item.getTransactionAmounts().size() > 2) {
-                            Formatter.formatAmountLabel(this.preLastAmountLabel, item.getTransactionAmounts().get(2).getAmount());
+                            formatter.formatAmountLabel(this.preLastAmountLabel, item.getTransactionAmounts().get(2).getAmount());
                         }
                     }
                 } else {
-                    Formatter.formatAmountLabel(this.amountLabel, item.getAmount());
+                    formatter.formatAmountLabel(this.amountLabel, item.getAmount());
                 }
 
                 this.isVariableLabel.setText(I18N.get("isVariable") + ": " +

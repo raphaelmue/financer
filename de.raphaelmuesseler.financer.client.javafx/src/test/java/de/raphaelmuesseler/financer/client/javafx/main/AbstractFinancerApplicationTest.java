@@ -4,13 +4,14 @@ import com.jfoenix.controls.JFXDatePicker;
 import com.jfoenix.controls.JFXTextField;
 import de.raphaelmuesseler.financer.client.connection.ServerRequest;
 import de.raphaelmuesseler.financer.client.format.I18N;
+import de.raphaelmuesseler.financer.client.javafx.format.JavaFXFormatter;
 import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
 import de.raphaelmuesseler.financer.client.javafx.login.LoginApplication;
 import de.raphaelmuesseler.financer.server.db.Database;
 import de.raphaelmuesseler.financer.server.main.Server;
 import de.raphaelmuesseler.financer.shared.model.BaseCategory;
 import de.raphaelmuesseler.financer.shared.model.Category;
-import de.raphaelmuesseler.financer.shared.model.User;
+import de.raphaelmuesseler.financer.shared.model.user.User;
 import de.raphaelmuesseler.financer.shared.model.transactions.Transaction;
 import javafx.scene.Node;
 import javafx.scene.control.*;
@@ -39,6 +40,8 @@ public class AbstractFinancerApplicationTest extends ApplicationTest {
             LocalDate.of(1989, 5, 28));
     final String password = "password";
     private static Server server;
+    static JavaFXFormatter formatter;
+
 
     @BeforeAll
     static void setUp() throws SQLException, IOException {
@@ -81,6 +84,8 @@ public class AbstractFinancerApplicationTest extends ApplicationTest {
         confirmDialog();
 
         sleep(1000);
+
+        formatter = new JavaFXFormatter(LocalStorageImpl.getInstance());
     }
 
     void login(User user, String password) {

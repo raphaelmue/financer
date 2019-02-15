@@ -3,7 +3,7 @@ package de.raphaelmuesseler.financer.client.javafx.main.transactions;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXDatePicker;
 import de.raphaelmuesseler.financer.client.connection.ServerRequestHandler;
-import de.raphaelmuesseler.financer.client.format.Formatter;
+import de.raphaelmuesseler.financer.client.format.FormatterImpl;
 import de.raphaelmuesseler.financer.client.format.I18N;
 import de.raphaelmuesseler.financer.client.javafx.components.DoubleField;
 import de.raphaelmuesseler.financer.client.javafx.connection.JavaFXAsyncConnectionCall;
@@ -15,7 +15,7 @@ import de.raphaelmuesseler.financer.shared.connection.ConnectionResult;
 import de.raphaelmuesseler.financer.shared.model.BaseCategory;
 import de.raphaelmuesseler.financer.shared.model.Category;
 import de.raphaelmuesseler.financer.shared.model.CategoryTree;
-import de.raphaelmuesseler.financer.shared.model.User;
+import de.raphaelmuesseler.financer.shared.model.user.User;
 import de.raphaelmuesseler.financer.shared.model.transactions.AttachmentWithContent;
 import de.raphaelmuesseler.financer.shared.model.transactions.Transaction;
 import de.raphaelmuesseler.financer.util.collections.TreeUtil;
@@ -174,7 +174,7 @@ class TransactionDialog extends FinancerDialog<Transaction> {
             protected void updateItem(CategoryTree item, boolean empty) {
                 super.updateItem(item, empty);
                 if (!empty) {
-                    setText(Formatter.formatCategoryName(item.getValue()));
+                    setText(new FormatterImpl(LocalStorageImpl.getInstance()).formatCategoryName(item.getValue()));
                 } else {
                     setText(null);
                 }
