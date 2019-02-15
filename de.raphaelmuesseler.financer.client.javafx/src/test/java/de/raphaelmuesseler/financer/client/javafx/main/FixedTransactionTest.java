@@ -18,8 +18,6 @@ import org.junit.jupiter.api.Test;
 import org.testfx.framework.junit5.ApplicationTest;
 
 import java.time.LocalDate;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class FixedTransactionTest extends AbstractFinancerApplicationTest {
 
@@ -136,8 +134,6 @@ public class FixedTransactionTest extends AbstractFinancerApplicationTest {
 
         Assertions.assertNotNull(find((Label label) -> label.getText().contains(I18N.get("active"))));
         Assertions.assertEquals(450.0, fixedTransaction.getTransactionAmounts().get(0).getAmount());
-        Logger.getLogger("FinancerApplication").log(Level.INFO, Formatter.formatCurrency(
-                fixedTransaction.getTransactionAmounts().get(0).getAmount()));
         Assertions.assertNotNull(find((Label label) -> label.getText().contains(Formatter.formatCurrency(
                 fixedTransaction.getTransactionAmounts().get(0).getAmount()))));
     }

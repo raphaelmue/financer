@@ -22,10 +22,10 @@ public class Formatter {
 
     public static String formatCurrency(Double amount) {
         if (SETTINGS != null) {
-            return (SETTINGS.getLanguage() == Locale.GERMAN ? String.format("%.2f", amount).replace(".", ",") : String.format("%.2f", amount)) +
+            return String.format(SETTINGS.getLanguage(), "%.2f", amount) +
                     " " + (SETTINGS.isShowCurrencySign() ? SETTINGS.getCurrency().getSymbol() : SETTINGS.getCurrency());
         } else {
-            return String.format("%.2f", amount);
+            return String.format(Locale.getDefault(), "%.2f", amount);
         }
     }
 
