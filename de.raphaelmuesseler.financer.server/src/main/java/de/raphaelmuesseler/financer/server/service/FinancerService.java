@@ -6,8 +6,6 @@ import de.raphaelmuesseler.financer.shared.exceptions.EmailAlreadyInUseException
 import de.raphaelmuesseler.financer.shared.model.BaseCategory;
 import de.raphaelmuesseler.financer.shared.model.Category;
 import de.raphaelmuesseler.financer.shared.model.CategoryTree;
-import de.raphaelmuesseler.financer.shared.model.user.UserSettings;
-import de.raphaelmuesseler.financer.shared.model.user.User;
 import de.raphaelmuesseler.financer.shared.model.db.Attachment;
 import de.raphaelmuesseler.financer.shared.model.db.DatabaseObject;
 import de.raphaelmuesseler.financer.shared.model.db.DatabaseUser;
@@ -16,6 +14,7 @@ import de.raphaelmuesseler.financer.shared.model.transactions.AttachmentWithCont
 import de.raphaelmuesseler.financer.shared.model.transactions.FixedTransaction;
 import de.raphaelmuesseler.financer.shared.model.transactions.Transaction;
 import de.raphaelmuesseler.financer.shared.model.transactions.TransactionAmount;
+import de.raphaelmuesseler.financer.shared.model.user.User;
 import de.raphaelmuesseler.financer.util.Hash;
 import de.raphaelmuesseler.financer.util.RandomString;
 import de.raphaelmuesseler.financer.util.collections.TreeUtil;
@@ -174,30 +173,6 @@ public class FinancerService {
         return new ConnectionResult<>(user);
     }
 
-    private void getUsersSettings(Logger logger, User user) throws SQLException {
-        logger.log(Level.INFO, "Fetching users settings ...");
-
-        Map<String, Object> whereParameters = new HashMap<>();
-        whereParameters.put("user_id", user.getId());
-
-        UserSettings settings = new UserSettings();
-
-        JSONArray result = this.database.get(Database.Table.USERS_SETTINGS, whereParameters);
-        for (int i = 0; i < result.length(); i++) {
-            String value = result.getJSONObject(i).getString("value");
-            switch (result.getJSONObject(i).getString("property")) {
-                case "currency":
-                    settings.setCurrency(Currency.getInstance(value));
-                    break;
-                case "showCurrencySign":
-                    settings.setShowCurrencySign(Boolean.valueOf(value));
-                    break;
-            }
-        }
-
-        user.setSettings(settings);
-    }
-
     public ConnectionResult<User> registerUser(Logger logger, Map<String, Object> parameters) throws Exception {
         logger.log(Level.INFO, "Registering new user ...");
         User user = (User) parameters.get("user");
@@ -254,6 +229,41 @@ public class FinancerService {
         this.database.delete(Database.Table.USERS_TOKENS, whereParameters);
 
         return new ConnectionResult<>(null);
+    }
+
+    private void getUsersSettings(Logger logger, User user) throws SQLException {
+        logger.log(Level.INFO, "Fetching users settings ...");
+
+        Map<String, Object> whereParameters = new HashMap<>();
+        whereParameters.put("user_id", user.getId());
+
+        JSONArray result = this.database.get(Database.Table.USERS_SETTINGS, whereParameters);
+        for (int i = 0; i < result.length(); i++) {
+            user.getSettings().setValueByProperty(result.getJSONObject(i).getString("property"),
+                    result.getJSONObject(i).getString("value"));
+        }
+    }
+
+    public ConnectionResult<User> updateUsersSettings(Logger logger, Map<String, Object> parameters) throws Exception {
+        logger.log(Level.INFO, "Updating users settings ...");
+        User user = (User) parameters.get("user");
+
+        Map<String, Object> whereParameters = new HashMap<>();
+        whereParameters.put("user_id", user.getId());
+        whereParameters.put("property", parameters.get("property"));
+
+        Map<String, Object> values = new HashMap<>();
+        values.put("value", parameters.get("value"));
+
+        if (this.database.get(Database.Table.USERS_SETTINGS, whereParameters).length() > 0) {
+            this.database.update(Database.Table.USERS_SETTINGS, whereParameters, values);
+        } else {
+            values.putAll(whereParameters);
+            this.database.insert(Database.Table.USERS_SETTINGS, values);
+        }
+        user.getSettings().setValueByProperty((String) parameters.get("property"), (String) parameters.get("value"));
+
+        return new ConnectionResult<>(user);
     }
 
     public ConnectionResult<BaseCategory> getUsersCategories(Logger logger, Map<String, Object> parameters) throws Exception {

@@ -9,6 +9,7 @@ import de.raphaelmuesseler.financer.client.javafx.dialogs.FinancerConfirmDialog;
 import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
 import de.raphaelmuesseler.financer.client.javafx.main.FinancerController;
 import de.raphaelmuesseler.financer.client.local.LocalSettings;
+import de.raphaelmuesseler.financer.client.local.LocalStorage;
 import de.raphaelmuesseler.financer.shared.connection.ConnectionResult;
 import de.raphaelmuesseler.financer.shared.model.db.Token;
 import de.raphaelmuesseler.financer.shared.model.user.User;
@@ -28,10 +29,7 @@ import org.controlsfx.glyphfont.GlyphFont;
 import org.controlsfx.glyphfont.GlyphFontRegistry;
 
 import java.net.URL;
-import java.util.Currency;
-import java.util.HashMap;
-import java.util.List;
-import java.util.ResourceBundle;
+import java.util.*;
 
 public class SettingsController implements Initializable {
     public ComboBox<I18N.Language> languageMenuComboBox;
@@ -40,8 +38,9 @@ public class SettingsController implements Initializable {
     public JFXButton logoutFromDeviceBtn;
     public JFXListView<Token> devicesListView;
 
-    private User user = (User) LocalStorageImpl.getInstance().readObject("user");
-    private LocalSettings localSettings = (LocalSettings) LocalStorageImpl.getInstance().readObject("localSettings");
+    private LocalStorage localStorage = LocalStorageImpl.getInstance();
+    private User user = (User) localStorage.readObject("user");
+    private LocalSettings localSettings = (LocalSettings) localStorage.readObject("localSettings");
     private ObservableList<Token> tokens;
 
     @Override
@@ -56,6 +55,7 @@ public class SettingsController implements Initializable {
         this.languageMenuComboBox.getSelectionModel().select(I18N.Language.getLanguageByLocale(this.localSettings.getLanguage()));
         this.languageMenuComboBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             localSettings.setLanguage(newValue.getLocale());
+            localStorage.writeObject("localSettings", localSettings);
         });
 
         this.currencyComboBox.getItems().addAll(Currency.getAvailableCurrencies());
@@ -63,11 +63,19 @@ public class SettingsController implements Initializable {
         this.currencyComboBox.getSelectionModel().select(this.user.getSettings().getCurrency());
         this.currencyComboBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             user.getSettings().setCurrency(newValue);
+            Map<String, Object> parameters = new HashMap<>();
+            parameters.put("property", "currency");
+            parameters.put("value", currencyComboBox.getValue().getCurrencyCode());
+            updateSettings(parameters);
         });
 
         this.showSignCheckbox.setSelected(this.user.getSettings().isShowCurrencySign());
         this.showSignCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
             user.getSettings().setShowCurrencySign(newValue);
+            Map<String, Object> parameters = new HashMap<>();
+            parameters.put("property", "showCurrencySign");
+            parameters.put("value", Boolean.toString(showSignCheckbox.isSelected()));
+            updateSettings(parameters);
         });
 
         this.loadTokenListView();
@@ -98,6 +106,24 @@ public class SettingsController implements Initializable {
             }
         }));
 
+    }
+
+    private void updateSettings(Map<String, Object> parameters) {
+        parameters.put("user", user);
+        FinancerExecutor.getExecutor().execute(new ServerRequestHandler(user, "updateUsersSettings", parameters, new JavaFXAsyncConnectionCall() {
+            @Override
+            public void onSuccess(ConnectionResult result) {}
+
+            @Override
+            public void onFailure(Exception exception) {
+                JavaFXAsyncConnectionCall.super.onFailure(exception);
+            }
+
+            @Override
+            public void onAfter() {
+                localStorage.writeObject("user", user);
+            }
+        }));
     }
 
     public void handleLogoutFromDevice() {

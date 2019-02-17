@@ -18,8 +18,31 @@ public class LocalSettingsImpl implements Serializable, LocalSettings {
     }
 
     @Override
+    public String getValueByProperty(String property) {
+        switch (property) {
+            case "language":
+                return this.getLanguage().toLanguageTag();
+            case "theme":
+                return this.getTheme();
+        }
+        return null;
+    }
+
+    @Override
     public String getTheme() {
         return getTheme();
+    }
+
+    @Override
+    public void setValueByProperty(String property, String value) {
+        switch (property) {
+            case "language":
+                this.setLanguage(Locale.forLanguageTag(value));
+                break;
+            case "theme":
+                this.setTheme(value);
+                break;
+        }
     }
 
     @Override
