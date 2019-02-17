@@ -4,7 +4,6 @@ import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXListView;
 import com.jfoenix.controls.JFXTextField;
 import de.raphaelmuesseler.financer.client.connection.ServerRequestHandler;
-import de.raphaelmuesseler.financer.client.format.FormatterImpl;
 import de.raphaelmuesseler.financer.client.format.I18N;
 import de.raphaelmuesseler.financer.client.javafx.connection.JavaFXAsyncConnectionCall;
 import de.raphaelmuesseler.financer.client.javafx.connection.RetrievalServiceImpl;
@@ -17,10 +16,10 @@ import de.raphaelmuesseler.financer.shared.connection.ConnectionResult;
 import de.raphaelmuesseler.financer.shared.model.BaseCategory;
 import de.raphaelmuesseler.financer.shared.model.Category;
 import de.raphaelmuesseler.financer.shared.model.CategoryTree;
-import de.raphaelmuesseler.financer.shared.model.user.User;
 import de.raphaelmuesseler.financer.shared.model.transactions.AbstractTransaction;
 import de.raphaelmuesseler.financer.shared.model.transactions.FixedTransaction;
 import de.raphaelmuesseler.financer.shared.model.transactions.Transaction;
+import de.raphaelmuesseler.financer.shared.model.user.User;
 import de.raphaelmuesseler.financer.util.collections.CollectionUtil;
 import de.raphaelmuesseler.financer.util.concurrency.FinancerExecutor;
 import javafx.application.Platform;
@@ -231,7 +230,7 @@ public class TransactionsController implements Initializable {
     }
 
     private void loadFixedTransactionTable() {
-        this.handleRefreshFixedTransactions();
+        this.categoriesListView.setCellFactory(param -> new CategoryListViewImpl());
 
         this.categoriesListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             showFixedTransactions(newValue);
@@ -249,6 +248,7 @@ public class TransactionsController implements Initializable {
             deleteFixedTransactionBtn.setDisable(false);
         });
 
+        this.handleRefreshFixedTransactions();
         this.fixedTransactionsListView.setOnMouseClicked(mouseEvent -> {
             if (mouseEvent.getClickCount() == 2) {
                 handleEditFixedTransaction();
@@ -271,6 +271,7 @@ public class TransactionsController implements Initializable {
 
         this.categoriesListView.getItems().sort((o1, o2) -> String.CASE_INSENSITIVE_ORDER.compare(formatter.formatCategoryName(o1),
                 formatter.formatCategoryName(o2)));
+
     }
 
     public void handleRefreshTransactions() {
@@ -381,7 +382,11 @@ public class TransactionsController implements Initializable {
                 FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "deleteTransaction", parameters, new JavaFXAsyncConnectionCall() {
                     @Override
                     public void onSuccess(ConnectionResult result) {
-                        Platform.runLater(() -> transactionsTableView.getItems().remove(transaction));
+                        Platform.runLater(() -> {
+                            transactions.remove(transaction);
+                            localStorage.writeObject("categories", categories);
+                            transactionsTableView.refresh();
+                        });
                     }
 
                     @Override

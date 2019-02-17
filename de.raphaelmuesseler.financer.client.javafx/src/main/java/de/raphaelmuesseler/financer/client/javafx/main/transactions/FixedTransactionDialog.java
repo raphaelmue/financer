@@ -69,19 +69,23 @@ public class FixedTransactionDialog extends FinancerDialog<FixedTransaction> {
 
         gridPane.add(new Label(I18N.get("valueDate")), 0, 1);
         this.dayField = new IntegerField(0, 30);
+        this.dayField.setId("dayTextField");
         gridPane.add(this.dayField, 1, 1);
 
         gridPane.add(new Label(I18N.get("startDate")), 0, 2);
         this.startDateField = new JFXDatePicker();
+        this.startDateField.setId("startDateDatePicker");
         this.startDateField.setValue(LocalDate.now());
         gridPane.add(this.startDateField, 1, 2);
 
         gridPane.add(new Label(I18N.get("endDate")), 0, 3);
         this.endDateField = new JFXDatePicker();
+        this.endDateField.setId("endDateDatePicker");
         gridPane.add(this.endDateField, 1, 3);
 
         gridPane.add(new Label(I18N.get("isVariable")), 0, 4);
         this.isVariableCheckbox = new CheckBox();
+        this.isVariableCheckbox.setId("isVariableCheckbox");
         this.isVariableCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
             if (this.amountField != null) {
                 this.amountField.setDisable(newValue);
@@ -97,6 +101,7 @@ public class FixedTransactionDialog extends FinancerDialog<FixedTransaction> {
 
         gridPane.add(new Label(I18N.get("amount")), 0, 5);
         this.amountField = new DoubleField();
+        this.amountField.setId("amountTextField");
         gridPane.add(this.amountField, 1, 5);
 
         hBox.getChildren().add(gridPane);
@@ -108,9 +113,11 @@ public class FixedTransactionDialog extends FinancerDialog<FixedTransaction> {
 
         GlyphFont fontAwesome = GlyphFontRegistry.font("FontAwesome");
         JFXButton newTransactionAmountBtn = new JFXButton(I18N.get("new"), fontAwesome.create(FontAwesome.Glyph.PLUS));
+        newTransactionAmountBtn.setId("newTransactionAmountBtn");
         JFXButton editTransactionAmountBtn = new JFXButton(I18N.get("edit"), fontAwesome.create(FontAwesome.Glyph.EDIT));
         editTransactionAmountBtn.setDisable(true);
         JFXButton deleteTransactionAmountBtn = new JFXButton(I18N.get("delete"), fontAwesome.create(FontAwesome.Glyph.TRASH));
+        deleteTransactionAmountBtn.setId("deleteTransactionAmountBtn");
         deleteTransactionAmountBtn.setDisable(true);
 
         newTransactionAmountBtn.setOnAction(event -> {
