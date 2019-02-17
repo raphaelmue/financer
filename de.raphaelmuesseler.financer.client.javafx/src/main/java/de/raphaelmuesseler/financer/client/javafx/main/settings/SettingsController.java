@@ -63,12 +63,16 @@ public class SettingsController implements Initializable {
         this.currencyComboBox.getSelectionModel().select(this.user.getSettings().getCurrency());
         this.currencyComboBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             user.getSettings().setCurrency(newValue);
+            showSignCheckbox.setDisable(false);
             Map<String, Object> parameters = new HashMap<>();
             parameters.put("property", "currency");
             parameters.put("value", currencyComboBox.getValue().getCurrencyCode());
             updateSettings(parameters);
         });
 
+        if (user.getSettings().getCurrency() == null) {
+            this.showSignCheckbox.setDisable(true);
+        }
         this.showSignCheckbox.setSelected(this.user.getSettings().isShowCurrencySign());
         this.showSignCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
             user.getSettings().setShowCurrencySign(newValue);

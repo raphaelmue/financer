@@ -4,6 +4,7 @@ import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
 import de.raphaelmuesseler.financer.client.local.LocalSettings;
 import de.raphaelmuesseler.financer.shared.model.user.User;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.input.KeyCode;
 import org.junit.jupiter.api.Assertions;
@@ -48,5 +49,39 @@ public class SettingsTest extends AbstractFinancerApplicationTest {
         Assertions.assertNotNull(clickOn("-" +
                 String.format(((LocalSettings) LocalStorageImpl.getInstance().readObject("localSettings")).getLanguage(), "%.2f", transaction.getAmount()) +
                 " " + ((User) LocalStorageImpl.getInstance().readObject("user")).getSettings().getCurrency().getCurrencyCode()));
+    }
+
+    @Test
+    public void testChangeShowCurrencySign() {
+        register(this.user, this.password);
+        addCategory(category);
+        addTransaction(transaction);
+
+        sleep(500);
+        clickOn((Button) find("#settingTabBtn"));
+
+        ComboBox<Currency> currencyComboBox = find("#currencyComboBox");
+        CheckBox showCurrencySignCheckbox = find("#showSignCheckbox");
+        Assertions.assertTrue(showCurrencySignCheckbox.isDisabled());
+
+        clickOn(currencyComboBox);
+        for (int i = 0; i < 63; i++) {
+            press(KeyCode.DOWN).release(KeyCode.DOWN);
+        }
+        press(KeyCode.ENTER).release(KeyCode.ENTER);
+        clickOn(showCurrencySignCheckbox);
+        sleep(500);
+        Assertions.assertEquals(showCurrencySignCheckbox.isSelected(), ((User) LocalStorageImpl.getInstance().readObject("user"))
+                .getSettings().isShowCurrencySign());
+
+        clickOn((Button) find("#transactionsTabBtn"));
+
+        sleep(1000);
+        press(KeyCode.RIGHT).release(KeyCode.RIGHT);
+        press(KeyCode.RIGHT).release(KeyCode.RIGHT);
+        sleep(500);
+        Assertions.assertNotNull(clickOn("-" +
+                String.format(((LocalSettings) LocalStorageImpl.getInstance().readObject("localSettings")).getLanguage(), "%.2f", transaction.getAmount()) +
+                " " + ((User) LocalStorageImpl.getInstance().readObject("user")).getSettings().getCurrency().getSymbol()));
     }
 }
