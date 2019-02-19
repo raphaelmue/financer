@@ -1,5 +1,6 @@
 package de.raphaelmuesseler.financer.client.javafx.main;
 
+import de.raphaelmuesseler.financer.client.format.I18N;
 import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
 import de.raphaelmuesseler.financer.client.local.LocalSettings;
 import de.raphaelmuesseler.financer.shared.model.user.User;
@@ -20,6 +21,21 @@ public class SettingsTest extends AbstractFinancerApplicationTest {
     public void setUpEach() throws Exception {
         super.setUpEach();
         ApplicationTest.launch(FinancerApplication.class);
+    }
+
+    @Test
+    public void testChangeLanguage() throws Exception {
+        register(this.user, this.password);
+        clickOn((Button) find("#settingTabBtn"));
+
+        ComboBox<I18N.Language> languageComboBox = find("#languageMenuComboBox");
+        clickOn(languageComboBox);
+
+        press(KeyCode.DOWN).release(KeyCode.DOWN);
+        press(KeyCode.ENTER).release(KeyCode.ENTER);
+
+        Assertions.assertEquals(languageComboBox.getItems().get(1).getLocale(),
+                ((LocalSettings) LocalStorageImpl.getInstance().readObject("localSettings")).getLanguage());
     }
 
     @Test
