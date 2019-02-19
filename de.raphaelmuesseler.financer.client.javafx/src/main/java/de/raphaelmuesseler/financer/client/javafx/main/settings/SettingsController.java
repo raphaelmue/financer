@@ -8,6 +8,7 @@ import de.raphaelmuesseler.financer.client.javafx.connection.JavaFXAsyncConnecti
 import de.raphaelmuesseler.financer.client.javafx.dialogs.FinancerConfirmDialog;
 import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
 import de.raphaelmuesseler.financer.client.javafx.main.FinancerController;
+import de.raphaelmuesseler.financer.client.javafx.util.ApplicationHelper;
 import de.raphaelmuesseler.financer.client.local.LocalSettings;
 import de.raphaelmuesseler.financer.client.local.LocalStorage;
 import de.raphaelmuesseler.financer.shared.connection.ConnectionResult;
@@ -24,6 +25,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 import org.controlsfx.glyphfont.FontAwesome;
 import org.controlsfx.glyphfont.GlyphFont;
 import org.controlsfx.glyphfont.GlyphFontRegistry;
@@ -56,6 +58,10 @@ public class SettingsController implements Initializable {
         this.languageMenuComboBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             localSettings.setLanguage(newValue.getLocale());
             localStorage.writeObject("localSettings", localSettings);
+
+            if (new FinancerConfirmDialog(I18N.get("warnChangesAfterRestart")).showAndGetResult()) {
+                ApplicationHelper.restartApplication((Stage) languageMenuComboBox.getScene().getWindow());
+            }
         });
 
         this.currencyComboBox.getItems().addAll(Currency.getAvailableCurrencies());

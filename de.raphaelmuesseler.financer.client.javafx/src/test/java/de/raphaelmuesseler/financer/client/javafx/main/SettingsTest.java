@@ -31,11 +31,20 @@ public class SettingsTest extends AbstractFinancerApplicationTest {
         ComboBox<I18N.Language> languageComboBox = find("#languageMenuComboBox");
         clickOn(languageComboBox);
 
-        press(KeyCode.DOWN).release(KeyCode.DOWN);
-        press(KeyCode.ENTER).release(KeyCode.ENTER);
+        clickOn(languageComboBox.getItems().get(1).getName());
 
         Assertions.assertEquals(languageComboBox.getItems().get(1).getLocale(),
                 ((LocalSettings) LocalStorageImpl.getInstance().readObject("localSettings")).getLanguage());
+
+        confirmDialog();
+
+        sleep(1000);
+        Assertions.assertNotNull(clickOn("Überblick"));
+
+        clickOn((Button) find("#settingTabBtn"));
+        languageComboBox = find("#languageMenuComboBox");
+        Assertions.assertEquals(((LocalSettings) LocalStorageImpl.getInstance().readObject("localSettings")).getLanguage(),
+                languageComboBox.getSelectionModel().getSelectedItem().getLocale());
     }
 
     @Test
