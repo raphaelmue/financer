@@ -41,6 +41,7 @@ public class ProfileController implements Initializable {
     public Label birthDateLabel;
     public Label addressLabel;
     public Label genderLabel;
+    public Hyperlink changePasswordLink;
     public TreeView<CategoryTree> categoriesTreeView;
     public JFXButton refreshCategoriesBtn;
     public JFXButton newCategoryBtn;
@@ -62,6 +63,30 @@ public class ProfileController implements Initializable {
             this.birthDateLabel.setText(this.user.getBirthDateAsLocalDate().toString());
             this.genderLabel.setText(I18N.get(this.user.getGenderObject().getName()));
         }
+
+        this.changePasswordLink.setOnAction(event -> {
+            new ChangePasswordDialog(user).showAndGetResult();
+
+            Map<String, Object> parameters = new HashMap<>();
+            parameters.put("user", user);
+
+            FinancerExecutor.getExecutor().execute(new ServerRequestHandler(user, "changePassword", parameters,
+                    new JavaFXAsyncConnectionCall() {
+                @Override
+                public void onSuccess(ConnectionResult result) { }
+
+                @Override
+                public void onFailure(Exception exception) {
+                    JavaFXAsyncConnectionCall.super.onFailure(exception);
+                }
+
+                @Override
+                public void onAfter() {
+                    localStorage.writeObject("user", user);
+                }
+            }));
+
+        });
 
         GlyphFont fontAwesome = GlyphFontRegistry.font("FontAwesome");
         this.refreshCategoriesBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.REFRESH));

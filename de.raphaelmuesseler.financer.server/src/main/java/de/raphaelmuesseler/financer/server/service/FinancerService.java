@@ -202,6 +202,23 @@ public class FinancerService {
         return new ConnectionResult<>(user);
     }
 
+    public ConnectionResult<Void> changePassword(Logger logger, Map<String, Object> parameters) throws Exception {
+        logger.log(Level.INFO, "Changing Users Password ...");
+        User user = (User) parameters.get("user");
+
+
+        Map<String, Object> whereParameters = new HashMap<>();
+        whereParameters.put("id", user.getId());
+
+        Map<String, Object> values = new HashMap<>();
+        values.put("password", user.getPassword());
+        values.put("salt", user.getSalt());
+
+        this.database.update(Database.Table.USERS, whereParameters, values);
+
+        return new ConnectionResult<>(null);
+    }
+
     public ConnectionResult<List<Token>> getUsersTokens(Logger logger, Map<String, Object> parameters) throws Exception {
         logger.log(Level.INFO, "Fetching all tokens of user ...");
         User user = (User) parameters.get("user");

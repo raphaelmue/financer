@@ -34,14 +34,17 @@
                                     </VBox>
                                     <JFXButton text="%edit" GridPane.rowIndex="0" GridPane.columnIndex="2"/>
                                 </GridPane>
-                                <Separator styleClass="separator" />
+                                <Separator styleClass="separator"/>
                                 <GridPane hgap="100" vgap="15" style="-fx-font-size: 14px">
                                     <Label text="%birthDate" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
                                     <Label fx:id="birthDateLabel" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
-                                    <Label text="%address" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-                                    <Label fx:id="addressLabel" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
-                                    <Label text="%gender" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
-                                    <Label fx:id="genderLabel" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+                                    <Label text="%gender" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                                    <Hyperlink fx:id="changePasswordLink" text="%changePassword" GridPane.rowIndex="1"
+                                               GridPane.columnIndex="1"/>
+                                    <Label text="%address" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                                    <Label fx:id="addressLabel" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+                                    <Label text="%gender" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                                    <Label fx:id="genderLabel" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
                                 </GridPane>
                             </VBox>
                         </HBox>
