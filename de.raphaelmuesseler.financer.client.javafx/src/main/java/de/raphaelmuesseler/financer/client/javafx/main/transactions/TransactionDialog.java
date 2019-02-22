@@ -3,7 +3,7 @@ package de.raphaelmuesseler.financer.client.javafx.main.transactions;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXDatePicker;
 import de.raphaelmuesseler.financer.client.connection.ServerRequestHandler;
-import de.raphaelmuesseler.financer.client.format.Formatter;
+import de.raphaelmuesseler.financer.client.format.FormatterImpl;
 import de.raphaelmuesseler.financer.client.format.I18N;
 import de.raphaelmuesseler.financer.client.javafx.components.DoubleField;
 import de.raphaelmuesseler.financer.client.javafx.connection.JavaFXAsyncConnectionCall;
@@ -15,7 +15,7 @@ import de.raphaelmuesseler.financer.shared.connection.ConnectionResult;
 import de.raphaelmuesseler.financer.shared.model.BaseCategory;
 import de.raphaelmuesseler.financer.shared.model.Category;
 import de.raphaelmuesseler.financer.shared.model.CategoryTree;
-import de.raphaelmuesseler.financer.shared.model.User;
+import de.raphaelmuesseler.financer.shared.model.user.User;
 import de.raphaelmuesseler.financer.shared.model.transactions.AttachmentWithContent;
 import de.raphaelmuesseler.financer.shared.model.transactions.Transaction;
 import de.raphaelmuesseler.financer.util.collections.TreeUtil;
@@ -99,62 +99,64 @@ class TransactionDialog extends FinancerDialog<Transaction> {
         this.shopField.setId("shopTextField");
         gridPane.add(this.shopField, 1, 4);
 
-        gridPane.add(new Label(I18N.get("product")), 0, 5);
+        gridPane.add(new Label(I18N.get("valueDate")), 0, 5);
         this.valueDateField = new JFXDatePicker();
         this.valueDateField.setId("valueDatePicker");
         gridPane.add(this.valueDateField, 1, 5);
 
         hBox.getChildren().add(gridPane);
 
-        VBox attachmentsContainer = new VBox();
-        attachmentsContainer.setSpacing(10);
-        attachmentsContainer.setPrefHeight(200);
-        attachmentsContainer.getChildren().add(new Label(I18N.get("attachments")));
+        if (this.getValue() != null) {
+            VBox attachmentsContainer = new VBox();
+            attachmentsContainer.setSpacing(10);
+            attachmentsContainer.setPrefHeight(200);
+            attachmentsContainer.getChildren().add(new Label(I18N.get("attachments")));
 
-        GlyphFont fontAwesome = GlyphFontRegistry.font("FontAwesome");
-        JFXButton uploadAttachmentBtn = new JFXButton(I18N.get("upload"), fontAwesome.create(FontAwesome.Glyph.PLUS));
-        JFXButton openFileBtn = new JFXButton(I18N.get("openFile"), fontAwesome.create(FontAwesome.Glyph.FOLDER_OPEN));
-        JFXButton deleteAttachmentBtn = new JFXButton(I18N.get("delete"), fontAwesome.create(FontAwesome.Glyph.TRASH));
+            GlyphFont fontAwesome = GlyphFontRegistry.font("FontAwesome");
+            JFXButton uploadAttachmentBtn = new JFXButton(I18N.get("upload"), fontAwesome.create(FontAwesome.Glyph.PLUS));
+            JFXButton openFileBtn = new JFXButton(I18N.get("openFile"), fontAwesome.create(FontAwesome.Glyph.FOLDER_OPEN));
+            JFXButton deleteAttachmentBtn = new JFXButton(I18N.get("delete"), fontAwesome.create(FontAwesome.Glyph.TRASH));
 
-        uploadAttachmentBtn.setOnAction(event -> {
-            FileChooser fileChooser = new FileChooser();
-            fileChooser.setTitle(I18N.get("uploadAttachment"));
-            fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
-            fileChooser.getExtensionFilters().addAll(
-                    new FileChooser.ExtensionFilter(I18N.get("documents"), "*.jpg", "*.png", "*.doc", "*.docx", "*.pdf")
-            );
-            File attachmentFile = fileChooser.showOpenDialog(uploadAttachmentBtn.getContextMenu());
-            onUploadAttachment(attachmentFile);
-        });
+            uploadAttachmentBtn.setOnAction(event -> {
+                FileChooser fileChooser = new FileChooser();
+                fileChooser.setTitle(I18N.get("uploadAttachment"));
+                fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
+                fileChooser.getExtensionFilters().addAll(
+                        new FileChooser.ExtensionFilter(I18N.get("documents"), "*.jpg", "*.png", "*.doc", "*.docx", "*.pdf")
+                );
+                File attachmentFile = fileChooser.showOpenDialog(uploadAttachmentBtn.getContextMenu());
+                onUploadAttachment(attachmentFile);
+            });
 
-        openFileBtn.setOnAction(event -> onOpenAttachment());
+            openFileBtn.setOnAction(event -> onOpenAttachment());
 
-        deleteAttachmentBtn.setOnAction(event -> onDeleteAttachment());
+            deleteAttachmentBtn.setOnAction(event -> onDeleteAttachment());
 
-        HBox toolBox = new HBox();
-        toolBox.setSpacing(8);
-        toolBox.getChildren().add(uploadAttachmentBtn);
-        toolBox.getChildren().add(openFileBtn);
-        toolBox.getChildren().add(deleteAttachmentBtn);
+            HBox toolBox = new HBox();
+            toolBox.setSpacing(8);
+            toolBox.getChildren().add(uploadAttachmentBtn);
+            toolBox.getChildren().add(openFileBtn);
+            toolBox.getChildren().add(deleteAttachmentBtn);
 
-        this.attachmentListView = new ListView<>();
-        this.attachmentListView.setCellFactory(param -> new ListCell<>() {
-            @Override
-            protected void updateItem(AttachmentWithContent item, boolean empty) {
-                super.updateItem(item, empty);
+            this.attachmentListView = new ListView<>();
+            this.attachmentListView.setCellFactory(param -> new ListCell<>() {
+                @Override
+                protected void updateItem(AttachmentWithContent item, boolean empty) {
+                    super.updateItem(item, empty);
 
-                if (item == null || empty) {
-                    setGraphic(null);
-                } else {
-                    setText(item.getName());
+                    if (item == null || empty) {
+                        setGraphic(null);
+                    } else {
+                        setText(item.getName());
+                    }
                 }
-            }
-        });
+            });
 
-        attachmentsContainer.getChildren().add(toolBox);
-        attachmentsContainer.getChildren().add(this.attachmentListView);
+            attachmentsContainer.getChildren().add(toolBox);
+            attachmentsContainer.getChildren().add(this.attachmentListView);
 
-        hBox.getChildren().add(attachmentsContainer);
+            hBox.getChildren().add(attachmentsContainer);
+        }
 
         return hBox;
     }
@@ -172,7 +174,7 @@ class TransactionDialog extends FinancerDialog<Transaction> {
             protected void updateItem(CategoryTree item, boolean empty) {
                 super.updateItem(item, empty);
                 if (!empty) {
-                    setText(Formatter.formatCategoryName(item.getValue()));
+                    setText(new FormatterImpl(LocalStorageImpl.getInstance()).formatCategoryName(item.getValue()));
                 } else {
                     setText(null);
                 }

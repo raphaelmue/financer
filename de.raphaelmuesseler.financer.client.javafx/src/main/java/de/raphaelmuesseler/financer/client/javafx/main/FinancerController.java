@@ -6,9 +6,10 @@ import de.raphaelmuesseler.financer.client.connection.ServerRequestHandler;
 import de.raphaelmuesseler.financer.client.format.I18N;
 import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
 import de.raphaelmuesseler.financer.client.javafx.login.LoginApplication;
+import de.raphaelmuesseler.financer.client.javafx.util.ApplicationHelper;
 import de.raphaelmuesseler.financer.client.local.Application;
-import de.raphaelmuesseler.financer.client.local.Settings;
-import de.raphaelmuesseler.financer.shared.model.User;
+import de.raphaelmuesseler.financer.client.local.LocalSettings;
+import de.raphaelmuesseler.financer.shared.model.user.User;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -28,7 +29,6 @@ import org.controlsfx.glyphfont.GlyphFontRegistry;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.concurrent.Executors;
 
@@ -61,14 +61,11 @@ public class FinancerController implements Initializable, Application {
             e.printStackTrace();
         }
 
+        User user = (User) this.localStorage.readObject("user");
+
         // setting up language
-        Locale locale;
-        if (this.localStorage.readObject("settings") != null) {
-            locale = ((Settings) this.localStorage.readObject("settings")).getLanguage();
-        } else {
-            locale = Locale.ENGLISH;
-        }
-        this.resourceBundle = ResourceBundle.getBundle("Financer", locale);
+        this.resourceBundle = ResourceBundle.getBundle("Financer",
+                ApplicationHelper.getLocale((LocalSettings) localStorage.readObject("localSettings")));
 
         try {
             loadingBox = FXMLLoader.load(getClass().getResource("/de/raphaelmuesseler/financer/client/javafx/main/views/loading.fxml"), this.resourceBundle);
@@ -76,7 +73,6 @@ public class FinancerController implements Initializable, Application {
             e.printStackTrace();
         }
 
-        User user = (User) this.localStorage.readObject("user");
         this.userNameLabel.setText(user.getFullName());
 
         GlyphFont fontAwesome = GlyphFontRegistry.font("FontAwesome");

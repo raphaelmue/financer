@@ -1,7 +1,6 @@
 package de.raphaelmuesseler.financer.client.javafx.login;
 
 import de.raphaelmuesseler.financer.client.connection.ServerRequestHandler;
-import de.raphaelmuesseler.financer.client.format.Formatter;
 import de.raphaelmuesseler.financer.client.format.I18N;
 import de.raphaelmuesseler.financer.client.javafx.connection.JavaFXAsyncConnectionCall;
 import de.raphaelmuesseler.financer.client.javafx.connection.RetrievalServiceImpl;
@@ -10,9 +9,10 @@ import de.raphaelmuesseler.financer.client.javafx.dialogs.FinancerExceptionDialo
 import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
 import de.raphaelmuesseler.financer.client.javafx.main.FinancerApplication;
 import de.raphaelmuesseler.financer.client.local.Application;
-import de.raphaelmuesseler.financer.client.local.Settings;
+import de.raphaelmuesseler.financer.client.local.LocalSettings;
+import de.raphaelmuesseler.financer.client.local.LocalSettingsImpl;
 import de.raphaelmuesseler.financer.shared.connection.ConnectionResult;
-import de.raphaelmuesseler.financer.shared.model.User;
+import de.raphaelmuesseler.financer.shared.model.user.User;
 import de.raphaelmuesseler.financer.util.concurrency.FinancerExecutor;
 import javafx.application.Platform;
 import javafx.fxml.Initializable;
@@ -28,8 +28,6 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -47,7 +45,7 @@ public class LoginController implements Initializable, Application {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        Settings settings = (Settings) this.localStorage.readObject("settings");
+        LocalSettings settings = (LocalSettings) this.localStorage.readObject("localSettings");
         if (settings != null) {
             for (MenuItem item : this.languageMenu.getItems()) {
                 RadioMenuItem radioMenuItem = (RadioMenuItem) item;
@@ -56,9 +54,11 @@ public class LoginController implements Initializable, Application {
                     break;
                 }
             }
+        } else {
+            settings = new LocalSettingsImpl();
+            this.localStorage.writeObject("localSettings", settings);
         }
         I18N.setLocalStorage(this.localStorage);
-        Formatter.setSettings(settings);
 
         ServerRequestHandler.setApplication(this);
         ServerRequestHandler.setLocalStorage(this.localStorage);
@@ -70,6 +70,12 @@ public class LoginController implements Initializable, Application {
                 }
             });
         });
+
+        Platform.runLater(() -> this.gridPane.getScene().setOnKeyPressed(e -> {
+            if (e.getCode() == KeyCode.ENTER) {
+                handleSignInButtonAction();
+            }
+        }));
     }
 
     public void handleSignInButtonAction() {
@@ -109,10 +115,7 @@ public class LoginController implements Initializable, Application {
 
     private void changeLanguage(Locale locale) {
         new FinancerAlert(Alert.AlertType.INFORMATION, I18N.get("language"), I18N.get("warnChangesAfterRestart")).showAndWait();
-
-        Settings settings = (Settings) this.localStorage.readObject("settings");
-        settings.setLanguage(locale);
-        localStorage.writeObject("settings", settings);
+        // TODO to be implemented
     }
 
     public void handleOpenRegisterDialog() {

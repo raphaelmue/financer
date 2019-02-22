@@ -1,17 +1,24 @@
 package de.raphaelmuesseler.financer.client.javafx.main;
 
+import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXDatePicker;
 import com.jfoenix.controls.JFXTextField;
 import de.raphaelmuesseler.financer.client.connection.ServerRequest;
 import de.raphaelmuesseler.financer.client.format.I18N;
+import de.raphaelmuesseler.financer.client.javafx.components.DoubleField;
+import de.raphaelmuesseler.financer.client.javafx.components.IntegerField;
+import de.raphaelmuesseler.financer.client.javafx.format.JavaFXFormatter;
 import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
 import de.raphaelmuesseler.financer.client.javafx.login.LoginApplication;
 import de.raphaelmuesseler.financer.server.db.Database;
 import de.raphaelmuesseler.financer.server.main.Server;
 import de.raphaelmuesseler.financer.shared.model.BaseCategory;
 import de.raphaelmuesseler.financer.shared.model.Category;
-import de.raphaelmuesseler.financer.shared.model.User;
+import de.raphaelmuesseler.financer.shared.model.CategoryTree;
+import de.raphaelmuesseler.financer.shared.model.transactions.FixedTransaction;
 import de.raphaelmuesseler.financer.shared.model.transactions.Transaction;
+import de.raphaelmuesseler.financer.shared.model.transactions.TransactionAmount;
+import de.raphaelmuesseler.financer.shared.model.user.User;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
@@ -26,10 +33,14 @@ import org.testfx.framework.junit5.ApplicationTest;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.concurrent.TimeoutException;
+import java.util.function.Predicate;
 
-public class AbstractFinancerApplicationTest extends ApplicationTest {
+class AbstractFinancerApplicationTest extends ApplicationTest {
+    private static Server server;
 
+    final String password = "password";
     final User user = new User(
             "max@mustermann.com",
             "6406b2e97a97f64910aca76370ee35a92087806da1aa878e8a9ae0f4dc3949af",
@@ -37,8 +48,15 @@ public class AbstractFinancerApplicationTest extends ApplicationTest {
             "Max",
             "Mustermann",
             LocalDate.of(1989, 5, 28));
-    final String password = "password";
-    private static Server server;
+    final CategoryTree category = new CategoryTree(BaseCategory.CategoryClass.VARIABLE_EXPENSES, new Category(-1, "TestCategory", -1, -1));
+    final Transaction transaction = new Transaction(-1, 52.5,
+            category, "ProductName",
+            "Purpose", LocalDate.of(2018, 5, 19), "Shop");
+    final FixedTransaction fixedTransaction = new FixedTransaction(-1, 570.0, category, "TestProduct",
+            "TestPurpose", LocalDate.of(2018, 2, 5), null, false, 3,
+            new ArrayList<>());
+
+    static JavaFXFormatter formatter;
 
     @BeforeAll
     static void setUp() throws SQLException, IOException {
@@ -63,6 +81,10 @@ public class AbstractFinancerApplicationTest extends ApplicationTest {
         return lookup(query).query();
     }
 
+    final <T extends Node> T find(Predicate<T> predicate) {
+        return lookup(predicate).query();
+    }
+
     void register(User user, String password) {
         clickOn((Hyperlink) find("#openRegisterDialogLink"));
 
@@ -80,7 +102,8 @@ public class AbstractFinancerApplicationTest extends ApplicationTest {
         write(password);
         confirmDialog();
 
-        sleep(1000);
+        sleep(2000);
+        formatter = new JavaFXFormatter(LocalStorageImpl.getInstance());
     }
 
     void login(User user, String password) {
@@ -97,27 +120,28 @@ public class AbstractFinancerApplicationTest extends ApplicationTest {
         ApplicationTest.launch(LoginApplication.class);
     }
 
-    void addCategory(Category category, BaseCategory.CategoryClass categoryClass) {
-        register(this.user, this.password);
+    void addCategory(CategoryTree category) {
         clickOn((Button) find("#profileTabBtn"));
         press(KeyCode.RIGHT).release(KeyCode.RIGHT);
         press(KeyCode.RIGHT).release(KeyCode.RIGHT);
 
+        sleep(250);
+
         Button newCategoryBtn = find("#newCategoryBtn");
-        clickOn(I18N.get(categoryClass.getName()));
+        clickOn(I18N.get(category.getCategoryClass().getName()));
         clickOn(newCategoryBtn);
 
         JFXTextField categoryNameField = find("#inputDialogTextField");
         categoryNameField.setText("");
         clickOn(categoryNameField);
-        write(category.getName());
+        write(category.getValue().getName());
 
         confirmDialog();
+
+        sleep(500);
     }
 
     void addTransaction(Transaction transaction) {
-        addCategory(transaction.getCategoryTree().getValue(), BaseCategory.CategoryClass.VARIABLE_EXPENSES);
-        sleep(500);
         clickOn((Button) find("#transactionsTabBtn"));
         press(KeyCode.RIGHT).release(KeyCode.RIGHT);
         press(KeyCode.RIGHT).release(KeyCode.RIGHT);
@@ -141,6 +165,47 @@ public class AbstractFinancerApplicationTest extends ApplicationTest {
         write(transaction.getShop());
         JFXDatePicker valueDatePicker = find("#valueDatePicker");
         valueDatePicker.setValue(transaction.getValueDate());
+
+        confirmDialog();
+
+        sleep(500);
+    }
+
+    void addFixedTransaction(FixedTransaction fixedTransaction) {
+        clickOn((Button) find("#transactionsTabBtn"));
+        press(KeyCode.RIGHT).release(KeyCode.RIGHT);
+        press(KeyCode.RIGHT).release(KeyCode.RIGHT);
+        press(KeyCode.RIGHT).release(KeyCode.RIGHT);
+
+        sleep(500);
+        clickOn(find((Label label) -> label.getText().contains(fixedTransaction.getCategoryTree().getValue().getName())));
+
+        clickOn((Button) find("#newFixedTransactionBtn"));
+        sleep(500);
+        clickOn((IntegerField) find("#dayTextField"));
+        write(Integer.toString(fixedTransaction.getDay()));
+        JFXDatePicker datePicker = find("#startDateDatePicker");
+        datePicker.setValue(fixedTransaction.getStartDate());
+        if (fixedTransaction.isVariable()) {
+            clickOn((CheckBox) find("#isVariableCheckbox"));
+
+            sleep(100);
+
+            for (TransactionAmount transactionAmount : fixedTransaction.getTransactionAmounts()) {
+                clickOn((JFXButton) find("#newTransactionAmountBtn"));
+
+                ((JFXDatePicker) find("#transactionAmountValueDatePicker")).setValue(transactionAmount.getValueDate());
+                clickOn((DoubleField) find("#transactionAmountTextField"));
+                eraseText(3);
+                write(Double.toString(transactionAmount.getAmount()));
+                press(KeyCode.TAB).release(KeyCode.TAB);
+                press(KeyCode.ENTER).release(KeyCode.ENTER);
+            }
+        } else {
+            clickOn((TextField) find("#amountTextField"));
+            eraseText(3);
+            write(Double.toString(fixedTransaction.getAmount()));
+        }
 
         confirmDialog();
     }

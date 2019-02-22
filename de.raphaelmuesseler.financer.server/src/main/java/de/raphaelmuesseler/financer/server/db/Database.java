@@ -39,7 +39,8 @@ public class Database {
         TRANSACTIONS_ATTACHMENTS("transactions_attachments"),
         USERS("users"),
         USERS_CATEGORIES("users_categories"),
-        USERS_TOKENS("users_tokens");
+        USERS_TOKENS("users_tokens"),
+        USERS_SETTINGS("users_settings");
 
         private String tableName;
 

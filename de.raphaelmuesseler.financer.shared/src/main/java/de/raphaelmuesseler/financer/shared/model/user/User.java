@@ -1,4 +1,4 @@
-package de.raphaelmuesseler.financer.shared.model;
+package de.raphaelmuesseler.financer.shared.model.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import de.raphaelmuesseler.financer.shared.model.db.DatabaseObject;
@@ -10,6 +10,7 @@ import java.time.LocalDate;
 @JsonIgnoreProperties(ignoreUnknown = true, value = { "birthDateAsLocalDate" })
 public class User extends DatabaseUser {
     private Token token;
+    private UserSettings settings;
 
     public User() {
         super();
@@ -37,8 +38,19 @@ public class User extends DatabaseUser {
         return token;
     }
 
+    public UserSettings getSettings() {
+        if (settings == null) {
+            settings = new UserSettings();
+        }
+        return settings;
+    }
+
     public void setToken(Token token) {
         this.token = token;
+    }
+
+    public void setSettings(UserSettings settings) {
+        this.settings = settings;
     }
 
     public LocalDate getBirthDateAsLocalDate() {

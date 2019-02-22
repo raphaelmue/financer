@@ -2,19 +2,19 @@ package de.raphaelmuesseler.financer.client.javafx.main.profile;
 
 import com.jfoenix.controls.JFXButton;
 import de.raphaelmuesseler.financer.client.connection.ServerRequestHandler;
-import de.raphaelmuesseler.financer.client.format.Formatter;
 import de.raphaelmuesseler.financer.client.format.I18N;
 import de.raphaelmuesseler.financer.client.javafx.connection.JavaFXAsyncConnectionCall;
 import de.raphaelmuesseler.financer.client.javafx.connection.RetrievalServiceImpl;
 import de.raphaelmuesseler.financer.client.javafx.dialogs.FinancerConfirmDialog;
 import de.raphaelmuesseler.financer.client.javafx.dialogs.FinancerTextInputDialog;
+import de.raphaelmuesseler.financer.client.javafx.format.JavaFXFormatter;
 import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
 import de.raphaelmuesseler.financer.shared.connection.AsyncCall;
 import de.raphaelmuesseler.financer.shared.connection.ConnectionResult;
 import de.raphaelmuesseler.financer.shared.model.BaseCategory;
 import de.raphaelmuesseler.financer.shared.model.Category;
 import de.raphaelmuesseler.financer.shared.model.CategoryTree;
-import de.raphaelmuesseler.financer.shared.model.User;
+import de.raphaelmuesseler.financer.shared.model.user.User;
 import de.raphaelmuesseler.financer.util.collections.Tree;
 import de.raphaelmuesseler.financer.util.collections.TreeUtil;
 import de.raphaelmuesseler.financer.util.concurrency.FinancerExecutor;
@@ -139,7 +139,6 @@ public class ProfileController implements Initializable {
                 FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "addCategory", parameters, new JavaFXAsyncConnectionCall() {
                     @Override
                     public void onSuccess(ConnectionResult result) {
-                        categoriesTreeView.getSelectionModel().getSelectedItem().setExpanded(true);
                         categoryTree.getValue().setId(((Category) result.getResult()).getId());
                         categoryTree.getValue().setPrefix(categoryTree.getParent().getValue().getPrefix() + (categoryTree.getParent().getChildren().size() + 1) + ".");
                         if (categoriesTreeView.getSelectionModel().getSelectedItem().getValue().isRoot()) {
@@ -150,6 +149,7 @@ public class ProfileController implements Initializable {
                         localStorage.writeObject("categories", categories);
 
                         Platform.runLater(() -> {
+                            categoriesTreeView.getSelectionModel().getSelectedItem().setExpanded(true);
                             categoriesTreeView.getSelectionModel().getSelectedItem().getChildren().add(new TreeItem<>(categoryTree));
                             categoriesTreeView.refresh();
                         });
@@ -294,7 +294,7 @@ public class ProfileController implements Initializable {
         public void updateItem(CategoryTree item, boolean empty) {
             super.updateItem(item, empty);
             if (item != null && !isEditing() && getParent() != null) {
-                if (item.isRoot() && !Formatter.formatCategoryName(item.getValue()).equals(I18N.get("categories"))) {
+                if (item.isRoot() && !new JavaFXFormatter(localStorage).formatCategoryName(item.getValue()).equals(I18N.get("categories"))) {
                     setContextMenu(this.contextMenu);
                 } else if (!item.isRoot()) {
                     setContextMenu(this.deleteContextMenu);

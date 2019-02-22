@@ -1,7 +1,8 @@
 package de.raphaelmuesseler.financer.client.javafx.main.overview;
 
-import de.raphaelmuesseler.financer.client.format.Formatter;
+import de.raphaelmuesseler.financer.client.format.FormatterImpl;
 import de.raphaelmuesseler.financer.client.format.I18N;
+import de.raphaelmuesseler.financer.client.javafx.format.JavaFXFormatter;
 import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
 import de.raphaelmuesseler.financer.shared.model.BaseCategory;
 import de.raphaelmuesseler.financer.shared.model.Category;
@@ -24,6 +25,7 @@ public class OverviewController implements Initializable {
     public GridPane balanceGridPane;
 
     private LocalStorageImpl localStorage = (LocalStorageImpl) LocalStorageImpl.getInstance();
+    private JavaFXFormatter formatter = new JavaFXFormatter(localStorage);
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -45,7 +47,7 @@ public class OverviewController implements Initializable {
                 this.lastTransactionsGridPane.add(new Label(transaction.getPurpose() + " (" + transaction.getProduct() + ")"),
                         0, counter);
 
-                Label amountLabel = Formatter.formatAmountLabel(transaction.getAmount());
+                Label amountLabel = formatter.formatAmountLabel(transaction.getAmount());
                 this.lastTransactionsGridPane.add(amountLabel, 1, counter);
                 GridPane.setHalignment(amountLabel, HPos.RIGHT);
                 GridPane.setHgrow(amountLabel, Priority.ALWAYS);
@@ -60,7 +62,7 @@ public class OverviewController implements Initializable {
         int counter = 0;
         for (Tree<Category> root : categories.getChildren()) {
             this.balanceGridPane.add(new Label(I18N.get(((CategoryTree) root).getCategoryClass().getName())), 0, counter);
-            Label baseCategoryLabel = Formatter.formatAmountLabel(((CategoryTree) root).getAmount(LocalDate.now()));
+            Label baseCategoryLabel = formatter.formatAmountLabel(((CategoryTree) root).getAmount(LocalDate.now()));
             balanceAmount += ((CategoryTree) root).getAmount(LocalDate.now());
             GridPane.setHalignment(baseCategoryLabel, HPos.RIGHT);
             GridPane.setHgrow(baseCategoryLabel, Priority.ALWAYS);
@@ -72,7 +74,7 @@ public class OverviewController implements Initializable {
         Label balanceTextLabel = new Label(I18N.get("balance"));
         balanceTextLabel.setId("balance-label");
         this.balanceGridPane.add(balanceTextLabel, 0, 4);
-        Label balanceLabel = Formatter.formatAmountLabel(balanceAmount);
+        Label balanceLabel = formatter.formatAmountLabel(balanceAmount);
         balanceLabel.setId("balance-amount");
         GridPane.setHalignment(balanceLabel, HPos.RIGHT);
         GridPane.setHgrow(balanceLabel, Priority.ALWAYS);

@@ -4,7 +4,7 @@ import de.raphaelmuesseler.financer.server.main.ClientRestHandler;
 import de.raphaelmuesseler.financer.shared.connection.ConnectionResult;
 import de.raphaelmuesseler.financer.shared.connection.RestResult;
 import de.raphaelmuesseler.financer.shared.connection.RestResultStatus;
-import de.raphaelmuesseler.financer.shared.model.User;
+import de.raphaelmuesseler.financer.shared.model.user.User;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;

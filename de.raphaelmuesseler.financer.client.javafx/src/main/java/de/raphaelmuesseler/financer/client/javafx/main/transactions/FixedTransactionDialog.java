@@ -3,11 +3,12 @@ package de.raphaelmuesseler.financer.client.javafx.main.transactions;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXDatePicker;
 import com.jfoenix.controls.JFXListView;
-import de.raphaelmuesseler.financer.client.format.Formatter;
 import de.raphaelmuesseler.financer.client.format.I18N;
 import de.raphaelmuesseler.financer.client.javafx.components.DoubleField;
 import de.raphaelmuesseler.financer.client.javafx.components.IntegerField;
 import de.raphaelmuesseler.financer.client.javafx.dialogs.FinancerDialog;
+import de.raphaelmuesseler.financer.client.javafx.format.JavaFXFormatter;
+import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
 import de.raphaelmuesseler.financer.shared.model.CategoryTree;
 import de.raphaelmuesseler.financer.shared.model.transactions.FixedTransaction;
 import de.raphaelmuesseler.financer.shared.model.transactions.TransactionAmount;
@@ -68,19 +69,23 @@ public class FixedTransactionDialog extends FinancerDialog<FixedTransaction> {
 
         gridPane.add(new Label(I18N.get("valueDate")), 0, 1);
         this.dayField = new IntegerField(0, 30);
+        this.dayField.setId("dayTextField");
         gridPane.add(this.dayField, 1, 1);
 
         gridPane.add(new Label(I18N.get("startDate")), 0, 2);
         this.startDateField = new JFXDatePicker();
+        this.startDateField.setId("startDateDatePicker");
         this.startDateField.setValue(LocalDate.now());
         gridPane.add(this.startDateField, 1, 2);
 
         gridPane.add(new Label(I18N.get("endDate")), 0, 3);
         this.endDateField = new JFXDatePicker();
+        this.endDateField.setId("endDateDatePicker");
         gridPane.add(this.endDateField, 1, 3);
 
         gridPane.add(new Label(I18N.get("isVariable")), 0, 4);
         this.isVariableCheckbox = new CheckBox();
+        this.isVariableCheckbox.setId("isVariableCheckbox");
         this.isVariableCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
             if (this.amountField != null) {
                 this.amountField.setDisable(newValue);
@@ -96,6 +101,7 @@ public class FixedTransactionDialog extends FinancerDialog<FixedTransaction> {
 
         gridPane.add(new Label(I18N.get("amount")), 0, 5);
         this.amountField = new DoubleField();
+        this.amountField.setId("amountTextField");
         gridPane.add(this.amountField, 1, 5);
 
         hBox.getChildren().add(gridPane);
@@ -107,8 +113,12 @@ public class FixedTransactionDialog extends FinancerDialog<FixedTransaction> {
 
         GlyphFont fontAwesome = GlyphFontRegistry.font("FontAwesome");
         JFXButton newTransactionAmountBtn = new JFXButton(I18N.get("new"), fontAwesome.create(FontAwesome.Glyph.PLUS));
+        newTransactionAmountBtn.setId("newTransactionAmountBtn");
         JFXButton editTransactionAmountBtn = new JFXButton(I18N.get("edit"), fontAwesome.create(FontAwesome.Glyph.EDIT));
+        editTransactionAmountBtn.setDisable(true);
         JFXButton deleteTransactionAmountBtn = new JFXButton(I18N.get("delete"), fontAwesome.create(FontAwesome.Glyph.TRASH));
+        deleteTransactionAmountBtn.setId("deleteTransactionAmountBtn");
+        deleteTransactionAmountBtn.setDisable(true);
 
         newTransactionAmountBtn.setOnAction(event -> {
             TransactionAmount transactionAmount = new TransactionAmountDialog(null, transactionAmountListView.getItems()).showAndGetResult();
@@ -119,20 +129,10 @@ public class FixedTransactionDialog extends FinancerDialog<FixedTransaction> {
         });
         editTransactionAmountBtn.setOnAction(event -> {
             if (transactionAmountListView.getSelectionModel().getSelectedItem() != null) {
-                TransactionAmount transactionAmount = new TransactionAmountDialog(transactionAmountListView.getSelectionModel().getSelectedItem(),
+                new TransactionAmountDialog(transactionAmountListView.getSelectionModel().getSelectedItem(),
                         transactionAmountListView.getItems())
                         .showAndGetResult();
-                if (transactionAmount != null) {
-
-                    for (int i = 0; i < transactionAmountListView.getItems().size(); i++) {
-                        if (transactionAmount.getId() == transactionAmountListView.getItems().get(i).getId()) {
-                            transactionAmountListView.getItems().get(i).setValueDate(transactionAmount.getValueDate());
-                            transactionAmountListView.getItems().get(i).setAmount(transactionAmount.getAmount());
-                            getValue().sortTransactionAmounts();
-                            break;
-                        }
-                    }
-                }
+                transactionAmountListView.refresh();
             }
         });
         deleteTransactionAmountBtn.setOnAction(event -> {
@@ -150,6 +150,15 @@ public class FixedTransactionDialog extends FinancerDialog<FixedTransaction> {
         this.transactionAmountContainer.getChildren().add(toolBox);
 
         this.transactionAmountListView = new JFXListView<>();
+        this.transactionAmountListView.getSelectionModel().selectedItemProperty().addListener((observableValue, oldValue, newValue) -> {
+            if (newValue != null) {
+                editTransactionAmountBtn.setDisable(false);
+                deleteTransactionAmountBtn.setDisable(false);
+            } else {
+                editTransactionAmountBtn.setDisable(true);
+                deleteTransactionAmountBtn.setDisable(true);
+            }
+        });
         this.transactionAmountListView.setCellFactory(param -> new ListCell<>() {
             @Override
             protected void updateItem(TransactionAmount item, boolean empty) {
@@ -180,7 +189,7 @@ public class FixedTransactionDialog extends FinancerDialog<FixedTransaction> {
 
     @Override
     protected void prepareDialogContent() {
-        this.categoryLabel.setText(Formatter.formatCategoryName(this.categoryTree.getValue()));
+        this.categoryLabel.setText(new JavaFXFormatter(LocalStorageImpl.getInstance()).formatCategoryName(this.categoryTree.getValue()));
         if (this.getValue() != null) {
             this.dayField.setValue(this.getValue().getDay());
             this.startDateField.setValue(this.getValue().getStartDate());
