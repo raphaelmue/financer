@@ -190,6 +190,7 @@ public class FinancerService {
         values.put("name", user.getName());
         values.put("surname", user.getSurname());
         values.put("birthDate", user.getBirthDate());
+        values.put("gender", user.getGenderObject().getName());
 
         this.database.insert(Database.Table.USERS, values);
 

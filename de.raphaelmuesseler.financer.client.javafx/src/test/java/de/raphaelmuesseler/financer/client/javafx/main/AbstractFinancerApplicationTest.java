@@ -47,7 +47,8 @@ class AbstractFinancerApplicationTest extends ApplicationTest {
             "I2HoOYJmqKfGboyJAdCEQwulUkxmhVH5",
             "Max",
             "Mustermann",
-            LocalDate.of(1989, 5, 28));
+            LocalDate.of(1989, 5, 28),
+            User.Gender.MALE);
     final CategoryTree category = new CategoryTree(BaseCategory.CategoryClass.VARIABLE_EXPENSES, new Category(-1, "TestCategory", -1, -1));
     final Transaction transaction = new Transaction(-1, 52.5,
             category, "ProductName",
@@ -96,6 +97,9 @@ class AbstractFinancerApplicationTest extends ApplicationTest {
         write(user.getEmail());
         JFXDatePicker birthDatePicker = find("#registerBirthDatePicker");
         birthDatePicker.setValue(user.getBirthDateAsLocalDate());
+        clickOn((ComboBox) find("#genderComboBox"));
+        press(KeyCode.DOWN).release(KeyCode.DOWN);
+        press(KeyCode.ENTER).release(KeyCode.ENTER);
         clickOn((PasswordField) find("#registerPasswordTextField"));
         write(password);
         clickOn((PasswordField) find("#registerRepeatPasswordTextField"));

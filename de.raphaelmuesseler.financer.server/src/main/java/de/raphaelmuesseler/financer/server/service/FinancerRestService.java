@@ -45,7 +45,7 @@ public class FinancerRestService {
                                  @FormParam("salt") String salt, @FormParam("name") String name,
                                  @FormParam("surname") String surname, @FormParam("birthDate") String birthdate) throws Exception {
         Map<String, Object> newParameters = new HashMap<>();
-        User user = new User(email, password, salt, name, surname, LocalDate.parse(birthdate));
+        User user = new User(email, password, salt, name, surname, LocalDate.parse(birthdate), User.Gender.MALE);
         newParameters.put("user", user);
 
         Future<ConnectionResult> result = this.executor.submit(new ClientRestHandler("registerUser", newParameters));

@@ -15,13 +15,14 @@ public class DatabaseUser implements DatabaseObject, Serializable {
 
     }
 
-    public DatabaseUser(String email, String password, String salt, String name, String surname, String birthDate) {
+    public DatabaseUser(String email, String password, String salt, String name, String surname, String birthDate, String gender) {
         this.email = email;
         this.password = password;
         this.salt = salt;
         this.name = name;
         this.surname = surname;
         this.birthDate = birthDate;
+        this.gender = gender;
     }
 
     @Override

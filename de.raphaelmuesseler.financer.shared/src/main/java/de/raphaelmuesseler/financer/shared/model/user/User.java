@@ -42,8 +42,8 @@ public class User extends DatabaseUser {
         super();
     }
 
-    public User(String email, String password, String salt, String name, String surname, LocalDate birthDate) {
-        super(email, password, salt, name, surname, birthDate.toString());
+    public User(String email, String password, String salt, String name, String surname, LocalDate birthDate, Gender gender) {
+        super(email, password, salt, name, surname, birthDate.toString(), gender.getName());
     }
 
     @Override
