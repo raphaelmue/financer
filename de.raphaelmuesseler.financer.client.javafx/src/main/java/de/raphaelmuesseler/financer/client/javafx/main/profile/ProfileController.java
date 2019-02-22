@@ -36,10 +36,11 @@ import java.util.logging.Logger;
 
 public class ProfileController implements Initializable {
 
-    public Label nameLabel;
-    public Label surnameLabel;
+    public Label fullNameLabel;
     public Label emailLabel;
     public Label birthDateLabel;
+    public Label addressLabel;
+    public Label genderLabel;
     public TreeView<CategoryTree> categoriesTreeView;
     public JFXButton refreshCategoriesBtn;
     public JFXButton newCategoryBtn;
@@ -56,10 +57,10 @@ public class ProfileController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         this.user = (User) this.localStorage.readObject("user");
         if (user != null) {
-            this.nameLabel.setText(user.getName());
-            this.surnameLabel.setText(user.getSurname());
+            this.fullNameLabel.setText(user.getFullName());
             this.emailLabel.setText(user.getEmail());
             this.birthDateLabel.setText(this.user.getBirthDateAsLocalDate().toString());
+            this.genderLabel.setText(I18N.get(this.user.getGenderObject().getName()));
         }
 
         GlyphFont fontAwesome = GlyphFontRegistry.font("FontAwesome");

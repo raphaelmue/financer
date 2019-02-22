@@ -2,6 +2,8 @@
 
 <?import com.jfoenix.controls.*?>
 <?import javafx.scene.control.*?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
 <VBox fx:controller="de.raphaelmuesseler.financer.client.javafx.main.profile.ProfileController"
       xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" styleClass="content">
@@ -12,29 +14,50 @@
             <JFXTabPane styleClass="tab-container">
                 <Tab text="%personalInformation" closable="false" styleClass="tab">
                     <VBox styleClass="tab-content">
-                        <Label text="%personalInformation" styleClass="content-heading"/>
-                        <GridPane hgap="100" vgap="15">
-                            <Label text="%name" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
-                            <Label fx:id="nameLabel" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
-                            <Label text="%surname" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-                            <Label fx:id="surnameLabel" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
-                            <Label text="%email" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
-                            <Label fx:id="emailLabel" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
-                            <Label text="%birthDate" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
-                            <Label fx:id="birthDateLabel" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
-                        </GridPane>
+                        <Label styleClass="content-heading"/>
+                        <HBox>
+                            <VBox styleClass="profile-image-container">
+                                <ImageView styleClass="profile-image" fitHeight="200.0" fitWidth="200.0"
+                                           pickOnBounds="true" preserveRatio="true">
+                                    <Image url="/images/icons/financer-icon-square.png"/>
+                                </ImageView>
+                            </VBox>
+                            <VBox spacing="5">
+                                <GridPane hgap="100">
+                                    <VBox styleClass="description-box" GridPane.rowIndex="0" GridPane.columnIndex="0">
+                                        <Label text="%fullName" styleClass="description-label"/>
+                                        <Label fx:id="fullNameLabel" styleClass="description-content-label"/>
+                                    </VBox>
+                                    <VBox styleClass="description-box" GridPane.rowIndex="0" GridPane.columnIndex="1">
+                                        <Label text="%email" styleClass="description-label"/>
+                                        <Label fx:id="emailLabel" styleClass="description-content-label"/>
+                                    </VBox>
+                                    <JFXButton text="%edit" GridPane.rowIndex="0" GridPane.columnIndex="2"/>
+                                </GridPane>
+                                <Separator styleClass="separator" />
+                                <GridPane hgap="100" vgap="15" style="-fx-font-size: 14px">
+                                    <Label text="%birthDate" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                                    <Label fx:id="birthDateLabel" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+                                    <Label text="%address" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                                    <Label fx:id="addressLabel" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+                                    <Label text="%gender" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                                    <Label fx:id="genderLabel" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+                                </GridPane>
+                            </VBox>
+                        </HBox>
                     </VBox>
                 </Tab>
                 <Tab fx:id="categoriesTab" text="%categories" closable="false">
                     <VBox styleClass="tab-content">
                         <Label text="%categories" styleClass="content-heading"/>
                         <HBox styleClass="tool-btn-bar">
-                            <JFXButton fx:id="refreshCategoriesBtn" text="%refresh" onAction="#handleRefreshCategories" />
+                            <JFXButton fx:id="refreshCategoriesBtn" text="%refresh"
+                                       onAction="#handleRefreshCategories"/>
                             <JFXButton fx:id="newCategoryBtn" text="%new" onAction="#handleNewCategory"/>
-                            <JFXButton fx:id="editCategoryBtn" text="%edit" onAction="#handleEditCategory" />
-                            <JFXButton fx:id="deleteCategoryBtn" text="%delete" onAction="#handleDeleteCategory" />
+                            <JFXButton fx:id="editCategoryBtn" text="%edit" onAction="#handleEditCategory"/>
+                            <JFXButton fx:id="deleteCategoryBtn" text="%delete" onAction="#handleDeleteCategory"/>
                         </HBox>
-                        <TreeView fx:id="categoriesTreeView" />
+                        <TreeView fx:id="categoriesTreeView"/>
                     </VBox>
                 </Tab>
             </JFXTabPane>

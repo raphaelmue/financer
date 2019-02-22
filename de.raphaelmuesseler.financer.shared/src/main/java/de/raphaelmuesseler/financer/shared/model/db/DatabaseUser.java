@@ -7,7 +7,7 @@ import java.io.Serializable;
 public class DatabaseUser implements DatabaseObject, Serializable {
     private static final long serialVersionUID = 8551108621522985674L;
     private int id;
-    private String email, password, salt, name, surname;
+    private String email, password, salt, name, surname, gender;
     @SerializedName("birthdate")
     private String birthDate;
 
@@ -57,6 +57,10 @@ public class DatabaseUser implements DatabaseObject, Serializable {
         return birthDate;
     }
 
+    public String getGender() {
+        return gender;
+    }
+
     public void setId(int id) {
         this.id = id;
     }
@@ -83,5 +87,9 @@ public class DatabaseUser implements DatabaseObject, Serializable {
 
     public void setBirthDate(String birthDate) {
         this.birthDate = birthDate;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
     }
 }

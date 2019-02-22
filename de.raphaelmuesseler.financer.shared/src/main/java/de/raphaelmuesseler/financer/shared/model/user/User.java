@@ -9,6 +9,32 @@ import java.time.LocalDate;
 
 @JsonIgnoreProperties(ignoreUnknown = true, value = { "birthDateAsLocalDate" })
 public class User extends DatabaseUser {
+
+    public enum Gender {
+        MALE("male"),
+        FEMALE("female"),
+        NOT_SPECIFIED("notSpecified");
+
+        private final String name;
+
+        Gender(String name) {
+            this.name = name;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public static Gender getGenderByName(String name) {
+            for (Gender gender : values()) {
+                if (gender.getName().equals(name)) {
+                    return gender;
+                }
+            }
+            return null;
+        }
+    }
+
     private Token token;
     private UserSettings settings;
 
@@ -30,6 +56,7 @@ public class User extends DatabaseUser {
             this.setPassword(((DatabaseUser) databaseObject).getPassword());
             this.setSalt(((DatabaseUser) databaseObject).getSalt());
             this.setBirthDate(((DatabaseUser) databaseObject).getBirthDate());
+            this.setGender(((DatabaseUser) databaseObject).getGender());
         }
         return this;
     }
@@ -43,6 +70,10 @@ public class User extends DatabaseUser {
             settings = new UserSettings();
         }
         return settings;
+    }
+
+    public Gender getGenderObject() {
+        return Gender.getGenderByName(super.getGender());
     }
 
     public void setToken(Token token) {
