@@ -8,6 +8,7 @@ import de.raphaelmuesseler.financer.client.javafx.dialogs.FinancerAlert;
 import de.raphaelmuesseler.financer.client.javafx.dialogs.FinancerExceptionDialog;
 import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
 import de.raphaelmuesseler.financer.client.javafx.main.FinancerApplication;
+import de.raphaelmuesseler.financer.client.local.Application;
 import de.raphaelmuesseler.financer.client.local.LocalSettings;
 import de.raphaelmuesseler.financer.client.local.LocalSettingsImpl;
 import de.raphaelmuesseler.financer.shared.connection.ConnectionResult;
@@ -30,7 +31,7 @@ import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class LoginController implements Initializable {
+public class LoginController implements Initializable, Application {
 
     public TextField loginEmailTextField;
     public PasswordField loginPasswordField;
@@ -59,6 +60,17 @@ public class LoginController implements Initializable {
         }
         I18N.setLocalStorage(this.localStorage);
 
+        ServerRequestHandler.setApplication(this);
+        ServerRequestHandler.setLocalStorage(this.localStorage);
+
+        Platform.runLater(() -> {
+            this.gridPane.getScene().setOnKeyPressed(e -> {
+                if (e.getCode() == KeyCode.ENTER) {
+                    handleSignInButtonAction();
+                }
+            });
+        });
+
         Platform.runLater(() -> this.gridPane.getScene().setOnKeyPressed(e -> {
             if (e.getCode() == KeyCode.ENTER) {
                 handleSignInButtonAction();
@@ -67,9 +79,6 @@ public class LoginController implements Initializable {
     }
 
     public void handleSignInButtonAction() {
-        this.gridPane.setDisable(true);
-        this.progressIndicatorBox.setVisible(true);
-
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("email", this.loginEmailTextField.getText());
         parameters.put("password", this.loginPasswordField.getText());
@@ -82,8 +91,6 @@ public class LoginController implements Initializable {
                 } else {
                     logger.log(Level.INFO, "User's credentials are incorrect.");
                     loginErrorLabel.setVisible(true);
-                    gridPane.setDisable(false);
-                    progressIndicatorBox.setVisible(false);
                 }
             }
 
@@ -93,8 +100,6 @@ public class LoginController implements Initializable {
                 Platform.runLater(() -> {
                     FinancerExceptionDialog dialog = new FinancerExceptionDialog("Login", exception);
                     dialog.showAndWait();
-                    gridPane.setDisable(false);
-                    progressIndicatorBox.setVisible(false);
                 });
             }
         }));
@@ -117,7 +122,6 @@ public class LoginController implements Initializable {
         User user = new RegisterDialog().showAndGetResult();
 
         if (user != null) {
-            this.progressIndicatorBox.setVisible(true);
             Map<String, Object> parameters = new HashMap<>();
             parameters.put("user", user);
 
@@ -135,8 +139,7 @@ public class LoginController implements Initializable {
 
                 @Override
                 public void onAfter() {
-                    gridPane.setDisable(false);
-                    progressIndicatorBox.setVisible(false);
+
                 }
             }));
         }
@@ -168,5 +171,27 @@ public class LoginController implements Initializable {
                 e.printStackTrace();
             }
         }));
+    }
+
+    @Override
+    public void showLoadingBox() {
+        this.gridPane.setDisable(true);
+        this.progressIndicatorBox.setVisible(true);
+    }
+
+    @Override
+    public void hideLoadingBox() {
+        this.gridPane.setDisable(false);
+        this.progressIndicatorBox.setVisible(false);
+    }
+
+    @Override
+    public void setOffline() {
+
+    }
+
+    @Override
+    public void setOnline() {
+
     }
 }

@@ -2,10 +2,12 @@ package de.raphaelmuesseler.financer.client.javafx.main;
 
 import com.jfoenix.controls.JFXHamburger;
 import com.jfoenix.transitions.hamburger.HamburgerSlideCloseTransition;
+import de.raphaelmuesseler.financer.client.connection.ServerRequestHandler;
 import de.raphaelmuesseler.financer.client.format.I18N;
 import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
 import de.raphaelmuesseler.financer.client.javafx.login.LoginApplication;
 import de.raphaelmuesseler.financer.client.javafx.util.ApplicationHelper;
+import de.raphaelmuesseler.financer.client.local.Application;
 import de.raphaelmuesseler.financer.client.local.LocalSettings;
 import de.raphaelmuesseler.financer.shared.model.user.User;
 import javafx.fxml.FXML;
@@ -28,9 +30,11 @@ import org.controlsfx.glyphfont.GlyphFontRegistry;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.concurrent.Executors;
 
-public class FinancerController implements Initializable {
+public class FinancerController implements Initializable, Application {
     public BorderPane rootLayout;
+    public BorderPane header;
     private static VBox loadingBox;
     public Button overviewTabBtn;
     public Button transactionsTabBtn;
@@ -42,12 +46,21 @@ public class FinancerController implements Initializable {
     public MenuItem logoutBtn;
     public JFXHamburger hamburgerBtn;
     public Label contentLabel;
+    public Label offlineLabel;
 
     private ResourceBundle resourceBundle;
     private LocalStorageImpl localStorage = (LocalStorageImpl) LocalStorageImpl.getInstance();
 
     @FXML
     public void initialize(URL location, ResourceBundle resources) {
+        ServerRequestHandler.setApplication(this);
+
+        try {
+            ServerRequestHandler.makeRequests(Executors.newCachedThreadPool());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         User user = (User) this.localStorage.readObject("user");
 
         // setting up language
@@ -87,20 +100,30 @@ public class FinancerController implements Initializable {
         handleShowOverviewContent();
     }
 
-    public static boolean showLoadingBox() {
+    @Override
+    public void showLoadingBox() {
         if (loadingBox != null) {
             loadingBox.setVisible(true);
-            return true;
         }
-        return false;
     }
 
-    public static boolean hideLoadingBox() {
+    @Override
+    public void hideLoadingBox() {
         if (loadingBox != null && loadingBox.isVisible()) {
             loadingBox.setVisible(false);
-            return true;
         }
-        return false;
+    }
+
+    @Override
+    public void setOffline() {
+        this.header.setStyle("-fx-background-color: #909ca8");
+        this.offlineLabel.setVisible(true);
+    }
+
+    @Override
+    public void setOnline() {
+        this.header.setStyle("-fx-background-color: #92cab1");
+        this.offlineLabel.setVisible(false);
     }
 
     public BorderPane getRootLayout() {

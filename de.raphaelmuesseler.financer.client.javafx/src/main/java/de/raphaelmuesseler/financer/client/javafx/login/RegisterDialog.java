@@ -46,7 +46,7 @@ public class RegisterDialog extends FinancerDialog<User> {
         this.emailField.setId("registerEmailTextField");
         gridPane.add(this.emailField, 1, 2);
 
-        gridPane.add(new Label(I18N.get("birthDate")), 0, 3);
+        gridPane.add(new Label(I18N.get("birthdate")), 0, 3);
         this.birthDatePicker = new JFXDatePicker();
         this.birthDatePicker.setId("registerBirthDatePicker");
         gridPane.add(this.birthDatePicker, 1, 3);

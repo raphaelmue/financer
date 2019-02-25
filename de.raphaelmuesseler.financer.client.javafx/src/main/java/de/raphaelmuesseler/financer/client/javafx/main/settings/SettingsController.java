@@ -7,7 +7,6 @@ import de.raphaelmuesseler.financer.client.format.I18N;
 import de.raphaelmuesseler.financer.client.javafx.connection.JavaFXAsyncConnectionCall;
 import de.raphaelmuesseler.financer.client.javafx.dialogs.FinancerConfirmDialog;
 import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
-import de.raphaelmuesseler.financer.client.javafx.main.FinancerController;
 import de.raphaelmuesseler.financer.client.javafx.util.ApplicationHelper;
 import de.raphaelmuesseler.financer.client.local.LocalSettings;
 import de.raphaelmuesseler.financer.client.local.LocalStorage;
@@ -47,8 +46,6 @@ public class SettingsController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        FinancerController.showLoadingBox();
-
         GlyphFont fontAwesome = GlyphFontRegistry.font("FontAwesome");
         this.logoutFromDeviceBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.SIGN_OUT));
 
@@ -89,8 +86,6 @@ public class SettingsController implements Initializable {
         });
 
         this.loadTokenListView();
-
-        FinancerController.hideLoadingBox();
     }
 
     private void loadTokenListView() {

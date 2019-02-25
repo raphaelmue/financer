@@ -4,7 +4,6 @@ import de.raphaelmuesseler.financer.client.format.FormatterImpl;
 import de.raphaelmuesseler.financer.client.format.I18N;
 import de.raphaelmuesseler.financer.client.javafx.format.JavaFXFormatter;
 import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
-import de.raphaelmuesseler.financer.client.javafx.main.FinancerController;
 import de.raphaelmuesseler.financer.shared.model.BaseCategory;
 import de.raphaelmuesseler.financer.shared.model.Category;
 import de.raphaelmuesseler.financer.shared.model.CategoryTree;
@@ -30,8 +29,6 @@ public class OverviewController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        FinancerController.showLoadingBox();
-
         BaseCategory categories = (BaseCategory) this.localStorage.readObject("categories");
 
         if (categories == null) {
@@ -83,7 +80,5 @@ public class OverviewController implements Initializable {
         GridPane.setHgrow(balanceLabel, Priority.ALWAYS);
         GridPane.setVgrow(balanceLabel, Priority.ALWAYS);
         this.balanceGridPane.add(balanceLabel, 1, 4);
-
-        FinancerController.hideLoadingBox();
     }
 }

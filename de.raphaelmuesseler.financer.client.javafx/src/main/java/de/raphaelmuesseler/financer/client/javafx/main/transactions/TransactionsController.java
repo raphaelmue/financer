@@ -10,7 +10,6 @@ import de.raphaelmuesseler.financer.client.javafx.connection.RetrievalServiceImp
 import de.raphaelmuesseler.financer.client.javafx.dialogs.FinancerConfirmDialog;
 import de.raphaelmuesseler.financer.client.javafx.format.JavaFXFormatter;
 import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
-import de.raphaelmuesseler.financer.client.javafx.main.FinancerController;
 import de.raphaelmuesseler.financer.shared.connection.AsyncCall;
 import de.raphaelmuesseler.financer.shared.connection.ConnectionResult;
 import de.raphaelmuesseler.financer.shared.model.BaseCategory;
@@ -20,11 +19,11 @@ import de.raphaelmuesseler.financer.shared.model.transactions.AbstractTransactio
 import de.raphaelmuesseler.financer.shared.model.transactions.FixedTransaction;
 import de.raphaelmuesseler.financer.shared.model.transactions.Transaction;
 import de.raphaelmuesseler.financer.shared.model.user.User;
-import de.raphaelmuesseler.financer.util.collections.CollectionUtil;
 import de.raphaelmuesseler.financer.util.concurrency.FinancerExecutor;
 import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.fxml.Initializable;
@@ -65,14 +64,11 @@ public class TransactionsController implements Initializable {
     private User user;
     private Logger logger = Logger.getLogger("FinancerApplication");
     private LocalStorageImpl localStorage = (LocalStorageImpl) LocalStorageImpl.getInstance();
-    private ObservableList<Transaction> transactions;
     private BaseCategory categories;
     private JavaFXFormatter formatter = new JavaFXFormatter(localStorage);
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        FinancerController.showLoadingBox();
-
         Platform.runLater(() -> {
             this.user = (User) this.localStorage.readObject("user");
 
@@ -277,21 +273,17 @@ public class TransactionsController implements Initializable {
     public void handleRefreshTransactions() {
         RetrievalServiceImpl.getInstance().fetchTransactions(this.user, new AsyncCall<>() {
             @Override
-            public void onSuccess(List<Transaction> result) {
-                transactions = CollectionUtil.castListToObservableList(result);
-                Platform.runLater(() -> {
-                    loadTransactionTableItems();
-                    transactionsTableView.refresh();
-                    FinancerController.hideLoadingBox();
-                });
-            }
+            public void onSuccess(List<Transaction> result) { }
 
             @Override
-            public void onFailure(Exception exception) {
-                List<Transaction> result = localStorage.readList("transactions");
-                if (result != null && result.size() > 0) {
-                    transactions = CollectionUtil.castListToObservableList(result);
-                }
+            public void onAfter() {
+                categories = (BaseCategory) localStorage.readObject("categories");
+                Platform.runLater(() -> {
+                    loadTransactionTableItems();
+                    transactionsTableView.getColumns().get(1).setSortType(TableColumn.SortType.DESCENDING);
+                    transactionsTableView.getSortOrder().add(transactionsTableView.getColumns().get(1));
+                    transactionsTableView.refresh();
+                });
             }
         });
     }
@@ -309,11 +301,8 @@ public class TransactionsController implements Initializable {
             FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "addTransaction", parameters, new JavaFXAsyncConnectionCall() {
                 @Override
                 public void onSuccess(ConnectionResult result) {
-                    Platform.runLater(() -> {
-                        // removing numbers in category's name
-                        transactions.add((Transaction) result.getResult());
-                        loadTransactionTableItems();
-                    });
+                    transaction.setId(((Transaction) result.getResult()).getId());
+                    localStorage.writeObject("categories", categories);
                 }
 
                 @Override
@@ -321,11 +310,31 @@ public class TransactionsController implements Initializable {
                     logger.log(Level.SEVERE, exception.getMessage(), exception);
                     JavaFXAsyncConnectionCall.super.onFailure(exception);
                 }
-            }));
+
+                @Override
+                public void onAfter() {
+                    Platform.runLater(() -> loadTransactionTableItems());
+                }
+            }, true));
         }
     }
 
     private void loadTransactionTableItems() {
+        ObservableList<Transaction> transactions = FXCollections.observableArrayList();
+        if (this.categories != null) {
+//            transactionsTableView.getItems().clear();
+            this.categories.traverse(treeItem -> {
+                if ((((CategoryTree) treeItem).getCategoryClass() == BaseCategory.CategoryClass.VARIABLE_EXPENSES ||
+                        ((CategoryTree) treeItem).getCategoryClass() == BaseCategory.CategoryClass.VARIABLE_REVENUE)) {
+                    for (AbstractTransaction abstractTransaction : ((CategoryTree) treeItem).getTransactions()) {
+                        if (abstractTransaction instanceof Transaction) {
+                            transactions.add((Transaction) abstractTransaction);
+                        }
+                    }
+                }
+            });
+        }
+
         FilteredList<Transaction> filteredData = new FilteredList<>(transactions, transaction -> true);
         filterTransactionsTextField.textProperty().addListener((observable, oldValue, newValue) ->
                 filteredData.setPredicate(transaction -> {
@@ -341,6 +350,7 @@ public class TransactionsController implements Initializable {
         transactionsTableView.setItems(filteredData);
         transactionsTableView.getColumns().get(1).setSortType(TableColumn.SortType.DESCENDING);
         transactionsTableView.getSortOrder().add(transactionsTableView.getColumns().get(1));
+        transactionsTableView.refresh();
     }
 
     public void handleEditTransaction() {
@@ -358,9 +368,8 @@ public class TransactionsController implements Initializable {
                     parameters, new JavaFXAsyncConnectionCall() {
                 @Override
                 public void onSuccess(ConnectionResult result) {
-                    Platform.runLater(() -> {
-                        transactionsTableView.refresh();
-                    });
+                    localStorage.writeObject("categories", categories);
+                    Platform.runLater(() -> transactionsTableView.refresh());
                 }
 
                 @Override
@@ -368,7 +377,7 @@ public class TransactionsController implements Initializable {
                     logger.log(Level.SEVERE, exception.getMessage(), exception);
                     JavaFXAsyncConnectionCall.super.onFailure(exception);
                 }
-            }));
+            }, true));
         }
     }
 
@@ -383,9 +392,9 @@ public class TransactionsController implements Initializable {
                     @Override
                     public void onSuccess(ConnectionResult result) {
                         Platform.runLater(() -> {
-                            transactions.remove(transaction);
+                            transaction.getCategoryTree().getTransactions().remove(transaction);
+                            loadTransactionTableItems();
                             localStorage.writeObject("categories", categories);
-                            transactionsTableView.refresh();
                         });
                     }
 
@@ -394,18 +403,31 @@ public class TransactionsController implements Initializable {
                         logger.log(Level.SEVERE, exception.getMessage(), exception);
                         JavaFXAsyncConnectionCall.super.onFailure(exception);
                     }
-                }));
+                }, true));
             }
         }
     }
 
     public void handleRefreshFixedTransactions() {
-        RetrievalServiceImpl.getInstance().fetchFixedTransactions(this.user, result -> Platform.runLater(() -> {
-            categories = (BaseCategory) localStorage.readObject("categories");
+        RetrievalServiceImpl.getInstance().fetchFixedTransactions(this.user, new AsyncCall<>() {
+            @Override
+            public void onSuccess(List<FixedTransaction> result) { }
 
-            loadFixedTransactionTableItems();
-            fixedTransactionsListView.getItems().clear();
-        }));
+            @Override
+            public void onFailure(Exception exception) {
+                logger.log(Level.SEVERE, exception.getMessage(), exception);
+            }
+
+            @Override
+            public void onAfter() {
+                Platform.runLater(() -> {
+                    categories = (BaseCategory) localStorage.readObject("categories");
+
+                    loadFixedTransactionTableItems();
+                    fixedTransactionsListView.getItems().clear();
+                });
+            }
+        });
     }
 
     public void handleNewFixedTransaction() {
@@ -434,7 +456,7 @@ public class TransactionsController implements Initializable {
                     logger.log(Level.SEVERE, exception.getMessage(), exception);
                     JavaFXAsyncConnectionCall.super.onFailure(exception);
                 }
-            }));
+            }, true));
         }
     }
 
@@ -467,7 +489,7 @@ public class TransactionsController implements Initializable {
                     logger.log(Level.SEVERE, exception.getMessage(), exception);
                     JavaFXAsyncConnectionCall.super.onFailure(exception);
                 }
-            }));
+            }, true));
         }
     }
 
@@ -496,7 +518,7 @@ public class TransactionsController implements Initializable {
                     logger.log(Level.SEVERE, exception.getMessage(), exception);
                     JavaFXAsyncConnectionCall.super.onFailure(exception);
                 }
-            }));
+            }, true));
         }
     }
 

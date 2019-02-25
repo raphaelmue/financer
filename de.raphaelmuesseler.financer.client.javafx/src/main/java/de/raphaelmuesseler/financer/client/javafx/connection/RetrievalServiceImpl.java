@@ -21,11 +21,14 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class RetrievalServiceImpl implements RetrievalService {
 
     private static RetrievalService INSTANCE = null;
     private final LocalStorage localStorage = LocalStorageImpl.getInstance();
+    private final Logger logger = Logger.getLogger("FinancerApplication");
 
 
     public static RetrievalService getInstance() {
@@ -60,11 +63,16 @@ public class RetrievalServiceImpl implements RetrievalService {
 
             @Override
             public void onFailure(Exception exception) {
-                if (exception instanceof ConnectException) {
-                    // TODO set offline
-                } else {
+                asyncCall.onFailure(exception);
+                if (!(exception instanceof ConnectException)) {
                     JavaFXAsyncConnectionCall.super.onFailure(exception);
+                    logger.log(Level.SEVERE, exception.getMessage(), exception);
                 }
+            }
+
+            @Override
+            public void onAfter() {
+                asyncCall.onAfter();
             }
         }));
     }
@@ -95,11 +103,15 @@ public class RetrievalServiceImpl implements RetrievalService {
 
             @Override
             public void onFailure(Exception exception) {
-                if (exception instanceof ConnectException) {
-                    // TODO set offline
-                } else {
+                asyncCall.onFailure(exception);
+                if (!(exception instanceof ConnectException)) {
                     JavaFXAsyncConnectionCall.super.onFailure(exception);
                 }
+            }
+
+            @Override
+            public void onAfter() {
+                asyncCall.onAfter();
             }
         }));
     }
@@ -131,13 +143,15 @@ public class RetrievalServiceImpl implements RetrievalService {
 
             @Override
             public void onFailure(Exception exception) {
-                if (exception instanceof ConnectException) {
-                    // TODO set offline
-                } else {
+                asyncConnectionCall.onFailure(exception);
+                if (!(exception instanceof ConnectException)) {
                     JavaFXAsyncConnectionCall.super.onFailure(exception);
-                    asyncConnectionCall.onFailure(exception);
                 }
+            }
 
+            @Override
+            public void onAfter() {
+                asyncConnectionCall.onAfter();
             }
         }));
     }
