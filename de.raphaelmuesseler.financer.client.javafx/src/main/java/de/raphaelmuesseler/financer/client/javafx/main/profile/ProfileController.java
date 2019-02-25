@@ -9,6 +9,8 @@ import de.raphaelmuesseler.financer.client.javafx.dialogs.FinancerConfirmDialog;
 import de.raphaelmuesseler.financer.client.javafx.dialogs.FinancerTextInputDialog;
 import de.raphaelmuesseler.financer.client.javafx.format.JavaFXFormatter;
 import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
+import de.raphaelmuesseler.financer.client.javafx.main.FinancerController;
+import de.raphaelmuesseler.financer.client.local.Application;
 import de.raphaelmuesseler.financer.shared.connection.AsyncCall;
 import de.raphaelmuesseler.financer.shared.connection.ConnectionResult;
 import de.raphaelmuesseler.financer.shared.model.BaseCategory;
@@ -74,7 +76,9 @@ public class ProfileController implements Initializable {
             FinancerExecutor.getExecutor().execute(new ServerRequestHandler(user, "changePassword", parameters,
                     new JavaFXAsyncConnectionCall() {
                 @Override
-                public void onSuccess(ConnectionResult result) { }
+                public void onSuccess(ConnectionResult result) {
+                    FinancerController.getInstance().showToast(Application.MessageType.SUCCESS, I18N.get("succChangedPassword"));
+                }
 
                 @Override
                 public void onFailure(Exception exception) {

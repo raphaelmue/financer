@@ -194,4 +194,9 @@ public class LoginController implements Initializable, Application {
     public void setOnline() {
 
     }
+
+    @Override
+    public void showToast(MessageType messageType, String message) {
+
+    }
 }

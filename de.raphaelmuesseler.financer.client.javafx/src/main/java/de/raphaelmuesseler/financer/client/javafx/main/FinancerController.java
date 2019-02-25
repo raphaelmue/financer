@@ -1,6 +1,7 @@
 package de.raphaelmuesseler.financer.client.javafx.main;
 
 import com.jfoenix.controls.JFXHamburger;
+import com.jfoenix.controls.JFXSnackbar;
 import com.jfoenix.transitions.hamburger.HamburgerSlideCloseTransition;
 import de.raphaelmuesseler.financer.client.connection.ServerRequestHandler;
 import de.raphaelmuesseler.financer.client.format.I18N;
@@ -48,12 +49,17 @@ public class FinancerController implements Initializable, Application {
     public Label contentLabel;
     public Label offlineLabel;
 
+    private static Application INSTANCE;
+
     private ResourceBundle resourceBundle;
     private LocalStorageImpl localStorage = (LocalStorageImpl) LocalStorageImpl.getInstance();
+    private JFXSnackbar snackbar;
 
     @FXML
     public void initialize(URL location, ResourceBundle resources) {
+        INSTANCE = this;
         ServerRequestHandler.setApplication(this);
+        ServerRequestHandler.setLocalStorage(this.localStorage);
 
         try {
             ServerRequestHandler.makeRequests(Executors.newCachedThreadPool());
@@ -66,6 +72,8 @@ public class FinancerController implements Initializable, Application {
         // setting up language
         this.resourceBundle = ResourceBundle.getBundle("Financer",
                 ApplicationHelper.getLocale((LocalSettings) localStorage.readObject("localSettings")));
+
+        this.snackbar = new JFXSnackbar(this.rootLayout);
 
         try {
             loadingBox = FXMLLoader.load(getClass().getResource("/de/raphaelmuesseler/financer/client/javafx/main/views/loading.fxml"), this.resourceBundle);
@@ -100,6 +108,10 @@ public class FinancerController implements Initializable, Application {
         handleShowOverviewContent();
     }
 
+    public static Application getInstance() {
+        return INSTANCE;
+    }
+
     @Override
     public void showLoadingBox() {
         if (loadingBox != null) {
@@ -124,6 +136,13 @@ public class FinancerController implements Initializable, Application {
     public void setOnline() {
         this.header.setStyle("-fx-background-color: #92cab1");
         this.offlineLabel.setVisible(false);
+    }
+
+    @Override
+    public synchronized void showToast(MessageType messageType, String message) {
+        Label messageLabel = new Label(message);
+        messageLabel.getStyleClass().add(messageType.getName() + "-toast-label");
+        this.snackbar.enqueue(new JFXSnackbar.SnackbarEvent(messageLabel));
     }
 
     public BorderPane getRootLayout() {
