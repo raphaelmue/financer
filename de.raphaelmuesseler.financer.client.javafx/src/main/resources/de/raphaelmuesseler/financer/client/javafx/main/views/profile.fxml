@@ -22,29 +22,37 @@
                                     <Image url="/images/icons/financer-icon-square.png"/>
                                 </ImageView>
                             </VBox>
-                            <VBox spacing="5">
-                                <GridPane hgap="100">
-                                    <VBox styleClass="description-box" GridPane.rowIndex="0" GridPane.columnIndex="0">
-                                        <Label text="%fullName" styleClass="description-label"/>
-                                        <Label fx:id="fullNameLabel" styleClass="description-content-label"/>
-                                    </VBox>
-                                    <VBox styleClass="description-box" GridPane.rowIndex="0" GridPane.columnIndex="1">
-                                        <Label text="%email" styleClass="description-label"/>
-                                        <Label fx:id="emailLabel" styleClass="description-content-label"/>
-                                    </VBox>
-                                    <JFXButton text="%edit" GridPane.rowIndex="0" GridPane.columnIndex="2"/>
-                                </GridPane>
+                            <VBox spacing="5" HBox.hgrow="ALWAYS">
+                                <BorderPane HBox.hgrow="ALWAYS">
+                                    <left>
+                                        <VBox styleClass="description-box">
+                                            <Label text="%fullName" styleClass="description-label"/>
+                                            <Label fx:id="fullNameLabel" styleClass="description-content-label"/>
+                                        </VBox>
+                                    </left>
+                                    <center>
+                                        <HBox alignment="CENTER">
+                                            <VBox styleClass="description-box">
+                                                <Label text="%email" styleClass="description-label"/>
+                                                <Label fx:id="emailLabel" styleClass="description-content-label"/>
+                                            </VBox>
+                                        </HBox>
+                                    </center>
+                                    <right>
+                                        <JFXButton alignment="CENTER" text="%edit"/>
+                                    </right>
+                                </BorderPane>
                                 <Separator styleClass="separator"/>
-                                <GridPane hgap="100" vgap="15" style="-fx-font-size: 14px">
-                                    <Label text="%birthDate" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
-                                    <Label fx:id="birthDateLabel" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
-                                    <Label text="%gender" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-                                    <Hyperlink fx:id="changePasswordLink" text="%changePassword" GridPane.rowIndex="1"
-                                               GridPane.columnIndex="1"/>
-                                    <Label text="%address" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
-                                    <Label fx:id="addressLabel" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
-                                    <Label text="%gender" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
-                                    <Label fx:id="genderLabel" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+                                <GridPane hgap="200" vgap="15" style="-fx-font-size: 14px">
+                                    <Label GridPane.rowIndex="0" GridPane.columnIndex="0" text="%birthDate"/>
+                                    <Label GridPane.rowIndex="0" GridPane.columnIndex="1" fx:id="birthDateLabel"/>
+                                    <Label GridPane.rowIndex="1" GridPane.columnIndex="0" text="%gender"/>
+                                    <Label GridPane.rowIndex="1" GridPane.columnIndex="1" fx:id="genderLabel"/>
+                                    <Label GridPane.rowIndex="2" GridPane.columnIndex="0" text="%address"/>
+                                    <Label GridPane.rowIndex="2" GridPane.columnIndex="1" fx:id="addressLabel"/>
+                                    <Label GridPane.rowIndex="3" GridPane.columnIndex="0" text="%password"/>
+                                    <Hyperlink GridPane.rowIndex="3" GridPane.columnIndex="1" fx:id="changePasswordLink"
+                                               text="%changePassword" style="-fx-padding: 0"/>
                                 </GridPane>
                             </VBox>
                         </HBox>

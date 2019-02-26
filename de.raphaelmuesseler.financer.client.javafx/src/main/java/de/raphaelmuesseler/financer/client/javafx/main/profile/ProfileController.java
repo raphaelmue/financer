@@ -68,29 +68,29 @@ public class ProfileController implements Initializable {
         }
 
         this.changePasswordLink.setOnAction(event -> {
-            new ChangePasswordDialog(user).showAndGetResult();
+            if (new ChangePasswordDialog(user).showAndGetResult() != null) {
 
-            Map<String, Object> parameters = new HashMap<>();
-            parameters.put("user", user);
+                Map<String, Object> parameters = new HashMap<>();
+                parameters.put("user", user);
 
-            FinancerExecutor.getExecutor().execute(new ServerRequestHandler(user, "changePassword", parameters,
-                    new JavaFXAsyncConnectionCall() {
-                @Override
-                public void onSuccess(ConnectionResult result) {
-                    FinancerController.getInstance().showToast(Application.MessageType.SUCCESS, I18N.get("succChangedPassword"));
-                }
+                FinancerExecutor.getExecutor().execute(new ServerRequestHandler(user, "changePassword", parameters,
+                        new JavaFXAsyncConnectionCall() {
+                            @Override
+                            public void onSuccess(ConnectionResult result) {
+                                FinancerController.getInstance().showToast(Application.MessageType.SUCCESS, I18N.get("succChangedPassword"));
+                            }
 
-                @Override
-                public void onFailure(Exception exception) {
-                    JavaFXAsyncConnectionCall.super.onFailure(exception);
-                }
+                            @Override
+                            public void onFailure(Exception exception) {
+                                JavaFXAsyncConnectionCall.super.onFailure(exception);
+                            }
 
-                @Override
-                public void onAfter() {
-                    localStorage.writeObject("user", user);
-                }
-            }));
-
+                            @Override
+                            public void onAfter() {
+                                localStorage.writeObject("user", user);
+                            }
+                        }));
+            }
         });
 
         GlyphFont fontAwesome = GlyphFontRegistry.font("FontAwesome");
