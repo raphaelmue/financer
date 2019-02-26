@@ -63,7 +63,7 @@ public class ProfileController implements Initializable {
         if (user != null) {
             this.fullNameLabel.setText(user.getFullName());
             this.emailLabel.setText(user.getEmail());
-            this.birthDateLabel.setText(this.user.getBirthDateAsLocalDate().toString());
+            this.birthDateLabel.setText(new JavaFXFormatter(localStorage).formatDate(this.user.getBirthDateAsLocalDate()));
             this.genderLabel.setText(I18N.get(this.user.getGenderObject().getName()));
         }
 

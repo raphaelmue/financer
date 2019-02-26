@@ -171,13 +171,21 @@ public class TransactionsController implements Initializable {
 
     private void loadTransactionsTable() {
         TableColumn<Transaction, Category> categoryColumn = new TableColumn<>(I18N.get("category"));
-        TableColumn<Transaction, Date> valueDateColumn = new TableColumn<>(I18N.get("valueDate"));
+        TableColumn<Transaction, LocalDate> valueDateColumn = new TableColumn<>(I18N.get("valueDate"));
         TableColumn<Transaction, Double> amountColumn = new TableColumn<>(I18N.get("amount"));
         TableColumn<Transaction, String> productColumn = new TableColumn<>(I18N.get("product"));
         TableColumn<Transaction, String> purposeColumn = new TableColumn<>(I18N.get("purpose"));
         TableColumn<Transaction, String> shopColumn = new TableColumn<>(I18N.get("shop"));
 
         valueDateColumn.setCellValueFactory(new PropertyValueFactory<>("valueDate"));
+        valueDateColumn.setStyle("-fx-alignment: CENTER;");
+        valueDateColumn.setCellFactory(param -> new TableCell<>() {
+            @Override
+            protected void updateItem(LocalDate item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(!empty ? formatter.formatDate(item) : null);
+            }
+        });
         amountColumn.setCellValueFactory(new PropertyValueFactory<>("amount"));
         amountColumn.setStyle("-fx-alignment: CENTER-RIGHT;");
         amountColumn.setCellFactory(param -> new TableCell<>() {

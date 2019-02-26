@@ -7,6 +7,13 @@ import de.raphaelmuesseler.financer.shared.model.Category;
 import de.raphaelmuesseler.financer.shared.model.CategoryTree;
 import de.raphaelmuesseler.financer.shared.model.user.User;
 
+import java.sql.Date;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
+
 public class FormatterImpl implements Formatter {
     private final LocalSettings localSettings;
     private final User user;
@@ -60,5 +67,11 @@ public class FormatterImpl implements Formatter {
             return (categoryTree.getValue().getName().equals(categoryTree.getCategoryClass().getName()) ?
                     I18N.get(categoryTree.getValue().getName()) : categoryTree.getValue().getName());
         }
+    }
+
+    @Override
+    public String formatDate(LocalDate localDate) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(localSettings.getLanguage());
+        return localDate.format(formatter);
     }
 }

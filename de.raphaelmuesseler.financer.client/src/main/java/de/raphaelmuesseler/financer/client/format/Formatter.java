@@ -4,6 +4,8 @@ import de.raphaelmuesseler.financer.shared.exceptions.FinancerException;
 import de.raphaelmuesseler.financer.shared.model.Category;
 import de.raphaelmuesseler.financer.shared.model.CategoryTree;
 
+import java.time.LocalDate;
+
 public interface Formatter {
     String formatExceptionMessage(FinancerException exception);
 
@@ -12,4 +14,6 @@ public interface Formatter {
     String formatCategoryName(Category category);
 
     String formatCategoryName(CategoryTree categoryTree);
+
+    String formatDate(LocalDate localDate);
 }
