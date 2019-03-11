@@ -20,10 +20,13 @@ import de.raphaelmuesseler.financer.client.app.R;
 import de.raphaelmuesseler.financer.client.app.local.LocalStorageImpl;
 import de.raphaelmuesseler.financer.client.app.ui.login.LoginActivity;
 import de.raphaelmuesseler.financer.client.app.ui.main.transactions.TransactionFragment;
+import de.raphaelmuesseler.financer.client.connection.ServerRequest;
+import de.raphaelmuesseler.financer.client.connection.ServerRequestHandler;
+import de.raphaelmuesseler.financer.client.local.Application;
 import de.raphaelmuesseler.financer.shared.model.user.User;
 
 public class FinancerActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, OnFragmentInteractionListener {
+        implements NavigationView.OnNavigationItemSelectedListener, OnFragmentInteractionListener, Application {
 
     private User user;
 
@@ -32,6 +35,8 @@ public class FinancerActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
 
         LocalStorageImpl.setContext(this);
+        ServerRequest.setHost(false);
+        ServerRequestHandler.setApplication(this);
 
         this.user = (User) LocalStorageImpl.getInstance().readObject("user");
         if (this.user == null) {
@@ -162,6 +167,31 @@ public class FinancerActivity extends AppCompatActivity
 
     @Override
     public void onFragmentInteraction(Uri uri) {
+
+    }
+
+    @Override
+    public void showLoadingBox() {
+
+    }
+
+    @Override
+    public void hideLoadingBox() {
+
+    }
+
+    @Override
+    public void setOffline() {
+
+    }
+
+    @Override
+    public void setOnline() {
+
+    }
+
+    @Override
+    public void showToast(MessageType messageType, String s) {
 
     }
 }
