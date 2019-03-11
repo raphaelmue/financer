@@ -9,7 +9,7 @@ import com.google.gson.GsonBuilder;
 import java.util.Objects;
 
 import de.raphaelmuesseler.financer.client.local.LocalStorage;
-import de.raphaelmuesseler.financer.shared.model.User;
+import de.raphaelmuesseler.financer.shared.model.user.User;
 
 public class LocalStorageImpl implements LocalStorage {
     private static final String FILE_NAME = "de.raphaelmuesseler.financer.localstorage";

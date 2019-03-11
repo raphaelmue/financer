@@ -20,7 +20,7 @@ import de.raphaelmuesseler.financer.client.app.R;
 import de.raphaelmuesseler.financer.client.app.local.LocalStorageImpl;
 import de.raphaelmuesseler.financer.client.app.ui.login.LoginActivity;
 import de.raphaelmuesseler.financer.client.app.ui.main.transactions.TransactionFragment;
-import de.raphaelmuesseler.financer.shared.model.User;
+import de.raphaelmuesseler.financer.shared.model.user.User;
 
 public class FinancerActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnFragmentInteractionListener {
