@@ -10,6 +10,8 @@ import de.raphaelmuesseler.financer.client.javafx.connection.RetrievalServiceImp
 import de.raphaelmuesseler.financer.client.javafx.dialogs.FinancerConfirmDialog;
 import de.raphaelmuesseler.financer.client.javafx.format.JavaFXFormatter;
 import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
+import de.raphaelmuesseler.financer.client.javafx.main.FinancerController;
+import de.raphaelmuesseler.financer.client.local.Application;
 import de.raphaelmuesseler.financer.shared.connection.AsyncCall;
 import de.raphaelmuesseler.financer.shared.connection.ConnectionResult;
 import de.raphaelmuesseler.financer.shared.model.BaseCategory;
@@ -388,6 +390,8 @@ public class TransactionsController implements Initializable {
                 public void onSuccess(ConnectionResult result) {
                     transaction.setId(((Transaction) result.getResult()).getId());
                     localStorage.writeObject("categories", categories);
+
+                    FinancerController.getInstance().showToast(Application.MessageType.SUCCESS, I18N.get("succAddedTransaction"));
                 }
 
                 @Override
@@ -426,6 +430,7 @@ public class TransactionsController implements Initializable {
                 @Override
                 public void onSuccess(ConnectionResult result) {
                     handleRefreshFixedTransactions();
+                    FinancerController.getInstance().showToast(Application.MessageType.SUCCESS, I18N.get("succAddedFixedTransaction"));
                 }
 
                 @Override
@@ -459,6 +464,8 @@ public class TransactionsController implements Initializable {
                 public void onSuccess(ConnectionResult result) {
                     localStorage.writeObject("categories", categories);
                     Platform.runLater(() -> transactionsTableView.refresh());
+
+                    FinancerController.getInstance().showToast(Application.MessageType.SUCCESS, I18N.get("succUpdatedTransaction"));
                 }
 
                 @Override
@@ -499,6 +506,8 @@ public class TransactionsController implements Initializable {
                         fixedTransactionsListView.refresh();
                         categoriesListView.refresh();
                     });
+
+                    FinancerController.getInstance().showToast(Application.MessageType.SUCCESS, I18N.get("succUpdatedFixedTransaction"));
                 }
 
                 @Override
@@ -532,6 +541,8 @@ public class TransactionsController implements Initializable {
                             loadTransactionTableData();
                             localStorage.writeObject("categories", categories);
                         });
+
+                        FinancerController.getInstance().showToast(Application.MessageType.SUCCESS, I18N.get("succDeletedTransaction"));
                     }
 
                     @Override
@@ -567,6 +578,8 @@ public class TransactionsController implements Initializable {
 
                     fixedTransactionsListView.refresh();
                     categoriesListView.refresh();
+
+                    FinancerController.getInstance().showToast(Application.MessageType.SUCCESS, I18N.get("succDeletedFixedTransaction"));
                 }
 
                 @Override
