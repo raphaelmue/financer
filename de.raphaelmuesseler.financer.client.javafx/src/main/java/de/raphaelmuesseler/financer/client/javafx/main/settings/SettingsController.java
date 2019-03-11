@@ -36,8 +36,12 @@ public class SettingsController implements Initializable {
     public ComboBox<I18N.Language> languageMenuComboBox;
     public ComboBox<Currency> currencyComboBox;
     public CheckBox showSignCheckbox;
+
+    public ComboBox<Integer> maxNumberOfMonthsDisplayedComboBox;
+
     public JFXButton logoutFromDeviceBtn;
     public JFXListView<Token> devicesListView;
+
 
     private LocalStorage localStorage = LocalStorageImpl.getInstance();
     private User user = (User) localStorage.readObject("user");
@@ -48,7 +52,6 @@ public class SettingsController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         GlyphFont fontAwesome = GlyphFontRegistry.font("FontAwesome");
         this.logoutFromDeviceBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.SIGN_OUT));
-
 
         this.languageMenuComboBox.getItems().addAll(I18N.Language.getAll());
         this.languageMenuComboBox.getSelectionModel().select(I18N.Language.getLanguageByLocale(this.localSettings.getLanguage()));
@@ -83,6 +86,13 @@ public class SettingsController implements Initializable {
             parameters.put("property", "showCurrencySign");
             parameters.put("value", Boolean.toString(showSignCheckbox.isSelected()));
             updateSettings(parameters);
+        });
+
+        for (int i = 3; i <= 8; i++) this.maxNumberOfMonthsDisplayedComboBox.getItems().add(i);
+        this.maxNumberOfMonthsDisplayedComboBox.getSelectionModel().select((Integer) localSettings.getMaxNumberOfMonthsDisplayed());
+        this.maxNumberOfMonthsDisplayedComboBox.getSelectionModel().selectedItemProperty().addListener((observableValue, oldValue, newValue) -> {
+            localSettings.setMaxNumberOfMonthsDisplayed(newValue);
+            localStorage.writeObject("localSettings", localSettings);
         });
 
         this.loadTokenListView();

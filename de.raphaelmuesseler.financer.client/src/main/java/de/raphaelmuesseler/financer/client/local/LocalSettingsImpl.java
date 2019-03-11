@@ -6,8 +6,12 @@ import java.util.Locale;
 public class LocalSettingsImpl implements Serializable, LocalSettings {
     private static final long serialVersionUID = -7328386947589105017L;
 
+    // GENERAL SETTINGS
     private Locale language;
     private String theme;
+
+    // TRANSACTION SETTINGS
+    private int maxNumberOfMonthsDisplayed = 6;
 
     @Override
     public Locale getLanguage() {
@@ -31,6 +35,16 @@ public class LocalSettingsImpl implements Serializable, LocalSettings {
     @Override
     public String getTheme() {
         return getTheme();
+    }
+
+    @Override
+    public int getMaxNumberOfMonthsDisplayed() {
+        return this.maxNumberOfMonthsDisplayed;
+    }
+
+    @Override
+    public void setMaxNumberOfMonthsDisplayed(int maxNumberOfMonthsDisplayed) {
+        this.maxNumberOfMonthsDisplayed = maxNumberOfMonthsDisplayed;
     }
 
     @Override

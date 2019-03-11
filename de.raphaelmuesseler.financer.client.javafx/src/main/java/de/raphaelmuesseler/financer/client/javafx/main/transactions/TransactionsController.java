@@ -10,6 +10,7 @@ import de.raphaelmuesseler.financer.client.javafx.connection.RetrievalServiceImp
 import de.raphaelmuesseler.financer.client.javafx.dialogs.FinancerConfirmDialog;
 import de.raphaelmuesseler.financer.client.javafx.format.JavaFXFormatter;
 import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
+import de.raphaelmuesseler.financer.client.local.LocalSettingsImpl;
 import de.raphaelmuesseler.financer.shared.connection.AsyncCall;
 import de.raphaelmuesseler.financer.shared.connection.ConnectionResult;
 import de.raphaelmuesseler.financer.shared.model.BaseCategory;
@@ -106,14 +107,14 @@ public class TransactionsController implements Initializable {
     }
 
     private void loadTransactionsOverviewTable() {
-        final int numberOfMaxMonths = 6;
+        final int numberOfMaxMonths = ((LocalSettingsImpl) localStorage.readObject("localSettings")).getMaxNumberOfMonthsDisplayed();
         final List<TableColumn<TransactionOverviewRow, String>> monthColumns = new ArrayList<>(numberOfMaxMonths);
         final Map<CategoryTree, TransactionOverviewRow> rows = new HashMap<>();
 
         if (this.categories != null) {
             this.categories.traverse(categoryTree -> {
                 TransactionOverviewRow transactionOverviewRow = new TransactionOverviewRow((CategoryTree) categoryTree);
-                for (int i = 0; i < 6; i++) {
+                for (int i = 0; i < numberOfMaxMonths; i++) {
                     transactionOverviewRow.getAmounts()[i] = ((CategoryTree) categoryTree).getAmount(LocalDate.now().minusMonths(i));
                 }
                 rows.put((CategoryTree) categoryTree, transactionOverviewRow);
@@ -146,7 +147,7 @@ public class TransactionsController implements Initializable {
 
         for (int i = 0; i < numberOfMaxMonths; i++) {
             TableColumn<TransactionOverviewRow, String> column = new TableColumn<>(I18N.get(Objects.requireNonNull(getMonthByNumber(LocalDate.now().minusMonths(i).getMonthValue())).getName()));
-            this.adjustColumnWidth(column, this.transactionsOverviewTableView, 8);
+            this.adjustColumnWidth(column, this.transactionsOverviewTableView, numberOfMaxMonths + 2);
             column.setStyle("-fx-alignment: CENTER-RIGHT;");
             column.setSortable(false);
             int index = i;
@@ -281,7 +282,8 @@ public class TransactionsController implements Initializable {
     public void handleRefreshTransactions() {
         RetrievalServiceImpl.getInstance().fetchTransactions(this.user, new AsyncCall<>() {
             @Override
-            public void onSuccess(List<Transaction> result) { }
+            public void onSuccess(List<Transaction> result) {
+            }
 
             @Override
             public void onAfter() {
@@ -419,7 +421,8 @@ public class TransactionsController implements Initializable {
     public void handleRefreshFixedTransactions() {
         RetrievalServiceImpl.getInstance().fetchFixedTransactions(this.user, new AsyncCall<>() {
             @Override
-            public void onSuccess(List<FixedTransaction> result) { }
+            public void onSuccess(List<FixedTransaction> result) {
+            }
 
             @Override
             public void onFailure(Exception exception) {
@@ -683,10 +686,11 @@ public class TransactionsController implements Initializable {
 
     private class TransactionOverviewRow {
         private CategoryTree categoryTree;
-        private double[] amounts = new double[6];
+        private double[] amounts;
 
         TransactionOverviewRow(CategoryTree categoryTree) {
             this.categoryTree = categoryTree;
+            this.amounts = new double[((LocalSettingsImpl) localStorage.readObject("localSettings")).getMaxNumberOfMonthsDisplayed()];
         }
 
         CategoryTree getCategory() {

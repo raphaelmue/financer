@@ -12,5 +12,9 @@ public interface LocalSettings extends Settings {
 
     String getTheme();
 
+    int getMaxNumberOfMonthsDisplayed();
+
+    void setMaxNumberOfMonthsDisplayed(int maxNumberOfMonthsDisplayed);
+
 }
 
