@@ -7,7 +7,7 @@
     <string name="navigation_drawer_open">Navigation öffnen</string>
     <string name="email">Email</string>
     <string name="password">Passwort</string>
-    <string name="title_activity_login">Anmelden</string>
+    <string name="sign_in">Anmelden</string>
     <string name="overview">Überblick</string>
     <string name="transactions">Transaktionen</string>
     <string name="statistics">Statistiken</string>
@@ -19,4 +19,12 @@
     <string name="error_field_required">Dieses Feld muss ausgefüllt sein.</string>
     <string name="error_invalid_email">Die Email Adresse ist ungültig.</string>
     <string name="error_invalid_credentials">Deine Anmeldedaten sind nicht korrekt.</string>
+    <string name="add_transaction">Transaktion hinzufügen</string>
+    <string name="product">Produkt</string>
+    <string name="purpose">Verwendungszweck</string>
+    <string name="shop">Geschäft</string>
+    <string name="value_date">Wertstellung</string>
+    <string name="category">Kategorie</string>
+    <string name="amount">Betrag</string>
+    <string name="submit">Bestätigen</string>
 </resources>

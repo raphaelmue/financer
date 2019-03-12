@@ -2,10 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="de.raphaelmuesseler.financer.client.app">
 
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-
 
     <application
         android:allowBackup="true"
@@ -30,8 +29,12 @@
         </activity>
         <activity
             android:name=".ui.login.LoginActivity"
-            android:label="@string/title_activity_login"
-            android:theme="@style/AppTheme"/>
+            android:label="@string/sign_in"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".ui.main.transactions.AddTransactionActivity"
+            android:label="@string/add_transaction"
+            android:theme="@style/AppTheme" />
     </application>
 
 </manifest>

@@ -1,8 +1,10 @@
 package de.raphaelmuesseler.financer.client.app.ui.main.transactions;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
@@ -16,6 +18,7 @@ import java.util.List;
 
 import de.raphaelmuesseler.financer.client.app.R;
 import de.raphaelmuesseler.financer.client.app.local.LocalStorageImpl;
+import de.raphaelmuesseler.financer.client.app.ui.main.FinancerActivity;
 import de.raphaelmuesseler.financer.client.format.Formatter;
 import de.raphaelmuesseler.financer.client.format.FormatterImpl;
 import de.raphaelmuesseler.financer.shared.model.BaseCategory;
@@ -54,6 +57,12 @@ public class TransactionsTabFragment extends Fragment {
 
         ListView transactionListView = rootView.findViewById(R.id.lv_transactions);
         transactionListView.setAdapter(new TransactionListViewAdapter(getContext(), transactions));
+
+        FloatingActionButton addTransactionBtn = rootView.findViewById(R.id.fab_add_transaction);
+        addTransactionBtn.setOnClickListener(view -> {
+            Intent intent = new Intent(getContext(), AddTransactionActivity.class);
+            startActivity(intent);
+        });
 
         return rootView;
     }
