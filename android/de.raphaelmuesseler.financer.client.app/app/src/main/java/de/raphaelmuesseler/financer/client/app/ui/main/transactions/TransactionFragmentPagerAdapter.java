@@ -7,13 +7,16 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
 import de.raphaelmuesseler.financer.client.app.R;
+import de.raphaelmuesseler.financer.shared.model.BaseCategory;
 
 public class TransactionFragmentPagerAdapter extends FragmentPagerAdapter {
     private final Context context;
+    private final BaseCategory baseCategory;
 
-    public TransactionFragmentPagerAdapter(FragmentManager fm, Context context) {
+    TransactionFragmentPagerAdapter(FragmentManager fm, Context context, BaseCategory baseCategory) {
         super(fm);
         this.context = context;
+        this.baseCategory = baseCategory;
     }
 
     @Override
@@ -22,7 +25,7 @@ public class TransactionFragmentPagerAdapter extends FragmentPagerAdapter {
             case 0:
                 return TransactionOverviewTabFragment.newInstance();
             case 1:
-                return TransactionsTabFragment.newInstance();
+                return TransactionsTabFragment.newInstance(this.baseCategory);
             case 2:
                 return FixedTransactionsTabFragment.newInstance();
         }

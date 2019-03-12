@@ -22,6 +22,7 @@ import de.raphaelmuesseler.financer.client.app.ui.main.FinancerActivity;
 import de.raphaelmuesseler.financer.client.connection.ServerRequest;
 import de.raphaelmuesseler.financer.client.connection.ServerRequestHandler;
 import de.raphaelmuesseler.financer.client.local.Application;
+import de.raphaelmuesseler.financer.client.local.LocalSettingsImpl;
 import de.raphaelmuesseler.financer.shared.connection.ConnectionResult;
 import de.raphaelmuesseler.financer.shared.model.user.User;
 import de.raphaelmuesseler.financer.util.concurrency.FinancerExecutor;
@@ -99,6 +100,7 @@ public class LoginActivity extends AppCompatActivity implements Application {
                 public void onSuccess(ConnectionResult connectionResult) {
                     if (connectionResult.getResult() != null) {
                         LocalStorageImpl.getInstance().writeObject("user", connectionResult.getResult());
+                        LocalStorageImpl.getInstance().writeObject("localSettings", new LocalSettingsImpl());
                         RetrievalServiceImpl.getInstance().fetchAllData((User) connectionResult.getResult(), aVoid -> openFinancerActivity());
                     } else {
                         runOnUiThread(() -> {

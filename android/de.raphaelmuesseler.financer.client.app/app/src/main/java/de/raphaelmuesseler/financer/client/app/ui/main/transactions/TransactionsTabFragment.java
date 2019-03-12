@@ -1,39 +1,42 @@
 package de.raphaelmuesseler.financer.client.app.ui.main.transactions;
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.TextView;
+
+import java.util.List;
 
 import de.raphaelmuesseler.financer.client.app.R;
-import de.raphaelmuesseler.financer.client.app.ui.main.OnFragmentInteractionListener;
+import de.raphaelmuesseler.financer.client.app.local.LocalStorageImpl;
+import de.raphaelmuesseler.financer.client.format.Formatter;
+import de.raphaelmuesseler.financer.client.format.FormatterImpl;
+import de.raphaelmuesseler.financer.shared.model.BaseCategory;
+import de.raphaelmuesseler.financer.shared.model.transactions.Transaction;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link TransactionsTabFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class TransactionsTabFragment extends Fragment {
-    private OnFragmentInteractionListener mListener;
+
+    private final Formatter formatter = new FormatterImpl(LocalStorageImpl.getInstance());
 
     public TransactionsTabFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @return A new instance of fragment TransactionsTabFragment.
-     */
-    public static TransactionsTabFragment newInstance() {
-        return new TransactionsTabFragment();
+    public static TransactionsTabFragment newInstance(BaseCategory categories) {
+        TransactionsTabFragment fragment = new TransactionsTabFragment();
+
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("categories", categories);
+        fragment.setArguments(bundle);
+
+        return fragment;
     }
 
     @Override
@@ -42,33 +45,53 @@ public class TransactionsTabFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_transactions_tab, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_transactions_tab, container, false);
+
+        List<Transaction> transactions = LocalStorageImpl.getInstance().readList("transactions");
+
+        ListView transactionListView = rootView.findViewById(R.id.lv_transactions);
+        transactionListView.setAdapter(new TransactionListViewAdapter(getContext(), transactions));
+
+        return rootView;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
+    private class TransactionListViewAdapter extends ArrayAdapter<Transaction> {
+
+        TransactionListViewAdapter(Context context, List<Transaction> transactions) {
+            super(context, R.layout.list_item_transaction, transactions);
         }
-    }
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
+        @NonNull
+        @Override
+        public View getView(int position, View convertView, @NonNull ViewGroup parent) {
+            Transaction transaction = getItem(position);
+
+            View listItem = convertView;
+            if (listItem == null) {
+                listItem = LayoutInflater.from(this.getContext()).inflate(R.layout.list_item_transaction, parent, false);
+            }
+
+            if (transaction != null) {
+                TextView categoryTextView = listItem.findViewById(R.id.tv_list_item_transaction_category);
+                categoryTextView.setText(transaction.getCategoryTree().getValue().getName());
+
+                TextView productTextView = listItem.findViewById(R.id.tv_list_item_transaction_product);
+                productTextView.setText(!transaction.getProduct().isEmpty() ? transaction.getProduct() : transaction.getPurpose());
+
+                TextView valueDateTextView = listItem.findViewById(R.id.tv_list_item_transaction_value_date);
+                valueDateTextView.setText(formatter.formatDate(transaction.getValueDate()));
+
+                TextView amountTextView = listItem.findViewById(R.id.tv_list_item_transaction_amount);
+                amountTextView.setTextColor(transaction.getAmount() < 0 ?
+                        ContextCompat.getColor(this.getContext(), R.color.error) :
+                        ContextCompat.getColor(this.getContext(), R.color.success));
+                amountTextView.setText(formatter.formatCurrency(transaction.getAmount()));
+            }
+
+            return listItem;
         }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
     }
 }
