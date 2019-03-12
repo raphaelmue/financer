@@ -3,13 +3,15 @@ package de.raphaelmuesseler.financer.client.app.local;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.Base64;
 import java.util.Objects;
 
 import de.raphaelmuesseler.financer.client.local.LocalStorage;
-import de.raphaelmuesseler.financer.shared.model.user.User;
 
 public class LocalStorageImpl implements LocalStorage {
     private static final String FILE_NAME = "de.raphaelmuesseler.financer.localstorage";
@@ -35,29 +37,39 @@ public class LocalStorageImpl implements LocalStorage {
         LocalStorageImpl.CONTEXT = CONTEXT;
     }
 
-
     @Override
-    public Object readObject(String key) {
-        if (Objects.requireNonNull(this.sharedPreferences.getString(USER_STORAGE_NAME, "")).isEmpty()) {
-            return null;
-        } else {
-            return new GsonBuilder().create().fromJson(this.sharedPreferences.getString(key, ""), User.class);
+    public synchronized Object readObject(String key) {
+        if (!Objects.requireNonNull(this.sharedPreferences.getString(key, "")).isEmpty()) {
+            String string = this.sharedPreferences.getString(key, "");
+            byte[] data = Base64.getDecoder().decode(string);
+            try (ObjectInputStream objectInputStream = new ObjectInputStream(new ByteArrayInputStream(data))) {
+                return objectInputStream.readObject();
+            } catch(IOException | ClassNotFoundException e) {
+                e.printStackTrace();
+            }
         }
+        return null;
     }
 
     @Override
-    public boolean writeObject(String key, Object object) {
-        Gson gson = new GsonBuilder().create();
-        return this.sharedPreferences.edit().putString(key, gson.toJson(object)).commit();
+    public synchronized boolean writeObject(String key, Object object) {
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        try (ObjectOutputStream out = new ObjectOutputStream(byteArrayOutputStream)) {
+            out.writeObject(object);
+            return this.sharedPreferences.edit().putString(key,  Base64.getEncoder().encodeToString(byteArrayOutputStream.toByteArray())).commit();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     @Override
-    public boolean deleteObject(String key) {
+    public synchronized boolean deleteObject(String key) {
         return this.sharedPreferences.edit().remove(key).commit();
     }
 
     @Override
-    public boolean deleteAllData() {
+    public synchronized boolean deleteAllData() {
         return this.sharedPreferences.edit().clear().commit();
     }
 }

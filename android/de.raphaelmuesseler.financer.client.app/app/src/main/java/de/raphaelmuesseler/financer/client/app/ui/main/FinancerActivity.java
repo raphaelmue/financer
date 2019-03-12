@@ -23,12 +23,14 @@ import de.raphaelmuesseler.financer.client.app.ui.main.transactions.TransactionF
 import de.raphaelmuesseler.financer.client.connection.ServerRequest;
 import de.raphaelmuesseler.financer.client.connection.ServerRequestHandler;
 import de.raphaelmuesseler.financer.client.local.Application;
+import de.raphaelmuesseler.financer.shared.model.BaseCategory;
 import de.raphaelmuesseler.financer.shared.model.user.User;
 
 public class FinancerActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnFragmentInteractionListener, Application {
 
     private User user;
+    private BaseCategory baseCategory;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,6 +70,8 @@ public class FinancerActivity extends AppCompatActivity
             tvUserEmail.setText(this.user.getEmail());
             TextView tvUserFullName = navigationView.getHeaderView(0).findViewById(R.id.tvUserFullName);
             tvUserFullName.setText(this.user.getFullName());
+
+            baseCategory = (BaseCategory) LocalStorageImpl.getInstance().readObject("categories");
         }
     }
 

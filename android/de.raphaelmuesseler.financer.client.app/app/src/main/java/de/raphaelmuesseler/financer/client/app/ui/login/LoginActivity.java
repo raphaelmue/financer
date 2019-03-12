@@ -15,21 +15,24 @@ import java.util.HashMap;
 import java.util.Map;
 
 import de.raphaelmuesseler.financer.client.app.R;
+import de.raphaelmuesseler.financer.client.app.connection.AndroidAsyncConnectionCall;
+import de.raphaelmuesseler.financer.client.app.connection.RetrievalServiceImpl;
 import de.raphaelmuesseler.financer.client.app.local.LocalStorageImpl;
 import de.raphaelmuesseler.financer.client.app.ui.main.FinancerActivity;
-import de.raphaelmuesseler.financer.client.connection.AsyncConnectionCall;
 import de.raphaelmuesseler.financer.client.connection.ServerRequest;
 import de.raphaelmuesseler.financer.client.connection.ServerRequestHandler;
 import de.raphaelmuesseler.financer.client.local.Application;
 import de.raphaelmuesseler.financer.shared.connection.ConnectionResult;
+import de.raphaelmuesseler.financer.shared.model.user.User;
+import de.raphaelmuesseler.financer.util.concurrency.FinancerExecutor;
 
 public class LoginActivity extends AppCompatActivity implements Application {
 
-    private ServerRequestHandler mAuthTask = null;
-
-    private LinearLayout progresBar;
+    private LinearLayout progressBar;
     private EditText emailEditText;
     private EditText passwordEditText;
+
+    private boolean attemptingLogin = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,9 +40,11 @@ public class LoginActivity extends AppCompatActivity implements Application {
         ServerRequest.setHost(false);
         ServerRequestHandler.setApplication(this);
 
+        LocalStorageImpl.getInstance().deleteAllData();
+
         setContentView(R.layout.activity_login);
 
-        progresBar = findViewById(R.id.ll_loading);
+        progressBar = findViewById(R.id.ll_loading);
 
         emailEditText = findViewById(R.id.et_email);
 
@@ -57,7 +62,7 @@ public class LoginActivity extends AppCompatActivity implements Application {
     }
 
     private void attemptLogin() {
-        if (mAuthTask != null) {
+        if (attemptingLogin) {
             return;
         }
 
@@ -89,13 +94,12 @@ public class LoginActivity extends AppCompatActivity implements Application {
             parameters.put("email", email);
             parameters.put("password", password);
 
-            mAuthTask = new ServerRequestHandler("checkCredentials", parameters, new AsyncConnectionCall() {
+            FinancerExecutor.getExecutor().execute(new ServerRequestHandler("checkCredentials", parameters, new AndroidAsyncConnectionCall() {
                 @Override
                 public void onSuccess(ConnectionResult connectionResult) {
                     if (connectionResult.getResult() != null) {
                         LocalStorageImpl.getInstance().writeObject("user", connectionResult.getResult());
-                        openFinancerActivity();
-                        showToast(MessageType.SUCCESS, "asdf");
+                        RetrievalServiceImpl.getInstance().fetchAllData((User) connectionResult.getResult(), aVoid -> openFinancerActivity());
                     } else {
                         runOnUiThread(() -> {
                             passwordEditText.setError(getString(R.string.error_invalid_credentials));
@@ -111,10 +115,11 @@ public class LoginActivity extends AppCompatActivity implements Application {
 
                 @Override
                 public void onAfter() {
-                    mAuthTask = null;
+                    attemptingLogin = false;
                 }
-            });
-            new Thread(mAuthTask).start();
+            }));
+
+            this.attemptingLogin = true;
         }
     }
 
@@ -130,12 +135,12 @@ public class LoginActivity extends AppCompatActivity implements Application {
 
     @Override
     public void showLoadingBox() {
-        runOnUiThread(() -> progresBar.setVisibility(View.VISIBLE));
+        runOnUiThread(() -> progressBar.setVisibility(View.VISIBLE));
     }
 
     @Override
     public void hideLoadingBox() {
-        runOnUiThread(() -> progresBar.setVisibility(View.GONE));
+        runOnUiThread(() -> progressBar.setVisibility(View.GONE));
     }
 
     @Override
