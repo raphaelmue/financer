@@ -3,6 +3,7 @@ package de.raphaelmuesseler.financer.client.app.ui.main;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -14,6 +15,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import de.raphaelmuesseler.financer.client.app.R;
@@ -23,14 +26,12 @@ import de.raphaelmuesseler.financer.client.app.ui.main.transactions.TransactionF
 import de.raphaelmuesseler.financer.client.connection.ServerRequest;
 import de.raphaelmuesseler.financer.client.connection.ServerRequestHandler;
 import de.raphaelmuesseler.financer.client.local.Application;
-import de.raphaelmuesseler.financer.shared.model.BaseCategory;
 import de.raphaelmuesseler.financer.shared.model.user.User;
 
 public class FinancerActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnFragmentInteractionListener, Application {
 
-    private User user;
-    private BaseCategory baseCategory;
+    private ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,9 +40,10 @@ public class FinancerActivity extends AppCompatActivity
         LocalStorageImpl.setContext(this);
         ServerRequest.setHost(false);
         ServerRequestHandler.setApplication(this);
+        ServerRequestHandler.setLocalStorage(LocalStorageImpl.getInstance());
 
-        this.user = (User) LocalStorageImpl.getInstance().readObject("user");
-        if (this.user == null) {
+        User user = (User) LocalStorageImpl.getInstance().readObject("user");
+        if (user == null) {
             this.openLoginActivity();
         } else {
             setContentView(R.layout.activity_financer);
@@ -67,11 +69,11 @@ public class FinancerActivity extends AppCompatActivity
             // setting user's full name and email to navigation header
 
             TextView tvUserEmail = navigationView.getHeaderView(0).findViewById(R.id.tvUserEmail);
-            tvUserEmail.setText(this.user.getEmail());
+            tvUserEmail.setText(user.getEmail());
             TextView tvUserFullName = navigationView.getHeaderView(0).findViewById(R.id.tvUserFullName);
-            tvUserFullName.setText(this.user.getFullName());
+            tvUserFullName.setText(user.getFullName());
 
-            baseCategory = (BaseCategory) LocalStorageImpl.getInstance().readObject("categories");
+            this.progressBar = findViewById(R.id.toolbar_progress_bar);
         }
     }
 
@@ -117,9 +119,9 @@ public class FinancerActivity extends AppCompatActivity
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         // Handle navigation view item clicks here.
-        Fragment fragment = null;
+        Fragment fragment;
         Class fragmentClass = null;
         AppBarLayout appBarLayout= findViewById(R.id.toolbarContainer);
 
@@ -154,13 +156,13 @@ public class FinancerActivity extends AppCompatActivity
         if (fragmentClass != null) {
             try {
                 fragment = (Fragment) fragmentClass.newInstance();
+
+                // Insert the fragment by replacing any existing fragment
+                FragmentManager fragmentManager = getSupportFragmentManager();
+                fragmentManager.beginTransaction().replace(R.id.fragment_content, fragment).commit();
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
-            // Insert the fragment by replacing any existing fragment
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            fragmentManager.beginTransaction().replace(R.id.fragment_content, fragment).commit();
 
             DrawerLayout drawer = findViewById(R.id.drawer_layout);
             drawer.closeDrawer(GravityCompat.START);
@@ -176,12 +178,12 @@ public class FinancerActivity extends AppCompatActivity
 
     @Override
     public void showLoadingBox() {
-
+        runOnUiThread(() -> this.progressBar.setVisibility(View.VISIBLE));
     }
 
     @Override
     public void hideLoadingBox() {
-
+        runOnUiThread(() -> this.progressBar.setVisibility(View.INVISIBLE));
     }
 
     @Override

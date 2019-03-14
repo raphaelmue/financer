@@ -4,29 +4,40 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import de.raphaelmuesseler.financer.client.app.R;
+import de.raphaelmuesseler.financer.client.app.connection.RetrievalServiceImpl;
 import de.raphaelmuesseler.financer.client.app.local.LocalStorageImpl;
-import de.raphaelmuesseler.financer.client.app.ui.main.FinancerActivity;
 import de.raphaelmuesseler.financer.client.format.Formatter;
 import de.raphaelmuesseler.financer.client.format.FormatterImpl;
+import de.raphaelmuesseler.financer.shared.connection.AsyncCall;
 import de.raphaelmuesseler.financer.shared.model.BaseCategory;
 import de.raphaelmuesseler.financer.shared.model.transactions.Transaction;
+import de.raphaelmuesseler.financer.shared.model.user.User;
 
 public class TransactionsTabFragment extends Fragment {
 
     private final Formatter formatter = new FormatterImpl(LocalStorageImpl.getInstance());
+    private List<Transaction> transactions = new ArrayList<>();
+
+    private ListView transactionListView;
+    private SwipeRefreshLayout swipeRefreshLayoutTransactions;
 
     public TransactionsTabFragment() {
         // Required empty public constructor
@@ -43,8 +54,9 @@ public class TransactionsTabFragment extends Fragment {
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -53,10 +65,13 @@ public class TransactionsTabFragment extends Fragment {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_transactions_tab, container, false);
 
-        List<Transaction> transactions = LocalStorageImpl.getInstance().readList("transactions");
+        transactions.addAll(LocalStorageImpl.getInstance().readList("transactions"));
 
-        ListView transactionListView = rootView.findViewById(R.id.lv_transactions);
-        transactionListView.setAdapter(new TransactionListViewAdapter(getContext(), transactions));
+        this.swipeRefreshLayoutTransactions = rootView.findViewById(R.id.swipe_layout_transactions);
+        this.swipeRefreshLayoutTransactions.setOnRefreshListener(this::refreshTransactions);
+
+        this.transactionListView = rootView.findViewById(R.id.lv_transactions);
+        this.transactionListView.setAdapter(new TransactionListViewAdapter(getContext(), transactions));
 
         FloatingActionButton addTransactionBtn = rootView.findViewById(R.id.fab_add_transaction);
         addTransactionBtn.setOnClickListener(view -> {
@@ -64,7 +79,46 @@ public class TransactionsTabFragment extends Fragment {
             startActivity(intent);
         });
 
+        this.refreshTransactions();
+
         return rootView;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.menu_refresh:
+                refreshTransactions();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void refreshTransactions() {
+        RetrievalServiceImpl.getInstance().fetchTransactions((User) LocalStorageImpl.getInstance().readObject("user"), new AsyncCall<List<Transaction>>() {
+            @Override
+            public void onSuccess(List<Transaction> result) {
+                transactions.clear();
+                transactions.addAll(result);
+            }
+
+            @Override
+            public void onFailure(Exception exception) {
+                exception.printStackTrace();
+                transactions.clear();
+                transactions.addAll(LocalStorageImpl.getInstance().readList("transactions"));
+            }
+
+            @Override
+            public void onAfter() {
+                Objects.requireNonNull(getActivity()).runOnUiThread(() -> {
+                    ((TransactionListViewAdapter) transactionListView.getAdapter()).notifyDataSetChanged();
+                    swipeRefreshLayoutTransactions.setRefreshing(false);
+                });
+            }
+        });
     }
 
     private class TransactionListViewAdapter extends ArrayAdapter<Transaction> {

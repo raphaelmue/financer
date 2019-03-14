@@ -16,34 +16,41 @@
         <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
             android:ems="10">
 
             <EditText
                 android:id="@+id/et_add_transaction_amount"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:digits="0123456789.,-"
                 android:focusableInTouchMode="true"
                 android:hint="@string/amount"
                 android:inputType="numberDecimal"
                 android:singleLine="true"
-                android:digits="0123456789.,"
-                app:layout_constraintStart_toStartOf="parent" />
+                app:layout_constraintStart_toStartOf="parent"
+                android:autofillHints="" />
 
         </android.support.design.widget.TextInputLayout>
 
-        <android.support.design.widget.TextInputLayout
+        <TextView
+            android:id="@+id/tv_add_transaction_value_date"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:ems="10">
+            android:clickable="true"
+            android:hint="@string/value_date"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:singleLine="true"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            app:layout_constraintStart_toStartOf="parent" />
 
-            <Spinner
-                android:id="@+id/sp_add_transaction_category"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:spinnerMode="dialog" />
-        </android.support.design.widget.TextInputLayout>
+        <Spinner
+            android:id="@+id/sp_add_transaction_category"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="16dp"
+            android:spinnerMode="dialog" />
 
         <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
@@ -57,8 +64,10 @@
                 android:layout_height="wrap_content"
                 android:focusableInTouchMode="true"
                 android:hint="@string/product"
+                android:inputType="textCapWords"
                 android:singleLine="true"
-                app:layout_constraintStart_toStartOf="parent" />
+                app:layout_constraintStart_toStartOf="parent"
+                android:autofillHints="" />
 
         </android.support.design.widget.TextInputLayout>
 
@@ -74,8 +83,10 @@
                 android:layout_height="wrap_content"
                 android:focusableInTouchMode="true"
                 android:hint="@string/purpose"
+                android:inputType="textCapWords"
                 android:singleLine="true"
-                app:layout_constraintStart_toStartOf="parent" />
+                app:layout_constraintStart_toStartOf="parent"
+                android:autofillHints="" />
 
         </android.support.design.widget.TextInputLayout>
 
@@ -91,25 +102,10 @@
                 android:layout_height="wrap_content"
                 android:focusableInTouchMode="true"
                 android:hint="@string/shop"
+                android:inputType="textCapWords"
                 android:singleLine="true"
-                app:layout_constraintStart_toStartOf="parent" />
-
-        </android.support.design.widget.TextInputLayout>
-
-        <android.support.design.widget.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:ems="10">
-
-            <EditText
-                android:id="@+id/et_add_transaction_value_date"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:focusableInTouchMode="true"
-                android:hint="@string/value_date"
-                android:singleLine="true"
-                app:layout_constraintStart_toStartOf="parent" />
+                app:layout_constraintStart_toStartOf="parent"
+                android:autofillHints="" />
 
         </android.support.design.widget.TextInputLayout>
 
@@ -117,9 +113,9 @@
             android:id="@+id/btn_add_transaction_submit"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="@string/submit"
             android:backgroundTint="@color/colorPrimaryDark"
-            android:textColor="@color/white"/>
+            android:text="@string/submit"
+            android:textColor="@color/white" />
 
     </LinearLayout>
 

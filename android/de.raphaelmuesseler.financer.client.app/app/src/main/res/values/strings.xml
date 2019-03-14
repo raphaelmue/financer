@@ -26,4 +26,10 @@
     <string name="category">Category</string>
     <string name="amount">Amount</string>
     <string name="submit">Submit</string>
+    <string name="loading">Loading ...</string>
+    <string name="refresh">Refresh</string>
+    <string name="fixed_expenses">Fixed Expenses</string>
+    <string name="variable_expenses">Variable Expenses</string>
+    <string name="fixed_revenue">Fixed Revenue</string>
+    <string name="variable_revenue">Variable Revenue</string>
 </resources>

@@ -27,4 +27,10 @@
     <string name="category">Kategorie</string>
     <string name="amount">Betrag</string>
     <string name="submit">Bestätigen</string>
+    <string name="loading">Laden</string>
+    <string name="refresh">Aktualisieren</string>
+    <string name="fixed_expenses">Feste Ausgaben</string>
+    <string name="variable_expenses">Variable Ausgaben</string>
+    <string name="fixed_revenue">Feste Einnahmen</string>
+    <string name="variable_revenue">Variable Einnahmen</string>
 </resources>
