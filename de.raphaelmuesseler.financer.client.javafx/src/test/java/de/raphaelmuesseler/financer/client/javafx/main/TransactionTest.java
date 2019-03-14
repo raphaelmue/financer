@@ -34,11 +34,11 @@ public class TransactionTest extends AbstractFinancerApplicationTest {
         clickOn((Button) find("#refreshTransactionsBtn"));
         sleep(500);
 
-        Assertions.assertNotNull(clickOn("-" + formatter.formatCurrency(transaction.getAmount())));
+        Assertions.assertNotNull(clickOn(formatter.formatCurrency(transaction.getAmount())));
         Assertions.assertEquals(1, LocalStorageImpl.getInstance().readList("transactions").size());
 
         Transaction insertedTransaction = (Transaction) LocalStorageImpl.getInstance().readList("transactions").get(0);
-        Assertions.assertEquals(-transaction.getAmount(), insertedTransaction.getAmount());
+        Assertions.assertEquals(transaction.getAmount(), insertedTransaction.getAmount());
         Assertions.assertEquals(transaction.getProduct(), insertedTransaction.getProduct());
         Assertions.assertEquals(transaction.getValueDate(), insertedTransaction.getValueDate());
         Assertions.assertEquals(transaction.getPurpose(), insertedTransaction.getPurpose());
@@ -73,11 +73,11 @@ public class TransactionTest extends AbstractFinancerApplicationTest {
 
         // uncomment when issue is fixed
         System.out.println(formatter.formatCurrency(amount));
-        Assertions.assertNotNull(clickOn("-" + formatter.formatCurrency(amount)));
+        Assertions.assertNotNull(clickOn(formatter.formatCurrency(amount)));
         Assertions.assertEquals(1, LocalStorageImpl.getInstance().readList("transactions").size());
 
         Transaction insertedTransaction = (Transaction) LocalStorageImpl.getInstance().readList("transactions").get(0);
-        Assertions.assertEquals(-transaction.getAmount() / 2, insertedTransaction.getAmount());
+        Assertions.assertEquals(transaction.getAmount() / 2, insertedTransaction.getAmount());
     }
 
     @Test

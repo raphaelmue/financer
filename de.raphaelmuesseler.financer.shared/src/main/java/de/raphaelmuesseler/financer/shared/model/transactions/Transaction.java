@@ -4,7 +4,6 @@ import de.raphaelmuesseler.financer.shared.model.CategoryTree;
 import de.raphaelmuesseler.financer.util.date.DateUtil;
 
 import java.time.LocalDate;
-import java.util.List;
 
 public class Transaction extends AbstractTransaction {
     private String shop;
@@ -31,6 +30,14 @@ public class Transaction extends AbstractTransaction {
 
     public void setValueDate(LocalDate valueDate) {
         this.valueDate = valueDate;
+    }
+
+    @Override
+    public void adjustAmountSign() {
+        if ((this.getCategoryTree().getValue().getRootId() == 1 && this.getAmount() < 0) ||
+                (this.getCategoryTree().getValue().getRootId() == 3 && this.getAmount() >= 0)) {
+            this.setAmount(this.getAmount() * (-1));
+        }
     }
 
     @Override

@@ -40,11 +40,16 @@
                         <Label text="%settings" styleClass="content-heading"/>
 
                         <GridPane maxWidth="Infinity" maxHeight="Infinity" vgap="8">
-                            <Label text="%maxNumberOfMonthsDisplayed" GridPane.columnIndex="0" GridPane.rowIndex="0"
+                            <Label text="%changeAmountSignAutomatically" GridPane.columnIndex="0" GridPane.rowIndex="0"
+                                   GridPane.hgrow="ALWAYS"
+                                   VBox.vgrow="ALWAYS"/>
+                            <CheckBox fx:id="changeAmountSignAutomaticallyCheckBox" GridPane.columnIndex="1"
+                                      GridPane.rowIndex="0" GridPane.hgrow="ALWAYS" VBox.vgrow="ALWAYS"/>
+                            <Label text="%maxNumberOfMonthsDisplayed" GridPane.columnIndex="0" GridPane.rowIndex="1"
                                    GridPane.hgrow="ALWAYS"
                                    VBox.vgrow="ALWAYS"/>
                             <ComboBox fx:id="maxNumberOfMonthsDisplayedComboBox" GridPane.columnIndex="1"
-                                      GridPane.rowIndex="0" GridPane.hgrow="ALWAYS" VBox.vgrow="ALWAYS"/>
+                                      GridPane.rowIndex="1" GridPane.hgrow="ALWAYS" VBox.vgrow="ALWAYS"/>
                         </GridPane>
                     </VBox>
                 </Tab>

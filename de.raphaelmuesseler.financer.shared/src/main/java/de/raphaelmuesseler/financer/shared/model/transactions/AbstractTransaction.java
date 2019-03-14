@@ -26,6 +26,8 @@ public abstract class AbstractTransaction implements Serializable, AmountProvide
         this.purpose = purpose;
     }
 
+    public abstract void adjustAmountSign();
+
     public int getId() {
         return id;
     }

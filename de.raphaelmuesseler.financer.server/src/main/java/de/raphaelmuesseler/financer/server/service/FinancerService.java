@@ -10,10 +10,7 @@ import de.raphaelmuesseler.financer.shared.model.db.Attachment;
 import de.raphaelmuesseler.financer.shared.model.db.DatabaseObject;
 import de.raphaelmuesseler.financer.shared.model.db.DatabaseUser;
 import de.raphaelmuesseler.financer.shared.model.db.Token;
-import de.raphaelmuesseler.financer.shared.model.transactions.AttachmentWithContent;
-import de.raphaelmuesseler.financer.shared.model.transactions.FixedTransaction;
-import de.raphaelmuesseler.financer.shared.model.transactions.Transaction;
-import de.raphaelmuesseler.financer.shared.model.transactions.TransactionAmount;
+import de.raphaelmuesseler.financer.shared.model.transactions.*;
 import de.raphaelmuesseler.financer.shared.model.user.User;
 import de.raphaelmuesseler.financer.util.Hash;
 import de.raphaelmuesseler.financer.util.RandomString;
@@ -424,6 +421,10 @@ public class FinancerService {
         User user = (User) parameters.get("user");
         Transaction transaction = (Transaction) parameters.get("transaction");
 
+        if (user.getSettings().isChangeAmountSignAutomatically()) {
+            transaction.adjustAmountSign();
+        }
+
         Map<String, Object> values = new HashMap<>();
         values.put("user_id", user.getId());
         values.put("value_date", transaction.getValueDate());
@@ -442,8 +443,14 @@ public class FinancerService {
 
 
     public ConnectionResult<Void> updateTransaction(Logger logger, Map<String, Object> parameters) throws Exception {
-        logger.log(Level.INFO, "Adding transaction ...");
+        logger.log(Level.INFO, "Updating transaction ...");
+        User user = (User) parameters.get("user");
         Transaction transaction = (Transaction) parameters.get("transaction");
+
+        if (user.getSettings().isChangeAmountSignAutomatically()) {
+            transaction.adjustAmountSign();
+
+        }
 
         Map<String, Object> where = new HashMap<>();
         where.put("id", transaction.getId());
@@ -578,6 +585,10 @@ public class FinancerService {
         User user = (User) parameters.get("user");
         FixedTransaction fixedTransaction = (FixedTransaction) parameters.get("fixedTransaction");
 
+        if (user.getSettings().isChangeAmountSignAutomatically()) {
+            fixedTransaction.adjustAmountSign();
+        }
+
         Map<String, Object> whereParameters = new HashMap<>();
         whereParameters.put("user_id", user.getId());
         whereParameters.put("cat_id", fixedTransaction.getCategoryTree().getValue().getId());
@@ -608,7 +619,12 @@ public class FinancerService {
 
     public ConnectionResult<Void> updateFixedTransaction(Logger logger, Map<String, Object> parameters) throws Exception {
         logger.log(Level.INFO, "Updating fixed transaction ...");
+        User user = (User) parameters.get("user");
         FixedTransaction fixedTransaction = (FixedTransaction) parameters.get("fixedTransaction");
+
+        if (user.getSettings().isChangeAmountSignAutomatically()) {
+            fixedTransaction.adjustAmountSign();
+        }
 
         Map<String, Object> whereParameters = new HashMap<>();
         whereParameters.put("id", fixedTransaction.getId());

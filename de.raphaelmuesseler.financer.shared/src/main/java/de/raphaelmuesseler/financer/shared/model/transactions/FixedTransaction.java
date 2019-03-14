@@ -98,6 +98,23 @@ public class FixedTransaction extends AbstractTransaction {
         return amount;
     }
 
+    @Override
+    public void adjustAmountSign() {
+        if (this.isVariable()) {
+            for (TransactionAmount transactionAmount : this.getTransactionAmounts()) {
+                if ((this.getCategoryTree().getValue().getRootId() == 0 && transactionAmount.getAmount() < 0) ||
+                        (this.getCategoryTree().getValue().getRootId() == 2 && transactionAmount.getAmount() >= 0)) {
+                    transactionAmount.setAmount(transactionAmount.getAmount() * (-1));
+                }
+            }
+        } else {
+            if ((this.getCategoryTree().getValue().getRootId() == 0 && this.getAmount() < 0) ||
+                    (this.getCategoryTree().getValue().getRootId() == 2 && this.getAmount() >= 0)) {
+                this.setAmount(this.getAmount() * (-1));
+            }
+        }
+    }
+
     public LocalDate getStartDate() {
         return startDate;
     }

@@ -302,7 +302,9 @@ public class TransactionsController implements Initializable {
         Transaction transaction = new TransactionDialog(null, this.categories).showAndGetResult();
         if (transaction != null) {
 
-            this.correctTransactionAmount(transaction);
+            if (user.getSettings().isChangeAmountSignAutomatically()) {
+                transaction.adjustAmountSign();
+            }
 
             Map<String, Object> parameters = new HashMap<>();
             parameters.put("user", this.user);
@@ -368,7 +370,9 @@ public class TransactionsController implements Initializable {
                 this.categories).showAndGetResult();
         if (transaction != null) {
 
-            this.correctTransactionAmount(transaction);
+            if (user.getSettings().isChangeAmountSignAutomatically()) {
+                transaction.adjustAmountSign();
+            }
 
             Map<String, Object> parameters = new HashMap<>();
             parameters.put("user", this.user);
@@ -447,9 +451,8 @@ public class TransactionsController implements Initializable {
                 .showAndGetResult();
         if (fixedTransaction != null) {
 
-            if ((fixedTransaction.getCategoryTree().getCategoryClass().isRevenue() && fixedTransaction.getAmount() < 0) ||
-                    (!fixedTransaction.getCategoryTree().getCategoryClass().isRevenue() && fixedTransaction.getAmount() >= 0)) {
-                fixedTransaction.setAmount(fixedTransaction.getAmount() * (-1));
+            if (user.getSettings().isChangeAmountSignAutomatically()) {
+                fixedTransaction.adjustAmountSign();
             }
 
             Map<String, Object> parameters = new HashMap<>();
@@ -478,12 +481,12 @@ public class TransactionsController implements Initializable {
                 .showAndGetResult();
         if (fixedTransaction != null) {
 
-            if ((fixedTransaction.getCategoryTree().getValue().getRootId() == 0 && fixedTransaction.getAmount() < 0) ||
-                    (fixedTransaction.getCategoryTree().getValue().getRootId() == 2 && fixedTransaction.getAmount() >= 0)) {
-                fixedTransaction.setAmount(fixedTransaction.getAmount() * (-1));
+            if (user.getSettings().isChangeAmountSignAutomatically()) {
+                fixedTransaction.adjustAmountSign();
             }
 
             Map<String, Object> parameters = new HashMap<>();
+            parameters.put("user", this.user);
             parameters.put("fixedTransaction", fixedTransaction);
 
             FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "updateFixedTransaction", parameters, new JavaFXAsyncConnectionCall() {
@@ -547,13 +550,6 @@ public class TransactionsController implements Initializable {
         fixedTransactionsListView.getItems().sort(Comparator.comparing(FixedTransaction::getStartDate).reversed());
     }
 
-
-    private void correctTransactionAmount(AbstractTransaction transaction) {
-        if ((transaction.getCategoryTree().getValue().getRootId() == 1 && transaction.getAmount() < 0) ||
-                (transaction.getCategoryTree().getValue().getRootId() == 3 && transaction.getAmount() >= 0)) {
-            transaction.setAmount(transaction.getAmount() * (-1));
-        }
-    }
 
     private <S, T> void adjustColumnWidth(TableColumn<S, T> column, TableView<S> tableView, double ratio) {
         column.prefWidthProperty().bind(tableView.widthProperty().divide(ratio).add(-3));

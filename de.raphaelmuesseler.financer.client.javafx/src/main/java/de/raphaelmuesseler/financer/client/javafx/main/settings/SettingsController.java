@@ -39,8 +39,10 @@ public class SettingsController implements Initializable {
 
     public ComboBox<Integer> maxNumberOfMonthsDisplayedComboBox;
 
+
     public JFXButton logoutFromDeviceBtn;
     public JFXListView<Token> devicesListView;
+    public CheckBox changeAmountSignAutomaticallyCheckBox;
 
 
     private LocalStorage localStorage = LocalStorageImpl.getInstance();
@@ -93,6 +95,15 @@ public class SettingsController implements Initializable {
         this.maxNumberOfMonthsDisplayedComboBox.getSelectionModel().selectedItemProperty().addListener((observableValue, oldValue, newValue) -> {
             localSettings.setMaxNumberOfMonthsDisplayed(newValue);
             localStorage.writeObject("localSettings", localSettings);
+        });
+
+        this.changeAmountSignAutomaticallyCheckBox.setSelected(this.user.getSettings().isChangeAmountSignAutomatically());
+        this.changeAmountSignAutomaticallyCheckBox.selectedProperty().addListener((observableValue, oldValue, newValue) -> {
+            user.getSettings().setChangeAmountSignAutomatically(newValue);
+            Map<String, Object> parameters = new HashMap<>();
+            parameters.put("property", "changeAmountSignAutomatically");
+            parameters.put("value", Boolean.toString(newValue));
+            updateSettings(parameters);
         });
 
         this.loadTokenListView();
