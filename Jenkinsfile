@@ -35,8 +35,7 @@ pipeline {
                 branch 'deployment'
             }
             steps {
-                sh 'cd ./service'
-                sh './start-financer-server.sh'
+                sh ' bash ./service/start-financer-server.sh'
             }
         }
     }
