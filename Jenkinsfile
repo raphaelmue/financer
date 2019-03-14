@@ -35,7 +35,7 @@ pipeline {
                 branch 'deployment'
             }
             steps {
-                //sh 'systemctl restart financer-server.service'
+                sh 'systemctl restart financer-server.service'
             }
         }
     }
