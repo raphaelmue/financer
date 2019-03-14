@@ -72,7 +72,6 @@ public class TransactionTest extends AbstractFinancerApplicationTest {
         sleep(500);
 
         // uncomment when issue is fixed
-        System.out.println(formatter.formatCurrency(amount));
         Assertions.assertNotNull(clickOn(formatter.formatCurrency(amount)));
         Assertions.assertEquals(1, LocalStorageImpl.getInstance().readList("transactions").size());
 

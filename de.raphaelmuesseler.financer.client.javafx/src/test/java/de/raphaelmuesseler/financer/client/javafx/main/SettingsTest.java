@@ -3,6 +3,7 @@ package de.raphaelmuesseler.financer.client.javafx.main;
 import de.raphaelmuesseler.financer.client.format.I18N;
 import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
 import de.raphaelmuesseler.financer.client.local.LocalSettings;
+import de.raphaelmuesseler.financer.shared.model.transactions.Transaction;
 import de.raphaelmuesseler.financer.shared.model.user.User;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
@@ -71,9 +72,8 @@ public class SettingsTest extends AbstractFinancerApplicationTest {
         press(KeyCode.RIGHT).release(KeyCode.RIGHT);
         press(KeyCode.RIGHT).release(KeyCode.RIGHT);
 
-        Assertions.assertNotNull(clickOn("-" +
-                String.format(((LocalSettings) LocalStorageImpl.getInstance().readObject("localSettings")).getLanguage(), "%.2f", transaction.getAmount()) +
-                " " + ((User) LocalStorageImpl.getInstance().readObject("user")).getSettings().getCurrency().getCurrencyCode()));
+        Assertions.assertNotNull(clickOn(String.format(((LocalSettings) LocalStorageImpl.getInstance().readObject("localSettings")).getLanguage(),
+                "%.2f", transaction.getAmount()) + " " + ((User) LocalStorageImpl.getInstance().readObject("user")).getSettings().getCurrency().getCurrencyCode()));
     }
 
     @Test
@@ -105,8 +105,32 @@ public class SettingsTest extends AbstractFinancerApplicationTest {
         press(KeyCode.RIGHT).release(KeyCode.RIGHT);
         press(KeyCode.RIGHT).release(KeyCode.RIGHT);
         sleep(500);
-        Assertions.assertNotNull(clickOn("-" +
-                String.format(((LocalSettings) LocalStorageImpl.getInstance().readObject("localSettings")).getLanguage(), "%.2f", transaction.getAmount()) +
-                " " + ((User) LocalStorageImpl.getInstance().readObject("user")).getSettings().getCurrency().getSymbol()));
+
+        Assertions.assertNotNull(clickOn(String.format(((LocalSettings) LocalStorageImpl.getInstance().readObject("localSettings")).getLanguage(),
+                "%.2f", transaction.getAmount()) + " " + ((User) LocalStorageImpl.getInstance().readObject("user")).getSettings().getCurrency().getSymbol()));
+    }
+
+    @Test
+    public void testChangeChangeAmountSignAutomatically() {
+        register(this.user, this.password);
+
+        clickOn((Button) find("#settingTabBtn"));
+        clickOn("Transaction Settings");
+        sleep(500);
+
+        CheckBox changeAmountSignAutomaticallyCheckBox = find("#changeAmountSignAutomaticallyCheckBox");
+        Assertions.assertFalse(changeAmountSignAutomaticallyCheckBox.isSelected());
+
+        clickOn(changeAmountSignAutomaticallyCheckBox);
+
+        addCategory(category);
+        addTransaction(transaction);
+        clickOn((Button) find("#refreshTransactionsBtn"));
+        sleep(500);
+
+        Assertions.assertNotNull(clickOn(formatter.formatCurrency(-transaction.getAmount())));
+
+        Transaction insertedTransaction = (Transaction) LocalStorageImpl.getInstance().readList("transactions").get(0);
+        Assertions.assertEquals(-transaction.getAmount(), insertedTransaction.getAmount());
     }
 }
