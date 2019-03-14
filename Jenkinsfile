@@ -36,7 +36,7 @@ pipeline {
             }
             steps {
                 sh 'cd ./service'
-                sh 'bash financer-server.service'
+                sh 'bash start-financer-server.sh'
             }
         }
     }
