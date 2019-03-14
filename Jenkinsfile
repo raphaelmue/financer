@@ -35,6 +35,7 @@ pipeline {
                 branch 'deployment'
             }
             steps {
+                sh 'cd ./service'
                 sh 'bash financer-server.service'
             }
         }
