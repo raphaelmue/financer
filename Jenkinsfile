@@ -1,8 +1,5 @@
 pipeline {
     agent any
-    node {
-      properties([disableConcurrentBuilds()])
-    }
     stages {
         stage('Build') {
             steps {
@@ -33,11 +30,14 @@ pipeline {
                 sh 'rm ./de.raphaelmuesseler.financer.server/src/main/resources/de/raphaelmuesseler/financer/server/db/config/database.conf'
             }
         }
-        /*stage('Deploy') {
-            steps {
-                sh 'systemctl restart financer-server.service'
+        stage('Deploy') {
+            when {
+                branch 'deployment'
             }
-        }*/
+            steps {
+                //sh 'systemctl restart financer-server.service'
+            }
+        }
     }
     post {
         always {
