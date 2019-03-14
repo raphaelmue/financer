@@ -9,7 +9,7 @@ then
         kill -9 $PID
 fi
 
-cd ./../de.raphaelmuesseler.financer.server/target/
+cd ./de.raphaelmuesseler.financer.server/target/
 java -jar de.raphaelmuesseler.financer.server-1.0-SNAPSHOT-jar-with-dependencies.jar --database=prod &
 
 echo 'Restarted financer server successfully!'
