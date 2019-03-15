@@ -6,11 +6,13 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -27,8 +29,10 @@ import de.raphaelmuesseler.financer.client.app.R;
 import de.raphaelmuesseler.financer.client.app.connection.AndroidAsyncConnectionCall;
 import de.raphaelmuesseler.financer.client.app.format.AndroidFormatter;
 import de.raphaelmuesseler.financer.client.app.local.LocalStorageImpl;
+import de.raphaelmuesseler.financer.client.app.ui.main.FinancerActivity;
 import de.raphaelmuesseler.financer.client.connection.ServerRequestHandler;
 import de.raphaelmuesseler.financer.client.format.Formatter;
+import de.raphaelmuesseler.financer.client.local.Application;
 import de.raphaelmuesseler.financer.client.local.LocalSettings;
 import de.raphaelmuesseler.financer.shared.connection.ConnectionResult;
 import de.raphaelmuesseler.financer.shared.model.BaseCategory;
@@ -42,17 +46,24 @@ public class AddTransactionActivity extends AppCompatActivity {
 
     private final Formatter formatter = new AndroidFormatter(LocalStorageImpl.getInstance(), this);
 
+    private BaseCategory baseCategory;
 
     private TextView valueDateEditText;
     private EditText amountEditText, productEditText, purposeEditText, shopEditText;
+    private Spinner categorySpinner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_transaction);
 
-        User user = (User) LocalStorageImpl.getInstance().readObject("user");
-        BaseCategory baseCategory = (BaseCategory) LocalStorageImpl.getInstance().readObject("categories");
+        Toolbar toolbar = findViewById(R.id.add_transaction_toolbar);
+        setSupportActionBar(toolbar);
+
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_back);
+        toolbar.setNavigationOnClickListener(v -> runOnUiThread(this::finish));
+
+        baseCategory = (BaseCategory) LocalStorageImpl.getInstance().readObject("categories");
 
         List<CategoryTree> categoryTreeList = new ArrayList<>();
         TreeUtil.traverse(baseCategory.getCategoryTreeByCategoryClass(BaseCategory.CategoryClass.VARIABLE_EXPENSES),
@@ -62,7 +73,7 @@ public class AddTransactionActivity extends AppCompatActivity {
 
         categoryTreeList.sort((o1, o2) -> formatter.formatCategoryName(o1).compareTo(formatter.formatCategoryName(o2)));
 
-        Spinner categorySpinner = findViewById(R.id.sp_add_transaction_category);
+        categorySpinner = findViewById(R.id.sp_add_transaction_category);
         ArrayAdapter<CategoryTree> adapter = new CategorySpinnerAdapter(this, categoryTreeList);
         categorySpinner.setAdapter(adapter);
 
@@ -80,50 +91,72 @@ public class AddTransactionActivity extends AppCompatActivity {
                 LocalDate.now().getYear(),
                 LocalDate.now().getMonthValue() - 1,
                 LocalDate.now().getDayOfMonth()).show());
+    }
 
-        Button submitButton = findViewById(R.id.btn_add_transaction_submit);
-        submitButton.setOnClickListener(view -> {
-            boolean cancel = false;
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.add_transaction_menu, menu);
+        return true;
+    }
 
-            if (amountEditText.getText().toString().isEmpty()) {
-                amountEditText.setError(getString(R.string.error_field_required));
-                cancel = true;
-            }
-            if (valueDateEditText.getText().toString().isEmpty()) {
-                valueDateEditText.setError(getString(R.string.error_field_required));
-                cancel = true;
-            }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
 
-            if (!cancel) {
-                Transaction transaction = new Transaction(-1,
-                        Double.valueOf(amountEditText.getText().toString().replace(",", ".")),
-                        (CategoryTree) categorySpinner.getSelectedItem(),
-                        productEditText.getText().toString(),
-                        purposeEditText.getText().toString(),
-                        LocalDate.parse(valueDateEditText.getText().toString(), DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)
-                                .withLocale(((LocalSettings) LocalStorageImpl.getInstance().readObject("localSettings")).getLanguage())),
-                        shopEditText.getText().toString());
+        if (id == R.id.menu_check) {
+            submitAddTransaction();
+            return true;
+        }
 
-                Map<String, Object> parameters = new HashMap<>();
-                parameters.put("user", user);
-                parameters.put("transaction", transaction);
+        return super.onOptionsItemSelected(item);
+    }
 
-                FinancerExecutor.getExecutor().execute(new ServerRequestHandler(user, "addTransaction", parameters, new AndroidAsyncConnectionCall() {
-                    @Override
-                    public void onSuccess(ConnectionResult connectionResult) {
-                        ((CategoryTree) categorySpinner.getSelectedItem()).getTransactions().add(transaction);
-                        LocalStorageImpl.getInstance().writeObject("categories", baseCategory);
+    private void submitAddTransaction() {
+        User user = (User) LocalStorageImpl.getInstance().readObject("user");
 
-                        runOnUiThread(() -> finish());
-                    }
+        boolean cancel = false;
 
-                    @Override
-                    public void onFailure(Exception exception) {
+        if (amountEditText.getText().toString().isEmpty()) {
+            amountEditText.setError(getString(R.string.error_field_required));
+            cancel = true;
+        }
+        if (valueDateEditText.getText().toString().isEmpty()) {
+            valueDateEditText.setError(getString(R.string.error_field_required));
+            cancel = true;
+        }
 
-                    }
-                }));
-            }
-        });
+        if (!cancel) {
+            final Transaction transaction = new Transaction(-1,
+                    Double.valueOf(amountEditText.getText().toString().replace(",", ".")),
+                    (CategoryTree) categorySpinner.getSelectedItem(),
+                    productEditText.getText().toString(),
+                    purposeEditText.getText().toString(),
+                    LocalDate.parse(valueDateEditText.getText().toString(), DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)
+                            .withLocale(((LocalSettings) LocalStorageImpl.getInstance().readObject("localSettings")).getLanguage())),
+                    shopEditText.getText().toString());
+
+            finish();
+
+            Map<String, Object> parameters = new HashMap<>();
+            parameters.put("user", user);
+            parameters.put("transaction", transaction);
+
+            FinancerExecutor.getExecutor().execute(new ServerRequestHandler(user, "addTransaction", parameters, new AndroidAsyncConnectionCall() {
+                @Override
+                public void onSuccess(ConnectionResult connectionResult) {
+                    ((CategoryTree) categorySpinner.getSelectedItem()).getTransactions().add(transaction);
+                    LocalStorageImpl.getInstance().writeObject("categories", baseCategory);
+                    List<Transaction> transactionList = LocalStorageImpl.getInstance().readList("transactions");
+                    transactionList.add(transaction);
+                    LocalStorageImpl.getInstance().writeObject("transactions", transactionList);
+                }
+
+                @Override
+                public void onFailure(Exception exception) {
+                    FinancerActivity.getFinancerApplication().showToast(Application.MessageType.ERROR, getString(R.string.something_went_wrong));
+                }
+            }));
+        }
     }
 
     private class CategorySpinnerAdapter extends ArrayAdapter<CategoryTree> {

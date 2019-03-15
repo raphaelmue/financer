@@ -33,4 +33,5 @@
     <string name="variable_expenses">Variable Ausgaben</string>
     <string name="fixed_revenue">Feste Einnahmen</string>
     <string name="variable_revenue">Variable Einnahmen</string>
+    <string name="something_went_wrong">Etwas ist schief gelaufen ...</string>
 </resources>

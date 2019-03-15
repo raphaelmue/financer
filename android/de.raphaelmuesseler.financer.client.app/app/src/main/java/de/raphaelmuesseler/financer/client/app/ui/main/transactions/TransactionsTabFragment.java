@@ -39,6 +39,8 @@ public class TransactionsTabFragment extends Fragment {
     private ListView transactionListView;
     private SwipeRefreshLayout swipeRefreshLayoutTransactions;
 
+    private boolean runningRefreshTask = false;
+
     public TransactionsTabFragment() {
         // Required empty public constructor
     }
@@ -73,7 +75,7 @@ public class TransactionsTabFragment extends Fragment {
         this.transactionListView = rootView.findViewById(R.id.lv_transactions);
         this.transactionListView.setAdapter(new TransactionListViewAdapter(getContext(), transactions));
 
-        FloatingActionButton addTransactionBtn = rootView.findViewById(R.id.fab_add_transaction);
+        FloatingActionButton addTransactionBtn = rootView.findViewById(R.id.fab_transaction_tab_add_transaction);
         addTransactionBtn.setOnClickListener(view -> {
             Intent intent = new Intent(getContext(), AddTransactionActivity.class);
             startActivity(intent);
@@ -82,6 +84,17 @@ public class TransactionsTabFragment extends Fragment {
         this.refreshTransactions();
 
         return rootView;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        if (!this.runningRefreshTask) {
+            transactions.clear();
+            transactions.addAll(LocalStorageImpl.getInstance().readList("transactions"));
+            ((TransactionListViewAdapter) transactionListView.getAdapter()).notifyDataSetChanged();
+        }
     }
 
     @Override
@@ -97,6 +110,7 @@ public class TransactionsTabFragment extends Fragment {
     }
 
     private void refreshTransactions() {
+        this.runningRefreshTask = true;
         RetrievalServiceImpl.getInstance().fetchTransactions((User) LocalStorageImpl.getInstance().readObject("user"), new AsyncCall<List<Transaction>>() {
             @Override
             public void onSuccess(List<Transaction> result) {
@@ -113,6 +127,7 @@ public class TransactionsTabFragment extends Fragment {
 
             @Override
             public void onAfter() {
+                runningRefreshTask = false;
                 Objects.requireNonNull(getActivity()).runOnUiThread(() -> {
                     ((TransactionListViewAdapter) transactionListView.getAdapter()).notifyDataSetChanged();
                     swipeRefreshLayoutTransactions.setRefreshing(false);

@@ -32,4 +32,5 @@
     <string name="variable_expenses">Variable Expenses</string>
     <string name="fixed_revenue">Fixed Revenue</string>
     <string name="variable_revenue">Variable Revenue</string>
+    <string name="something_went_wrong">Something went wrong ...</string>
 </resources>

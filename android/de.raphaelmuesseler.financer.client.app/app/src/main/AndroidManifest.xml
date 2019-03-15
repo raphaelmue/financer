@@ -30,11 +30,11 @@
         <activity
             android:name=".ui.login.LoginActivity"
             android:label="@string/sign_in"
-            android:theme="@style/AppTheme" />
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ui.main.transactions.AddTransactionActivity"
             android:label="@string/add_transaction"
-            android:theme="@style/AppTheme" />
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>

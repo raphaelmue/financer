@@ -31,11 +31,20 @@ import de.raphaelmuesseler.financer.shared.model.user.User;
 public class FinancerActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnFragmentInteractionListener, Application {
 
+    public static Application INSTANCE;
+
     private ProgressBar progressBar;
+
+
+    public static Application getFinancerApplication() {
+        return INSTANCE;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        INSTANCE = this;
 
         LocalStorageImpl.setContext(this);
         ServerRequest.setHost(false);
