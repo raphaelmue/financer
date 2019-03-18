@@ -153,6 +153,10 @@ public class Database {
         return INSTANCE;
     }
 
+    public List<DatabaseObject> getObject(Table table, Type resultType, Map<String, Object> whereParameters) throws SQLException, JsonParseException {
+        return this.getObject(table, resultType, whereParameters, "*");
+    }
+
     /**
      * Fetches data from the database and parses via the Gson library it to an object.
      *
@@ -162,9 +166,9 @@ public class Database {
      * @return Object with fetched data
      * @throws SQLException thrown, when something went wrong executing the SQL statement
      */
-    public List<DatabaseObject> getObject(Table table, Type resultType, Map<String, Object> whereParameters) throws SQLException, JsonParseException {
+    public List<DatabaseObject> getObject(Table table, Type resultType, Map<String, Object> whereParameters, String fields) throws SQLException, JsonParseException {
         Gson gson = new GsonBuilder().create();
-        JSONArray jsonArray = this.get(table, whereParameters);
+        JSONArray jsonArray = this.get(table, whereParameters, fields, "");
         List<DatabaseObject> result = new ArrayList<>();
         for (int i = 0; i < jsonArray.length(); i++) {
             JSONObject jsonObject = jsonArray.getJSONObject(i);
@@ -182,18 +186,24 @@ public class Database {
         return this.get(table, whereParameters, null);
     }
 
+    public JSONArray get(Table tableName, Map<String, Object> whereParameters, String orderByClause) throws SQLException {
+        return this.get(tableName, whereParameters, "*", orderByClause);
+    }
+
     /**
      * @param tableName       database table to fetch from
      * @param whereParameters where parameters which will be concatenated by AND
+     * @param fields          fields to select from database
      * @param orderByClause   order by clause which will be appended on the sql statement
      * @return JSONArray that contains
      * @throws SQLException thrown, when something went wrong executing the SQL statement
      */
-    public JSONArray get(Table tableName, Map<String, Object> whereParameters, String orderByClause) throws SQLException {
+    public JSONArray get(Table tableName, Map<String, Object> whereParameters, String fields, String orderByClause) throws SQLException {
         PreparedStatement statement;
-        String query = "SELECT * FROM " + tableName.getTableName() +
+        String query = "SELECT " + fields + " FROM " + tableName.getTableName() +
                 this.getClause(whereParameters, "WHERE", " AND ", true) +
                 this.getOrderByClause(orderByClause);
+        System.out.println(query);
 
         statement = connection.prepareStatement(query);
         this.preparedStatement(statement, whereParameters);
@@ -338,7 +348,7 @@ public class Database {
 
     private String getOrderByClause(String field) {
         StringBuilder orderByClauseString = new StringBuilder();
-        if (field != null) {
+        if (field != null && !field.isEmpty()) {
             orderByClauseString.append(" ORDER BY ").append(field);
         }
         return orderByClauseString.toString();
