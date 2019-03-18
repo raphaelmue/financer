@@ -34,4 +34,16 @@
     <string name="fixed_revenue">Feste Einnahmen</string>
     <string name="variable_revenue">Variable Einnahmen</string>
     <string name="something_went_wrong">Etwas ist schief gelaufen ...</string>
+    <string name="register">Registrieren</string>
+    <string name="name">Vorname</string>
+    <string name="surname">Nachname</string>
+    <string name="repeat_password">Passwort wiederholen</string>
+    <string name="passwords_do_not_match">Passwörter stimmen nicht überein.</string>
+    <string name="birth_date">Geburtsdatum</string>
+    <string name="gender">Geschlecht</string>
+    <string name="male">Männlich</string>
+    <string name="female">Weiblich</string>
+    <string name="not_specified">Keine Angabe</string>
+    <string name="email_already_in_use">Diese Email Adresse wurde bereits registriert.</string>
+    <string name="password_too_short">Das Passwort ist zu kurz (mind. 4 Zeichen).</string>
 </resources>

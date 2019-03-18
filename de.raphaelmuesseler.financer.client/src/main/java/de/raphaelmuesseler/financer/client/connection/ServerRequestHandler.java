@@ -58,6 +58,8 @@ public class ServerRequestHandler implements Runnable {
                 this.asyncCall.onSuccess(result);
                 application.setOnline();
                 makeRequests(Executors.newCachedThreadPool());
+            } else {
+                this.asyncCall.onFailure(result.getException());
             }
         } catch (Exception e) {
             this.asyncCall.onFailure(e);

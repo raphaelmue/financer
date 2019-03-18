@@ -40,8 +40,8 @@ public class LoginActivity extends AppCompatActivity implements Application {
         super.onCreate(savedInstanceState);
         ServerRequest.setHost(false);
         ServerRequestHandler.setApplication(this);
-
         LocalStorageImpl.getInstance().deleteAllData();
+        LocalStorageImpl.getInstance().writeObject("localSettings", new LocalSettingsImpl());
 
         setContentView(R.layout.activity_login);
 
@@ -58,8 +58,15 @@ public class LoginActivity extends AppCompatActivity implements Application {
             return false;
         });
 
-        Button mEmailSignInButton = findViewById(R.id.btn_login);
-        mEmailSignInButton.setOnClickListener(view -> attemptLogin());
+        Button openRegisterButton = findViewById(R.id.btn_open_register);
+        openRegisterButton.setOnClickListener(v -> {
+            Intent intent = new Intent(this, RegisterActivity.class);
+            startActivity(intent);
+            finish();
+        });
+
+        Button signInButton = findViewById(R.id.btn_login);
+        signInButton.setOnClickListener(view -> attemptLogin());
     }
 
     private void attemptLogin() {
@@ -100,7 +107,6 @@ public class LoginActivity extends AppCompatActivity implements Application {
                 public void onSuccess(ConnectionResult connectionResult) {
                     if (connectionResult.getResult() != null) {
                         LocalStorageImpl.getInstance().writeObject("user", connectionResult.getResult());
-                        LocalStorageImpl.getInstance().writeObject("localSettings", new LocalSettingsImpl());
                         RetrievalServiceImpl.getInstance().fetchAllData((User) connectionResult.getResult(), aVoid -> openFinancerActivity());
                     } else {
                         runOnUiThread(() -> {

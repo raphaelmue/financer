@@ -33,4 +33,16 @@
     <string name="fixed_revenue">Fixed Revenue</string>
     <string name="variable_revenue">Variable Revenue</string>
     <string name="something_went_wrong">Something went wrong ...</string>
+    <string name="register">Register</string>
+    <string name="name">Name</string>
+    <string name="surname">Surname</string>
+    <string name="repeat_password">Repeat Password</string>
+    <string name="passwords_do_not_match">Passwords do not match.</string>
+    <string name="birth_date">Birth date</string>
+    <string name="gender">Gender</string>
+    <string name="male">Male</string>
+    <string name="female">Female</string>
+    <string name="not_specified">Not specified</string>
+    <string name="email_already_in_use">Email is already in use.</string>
+    <string name="password_too_short">Password is too short (min 4 characters).</string>
 </resources>
