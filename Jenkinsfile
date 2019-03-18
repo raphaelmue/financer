@@ -25,16 +25,19 @@ pipeline {
             }
         }
         stage('JavaFX Tests') {
-            steps {
+           steps {
                 sh 'mvn test -pl de.raphaelmuesseler.financer.client.javafx -Dtestfx.robot=glass -Dglass.platform=Monocle -Dmonocle.platform=Headless'
                 sh 'rm ./de.raphaelmuesseler.financer.server/src/main/resources/de/raphaelmuesseler/financer/server/db/config/database.conf'
             }
         }
-        /*stage('Deploy') {
-            steps {
-                sh 'systemctl restart financer-server.service'
+        stage('Deploy') {
+            when {
+                branch 'deployment'
             }
-        }*/
+            steps {
+                sh ' bash ./service/start-financer-server.sh'
+            }
+        }
     }
     post {
         always {
