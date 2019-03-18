@@ -408,7 +408,7 @@ public class FinancerService {
             whereClause.clear();
             whereClause.put("transaction_id", transaction.getId());
             for (DatabaseObject databaseObject : this.database.getObject(Database.Table.TRANSACTIONS_ATTACHMENTS,
-                    Attachment.class, whereClause)) {
+                    Attachment.class, whereClause, "id, transaction_id, name, upload_date")) {
                 transaction.getAttachments().add((AttachmentWithContent) new AttachmentWithContent().fromDatabaseObject(databaseObject));
             }
 
