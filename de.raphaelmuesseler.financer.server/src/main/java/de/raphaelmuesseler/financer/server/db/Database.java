@@ -203,7 +203,6 @@ public class Database {
         String query = "SELECT " + fields + " FROM " + tableName.getTableName() +
                 this.getClause(whereParameters, "WHERE", " AND ", true) +
                 this.getOrderByClause(orderByClause);
-        System.out.println(query);
 
         statement = connection.prepareStatement(query);
         this.preparedStatement(statement, whereParameters);
