@@ -2,6 +2,7 @@ package de.raphaelmuesseler.financer.server.main;
 
 import de.raphaelmuesseler.financer.server.db.Database;
 import de.raphaelmuesseler.financer.server.service.FinancerRestService;
+import de.raphaelmuesseler.financer.util.concurrency.FinancerExecutor;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
 
@@ -13,7 +14,6 @@ import java.net.Socket;
 import java.net.URI;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -24,7 +24,7 @@ public class Server {
 
     private Logger logger = Logger.getLogger("Server");
     private ServerSocket serverSocket;
-    private ExecutorService executor = Executors.newCachedThreadPool();
+    private ExecutorService executor = FinancerExecutor.getExecutor();
 
     public static void main(String[] args) {
         int port = -1;
@@ -84,7 +84,7 @@ public class Server {
                 Socket client = this.serverSocket.accept();
                 DataInputStream input = new DataInputStream(client.getInputStream());
                 DataOutputStream output = new DataOutputStream(client.getOutputStream());
-                this.executor.execute(new ClientHandler(client, input, output));
+                FinancerExecutor.getExecutor().execute(new ClientHandler(client, input, output));
             } catch (Exception e) {
                 this.logger.log(Level.SEVERE, e.getMessage());
                 break;

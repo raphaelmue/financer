@@ -36,9 +36,11 @@ public class Database {
         FIXED_TRANSACTIONS("fixed_transactions"),
         FIXED_TRANSACTIONS_AMOUNTS("fixed_transactions_amounts"),
         TRANSACTIONS("transactions"),
+        TRANSACTIONS_ATTACHMENTS("transactions_attachments"),
         USERS("users"),
         USERS_CATEGORIES("users_categories"),
-        USERS_TOKENS("users_tokens");
+        USERS_TOKENS("users_tokens"),
+        USERS_SETTINGS("users_settings");
 
         private String tableName;
 
@@ -190,7 +192,7 @@ public class Database {
     public JSONArray get(Table tableName, Map<String, Object> whereParameters, String orderByClause) throws SQLException {
         PreparedStatement statement;
         String query = "SELECT * FROM " + tableName.getTableName() +
-                this.getClause(whereParameters, "WHERE", " AND ") +
+                this.getClause(whereParameters, "WHERE", " AND ", true) +
                 this.getOrderByClause(orderByClause);
 
         statement = connection.prepareStatement(query);
@@ -240,8 +242,8 @@ public class Database {
     public void update(Table tableName, Map<String, Object> whereParameters, Map<String, Object> values) throws SQLException {
         PreparedStatement statement;
         String query = "UPDATE " + tableName.getTableName() +
-                this.getClause(values, "SET", ", ") +
-                this.getClause(whereParameters, "WHERE", " AND ");
+                this.getClause(values, "SET", ", ", false) +
+                this.getClause(whereParameters, "WHERE", " AND ", true);
 
         statement = connection.prepareStatement(query);
         this.preparedStatement(statement, values);
@@ -260,13 +262,14 @@ public class Database {
     public void delete(Table table, Map<String, Object> whereParameters) throws SQLException {
         PreparedStatement statement;
         String query = "DELETE FROM " + table.getTableName() + " " +
-                this.getClause(whereParameters, "WHERE", " AND ");
+                this.getClause(whereParameters, "WHERE", " AND ", true);
         statement = this.preparedStatement(connection.prepareStatement(query), whereParameters);
         statement.execute();
     }
 
     /**
      * Returns the latest id that was inserted into the table.
+     *
      * @param table database table that will be requested
      * @return the latest id in the table
      * @throws SQLException thrown, when something went wrong executing the SQL statement
@@ -281,6 +284,7 @@ public class Database {
 
     /**
      * Clears all data in the database. Only possible if server is in test mode.
+     *
      * @throws SQLException thrown, when something went wrong executing the SQL statement
      */
     public void clearDatabase() throws SQLException {
@@ -291,7 +295,7 @@ public class Database {
         }
     }
 
-    private String getClause(Map<String, Object> values, String operation, String separator) {
+    private String getClause(Map<String, Object> values, String operation, String separator, boolean isWhereClause) {
         StringBuilder whereClauseString = new StringBuilder();
         if (values.size() > 0) {
             whereClauseString.append(" ").append(operation).append(" ");
@@ -302,8 +306,16 @@ public class Database {
                 } else {
                     whereClauseString.append(separator);
                 }
-                whereClauseString.append(entry.getKey()).append(" = ?");
+
+                if (entry.getValue() == null) {
+                    whereClauseString.append(entry.getKey());
+                    whereClauseString.append(isWhereClause ? " IS " : " = ");
+                    whereClauseString.append(" NULL");
+                } else {
+                    whereClauseString.append(entry.getKey()).append(" = ?");
+                }
             }
+            values.entrySet().removeIf(entry -> entry.getValue() == null);
         }
         return whereClauseString.toString();
     }

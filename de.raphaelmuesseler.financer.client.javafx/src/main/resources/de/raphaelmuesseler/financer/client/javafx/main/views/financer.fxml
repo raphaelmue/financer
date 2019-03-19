@@ -39,7 +39,7 @@
             </VBox>
         </left>
         <top>
-            <BorderPane styleClass="header">
+            <BorderPane fx:id="header" styleClass="header">
                 <left>
                     <HBox>
                         <JFXHamburger fx:id="hamburgerBtn" onMouseClicked="#onToggleNavigationBar" alignment="CENTER_LEFT"/>
@@ -47,12 +47,15 @@
                     </HBox>
                 </left>
                 <center>
-                    <Label fx:id="contentLabel" text="%overview" alignment="CENTER" textAlignment="CENTER"/>
+                    <HBox  alignment="CENTER" spacing="5">
+                        <Label fx:id="contentLabel" text="%overview"/>
+                        <Label fx:id="offlineLabel" text="%offline" visible="false" />
+                    </HBox>
                 </center>
                 <right>
                     <MenuButton fx:id="accountMenuBtn" text="Account">
                         <items>
-                            <MenuItem fx:id="logoutBtn" text="Logout" onAction="#handleLogout" />
+                            <MenuItem fx:id="logoutBtn" text="Logout" onAction="#handleLogoutBtn" />
                         </items>
                     </MenuButton>
                 </right>

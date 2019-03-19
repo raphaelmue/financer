@@ -1,20 +1,43 @@
 package de.raphaelmuesseler.financer.client.javafx.main.transactions;
 
+import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXDatePicker;
-import de.raphaelmuesseler.financer.client.format.Formatter;
+import de.raphaelmuesseler.financer.client.connection.ServerRequestHandler;
+import de.raphaelmuesseler.financer.client.format.FormatterImpl;
 import de.raphaelmuesseler.financer.client.format.I18N;
 import de.raphaelmuesseler.financer.client.javafx.components.DoubleField;
+import de.raphaelmuesseler.financer.client.javafx.connection.JavaFXAsyncConnectionCall;
+import de.raphaelmuesseler.financer.client.javafx.dialogs.FinancerConfirmDialog;
 import de.raphaelmuesseler.financer.client.javafx.dialogs.FinancerDialog;
+import de.raphaelmuesseler.financer.client.javafx.dialogs.FinancerExceptionDialog;
+import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
+import de.raphaelmuesseler.financer.shared.connection.ConnectionResult;
 import de.raphaelmuesseler.financer.shared.model.BaseCategory;
 import de.raphaelmuesseler.financer.shared.model.Category;
 import de.raphaelmuesseler.financer.shared.model.CategoryTree;
+import de.raphaelmuesseler.financer.shared.model.user.User;
+import de.raphaelmuesseler.financer.shared.model.transactions.AttachmentWithContent;
 import de.raphaelmuesseler.financer.shared.model.transactions.Transaction;
 import de.raphaelmuesseler.financer.util.collections.TreeUtil;
+import de.raphaelmuesseler.financer.util.concurrency.FinancerExecutor;
 import javafx.scene.Node;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
+import org.controlsfx.glyphfont.FontAwesome;
+import org.controlsfx.glyphfont.GlyphFont;
+import org.controlsfx.glyphfont.GlyphFontRegistry;
 
+import java.awt.*;
+import java.io.*;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.Executors;
 
 class TransactionDialog extends FinancerDialog<Transaction> {
 
@@ -24,6 +47,7 @@ class TransactionDialog extends FinancerDialog<Transaction> {
     private TextField purposeField;
     private TextField shopField;
     private JFXDatePicker valueDateField;
+    private ListView<AttachmentWithContent> attachmentListView;
     private BaseCategory categories;
 
     TransactionDialog(Transaction transaction, BaseCategory categories) {
@@ -41,6 +65,9 @@ class TransactionDialog extends FinancerDialog<Transaction> {
 
     @Override
     protected Node setDialogContent() {
+        HBox hBox = new HBox();
+        hBox.setSpacing(15);
+
         GridPane gridPane = new GridPane();
         gridPane.setHgap(80);
         gridPane.setVgap(8);
@@ -72,12 +99,66 @@ class TransactionDialog extends FinancerDialog<Transaction> {
         this.shopField.setId("shopTextField");
         gridPane.add(this.shopField, 1, 4);
 
-        gridPane.add(new Label(I18N.get("product")), 0, 5);
+        gridPane.add(new Label(I18N.get("valueDate")), 0, 5);
         this.valueDateField = new JFXDatePicker();
         this.valueDateField.setId("valueDatePicker");
         gridPane.add(this.valueDateField, 1, 5);
 
-        return gridPane;
+        hBox.getChildren().add(gridPane);
+
+        if (this.getValue() != null) {
+            VBox attachmentsContainer = new VBox();
+            attachmentsContainer.setSpacing(10);
+            attachmentsContainer.setPrefHeight(200);
+            attachmentsContainer.getChildren().add(new Label(I18N.get("attachments")));
+
+            GlyphFont fontAwesome = GlyphFontRegistry.font("FontAwesome");
+            JFXButton uploadAttachmentBtn = new JFXButton(I18N.get("upload"), fontAwesome.create(FontAwesome.Glyph.PLUS));
+            JFXButton openFileBtn = new JFXButton(I18N.get("openFile"), fontAwesome.create(FontAwesome.Glyph.FOLDER_OPEN));
+            JFXButton deleteAttachmentBtn = new JFXButton(I18N.get("delete"), fontAwesome.create(FontAwesome.Glyph.TRASH));
+
+            uploadAttachmentBtn.setOnAction(event -> {
+                FileChooser fileChooser = new FileChooser();
+                fileChooser.setTitle(I18N.get("uploadAttachment"));
+                fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
+                fileChooser.getExtensionFilters().addAll(
+                        new FileChooser.ExtensionFilter(I18N.get("documents"), "*.jpg", "*.png", "*.doc", "*.docx", "*.pdf")
+                );
+                File attachmentFile = fileChooser.showOpenDialog(uploadAttachmentBtn.getContextMenu());
+                onUploadAttachment(attachmentFile);
+            });
+
+            openFileBtn.setOnAction(event -> onOpenAttachment());
+
+            deleteAttachmentBtn.setOnAction(event -> onDeleteAttachment());
+
+            HBox toolBox = new HBox();
+            toolBox.setSpacing(8);
+            toolBox.getChildren().add(uploadAttachmentBtn);
+            toolBox.getChildren().add(openFileBtn);
+            toolBox.getChildren().add(deleteAttachmentBtn);
+
+            this.attachmentListView = new ListView<>();
+            this.attachmentListView.setCellFactory(param -> new ListCell<>() {
+                @Override
+                protected void updateItem(AttachmentWithContent item, boolean empty) {
+                    super.updateItem(item, empty);
+
+                    if (item == null || empty) {
+                        setGraphic(null);
+                    } else {
+                        setText(item.getName());
+                    }
+                }
+            });
+
+            attachmentsContainer.getChildren().add(toolBox);
+            attachmentsContainer.getChildren().add(this.attachmentListView);
+
+            hBox.getChildren().add(attachmentsContainer);
+        }
+
+        return hBox;
     }
 
     @Override
@@ -88,12 +169,12 @@ class TransactionDialog extends FinancerDialog<Transaction> {
                 categoryComboBox.getItems().add((CategoryTree) treeItem);
             }
         });
-        this.categoryComboBox.setCellFactory(param -> new ListCell<CategoryTree>() {
+        this.categoryComboBox.setCellFactory(param -> new ListCell<>() {
             @Override
             protected void updateItem(CategoryTree item, boolean empty) {
                 super.updateItem(item, empty);
                 if (!empty) {
-                    setText(Formatter.formatCategoryName(item.getValue()));
+                    setText(new FormatterImpl(LocalStorageImpl.getInstance()).formatCategoryName(item.getValue()));
                 } else {
                     setText(null);
                 }
@@ -108,6 +189,8 @@ class TransactionDialog extends FinancerDialog<Transaction> {
             this.purposeField.setText(this.getValue().getPurpose());
             this.shopField.setText(this.getValue().getShop());
             this.valueDateField.setValue(this.getValue().getValueDate());
+
+            this.attachmentListView.getItems().addAll(this.getValue().getAttachments());
         }
     }
 
@@ -120,7 +203,7 @@ class TransactionDialog extends FinancerDialog<Transaction> {
             result = false;
         }
 
-        if (Double.valueOf(this.amountField.getText()).equals(0)) {
+        if (Double.valueOf(this.amountField.getText()).equals(0.0)) {
             setErrorMessage(I18N.get("selectValidAmount"));
             result = false;
         }
@@ -134,6 +217,7 @@ class TransactionDialog extends FinancerDialog<Transaction> {
             this.setValue(new Transaction(-1, Double.valueOf(this.amountField.getText()),
                     this.categoryComboBox.getSelectionModel().getSelectedItem(), this.productField.getText(),
                     this.purposeField.getText(), this.valueDateField.getValue(), this.shopField.getText()));
+            this.getValue().getCategoryTree().getTransactions().add(this.getValue());
         } else {
             this.getValue().setAmount(Double.valueOf(this.amountField.getText()));
             this.getValue().setCategoryTree(this.categoryComboBox.getSelectionModel().getSelectedItem());
@@ -144,5 +228,98 @@ class TransactionDialog extends FinancerDialog<Transaction> {
         }
 
         return super.onConfirm();
+    }
+
+    private void onUploadAttachment(File attachmentFile) {
+
+        if (attachmentFile != null) {
+            Map<String, Object> parameters = new HashMap<>();
+            parameters.put("transaction", this.getValue());
+            parameters.put("attachmentFile", attachmentFile);
+
+            byte[] attachmentContent = new byte[(int) attachmentFile.length()];
+            try (BufferedInputStream bufferedReader = new BufferedInputStream(new FileInputStream(attachmentFile))) {
+                if (bufferedReader.read(attachmentContent, 0, attachmentContent.length) != -1) {
+                    parameters.put("content", attachmentContent);
+                    Executors.newCachedThreadPool().execute(new ServerRequestHandler((User) LocalStorageImpl.getInstance().readObject("user"),
+                            "uploadTransactionAttachment", parameters, new JavaFXAsyncConnectionCall() {
+                        @Override
+                        public void onSuccess(ConnectionResult result) {
+                            attachmentListView.getItems().add((AttachmentWithContent) result.getResult());
+                            getValue().getAttachments().add((AttachmentWithContent) result.getResult());
+                        }
+
+                        @Override
+                        public void onFailure(Exception exception) {
+                            JavaFXAsyncConnectionCall.super.onFailure(exception);
+                        }
+                    }));
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void onOpenAttachment() {
+        File file = new File(LocalStorageImpl.LocalStorageFile.TRANSACTIONS.getFile().getParent() +
+                "/transactions/" + this.getValue().getId() + "/attachments/" +
+                this.attachmentListView.getSelectionModel().getSelectedItem().getName());
+
+        if (file.exists()) {
+            try {
+                Desktop.getDesktop().open(file);
+            } catch (IOException e) {
+                new FinancerExceptionDialog("Financer", e).showAndWait();
+            }
+        } else {
+            if (!file.getParentFile().exists()) {
+                file.getParentFile().mkdirs();
+            }
+
+            Map<String, Object> parameters = new HashMap<>();
+            parameters.put("id", this.attachmentListView.getSelectionModel().getSelectedItem().getId());
+
+            FinancerExecutor.getExecutor().execute(new ServerRequestHandler(
+                    (User) LocalStorageImpl.getInstance().readObject("user"),
+                    "getAttachment", parameters, new JavaFXAsyncConnectionCall() {
+                @Override
+                public void onSuccess(ConnectionResult result) {
+                    try (FileOutputStream fileOutputStream = new FileOutputStream(file)) {
+                        fileOutputStream.write(((AttachmentWithContent) result.getResult()).getContent());
+                        Desktop.getDesktop().open(file);
+                    } catch (IOException e) {
+                        new FinancerExceptionDialog("Financer", e).showAndWait();
+                        e.printStackTrace();
+                    }
+                }
+
+                @Override
+                public void onFailure(Exception exception) {
+                    JavaFXAsyncConnectionCall.super.onFailure(exception);
+                }
+            }));
+        }
+    }
+
+    private void onDeleteAttachment() {
+        if (new FinancerConfirmDialog(I18N.get("confirmDeleteAttachment")).showAndGetResult()) {
+            Map<String, Object> parameters = new HashMap<>();
+            parameters.put("id", this.attachmentListView.getSelectionModel().getSelectedItem().getId());
+
+            FinancerExecutor.getExecutor().execute(new ServerRequestHandler(
+                    (User) LocalStorageImpl.getInstance().readObject("user"), "deleteAttachment",
+                    parameters, new JavaFXAsyncConnectionCall() {
+                @Override
+                public void onSuccess(ConnectionResult result) {
+                    attachmentListView.getItems().remove(attachmentListView.getSelectionModel().getSelectedItem());
+                }
+
+                @Override
+                public void onFailure(Exception exception) {
+                    JavaFXAsyncConnectionCall.super.onFailure(exception);
+                }
+            }));
+        }
     }
 }

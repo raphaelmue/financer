@@ -1,24 +1,28 @@
 package de.raphaelmuesseler.financer.shared.model.db;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.io.Serializable;
 
 public class DatabaseUser implements DatabaseObject, Serializable {
     private static final long serialVersionUID = 8551108621522985674L;
     private int id;
-    private String email, password, salt, name, surname;
-    private String birthdate;
+    private String email, password, salt, name, surname, gender;
+    @SerializedName("birthdate")
+    private String birthDate;
 
     public DatabaseUser() {
 
     }
 
-    public DatabaseUser(String email, String password, String salt, String name, String surname, String birthDate) {
+    public DatabaseUser(String email, String password, String salt, String name, String surname, String birthDate, String gender) {
         this.email = email;
         this.password = password;
         this.salt = salt;
         this.name = name;
         this.surname = surname;
-        this.birthdate = birthDate;
+        this.birthDate = birthDate;
+        this.gender = gender;
     }
 
     @Override
@@ -50,8 +54,12 @@ public class DatabaseUser implements DatabaseObject, Serializable {
         return this.name + " " + this.surname;
     }
 
-    public String getBirthdate() {
-        return birthdate;
+    public String getBirthDate() {
+        return birthDate;
+    }
+
+    public String getGender() {
+        return gender;
     }
 
     public void setId(int id) {
@@ -78,7 +86,11 @@ public class DatabaseUser implements DatabaseObject, Serializable {
         this.surname = surname;
     }
 
-    public void setBirthdate(String birthdate) {
-        this.birthdate = birthdate;
+    public void setBirthDate(String birthDate) {
+        this.birthDate = birthDate;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
     }
 }

@@ -9,25 +9,26 @@ import de.raphaelmuesseler.financer.shared.connection.ConnectionResult;
 import de.raphaelmuesseler.financer.shared.model.BaseCategory;
 import de.raphaelmuesseler.financer.shared.model.Category;
 import de.raphaelmuesseler.financer.shared.model.CategoryTree;
-import de.raphaelmuesseler.financer.shared.model.User;
+import de.raphaelmuesseler.financer.shared.model.user.User;
 import de.raphaelmuesseler.financer.shared.model.transactions.FixedTransaction;
 import de.raphaelmuesseler.financer.shared.model.transactions.Transaction;
 import de.raphaelmuesseler.financer.util.collections.Action;
 import de.raphaelmuesseler.financer.util.collections.TreeUtil;
+import de.raphaelmuesseler.financer.util.concurrency.FinancerExecutor;
 
 import java.net.ConnectException;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class RetrievalServiceImpl implements RetrievalService {
 
     private static RetrievalService INSTANCE = null;
-    private ExecutorService executor = Executors.newCachedThreadPool();
     private final LocalStorage localStorage = LocalStorageImpl.getInstance();
+    private final Logger logger = Logger.getLogger("FinancerApplication");
 
 
     public static RetrievalService getInstance() {
@@ -50,10 +51,11 @@ public class RetrievalServiceImpl implements RetrievalService {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("user", user);
 
-        this.executor.execute(new ServerRequestHandler(user, "getUsersCategories", parameters, new JavaFXAsyncConnectionCall() {
+        FinancerExecutor.getExecutor().execute(new ServerRequestHandler(user, "getUsersCategories", parameters, new JavaFXAsyncConnectionCall() {
             @Override
             public void onSuccess(ConnectionResult result) {
                 BaseCategory categories = (BaseCategory) result.getResult();
+                TreeUtil.numberItemsByValue(categories, (categoryTree, prefix) -> categoryTree.getValue().setPrefix(prefix));
                 localStorage.writeObject("categories", categories);
 
                 asyncCall.onSuccess(categories);
@@ -61,11 +63,16 @@ public class RetrievalServiceImpl implements RetrievalService {
 
             @Override
             public void onFailure(Exception exception) {
-                if (exception instanceof ConnectException) {
-                    // TODO set offline
-                } else {
+                asyncCall.onFailure(exception);
+                if (!(exception instanceof ConnectException)) {
                     JavaFXAsyncConnectionCall.super.onFailure(exception);
+                    logger.log(Level.SEVERE, exception.getMessage(), exception);
                 }
+            }
+
+            @Override
+            public void onAfter() {
+                asyncCall.onAfter();
             }
         }));
     }
@@ -75,7 +82,7 @@ public class RetrievalServiceImpl implements RetrievalService {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("user", user);
 
-        this.executor.execute(new ServerRequestHandler(user, "getTransactions", parameters, new JavaFXAsyncConnectionCall() {
+        FinancerExecutor.getExecutor().execute(new ServerRequestHandler(user, "getTransactions", parameters, new JavaFXAsyncConnectionCall() {
             @Override
             public void onSuccess(ConnectionResult result) {
                 List<Transaction> transactions = (List<Transaction>) result.getResult();
@@ -96,11 +103,15 @@ public class RetrievalServiceImpl implements RetrievalService {
 
             @Override
             public void onFailure(Exception exception) {
-                if (exception instanceof ConnectException) {
-                    // TODO set offline
-                } else {
+                asyncCall.onFailure(exception);
+                if (!(exception instanceof ConnectException)) {
                     JavaFXAsyncConnectionCall.super.onFailure(exception);
                 }
+            }
+
+            @Override
+            public void onAfter() {
+                asyncCall.onAfter();
             }
         }));
     }
@@ -110,15 +121,17 @@ public class RetrievalServiceImpl implements RetrievalService {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("user", user);
 
-        this.executor.execute(new ServerRequestHandler(user, "getFixedTransactions", parameters, new JavaFXAsyncConnectionCall() {
+        FinancerExecutor.getExecutor().execute(new ServerRequestHandler(user, "getFixedTransactions", parameters, new JavaFXAsyncConnectionCall() {
             @Override
             public void onSuccess(ConnectionResult result) {
                 List<FixedTransaction> fixedTransactions = (List<FixedTransaction>) result.getResult();
                 BaseCategory categories = (BaseCategory) localStorage.readObject("categories");
                 for (FixedTransaction fixedTransaction : fixedTransactions) {
-                    CategoryTree categoryTree = (CategoryTree) TreeUtil.getByValue(categories, fixedTransaction.getCategoryTree(), Comparator.comparingInt(Category::getId));
+                    CategoryTree categoryTree = (CategoryTree) TreeUtil.getByValue(categories, fixedTransaction.getCategoryTree(),
+                            Comparator.comparingInt(Category::getId));
                     if (categoryTree != null) {
                         fixedTransaction.setCategoryTree(categoryTree);
+                        categoryTree.getTransactions().remove(fixedTransaction);
                         categoryTree.getTransactions().add(fixedTransaction);
                     }
                 }
@@ -130,13 +143,15 @@ public class RetrievalServiceImpl implements RetrievalService {
 
             @Override
             public void onFailure(Exception exception) {
-                if (exception instanceof ConnectException) {
-                    // TODO set offline
-                } else {
+                asyncConnectionCall.onFailure(exception);
+                if (!(exception instanceof ConnectException)) {
                     JavaFXAsyncConnectionCall.super.onFailure(exception);
-                    asyncConnectionCall.onFailure(exception);
                 }
+            }
 
+            @Override
+            public void onAfter() {
+                asyncConnectionCall.onAfter();
             }
         }));
     }

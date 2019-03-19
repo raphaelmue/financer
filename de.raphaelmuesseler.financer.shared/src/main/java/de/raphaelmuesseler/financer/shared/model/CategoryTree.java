@@ -16,7 +16,7 @@ public class CategoryTree implements Serializable, AmountProvider, Tree<Category
     private final Category category;
     private final List<CategoryTree> children = new ArrayList<>();
     private Set<AbstractTransaction> transactions = new HashSet<>();
-    private final BaseCategory.CategoryClass categoryClass;
+    private BaseCategory.CategoryClass categoryClass;
     private CategoryTree parent;
 
     public CategoryTree(BaseCategory.CategoryClass categoryClass, Category category) {
@@ -98,12 +98,12 @@ public class CategoryTree implements Serializable, AmountProvider, Tree<Category
     }
 
     @Override
-    public Tree<Category> getParent() {
+    public CategoryTree getParent() {
         return this.parent;
     }
 
     @Override
-    public List<? extends Tree<Category>> getChildren() {
+    public List<CategoryTree> getChildren() {
         return this.children;
     }
 
@@ -121,6 +121,10 @@ public class CategoryTree implements Serializable, AmountProvider, Tree<Category
     @Override
     public void setParent(Tree<Category> parent) {
         this.parent = (CategoryTree) parent;
+    }
+
+    public void setCategoryClass(BaseCategory.CategoryClass categoryClass) {
+        this.categoryClass = categoryClass;
     }
 
     @Override
