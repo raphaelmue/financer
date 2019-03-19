@@ -10,6 +10,8 @@ import de.raphaelmuesseler.financer.client.javafx.connection.RetrievalServiceImp
 import de.raphaelmuesseler.financer.client.javafx.dialogs.FinancerConfirmDialog;
 import de.raphaelmuesseler.financer.client.javafx.format.JavaFXFormatter;
 import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
+import de.raphaelmuesseler.financer.client.javafx.main.FinancerController;
+import de.raphaelmuesseler.financer.client.local.Application;
 import de.raphaelmuesseler.financer.shared.connection.AsyncCall;
 import de.raphaelmuesseler.financer.shared.connection.ConnectionResult;
 import de.raphaelmuesseler.financer.shared.model.BaseCategory;
@@ -26,6 +28,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
@@ -98,27 +101,16 @@ public class TransactionsController implements Initializable {
 
             this.categories = (BaseCategory) this.localStorage.readObject("categories");
 
-            this.loadTransactionsTable();
-            this.loadFixedTransactionTable();
-            this.loadTransactionsOverviewTable();
+            this.initializeTransactionsTable();
+            this.initializeFixedTransactionTable();
+            this.initializeTransactionsOverviewTable();
 
         });
     }
 
-    private void loadTransactionsOverviewTable() {
+    private void initializeTransactionsOverviewTable() {
         final int numberOfMaxMonths = 6;
         final List<TableColumn<TransactionOverviewRow, String>> monthColumns = new ArrayList<>(numberOfMaxMonths);
-        final Map<CategoryTree, TransactionOverviewRow> rows = new HashMap<>();
-
-        if (this.categories != null) {
-            this.categories.traverse(categoryTree -> {
-                TransactionOverviewRow transactionOverviewRow = new TransactionOverviewRow((CategoryTree) categoryTree);
-                for (int i = 0; i < 6; i++) {
-                    transactionOverviewRow.getAmounts()[i] = ((CategoryTree) categoryTree).getAmount(LocalDate.now().minusMonths(i));
-                }
-                rows.put((CategoryTree) categoryTree, transactionOverviewRow);
-            });
-        }
 
         TableColumn<TransactionOverviewRow, CategoryTree> categoryColumn = new TableColumn<>(I18N.get("category"));
         categoryColumn.setCellValueFactory(param -> new ReadOnlyObjectWrapper<>(param.getValue().getCategory()));
@@ -162,14 +154,10 @@ public class TransactionsController implements Initializable {
         }
         this.transactionsOverviewTableView.getColumns().add(categoryColumn);
         this.transactionsOverviewTableView.getColumns().addAll(monthColumns);
-
-        List<TransactionOverviewRow> items = new ArrayList<>(rows.values());
-        items.sort((o1, o2) -> String.CASE_INSENSITIVE_ORDER.compare(formatter.formatCategoryName(o1.getCategory().getValue()),
-                formatter.formatCategoryName(o2.getCategory().getValue())));
-        this.transactionsOverviewTableView.getItems().addAll(items);
     }
 
-    private void loadTransactionsTable() {
+    private void initializeTransactionsTable() {
+
         TableColumn<Transaction, Category> categoryColumn = new TableColumn<>(I18N.get("category"));
         TableColumn<Transaction, LocalDate> valueDateColumn = new TableColumn<>(I18N.get("valueDate"));
         TableColumn<Transaction, Double> amountColumn = new TableColumn<>(I18N.get("amount"));
@@ -178,6 +166,8 @@ public class TransactionsController implements Initializable {
         TableColumn<Transaction, String> shopColumn = new TableColumn<>(I18N.get("shop"));
 
         valueDateColumn.setCellValueFactory(new PropertyValueFactory<>("valueDate"));
+        valueDateColumn.setSortable(true);
+        valueDateColumn.setComparator(LocalDate::compareTo);
         valueDateColumn.setStyle("-fx-alignment: CENTER;");
         valueDateColumn.setCellFactory(param -> new TableCell<>() {
             @Override
@@ -230,10 +220,13 @@ public class TransactionsController implements Initializable {
             deleteTransactionBtn.setDisable(false);
         });
 
+        transactionsTableView.getColumns().get(1).setSortType(TableColumn.SortType.DESCENDING);
+        transactionsTableView.getSortOrder().add(valueDateColumn);
+
         this.handleRefreshTransactions();
     }
 
-    private void loadFixedTransactionTable() {
+    private void initializeFixedTransactionTable() {
         this.categoriesListView.setCellFactory(param -> new CategoryListViewImpl());
 
         this.categoriesListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
@@ -262,72 +255,29 @@ public class TransactionsController implements Initializable {
         categoriesListView.setCellFactory(param -> new CategoryListViewImpl());
     }
 
-    private void loadFixedTransactionTableItems() {
+    private void loadTransactionOverviewTableData() {
+        this.transactionsOverviewTableView.getItems().clear();
+        final Map<CategoryTree, TransactionOverviewRow> rows = new HashMap<>();
+
         if (this.categories != null) {
-            categoriesListView.getItems().clear();
-            this.categories.traverse(treeItem -> {
-                if ((((CategoryTree) treeItem).getCategoryClass() == BaseCategory.CategoryClass.FIXED_EXPENSES ||
-                        ((CategoryTree) treeItem).getCategoryClass() == BaseCategory.CategoryClass.FIXED_REVENUE)) {
-                    categoriesListView.getItems().add((CategoryTree) treeItem);
+            this.categories.traverse(categoryTree -> {
+                TransactionOverviewRow transactionOverviewRow = new TransactionOverviewRow((CategoryTree) categoryTree);
+                for (int i = 0; i < 6; i++) {
+                    transactionOverviewRow.getAmounts()[i] = ((CategoryTree) categoryTree).getAmount(LocalDate.now().minusMonths(i));
                 }
+                rows.put((CategoryTree) categoryTree, transactionOverviewRow);
             });
         }
 
-        this.categoriesListView.getItems().sort((o1, o2) -> String.CASE_INSENSITIVE_ORDER.compare(formatter.formatCategoryName(o1),
-                formatter.formatCategoryName(o2)));
+        List<TransactionOverviewRow> items = new ArrayList<>(rows.values());
+        items.sort((o1, o2) -> String.CASE_INSENSITIVE_ORDER.compare(formatter.formatCategoryName(o1.getCategory().getValue()),
+                formatter.formatCategoryName(o2.getCategory().getValue())));
+        this.transactionsOverviewTableView.getItems().addAll(items);
 
+        this.transactionsOverviewTableView.refresh();
     }
 
-    public void handleRefreshTransactions() {
-        RetrievalServiceImpl.getInstance().fetchTransactions(this.user, new AsyncCall<>() {
-            @Override
-            public void onSuccess(List<Transaction> result) { }
-
-            @Override
-            public void onAfter() {
-                categories = (BaseCategory) localStorage.readObject("categories");
-                Platform.runLater(() -> {
-                    loadTransactionTableItems();
-                    transactionsTableView.getColumns().get(1).setSortType(TableColumn.SortType.DESCENDING);
-                    transactionsTableView.getSortOrder().add(transactionsTableView.getColumns().get(1));
-                    transactionsTableView.refresh();
-                });
-            }
-        });
-    }
-
-    public void handleNewTransaction() {
-        Transaction transaction = new TransactionDialog(null, this.categories).showAndGetResult();
-        if (transaction != null) {
-
-            this.correctTransactionAmount(transaction);
-
-            Map<String, Object> parameters = new HashMap<>();
-            parameters.put("user", this.user);
-            parameters.put("transaction", transaction);
-
-            FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "addTransaction", parameters, new JavaFXAsyncConnectionCall() {
-                @Override
-                public void onSuccess(ConnectionResult result) {
-                    transaction.setId(((Transaction) result.getResult()).getId());
-                    localStorage.writeObject("categories", categories);
-                }
-
-                @Override
-                public void onFailure(Exception exception) {
-                    logger.log(Level.SEVERE, exception.getMessage(), exception);
-                    JavaFXAsyncConnectionCall.super.onFailure(exception);
-                }
-
-                @Override
-                public void onAfter() {
-                    Platform.runLater(() -> loadTransactionTableItems());
-                }
-            }, true));
-        }
-    }
-
-    private void loadTransactionTableItems() {
+    private void loadTransactionTableData() {
         ObservableList<Transaction> transactions = FXCollections.observableArrayList();
         if (this.categories != null) {
 //            transactionsTableView.getItems().clear();
@@ -355,71 +305,56 @@ public class TransactionsController implements Initializable {
                             transaction.getProduct().toLowerCase().contains(newValue.toLowerCase()) ||
                             transaction.getPurpose().toLowerCase().contains(newValue.toLowerCase());
                 }));
-        transactionsTableView.setItems(filteredData);
-        transactionsTableView.getColumns().get(1).setSortType(TableColumn.SortType.DESCENDING);
-        transactionsTableView.getSortOrder().add(transactionsTableView.getColumns().get(1));
+
+        SortedList<Transaction> sortedData = new SortedList<>(filteredData);
+        sortedData.comparatorProperty().bind(transactionsTableView.comparatorProperty());
+
+        transactionsTableView.setItems(sortedData);
         transactionsTableView.refresh();
     }
 
-    public void handleEditTransaction() {
-        Transaction transaction = new TransactionDialog(this.transactionsTableView.getSelectionModel().getSelectedItem(),
-                this.categories).showAndGetResult();
-        if (transaction != null) {
-
-            this.correctTransactionAmount(transaction);
-
-            Map<String, Object> parameters = new HashMap<>();
-            parameters.put("user", this.user);
-            parameters.put("transaction", transaction);
-
-            FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "updateTransaction",
-                    parameters, new JavaFXAsyncConnectionCall() {
-                @Override
-                public void onSuccess(ConnectionResult result) {
-                    localStorage.writeObject("categories", categories);
-                    Platform.runLater(() -> transactionsTableView.refresh());
+    private void loadFixedTransactionTableData() {
+        if (this.categories != null) {
+            categoriesListView.getItems().clear();
+            this.categories.traverse(treeItem -> {
+                if ((((CategoryTree) treeItem).getCategoryClass() == BaseCategory.CategoryClass.FIXED_EXPENSES ||
+                        ((CategoryTree) treeItem).getCategoryClass() == BaseCategory.CategoryClass.FIXED_REVENUE)) {
+                    categoriesListView.getItems().add((CategoryTree) treeItem);
                 }
-
-                @Override
-                public void onFailure(Exception exception) {
-                    logger.log(Level.SEVERE, exception.getMessage(), exception);
-                    JavaFXAsyncConnectionCall.super.onFailure(exception);
-                }
-            }, true));
+            });
         }
+
+        this.categoriesListView.getItems().sort((o1, o2) -> String.CASE_INSENSITIVE_ORDER.compare(formatter.formatCategoryName(o1),
+                formatter.formatCategoryName(o2)));
+
     }
 
-    public void handleDeleteTransaction() {
-        if (new FinancerConfirmDialog(I18N.get("confirmDeleteTransaction")).showAndGetResult()) {
-            Transaction transaction = this.transactionsTableView.getSelectionModel().getSelectedItem();
-            if (transaction != null) {
-                Map<String, Object> parameters = new HashMap<>();
-                parameters.put("transaction", transaction);
-
-                FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "deleteTransaction", parameters, new JavaFXAsyncConnectionCall() {
-                    @Override
-                    public void onSuccess(ConnectionResult result) {
-                        Platform.runLater(() -> {
-                            transaction.getCategoryTree().getTransactions().remove(transaction);
-                            loadTransactionTableItems();
-                            localStorage.writeObject("categories", categories);
-                        });
-                    }
-
-                    @Override
-                    public void onFailure(Exception exception) {
-                        logger.log(Level.SEVERE, exception.getMessage(), exception);
-                        JavaFXAsyncConnectionCall.super.onFailure(exception);
-                    }
-                }, true));
+    public void handleRefreshTransactions() {
+        RetrievalServiceImpl.getInstance().fetchTransactions(this.user, new AsyncCall<>() {
+            @Override
+            public void onSuccess(List<Transaction> result) {
             }
-        }
+
+            @Override
+            public void onAfter() {
+                categories = (BaseCategory) localStorage.readObject("categories");
+                Platform.runLater(() -> {
+                    loadTransactionTableData();
+                    transactionsTableView.getColumns().get(1).setSortType(TableColumn.SortType.DESCENDING);
+                    transactionsTableView.getSortOrder().add(transactionsTableView.getColumns().get(1));
+                    transactionsTableView.refresh();
+
+                    loadTransactionOverviewTableData();
+                });
+            }
+        });
     }
 
     public void handleRefreshFixedTransactions() {
         RetrievalServiceImpl.getInstance().fetchFixedTransactions(this.user, new AsyncCall<>() {
             @Override
-            public void onSuccess(List<FixedTransaction> result) { }
+            public void onSuccess(List<FixedTransaction> result) {
+            }
 
             @Override
             public void onFailure(Exception exception) {
@@ -431,11 +366,49 @@ public class TransactionsController implements Initializable {
                 Platform.runLater(() -> {
                     categories = (BaseCategory) localStorage.readObject("categories");
 
-                    loadFixedTransactionTableItems();
+                    loadFixedTransactionTableData();
                     fixedTransactionsListView.getItems().clear();
+
+                    loadTransactionOverviewTableData();
                 });
             }
         });
+    }
+
+    public void handleNewTransaction() {
+        Transaction transaction = new TransactionDialog(null, this.categories).showAndGetResult();
+        if (transaction != null) {
+
+            this.correctTransactionAmount(transaction);
+
+            Map<String, Object> parameters = new HashMap<>();
+            parameters.put("user", this.user);
+            parameters.put("transaction", transaction);
+
+            FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "addTransaction", parameters, new JavaFXAsyncConnectionCall() {
+                @Override
+                public void onSuccess(ConnectionResult result) {
+                    transaction.setId(((Transaction) result.getResult()).getId());
+                    localStorage.writeObject("categories", categories);
+
+                    FinancerController.getInstance().showToast(Application.MessageType.SUCCESS, I18N.get("succAddedTransaction"));
+                }
+
+                @Override
+                public void onFailure(Exception exception) {
+                    logger.log(Level.SEVERE, exception.getMessage(), exception);
+                    JavaFXAsyncConnectionCall.super.onFailure(exception);
+                }
+
+                @Override
+                public void onAfter() {
+                    Platform.runLater(() -> {
+                        loadTransactionTableData();
+                        loadTransactionOverviewTableData();
+                    });
+                }
+            }, true));
+        }
     }
 
     public void handleNewFixedTransaction() {
@@ -457,12 +430,53 @@ public class TransactionsController implements Initializable {
                 @Override
                 public void onSuccess(ConnectionResult result) {
                     handleRefreshFixedTransactions();
+                    FinancerController.getInstance().showToast(Application.MessageType.SUCCESS, I18N.get("succAddedFixedTransaction"));
                 }
 
                 @Override
                 public void onFailure(Exception exception) {
                     logger.log(Level.SEVERE, exception.getMessage(), exception);
                     JavaFXAsyncConnectionCall.super.onFailure(exception);
+                }
+
+                @Override
+                public void onAfter() {
+                    Platform.runLater(() -> loadTransactionOverviewTableData());
+                }
+            }, true));
+        }
+    }
+
+    public void handleEditTransaction() {
+        Transaction transaction = new TransactionDialog(this.transactionsTableView.getSelectionModel().getSelectedItem(),
+                this.categories).showAndGetResult();
+        if (transaction != null) {
+
+            this.correctTransactionAmount(transaction);
+
+            Map<String, Object> parameters = new HashMap<>();
+            parameters.put("user", this.user);
+            parameters.put("transaction", transaction);
+
+            FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "updateTransaction",
+                    parameters, new JavaFXAsyncConnectionCall() {
+                @Override
+                public void onSuccess(ConnectionResult result) {
+                    localStorage.writeObject("categories", categories);
+                    Platform.runLater(() -> transactionsTableView.refresh());
+
+                    FinancerController.getInstance().showToast(Application.MessageType.SUCCESS, I18N.get("succUpdatedTransaction"));
+                }
+
+                @Override
+                public void onFailure(Exception exception) {
+                    logger.log(Level.SEVERE, exception.getMessage(), exception);
+                    JavaFXAsyncConnectionCall.super.onFailure(exception);
+                }
+
+                @Override
+                public void onAfter() {
+                    Platform.runLater(() -> loadTransactionOverviewTableData());
                 }
             }, true));
         }
@@ -488,8 +502,12 @@ public class TransactionsController implements Initializable {
                 public void onSuccess(ConnectionResult result) {
                     localStorage.writeObject("categories", categories);
 
-                    fixedTransactionsListView.refresh();
-                    categoriesListView.refresh();
+                    Platform.runLater(() -> {
+                        fixedTransactionsListView.refresh();
+                        categoriesListView.refresh();
+                    });
+
+                    FinancerController.getInstance().showToast(Application.MessageType.SUCCESS, I18N.get("succUpdatedFixedTransaction"));
                 }
 
                 @Override
@@ -497,7 +515,48 @@ public class TransactionsController implements Initializable {
                     logger.log(Level.SEVERE, exception.getMessage(), exception);
                     JavaFXAsyncConnectionCall.super.onFailure(exception);
                 }
+
+                @Override
+                public void onAfter() {
+                    Platform.runLater(() -> {
+                        loadTransactionOverviewTableData();
+                    });
+                }
             }, true));
+        }
+    }
+
+    public void handleDeleteTransaction() {
+        if (new FinancerConfirmDialog(I18N.get("confirmDeleteTransaction")).showAndGetResult()) {
+            Transaction transaction = this.transactionsTableView.getSelectionModel().getSelectedItem();
+            if (transaction != null) {
+                Map<String, Object> parameters = new HashMap<>();
+                parameters.put("transaction", transaction);
+
+                FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "deleteTransaction", parameters, new JavaFXAsyncConnectionCall() {
+                    @Override
+                    public void onSuccess(ConnectionResult result) {
+                        Platform.runLater(() -> {
+                            transaction.getCategoryTree().getTransactions().remove(transaction);
+                            loadTransactionTableData();
+                            localStorage.writeObject("categories", categories);
+                        });
+
+                        FinancerController.getInstance().showToast(Application.MessageType.SUCCESS, I18N.get("succDeletedTransaction"));
+                    }
+
+                    @Override
+                    public void onFailure(Exception exception) {
+                        logger.log(Level.SEVERE, exception.getMessage(), exception);
+                        JavaFXAsyncConnectionCall.super.onFailure(exception);
+                    }
+
+                    @Override
+                    public void onAfter() {
+                        Platform.runLater(() -> loadTransactionOverviewTableData());
+                    }
+                }, true));
+            }
         }
     }
 
@@ -519,12 +578,19 @@ public class TransactionsController implements Initializable {
 
                     fixedTransactionsListView.refresh();
                     categoriesListView.refresh();
+
+                    FinancerController.getInstance().showToast(Application.MessageType.SUCCESS, I18N.get("succDeletedFixedTransaction"));
                 }
 
                 @Override
                 public void onFailure(Exception exception) {
                     logger.log(Level.SEVERE, exception.getMessage(), exception);
                     JavaFXAsyncConnectionCall.super.onFailure(exception);
+                }
+
+                @Override
+                public void onAfter() {
+                    Platform.runLater(() -> loadTransactionOverviewTableData());
                 }
             }, true));
         }
