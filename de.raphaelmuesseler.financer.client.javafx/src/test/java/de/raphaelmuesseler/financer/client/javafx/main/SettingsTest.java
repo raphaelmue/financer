@@ -15,6 +15,7 @@ import org.testfx.framework.junit5.ApplicationTest;
 
 import java.util.Currency;
 
+@SuppressWarnings("WeakerAccess")
 public class SettingsTest extends AbstractFinancerApplicationTest {
 
     @BeforeEach

@@ -19,6 +19,7 @@ import org.testfx.framework.junit5.ApplicationTest;
 
 import java.time.LocalDate;
 
+@SuppressWarnings("WeakerAccess")
 public class FixedTransactionTest extends AbstractFinancerApplicationTest {
 
     @BeforeEach

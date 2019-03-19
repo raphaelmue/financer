@@ -3,6 +3,7 @@ package de.raphaelmuesseler.financer.util;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+@SuppressWarnings("WeakerAccess")
 public class RandomStringTest {
     @Test
     public void testRandomStringLength() {

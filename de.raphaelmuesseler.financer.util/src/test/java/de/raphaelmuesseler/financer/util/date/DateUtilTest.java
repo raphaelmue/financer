@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
 
+@SuppressWarnings("WeakerAccess")
 public class DateUtilTest {
     @Test
     public void testMonthDifference() {

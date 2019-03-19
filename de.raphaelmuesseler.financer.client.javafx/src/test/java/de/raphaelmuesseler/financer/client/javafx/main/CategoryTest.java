@@ -15,6 +15,7 @@ import org.testfx.framework.junit5.ApplicationTest;
 
 import static java.lang.String.CASE_INSENSITIVE_ORDER;
 
+@SuppressWarnings("WeakerAccess")
 public class CategoryTest extends AbstractFinancerApplicationTest {
 
     @BeforeEach

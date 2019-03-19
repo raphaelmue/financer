@@ -18,6 +18,7 @@ import org.testfx.framework.junit5.ApplicationTest;
 
 import java.util.Comparator;
 
+@SuppressWarnings("WeakerAccess")
 public class TransactionTest extends AbstractFinancerApplicationTest {
 
     @BeforeEach

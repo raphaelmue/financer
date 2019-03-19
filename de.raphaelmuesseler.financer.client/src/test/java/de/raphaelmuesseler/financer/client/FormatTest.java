@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import java.util.Currency;
 import java.util.Locale;
 
+@SuppressWarnings("WeakerAccess")
 public class FormatTest {
     private static LocalSettings settings;
     private static User user;
