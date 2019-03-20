@@ -1,3 +1,6 @@
+@Library('github.com/spotify/jenkins-coverage-poster@1.0') _
+
+
 pipeline {
     agent any
     stages {
@@ -29,6 +32,9 @@ pipeline {
                 sh 'mvn test -pl de.raphaelmuesseler.financer.client.javafx -Dtestfx.robot=glass -Dglass.platform=Monocle -Dmonocle.platform=Headless'
                 sh 'rm ./de.raphaelmuesseler.financer.server/src/main/resources/de/raphaelmuesseler/financer/server/db/config/database.conf'
             }
+        }
+        stage('Code Coverage') {
+            postJacocoCoverage(threshold: 75)
         }
         stage('Deploy') {
             when {
