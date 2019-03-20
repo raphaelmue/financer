@@ -82,6 +82,10 @@
     -fx-spacing: 5;
 }
 
+.scroll-pane {
+    -fx-background-color:transparent;
+}
+
 .separator {
     -fx-padding: 10px 0 20px;
     -fx-stroke: #909ca8;

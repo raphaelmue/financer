@@ -1,7 +1,6 @@
-package de.raphaelmuesseler.financer.client;
+package de.raphaelmuesseler.financer.client.javafx.format;
 
 import de.raphaelmuesseler.financer.client.format.Formatter;
-import de.raphaelmuesseler.financer.client.format.FormatterImpl;
 import de.raphaelmuesseler.financer.client.local.LocalSettings;
 import de.raphaelmuesseler.financer.client.local.LocalSettingsImpl;
 import de.raphaelmuesseler.financer.shared.model.Category;
@@ -13,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import java.util.Currency;
 import java.util.Locale;
 
+@SuppressWarnings("WeakerAccess")
 public class FormatTest {
     private static LocalSettings settings;
     private static User user;
@@ -27,7 +27,7 @@ public class FormatTest {
         user.getSettings().setShowCurrencySign(false);
         user.getSettings().setCurrency(Currency.getInstance("USD"));
 
-        formatter = new FormatterImpl(settings, user);
+        formatter = new JavaFXFormatter(settings, user);
     }
 
     @Test

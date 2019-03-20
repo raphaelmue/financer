@@ -6,7 +6,10 @@ import de.raphaelmuesseler.financer.util.collections.TreeUtil;
 
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class BaseCategory implements Serializable, AmountProvider, Tree<Category> {
     private static final long serialVersionUID = 6444376234610401363L;
@@ -49,6 +52,15 @@ public class BaseCategory implements Serializable, AmountProvider, Tree<Category
         CategoryClass(int index, String name) {
             this.index = index;
             this.name = name;
+        }
+
+        public static CategoryClass getCategoryClassByName(String name) {
+            for (CategoryClass categoryClass : values()) {
+                if (categoryClass.getName().equals(name)) {
+                    return categoryClass;
+                }
+            }
+            return null;
         }
 
         public int getIndex() {
