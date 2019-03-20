@@ -1,6 +1,5 @@
 @Library('github.com/spotify/jenkins-coverage-poster@1.0') _
 
-
 pipeline {
     agent any
     stages {
@@ -34,7 +33,9 @@ pipeline {
             }
         }
         stage('Code Coverage') {
-            postJacocoCoverage(threshold: 75)
+            steps {
+                postJacocoCoverage(threshold: 75)
+            }
         }
         stage('Deploy') {
             when {
