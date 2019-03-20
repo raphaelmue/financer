@@ -1,5 +1,13 @@
 pipeline {
-    agent any
+    agent {
+        node {
+            parallel firstBranch: {
+                publishCoverage adapters: [jacocoAdapter('target/site/jacoco/jacoco.xml')]
+        }, secondBranch: {
+                publishCoverage adapters: [jacocoAdapter('jacoco.xml')]
+            }
+        }
+    }
     stages {
         stage('Build') {
             steps {
