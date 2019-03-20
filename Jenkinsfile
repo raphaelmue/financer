@@ -1,13 +1,5 @@
 pipeline {
-    agent {
-        node {
-            parallel firstBranch: {
-                publishCoverage adapters: [jacocoAdapter('target/site/jacoco/jacoco.xml')]
-        }, secondBranch: {
-                publishCoverage adapters: [jacocoAdapter('jacoco.xml')]
-            }
-        }
-    }
+    agent any
     stages {
         stage('Build') {
             steps {
@@ -50,8 +42,8 @@ pipeline {
     post {
         always {
             junit '**/target/surefire-reports/TEST-*.xml'
-            step( [ $class: 'JacocoPublisher' ] )
             publishCoverage adapters: [jacocoAdapter('**/target/sites/jacoco/jacoco.xml')], sourceFileResolver: sourceFiles('STORE_ALL_BUILD')
+            step( [ $class: 'JacocoPublisher' ] )
         }
     }
 }
