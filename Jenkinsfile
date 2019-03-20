@@ -1,5 +1,3 @@
-@Library('github.com/spotify/jenkins-coverage-poster@1.0') _
-
 pipeline {
     agent any
     stages {
@@ -26,17 +24,12 @@ pipeline {
                 sh 'mvn test -pl de.raphaelmuesseler.financer.util,de.raphaelmuesseler.financer.shared,de.raphaelmuesseler.financer.server,de.raphaelmuesseler.financer.client'
             }
         }
-        stage('JavaFX Tests') {
+        /*stage('JavaFX Tests') {
            steps {
                 sh 'mvn test -pl de.raphaelmuesseler.financer.client.javafx -Dtestfx.robot=glass -Dglass.platform=Monocle -Dmonocle.platform=Headless'
                 sh 'rm ./de.raphaelmuesseler.financer.server/src/main/resources/de/raphaelmuesseler/financer/server/db/config/database.conf'
             }
-        }
-        stage('Code Coverage') {
-            steps {
-                postJacocoCoverage(threshold: 75)
-            }
-        }
+        }*/
         stage('Deploy') {
             when {
                 branch 'deployment'
@@ -49,6 +42,7 @@ pipeline {
     post {
         always {
             junit '**/target/surefire-reports/TEST-*.xml'
+            step([$class: 'CoberturaPublisher', autoUpdateHealth: false, autoUpdateStability: false, coberturaReportFile: '**/coverage.xml', failUnhealthy: false, failUnstable: false, maxNumberOfBuilds: 0, onlyStable: false, sourceEncoding: 'ASCII', zoomCoverageChart: false])
         }
     }
 }
