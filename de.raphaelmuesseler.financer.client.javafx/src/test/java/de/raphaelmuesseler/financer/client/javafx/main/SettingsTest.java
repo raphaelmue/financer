@@ -25,7 +25,7 @@ public class SettingsTest extends AbstractFinancerApplicationTest {
     }
 
     @Test
-    public void testChangeLanguage() throws Exception {
+    public void testChangeLanguage() {
         register(this.user, this.password);
         clickOn((Button) find("#settingTabBtn"));
 
@@ -54,7 +54,6 @@ public class SettingsTest extends AbstractFinancerApplicationTest {
         addCategory(category);
         addTransaction(transaction);
 
-        sleep(500);
         clickOn((Button) find("#settingTabBtn"));
 
         ComboBox<Currency> currencyComboBox = find("#currencyComboBox");

@@ -106,7 +106,7 @@ class AbstractFinancerApplicationTest extends ApplicationTest {
         write(password);
         confirmDialog();
 
-        sleep(2000);
+        sleep(3000);
         formatter = new JavaFXFormatter(LocalStorageImpl.getInstance());
     }
 
@@ -142,7 +142,7 @@ class AbstractFinancerApplicationTest extends ApplicationTest {
 
         confirmDialog();
 
-        sleep(500);
+        sleep(1000);
     }
 
     void addTransaction(Transaction transaction) {
@@ -150,8 +150,9 @@ class AbstractFinancerApplicationTest extends ApplicationTest {
         press(KeyCode.RIGHT).release(KeyCode.RIGHT);
         press(KeyCode.RIGHT).release(KeyCode.RIGHT);
 
-        clickOn((Button) find("#newTransactionBtn"));
         sleep(500);
+
+        clickOn((Button) find("#newTransactionBtn"));
         TextField amountTextField = find("#amountTextField");
         clickOn(amountTextField);
         press(KeyCode.BACK_SPACE).release(KeyCode.BACK_SPACE);
@@ -172,7 +173,7 @@ class AbstractFinancerApplicationTest extends ApplicationTest {
 
         confirmDialog();
 
-        sleep(500);
+        sleep(1000);
     }
 
     void addFixedTransaction(FixedTransaction fixedTransaction) {
@@ -212,6 +213,8 @@ class AbstractFinancerApplicationTest extends ApplicationTest {
         }
 
         confirmDialog();
+
+        sleep(500);
     }
 
     final void confirmDialog() {

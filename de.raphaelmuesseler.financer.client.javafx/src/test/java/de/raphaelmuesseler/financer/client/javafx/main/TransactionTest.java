@@ -33,7 +33,7 @@ public class TransactionTest extends AbstractFinancerApplicationTest {
         addCategory(category);
         addTransaction(transaction);
         clickOn((Button) find("#refreshTransactionsBtn"));
-        sleep(500);
+        sleep(1000);
 
         Assertions.assertNotNull(clickOn("-" + formatter.formatCurrency(transaction.getAmount())));
         Assertions.assertEquals(1, LocalStorageImpl.getInstance().readList("transactions").size());
@@ -53,7 +53,7 @@ public class TransactionTest extends AbstractFinancerApplicationTest {
         addCategory(category);
         addTransaction(transaction);
         clickOn((Button) find("#refreshTransactionsBtn"));
-        sleep(500);
+        sleep(1000);
 
         clickOn(transaction.getProduct());
         clickOn((Button) find("#editTransactionBtn"));
@@ -68,9 +68,8 @@ public class TransactionTest extends AbstractFinancerApplicationTest {
         write(Double.toString(amount));
 
         confirmDialog();
-        sleep(500);
         clickOn((Button) find("#refreshTransactionsBtn"));
-        sleep(500);
+        sleep(1000);
 
         // uncomment when issue is fixed
         System.out.println(formatter.formatCurrency(amount));
@@ -87,7 +86,7 @@ public class TransactionTest extends AbstractFinancerApplicationTest {
         addCategory(this.category);
         addTransaction(this.transaction);
         clickOn((Button) find("#refreshTransactionsBtn"));
-        sleep(500);
+        sleep(1000);
 
         clickOn(transaction.getProduct());
         clickOn((JFXButton) find("#deleteTransactionBtn"));
