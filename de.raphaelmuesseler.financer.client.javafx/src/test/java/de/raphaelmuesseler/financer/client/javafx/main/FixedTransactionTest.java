@@ -78,9 +78,7 @@ public class FixedTransactionTest extends AbstractFinancerApplicationTest {
         sleep(500);
 
         Assertions.assertNotNull(find((Label label) -> label.getText().contains(formatter.formatCurrency(amount))));
-        Assertions.assertEquals(1, ((CategoryTree) TreeUtil.getByValue(((BaseCategory) LocalStorageImpl.getInstance().readObject("categories"))
-                        .getCategoryTreeByCategoryClass(fixedTransaction.getCategoryTree().getCategoryClass()),
-                fixedTransaction.getCategoryTree(), (o1, o2) -> String.CASE_INSENSITIVE_ORDER.compare(o1.getName(), o2.getName()))).getTransactions().size());
+        Assertions.assertEquals(1, getCategoryTree().getTransactions().size());
     }
 
     @Test

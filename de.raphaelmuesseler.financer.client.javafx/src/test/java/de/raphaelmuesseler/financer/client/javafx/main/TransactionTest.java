@@ -5,6 +5,7 @@ import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
 import de.raphaelmuesseler.financer.shared.model.BaseCategory;
 import de.raphaelmuesseler.financer.shared.model.Category;
 import de.raphaelmuesseler.financer.shared.model.CategoryTree;
+import de.raphaelmuesseler.financer.shared.model.transactions.AbstractTransaction;
 import de.raphaelmuesseler.financer.shared.model.transactions.Transaction;
 import de.raphaelmuesseler.financer.util.collections.TreeUtil;
 import javafx.scene.control.Button;
@@ -33,8 +34,13 @@ public class TransactionTest extends AbstractFinancerApplicationTest {
         addCategory(category);
         addTransaction(transaction);
         Assertions.assertNotNull(clickOn("-" + formatter.formatCurrency(transaction.getAmount())));
-        Assertions.assertEquals(1, LocalStorageImpl.getInstance().readList("transactions").size());
-        Transaction insertedTransaction = (Transaction) LocalStorageImpl.getInstance().readList("transactions").get(0);
+        Assertions.assertEquals(1, getCategoryTree().getTransactions().size());
+        Transaction insertedTransaction = null;
+        for (AbstractTransaction transaction : getCategoryTree().getTransactions()) {
+            insertedTransaction = (Transaction) transaction;
+            break;
+        }
+        Assertions.assertNotNull(insertedTransaction);
         Assertions.assertEquals(-transaction.getAmount(), insertedTransaction.getAmount());
         Assertions.assertEquals(transaction.getProduct(), insertedTransaction.getProduct());
         Assertions.assertEquals(transaction.getValueDate(), insertedTransaction.getValueDate());
