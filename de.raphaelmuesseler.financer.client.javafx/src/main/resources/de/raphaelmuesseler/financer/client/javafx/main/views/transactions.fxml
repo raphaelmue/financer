@@ -44,8 +44,12 @@
                                        onAction="#handleDeleteFixedTransaction"/>
                         </HBox>
                         <SplitPane>
-                            <JFXListView fx:id="categoriesListView"/>
-                            <JFXListView fx:id="fixedTransactionsListView"/>
+                            <VBox>
+                                <JFXListView fx:id="categoriesListView"/>
+                            </VBox>
+                            <VBox>
+                                <JFXListView fx:id="fixedTransactionsListView"/>
+                            </VBox>
                         </SplitPane>
                     </VBox>
 
