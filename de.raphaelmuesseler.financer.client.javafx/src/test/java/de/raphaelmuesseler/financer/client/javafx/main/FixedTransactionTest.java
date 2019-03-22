@@ -8,6 +8,7 @@ import de.raphaelmuesseler.financer.shared.model.BaseCategory;
 import de.raphaelmuesseler.financer.shared.model.transactions.AbstractTransaction;
 import de.raphaelmuesseler.financer.shared.model.transactions.FixedTransaction;
 import de.raphaelmuesseler.financer.shared.model.transactions.TransactionAmount;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
 import org.junit.jupiter.api.Assertions;
@@ -132,6 +133,8 @@ public class FixedTransactionTest extends AbstractFinancerApplicationTest {
         sleep(MEDIUM_SLEEP);
         Assertions.assertTrue(find("#editTransactionAmountBtn").isDisabled());
         Assertions.assertTrue(find("#deleteTransactionAmountBtn").isDisabled());
+        Assertions.assertTrue(((CheckBox) find("#isVariableCheckbox")).isSelected());
+        Assertions.assertTrue(find("#transactionAmountListView").isManaged());
         clickOn(find((Label label) -> label.getText().equals(formatter.formatDate(fixedTransaction.getTransactionAmounts().get(0).getValueDate()))));
         clickOn((JFXButton) find("#deleteTransactionAmountBtn"));
         press(KeyCode.ENTER).release(KeyCode.ENTER);

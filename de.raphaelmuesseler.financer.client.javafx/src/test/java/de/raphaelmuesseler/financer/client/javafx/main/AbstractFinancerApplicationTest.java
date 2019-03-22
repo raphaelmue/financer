@@ -62,7 +62,7 @@ class AbstractFinancerApplicationTest extends ApplicationTest {
             "TestPurpose", LocalDate.of(2018, 2, 5), null, false, 3,
             new ArrayList<>());
 
-    static JavaFXFormatter formatter;
+    JavaFXFormatter formatter;
 
     @BeforeAll
     static void setUp() throws SQLException, IOException {
