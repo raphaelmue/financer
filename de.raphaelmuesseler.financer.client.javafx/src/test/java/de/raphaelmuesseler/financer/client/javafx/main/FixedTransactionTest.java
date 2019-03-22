@@ -134,13 +134,13 @@ public class FixedTransactionTest extends AbstractFinancerApplicationTest {
         Assertions.assertTrue(find("#editTransactionAmountBtn").isDisabled());
         Assertions.assertTrue(find("#deleteTransactionAmountBtn").isDisabled());
         Assertions.assertTrue(((CheckBox) find("#isVariableCheckbox")).isSelected());
-        Assertions.assertTrue(find("#transactionAmountListView").isManaged());
-        clickOn(formatter.formatDate(fixedTransaction.getTransactionAmounts().get(0).getValueDate()));
+        JFXListView<TransactionAmount> transactionAmountListView = find("#transactionAmountListView");
+        Assertions.assertTrue(transactionAmountListView.isManaged());
+        transactionAmountListView.getSelectionModel().select(0);
         clickOn((JFXButton) find("#deleteTransactionAmountBtn"));
         press(KeyCode.ENTER).release(KeyCode.ENTER);
-        JFXListView<TransactionAmount> transactionAmountListView = find("#transactionAmountListView");
         Assertions.assertEquals(1, transactionAmountListView.getItems().size());
-        clickOn(formatter.formatDate(fixedTransaction.getTransactionAmounts().get(0).getValueDate()));
+        transactionAmountListView.getSelectionModel().select(0);
         clickOn((JFXButton) find("#editTransactionAmountBtn"));
         clickOn((DoubleField) find("#transactionAmountTextField"));
         eraseText(6);
