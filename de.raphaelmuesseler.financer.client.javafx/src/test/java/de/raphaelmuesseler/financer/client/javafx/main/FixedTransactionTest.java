@@ -139,6 +139,7 @@ public class FixedTransactionTest extends AbstractFinancerApplicationTest {
         transactionAmountListView.getSelectionModel().select(0);
         clickOn((JFXButton) find("#deleteTransactionAmountBtn"));
         press(KeyCode.ENTER).release(KeyCode.ENTER);
+        sleep(MEDIUM_SLEEP);
         Assertions.assertEquals(1, transactionAmountListView.getItems().size());
         transactionAmountListView.getSelectionModel().select(0);
         clickOn((JFXButton) find("#editTransactionAmountBtn"));
