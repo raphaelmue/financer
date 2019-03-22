@@ -28,7 +28,6 @@ public class CategoryTest extends AbstractFinancerApplicationTest {
     public void testCreateCategory() {
         register(this.user, this.password);
         addCategory(category);
-        sleep(500);
         Tree<Category> categoryTree = TreeUtil.getByValue(((BaseCategory) LocalStorageImpl.getInstance().readObject("categories")),
                 category, (o1, o2) -> CASE_INSENSITIVE_ORDER.compare(o1.getName(), o2.getName()));
         Assertions.assertNotNull(clickOn(category.getValue().getName()));
@@ -39,7 +38,6 @@ public class CategoryTest extends AbstractFinancerApplicationTest {
     public void testEditCategory() {
         register(this.user, this.password);
         addCategory(category);
-        sleep(500);
         clickOn(category.getValue().getName());
         clickOn((Button) find("#editCategoryBtn"));
         category.getValue().setName("Category 2");
@@ -48,8 +46,7 @@ public class CategoryTest extends AbstractFinancerApplicationTest {
         clickOn(categoryNameField);
         write(category.getValue().getName());
         confirmDialog();
-        sleep(500);
-
+        sleep(1000);
         Tree<Category> categoryTree = TreeUtil.getByValue(((BaseCategory) LocalStorageImpl.getInstance().readObject("categories")),
                category, (o1, o2) -> CASE_INSENSITIVE_ORDER.compare(o1.getName(), o2.getName()));
         Assertions.assertNotNull(categoryTree);
@@ -59,17 +56,12 @@ public class CategoryTest extends AbstractFinancerApplicationTest {
     public void testDeleteCategory() {
         register(this.user, this.password);
         addCategory(category);
-        sleep(500);
         clickOn(category.getValue().getName());
         clickOn((Button) find("#deleteCategoryBtn"));
         press(KeyCode.ENTER).release(KeyCode.ENTER);
-        sleep(500);
+        sleep(1000);
         Tree<Category> categoryTree = TreeUtil.getByValue(((BaseCategory) LocalStorageImpl.getInstance().readObject("categories")),
                category, (o1, o2) -> CASE_INSENSITIVE_ORDER.compare(o1.getName(), o2.getName()));
         Assertions.assertNull(categoryTree);
     }
-
-    // ------------------- TRANSACTIONS ------------------- \\
-
-
 }

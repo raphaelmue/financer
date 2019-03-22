@@ -28,20 +28,14 @@ public class SettingsTest extends AbstractFinancerApplicationTest {
     public void testChangeLanguage() {
         register(this.user, this.password);
         clickOn((Button) find("#settingTabBtn"));
-
         ComboBox<I18N.Language> languageComboBox = find("#languageMenuComboBox");
         clickOn(languageComboBox);
-
         clickOn(languageComboBox.getItems().get(1).getName());
-
         Assertions.assertEquals(languageComboBox.getItems().get(1).getLocale(),
                 ((LocalSettings) LocalStorageImpl.getInstance().readObject("localSettings")).getLanguage());
-
         confirmDialog();
-
         sleep(1000);
         Assertions.assertNotNull(clickOn("Überblick"));
-
         clickOn((Button) find("#settingTabBtn"));
         languageComboBox = find("#languageMenuComboBox");
         Assertions.assertEquals(((LocalSettings) LocalStorageImpl.getInstance().readObject("localSettings")).getLanguage(),
@@ -53,24 +47,17 @@ public class SettingsTest extends AbstractFinancerApplicationTest {
         register(this.user, this.password);
         addCategory(category);
         addTransaction(transaction);
-
         clickOn((Button) find("#settingTabBtn"));
-
         ComboBox<Currency> currencyComboBox = find("#currencyComboBox");
         clickOn(currencyComboBox);
-
         press(KeyCode.DOWN).release(KeyCode.DOWN);
         press(KeyCode.ENTER).release(KeyCode.ENTER);
-
         Assertions.assertEquals(currencyComboBox.getItems().get(0), ((User) LocalStorageImpl.getInstance().readObject("user"))
                 .getSettings().getCurrency());
-
         clickOn((Button) find("#transactionsTabBtn"));
-
         sleep(1000);
         press(KeyCode.RIGHT).release(KeyCode.RIGHT);
         press(KeyCode.RIGHT).release(KeyCode.RIGHT);
-
         Assertions.assertNotNull(clickOn("-" +
                 String.format(((LocalSettings) LocalStorageImpl.getInstance().readObject("localSettings")).getLanguage(), "%.2f", transaction.getAmount()) +
                 " " + ((User) LocalStorageImpl.getInstance().readObject("user")).getSettings().getCurrency().getCurrencyCode()));
