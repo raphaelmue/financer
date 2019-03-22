@@ -1,7 +1,6 @@
 package de.raphaelmuesseler.financer.client.javafx.main;
 
 import com.jfoenix.controls.JFXButton;
-import com.jfoenix.controls.JFXDatePicker;
 import com.jfoenix.controls.JFXListView;
 import de.raphaelmuesseler.financer.client.format.I18N;
 import de.raphaelmuesseler.financer.client.javafx.components.DoubleField;
@@ -129,7 +128,7 @@ public class FixedTransactionTest extends AbstractFinancerApplicationTest {
         clickOn(find((Label label) -> label.getText().contains(fixedTransaction.getCategoryTree().getValue().getName())));
         clickOn(find((Label label) -> label.getText().contains(I18N.get("active"))));
         clickOn((JFXButton) find("#editFixedTransactionBtn"));
-        sleep(500);
+        sleep(1000);
         Assertions.assertTrue(find("#editTransactionAmountBtn").isDisabled());
         Assertions.assertTrue(find("#deleteTransactionAmountBtn").isDisabled());
         clickOn(formatter.formatDate(fixedTransaction.getTransactionAmounts().get(0).getValueDate()));
