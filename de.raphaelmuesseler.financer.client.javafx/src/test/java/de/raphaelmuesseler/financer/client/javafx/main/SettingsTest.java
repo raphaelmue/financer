@@ -34,7 +34,7 @@ public class SettingsTest extends AbstractFinancerApplicationTest {
         Assertions.assertEquals(languageComboBox.getItems().get(1).getLocale(),
                 ((LocalSettings) LocalStorageImpl.getInstance().readObject("localSettings")).getLanguage());
         confirmDialog();
-        sleep(1000);
+        sleep(MEDIUM_SLEEP);
         Assertions.assertNotNull(clickOn("Überblick"));
         clickOn((Button) find("#settingTabBtn"));
         languageComboBox = find("#languageMenuComboBox");
@@ -55,7 +55,7 @@ public class SettingsTest extends AbstractFinancerApplicationTest {
         Assertions.assertEquals(currencyComboBox.getItems().get(0), ((User) LocalStorageImpl.getInstance().readObject("user"))
                 .getSettings().getCurrency());
         clickOn((Button) find("#transactionsTabBtn"));
-        sleep(1000);
+        sleep(MEDIUM_SLEEP);
         press(KeyCode.RIGHT).release(KeyCode.RIGHT);
         press(KeyCode.RIGHT).release(KeyCode.RIGHT);
         Assertions.assertNotNull(clickOn("-" +
@@ -69,7 +69,7 @@ public class SettingsTest extends AbstractFinancerApplicationTest {
         addCategory(category);
         addTransaction(transaction);
 
-        sleep(500);
+        sleep(SHORT_SLEEP);
         clickOn((Button) find("#settingTabBtn"));
 
         ComboBox<Currency> currencyComboBox = find("#currencyComboBox");
@@ -82,16 +82,16 @@ public class SettingsTest extends AbstractFinancerApplicationTest {
         }
         press(KeyCode.ENTER).release(KeyCode.ENTER);
         clickOn(showCurrencySignCheckbox);
-        sleep(500);
+        sleep(SHORT_SLEEP);
         Assertions.assertEquals(showCurrencySignCheckbox.isSelected(), ((User) LocalStorageImpl.getInstance().readObject("user"))
                 .getSettings().isShowCurrencySign());
 
         clickOn((Button) find("#transactionsTabBtn"));
 
-        sleep(1000);
+        sleep(MEDIUM_SLEEP);
         press(KeyCode.RIGHT).release(KeyCode.RIGHT);
         press(KeyCode.RIGHT).release(KeyCode.RIGHT);
-        sleep(500);
+        sleep(SHORT_SLEEP);
         Assertions.assertNotNull(clickOn("-" +
                 String.format(((LocalSettings) LocalStorageImpl.getInstance().readObject("localSettings")).getLanguage(), "%.2f", transaction.getAmount()) +
                 " " + ((User) LocalStorageImpl.getInstance().readObject("user")).getSettings().getCurrency().getSymbol()));

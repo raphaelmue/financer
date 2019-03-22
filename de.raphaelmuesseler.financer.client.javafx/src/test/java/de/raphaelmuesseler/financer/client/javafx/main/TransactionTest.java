@@ -38,7 +38,6 @@ public class TransactionTest extends AbstractFinancerApplicationTest {
         Transaction insertedTransaction = null;
         for (AbstractTransaction transaction : getCategoryTree().getTransactions()) {
             insertedTransaction = (Transaction) transaction;
-            break;
         }
         Assertions.assertNotNull(insertedTransaction);
         Assertions.assertEquals(-transaction.getAmount(), insertedTransaction.getAmount());
@@ -66,7 +65,7 @@ public class TransactionTest extends AbstractFinancerApplicationTest {
         write(Double.toString(amount));
         confirmDialog();
         clickOn((Button) find("#refreshTransactionsBtn"));
-        sleep(1000);
+        sleep(MEDIUM_SLEEP);
         Assertions.assertNotNull(clickOn("-" + formatter.formatCurrency(amount)));
         Assertions.assertEquals(1, LocalStorageImpl.getInstance().readList("transactions").size());
         Transaction insertedTransaction = (Transaction) LocalStorageImpl.getInstance().readList("transactions").get(0);
@@ -79,11 +78,11 @@ public class TransactionTest extends AbstractFinancerApplicationTest {
         addCategory(this.category);
         addTransaction(this.transaction);
         clickOn((Button) find("#refreshTransactionsBtn"));
-        sleep(1000);
+        sleep(MEDIUM_SLEEP);
         clickOn(transaction.getProduct());
         clickOn((JFXButton) find("#deleteTransactionBtn"));
         confirmDialog();
-        sleep(1000);
+        sleep(MEDIUM_SLEEP);
         Assertions.assertEquals(0, ((TableView) find("#transactionsTableView")).getItems().size());
         BaseCategory baseCategory = (BaseCategory) LocalStorageImpl.getInstance().readObject("categories");
         Assertions.assertEquals(0, ((CategoryTree)TreeUtil.getByValue(baseCategory, transaction.getCategoryTree(),

@@ -20,7 +20,7 @@ public class LoginApplicationTest extends AbstractFinancerApplicationTest {
     @Test
     public void testInvalidLogin() {
         login(this.user, "wrong");
-        sleep(1000);
+        sleep(MEDIUM_SLEEP);
         Assertions.assertTrue(find("#loginErrorLabel").isVisible());
     }
 
@@ -28,7 +28,7 @@ public class LoginApplicationTest extends AbstractFinancerApplicationTest {
     public void testRegisterUser() {
         register(this.user, password);
         User user = (User) LocalStorageImpl.getInstance().readObject("user");
-        sleep(1000);
+        sleep(MEDIUM_SLEEP);
         Assertions.assertEquals(this.user.getEmail(), user.getEmail());
         Assertions.assertEquals(this.user.getName(), user.getName());
         Assertions.assertEquals(this.user.getSurname(), user.getSurname());
@@ -41,7 +41,7 @@ public class LoginApplicationTest extends AbstractFinancerApplicationTest {
         logout();
         login(this.user, password);
 
-        sleep(500);
+        sleep(SHORT_SLEEP);
         User loggedInUser = (User) LocalStorageImpl.getInstance().readObject("user");
         Assertions.assertNotNull(loggedInUser);
         Assertions.assertEquals(this.user.getEmail(), loggedInUser.getEmail());

@@ -32,7 +32,7 @@ public class FixedTransactionTest extends AbstractFinancerApplicationTest {
         category.setCategoryClass(BaseCategory.CategoryClass.FIXED_EXPENSES);
         addCategory(category);
         addFixedTransaction(fixedTransaction);
-        sleep(500);
+        sleep(SHORT_SLEEP);
         // TODO: related to issue #14
         // clickOn(find((Label label) -> label.getText().contains(fixedTransaction.getCategoryTree().getValue().getName())));
         // sleep(500);
@@ -53,7 +53,7 @@ public class FixedTransactionTest extends AbstractFinancerApplicationTest {
         addCategory(category);
         addFixedTransaction(fixedTransaction);
         final double amount = fixedTransaction.getAmount() / 2;
-        sleep(500);
+        sleep(SHORT_SLEEP);
         clickOn((JFXListView) find("#categoriesListView"));
         press(KeyCode.DOWN).release(KeyCode.DOWN);
         press(KeyCode.DOWN).release(KeyCode.DOWN);
@@ -64,7 +64,7 @@ public class FixedTransactionTest extends AbstractFinancerApplicationTest {
         eraseText(6);
         write(Double.toString(amount));
         confirmDialog();
-        sleep(500);
+        sleep(SHORT_SLEEP);
         Assertions.assertNotNull(find((Label label) -> label.getText().contains(formatter.formatCurrency(amount))));
         Assertions.assertEquals(1, getCategoryTree().getTransactions().size());
     }
@@ -75,7 +75,7 @@ public class FixedTransactionTest extends AbstractFinancerApplicationTest {
         category.setCategoryClass(BaseCategory.CategoryClass.FIXED_EXPENSES);
         addCategory(category);
         addFixedTransaction(fixedTransaction);
-        sleep(500);
+        sleep(SHORT_SLEEP);
         clickOn((JFXListView) find("#categoriesListView"));
         press(KeyCode.DOWN).release(KeyCode.DOWN);
         press(KeyCode.DOWN).release(KeyCode.DOWN);
@@ -102,9 +102,9 @@ public class FixedTransactionTest extends AbstractFinancerApplicationTest {
         category.setCategoryClass(BaseCategory.CategoryClass.FIXED_EXPENSES);
         addCategory(category);
         addFixedTransaction(fixedTransaction);
-        sleep(500);
+        sleep(SHORT_SLEEP);
         clickOn((JFXButton) find("#refreshFixedTransactionsBtn"));
-        sleep(500);
+        sleep(SHORT_SLEEP);
         clickOn(find((Label label) -> label.getText().contains(fixedTransaction.getCategoryTree().getValue().getName())));
         Assertions.assertNotNull(find((Label label) -> label.getText().contains(I18N.get("active"))));
         Assertions.assertEquals(450.0, fixedTransaction.getTransactionAmounts().get(0).getAmount());
@@ -124,19 +124,20 @@ public class FixedTransactionTest extends AbstractFinancerApplicationTest {
         category.getValue().setPrefix("3.1");
         addCategory(category);
         addFixedTransaction(fixedTransaction);
-        sleep(1000);
+        sleep(MEDIUM_SLEEP);
         clickOn(find((Label label) -> label.getText().contains(fixedTransaction.getCategoryTree().getValue().getName())));
+        sleep(SHORT_SLEEP);
         clickOn(find((Label label) -> label.getText().contains(I18N.get("active"))));
         clickOn((JFXButton) find("#editFixedTransactionBtn"));
-        sleep(1000);
+        sleep(MEDIUM_SLEEP);
         Assertions.assertTrue(find("#editTransactionAmountBtn").isDisabled());
         Assertions.assertTrue(find("#deleteTransactionAmountBtn").isDisabled());
-        clickOn(find((Label label) -> label.getText().contains(formatter.formatDate(fixedTransaction.getTransactionAmounts().get(0).getValueDate()))));
+        clickOn(find((Label label) -> label.getText().equals(formatter.formatDate(fixedTransaction.getTransactionAmounts().get(0).getValueDate()))));
         clickOn((JFXButton) find("#deleteTransactionAmountBtn"));
         press(KeyCode.ENTER).release(KeyCode.ENTER);
         JFXListView<TransactionAmount> transactionAmountListView = find("#transactionAmountListView");
         Assertions.assertEquals(1, transactionAmountListView.getItems().size());
-        clickOn(find((Label label) -> label.getText().contains(formatter.formatDate(fixedTransaction.getTransactionAmounts().get(1).getValueDate()))));
+        clickOn(find((Label label) -> label.getText().equals(formatter.formatDate(fixedTransaction.getTransactionAmounts().get(1).getValueDate()))));
         clickOn((JFXButton) find("#editTransactionAmountBtn"));
         clickOn((DoubleField) find("#transactionAmountTextField"));
         eraseText(6);
@@ -145,13 +146,12 @@ public class FixedTransactionTest extends AbstractFinancerApplicationTest {
         press(KeyCode.ENTER).release(KeyCode.ENTER);
         Assertions.assertNotNull(clickOn(formatter.formatCurrency(amount / 2)));
         confirmDialog();
-        sleep(1000);
+        sleep(MEDIUM_SLEEP);
 
         Assertions.assertEquals(1, getCategoryTree().getTransactions().size());
         FixedTransaction updatedTransaction = null;
         for (AbstractTransaction transaction : getCategoryTree().getTransactions()) {
             updatedTransaction = (FixedTransaction) transaction;
-            break;
         }
         Assertions.assertNotNull(updatedTransaction);
         Assertions.assertEquals(amount / 2, updatedTransaction.getTransactionAmounts().get(0).getAmount());

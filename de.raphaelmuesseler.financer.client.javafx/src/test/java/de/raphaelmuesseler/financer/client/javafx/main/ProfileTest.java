@@ -27,7 +27,7 @@ public class ProfileTest extends AbstractFinancerApplicationTest {
         register(user, password);
 
         clickOn((Button) find("#profileTabBtn"));
-        sleep(500);
+        sleep(SHORT_SLEEP);
         clickOn((Hyperlink) find("#changePasswordLink"));
 
         clickOn((JFXPasswordField) find("#oldPasswordField"));
@@ -39,7 +39,7 @@ public class ProfileTest extends AbstractFinancerApplicationTest {
 
         confirmDialog();
 
-        sleep(500);
+        sleep(SHORT_SLEEP);
 
         Assertions.assertEquals(Hash.create(newPassword, ((User)LocalStorageImpl.getInstance().readObject("user")).getSalt()),
                 ((User)LocalStorageImpl.getInstance().readObject("user")).getPassword());
