@@ -19,7 +19,6 @@ import javafx.scene.chart.PieChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.ListCell;
 import javafx.util.StringConverter;
 
 import java.net.URL;
@@ -69,31 +68,18 @@ public class StatisticsController implements Initializable {
         this.loadFixedExpensesDistributionChart(this.variableExpensesFromDatePicker.getValue(), this.variableExpensesToDatePicker.getValue());
 
         this.progressFromDatePicker.setValue(LocalDate.now().minusMonths(6));
-        this.progressFromDatePicker.valueProperty().addListener((observable, oldValue, newValue) -> {
-            this.loadProgressChart(progressCategoryComboBox.getValue(), newValue, progressToDatePicker.getValue());
-        });
+        this.progressFromDatePicker.valueProperty().addListener((observable, oldValue, newValue)
+                -> this.loadProgressChart(progressCategoryComboBox.getValue(), newValue, progressToDatePicker.getValue()));
 
         this.progressToDatePicker.setValue(LocalDate.now());
-        this.progressToDatePicker.valueProperty().addListener((observableValue, oldValue, newValue) -> {
-            this.loadProgressChart(progressCategoryComboBox.getValue(), progressFromDatePicker.getValue(), newValue);
-        });
+        this.progressToDatePicker.valueProperty().addListener((observableValue, oldValue, newValue)
+                -> this.loadProgressChart(progressCategoryComboBox.getValue(), progressFromDatePicker.getValue(), newValue));
 
         categories.traverse(categoryTree -> progressCategoryComboBox.getItems().add((CategoryTree) categoryTree));
         this.progressCategoryComboBox.getItems().sort((o1, o2)
                 -> String.CASE_INSENSITIVE_ORDER.compare(o1.getValue().getPrefix(), o2.getValue().getPrefix()));
         this.progressCategoryComboBox.valueProperty().addListener((observableValue, oldValue, newValue)
                 -> this.loadProgressChart(newValue, progressFromDatePicker.getValue(), progressToDatePicker.getValue()));
-//        this.progressCategoryComboBox.setCellFactory(param -> new ListCell<>() {
-//            @Override
-//            protected void updateItem(CategoryTree item, boolean empty) {
-//                super.updateItem(item, empty);
-//                if (!empty) {
-//                    setText(formatter.formatCategoryName(item.getValue()));
-//                } else {
-//                    setText(null);
-//                }
-//            }
-//        });
         this.progressCategoryComboBox.setConverter(new StringConverter<>() {
             @Override
             public String toString(CategoryTree categoryTree) {
