@@ -11,6 +11,7 @@ import de.raphaelmuesseler.financer.client.local.LocalStorage;
 import de.raphaelmuesseler.financer.shared.model.BaseCategory;
 import de.raphaelmuesseler.financer.shared.model.Category;
 import de.raphaelmuesseler.financer.shared.model.CategoryTree;
+import de.raphaelmuesseler.financer.shared.model.CategoryTreeImpl;
 import de.raphaelmuesseler.financer.util.collections.Tree;
 import de.raphaelmuesseler.financer.util.date.DateUtil;
 import javafx.collections.FXCollections;
@@ -115,6 +116,7 @@ public class StatisticsController implements Initializable {
     }
 
     private void initializeCategoryComboBox(ComboBox<CategoryTree> categoryTreeComboBox) {
+        categoryTreeComboBox.getItems().add(categories);
         categories.traverse(categoryTree -> categoryTreeComboBox.getItems().add((CategoryTree) categoryTree));
         categoryTreeComboBox.getItems().sort((o1, o2)
                 -> String.CASE_INSENSITIVE_ORDER.compare(o1.getValue().getPrefix(), o2.getValue().getPrefix()));
@@ -136,7 +138,7 @@ public class StatisticsController implements Initializable {
 
             @Override
             public CategoryTree fromString(String s) {
-                return new CategoryTree(null, new Category(-1, s, -1, -1));
+                return new CategoryTreeImpl(null, new Category(-1, s, -1, -1));
             }
         });
     }
@@ -160,7 +162,7 @@ public class StatisticsController implements Initializable {
         ObservableList<PieChart.Data> variableExpensesData = FXCollections.observableArrayList();
         for (Tree<Category> categoryTree : this.categories.getCategoryTreeByCategoryClass(
                 BaseCategory.CategoryClass.VARIABLE_EXPENSES).getChildren()) {
-            double amount = ((CategoryTree) categoryTree).getAmount(startDate, endDate);
+            double amount = ((CategoryTreeImpl) categoryTree).getAmount(startDate, endDate);
             if (amount != 0) {
                 variableExpensesData.add(new PieChart.Data(categoryTree.getValue().getName(), Math.abs(amount)));
             }
@@ -184,7 +186,7 @@ public class StatisticsController implements Initializable {
         ObservableList<PieChart.Data> variableExpensesData = FXCollections.observableArrayList();
         for (Tree<Category> categoryTree : this.categories.getCategoryTreeByCategoryClass(
                 BaseCategory.CategoryClass.FIXED_EXPENSES).getChildren()) {
-            double amount = ((CategoryTree) categoryTree).getAmount(startDate, endDate);
+            double amount = ((CategoryTreeImpl) categoryTree).getAmount(startDate, endDate);
             if (amount != 0) {
                 variableExpensesData.add(new PieChart.Data(categoryTree.getValue().getName(), Math.abs(amount)));
             }

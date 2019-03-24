@@ -16,6 +16,7 @@ import de.raphaelmuesseler.financer.shared.connection.ConnectionResult;
 import de.raphaelmuesseler.financer.shared.model.BaseCategory;
 import de.raphaelmuesseler.financer.shared.model.Category;
 import de.raphaelmuesseler.financer.shared.model.CategoryTree;
+import de.raphaelmuesseler.financer.shared.model.CategoryTreeImpl;
 import de.raphaelmuesseler.financer.shared.model.user.User;
 import de.raphaelmuesseler.financer.util.collections.Tree;
 import de.raphaelmuesseler.financer.util.collections.TreeUtil;
@@ -158,7 +159,7 @@ public class ProfileController implements Initializable {
             String categoryName = new FinancerTextInputDialog(I18N.get("enterCategoryName"), I18N.get("newCategory"))
                     .showAndGetResult();
             if (categoryName != null) {
-                CategoryTree categoryTree = new CategoryTree(categoriesTreeView.getSelectionModel().getSelectedItem().getValue().getCategoryClass(),
+                CategoryTree categoryTree = new CategoryTreeImpl(categoriesTreeView.getSelectionModel().getSelectedItem().getValue().getCategoryClass(),
                         categoriesTreeView.getSelectionModel().getSelectedItem().getValue(),
                         new Category(-1, categoryName, currentItem.getValue().getValue().getId(), currentItem.getValue().getCategoryClass().getIndex()));
 
@@ -261,7 +262,7 @@ public class ProfileController implements Initializable {
     }
 
     private void createTreeView() {
-        this.treeStructure = new TreeItem<>(new CategoryTree(null, new Category(-1, "root", -1, -1)));
+        this.treeStructure = new TreeItem<>(new CategoryTreeImpl(null, new Category(-1, "root", -1, -1)));
         for (BaseCategory.CategoryClass categoryClass : BaseCategory.CategoryClass.values()) {
             this.createTreeView(treeStructure, this.categories.getCategoryTreeByCategoryClass(categoryClass));
         }
@@ -286,7 +287,7 @@ public class ProfileController implements Initializable {
 
             @Override
             public CategoryTree fromString(String string) {
-                return new CategoryTree(null, new Category(-1, string, -1, -1));
+                return new CategoryTreeImpl(null, new Category(-1, string, -1, -1));
             }
         });
     }
@@ -312,7 +313,7 @@ public class ProfileController implements Initializable {
             this.contextMenu.getItems().add(addMenuItem);
 
             MenuItem addMenuItemDelete = new MenuItem(I18N.get("new"));
-            addMenuItemDelete.setOnAction(t -> getTreeItem().getChildren().add(new TreeItem<>(new CategoryTree(null, new Category(-1, "newCategory", -1, -1)))));
+            addMenuItemDelete.setOnAction(t -> getTreeItem().getChildren().add(new TreeItem<>(new CategoryTreeImpl(null, new Category(-1, "newCategory", -1, -1)))));
             this.deleteContextMenu.getItems().add(addMenuItemDelete);
 
             MenuItem deleteMenuItem = new MenuItem(I18N.get("delete"));

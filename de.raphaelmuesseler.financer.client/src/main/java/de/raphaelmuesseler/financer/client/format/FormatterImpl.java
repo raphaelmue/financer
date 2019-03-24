@@ -55,9 +55,7 @@ public abstract class FormatterImpl implements Formatter {
     }
 
     @Override
-    public String formatCategoryName(CategoryTree categoryTree) {
-        return null;
-    }
+    public abstract String formatCategoryName(CategoryTree categoryTree);
 
     @Override
     public String formatDate(LocalDate localDate) {

@@ -43,6 +43,8 @@ public class JavaFXFormatter extends FormatterImpl {
 
         if (BaseCategory.CategoryClass.getCategoryClassByName(category.getName()) != null) {
             result.append(I18N.get(category.getName()));
+        } else if (category.getName().equals("root")) {
+            result.append(I18N.get("balance"));
         } else {
             result.append(category.getName());
         }

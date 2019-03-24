@@ -1,6 +1,5 @@
 package de.raphaelmuesseler.financer.client.javafx.main.overview;
 
-import de.raphaelmuesseler.financer.client.format.FormatterImpl;
 import de.raphaelmuesseler.financer.client.format.I18N;
 import de.raphaelmuesseler.financer.client.javafx.format.JavaFXFormatter;
 import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
