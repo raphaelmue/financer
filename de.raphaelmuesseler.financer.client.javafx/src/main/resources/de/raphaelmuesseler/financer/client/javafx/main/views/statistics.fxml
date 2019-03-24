@@ -10,13 +10,25 @@
         <JFXMasonryPane>
             <VBox styleClass="content-box" prefWidth="1000" prefHeight="500">
                 <Label text="%progress" styleClass="content-heading"/>
-                <HBox spacing="10" prefWidth="Infinity" alignment="CENTER">
-                    <ComboBox fx:id="progressCategoryComboBox"/>
-                    <Label text="%from"/>
-                    <JFXDatePicker fx:id="progressFromDatePicker"/>
-                    <Label text="%to"/>
-                    <JFXDatePicker fx:id="progressToDatePicker"/>
-                </HBox>
+                <BorderPane>
+                    <left>
+                        <HBox spacing="10" alignment="CENTER">
+                            <Label text="%from"/>
+                            <JFXDatePicker fx:id="progressFromDatePicker"/>
+                            <Label text="%to"/>
+                            <JFXDatePicker fx:id="progressToDatePicker"/>
+                        </HBox>
+                    </left>
+                    <right>
+                        <VBox fx:id="categoriesContainer" spacing="10">
+                            <HBox spacing="10">
+                                <ComboBox fx:id="progressChartDefaultCategoryComboBox" />
+                                <JFXButton fx:id="addCategoryBtn" text="%addCategory" disable="true"/>
+                            </HBox>
+                        </VBox>
+                    </right>
+
+                </BorderPane>
                 <LineChart fx:id="progressLineChart">
                     <xAxis>
                         <CategoryAxis side="BOTTOM" label="%valueDate"/>

@@ -1,7 +1,9 @@
 package de.raphaelmuesseler.financer.client.javafx.main.statistics;
 
+import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXDatePicker;
 import de.raphaelmuesseler.financer.client.format.Formatter;
+import de.raphaelmuesseler.financer.client.format.I18N;
 import de.raphaelmuesseler.financer.client.javafx.format.JavaFXFormatter;
 import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
 import de.raphaelmuesseler.financer.client.javafx.main.FinancerController;
@@ -19,7 +21,12 @@ import javafx.scene.chart.PieChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.util.StringConverter;
+import org.controlsfx.glyphfont.FontAwesome;
+import org.controlsfx.glyphfont.GlyphFont;
+import org.controlsfx.glyphfont.GlyphFontRegistry;
 
 import java.net.URL;
 import java.time.LocalDate;
@@ -38,8 +45,10 @@ public class StatisticsController implements Initializable {
 
     public JFXDatePicker progressFromDatePicker;
     public JFXDatePicker progressToDatePicker;
-    public ComboBox<CategoryTree> progressCategoryComboBox;
     public LineChart<String, Number> progressLineChart;
+    public VBox categoriesContainer;
+    public JFXButton addCategoryBtn;
+    public ComboBox<CategoryTree> progressChartDefaultCategoryComboBox;
 
     private LocalStorage localStorage = LocalStorageImpl.getInstance();
     private BaseCategory categories;
@@ -69,18 +78,57 @@ public class StatisticsController implements Initializable {
 
         this.progressFromDatePicker.setValue(LocalDate.now().minusMonths(6));
         this.progressFromDatePicker.valueProperty().addListener((observable, oldValue, newValue)
-                -> this.loadProgressChart(progressCategoryComboBox.getValue(), newValue, progressToDatePicker.getValue()));
+                -> this.loadProgressChartData(progressChartDefaultCategoryComboBox.getValue(), newValue, progressToDatePicker.getValue()));
 
         this.progressToDatePicker.setValue(LocalDate.now());
         this.progressToDatePicker.valueProperty().addListener((observableValue, oldValue, newValue)
-                -> this.loadProgressChart(progressCategoryComboBox.getValue(), progressFromDatePicker.getValue(), newValue));
+                -> this.loadProgressChartData(progressChartDefaultCategoryComboBox.getValue(), progressFromDatePicker.getValue(), newValue));
 
-        categories.traverse(categoryTree -> progressCategoryComboBox.getItems().add((CategoryTree) categoryTree));
-        this.progressCategoryComboBox.getItems().sort((o1, o2)
+        this.initializeCategoryComboBox(this.progressChartDefaultCategoryComboBox);
+
+        this.addCategoryBtn.setOnAction(event -> {
+            addCategoryBtn.setDisable(true);
+            categoriesContainer.getChildren().add(initializeCategoryComboBoxContainer());
+        });
+    }
+
+    private HBox initializeCategoryComboBoxContainer() {
+        final HBox container = new HBox();
+        container.setSpacing(10);
+
+        final ComboBox<CategoryTree> categoryTreeComboBox = new ComboBox<>();
+        this.initializeCategoryComboBox(categoryTreeComboBox);
+
+        GlyphFont fontAwesome = GlyphFontRegistry.font("FontAwesome");
+        final JFXButton deleteCategoryBtn = new JFXButton(I18N.get("delete"));
+        deleteCategoryBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.TRASH));
+        deleteCategoryBtn.setOnAction(event -> {
+            progressLineChart.getData().removeIf(stringNumberSeries ->
+                    stringNumberSeries.getName().equals(formatter.formatCategoryName(categoryTreeComboBox.getValue())));
+            addCategoryBtn.setDisable(false);
+            categoriesContainer.getChildren().remove(container);
+        });
+
+        container.getChildren().add(categoryTreeComboBox);
+        container.getChildren().add(deleteCategoryBtn);
+        return container;
+    }
+
+    private void initializeCategoryComboBox(ComboBox<CategoryTree> categoryTreeComboBox) {
+        categories.traverse(categoryTree -> categoryTreeComboBox.getItems().add((CategoryTree) categoryTree));
+        categoryTreeComboBox.getItems().sort((o1, o2)
                 -> String.CASE_INSENSITIVE_ORDER.compare(o1.getValue().getPrefix(), o2.getValue().getPrefix()));
-        this.progressCategoryComboBox.valueProperty().addListener((observableValue, oldValue, newValue)
-                -> this.loadProgressChart(newValue, progressFromDatePicker.getValue(), progressToDatePicker.getValue()));
-        this.progressCategoryComboBox.setConverter(new StringConverter<>() {
+        categoryTreeComboBox.valueProperty().addListener((observableValue, oldValue, newValue) -> {
+            if (oldValue != null) {
+                progressLineChart.getData().removeIf(stringNumberSeries ->
+                        stringNumberSeries.getName().equals(formatter.formatCategoryName(oldValue)));
+            }
+            if (newValue != null) {
+                this.addCategoryBtn.setDisable(false);
+                this.loadProgressChartData(newValue, progressFromDatePicker.getValue(), progressToDatePicker.getValue());
+            }
+        });
+        categoryTreeComboBox.setConverter(new StringConverter<>() {
             @Override
             public String toString(CategoryTree categoryTree) {
                 return categoryTree != null ? formatter.formatCategoryName(categoryTree) : "";
@@ -91,6 +139,21 @@ public class StatisticsController implements Initializable {
                 return new CategoryTree(null, new Category(-1, s, -1, -1));
             }
         });
+    }
+
+    private void loadProgressChartData(CategoryTree categoryTree, LocalDate startDate, LocalDate endDate) {
+        FinancerController.getInstance().showLoadingBox();
+
+        XYChart.Series<String, Number> series = new XYChart.Series<>();
+        series.setName(formatter.formatCategoryName(categoryTree));
+
+        for (int i = DateUtil.getMonthDifference(startDate, endDate); i >= 0; i--) {
+            series.getData().add(new XYChart.Data<>(formatter.formatDate(endDate.minusMonths(i)),
+                    Math.abs(categoryTree.getAmount(endDate.minusMonths(i)))));
+        }
+
+        this.progressLineChart.getData().add(series);
+        FinancerController.getInstance().hideLoadingBox();
     }
 
     private void loadVariableExpensesDistributionChart(LocalDate startDate, LocalDate endDate) {
@@ -138,24 +201,6 @@ public class StatisticsController implements Initializable {
             this.fixedExpensesDistributionChart.setVisible(false);
             this.fixedExpensesNoDataLabel.setManaged(true);
             this.fixedExpensesNoDataLabel.setVisible(true);
-        }
-    }
-
-    private void loadProgressChart(CategoryTree categoryTree, LocalDate startDate, LocalDate endDate) {
-        if (this.progressCategoryComboBox.getValue() != null) {
-            FinancerController.getInstance().showLoadingBox();
-            this.progressLineChart.getData().clear();
-
-            XYChart.Series<String, Number> series = new XYChart.Series<>();
-            series.setName(formatter.formatCategoryName(categoryTree));
-
-            for (int i = DateUtil.getMonthDifference(startDate, endDate); i > 0; i--) {
-                series.getData().add(new XYChart.Data<>(formatter.formatDate(endDate.minusMonths(i)),
-                        Math.abs(categoryTree.getAmount(endDate.minusMonths(i)))));
-            }
-
-            this.progressLineChart.getData().add(series);
-            FinancerController.getInstance().hideLoadingBox();
         }
     }
 }
