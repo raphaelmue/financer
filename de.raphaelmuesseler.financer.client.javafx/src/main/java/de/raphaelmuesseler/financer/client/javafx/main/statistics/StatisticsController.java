@@ -4,6 +4,7 @@ import com.jfoenix.controls.JFXDatePicker;
 import de.raphaelmuesseler.financer.client.format.Formatter;
 import de.raphaelmuesseler.financer.client.javafx.format.JavaFXFormatter;
 import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
+import de.raphaelmuesseler.financer.client.javafx.main.FinancerController;
 import de.raphaelmuesseler.financer.client.local.LocalStorage;
 import de.raphaelmuesseler.financer.shared.model.BaseCategory;
 import de.raphaelmuesseler.financer.shared.model.Category;
@@ -19,6 +20,7 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
+import javafx.util.StringConverter;
 
 import java.net.URL;
 import java.time.LocalDate;
@@ -81,15 +83,26 @@ public class StatisticsController implements Initializable {
                 -> String.CASE_INSENSITIVE_ORDER.compare(o1.getValue().getPrefix(), o2.getValue().getPrefix()));
         this.progressCategoryComboBox.valueProperty().addListener((observableValue, oldValue, newValue)
                 -> this.loadProgressChart(newValue, progressFromDatePicker.getValue(), progressToDatePicker.getValue()));
-        this.progressCategoryComboBox.setCellFactory(param -> new ListCell<>() {
+//        this.progressCategoryComboBox.setCellFactory(param -> new ListCell<>() {
+//            @Override
+//            protected void updateItem(CategoryTree item, boolean empty) {
+//                super.updateItem(item, empty);
+//                if (!empty) {
+//                    setText(formatter.formatCategoryName(item.getValue()));
+//                } else {
+//                    setText(null);
+//                }
+//            }
+//        });
+        this.progressCategoryComboBox.setConverter(new StringConverter<>() {
             @Override
-            protected void updateItem(CategoryTree item, boolean empty) {
-                super.updateItem(item, empty);
-                if (!empty) {
-                    setText(formatter.formatCategoryName(item.getValue()));
-                } else {
-                    setText(null);
-                }
+            public String toString(CategoryTree categoryTree) {
+                return categoryTree != null ? formatter.formatCategoryName(categoryTree) : "";
+            }
+
+            @Override
+            public CategoryTree fromString(String s) {
+                return new CategoryTree(null, new Category(-1, s, -1, -1));
             }
         });
     }
@@ -144,6 +157,7 @@ public class StatisticsController implements Initializable {
 
     private void loadProgressChart(CategoryTree categoryTree, LocalDate startDate, LocalDate endDate) {
         if (this.progressCategoryComboBox.getValue() != null) {
+            FinancerController.getInstance().showLoadingBox();
             this.progressLineChart.getData().clear();
 
             XYChart.Series<String, Number> series = new XYChart.Series<>();
@@ -155,6 +169,7 @@ public class StatisticsController implements Initializable {
             }
 
             this.progressLineChart.getData().add(series);
+            FinancerController.getInstance().hideLoadingBox();
         }
     }
 }
