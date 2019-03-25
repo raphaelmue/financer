@@ -1,7 +1,6 @@
 package de.raphaelmuesseler.financer.client.javafx.login;
 
 import de.raphaelmuesseler.financer.client.connection.ServerRequestHandler;
-import de.raphaelmuesseler.financer.client.format.Formatter;
 import de.raphaelmuesseler.financer.client.format.I18N;
 import de.raphaelmuesseler.financer.client.javafx.connection.JavaFXAsyncConnectionCall;
 import de.raphaelmuesseler.financer.client.javafx.connection.RetrievalServiceImpl;
@@ -9,12 +8,16 @@ import de.raphaelmuesseler.financer.client.javafx.dialogs.FinancerAlert;
 import de.raphaelmuesseler.financer.client.javafx.dialogs.FinancerExceptionDialog;
 import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
 import de.raphaelmuesseler.financer.client.javafx.main.FinancerApplication;
-import de.raphaelmuesseler.financer.client.local.Settings;
+import de.raphaelmuesseler.financer.client.local.Application;
+import de.raphaelmuesseler.financer.client.local.LocalSettings;
+import de.raphaelmuesseler.financer.client.local.LocalSettingsImpl;
 import de.raphaelmuesseler.financer.shared.connection.ConnectionResult;
-import de.raphaelmuesseler.financer.shared.model.User;
+import de.raphaelmuesseler.financer.shared.model.user.User;
+import de.raphaelmuesseler.financer.util.concurrency.FinancerExecutor;
 import javafx.application.Platform;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -25,12 +28,10 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class LoginController implements Initializable {
+public class LoginController implements Initializable, Application {
 
     public TextField loginEmailTextField;
     public PasswordField loginPasswordField;
@@ -40,12 +41,11 @@ public class LoginController implements Initializable {
     public Menu languageMenu;
 
     private Logger logger = Logger.getLogger("LoginApplication");
-    private ExecutorService executor = Executors.newCachedThreadPool();
     private LocalStorageImpl localStorage = (LocalStorageImpl) LocalStorageImpl.getInstance();
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        Settings settings = (Settings) this.localStorage.readObject("settings");
+        LocalSettings settings = (LocalSettings) this.localStorage.readObject("localSettings");
         if (settings != null) {
             for (MenuItem item : this.languageMenu.getItems()) {
                 RadioMenuItem radioMenuItem = (RadioMenuItem) item;
@@ -54,20 +54,36 @@ public class LoginController implements Initializable {
                     break;
                 }
             }
+        } else {
+            settings = new LocalSettingsImpl();
+            this.localStorage.writeObject("localSettings", settings);
         }
         I18N.setLocalStorage(this.localStorage);
-        Formatter.setSettings(settings);
+
+        ServerRequestHandler.setApplication(this);
+        ServerRequestHandler.setLocalStorage(this.localStorage);
+
+        Platform.runLater(() -> {
+            this.gridPane.getScene().setOnKeyPressed(e -> {
+                if (e.getCode() == KeyCode.ENTER) {
+                    handleSignInButtonAction();
+                }
+            });
+        });
+
+        Platform.runLater(() -> this.gridPane.getScene().setOnKeyPressed(e -> {
+            if (e.getCode() == KeyCode.ENTER) {
+                handleSignInButtonAction();
+            }
+        }));
     }
 
     public void handleSignInButtonAction() {
-        this.gridPane.setDisable(true);
-        this.progressIndicatorBox.setVisible(true);
-
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("email", this.loginEmailTextField.getText());
         parameters.put("password", this.loginPasswordField.getText());
         logger.log(Level.INFO, "User's credentials will be checked ...");
-        this.executor.execute(new ServerRequestHandler("checkCredentials", parameters, new JavaFXAsyncConnectionCall() {
+        FinancerExecutor.getExecutor().execute(new ServerRequestHandler("checkCredentials", parameters, new JavaFXAsyncConnectionCall() {
             @Override
             public void onSuccess(ConnectionResult result) {
                 if (result.getResult() != null) {
@@ -75,8 +91,6 @@ public class LoginController implements Initializable {
                 } else {
                     logger.log(Level.INFO, "User's credentials are incorrect.");
                     loginErrorLabel.setVisible(true);
-                    gridPane.setDisable(false);
-                    progressIndicatorBox.setVisible(false);
                 }
             }
 
@@ -86,8 +100,6 @@ public class LoginController implements Initializable {
                 Platform.runLater(() -> {
                     FinancerExceptionDialog dialog = new FinancerExceptionDialog("Login", exception);
                     dialog.showAndWait();
-                    gridPane.setDisable(false);
-                    progressIndicatorBox.setVisible(false);
                 });
             }
         }));
@@ -103,21 +115,17 @@ public class LoginController implements Initializable {
 
     private void changeLanguage(Locale locale) {
         new FinancerAlert(Alert.AlertType.INFORMATION, I18N.get("language"), I18N.get("warnChangesAfterRestart")).showAndWait();
-
-        Settings settings = (Settings) this.localStorage.readObject("settings");
-        settings.setLanguage(locale);
-        localStorage.writeObject("settings", settings);
+        // TODO to be implemented
     }
 
     public void handleOpenRegisterDialog() {
         User user = new RegisterDialog().showAndGetResult();
 
         if (user != null) {
-            this.progressIndicatorBox.setVisible(true);
             Map<String, Object> parameters = new HashMap<>();
             parameters.put("user", user);
 
-            this.executor.execute(new ServerRequestHandler("registerUser", parameters, new JavaFXAsyncConnectionCall() {
+            FinancerExecutor.getExecutor().execute(new ServerRequestHandler("registerUser", parameters, new JavaFXAsyncConnectionCall() {
                 @Override
                 public void onSuccess(ConnectionResult result) {
                     Platform.runLater(() -> loginUser((User) result.getResult()));
@@ -131,8 +139,7 @@ public class LoginController implements Initializable {
 
                 @Override
                 public void onAfter() {
-                    gridPane.setDisable(false);
-                    progressIndicatorBox.setVisible(false);
+
                 }
             }));
         }
@@ -164,5 +171,32 @@ public class LoginController implements Initializable {
                 e.printStackTrace();
             }
         }));
+    }
+
+    @Override
+    public void showLoadingBox() {
+        this.gridPane.setDisable(true);
+        this.progressIndicatorBox.setVisible(true);
+    }
+
+    @Override
+    public void hideLoadingBox() {
+        this.gridPane.setDisable(false);
+        this.progressIndicatorBox.setVisible(false);
+    }
+
+    @Override
+    public void setOffline() {
+
+    }
+
+    @Override
+    public void setOnline() {
+
+    }
+
+    @Override
+    public void showToast(MessageType messageType, String message) {
+
     }
 }

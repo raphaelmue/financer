@@ -37,10 +37,12 @@ public class TransactionAmountDialog extends FinancerDialog<TransactionAmount> {
 
         gridPane.add(new Label(I18N.get("valueDate")), 0, 0);
         this.valueDateField = new JFXDatePicker();
+        this.valueDateField.setId("transactionAmountValueDatePicker");
         gridPane.add(this.valueDateField, 1, 0);
 
         gridPane.add(new Label(I18N.get("amount")), 0, 1);
         this.amountField = new DoubleField();
+        this.amountField.setId("transactionAmountTextField");
         gridPane.add(this.amountField, 1, 1);
 
         return gridPane;
@@ -58,12 +60,14 @@ public class TransactionAmountDialog extends FinancerDialog<TransactionAmount> {
     protected boolean checkConsistency() {
         boolean result = true;
 
-        for (TransactionAmount transactionAmount : this.transactionAmounts) {
-            if (transactionAmount.getValueDate().getMonth() == this.valueDateField.getValue().getMonth() &&
-                    transactionAmount.getValueDate().getYear() == this.valueDateField.getValue().getYear()) {
-                this.setErrorMessage(I18N.get("errTransactionAmountExists"));
-                result = false;
-                break;
+        if (this.getValue() == null) {
+            for (TransactionAmount transactionAmount : this.transactionAmounts) {
+                if (transactionAmount.getValueDate().getMonth() == this.valueDateField.getValue().getMonth() &&
+                        transactionAmount.getValueDate().getYear() == this.valueDateField.getValue().getYear()) {
+                    this.setErrorMessage(I18N.get("errTransactionAmountExists"));
+                    result = false;
+                    break;
+                }
             }
         }
 

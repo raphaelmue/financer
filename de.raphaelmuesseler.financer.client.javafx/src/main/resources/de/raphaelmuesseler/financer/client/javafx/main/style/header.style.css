@@ -29,6 +29,12 @@
 #contentLabel {
     -fx-text-fill: #ffffff;
     -fx-font-size: 14;
+    -fx-font-weight: 700;
+}
+
+#offlineLabel {
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 14;
 }
 
 #accountMenuBtn {

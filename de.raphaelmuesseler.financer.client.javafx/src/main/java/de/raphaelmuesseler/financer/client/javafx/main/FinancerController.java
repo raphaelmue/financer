@@ -1,12 +1,16 @@
 package de.raphaelmuesseler.financer.client.javafx.main;
 
 import com.jfoenix.controls.JFXHamburger;
+import com.jfoenix.controls.JFXSnackbar;
 import com.jfoenix.transitions.hamburger.HamburgerSlideCloseTransition;
+import de.raphaelmuesseler.financer.client.connection.ServerRequestHandler;
 import de.raphaelmuesseler.financer.client.format.I18N;
 import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
 import de.raphaelmuesseler.financer.client.javafx.login.LoginApplication;
-import de.raphaelmuesseler.financer.client.local.Settings;
-import de.raphaelmuesseler.financer.shared.model.User;
+import de.raphaelmuesseler.financer.client.javafx.util.ApplicationHelper;
+import de.raphaelmuesseler.financer.client.local.Application;
+import de.raphaelmuesseler.financer.client.local.LocalSettings;
+import de.raphaelmuesseler.financer.shared.model.user.User;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -26,11 +30,12 @@ import org.controlsfx.glyphfont.GlyphFontRegistry;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.Locale;
 import java.util.ResourceBundle;
+import java.util.concurrent.Executors;
 
-public class FinancerController implements Initializable {
+public class FinancerController implements Initializable, Application {
     public BorderPane rootLayout;
+    public BorderPane header;
     private static VBox loadingBox;
     public Button overviewTabBtn;
     public Button transactionsTabBtn;
@@ -42,22 +47,33 @@ public class FinancerController implements Initializable {
     public MenuItem logoutBtn;
     public JFXHamburger hamburgerBtn;
     public Label contentLabel;
+    public Label offlineLabel;
+
+    private static Application INSTANCE;
 
     private ResourceBundle resourceBundle;
     private LocalStorageImpl localStorage = (LocalStorageImpl) LocalStorageImpl.getInstance();
+    private JFXSnackbar snackbar;
 
     @FXML
     public void initialize(URL location, ResourceBundle resources) {
+        INSTANCE = this;
+        ServerRequestHandler.setApplication(this);
+        ServerRequestHandler.setLocalStorage(this.localStorage);
 
+        try {
+            ServerRequestHandler.makeRequests(Executors.newCachedThreadPool());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        User user = (User) this.localStorage.readObject("user");
 
         // setting up language
-        Locale locale;
-        if (this.localStorage.readObject("settings") != null) {
-            locale = ((Settings) this.localStorage.readObject("settings")).getLanguage();
-        } else {
-            locale = Locale.ENGLISH;
-        }
-        this.resourceBundle = ResourceBundle.getBundle("Financer", locale);
+        this.resourceBundle = ResourceBundle.getBundle("Financer",
+                ApplicationHelper.getLocale((LocalSettings) localStorage.readObject("localSettings")));
+
+        this.snackbar = new JFXSnackbar(this.rootLayout);
 
         try {
             loadingBox = FXMLLoader.load(getClass().getResource("/de/raphaelmuesseler/financer/client/javafx/main/views/loading.fxml"), this.resourceBundle);
@@ -65,7 +81,6 @@ public class FinancerController implements Initializable {
             e.printStackTrace();
         }
 
-        User user = (User) this.localStorage.readObject("user");
         this.userNameLabel.setText(user.getFullName());
 
         GlyphFont fontAwesome = GlyphFontRegistry.font("FontAwesome");
@@ -93,20 +108,41 @@ public class FinancerController implements Initializable {
         handleShowOverviewContent();
     }
 
-    public static boolean showLoadingBox() {
-        if (loadingBox != null) {
-            loadingBox.setVisible(true);
-            return true;
-        }
-        return false;
+    public static Application getInstance() {
+        return INSTANCE;
     }
 
-    public static boolean hideLoadingBox() {
+    @Override
+    public void showLoadingBox() {
+        if (loadingBox != null) {
+            loadingBox.setVisible(true);
+        }
+    }
+
+    @Override
+    public void hideLoadingBox() {
         if (loadingBox != null && loadingBox.isVisible()) {
             loadingBox.setVisible(false);
-            return true;
         }
-        return false;
+    }
+
+    @Override
+    public void setOffline() {
+        this.header.setStyle("-fx-background-color: #909ca8");
+        this.offlineLabel.setVisible(true);
+    }
+
+    @Override
+    public void setOnline() {
+        this.header.setStyle("-fx-background-color: #92cab1");
+        this.offlineLabel.setVisible(false);
+    }
+
+    @Override
+    public synchronized void showToast(MessageType messageType, String message) {
+        Label messageLabel = new Label(message);
+        messageLabel.getStyleClass().add(messageType.getName() + "-toast-label");
+        this.snackbar.enqueue(new JFXSnackbar.SnackbarEvent(messageLabel));
     }
 
     public BorderPane getRootLayout() {
@@ -175,11 +211,15 @@ public class FinancerController implements Initializable {
         }
     }
 
-    public void handleLogout() {
-        Stage stage = (Stage) this.accountMenuBtn.getScene().getWindow();
+    public void handleLogoutBtn() {
+        handleLogout();
+    }
+
+    public static void handleLogout() {
+        Stage stage = (Stage) loadingBox.getScene().getWindow();
         stage.close();
 
-        this.localStorage.deleteAllData();
+        LocalStorageImpl.getInstance().deleteAllData();
 
         try {
             new LoginApplication().start(new Stage());

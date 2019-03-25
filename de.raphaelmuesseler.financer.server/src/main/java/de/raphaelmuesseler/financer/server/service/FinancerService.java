@@ -6,19 +6,23 @@ import de.raphaelmuesseler.financer.shared.exceptions.EmailAlreadyInUseException
 import de.raphaelmuesseler.financer.shared.model.BaseCategory;
 import de.raphaelmuesseler.financer.shared.model.Category;
 import de.raphaelmuesseler.financer.shared.model.CategoryTree;
-import de.raphaelmuesseler.financer.shared.model.User;
+import de.raphaelmuesseler.financer.shared.model.CategoryTreeImpl;
+import de.raphaelmuesseler.financer.shared.model.db.Attachment;
 import de.raphaelmuesseler.financer.shared.model.db.DatabaseObject;
 import de.raphaelmuesseler.financer.shared.model.db.DatabaseUser;
+import de.raphaelmuesseler.financer.shared.model.db.Token;
+import de.raphaelmuesseler.financer.shared.model.transactions.AttachmentWithContent;
 import de.raphaelmuesseler.financer.shared.model.transactions.FixedTransaction;
 import de.raphaelmuesseler.financer.shared.model.transactions.Transaction;
 import de.raphaelmuesseler.financer.shared.model.transactions.TransactionAmount;
+import de.raphaelmuesseler.financer.shared.model.user.User;
 import de.raphaelmuesseler.financer.util.Hash;
 import de.raphaelmuesseler.financer.util.RandomString;
-import de.raphaelmuesseler.financer.util.collections.Tree;
 import de.raphaelmuesseler.financer.util.collections.TreeUtil;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -26,6 +30,7 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+@SuppressWarnings("unused")
 public class FinancerService {
 
     private static FinancerService INSTANCE = null;
@@ -50,15 +55,15 @@ public class FinancerService {
     /**
      * Checks, whether the token is valid and not expired and returns the corresponding user.
      *
-     * @param token token string
+     * @param parameters [token]
      * @return User that has this token
      * @throws SQLException thrown, when something went wrong executing the SQL statement
      */
-    public User checkUsersToken(Logger logger, String token) throws SQLException {
+    public User checkUsersToken(Logger logger, Map<String, Object> parameters) throws SQLException {
         logger.log(Level.INFO, "Checking users token ...");
 
         Map<String, Object> whereParameters = new HashMap<>();
-        whereParameters.put("token", token);
+        whereParameters.put("token", ((Token) parameters.get("token")).getToken());
 
         JSONArray jsonArray = this.database.get(Database.Table.USERS_TOKENS, whereParameters);
 
@@ -72,7 +77,7 @@ public class FinancerService {
 
                 // update expire date
                 whereParameters.clear();
-                whereParameters.put("token", token);
+                whereParameters.put("token", parameters.get("token"));
 
                 Map<String, Object> values = new HashMap<>();
                 values.put("expire_date", LocalDate.now().plusMonths(1));
@@ -85,6 +90,52 @@ public class FinancerService {
         logger.log(Level.INFO, "Token is invalid");
 
         return null;
+    }
+
+    /**
+     * Generates a new token (or updates the token, if the IP address is already store in the database)
+     * and stores it in the database
+     *
+     * @param user      user
+     * @param ipAddress ip address of client
+     * @param system    operating system
+     * @throws SQLException thrown, when something went wrong executing the SQL statement
+     */
+    private void generateToken(User user, String ipAddress, String system, boolean isMobile) throws SQLException {
+        Token token;
+        Map<String, Object> whereParameters = new HashMap<>();
+        whereParameters.put("user_id", user.getId());
+        whereParameters.put("ip_address", ipAddress);
+
+        JSONArray result = this.database.get(Database.Table.USERS_TOKENS, whereParameters);
+        String tokenString = this.tokenGenerator.nextString();
+
+        Map<String, Object> values = new HashMap<>();
+        if (result.length() > 0) {
+            whereParameters.clear();
+            whereParameters.put("id", result.getJSONObject(0).get("id"));
+
+            values.put("token", tokenString);
+            values.put("expire_date", LocalDate.now().plusMonths(1));
+            this.database.update(Database.Table.USERS_TOKENS, whereParameters, values);
+
+            token = new Token(result.getJSONObject(0).getInt("id"),
+                    tokenString, ipAddress, system, LocalDate.now().plusMonths(1), isMobile);
+        } else {
+            values.put("user_id", user.getId());
+            values.put("token", tokenString);
+            values.put("expire_date", LocalDate.now().plusMonths(1));
+            values.put("ip_address", ipAddress);
+            values.put("system", system);
+            values.put("is_mobile", Boolean.toString(isMobile));
+            this.database.insert(Database.Table.USERS_TOKENS, values);
+
+            token = new Token(this.database.getLatestId(Database.Table.USERS_TOKENS),
+                    tokenString, ipAddress, system, LocalDate.now().plusMonths(1), isMobile);
+
+        }
+
+        user.setToken(token);
     }
 
     /**
@@ -108,15 +159,9 @@ public class FinancerService {
                 String password = Hash.create((String) parameters.get("password"), user.getSalt());
                 if (password.equals(user.getPassword())) {
                     logger.log(Level.INFO, "Credentials of user '" + user.getFullName() + "' are approved.");
-
-                    String token = this.tokenGenerator.nextString();
-                    Map<String, Object> values = new HashMap<>();
-                    values.put("user_id", user.getId());
-                    values.put("token", token);
-                    values.put("expire_date", LocalDate.now().plusMonths(1));
-                    this.database.insert(Database.Table.USERS_TOKENS, values);
-
-                    user.setToken(token);
+                    this.getUsersSettings(logger, user);
+                    this.generateToken(user, (String) parameters.get("ipAddress"), (String) parameters.get("system"),
+                            parameters.containsKey("isMobile") && (boolean) parameters.get("isMobile"));
                 } else {
                     user = null;
                 }
@@ -146,21 +191,97 @@ public class FinancerService {
         values.put("salt", user.getSalt());
         values.put("name", user.getName());
         values.put("surname", user.getSurname());
-        values.put("birthDate", user.getBirthdate());
+        values.put("birthDate", user.getBirthDate());
+        values.put("gender", user.getGenderObject().getName());
 
         this.database.insert(Database.Table.USERS, values);
 
         user.setId(this.database.getLatestId(Database.Table.USERS));
 
         // creating new token and inserting it to database
-        String token = this.tokenGenerator.nextString();
-        values.clear();
-        values.put("user_id", user.getId());
-        values.put("token", token);
-        values.put("expire_date", LocalDate.now().plusMonths(1));
-        this.database.insert(Database.Table.USERS_TOKENS, values);
+        this.generateToken(user, (String) parameters.get("ipAddress"), (String) parameters.get("system"),
+                parameters.containsKey("isMobile") && (boolean) parameters.get("isMobile"));
 
-        user.setToken(token);
+        return new ConnectionResult<>(user);
+    }
+
+    public ConnectionResult<Void> changePassword(Logger logger, Map<String, Object> parameters) throws Exception {
+        logger.log(Level.INFO, "Changing Users Password ...");
+        User user = (User) parameters.get("user");
+
+
+        Map<String, Object> whereParameters = new HashMap<>();
+        whereParameters.put("id", user.getId());
+
+        Map<String, Object> values = new HashMap<>();
+        values.put("password", user.getPassword());
+        values.put("salt", user.getSalt());
+
+        this.database.update(Database.Table.USERS, whereParameters, values);
+
+        return new ConnectionResult<>(null);
+    }
+
+    public ConnectionResult<List<Token>> getUsersTokens(Logger logger, Map<String, Object> parameters) throws Exception {
+        logger.log(Level.INFO, "Fetching all tokens of user ...");
+        User user = (User) parameters.get("user");
+
+        Map<String, Object> whereParameters = new HashMap<>();
+        whereParameters.put("user_id", user.getId());
+
+        List<DatabaseObject> databaseObjects = this.database.getObject(Database.Table.USERS_TOKENS, Token.class, whereParameters);
+        List<Token> result = new ArrayList<>();
+
+        for (DatabaseObject databaseObject : databaseObjects) {
+            if (((Token) databaseObject).getExpireDate().compareTo(LocalDate.now()) >= 0) {
+                result.add((Token) databaseObject);
+            }
+        }
+
+        return new ConnectionResult<>(result);
+    }
+
+    public ConnectionResult<Void> deleteToken(Logger logger, Map<String, Object> parameters) throws Exception {
+        logger.log(Level.INFO, "Deleting users token ...");
+
+        Map<String, Object> whereParameters = new HashMap<>();
+        whereParameters.put("id", parameters.get("tokenId"));
+        this.database.delete(Database.Table.USERS_TOKENS, whereParameters);
+
+        return new ConnectionResult<>(null);
+    }
+
+    private void getUsersSettings(Logger logger, User user) throws SQLException {
+        logger.log(Level.INFO, "Fetching users settings ...");
+
+        Map<String, Object> whereParameters = new HashMap<>();
+        whereParameters.put("user_id", user.getId());
+
+        JSONArray result = this.database.get(Database.Table.USERS_SETTINGS, whereParameters);
+        for (int i = 0; i < result.length(); i++) {
+            user.getSettings().setValueByProperty(result.getJSONObject(i).getString("property"),
+                    result.getJSONObject(i).getString("value"));
+        }
+    }
+
+    public ConnectionResult<User> updateUsersSettings(Logger logger, Map<String, Object> parameters) throws Exception {
+        logger.log(Level.INFO, "Updating users settings ...");
+        User user = (User) parameters.get("user");
+
+        Map<String, Object> whereParameters = new HashMap<>();
+        whereParameters.put("user_id", user.getId());
+        whereParameters.put("property", parameters.get("property"));
+
+        Map<String, Object> values = new HashMap<>();
+        values.put("value", parameters.get("value"));
+
+        if (this.database.get(Database.Table.USERS_SETTINGS, whereParameters).length() > 0) {
+            this.database.update(Database.Table.USERS_SETTINGS, whereParameters, values);
+        } else {
+            values.putAll(whereParameters);
+            this.database.insert(Database.Table.USERS_SETTINGS, values);
+        }
+        user.getSettings().setValueByProperty((String) parameters.get("property"), (String) parameters.get("value"));
 
         return new ConnectionResult<>(user);
     }
@@ -182,14 +303,14 @@ public class FinancerService {
                 JSONObject jsonObject = jsonArray.getJSONObject(j);
 
                 if (jsonObject.get("parent_id").equals("null")) {
-                    ((List<Tree<Category>>) baseCategory.getCategoryTreeByCategoryClass(categoryClass).getChildren()).add(
-                            new CategoryTree(categoryClass, baseCategory.getCategoryTreeByCategoryClass(categoryClass),
+                    baseCategory.getCategoryTreeByCategoryClass(categoryClass).getChildren().add(
+                            new CategoryTreeImpl(categoryClass, baseCategory.getCategoryTreeByCategoryClass(categoryClass),
                                     new Category(jsonObject.getInt("id"),
                                             jsonObject.getString("name"),
                                             (jsonObject.get("parent_id") == "null" ? -1 : jsonObject.getInt("parent_id")),
                                             jsonObject.getInt("cat_id"))));
                 } else {
-                    TreeUtil.insertByValue(baseCategory.getCategoryTreeByCategoryClass(categoryClass), new CategoryTree(categoryClass, null,
+                    TreeUtil.insertByValue(baseCategory.getCategoryTreeByCategoryClass(categoryClass), new CategoryTreeImpl(categoryClass, null,
                                     new Category(jsonObject.getInt("id"),
                                             jsonObject.getString("name"),
                                             jsonObject.getInt("parent_id"),
@@ -214,6 +335,7 @@ public class FinancerService {
         }
         values.put("name", category.getName());
 
+
         this.database.insert(Database.Table.USERS_CATEGORIES, values);
 
         return new ConnectionResult<>((Category) this.database.getObject(Database.Table.USERS_CATEGORIES, Category.class, values).get(0));
@@ -236,7 +358,7 @@ public class FinancerService {
 
     public ConnectionResult<Void> deleteCategory(Logger logger, Map<String, Object> parameters) throws Exception {
         logger.log(Level.INFO, "Deleting category ...");
-        CategoryTree category = (CategoryTree) parameters.get("category");
+        CategoryTreeImpl category = (CategoryTreeImpl) parameters.get("category");
 
         Map<String, Object> where = new HashMap<>();
         where.put("id", category.getValue().getId());
@@ -276,19 +398,30 @@ public class FinancerService {
                     (jsonObjectCategory.get("parent_id") == "null" ? -1 : jsonObjectCategory.getInt("parent_id")),
                     jsonObjectCategory.getInt("cat_id"));
 
-            // TODO get real CategoryTree instance
-            transactions.add(new Transaction(jsonObjectTransaction.getInt("id"),
+            // TODO get real CategoryTreeImpl instance
+            Transaction transaction = new Transaction(jsonObjectTransaction.getInt("id"),
                     jsonObjectTransaction.getDouble("amount"),
-                    new CategoryTree(BaseCategory.CategoryClass.getCategoryClassByIndex(category.getRootId() - 1), null, category),
+                    new CategoryTreeImpl(BaseCategory.CategoryClass.getCategoryClassByIndex(category.getRootId() - 1), null, category),
                     jsonObjectTransaction.getString("product"),
                     jsonObjectTransaction.getString("purpose"),
                     ((Date) jsonObjectTransaction.get("value_date")).toLocalDate(),
-                    jsonObjectTransaction.getString("shop")));
+                    jsonObjectTransaction.getString("shop"));
+
+            whereClause.clear();
+            whereClause.put("transaction_id", transaction.getId());
+            for (DatabaseObject databaseObject : this.database.getObject(Database.Table.TRANSACTIONS_ATTACHMENTS,
+                    Attachment.class, whereClause, "id, transaction_id, name, upload_date")) {
+                transaction.getAttachments().add((AttachmentWithContent) new AttachmentWithContent().fromDatabaseObject(databaseObject));
+            }
+
+            transactions.add(transaction);
+
+            whereClause.clear();
         }
         return new ConnectionResult<>(transactions);
     }
 
-    public ConnectionResult<Void> addTransaction(Logger logger, Map<String, Object> parameters) throws Exception {
+    public ConnectionResult<Transaction> addTransaction(Logger logger, Map<String, Object> parameters) throws Exception {
         logger.log(Level.INFO, "Adding transaction ...");
         User user = (User) parameters.get("user");
         Transaction transaction = (Transaction) parameters.get("transaction");
@@ -304,7 +437,9 @@ public class FinancerService {
 
         this.database.insert(Database.Table.TRANSACTIONS, values);
 
-        return new ConnectionResult<>(null);
+        transaction.setId(this.database.getLatestId(Database.Table.TRANSACTIONS));
+
+        return new ConnectionResult<>(transaction);
     }
 
 
@@ -324,6 +459,50 @@ public class FinancerService {
         values.put("cat_id", transaction.getCategoryTree().getValue().getId());
 
         this.database.update(Database.Table.TRANSACTIONS, where, values);
+
+        return new ConnectionResult<>(null);
+    }
+
+    public ConnectionResult<AttachmentWithContent> uploadTransactionAttachment(Logger logger, Map<String, Object> parameters) throws Exception {
+        logger.log(Level.INFO, "Uploading AttachmentWithContent ...");
+        AttachmentWithContent result = new AttachmentWithContent();
+        File attachmentFile = (File) parameters.get("attachmentFile");
+
+        Map<String, Object> values = new HashMap<>();
+        values.put("transaction_id", ((Transaction) parameters.get("transaction")).getId());
+        values.put("name", attachmentFile.getName());
+        values.put("upload_date", LocalDate.now().toString());
+        values.put("content", parameters.get("content"));
+
+        this.database.insert(Database.Table.TRANSACTIONS_ATTACHMENTS, values);
+
+        result.setId(this.database.getLatestId(Database.Table.TRANSACTIONS_ATTACHMENTS));
+        result.setName(attachmentFile.getName());
+        result.setUploadDate(LocalDate.now());
+        //result.setContent((byte[]) parameters.get("content"));
+
+        return new ConnectionResult<>(result);
+    }
+
+    public ConnectionResult<AttachmentWithContent> getAttachment(Logger logger, Map<String, Object> parameters) throws Exception {
+        logger.log(Level.INFO, "Fetching attachment ...");
+        Map<String, Object> whereParameters = new HashMap<>();
+        whereParameters.put("id", parameters.get("id"));
+
+        List<DatabaseObject> result = this.database.getObject(Database.Table.TRANSACTIONS_ATTACHMENTS, AttachmentWithContent.class, whereParameters);
+        if (result != null && result.size() > 0) {
+            return new ConnectionResult<>((AttachmentWithContent) result.get(0));
+        }
+
+        return new ConnectionResult<>(null);
+    }
+
+    public ConnectionResult<Void> deleteAttachment(Logger logger, Map<String, Object> parameters) throws Exception {
+        logger.log(Level.INFO, "Deleting attachment ...");
+        Map<String, Object> whereParamters = new HashMap<>();
+        whereParamters.put("id", parameters.get("id"));
+
+        this.database.delete(Database.Table.TRANSACTIONS_ATTACHMENTS, whereParamters);
 
         return new ConnectionResult<>(null);
     }
@@ -380,10 +559,10 @@ public class FinancerService {
 
             transactionAmounts.sort(Comparator.comparing(TransactionAmount::getValueDate).reversed());
 
-            // TODO get real CategoryTree instance
+            // TODO get real CategoryTreeImpl instance
             fixedTransactions.add(new FixedTransaction(jsonObjectTransaction.getInt("id"),
                     (jsonObjectTransaction.get("amount") == "null" ? 0 : jsonObjectTransaction.getDouble("amount")),
-                    new CategoryTree(BaseCategory.CategoryClass.getCategoryClassByIndex(category.getRootId() - 1), null, category),
+                    new CategoryTreeImpl(BaseCategory.CategoryClass.getCategoryClassByIndex(category.getRootId() - 1), null, category),
                     (jsonObjectTransaction.get("product") == "null" ? null : jsonObjectTransaction.getString("product")),
                     (jsonObjectTransaction.get("purpose") == "null" ? null : jsonObjectTransaction.getString("purpose")),
                     ((Date) jsonObjectTransaction.get("start_date")).toLocalDate(),
@@ -407,7 +586,7 @@ public class FinancerService {
         whereParameters.put("end_date", null);
 
         Map<String, Object> values = new HashMap<>();
-        values.put("end_date", LocalDate.now().toString());
+        values.put("end_date", fixedTransaction.getStartDate());
 
         this.database.update(Database.Table.FIXED_TRANSACTIONS, whereParameters, values);
 
@@ -422,7 +601,10 @@ public class FinancerService {
 
         this.database.insert(Database.Table.FIXED_TRANSACTIONS, values);
 
-        return new ConnectionResult<>(null);
+        fixedTransaction.setId(this.database.getLatestId(Database.Table.FIXED_TRANSACTIONS));
+        this.updateOrCreateTransactionAmounts(fixedTransaction);
+
+        return new ConnectionResult<>(fixedTransaction);
     }
 
 
@@ -441,21 +623,8 @@ public class FinancerService {
         values.put("day", fixedTransaction.getDay());
 
         this.database.update(Database.Table.FIXED_TRANSACTIONS, whereParameters, values);
-        whereParameters.clear();
-        values.clear();
 
-        for (TransactionAmount transactionAmount : fixedTransaction.getTransactionAmounts()) {
-            whereParameters.put("id", transactionAmount.getId());
-
-            values.put("fixed_transaction_id", fixedTransaction.getId());
-            values.put("value_date", transactionAmount.getValueDate());
-            values.put("amount", transactionAmount.getAmount());
-            if (transactionAmount.getId() < 0) {
-                this.database.insert(Database.Table.FIXED_TRANSACTIONS_AMOUNTS, values);
-            } else {
-                this.database.update(Database.Table.FIXED_TRANSACTIONS_AMOUNTS, whereParameters, values);
-            }
-        }
+        this.updateOrCreateTransactionAmounts(fixedTransaction);
 
         return new ConnectionResult<>(null);
     }
@@ -470,5 +639,25 @@ public class FinancerService {
         whereParameters.put("fixed_transaction_id", ((FixedTransaction) parameters.get("fixedTransaction")).getId());
         this.database.delete(Database.Table.FIXED_TRANSACTIONS_AMOUNTS, whereParameters);
         return new ConnectionResult<>(null);
+    }
+
+    private void updateOrCreateTransactionAmounts(FixedTransaction fixedTransaction) throws SQLException {
+        Map<String, Object> whereParameters = new HashMap<>();
+        Map<String, Object> values = new HashMap<>();
+
+        if (fixedTransaction.isVariable() && fixedTransaction.getTransactionAmounts() != null) {
+            for (TransactionAmount transactionAmount : fixedTransaction.getTransactionAmounts()) {
+                whereParameters.put("id", transactionAmount.getId());
+
+                values.put("fixed_transaction_id", fixedTransaction.getId());
+                values.put("value_date", transactionAmount.getValueDate());
+                values.put("amount", transactionAmount.getAmount());
+                if (transactionAmount.getId() < 0) {
+                    this.database.insert(Database.Table.FIXED_TRANSACTIONS_AMOUNTS, values);
+                } else {
+                    this.database.update(Database.Table.FIXED_TRANSACTIONS_AMOUNTS, whereParameters, values);
+                }
+            }
+        }
     }
 }

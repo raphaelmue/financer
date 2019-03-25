@@ -2,7 +2,7 @@ package de.raphaelmuesseler.financer.client.javafx.main;
 
 import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
 import de.raphaelmuesseler.financer.client.javafx.login.LoginApplication;
-import de.raphaelmuesseler.financer.shared.model.User;
+import de.raphaelmuesseler.financer.shared.model.user.User;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -53,7 +53,9 @@ public class LoginApplicationTest extends AbstractFinancerApplicationTest {
 
         for (LocalStorageImpl.LocalStorageFile file : LocalStorageImpl.LocalStorageFile.values()) {
             for (String key : file.getKeys()) {
-                Assertions.assertNull(LocalStorageImpl.getInstance().readObject(key));
+                if (!key.equals("localSettings")) {
+                    Assertions.assertNull(LocalStorageImpl.getInstance().readObject(key));
+                }
             }
         }
     }

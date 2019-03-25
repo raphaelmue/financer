@@ -1,51 +1,19 @@
 package de.raphaelmuesseler.financer.client.format;
 
-import de.raphaelmuesseler.financer.client.local.Settings;
 import de.raphaelmuesseler.financer.shared.exceptions.FinancerException;
 import de.raphaelmuesseler.financer.shared.model.Category;
-import javafx.geometry.Pos;
-import javafx.scene.control.Label;
-import javafx.scene.text.TextAlignment;
+import de.raphaelmuesseler.financer.shared.model.CategoryTree;
 
-import java.util.Locale;
+import java.time.LocalDate;
 
-public class Formatter {
-    private static Settings SETTINGS;
+public interface Formatter {
+    String formatExceptionMessage(FinancerException exception);
 
-    public static void setSettings(Settings SETTINGS) {
-        Formatter.SETTINGS = SETTINGS;
-    }
+    String formatCurrency(Double amount);
 
-    public static String formatExceptionMessage(FinancerException exception) {
-        return I18N.get(exception.getDisplayMessage());
-    }
+    String formatCategoryName(Category category);
 
-    public static String formatCurrency(Double amount) {
-        if (SETTINGS != null) {
-            return (SETTINGS.getLanguage() == Locale.GERMAN ? String.format("%.2f", amount).replace(".", ",") : String.format("%.2f", amount)) +
-                    " " + (SETTINGS.isShowCurrencySign() ? SETTINGS.getCurrency().getSymbol() : SETTINGS.getCurrency());
-        } else {
-            return String.format("%.2f", amount);
-        }
-    }
+    String formatCategoryName(CategoryTree categoryTree);
 
-    public static Label formatAmountLabel(Double amount) {
-        return formatAmountLabel(new Label(), amount);
-    }
-
-    public static Label formatAmountLabel(Label amountLabel, Double amount) {
-        amountLabel.setText(formatCurrency(amount));
-        amountLabel.setTextAlignment(TextAlignment.RIGHT);
-        amountLabel.setAlignment(Pos.CENTER_RIGHT);
-        amountLabel.getStyleClass().add(amount < 0 ? "neg-amount" : "pos-amount");
-        return amountLabel;
-    }
-
-    public static String formatCategoryName(Category category) {
-        if (category.getPrefix() != null) {
-            return category.getPrefix() + " " + category.getName();
-        } else {
-            return category.getName();
-        }
-    }
+    String formatDate(LocalDate localDate);
 }
