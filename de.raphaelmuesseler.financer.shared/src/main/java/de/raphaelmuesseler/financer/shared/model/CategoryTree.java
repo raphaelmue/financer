@@ -11,4 +11,9 @@ public interface CategoryTree extends Tree<Category>, AmountProvider {
     void setCategoryClass(BaseCategory.CategoryClass categoryClass);
 
     Set<AbstractTransaction> getTransactions();
+
+    @Override
+    default boolean isRoot() {
+        return getParent() == null || getParent().getValue().getName().equals("root");
+    }
 }

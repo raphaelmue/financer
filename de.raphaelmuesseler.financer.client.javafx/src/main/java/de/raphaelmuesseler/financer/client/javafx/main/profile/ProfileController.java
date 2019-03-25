@@ -175,7 +175,7 @@ public class ProfileController implements Initializable {
                         if (categoriesTreeView.getSelectionModel().getSelectedItem().getValue().isRoot()) {
                             categories.getCategoryTreeByCategoryClass(categoriesTreeView.getSelectionModel().getSelectedItem().getValue().getCategoryClass()).getChildren().add(categoryTree);
                         } else {
-                            TreeUtil.insertByValue(categories.getCategoryTreeByCategoryClass(categoryTree.getCategoryClass()), categoryTree, (o1, o2) -> Integer.compare(o1.getParentId(), o2.getId()));
+                            TreeUtil.insertByValue(categories, categoryTree, (o1, o2) -> Integer.compare(o1.getParentId(), o2.getId()));
                         }
                         localStorage.writeObject("categories", categories);
 
