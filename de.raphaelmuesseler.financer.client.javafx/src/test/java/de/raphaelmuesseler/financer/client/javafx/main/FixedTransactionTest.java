@@ -115,11 +115,48 @@ public class FixedTransactionTest extends AbstractFinancerApplicationTest {
     }
 
     @Test
-    public void testEditFixedVariableTransaction() {
+    public void testEditFixedVariableTransactionEditTransactionAmount() {
         final double amount = 450.0;
         fixedTransaction.setVariable(true);
         fixedTransaction.getTransactionAmounts().add(new TransactionAmount(-1, amount, LocalDate.now().withDayOfMonth(1)));
-        fixedTransaction.getTransactionAmounts().add(new TransactionAmount(-1, amount, LocalDate.now().minusMonths(1).withDayOfMonth(1)));
+        register(user, password);
+        category.setCategoryClass(BaseCategory.CategoryClass.FIXED_EXPENSES);
+        category.getValue().setPrefix("3.1");
+        addCategory(category);
+        addFixedTransaction(fixedTransaction);
+        sleep(MEDIUM_SLEEP);
+        clickOn(find((Label label) -> label.getText().contains(fixedTransaction.getCategoryTree().getValue().getName())));
+        sleep(SHORT_SLEEP);
+        clickOn(find((Label label) -> label.getText().contains(I18N.get("active"))));
+        clickOn((JFXButton) find("#editFixedTransactionBtn"));
+        sleep(MEDIUM_SLEEP);
+        Assertions.assertTrue(find("#editTransactionAmountBtn").isDisabled());
+        Assertions.assertTrue(find("#deleteTransactionAmountBtn").isDisabled());
+        Assertions.assertTrue(((CheckBox) find("#isVariableCheckbox")).isSelected());
+        JFXListView<TransactionAmount> transactionAmountListView = find("#transactionAmountListView");
+        Assertions.assertTrue(transactionAmountListView.isManaged());
+        transactionAmountListView.getSelectionModel().select(0);
+        clickOn((JFXButton) find("#editTransactionAmountBtn"));
+        clickOn((DoubleField) find("#transactionAmountTextField"));
+        eraseText(6);
+        write(Double.toString(amount / 2));
+        press(KeyCode.TAB).release(KeyCode.TAB);
+        press(KeyCode.ENTER).release(KeyCode.ENTER);
+        Assertions.assertNotNull(clickOn(formatter.formatCurrency(amount / 2)));
+        confirmDialog();
+        sleep(MEDIUM_SLEEP);
+        FixedTransaction updatedTransaction = null;
+        for (AbstractTransaction transaction : getCategoryTree().getTransactions()) {
+            updatedTransaction = (FixedTransaction) transaction;
+        }
+        Assertions.assertNotNull(updatedTransaction);
+        Assertions.assertEquals(amount / 2, updatedTransaction.getTransactionAmounts().get(0).getAmount());
+    }
+
+    @Test
+    public void testEditFixedVariableTransactionDeleteTransactionAmount() {
+        fixedTransaction.setVariable(true);
+        fixedTransaction.getTransactionAmounts().add(new TransactionAmount(-1, 450.0, LocalDate.now().withDayOfMonth(1)));
         register(user, password);
         category.setCategoryClass(BaseCategory.CategoryClass.FIXED_EXPENSES);
         category.getValue().setPrefix("3.1");
@@ -141,24 +178,14 @@ public class FixedTransactionTest extends AbstractFinancerApplicationTest {
         press(KeyCode.ENTER).release(KeyCode.ENTER);
         sleep(MEDIUM_SLEEP);
         transactionAmountListView = find("#transactionAmountListView");
-        Assertions.assertEquals(1, transactionAmountListView.getItems().size());
-        transactionAmountListView.getSelectionModel().select(0);
-        clickOn((JFXButton) find("#editTransactionAmountBtn"));
-        clickOn((DoubleField) find("#transactionAmountTextField"));
-        eraseText(6);
-        write(Double.toString(amount / 2));
-        press(KeyCode.TAB).release(KeyCode.TAB);
-        press(KeyCode.ENTER).release(KeyCode.ENTER);
-        Assertions.assertNotNull(clickOn(formatter.formatCurrency(amount / 2)));
+        Assertions.assertEquals(0, transactionAmountListView.getItems().size());
         confirmDialog();
         sleep(MEDIUM_SLEEP);
-
-        Assertions.assertEquals(1, getCategoryTree().getTransactions().size());
         FixedTransaction updatedTransaction = null;
         for (AbstractTransaction transaction : getCategoryTree().getTransactions()) {
             updatedTransaction = (FixedTransaction) transaction;
         }
         Assertions.assertNotNull(updatedTransaction);
-        Assertions.assertEquals(amount / 2, updatedTransaction.getTransactionAmounts().get(0).getAmount());
+        Assertions.assertEquals(0, updatedTransaction.getTransactionAmounts().size());
     }
 }
