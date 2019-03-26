@@ -1,15 +1,19 @@
 package de.raphaelmuesseler.financer.shared.model.db;
 
-import com.google.gson.annotations.SerializedName;
-
 import java.io.Serializable;
+import java.util.Set;
 
 public class DatabaseUser implements DatabaseObject, Serializable {
     private static final long serialVersionUID = 8551108621522985674L;
     private int id;
-    private String email, password, salt, name, surname, gender;
-    @SerializedName("birthdate")
+    private String email;
+    private String password;
+    private String salt;
+    private String name;
+    private String surname;
     private String birthDate;
+    private String gender;
+    private Set<DatabaseCategory> categories;
 
     public DatabaseUser() {
 
@@ -62,6 +66,10 @@ public class DatabaseUser implements DatabaseObject, Serializable {
         return gender;
     }
 
+    public Set<DatabaseCategory> getCategories() {
+        return categories;
+    }
+
     public void setId(int id) {
         this.id = id;
     }
@@ -92,5 +100,9 @@ public class DatabaseUser implements DatabaseObject, Serializable {
 
     public void setGender(String gender) {
         this.gender = gender;
+    }
+
+    public void setCategories(Set<DatabaseCategory> categories) {
+        this.categories = categories;
     }
 }
