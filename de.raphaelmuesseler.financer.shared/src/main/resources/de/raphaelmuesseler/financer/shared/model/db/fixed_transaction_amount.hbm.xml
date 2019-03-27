@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="de.raphaelmuesseler.financer.shared.model.db">
+    <class name="DatabaseFixedTransactionAmount" table="fixed_transaction_amount">
+        <id name="id" type="int">
+            <column name="id"/>
+            <generator class="increment"/>
+        </id>
+        <many-to-one name="fixedTransaction" class="DatabaseFixedTransaction">
+            <column name="fixed_transaction_id"/>
+        </many-to-one>
+        <property name="valueDate" type="java.time.LocalDate">
+            <column name="value_date"/>
+        </property>
+        <property name="amount" type="double">
+            <column name="parent_id"/>
+        </property>
+    </class>
+</hibernate-mapping>

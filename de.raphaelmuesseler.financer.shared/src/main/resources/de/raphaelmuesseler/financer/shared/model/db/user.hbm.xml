@@ -18,7 +18,7 @@
             <column name="salt"/>
         </property>
         <property name="name" type="java.lang.String">
-            <column name="NAME"/>
+            <column name="name"/>
         </property>
         <property name="surname" type="java.lang.String">
             <column name="surname"/>

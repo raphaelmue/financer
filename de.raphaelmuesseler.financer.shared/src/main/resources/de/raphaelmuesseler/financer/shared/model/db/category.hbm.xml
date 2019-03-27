@@ -20,5 +20,13 @@
         <property name="name" type="java.lang.String">
             <column name="name"/>
         </property>
+        <set name="transactions" table="transactions" fetch="select" cascade="all">
+            <key column="cat_id" not-null="true"/>
+            <one-to-many class="DatabaseTransaction"/>
+        </set>
+        <set name="fixedTransactions" table="fixed_transactions" fetch="select" cascade="all">
+            <key column="cat_id" not-null="true"/>
+            <one-to-many class="DatabaseFixedTransaction" />
+        </set>
     </class>
 </hibernate-mapping>
