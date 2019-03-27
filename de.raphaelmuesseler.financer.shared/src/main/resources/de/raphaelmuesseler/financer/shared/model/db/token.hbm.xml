@@ -3,13 +3,13 @@
         "http://hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping package="de.raphaelmuesseler.financer.shared.model.db">
-    <class name="DatabaseToken" table="users">
+    <class name="DatabaseToken" table="users_tokens">
         <id name="id" type="int">
             <column name="id"/>
             <generator class="increment"/>
         </id>
         <many-to-one name="user" class="DatabaseUser">
-            <column name="user_id"/>
+            <column name="user_id" not-null="true"/>
         </many-to-one>
         <property name="token" type="java.lang.String">
             <column name="token"/>

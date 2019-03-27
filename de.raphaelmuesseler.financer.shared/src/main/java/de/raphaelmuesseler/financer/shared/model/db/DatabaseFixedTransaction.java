@@ -78,11 +78,11 @@ public class DatabaseFixedTransaction {
         this.purpose = purpose;
     }
 
-    public boolean isVariable() {
+    public boolean getIsVariable() {
         return isVariable;
     }
 
-    public void setVariable(boolean variable) {
+    public void setIsVariable(boolean variable) {
         isVariable = variable;
     }
 

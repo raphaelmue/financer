@@ -8,8 +8,8 @@
             <column name="id"/>
             <generator class="increment"/>
         </id>
-        <many-to-one name="user" class="de.raphaelmuesseler.financer.shared.model.db.DatabaseUser">
-            <column name="user_id"/>
+        <many-to-one name="user" class="DatabaseUser" insert="false" update="false">
+            <column name="user_id" />
         </many-to-one>
         <property name="categoryClass" type="int">
             <column name="cat_id"/>

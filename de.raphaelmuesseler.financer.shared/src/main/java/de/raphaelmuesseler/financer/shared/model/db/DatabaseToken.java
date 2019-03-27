@@ -59,11 +59,11 @@ public class DatabaseToken {
         this.system = system;
     }
 
-    public boolean isMobile() {
+    public boolean getIsMobile() {
         return isMobile;
     }
 
-    public void setMobile(boolean mobile) {
+    public void setIsMobile(boolean mobile) {
         isMobile = mobile;
     }
 }

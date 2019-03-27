@@ -8,11 +8,11 @@
             <column name="id"/>
             <generator class="increment"/>
         </id>
-        <many-to-one name="user" class="DatabaseUser">
+        <many-to-one name="user" class="DatabaseUser" insert="false" update="false">
             <column name="user_id"/>
         </many-to-one>
-        <many-to-one name="category" class="DatabaseCategory">
-            <column name="cat_id"/>
+        <many-to-one name="category" class="DatabaseCategory" insert="false" update="false">
+            <column name="cat_id" />
         </many-to-one>
         <property name="amount" type="double">
             <column name="amount"/>
@@ -29,7 +29,7 @@
         <property name="purpose" type="java.lang.String">
             <column name="purpose"/>
         </property>
-        <property name="isVariable" type="org.hibernate.type.NumericBooleanType">
+        <property name="isVariable" type="boolean">
             <column name="is_variable"/>
         </property>
         <property name="day" type="int">

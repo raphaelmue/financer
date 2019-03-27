@@ -3,7 +3,7 @@
         "http://hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping package="de.raphaelmuesseler.financer.shared.model.db">
-    <class name="DatabaseFixedTransactionAmount" table="fixed_transaction_amount">
+    <class name="DatabaseFixedTransactionAmount" table="fixed_transactions_amounts">
         <id name="id" type="int">
             <column name="id"/>
             <generator class="increment"/>
@@ -15,7 +15,7 @@
             <column name="value_date"/>
         </property>
         <property name="amount" type="double">
-            <column name="parent_id"/>
+            <column name="amount"/>
         </property>
     </class>
 </hibernate-mapping>

@@ -9,7 +9,7 @@
             <generator class="increment"/>
         </id>
         <property name="email" type="java.lang.String">
-            <column name="name"/>
+            <column name="email"/>
         </property>
         <property name="password" type="java.lang.String">
             <column name="password"/>
@@ -32,6 +32,14 @@
         <set name="categories" table="users_categories" fetch="select" cascade="all">
             <key column="user_id" not-null="true"/>
             <one-to-many class="DatabaseCategory"/>
+        </set>
+        <set name="settings" table="users_settings" fetch="select" cascade="all">
+            <key column="user_id" not-null="true"/>
+            <one-to-many class="DatabaseSettings"/>
+        </set>
+        <set name="tokens" table="users_tokens" fetch="select" cascade="all">
+            <key column="user_id" not-null="true"/>
+            <one-to-many class="DatabaseToken"/>
         </set>
     </class>
 </hibernate-mapping>

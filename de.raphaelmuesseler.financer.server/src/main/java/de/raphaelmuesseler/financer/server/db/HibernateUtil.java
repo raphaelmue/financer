@@ -15,15 +15,22 @@ public class HibernateUtil {
             // Create the SessionFactory from hibernate.cfg.xml
             Configuration configuration = new Configuration();
             configuration.configure("/de/raphaelmuesseler/financer/server/db/hibernate.cfg.xml");
-            System.out.println("Hibernate Configuration loaded");
+
+            // load mappings
+            configuration.addResource("/de/raphaelmuesseler/financer/shared/model/db/category.hbm.xml");
+            configuration.addResource("/de/raphaelmuesseler/financer/shared/model/db/fixed_transaction.hbm.xml");
+            configuration.addResource("/de/raphaelmuesseler/financer/shared/model/db/fixed_transaction_amount.hbm.xml");
+            configuration.addResource("/de/raphaelmuesseler/financer/shared/model/db/token.hbm.xml");
+            configuration.addResource("/de/raphaelmuesseler/financer/shared/model/db/transaction.hbm.xml");
+            configuration.addResource("/de/raphaelmuesseler/financer/shared/model/db/transaction_attachment.hbm.xml");
+            configuration.addResource("/de/raphaelmuesseler/financer/shared/model/db/user.hbm.xml");
+            configuration.addResource("/de/raphaelmuesseler/financer/shared/model/db/users_settings.hbm.xml");
+
 
             ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder().applySettings(configuration.getProperties()).build();
-            System.out.println("Hibernate serviceRegistry created");
 
             return configuration.buildSessionFactory(serviceRegistry);
         } catch (Throwable ex) {
-            // Make sure you log the exception, as it might be swallowed
-            System.err.println("Initial SessionFactory creation failed." + ex);
             throw new ExceptionInInitializerError(ex);
         }
     }

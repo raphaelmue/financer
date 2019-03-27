@@ -3,12 +3,12 @@
         "http://hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping package="de.raphaelmuesseler.financer.shared.model.db">
-    <class name="DatabaseTransactionAttachment" table="users">
+    <class name="DatabaseTransactionAttachment" table="transactions_attachments">
         <id name="id" type="int">
             <column name="id"/>
             <generator class="increment"/>
         </id>
-        <many-to-one name="transaction" class="DatabaseTransaction">
+        <many-to-one name="transaction" class="DatabaseTransaction" insert="false" update="false">
             <column name="transaction_id"/>
         </many-to-one>
         <property name="name" type="java.lang.String">
@@ -18,7 +18,7 @@
             <column name="upload_date"/>
         </property>
         <property name="content" type="blob">
-            <column name="name"/>
+            <column name="content"/>
         </property>
     </class>
 </hibernate-mapping>

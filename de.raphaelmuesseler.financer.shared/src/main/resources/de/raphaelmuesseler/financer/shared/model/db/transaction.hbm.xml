@@ -8,10 +8,10 @@
             <column name="id"/>
             <generator class="increment"/>
         </id>
-        <many-to-one name="user" class="DatabaseUser">
+        <many-to-one name="user" class="DatabaseUser" insert="false" update="false">
             <column name="user_id"/>
         </many-to-one>
-        <many-to-one name="category" class="DatabaseCategory">
+        <many-to-one name="category" class="DatabaseCategory" insert="false" update="false">
             <column name="cat_id"/>
         </many-to-one>
         <property name="valueDate" type="java.time.LocalDate">
