@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="de.raphaelmuesseler.financer.shared.model.db">
+    <class name="DatabaseFixedTransaction" table="fixed_transactions">
+        <id name="id" type="int">
+            <column name="id"/>
+            <generator class="increment"/>
+        </id>
+        <many-to-one name="user" class="DatabaseUser">
+            <column name="user_id"/>
+        </many-to-one>
+        <many-to-one name="category" class="DatabaseCategory">
+            <column name="cat_id"/>
+        </many-to-one>
+        <property name="amount" type="double">
+            <column name="amount"/>
+        </property>
+        <property name="startDate" type="java.time.LocalDate">
+            <column name="start_date"/>
+        </property>
+        <property name="endDate" type="java.time.LocalDate">
+            <column name="end_date"/>
+        </property>
+        <property name="product" type="java.lang.String">
+            <column name="product"/>
+        </property>
+        <property name="purpose" type="java.lang.String">
+            <column name="purpose"/>
+        </property>
+        <property name="isVariable" type="org.hibernate.type.NumericBooleanType">
+            <column name="is_variable"/>
+        </property>
+        <property name="day" type="int">
+            <column name="day"/>
+        </property>
+    </class>
+</hibernate-mapping>
