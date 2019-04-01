@@ -5,7 +5,6 @@ import de.raphaelmuesseler.financer.client.format.I18N;
 import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
 import de.raphaelmuesseler.financer.client.local.LocalSettings;
 import de.raphaelmuesseler.financer.client.local.LocalSettingsImpl;
-import de.raphaelmuesseler.financer.client.local.LocalStorage;
 import de.raphaelmuesseler.financer.shared.model.Category;
 import de.raphaelmuesseler.financer.shared.model.user.User;
 import org.junit.jupiter.api.Assertions;

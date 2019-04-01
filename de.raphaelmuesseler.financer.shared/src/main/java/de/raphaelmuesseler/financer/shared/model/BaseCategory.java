@@ -152,5 +152,7 @@ public class BaseCategory implements Serializable, CategoryTree {
     }
 
     @Override
-    public void setCategoryClass(CategoryClass categoryClass) { }
+    public void setCategoryClass(CategoryClass categoryClass) {
+        throw new IllegalArgumentException("BaseCategory must not have a category class");
+    }
 }
