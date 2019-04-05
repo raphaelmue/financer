@@ -612,8 +612,8 @@ public class TransactionsController implements Initializable {
 
 
     private void correctTransactionAmount(AbstractTransaction transaction) {
-        if ((transaction.getCategoryTree().getValue().getRootId() == 1 && transaction.getAmount() < 0) ||
-                (transaction.getCategoryTree().getValue().getRootId() == 3 && transaction.getAmount() >= 0)) {
+        if ((transaction.getCategoryTree().getCategoryClass().equals(BaseCategory.CategoryClass.VARIABLE_REVENUE) && transaction.getAmount() < 0) ||
+                (transaction.getCategoryTree().getCategoryClass().equals(BaseCategory.CategoryClass.VARIABLE_EXPENSES) && transaction.getAmount() >= 0)) {
             transaction.setAmount(transaction.getAmount() * (-1));
         }
     }
