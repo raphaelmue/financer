@@ -15,6 +15,7 @@ import de.raphaelmuesseler.financer.server.main.Server;
 import de.raphaelmuesseler.financer.shared.model.BaseCategory;
 import de.raphaelmuesseler.financer.shared.model.Category;
 import de.raphaelmuesseler.financer.shared.model.CategoryTree;
+import de.raphaelmuesseler.financer.shared.model.CategoryTreeImpl;
 import de.raphaelmuesseler.financer.shared.model.transactions.FixedTransaction;
 import de.raphaelmuesseler.financer.shared.model.transactions.Transaction;
 import de.raphaelmuesseler.financer.shared.model.transactions.TransactionAmount;
@@ -49,7 +50,7 @@ class AbstractFinancerApplicationTest extends ApplicationTest {
             "Mustermann",
             LocalDate.of(1989, 5, 28),
             User.Gender.MALE);
-    final CategoryTree category = new CategoryTree(BaseCategory.CategoryClass.VARIABLE_EXPENSES, new Category(-1, "TestCategory", -1, -1));
+    final CategoryTree category = new CategoryTreeImpl(BaseCategory.CategoryClass.VARIABLE_EXPENSES, new Category(-1, "TestCategory", -1, -1));
     final Transaction transaction = new Transaction(-1, 52.5,
             category, "ProductName",
             "Purpose", LocalDate.of(2018, 5, 19), "Shop");

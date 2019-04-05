@@ -1,37 +1,65 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import com.jfoenix.controls.JFXMasonryPane?>
-<?import javafx.scene.control.Label?>
+<?import com.jfoenix.controls.*?>
+<?import javafx.scene.chart.*?>
+<?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.chart.PieChart?>
-<?import com.jfoenix.controls.JFXDatePicker?>
 <VBox fx:controller="de.raphaelmuesseler.financer.client.javafx.main.statistics.StatisticsController"
       xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" styleClass="content">
-
-    <JFXMasonryPane>
-        <VBox styleClass="content-box" prefWidth="500" prefHeight="250">
-            <Label text="%variableTransactionsDistribution" styleClass="content-heading"/>
-            <HBox spacing="10" prefWidth="Infinity" alignment="CENTER">
-                <Label text="%from" />
-                <JFXDatePicker fx:id="variableExpensesFromDatePicker"/>
-                <Label text="%to" />
-                <JFXDatePicker fx:id="variableExpensesToDatePicker"/>
-            </HBox>
-            <PieChart fx:id="variableExpensesDistributionChart" labelsVisible="false"  legendSide="LEFT"/>
-            <Label fx:id="variableExpensesNoDataLabel" styleClass="warning-label" text="%noData" managed="false" />
-        </VBox>
-
-        <VBox styleClass="content-box" prefWidth="500" prefHeight="250">
-            <Label text="%variableTransactionsDistribution" styleClass="content-heading"/>
-            <HBox spacing="10" prefWidth="Infinity" alignment="CENTER">
-                <Label text="%from" />
-                <JFXDatePicker fx:id="fixedExpensesFromDatePicker" />
-                <Label text="%to" />
-                <JFXDatePicker fx:id="fixedExpensesToDatePicker" />
-            </HBox>
-            <PieChart fx:id="fixedExpensesDistributionChart" labelsVisible="false"  legendSide="LEFT"/>
-            <Label fx:id="fixedExpensesNoDataLabel" styleClass="warning-label" text="%noData" managed="false" />
-        </VBox>
-    </JFXMasonryPane>
-
+    <ScrollPane fitToWidth="true" hbarPolicy="NEVER">
+        <JFXMasonryPane>
+            <VBox styleClass="content-box" prefWidth="1000" prefHeight="500">
+                <Label text="%progress" styleClass="content-heading"/>
+                <BorderPane>
+                    <left>
+                        <HBox spacing="10" alignment="CENTER">
+                            <Label text="%from"/>
+                            <JFXDatePicker fx:id="progressFromDatePicker"/>
+                            <Label text="%to"/>
+                            <JFXDatePicker fx:id="progressToDatePicker"/>
+                        </HBox>
+                    </left>
+                    <right>
+                        <VBox fx:id="categoriesContainer" spacing="10">
+                            <HBox spacing="10">
+                                <ComboBox fx:id="progressChartDefaultCategoryComboBox" />
+                                <JFXButton fx:id="addCategoryBtn" text="%addCategory" disable="true"/>
+                            </HBox>
+                        </VBox>
+                    </right>
+                </BorderPane>
+                <LineChart fx:id="progressLineChart">
+                    <xAxis>
+                        <CategoryAxis side="BOTTOM" label="%valueDate"/>
+                    </xAxis>
+                    <yAxis>
+                        <NumberAxis side="LEFT" label="%amount"/>
+                    </yAxis>
+                </LineChart>
+            </VBox>
+            <VBox styleClass="content-box" prefWidth="500" prefHeight="250">
+                <Label text="%variableExpensesDistribution" styleClass="content-heading"/>
+                <HBox spacing="10" prefWidth="Infinity" alignment="CENTER">
+                    <Label text="%from"/>
+                    <JFXDatePicker fx:id="variableExpensesFromDatePicker"/>
+                    <Label text="%to"/>
+                    <JFXDatePicker fx:id="variableExpensesToDatePicker"/>
+                </HBox>
+                <PieChart fx:id="variableExpensesDistributionChart" labelsVisible="false" legendSide="LEFT"/>
+                <Label fx:id="variableExpensesNoDataLabel" styleClass="warning-label" text="%noData"
+                       managed="false"/>
+            </VBox>
+            <VBox styleClass="content-box" prefWidth="500" prefHeight="250">
+                <Label text="%variableExpensesDistribution" styleClass="content-heading"/>
+                <HBox spacing="10" prefWidth="Infinity" alignment="CENTER">
+                    <Label text="%from"/>
+                    <JFXDatePicker fx:id="fixedExpensesFromDatePicker"/>
+                    <Label text="%to"/>
+                    <JFXDatePicker fx:id="fixedExpensesToDatePicker"/>
+                </HBox>
+                <PieChart fx:id="fixedExpensesDistributionChart" labelsVisible="false" legendSide="LEFT"/>
+                <Label fx:id="fixedExpensesNoDataLabel" styleClass="warning-label" text="%noData" managed="false"/>
+            </VBox>
+        </JFXMasonryPane>
+    </ScrollPane>
 </VBox>

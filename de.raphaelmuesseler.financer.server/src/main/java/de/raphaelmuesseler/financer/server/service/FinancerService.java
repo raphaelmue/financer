@@ -6,6 +6,7 @@ import de.raphaelmuesseler.financer.shared.exceptions.EmailAlreadyInUseException
 import de.raphaelmuesseler.financer.shared.model.BaseCategory;
 import de.raphaelmuesseler.financer.shared.model.Category;
 import de.raphaelmuesseler.financer.shared.model.CategoryTree;
+import de.raphaelmuesseler.financer.shared.model.CategoryTreeImpl;
 import de.raphaelmuesseler.financer.shared.model.db.Attachment;
 import de.raphaelmuesseler.financer.shared.model.db.DatabaseObject;
 import de.raphaelmuesseler.financer.shared.model.db.DatabaseUser;
@@ -29,6 +30,7 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+@SuppressWarnings("unused")
 public class FinancerService {
 
     private static FinancerService INSTANCE = null;
@@ -302,13 +304,13 @@ public class FinancerService {
 
                 if (jsonObject.get("parent_id").equals("null")) {
                     baseCategory.getCategoryTreeByCategoryClass(categoryClass).getChildren().add(
-                            new CategoryTree(categoryClass, baseCategory.getCategoryTreeByCategoryClass(categoryClass),
+                            new CategoryTreeImpl(categoryClass, baseCategory.getCategoryTreeByCategoryClass(categoryClass),
                                     new Category(jsonObject.getInt("id"),
                                             jsonObject.getString("name"),
                                             (jsonObject.get("parent_id") == "null" ? -1 : jsonObject.getInt("parent_id")),
                                             jsonObject.getInt("cat_id"))));
                 } else {
-                    TreeUtil.insertByValue(baseCategory.getCategoryTreeByCategoryClass(categoryClass), new CategoryTree(categoryClass, null,
+                    TreeUtil.insertByValue(baseCategory.getCategoryTreeByCategoryClass(categoryClass), new CategoryTreeImpl(categoryClass, null,
                                     new Category(jsonObject.getInt("id"),
                                             jsonObject.getString("name"),
                                             jsonObject.getInt("parent_id"),
@@ -356,7 +358,7 @@ public class FinancerService {
 
     public ConnectionResult<Void> deleteCategory(Logger logger, Map<String, Object> parameters) throws Exception {
         logger.log(Level.INFO, "Deleting category ...");
-        CategoryTree category = (CategoryTree) parameters.get("category");
+        CategoryTreeImpl category = (CategoryTreeImpl) parameters.get("category");
 
         Map<String, Object> where = new HashMap<>();
         where.put("id", category.getValue().getId());
@@ -396,10 +398,10 @@ public class FinancerService {
                     (jsonObjectCategory.get("parent_id") == "null" ? -1 : jsonObjectCategory.getInt("parent_id")),
                     jsonObjectCategory.getInt("cat_id"));
 
-            // TODO get real CategoryTree instance
+            // TODO get real CategoryTreeImpl instance
             Transaction transaction = new Transaction(jsonObjectTransaction.getInt("id"),
                     jsonObjectTransaction.getDouble("amount"),
-                    new CategoryTree(BaseCategory.CategoryClass.getCategoryClassByIndex(category.getRootId() - 1), null, category),
+                    new CategoryTreeImpl(BaseCategory.CategoryClass.getCategoryClassByIndex(category.getRootId() - 1), null, category),
                     jsonObjectTransaction.getString("product"),
                     jsonObjectTransaction.getString("purpose"),
                     ((Date) jsonObjectTransaction.get("value_date")).toLocalDate(),
@@ -557,10 +559,10 @@ public class FinancerService {
 
             transactionAmounts.sort(Comparator.comparing(TransactionAmount::getValueDate).reversed());
 
-            // TODO get real CategoryTree instance
+            // TODO get real CategoryTreeImpl instance
             fixedTransactions.add(new FixedTransaction(jsonObjectTransaction.getInt("id"),
                     (jsonObjectTransaction.get("amount") == "null" ? 0 : jsonObjectTransaction.getDouble("amount")),
-                    new CategoryTree(BaseCategory.CategoryClass.getCategoryClassByIndex(category.getRootId() - 1), null, category),
+                    new CategoryTreeImpl(BaseCategory.CategoryClass.getCategoryClassByIndex(category.getRootId() - 1), null, category),
                     (jsonObjectTransaction.get("product") == "null" ? null : jsonObjectTransaction.getString("product")),
                     (jsonObjectTransaction.get("purpose") == "null" ? null : jsonObjectTransaction.getString("purpose")),
                     ((Date) jsonObjectTransaction.get("start_date")).toLocalDate(),
