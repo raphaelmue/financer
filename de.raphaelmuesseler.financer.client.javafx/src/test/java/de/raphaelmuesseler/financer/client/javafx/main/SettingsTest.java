@@ -63,7 +63,7 @@ public class SettingsTest extends AbstractFinancerApplicationTest {
         press(KeyCode.ENTER).release(KeyCode.ENTER);
 
         Assertions.assertEquals(currencyComboBox.getItems().get(0), ((User) LocalStorageImpl.getInstance().readObject("user"))
-                .getSettings().getCurrency());
+                .getDatabaseSettings().getCurrency());
 
         clickOn((Button) find("#transactionsTabBtn"));
 
@@ -73,7 +73,7 @@ public class SettingsTest extends AbstractFinancerApplicationTest {
 
         Assertions.assertNotNull(clickOn("-" +
                 String.format(((LocalSettings) LocalStorageImpl.getInstance().readObject("localSettings")).getLanguage(), "%.2f", transaction.getAmount()) +
-                " " + ((User) LocalStorageImpl.getInstance().readObject("user")).getSettings().getCurrency().getCurrencyCode()));
+                " " + ((User) LocalStorageImpl.getInstance().readObject("user")).getDatabaseSettings().getCurrency().getCurrencyCode()));
     }
 
     @Test
@@ -97,7 +97,7 @@ public class SettingsTest extends AbstractFinancerApplicationTest {
         clickOn(showCurrencySignCheckbox);
         sleep(500);
         Assertions.assertEquals(showCurrencySignCheckbox.isSelected(), ((User) LocalStorageImpl.getInstance().readObject("user"))
-                .getSettings().isShowCurrencySign());
+                .getDatabaseSettings().isShowCurrencySign());
 
         clickOn((Button) find("#transactionsTabBtn"));
 
@@ -107,6 +107,6 @@ public class SettingsTest extends AbstractFinancerApplicationTest {
         sleep(500);
         Assertions.assertNotNull(clickOn("-" +
                 String.format(((LocalSettings) LocalStorageImpl.getInstance().readObject("localSettings")).getLanguage(), "%.2f", transaction.getAmount()) +
-                " " + ((User) LocalStorageImpl.getInstance().readObject("user")).getSettings().getCurrency().getSymbol()));
+                " " + ((User) LocalStorageImpl.getInstance().readObject("user")).getDatabaseSettings().getCurrency().getSymbol()));
     }
 }

@@ -3,8 +3,8 @@ package de.raphaelmuesseler.financer.client.format;
 import de.raphaelmuesseler.financer.client.local.LocalSettings;
 import de.raphaelmuesseler.financer.client.local.LocalStorage;
 import de.raphaelmuesseler.financer.shared.exceptions.FinancerException;
-import de.raphaelmuesseler.financer.shared.model.Category;
-import de.raphaelmuesseler.financer.shared.model.CategoryTree;
+import de.raphaelmuesseler.financer.shared.model.categories.Category;
+import de.raphaelmuesseler.financer.shared.model.categories.CategoryTree;
 import de.raphaelmuesseler.financer.shared.model.user.User;
 
 import java.time.LocalDate;
@@ -34,12 +34,12 @@ public abstract class FormatterImpl implements Formatter {
     @Override
     public String formatCurrency(Double amount) {
         StringBuilder result = new StringBuilder(String.format(localSettings.getLanguage(), "%.2f", amount));
-        if (this.user.getSettings().getCurrency() != null) {
+        if (this.user.getDatabaseSettings().getCurrency() != null) {
             result.append(" ");
-            if (this.user.getSettings().isShowCurrencySign()) {
-                result.append(this.user.getSettings().getCurrency().getSymbol());
+            if (this.user.getDatabaseSettings().isShowCurrencySign()) {
+                result.append(this.user.getDatabaseSettings().getCurrency().getSymbol());
             } else {
-                result.append(this.user.getSettings().getCurrency().getCurrencyCode());
+                result.append(this.user.getDatabaseSettings().getCurrency().getCurrencyCode());
             }
         }
         return result.toString();

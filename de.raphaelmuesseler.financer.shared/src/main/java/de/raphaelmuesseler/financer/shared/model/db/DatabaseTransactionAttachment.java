@@ -4,7 +4,6 @@ import java.time.LocalDate;
 
 public class DatabaseTransactionAttachment {
     private int id;
-    private DatabaseTransaction transaction;
     private String name;
     private LocalDate uploadDate;
     private byte[] content;
@@ -15,14 +14,6 @@ public class DatabaseTransactionAttachment {
 
     public void setId(int id) {
         this.id = id;
-    }
-
-    public DatabaseTransaction getTransaction() {
-        return transaction;
-    }
-
-    public void setTransaction(DatabaseTransaction transaction) {
-        this.transaction = transaction;
     }
 
     public String getName() {

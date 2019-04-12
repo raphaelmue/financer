@@ -1,8 +1,8 @@
 package de.raphaelmuesseler.financer.client.format;
 
 import de.raphaelmuesseler.financer.shared.exceptions.FinancerException;
-import de.raphaelmuesseler.financer.shared.model.Category;
-import de.raphaelmuesseler.financer.shared.model.CategoryTree;
+import de.raphaelmuesseler.financer.shared.model.categories.Category;
+import de.raphaelmuesseler.financer.shared.model.categories.CategoryTree;
 
 import java.time.LocalDate;
 

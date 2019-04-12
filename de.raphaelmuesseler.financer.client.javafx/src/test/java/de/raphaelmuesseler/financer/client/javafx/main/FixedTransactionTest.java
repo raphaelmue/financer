@@ -2,12 +2,11 @@ package de.raphaelmuesseler.financer.client.javafx.main;
 
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXListView;
-import de.raphaelmuesseler.financer.client.format.Formatter;
 import de.raphaelmuesseler.financer.client.format.I18N;
 import de.raphaelmuesseler.financer.client.javafx.components.DoubleField;
 import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
-import de.raphaelmuesseler.financer.shared.model.BaseCategory;
-import de.raphaelmuesseler.financer.shared.model.CategoryTree;
+import de.raphaelmuesseler.financer.shared.model.categories.BaseCategory;
+import de.raphaelmuesseler.financer.shared.model.categories.CategoryTree;
 import de.raphaelmuesseler.financer.shared.model.transactions.TransactionAmount;
 import de.raphaelmuesseler.financer.util.collections.TreeUtil;
 import javafx.scene.control.Label;

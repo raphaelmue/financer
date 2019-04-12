@@ -3,17 +3,16 @@ package de.raphaelmuesseler.financer.server.service;
 import de.raphaelmuesseler.financer.server.db.Database;
 import de.raphaelmuesseler.financer.shared.connection.ConnectionResult;
 import de.raphaelmuesseler.financer.shared.exceptions.EmailAlreadyInUseException;
-import de.raphaelmuesseler.financer.shared.model.BaseCategory;
-import de.raphaelmuesseler.financer.shared.model.Category;
-import de.raphaelmuesseler.financer.shared.model.CategoryTree;
-import de.raphaelmuesseler.financer.shared.model.CategoryTreeImpl;
-import de.raphaelmuesseler.financer.shared.model.db.Attachment;
-import de.raphaelmuesseler.financer.shared.model.db.DatabaseObject;
+import de.raphaelmuesseler.financer.shared.model.categories.BaseCategory;
+import de.raphaelmuesseler.financer.shared.model.categories.Category;
+import de.raphaelmuesseler.financer.shared.model.categories.CategoryTree;
+import de.raphaelmuesseler.financer.shared.model.categories.CategoryTreeImpl;
+import de.raphaelmuesseler.financer.shared.model.transactions.Attachment;
 import de.raphaelmuesseler.financer.shared.model.db.DatabaseUser;
-import de.raphaelmuesseler.financer.shared.model.db.Token;
+import de.raphaelmuesseler.financer.shared.model.user.Token;
 import de.raphaelmuesseler.financer.shared.model.transactions.AttachmentWithContent;
 import de.raphaelmuesseler.financer.shared.model.transactions.FixedTransaction;
-import de.raphaelmuesseler.financer.shared.model.transactions.Transaction;
+import de.raphaelmuesseler.financer.shared.model.transactions.VariableTransaction;
 import de.raphaelmuesseler.financer.shared.model.transactions.TransactionAmount;
 import de.raphaelmuesseler.financer.shared.model.user.User;
 import de.raphaelmuesseler.financer.util.Hash;
@@ -259,7 +258,7 @@ public class FinancerService {
 
         JSONArray result = this.database.get(Database.Table.USERS_SETTINGS, whereParameters);
         for (int i = 0; i < result.length(); i++) {
-            user.getSettings().setValueByProperty(result.getJSONObject(i).getString("property"),
+            user.getDatabaseSettings().setValueByProperty(result.getJSONObject(i).getString("property"),
                     result.getJSONObject(i).getString("value"));
         }
     }
@@ -281,7 +280,7 @@ public class FinancerService {
             values.putAll(whereParameters);
             this.database.insert(Database.Table.USERS_SETTINGS, values);
         }
-        user.getSettings().setValueByProperty((String) parameters.get("property"), (String) parameters.get("value"));
+        user.getDatabaseSettings().setValueByProperty((String) parameters.get("property"), (String) parameters.get("value"));
 
         return new ConnectionResult<>(user);
     }
@@ -379,9 +378,9 @@ public class FinancerService {
         return new ConnectionResult<>(null);
     }
 
-    public ConnectionResult<List<Transaction>> getTransactions(Logger logger, Map<String, Object> parameters) throws Exception {
+    public ConnectionResult<List<VariableTransaction>> getTransactions(Logger logger, Map<String, Object> parameters) throws Exception {
         logger.log(Level.INFO, "Fetching users transaction ...");
-        List<Transaction> transactions = new ArrayList<>();
+        List<VariableTransaction> transactions = new ArrayList<>();
 
         Map<String, Object> whereClause = new HashMap<>();
         whereClause.put("user_id", ((User) parameters.get("user")).getId());
@@ -399,7 +398,7 @@ public class FinancerService {
                     jsonObjectCategory.getInt("cat_id"));
 
             // TODO get real CategoryTreeImpl instance
-            Transaction transaction = new Transaction(jsonObjectTransaction.getInt("id"),
+            VariableTransaction transaction = new VariableTransaction(jsonObjectTransaction.getInt("id"),
                     jsonObjectTransaction.getDouble("amount"),
                     new CategoryTreeImpl(BaseCategory.CategoryClass.getCategoryClassByIndex(category.getRootId() - 1), null, category),
                     jsonObjectTransaction.getString("product"),
@@ -411,7 +410,7 @@ public class FinancerService {
             whereClause.put("transaction_id", transaction.getId());
             for (DatabaseObject databaseObject : this.database.getObject(Database.Table.TRANSACTIONS_ATTACHMENTS,
                     Attachment.class, whereClause, "id, transaction_id, name, upload_date")) {
-                transaction.getAttachments().add((AttachmentWithContent) new AttachmentWithContent().fromDatabaseObject(databaseObject));
+                transaction.getDatabaseAttachments().add((AttachmentWithContent) new AttachmentWithContent().fromDatabaseObject(databaseObject));
             }
 
             transactions.add(transaction);
@@ -421,10 +420,10 @@ public class FinancerService {
         return new ConnectionResult<>(transactions);
     }
 
-    public ConnectionResult<Transaction> addTransaction(Logger logger, Map<String, Object> parameters) throws Exception {
+    public ConnectionResult<VariableTransaction> addTransaction(Logger logger, Map<String, Object> parameters) throws Exception {
         logger.log(Level.INFO, "Adding transaction ...");
         User user = (User) parameters.get("user");
-        Transaction transaction = (Transaction) parameters.get("transaction");
+        VariableTransaction transaction = (VariableTransaction) parameters.get("transaction");
 
         Map<String, Object> values = new HashMap<>();
         values.put("user_id", user.getId());
@@ -445,7 +444,7 @@ public class FinancerService {
 
     public ConnectionResult<Void> updateTransaction(Logger logger, Map<String, Object> parameters) throws Exception {
         logger.log(Level.INFO, "Adding transaction ...");
-        Transaction transaction = (Transaction) parameters.get("transaction");
+        VariableTransaction transaction = (VariableTransaction) parameters.get("transaction");
 
         Map<String, Object> where = new HashMap<>();
         where.put("id", transaction.getId());
@@ -469,7 +468,7 @@ public class FinancerService {
         File attachmentFile = (File) parameters.get("attachmentFile");
 
         Map<String, Object> values = new HashMap<>();
-        values.put("transaction_id", ((Transaction) parameters.get("transaction")).getId());
+        values.put("transaction_id", ((VariableTransaction) parameters.get("transaction")).getId());
         values.put("name", attachmentFile.getName());
         values.put("upload_date", LocalDate.now().toString());
         values.put("content", parameters.get("content"));
@@ -509,7 +508,7 @@ public class FinancerService {
 
     public ConnectionResult<Void> deleteTransaction(Logger logger, Map<String, Object> parameters) throws Exception {
         logger.log(Level.INFO, "Adding transaction ...");
-        Transaction transaction = (Transaction) parameters.get("transaction");
+        VariableTransaction transaction = (VariableTransaction) parameters.get("transaction");
 
         Map<String, Object> where = new HashMap<>();
         where.put("id", transaction.getId());

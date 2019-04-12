@@ -23,17 +23,17 @@
         <property name="surname" type="java.lang.String">
             <column name="surname"/>
         </property>
-        <property name="birthDate" type="java.lang.String">
+        <property name="birthDate" type="java.time.LocalDate">
             <column name="birthdate"/>
         </property>
-        <property name="gender" type="java.lang.String">
+        <property name="genderName" type="java.lang.String">
             <column name="gender"/>
         </property>
         <set name="categories" table="users_categories" fetch="select" cascade="all">
             <key column="user_id" not-null="true"/>
             <one-to-many class="DatabaseCategory"/>
         </set>
-        <set name="settings" table="users_settings" fetch="select" cascade="all">
+        <set name="getDatabaseSettings" table="users_settings" fetch="select" cascade="all">
             <key column="user_id" not-null="true"/>
             <one-to-many class="DatabaseSettings"/>
         </set>

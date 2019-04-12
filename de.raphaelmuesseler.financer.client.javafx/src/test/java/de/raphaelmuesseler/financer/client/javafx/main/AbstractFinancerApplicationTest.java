@@ -12,12 +12,11 @@ import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
 import de.raphaelmuesseler.financer.client.javafx.login.LoginApplication;
 import de.raphaelmuesseler.financer.server.db.Database;
 import de.raphaelmuesseler.financer.server.main.Server;
-import de.raphaelmuesseler.financer.shared.model.BaseCategory;
-import de.raphaelmuesseler.financer.shared.model.Category;
-import de.raphaelmuesseler.financer.shared.model.CategoryTree;
-import de.raphaelmuesseler.financer.shared.model.CategoryTreeImpl;
+import de.raphaelmuesseler.financer.shared.model.categories.Category;
+import de.raphaelmuesseler.financer.shared.model.categories.CategoryTree;
+import de.raphaelmuesseler.financer.shared.model.categories.CategoryTreeImpl;
 import de.raphaelmuesseler.financer.shared.model.transactions.FixedTransaction;
-import de.raphaelmuesseler.financer.shared.model.transactions.Transaction;
+import de.raphaelmuesseler.financer.shared.model.transactions.VariableTransaction;
 import de.raphaelmuesseler.financer.shared.model.transactions.TransactionAmount;
 import de.raphaelmuesseler.financer.shared.model.user.User;
 import javafx.scene.Node;
@@ -50,8 +49,8 @@ class AbstractFinancerApplicationTest extends ApplicationTest {
             "Mustermann",
             LocalDate.of(1989, 5, 28),
             User.Gender.MALE);
-    final CategoryTree category = new CategoryTreeImpl(BaseCategory.CategoryClass.VARIABLE_EXPENSES, new Category(-1, "TestCategory", -1, -1));
-    final Transaction transaction = new Transaction(-1, 52.5,
+    final CategoryTree category = new CategoryTreeImpl(new Category(-1, "TestCategory", -1, -1));
+    final VariableTransaction transaction = new VariableTransaction(-1, 52.5,
             category, "ProductName",
             "Purpose", LocalDate.of(2018, 5, 19), "Shop");
     final FixedTransaction fixedTransaction = new FixedTransaction(-1, 570.0, category, "TestProduct",
@@ -146,7 +145,7 @@ class AbstractFinancerApplicationTest extends ApplicationTest {
         sleep(500);
     }
 
-    void addTransaction(Transaction transaction) {
+    void addTransaction(VariableTransaction transaction) {
         clickOn((Button) find("#transactionsTabBtn"));
         press(KeyCode.RIGHT).release(KeyCode.RIGHT);
         press(KeyCode.RIGHT).release(KeyCode.RIGHT);

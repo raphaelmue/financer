@@ -9,7 +9,7 @@ import de.raphaelmuesseler.financer.client.javafx.components.IntegerField;
 import de.raphaelmuesseler.financer.client.javafx.dialogs.FinancerDialog;
 import de.raphaelmuesseler.financer.client.javafx.format.JavaFXFormatter;
 import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
-import de.raphaelmuesseler.financer.shared.model.CategoryTree;
+import de.raphaelmuesseler.financer.shared.model.categories.CategoryTree;
 import de.raphaelmuesseler.financer.shared.model.transactions.FixedTransaction;
 import de.raphaelmuesseler.financer.shared.model.transactions.TransactionAmount;
 import javafx.application.Platform;

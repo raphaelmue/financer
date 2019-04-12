@@ -1,56 +1,33 @@
 package de.raphaelmuesseler.financer.shared.model.transactions;
 
-import de.raphaelmuesseler.financer.shared.model.AmountProvider;
+import de.raphaelmuesseler.financer.shared.model.db.DatabaseFixedTransactionAmount;
 import de.raphaelmuesseler.financer.util.date.DateUtil;
 
 import java.io.Serializable;
 import java.time.LocalDate;
 
-public class TransactionAmount implements Serializable, AmountProvider {
+public class TransactionAmount extends DatabaseFixedTransactionAmount implements Serializable, AmountProvider {
     private static final long serialVersionUID = -6751558797407170754L;
-    private int id;
-    private double amount;
-    private LocalDate valueDate;
 
     public TransactionAmount(int id, double amount, LocalDate valueDate) {
-        this.id = id;
-        this.amount = amount;
-        this.valueDate = valueDate;
-    }
-
-    public int getId() {
-        return id;
+        this.setId(id);
+        this.setAmount(amount);
+        this.setValueDate(valueDate);
     }
 
     @Override
     public double getAmount() {
-        return amount;
+        return super.getAmount();
     }
 
     @Override
     public double getAmount(LocalDate localDate) {
-        return (DateUtil.checkIfMonthsAreEqual(localDate, this.valueDate) ? this.getAmount() : 0);
+        return (DateUtil.checkIfMonthsAreEqual(localDate, this.getValueDate()) ? this.getAmount() : 0);
     }
 
     @Override
     public double getAmount(LocalDate startDate, LocalDate endDate) {
-        return (startDate.compareTo(this.valueDate) <= 0 && endDate.compareTo(this.valueDate) >= 0 ? this.getAmount() : 0);
-    }
-
-    public LocalDate getValueDate() {
-        return valueDate;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public void setAmount(double amount) {
-        this.amount = amount;
-    }
-
-    public void setValueDate(LocalDate valueDate) {
-        this.valueDate = valueDate;
+        return (startDate.compareTo(this.getValueDate()) <= 0 && endDate.compareTo(this.getValueDate()) >= 0 ? this.getAmount() : 0);
     }
 
     @Override

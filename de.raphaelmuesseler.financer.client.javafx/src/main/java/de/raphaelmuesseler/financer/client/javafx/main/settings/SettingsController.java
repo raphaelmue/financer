@@ -11,7 +11,7 @@ import de.raphaelmuesseler.financer.client.javafx.util.ApplicationHelper;
 import de.raphaelmuesseler.financer.client.local.LocalSettings;
 import de.raphaelmuesseler.financer.client.local.LocalStorage;
 import de.raphaelmuesseler.financer.shared.connection.ConnectionResult;
-import de.raphaelmuesseler.financer.shared.model.db.Token;
+import de.raphaelmuesseler.financer.shared.model.user.Token;
 import de.raphaelmuesseler.financer.shared.model.user.User;
 import de.raphaelmuesseler.financer.util.collections.CollectionUtil;
 import de.raphaelmuesseler.financer.util.concurrency.FinancerExecutor;
@@ -63,9 +63,9 @@ public class SettingsController implements Initializable {
 
         this.currencyComboBox.getItems().addAll(Currency.getAvailableCurrencies());
         this.currencyComboBox.getItems().sort((o1, o2) -> String.CASE_INSENSITIVE_ORDER.compare(o1.toString(), o2.toString()));
-        this.currencyComboBox.getSelectionModel().select(this.user.getSettings().getCurrency());
+        this.currencyComboBox.getSelectionModel().select(this.user.getDatabaseSettings().getCurrency());
         this.currencyComboBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            user.getSettings().setCurrency(newValue);
+            user.getDatabaseSettings().setCurrency(newValue);
             showSignCheckbox.setDisable(false);
             Map<String, Object> parameters = new HashMap<>();
             parameters.put("property", "currency");
@@ -73,12 +73,12 @@ public class SettingsController implements Initializable {
             updateSettings(parameters);
         });
 
-        if (user.getSettings().getCurrency() == null) {
+        if (user.getDatabaseSettings().getCurrency() == null) {
             this.showSignCheckbox.setDisable(true);
         }
-        this.showSignCheckbox.setSelected(this.user.getSettings().isShowCurrencySign());
+        this.showSignCheckbox.setSelected(this.user.getDatabaseSettings().isShowCurrencySign());
         this.showSignCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
-            user.getSettings().setShowCurrencySign(newValue);
+            user.getDatabaseSettings().setShowCurrencySign(newValue);
             Map<String, Object> parameters = new HashMap<>();
             parameters.put("property", "showCurrencySign");
             parameters.put("value", Boolean.toString(showSignCheckbox.isSelected()));

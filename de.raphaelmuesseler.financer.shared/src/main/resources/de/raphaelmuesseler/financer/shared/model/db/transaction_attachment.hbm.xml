@@ -8,9 +8,6 @@
             <column name="id"/>
             <generator class="increment"/>
         </id>
-        <many-to-one name="transaction" class="DatabaseTransaction" insert="false" update="false">
-            <column name="transaction_id"/>
-        </many-to-one>
         <property name="name" type="java.lang.String">
             <column name="name"/>
         </property>

@@ -1,15 +1,11 @@
 package de.raphaelmuesseler.financer.shared.model.db;
 
-import java.util.Set;
-
 public class DatabaseCategory {
     private int id;
     private DatabaseUser user;
-    private int categoryClass;
-    private DatabaseCategory parent;
+    private int categoryRoot;
+    private int parentId;
     private String name;
-    private Set<DatabaseTransaction> transactions;
-    private Set<DatabaseFixedTransaction> fixedTransactions;
 
     public int getId() {
         return id;
@@ -27,20 +23,20 @@ public class DatabaseCategory {
         this.user = user;
     }
 
-    public int getCategoryClass() {
-        return categoryClass;
+    protected int getCategoryRoot() {
+        return categoryRoot;
     }
 
-    public void setCategoryClass(int categoryClass) {
-        this.categoryClass = categoryClass;
+    protected void setCategoryRoot(int categoryClass) {
+        this.categoryRoot = categoryClass;
     }
 
-    public DatabaseCategory getParent() {
-        return parent;
+    public int getParentId() {
+        return parentId;
     }
 
-    public void setParent(DatabaseCategory parent) {
-        this.parent = parent;
+    public void setParentId(int parentId) {
+        this.parentId = parentId;
     }
 
     public String getName() {
@@ -51,19 +47,4 @@ public class DatabaseCategory {
         this.name = name;
     }
 
-    public Set<DatabaseTransaction> getTransactions() {
-        return transactions;
-    }
-
-    public void setTransactions(Set<DatabaseTransaction> transactions) {
-        this.transactions = transactions;
-    }
-
-    public Set<DatabaseFixedTransaction> getFixedTransactions() {
-        return fixedTransactions;
-    }
-
-    public void setFixedTransactions(Set<DatabaseFixedTransaction> fixedTransactions) {
-        this.fixedTransactions = fixedTransactions;
-    }
 }

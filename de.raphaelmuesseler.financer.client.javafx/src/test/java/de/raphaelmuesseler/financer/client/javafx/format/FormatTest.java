@@ -5,7 +5,7 @@ import de.raphaelmuesseler.financer.client.format.I18N;
 import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
 import de.raphaelmuesseler.financer.client.local.LocalSettings;
 import de.raphaelmuesseler.financer.client.local.LocalSettingsImpl;
-import de.raphaelmuesseler.financer.shared.model.Category;
+import de.raphaelmuesseler.financer.shared.model.categories.Category;
 import de.raphaelmuesseler.financer.shared.model.user.User;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,8 +29,8 @@ public class FormatTest {
         I18N.setLocalStorage(LocalStorageImpl.getInstance());
 
         settings.setLanguage(Locale.ENGLISH);
-        user.getSettings().setShowCurrencySign(false);
-        user.getSettings().setCurrency(Currency.getInstance("USD"));
+        user.getDatabaseSettings().setShowCurrencySign(false);
+        user.getDatabaseSettings().setCurrency(Currency.getInstance("USD"));
 
         formatter = new JavaFXFormatter(settings, user);
     }
@@ -42,7 +42,7 @@ public class FormatTest {
         String currencyFormat = formatter.formatCurrency(amount);
         Assertions.assertEquals(String.format(Locale.ENGLISH, "%.2f", amount) + " " + Currency.getInstance("USD").getCurrencyCode(), currencyFormat);
 
-        user.getSettings().setShowCurrencySign(true);
+        user.getDatabaseSettings().setShowCurrencySign(true);
 
         currencyFormat = formatter.formatCurrency(amount);
         Assertions.assertEquals(String.format(Locale.ENGLISH, "%.2f", amount) + " " + Currency.getInstance("USD").getSymbol(), currencyFormat);

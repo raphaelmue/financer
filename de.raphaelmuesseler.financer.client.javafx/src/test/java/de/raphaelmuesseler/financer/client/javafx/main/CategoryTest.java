@@ -2,8 +2,8 @@ package de.raphaelmuesseler.financer.client.javafx.main;
 
 import com.jfoenix.controls.JFXTextField;
 import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
-import de.raphaelmuesseler.financer.shared.model.BaseCategory;
-import de.raphaelmuesseler.financer.shared.model.Category;
+import de.raphaelmuesseler.financer.shared.model.categories.BaseCategory;
+import de.raphaelmuesseler.financer.shared.model.categories.Category;
 import de.raphaelmuesseler.financer.util.collections.Tree;
 import de.raphaelmuesseler.financer.util.collections.TreeUtil;
 import javafx.scene.control.Button;

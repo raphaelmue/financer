@@ -6,11 +6,11 @@ import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
 import de.raphaelmuesseler.financer.client.local.LocalStorage;
 import de.raphaelmuesseler.financer.shared.connection.AsyncCall;
 import de.raphaelmuesseler.financer.shared.connection.ConnectionResult;
-import de.raphaelmuesseler.financer.shared.model.BaseCategory;
-import de.raphaelmuesseler.financer.shared.model.Category;
-import de.raphaelmuesseler.financer.shared.model.CategoryTree;
+import de.raphaelmuesseler.financer.shared.model.categories.BaseCategory;
+import de.raphaelmuesseler.financer.shared.model.categories.Category;
+import de.raphaelmuesseler.financer.shared.model.categories.CategoryTree;
 import de.raphaelmuesseler.financer.shared.model.transactions.FixedTransaction;
-import de.raphaelmuesseler.financer.shared.model.transactions.Transaction;
+import de.raphaelmuesseler.financer.shared.model.transactions.VariableTransaction;
 import de.raphaelmuesseler.financer.shared.model.user.User;
 import de.raphaelmuesseler.financer.util.collections.Action;
 import de.raphaelmuesseler.financer.util.collections.TreeUtil;
@@ -78,16 +78,16 @@ public class RetrievalServiceImpl implements RetrievalService {
     }
 
     @Override
-    public void fetchTransactions(User user, final AsyncCall<List<Transaction>> asyncCall) {
+    public void fetchTransactions(User user, final AsyncCall<List<VariableTransaction>> asyncCall) {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("user", user);
 
         FinancerExecutor.getExecutor().execute(new ServerRequestHandler(user, "getTransactions", parameters, new JavaFXAsyncConnectionCall() {
             @Override
             public void onSuccess(ConnectionResult result) {
-                List<Transaction> transactions = (List<Transaction>) result.getResult();
+                List<VariableTransaction> transactions = (List<VariableTransaction>) result.getResult();
                 BaseCategory categories = (BaseCategory) localStorage.readObject("categories");
-                for (Transaction transaction : transactions) {
+                for (VariableTransaction transaction : transactions) {
                     CategoryTree categoryTree = (CategoryTree) TreeUtil.getByValue(categories,
                             transaction.getCategoryTree(), Comparator.comparingInt(Category::getId));
                     if (categoryTree != null) {

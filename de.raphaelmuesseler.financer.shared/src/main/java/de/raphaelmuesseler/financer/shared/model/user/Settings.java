@@ -1,9 +1,33 @@
 package de.raphaelmuesseler.financer.shared.model.user;
 
 public interface Settings {
+    enum Property {
+        CURRENCY("currency"),
+        SHOW_CURRENCY_SIGN("showCurrencySign"),
+        THEME("theme");
 
-    void setValueByProperty(String property, String value);
+        private final String name;
 
-    String getValueByProperty(String property);
+        Property(String name) {
+            this.name = name;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public static Property getPropertyByName(String name) {
+            for (Property property : values()) {
+                if (property.getName().equals(name)) {
+                    return property;
+                }
+            }
+            throw new IllegalArgumentException("No such property with name: " + name);
+        }
+    }
+
+    void setValueByProperty(Property property, String value);
+
+    String getValueByProperty(Property property);
 
 }

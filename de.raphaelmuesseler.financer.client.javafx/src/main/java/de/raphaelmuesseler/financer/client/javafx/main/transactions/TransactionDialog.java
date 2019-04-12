@@ -12,11 +12,11 @@ import de.raphaelmuesseler.financer.client.javafx.dialogs.FinancerExceptionDialo
 import de.raphaelmuesseler.financer.client.javafx.format.JavaFXFormatter;
 import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
 import de.raphaelmuesseler.financer.shared.connection.ConnectionResult;
-import de.raphaelmuesseler.financer.shared.model.BaseCategory;
-import de.raphaelmuesseler.financer.shared.model.Category;
-import de.raphaelmuesseler.financer.shared.model.CategoryTree;
+import de.raphaelmuesseler.financer.shared.model.categories.BaseCategory;
+import de.raphaelmuesseler.financer.shared.model.categories.Category;
+import de.raphaelmuesseler.financer.shared.model.categories.CategoryTree;
 import de.raphaelmuesseler.financer.shared.model.transactions.AttachmentWithContent;
-import de.raphaelmuesseler.financer.shared.model.transactions.Transaction;
+import de.raphaelmuesseler.financer.shared.model.transactions.VariableTransaction;
 import de.raphaelmuesseler.financer.shared.model.user.User;
 import de.raphaelmuesseler.financer.util.collections.TreeUtil;
 import de.raphaelmuesseler.financer.util.concurrency.FinancerExecutor;
@@ -39,7 +39,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Executors;
 
-class TransactionDialog extends FinancerDialog<Transaction> {
+class TransactionDialog extends FinancerDialog<VariableTransaction> {
 
     private DoubleField amountField;
     private ComboBox<CategoryTree> categoryComboBox;
@@ -50,7 +50,7 @@ class TransactionDialog extends FinancerDialog<Transaction> {
     private ListView<AttachmentWithContent> attachmentListView;
     private BaseCategory categories;
 
-    TransactionDialog(Transaction transaction, BaseCategory categories) {
+    TransactionDialog(VariableTransaction transaction, BaseCategory categories) {
         super(transaction);
 
         this.categories = categories;
@@ -190,7 +190,7 @@ class TransactionDialog extends FinancerDialog<Transaction> {
             this.shopField.setText(this.getValue().getShop());
             this.valueDateField.setValue(this.getValue().getValueDate());
 
-            this.attachmentListView.getItems().addAll(this.getValue().getAttachments());
+            this.attachmentListView.getItems().addAll(this.getValue().getDatabaseAttachments());
         }
     }
 
@@ -212,9 +212,9 @@ class TransactionDialog extends FinancerDialog<Transaction> {
     }
 
     @Override
-    protected Transaction onConfirm() {
+    protected VariableTransaction onConfirm() {
         if (this.getValue() == null) {
-            this.setValue(new Transaction(-1, Double.valueOf(this.amountField.getText()),
+            this.setValue(new VariableTransaction(-1, Double.valueOf(this.amountField.getText()),
                     this.categoryComboBox.getSelectionModel().getSelectedItem(), this.productField.getText(),
                     this.purposeField.getText(), this.valueDateField.getValue(), this.shopField.getText()));
             this.getValue().getCategoryTree().getTransactions().add(this.getValue());
@@ -246,7 +246,7 @@ class TransactionDialog extends FinancerDialog<Transaction> {
                         @Override
                         public void onSuccess(ConnectionResult result) {
                             attachmentListView.getItems().add((AttachmentWithContent) result.getResult());
-                            getValue().getAttachments().add((AttachmentWithContent) result.getResult());
+                            getValue().getDatabaseAttachments().add((AttachmentWithContent) result.getResult());
                         }
 
                         @Override

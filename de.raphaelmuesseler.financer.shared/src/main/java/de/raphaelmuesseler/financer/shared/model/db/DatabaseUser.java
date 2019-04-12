@@ -1,6 +1,7 @@
 package de.raphaelmuesseler.financer.shared.model.db;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.Set;
 
 public class DatabaseUser implements Serializable {
@@ -12,25 +13,11 @@ public class DatabaseUser implements Serializable {
     private String salt;
     private String name;
     private String surname;
-    private String birthDate;
-    private String gender;
+    private LocalDate birthDate;
+    private String genderName;
     private Set<DatabaseCategory> categories;
-    private Set<DatabaseSettings> settings;
+    private Set<DatabaseSettings> databaseSettings;
     private Set<DatabaseToken> tokens;
-
-    public DatabaseUser() {
-
-    }
-
-    public DatabaseUser(String email, String password, String salt, String name, String surname, String birthDate, String gender) {
-        this.email = email;
-        this.password = password;
-        this.salt = salt;
-        this.name = name;
-        this.surname = surname;
-        this.birthDate = birthDate;
-        this.gender = gender;
-    }
 
     public int getId() {
         return id;
@@ -80,20 +67,20 @@ public class DatabaseUser implements Serializable {
         this.surname = surname;
     }
 
-    public String getBirthDate() {
+    public LocalDate getBirthDate() {
         return birthDate;
     }
 
-    public void setBirthDate(String birthDate) {
+    public void setBirthDate(LocalDate birthDate) {
         this.birthDate = birthDate;
     }
 
-    public String getGender() {
-        return gender;
+    protected String getGenderName() {
+        return genderName;
     }
 
-    public void setGender(String gender) {
-        this.gender = gender;
+    protected void setGenderName(String gender) {
+        this.genderName = gender;
     }
 
     public Set<DatabaseCategory> getCategories() {
@@ -104,12 +91,12 @@ public class DatabaseUser implements Serializable {
         this.categories = categories;
     }
 
-    public Set<DatabaseSettings> getSettings() {
-        return settings;
+    protected Set<DatabaseSettings> getDatabaseSettings() {
+        return databaseSettings;
     }
 
-    public void setSettings(Set<DatabaseSettings> settings) {
-        this.settings = settings;
+    protected void setDatabaseSettings(Set<DatabaseSettings> settings) {
+        this.databaseSettings = settings;
     }
 
     public Set<DatabaseToken> getTokens() {
