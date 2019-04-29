@@ -1,6 +1,7 @@
-package de.raphaelmuesseler.financer.server.db;
+package de.raphaelmuesseler.financer.server.service;
 
-import de.raphaelmuesseler.financer.server.service.FinancerService;
+import de.raphaelmuesseler.financer.server.db.DatabaseName;
+import de.raphaelmuesseler.financer.server.db.HibernateUtil;
 import de.raphaelmuesseler.financer.shared.model.db.DatabaseToken;
 import de.raphaelmuesseler.financer.shared.model.db.DatabaseUser;
 import de.raphaelmuesseler.financer.shared.model.user.Token;
@@ -59,7 +60,6 @@ public class ServiceTest {
         user.getTokens().add(token);
 
         session.save(user);
-        session.save(token);
         transaction.commit();
     }
 
@@ -70,9 +70,25 @@ public class ServiceTest {
         User userToAssert = service.checkUsersToken(logger, parameters);
 
         Assertions.assertNotNull(userToAssert);
-        Assertions.assertEquals(user.getTokens().size(), userToAssert.getTokens().size());
+        Assertions.assertEquals(1, userToAssert.getTokens().size());
         for (DatabaseToken _token : userToAssert.getTokens()) {
             Assertions.assertEquals(new Token(token), new Token(_token));
         }
+    }
+
+    @Test
+    public void testGenerateToken() {
+        User _user = new User(user);
+
+        // test updating token
+        service.generateToken(_user, token.getIpAddress(), token.getSystem(), token.getIsMobile());
+        Assertions.assertEquals(1, _user.getTokens().size());
+        for (DatabaseToken _token : _user.getTokens()) {
+            Assertions.assertNotEquals(new Token(token), new Token(_token));
+        }
+
+        // test inserting new token
+        service.generateToken(_user, "123.456.789.0", token.getSystem(), token.getIsMobile());
+        Assertions.assertEquals(2, _user.getTokens().size());
     }
 }

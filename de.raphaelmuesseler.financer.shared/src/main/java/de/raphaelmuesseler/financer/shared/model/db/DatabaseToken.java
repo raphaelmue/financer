@@ -3,16 +3,16 @@ package de.raphaelmuesseler.financer.shared.model.db;
 import java.io.Serializable;
 import java.time.LocalDate;
 
-public class DatabaseToken implements Serializable {
+public class DatabaseToken implements Serializable, Cloneable {
     private final static long serialVersionUID = 8834445127500149942L;
 
-    private int id;
-    private DatabaseUser user;
-    private String token;
-    private LocalDate expireDate;
-    private String ipAddress;
-    private String system;
-    private boolean isMobile;
+    protected int id;
+    protected DatabaseUser user;
+    protected String token;
+    protected LocalDate expireDate;
+    protected String ipAddress;
+    protected String system;
+    protected boolean isMobile;
 
     public int getId() {
         return id;
@@ -27,7 +27,7 @@ public class DatabaseToken implements Serializable {
     }
 
     public void setUser(DatabaseUser user) {
-        this.user = user;
+        this.user = (DatabaseUser) user;
     }
 
     public String getToken() {
@@ -68,5 +68,14 @@ public class DatabaseToken implements Serializable {
 
     public void setIsMobile(boolean mobile) {
         isMobile = mobile;
+    }
+
+    @Override
+    public DatabaseToken clone() {
+        try {
+            return (DatabaseToken) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new ClassCastException(e.getMessage());
+        }
     }
 }

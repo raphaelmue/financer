@@ -2,6 +2,7 @@ package de.raphaelmuesseler.financer.server.service;
 
 import de.raphaelmuesseler.financer.server.db.HibernateUtil;
 import de.raphaelmuesseler.financer.shared.model.db.DatabaseToken;
+import de.raphaelmuesseler.financer.shared.model.db.DatabaseUser;
 import de.raphaelmuesseler.financer.shared.model.user.Token;
 import de.raphaelmuesseler.financer.shared.model.user.User;
 import de.raphaelmuesseler.financer.util.RandomString;
@@ -12,6 +13,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+import java.time.LocalDate;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -65,52 +67,48 @@ public class FinancerService {
         return null;
     }
 
-//    /**
-//     * Generates a new token (or updates the token, if the IP address is already store in the database)
-//     * and stores it in the database
-//     *
-//     * @param user      user
-//     * @param ipAddress ip address of client
-//     * @param system    operating system
-//     * @throws SQLException thrown, when something went wrong executing the SQL statement
-//     */
-//    private void generateToken(User user, String ipAddress, String system, boolean isMobile) throws SQLException {
-//        Token token;
-//        Map<String, Object> whereParameters = new HashMap<>();
-//        whereParameters.put("user_id", user.getId());
-//        whereParameters.put("ip_address", ipAddress);
-//
-//        JSONArray result = this.database.get(Database.Table.USERS_TOKENS, whereParameters);
-//        String tokenString = this.tokenGenerator.nextString();
-//
-//        Map<String, Object> values = new HashMap<>();
-//        if (result.length() > 0) {
-//            whereParameters.clear();
-//            whereParameters.put("id", result.getJSONObject(0).get("id"));
-//
-//            values.put("token", tokenString);
-//            values.put("expire_date", LocalDate.now().plusMonths(1));
-//            this.database.update(Database.Table.USERS_TOKENS, whereParameters, values);
-//
-//            token = new Token(result.getJSONObject(0).getInt("id"),
-//                    tokenString, ipAddress, system, LocalDate.now().plusMonths(1), isMobile);
-//        } else {
-//            values.put("user_id", user.getId());
-//            values.put("token", tokenString);
-//            values.put("expire_date", LocalDate.now().plusMonths(1));
-//            values.put("ip_address", ipAddress);
-//            values.put("system", system);
-//            values.put("is_mobile", Boolean.toString(isMobile));
-//            this.database.insert(Database.Table.USERS_TOKENS, values);
-//
-//            token = new Token(this.database.getLatestId(Database.Table.USERS_TOKENS),
-//                    tokenString, ipAddress, system, LocalDate.now().plusMonths(1), isMobile);
-//
-//        }
-//
-//        user.setToken(token);
-//    }
-//
+    /**
+     * Generates a new token (or updates the token, if the IP address is already store in the database)
+     * and stores it in the database
+     *
+     * @param user      user
+     * @param ipAddress ip address of client
+     * @param system    operating system
+     * @param isMobile  defines whether operating system is a mobile device
+     */
+    void generateToken(User user, String ipAddress, String system, boolean isMobile) {
+        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+        Transaction transaction = session.beginTransaction();
+
+        boolean foundEntry = false;
+        for (DatabaseToken token : user.getTokens()) {
+            if (token.getIpAddress().equals(ipAddress)) {
+                foundEntry = true;
+                DatabaseToken updatedToken = token.clone();
+                user.getTokens().remove(token);
+                updatedToken.setToken(this.tokenGenerator.nextString());
+                user.getTokens().add(updatedToken);
+                session.update(updatedToken);
+                break;
+            }
+        }
+
+        if (!foundEntry) {
+            DatabaseToken databaseToken;
+            databaseToken = new DatabaseToken();
+            databaseToken.setUser(user);
+            databaseToken.setToken(this.tokenGenerator.nextString());
+            databaseToken.setIpAddress(ipAddress);
+            databaseToken.setSystem(system);
+            databaseToken.setExpireDate(LocalDate.now().plusMonths(1));
+            databaseToken.setIsMobile(isMobile);
+            databaseToken.setId((int) session.save(databaseToken));
+            user.getTokens().add(databaseToken);
+        }
+
+        transaction.commit();
+    }
+
 //    /**
 //     * Checks, if the users credentials are correct
 //     *

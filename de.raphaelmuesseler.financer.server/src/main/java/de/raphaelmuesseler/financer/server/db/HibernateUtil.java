@@ -81,7 +81,7 @@ public class HibernateUtil {
         return sessionFactory;
     }
 
-    static void cleanDatabase() {
+    public static void cleanDatabase() {
         if (databaseName == DatabaseName.TEST) {
             Session session = getSessionFactory().getCurrentSession();
             Transaction transaction = session.beginTransaction();

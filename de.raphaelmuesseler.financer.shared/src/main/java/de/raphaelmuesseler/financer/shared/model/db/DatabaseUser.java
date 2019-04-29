@@ -12,17 +12,17 @@ import java.util.Set;
 public class DatabaseUser implements Serializable {
     private static final long serialVersionUID = 8551108621522985674L;
 
-    private int id;
-    private String email;
-    private String password;
-    private String salt;
-    private String name;
-    private String surname;
-    private LocalDate birthDate;
-    private String genderName;
-    private Set<DatabaseCategory> categories;
-    private Set<DatabaseSettings> databaseSettings;
-    private Set<DatabaseToken> tokens;
+    protected int id;
+    protected String email;
+    protected String password;
+    protected String salt;
+    protected String name;
+    protected String surname;
+    protected LocalDate birthDate;
+    protected String genderName;
+    protected Set<DatabaseCategory> categories;
+    protected Set<DatabaseSettings> databaseSettings;
+    protected Set<DatabaseToken> tokens;
 
     public int getId() {
         return id;
