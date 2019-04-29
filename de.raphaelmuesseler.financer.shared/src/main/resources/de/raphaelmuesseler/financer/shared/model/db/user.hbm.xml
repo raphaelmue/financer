@@ -5,7 +5,7 @@
 <hibernate-mapping package="de.raphaelmuesseler.financer.shared.model.db">
     <class name="DatabaseUser" table="users">
         <id name="id" type="int">
-            <column name="id"/>
+            <column name="id" not-null="true"/>
             <generator class="increment"/>
         </id>
         <property name="email" type="java.lang.String">
@@ -37,9 +37,9 @@
             <key column="user_id" not-null="true"/>
             <one-to-many class="DatabaseSettings"/>
         </set>
-        <set name="tokens" table="users_tokens" fetch="select" cascade="all">
-            <key column="user_id" not-null="true"/>
-            <one-to-many class="DatabaseToken"/>
+        <set name="tokens" table="users_tokens" inverse="true" cascade="save-update" fetch="select">
+            <key column="user_id" not-null="true" />
+            <one-to-many class="DatabaseToken" />
         </set>
     </class>
 </hibernate-mapping>

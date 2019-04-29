@@ -93,6 +93,7 @@ public class FinancerService {
             }
         }
 
+        // insert if not found
         if (!foundEntry) {
             DatabaseToken databaseToken;
             databaseToken = new DatabaseToken();

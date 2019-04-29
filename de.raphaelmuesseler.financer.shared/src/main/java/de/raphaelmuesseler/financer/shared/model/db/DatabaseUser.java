@@ -1,28 +1,23 @@
 package de.raphaelmuesseler.financer.shared.model.db;
 
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.MappedSuperclass;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Set;
 
-@MappedSuperclass
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 public class DatabaseUser implements Serializable {
     private static final long serialVersionUID = 8551108621522985674L;
 
-    protected int id;
-    protected String email;
-    protected String password;
-    protected String salt;
-    protected String name;
-    protected String surname;
-    protected LocalDate birthDate;
-    protected String genderName;
-    protected Set<DatabaseCategory> categories;
-    protected Set<DatabaseSettings> databaseSettings;
-    protected Set<DatabaseToken> tokens;
+    private int id;
+    private String email;
+    private String password;
+    private String salt;
+    private String name;
+    private String surname;
+    private LocalDate birthDate;
+    private String genderName;
+    private Set<DatabaseCategory> categories;
+    private Set<DatabaseSettings> databaseSettings;
+    private Set<DatabaseToken> tokens;
 
     public int getId() {
         return id;

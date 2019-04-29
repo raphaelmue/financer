@@ -6,13 +6,13 @@ import java.time.LocalDate;
 public class DatabaseToken implements Serializable, Cloneable {
     private final static long serialVersionUID = 8834445127500149942L;
 
-    protected int id;
-    protected DatabaseUser user;
-    protected String token;
-    protected LocalDate expireDate;
-    protected String ipAddress;
-    protected String system;
-    protected boolean isMobile;
+    private int id;
+    private DatabaseUser user;
+    private String token;
+    private LocalDate expireDate;
+    private String ipAddress;
+    private String system;
+    private boolean isMobile;
 
     public int getId() {
         return id;
@@ -27,7 +27,7 @@ public class DatabaseToken implements Serializable, Cloneable {
     }
 
     public void setUser(DatabaseUser user) {
-        this.user = (DatabaseUser) user;
+        this.user = user;
     }
 
     public String getToken() {

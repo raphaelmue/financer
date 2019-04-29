@@ -8,6 +8,8 @@ import org.hibernate.cfg.Configuration;
 import org.hibernate.query.Query;
 import org.hibernate.service.ServiceRegistry;
 
+import java.util.TimeZone;
+
 public class HibernateUtil {
     private enum Table {
         FIXED_TRANSACTIONS("fixed_transactions"),
