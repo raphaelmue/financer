@@ -2,7 +2,7 @@ package de.raphaelmuesseler.financer.server.service;
 
 import de.raphaelmuesseler.financer.server.db.HibernateUtil;
 import de.raphaelmuesseler.financer.shared.model.db.DatabaseToken;
-import de.raphaelmuesseler.financer.shared.model.db.DatabaseUser;
+import de.raphaelmuesseler.financer.shared.model.user.Token;
 import de.raphaelmuesseler.financer.shared.model.user.User;
 import de.raphaelmuesseler.financer.util.RandomString;
 import org.hibernate.Session;
@@ -12,7 +12,6 @@ import javax.persistence.NoResultException;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-import java.time.LocalDate;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -49,10 +48,13 @@ public class FinancerService {
         Root<DatabaseToken> root = criteriaQuery.from(DatabaseToken.class);
         criteriaQuery.select(root).where(criteriaBuilder.equal(root.get("token"), parameters.get("token")));
         try {
-            DatabaseToken token = session.createQuery(criteriaQuery).getSingleResult();
-            if (token != null && token.getExpireDate().compareTo(LocalDate.now()) >= 0) {
-                logger.log(Level.INFO, "Token of user '" + token.getUser().getName() + "' is approved");
-                return (User) token.getUser();
+            DatabaseToken databaseToken = session.createQuery(criteriaQuery).getSingleResult();
+            if (databaseToken != null) {
+                Token token = new Token(databaseToken);
+                if (token.isValid()) {
+                    logger.log(Level.INFO, "Token of user '" + token.getUser().getFullName() + "' is approved");
+                    return token.getUser();
+                }
             }
         } catch (NoResultException ignored) {
         }

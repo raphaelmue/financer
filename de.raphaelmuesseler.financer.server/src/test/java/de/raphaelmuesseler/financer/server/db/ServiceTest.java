@@ -3,6 +3,7 @@ package de.raphaelmuesseler.financer.server.db;
 import de.raphaelmuesseler.financer.server.service.FinancerService;
 import de.raphaelmuesseler.financer.shared.model.db.DatabaseToken;
 import de.raphaelmuesseler.financer.shared.model.db.DatabaseUser;
+import de.raphaelmuesseler.financer.shared.model.user.Token;
 import de.raphaelmuesseler.financer.shared.model.user.User;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -11,7 +12,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -27,7 +27,7 @@ public class ServiceTest {
 
     @BeforeAll
     public static void beforeAll() {
-        HibernateUtil.setIsHostLocal(false);
+        HibernateUtil.setIsHostLocal(true);
         HibernateUtil.setDatabaseName(DatabaseName.TEST);
     }
 
@@ -64,14 +64,15 @@ public class ServiceTest {
     }
 
     @Test
-    public void testCheckUsersToken() throws SQLException {
+    public void testCheckUsersToken() {
         HashMap<String, Object> parameters = new HashMap<>();
         parameters.put("token", token.getToken());
         User userToAssert = service.checkUsersToken(logger, parameters);
 
         Assertions.assertNotNull(userToAssert);
-        Assertions.assertEquals(user.getTokens(), userToAssert.getTokens());
-
-
+        Assertions.assertEquals(user.getTokens().size(), userToAssert.getTokens().size());
+        for (DatabaseToken _token : userToAssert.getTokens()) {
+            Assertions.assertEquals(new Token(token), new Token(_token));
+        }
     }
 }

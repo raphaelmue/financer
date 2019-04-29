@@ -38,18 +38,37 @@ public class User extends DatabaseUser {
 
     private final Settings settings;
 
-    public User() {
-        this(null, null, null, null, null, null, null);
+    public User(DatabaseUser databaseUser) {
+        this(databaseUser.getId(),
+                databaseUser.getEmail(),
+                databaseUser.getPassword(),
+                databaseUser.getSalt(),
+                databaseUser.getName(),
+                databaseUser.getSurname(),
+                databaseUser.getBirthDate(),
+                Gender.getGenderByName(databaseUser.getGenderName()));
+        if (databaseUser.getTokens() != null) {
+            this.setTokens(databaseUser.getTokens());
+        }
     }
 
-    public User(String email, String password, String salt, String name, String surname, LocalDate birthDate, Gender gender) {
+    public User() {
+        this(-1, null, null, null, null, null, null, null);
+    }
+
+    public User(int id, String email, String password, String salt, String name, String surname, LocalDate birthDate, Gender gender) {
+        this.setId(id);
         this.setEmail(email);
         this.setPassword(password);
         this.setSalt(salt);
         this.setName(name);
         this.setSurname(surname);
         this.setBirthDate(birthDate);
-        this.setGenderName(gender.getName());
+        if (gender != null) {
+            this.setGenderName(gender.getName());
+        } else {
+            this.setGenderName(null);
+        }
 
         this.settings = new UserSettings();
         if (this.getDatabaseSettings() != null) {

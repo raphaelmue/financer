@@ -8,6 +8,18 @@ import java.time.LocalDate;
 public class Token extends DatabaseToken implements Serializable {
     private static final long serialVersionUID = -769078637730799395L;
 
+    public Token(DatabaseToken databaseToken) {
+        this(databaseToken.getId(),
+                databaseToken.getToken(),
+                databaseToken.getIpAddress(),
+                databaseToken.getSystem(),
+                databaseToken.getExpireDate(),
+                databaseToken.getIsMobile());
+        if (databaseToken.getUser() != null) {
+            this.setUser(new User(databaseToken.getUser()));
+        }
+    }
+
     public Token(int id, String token, String ipAddress, String system, LocalDate expireDate, boolean isMobile) {
         this.setId(id);
         this.setToken(token);
@@ -22,7 +34,22 @@ public class Token extends DatabaseToken implements Serializable {
     }
 
     @Override
+    public User getUser() {
+        return (User) super.getUser();
+    }
+
+    @Override
     public String toString() {
         return this.getToken();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return (obj instanceof Token && ((Token) obj).getToken().equals(this.getToken()));
+    }
+
+    @Override
+    public int hashCode() {
+        return this.getId() * this.getToken().hashCode();
     }
 }

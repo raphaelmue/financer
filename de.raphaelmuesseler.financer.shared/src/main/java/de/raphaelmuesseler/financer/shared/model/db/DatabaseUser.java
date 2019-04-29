@@ -1,9 +1,14 @@
 package de.raphaelmuesseler.financer.shared.model.db;
 
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.MappedSuperclass;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Set;
 
+@MappedSuperclass
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 public class DatabaseUser implements Serializable {
     private static final long serialVersionUID = 8551108621522985674L;
 
@@ -75,7 +80,7 @@ public class DatabaseUser implements Serializable {
         this.birthDate = birthDate;
     }
 
-    protected String getGenderName() {
+    public String getGenderName() {
         return genderName;
     }
 
