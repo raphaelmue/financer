@@ -1,6 +1,7 @@
 package de.raphaelmuesseler.financer.server.main;
 
-import de.raphaelmuesseler.financer.server.db.Database;
+import de.raphaelmuesseler.financer.server.db.DatabaseName;
+import de.raphaelmuesseler.financer.server.db.HibernateUtil;
 import de.raphaelmuesseler.financer.server.service.FinancerRestService;
 import de.raphaelmuesseler.financer.util.concurrency.FinancerExecutor;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
@@ -12,7 +13,6 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.URI;
-import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -28,9 +28,8 @@ public class Server {
 
     public static void main(String[] args) {
         int port = -1;
-        Database.DatabaseName databaseName = null;
-        Database.setHost(false);
         try {
+            DatabaseName databaseName = DatabaseName.DEV;
             for (String arg : args) {
                 if (arg.contains("--port=")) {
                     port = Integer.parseInt(arg.substring(7));
@@ -39,10 +38,10 @@ public class Server {
                         return;
                     }
                 } else if (arg.contains("--db-host=")) {
-                    Database.setHost(arg.substring(10).equals("local"));
+                    HibernateUtil.setIsHostLocal(arg.substring(10).equals("local"));
                 } else if (arg.contains("--database=")) {
-                    if (Database.DatabaseName.getByShortCut(arg.substring(11)) != null) {
-                        databaseName = Database.DatabaseName.getByShortCut(arg.substring(11));
+                    if (DatabaseName.getByShortCut(arg.substring(11)) != null) {
+                        databaseName = DatabaseName.getByShortCut(arg.substring(11));
                     }
                 }
             }
@@ -51,7 +50,7 @@ public class Server {
                 port = PORT;
             }
 
-            Database.setDbName(Objects.requireNonNullElse(databaseName, Database.DatabaseName.DEV));
+            HibernateUtil.setDatabaseName(databaseName);
 
             Server server = new Server(port);
             server.startHttpServer();

@@ -1,9 +1,12 @@
 package de.raphaelmuesseler.financer.shared.model.user;
 
 import de.raphaelmuesseler.financer.shared.model.db.DatabaseSettings;
+import de.raphaelmuesseler.financer.shared.model.db.DatabaseToken;
 import de.raphaelmuesseler.financer.shared.model.db.DatabaseUser;
 
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 public class User extends DatabaseUser {
 
@@ -34,6 +37,10 @@ public class User extends DatabaseUser {
 
     private final Settings settings;
 
+    public User() {
+        this(null, null, null, null, null, null, null);
+    }
+
     public User(String email, String password, String salt, String name, String surname, LocalDate birthDate, Gender gender) {
         this.setEmail(email);
         this.setPassword(password);
@@ -44,9 +51,15 @@ public class User extends DatabaseUser {
         this.setGenderName(gender.getName());
 
         this.settings = new UserSettings();
-        for (DatabaseSettings databaseSettings : this.getDatabaseSettings()) {
-            this.settings.setValueByProperty(Settings.Property.getPropertyByName(databaseSettings.getProperty()), databaseSettings.getValue());
+        if (this.getDatabaseSettings() != null) {
+            for (DatabaseSettings databaseSettings : this.getDatabaseSettings()) {
+                this.settings.setValueByProperty(Settings.Property.getPropertyByName(databaseSettings.getProperty()), databaseSettings.getValue());
+            }
         }
+    }
+
+    public String getFullName() {
+        return this.getName() + " " + this.getSurname();
     }
 
     public Settings getSettings() {
@@ -55,6 +68,14 @@ public class User extends DatabaseUser {
 
     public Gender getGender() {
         return Gender.getGenderByName(this.getGenderName());
+    }
+
+    @Override
+    public Set<DatabaseToken> getTokens() {
+        if (super.getTokens() == null) {
+            this.setTokens(new HashSet<>());
+        }
+        return super.getTokens();
     }
 
     public void setGender(Gender gender) {

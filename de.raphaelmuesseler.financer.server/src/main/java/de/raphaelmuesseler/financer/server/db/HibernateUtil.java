@@ -9,12 +9,24 @@ public class HibernateUtil {
 
     //XML based configuration
     private static SessionFactory sessionFactory;
+    private static boolean isHostLocal = false;
+    private static DatabaseName databaseName = DatabaseName.DEV;
+
+    public static void setDatabaseName(DatabaseName databaseName) {
+        HibernateUtil.databaseName = databaseName;
+    }
+
+    public static void setIsHostLocal(boolean isHostLocal) {
+        HibernateUtil.isHostLocal = isHostLocal;
+    };
 
     private static SessionFactory buildSessionFactory() {
         try {
             // Create the SessionFactory from hibernate.cfg.xml
             Configuration configuration = new Configuration();
-            configuration.configure("/de/raphaelmuesseler/financer/server/db/hibernate.cfg.xml");
+            configuration.configure("/de/raphaelmuesseler/financer/server/db/config/hibernate" + (isHostLocal ? ".local" : "") + ".cfg.xml");
+            String url = configuration.getProperty("hibernate.connection.url");
+            configuration.setProperty("hibernate.connection.url", url.substring(0, url.indexOf('_') - 8) + databaseName.getName());
 
             // load mappings
             configuration.addResource("/de/raphaelmuesseler/financer/shared/model/db/category.hbm.xml");
@@ -36,7 +48,9 @@ public class HibernateUtil {
     }
 
     public static SessionFactory getSessionFactory() {
-        if (sessionFactory == null) sessionFactory = buildSessionFactory();
+        if (sessionFactory == null) {
+            sessionFactory = buildSessionFactory();
+        }
         return sessionFactory;
     }
 }

@@ -2,13 +2,13 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
         "http://hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 
-<hibernate-mapping>
-    <class name="de.raphaelmuesseler.financer.shared.model.db.DatabaseSettings" table="users_settings">
+<hibernate-mapping package="de.raphaelmuesseler.financer.shared.model.db">
+    <class name="DatabaseSettings" table="users_settings">
         <id name="id" type="int">
             <column name="id" />
             <generator class="increment" />
         </id>
-        <many-to-one name="user" class="de.raphaelmuesseler.financer.shared.model.db.DatabaseUser">
+        <many-to-one name="user" class="DatabaseUser" insert="false" update="false">
             <column name="user_id"/>
         </many-to-one>
         <property name="property" type="java.lang.String">
