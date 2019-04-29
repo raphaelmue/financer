@@ -39,7 +39,7 @@ public class ClientHandler implements Runnable {
 
             try {
                 if (!connectionCall.getMethodName().equals("checkCredentials") && !connectionCall.getMethodName().equals("registerUser")) {
-                    User user = FinancerService.getInstance().checkUsersToken(this.logger, connectionCall.getParameters());
+                    User user = this.service.checkUsersToken(this.logger, connectionCall.getParameters());
                     if (user == null) {
                         throw new NotAuthorizedException("Token '" + connectionCall.getParameters().get("token") + "' is invalid.");
                     }
@@ -67,7 +67,7 @@ public class ClientHandler implements Runnable {
                 this.client.close();
                 this.logger.log(Level.INFO, "Connection to Client (" + client.getRemoteSocketAddress() + ") has been closed.");
             }
-        } catch (IOException | ClassNotFoundException | SQLException e) {
+        } catch (IOException | ClassNotFoundException  e) {
             this.logger.log(Level.SEVERE, e.getMessage(), e);
         }
     }

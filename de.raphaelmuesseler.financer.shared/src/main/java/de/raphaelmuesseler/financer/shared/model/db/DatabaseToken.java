@@ -1,8 +1,11 @@
 package de.raphaelmuesseler.financer.shared.model.db;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 
-public class DatabaseToken {
+public class DatabaseToken implements Serializable {
+    private final static long serialVersionUID = 8834445127500149942L;
+
     private int id;
     private DatabaseUser user;
     private String token;

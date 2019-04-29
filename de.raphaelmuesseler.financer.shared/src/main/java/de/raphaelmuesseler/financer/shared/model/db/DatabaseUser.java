@@ -79,7 +79,7 @@ public class DatabaseUser implements Serializable {
         return genderName;
     }
 
-    protected void setGenderName(String gender) {
+    public void setGenderName(String gender) {
         this.genderName = gender;
     }
 

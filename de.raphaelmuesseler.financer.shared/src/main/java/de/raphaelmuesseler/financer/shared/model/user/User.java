@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class User extends DatabaseUser {
+    private static final long serialVersionUID = 164741396778652317L;
 
     public enum Gender {
         MALE("male"),

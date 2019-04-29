@@ -1,11 +1,39 @@
 package de.raphaelmuesseler.financer.server.db;
 
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
+import org.hibernate.query.Query;
 import org.hibernate.service.ServiceRegistry;
 
 public class HibernateUtil {
+    private enum Table {
+        FIXED_TRANSACTIONS("fixed_transactions"),
+        FIXED_TRANSACTIONS_AMOUNTS("fixed_transactions_amounts"),
+        TRANSACTIONS("transactions"),
+        TRANSACTIONS_ATTACHMENTS("transactions_attachments"),
+        USERS("users"),
+        USERS_CATEGORIES("users_categories"),
+        USERS_TOKENS("users_tokens"),
+        USERS_SETTINGS("users_settings");
+
+        private String tableName;
+
+        Table(String tableName) {
+            this.tableName = tableName;
+        }
+
+        public String getTableName() {
+            return tableName;
+        }
+
+        @Override
+        public String toString() {
+            return this.getTableName();
+        }
+    }
 
     //XML based configuration
     private static SessionFactory sessionFactory;
@@ -18,7 +46,7 @@ public class HibernateUtil {
 
     public static void setIsHostLocal(boolean isHostLocal) {
         HibernateUtil.isHostLocal = isHostLocal;
-    };
+    }
 
     private static SessionFactory buildSessionFactory() {
         try {
@@ -38,7 +66,6 @@ public class HibernateUtil {
             configuration.addResource("/de/raphaelmuesseler/financer/shared/model/db/user.hbm.xml");
             configuration.addResource("/de/raphaelmuesseler/financer/shared/model/db/users_settings.hbm.xml");
 
-
             ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder().applySettings(configuration.getProperties()).build();
 
             return configuration.buildSessionFactory(serviceRegistry);
@@ -52,5 +79,20 @@ public class HibernateUtil {
             sessionFactory = buildSessionFactory();
         }
         return sessionFactory;
+    }
+
+    static void cleanDatabase() {
+        if (databaseName == DatabaseName.TEST) {
+            Session session = getSessionFactory().getCurrentSession();
+            Transaction transaction = session.beginTransaction();
+            for (Table table : Table.values()) {
+                String hql = String.format("truncate table %s", table.getTableName());
+                Query query = session.createSQLQuery(hql);
+                query.executeUpdate();
+            }
+            transaction.commit();
+        } else {
+            throw new IllegalArgumentException("It is only allowed to clean the test database");
+        }
     }
 }

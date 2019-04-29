@@ -1,36 +1,19 @@
 package de.raphaelmuesseler.financer.server.service;
 
 import de.raphaelmuesseler.financer.server.db.HibernateUtil;
-import de.raphaelmuesseler.financer.shared.connection.ConnectionResult;
-import de.raphaelmuesseler.financer.shared.exceptions.EmailAlreadyInUseException;
-import de.raphaelmuesseler.financer.shared.model.categories.BaseCategory;
-import de.raphaelmuesseler.financer.shared.model.categories.Category;
-import de.raphaelmuesseler.financer.shared.model.categories.CategoryTree;
-import de.raphaelmuesseler.financer.shared.model.categories.CategoryTreeImpl;
 import de.raphaelmuesseler.financer.shared.model.db.DatabaseToken;
 import de.raphaelmuesseler.financer.shared.model.db.DatabaseUser;
-import de.raphaelmuesseler.financer.shared.model.transactions.*;
-import de.raphaelmuesseler.financer.shared.model.user.Token;
 import de.raphaelmuesseler.financer.shared.model.user.User;
-import de.raphaelmuesseler.financer.util.Hash;
 import de.raphaelmuesseler.financer.util.RandomString;
-import de.raphaelmuesseler.financer.util.collections.TreeUtil;
-import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.hibernate.internal.CriteriaImpl;
-import org.hibernate.query.Query;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
+import javax.persistence.NoResultException;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-import java.io.File;
-import java.sql.Date;
-import java.sql.SQLException;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -53,29 +36,28 @@ public class FinancerService {
     /**
      * Checks, whether the token is valid and not expired and returns the corresponding user.
      *
-     * @param parameters [String email, String token]
+     * @param parameters [String token]
      * @return User that has this token
-     * @throws SQLException thrown, when something went wrong executing the SQL statement
      */
-    public User checkUsersToken(Logger logger, Map<String, Object> parameters) throws SQLException {
+    public synchronized User checkUsersToken(Logger logger, Map<String, Object> parameters) {
         logger.log(Level.INFO, "Checking users token ...");
 
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
-        session.beginTransaction();
+        Transaction transaction = session.beginTransaction();
         CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
-        CriteriaQuery<DatabaseUser> criteriaQuery = criteriaBuilder.createQuery(DatabaseUser.class);
-        Root<DatabaseUser> root = criteriaQuery.from(DatabaseUser.class);
-        criteriaQuery.select(root).where(criteriaBuilder.equal(root.get("email"), parameters.get("email")));
-        User user = (User) session.createQuery(criteriaQuery).getSingleResult();
-
-        if (user != null) {
-            for (DatabaseToken token : user.getTokens()) {
-                if (token.getToken().equals(parameters.get("Token")) && token.getExpireDate().compareTo(LocalDate.now()) >= 0) {
-                    logger.log(Level.INFO, "Token of user '" + user.getFullName() + "' is approved");
-                    return user;
-                }
+        CriteriaQuery<DatabaseToken> criteriaQuery = criteriaBuilder.createQuery(DatabaseToken.class);
+        Root<DatabaseToken> root = criteriaQuery.from(DatabaseToken.class);
+        criteriaQuery.select(root).where(criteriaBuilder.equal(root.get("token"), parameters.get("token")));
+        try {
+            DatabaseToken token = session.createQuery(criteriaQuery).getSingleResult();
+            if (token != null && token.getExpireDate().compareTo(LocalDate.now()) >= 0) {
+                logger.log(Level.INFO, "Token of user '" + token.getUser().getName() + "' is approved");
+                return (User) token.getUser();
             }
+        } catch (NoResultException ignored) {
         }
+
+        transaction.commit();
 
         logger.log(Level.INFO, "Token is invalid");
         return null;
