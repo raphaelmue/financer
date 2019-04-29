@@ -37,7 +37,7 @@
             <key column="user_id" not-null="true"/>
             <one-to-many class="DatabaseSettings"/>
         </set>
-        <set name="tokens" table="users_tokens" inverse="true" cascade="save-update" fetch="select">
+        <set name="tokens" table="users_tokens" lazy="true" inverse="true" cascade="all" fetch="select">
             <key column="user_id" not-null="true" />
             <one-to-many class="DatabaseToken" />
         </set>

@@ -1,10 +1,12 @@
 package de.raphaelmuesseler.financer.server.service;
 
 import de.raphaelmuesseler.financer.server.db.HibernateUtil;
+import de.raphaelmuesseler.financer.shared.connection.ConnectionResult;
 import de.raphaelmuesseler.financer.shared.model.db.DatabaseToken;
 import de.raphaelmuesseler.financer.shared.model.db.DatabaseUser;
 import de.raphaelmuesseler.financer.shared.model.user.Token;
 import de.raphaelmuesseler.financer.shared.model.user.User;
+import de.raphaelmuesseler.financer.util.Hash;
 import de.raphaelmuesseler.financer.util.RandomString;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -43,6 +45,8 @@ public class FinancerService {
     public synchronized User checkUsersToken(Logger logger, Map<String, Object> parameters) {
         logger.log(Level.INFO, "Checking users token ...");
 
+        User user = null;
+
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
         Transaction transaction = session.beginTransaction();
         CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
@@ -55,7 +59,10 @@ public class FinancerService {
                 Token token = new Token(databaseToken);
                 if (token.isValid()) {
                     logger.log(Level.INFO, "Token of user '" + token.getUser().getFullName() + "' is approved");
-                    return token.getUser();
+                    user = new User(session.get(DatabaseUser.class, token.getUser().getId()));
+
+                    // needs to be called to avoid LazyInitializationException
+                    user.getTokens().size();
                 }
             }
         } catch (NoResultException ignored) {
@@ -64,7 +71,7 @@ public class FinancerService {
         transaction.commit();
 
         logger.log(Level.INFO, "Token is invalid");
-        return null;
+        return user;
     }
 
     /**
@@ -76,77 +83,83 @@ public class FinancerService {
      * @param system    operating system
      * @param isMobile  defines whether operating system is a mobile device
      */
-    void generateToken(User user, String ipAddress, String system, boolean isMobile) {
+    User generateToken(User user, String ipAddress, String system, boolean isMobile) {
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
         Transaction transaction = session.beginTransaction();
 
-        boolean foundEntry = false;
-        for (DatabaseToken token : user.getTokens()) {
-            if (token.getIpAddress().equals(ipAddress)) {
-                foundEntry = true;
-                DatabaseToken updatedToken = token.clone();
-                user.getTokens().remove(token);
-                updatedToken.setToken(this.tokenGenerator.nextString());
-                user.getTokens().add(updatedToken);
-                session.update(updatedToken);
-                break;
-            }
-        }
+        user = new User(session.load(DatabaseUser.class, user.getId()));
 
-        // insert if not found
-        if (!foundEntry) {
-            DatabaseToken databaseToken;
-            databaseToken = new DatabaseToken();
-            databaseToken.setUser(user);
-            databaseToken.setToken(this.tokenGenerator.nextString());
-            databaseToken.setIpAddress(ipAddress);
-            databaseToken.setSystem(system);
-            databaseToken.setExpireDate(LocalDate.now().plusMonths(1));
-            databaseToken.setIsMobile(isMobile);
-            databaseToken.setId((int) session.save(databaseToken));
-            user.getTokens().add(databaseToken);
+        try {
+            boolean foundEntry = false;
+            for (DatabaseToken token : user.getTokens()) {
+                if (token.getIpAddress().equals(ipAddress)) {
+                    foundEntry = true;
+                    token.setToken(this.tokenGenerator.nextString());
+                    session.merge(token);
+                    break;
+                }
+            }
+
+            // insert if not found
+            if (!foundEntry) {
+                DatabaseToken databaseToken;
+                databaseToken = new DatabaseToken();
+                databaseToken.setUser(user);
+                databaseToken.setToken(this.tokenGenerator.nextString());
+                databaseToken.setIpAddress(ipAddress);
+                databaseToken.setSystem(system);
+                databaseToken.setExpireDate(LocalDate.now().plusMonths(1));
+                databaseToken.setIsMobile(isMobile);
+                databaseToken.setId((int) session.save(databaseToken));
+                user.getTokens().add(databaseToken);
+            }
+        } finally {
+            transaction.commit();
+        }
+        return user;
+    }
+
+    /**
+     * Checks, if the users credentials are correct
+     *
+     * @param parameters [String email, String password]
+     * @return true, if credentials are correct
+     */
+    public synchronized ConnectionResult<User> checkCredentials(Logger logger, Map<String, Object> parameters) {
+        logger.log(Level.INFO, "Checking credentials ...");
+
+        Transaction transaction;
+        User user = null;
+        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+        transaction = session.beginTransaction();
+
+        CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+        CriteriaQuery<DatabaseUser> criteriaQuery = criteriaBuilder.createQuery(DatabaseUser.class);
+        Root<DatabaseUser> root = criteriaQuery.from(DatabaseUser.class);
+        criteriaQuery.select(root).where(criteriaBuilder.equal(root.get("email"), parameters.get("email")));
+        try {
+            user = new User(session.createQuery(criteriaQuery).getSingleResult());
+            String password = Hash.create((String) parameters.get("password"), user.getSalt());
+            if (password.equals(user.getPassword())) {
+                logger.log(Level.INFO, "Credentials of user '" + user.getFullName() + "' are approved.");
+            } else {
+                user = null;
+            }
+        } catch (NoResultException ignored) {
         }
 
         transaction.commit();
+
+        if (user != null) {
+            user = this.generateToken(user, (String) parameters.get("ipAddress"), (String) parameters.get("system"),
+                    parameters.containsKey("isMobile") && (boolean) parameters.get("isMobile"));
+        } else {
+            logger.log(Level.INFO, "Credentials are incorrect.");
+        }
+
+        return new ConnectionResult<>(user);
     }
 
-//    /**
-//     * Checks, if the users credentials are correct
-//     *
-//     * @param parameters [email, password]
-//     * @return true, if credentials are correct
-//     */
-//    public ConnectionResult<User> checkCredentials(Logger logger, Map<String, Object> parameters) throws Exception {
-//        logger.log(Level.INFO, "Checking credentials ...");
-//
-//        Map<String, Object> whereEmail = new HashMap<>();
-//        whereEmail.put("email", parameters.get("email"));
-//
-//        User user = null;
-//
-//        List<DatabaseObject> result = this.database.getObject(Database.Table.USERS, DatabaseUser.class, whereEmail);
-//        if (result != null && result.size() == 1) {
-//            user = (User) new User().fromDatabaseObject(result.get(0));
-//            if (user != null) {
-//                String password = Hash.create((String) parameters.get("password"), user.getSalt());
-//                if (password.equals(user.getPassword())) {
-//                    logger.log(Level.INFO, "Credentials of user '" + user.getFullName() + "' are approved.");
-//                    this.getUsersSettings(logger, user);
-//                    this.generateToken(user, (String) parameters.get("ipAddress"), (String) parameters.get("system"),
-//                            parameters.containsKey("isMobile") && (boolean) parameters.get("isMobile"));
-//                } else {
-//                    user = null;
-//                }
-//            }
-//        }
-//
-//        if (user == null) {
-//            logger.log(Level.INFO, "Credentials are incorrect.");
-//        }
-//
-//        return new ConnectionResult<>(user);
-//    }
-//
 //    public ConnectionResult<User> registerUser(Logger logger, Map<String, Object> parameters) throws Exception {
 //        logger.log(Level.INFO, "Registering new user ...");
 //        User user = (User) parameters.get("user");
