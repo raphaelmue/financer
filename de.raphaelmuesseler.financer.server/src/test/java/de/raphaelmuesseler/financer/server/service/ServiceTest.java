@@ -6,6 +6,8 @@ import de.raphaelmuesseler.financer.shared.connection.ConnectionResult;
 import de.raphaelmuesseler.financer.shared.model.db.DatabaseToken;
 import de.raphaelmuesseler.financer.shared.model.db.DatabaseUser;
 import de.raphaelmuesseler.financer.shared.model.user.User;
+import de.raphaelmuesseler.financer.util.Hash;
+import de.raphaelmuesseler.financer.util.RandomString;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.junit.jupiter.api.Assertions;
@@ -144,11 +146,33 @@ public class ServiceTest {
 
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
         Transaction transaction = session.beginTransaction();
-        User userToAssert = new User(session.get(DatabaseUser.class, 2));
+        User userToAssert = new User(session.get(DatabaseUser.class, result.getResult().getId()));
 
         Assertions.assertEquals(_user.getEmail(), userToAssert.getEmail());
         Assertions.assertEquals(_user.getFullName(), userToAssert.getFullName());
 
         transaction.commit();
+    }
+
+    @Test
+    public void testChangePassword() {
+        final String salt = new RandomString(32).nextString();
+        final String password = Hash.create("newPassword", salt);
+        user.setPassword(password);
+        user.setSalt(salt);
+
+        HashMap<String, Object> parameters = new HashMap<>();
+        parameters.put("user", new User(user));
+        service.changePassword(logger, parameters);
+
+        parameters.clear();
+        parameters.put("email", user.getEmail());
+        parameters.put("password", "newPassword");
+        parameters.put("ipAddress", token.getIpAddress());
+        parameters.put("system", token.getSystem());
+        parameters.put("isMobile", token.getIsMobile());
+        ConnectionResult<User> result = service.checkCredentials(logger, parameters);
+        Assertions.assertNotNull(result.getResult());
+        Assertions.assertNull(result.getException());
     }
 }

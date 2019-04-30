@@ -16,6 +16,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -122,8 +123,8 @@ public class FinancerService {
     /**
      * Checks, if the users credentials are correct
      *
-     * @param parameters [String email, String password]
-     * @return true, if credentials are correct
+     * @param parameters [String email, String password, String ipAddress, String system, boolean isMobile]
+     * @return User object, if credentials are correct, else null
      */
     public synchronized ConnectionResult<User> checkCredentials(Logger logger, Map<String, Object> parameters) {
         logger.log(Level.INFO, "Checking credentials ...");
@@ -159,6 +160,12 @@ public class FinancerService {
         return new ConnectionResult<>(user);
     }
 
+    /**
+     * Registers a new user and stores it into database.
+     *
+     * @param parameters [User user, String ipAddress, String system, boolean isMobile]
+     * @return void
+     */
     public ConnectionResult<User> registerUser(Logger logger, Map<String, Object> parameters) {
         logger.log(Level.INFO, "Registering new user ...");
         User user = (User) parameters.get("user");
@@ -175,23 +182,24 @@ public class FinancerService {
         return new ConnectionResult<>(user);
     }
 
-//    public ConnectionResult<Void> changePassword(Logger logger, Map<String, Object> parameters) throws Exception {
-//        logger.log(Level.INFO, "Changing Users Password ...");
-//        User user = (User) parameters.get("user");
-//
-//
-//        Map<String, Object> whereParameters = new HashMap<>();
-//        whereParameters.put("id", user.getId());
-//
-//        Map<String, Object> values = new HashMap<>();
-//        values.put("password", user.getPassword());
-//        values.put("salt", user.getSalt());
-//
-//        this.database.update(Database.Table.USERS, whereParameters, values);
-//
-//        return new ConnectionResult<>(null);
-//    }
-//
+    /**
+     * Updates a password of a user.
+     *
+     * @param parameters [User user]
+     * @return void
+     */
+    public ConnectionResult<Void> changePassword(Logger logger, Map<String, Object> parameters) {
+        logger.log(Level.INFO, "Changing Users Password ...");
+        User user = (User) parameters.get("user");
+
+        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+        Transaction transaction = session.beginTransaction();
+        session.merge(user.toDatabaseAccessObject());
+        transaction.commit();
+
+        return new ConnectionResult<>(null);
+    }
+
 //    public ConnectionResult<List<Token>> getUsersTokens(Logger logger, Map<String, Object> parameters) throws Exception {
 //        logger.log(Level.INFO, "Fetching all tokens of user ...");
 //        User user = (User) parameters.get("user");
