@@ -16,7 +16,6 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import java.time.LocalDate;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -200,35 +199,24 @@ public class FinancerService {
         return new ConnectionResult<>(null);
     }
 
-//    public ConnectionResult<List<Token>> getUsersTokens(Logger logger, Map<String, Object> parameters) throws Exception {
-//        logger.log(Level.INFO, "Fetching all tokens of user ...");
-//        User user = (User) parameters.get("user");
-//
-//        Map<String, Object> whereParameters = new HashMap<>();
-//        whereParameters.put("user_id", user.getId());
-//
-//        List<DatabaseObject> databaseObjects = this.database.getObject(Database.Table.USERS_TOKENS, Token.class, whereParameters);
-//        List<Token> result = new ArrayList<>();
-//
-//        for (DatabaseObject databaseObject : databaseObjects) {
-//            if (((Token) databaseObject).getExpireDate().compareTo(LocalDate.now()) >= 0) {
-//                result.add((Token) databaseObject);
-//            }
-//        }
-//
-//        return new ConnectionResult<>(result);
-//    }
-//
-//    public ConnectionResult<Void> deleteToken(Logger logger, Map<String, Object> parameters) throws Exception {
-//        logger.log(Level.INFO, "Deleting users token ...");
-//
-//        Map<String, Object> whereParameters = new HashMap<>();
-//        whereParameters.put("id", parameters.get("tokenId"));
-//        this.database.delete(Database.Table.USERS_TOKENS, whereParameters);
-//
-//        return new ConnectionResult<>(null);
-//    }
-//
+    /**
+     * Deletes a token of a user.
+     *
+     * @param parameters [int tokenId]
+     * @return void
+     */
+    public ConnectionResult<Void> deleteToken(Logger logger, Map<String, Object> parameters) {
+        logger.log(Level.INFO, "Deleting users token ...");
+
+        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+        Transaction transaction = session.beginTransaction();
+        DatabaseToken token = session.load(DatabaseToken.class, (int) parameters.get("tokenId"));
+        session.delete(token);
+        transaction.commit();
+
+        return new ConnectionResult<>(null);
+    }
+
 //    private void getUsersSettings(Logger logger, User user) throws SQLException {
 //        logger.log(Level.INFO, "Fetching users settings ...");
 //

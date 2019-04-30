@@ -175,4 +175,19 @@ public class ServiceTest {
         Assertions.assertNotNull(result.getResult());
         Assertions.assertNull(result.getException());
     }
+
+    @Test
+    public void testDeleteToken() {
+        HashMap<String, Object> parameters = new HashMap<>();
+        parameters.put("tokenId", token.getId());
+        service.deleteToken(logger, parameters);
+
+        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+        Transaction transaction = session.beginTransaction();
+        User userToAssert = new User(session.get(DatabaseUser.class, user.getId()));
+
+        Assertions.assertEquals(0, userToAssert.getTokens().size());
+
+        transaction.commit();
+    }
 }
