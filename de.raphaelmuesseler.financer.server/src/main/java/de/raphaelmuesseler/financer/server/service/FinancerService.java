@@ -128,10 +128,9 @@ public class FinancerService {
     public synchronized ConnectionResult<User> checkCredentials(Logger logger, Map<String, Object> parameters) {
         logger.log(Level.INFO, "Checking credentials ...");
 
-        Transaction transaction;
         User user = null;
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
-        transaction = session.beginTransaction();
+        Transaction transaction = session.beginTransaction();
 
         CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
         CriteriaQuery<DatabaseUser> criteriaQuery = criteriaBuilder.createQuery(DatabaseUser.class);
@@ -160,36 +159,22 @@ public class FinancerService {
         return new ConnectionResult<>(user);
     }
 
-//    public ConnectionResult<User> registerUser(Logger logger, Map<String, Object> parameters) throws Exception {
-//        logger.log(Level.INFO, "Registering new user ...");
-//        User user = (User) parameters.get("user");
-//
-//        Map<String, Object> values = new HashMap<>();
-//        values.put("email", user.getEmail());
-//
-//        List<? extends DatabaseObject> result = this.database.getObject(Database.Table.USERS, User.class, values);
-//        if (result.size() > 0) {
-//            throw new EmailAlreadyInUseException((User) result.get(0));
-//        }
-//
-//        values.put("password", user.getPassword());
-//        values.put("salt", user.getSalt());
-//        values.put("name", user.getName());
-//        values.put("surname", user.getSurname());
-//        values.put("birthDate", user.getBirthDate());
-//        values.put("gender", user.getGenderObject().getName());
-//
-//        this.database.insert(Database.Table.USERS, values);
-//
-//        user.setId(this.database.getLatestId(Database.Table.USERS));
-//
-//        // creating new token and inserting it to database
-//        this.generateToken(user, (String) parameters.get("ipAddress"), (String) parameters.get("system"),
-//                parameters.containsKey("isMobile") && (boolean) parameters.get("isMobile"));
-//
-//        return new ConnectionResult<>(user);
-//    }
-//
+    public ConnectionResult<User> registerUser(Logger logger, Map<String, Object> parameters) {
+        logger.log(Level.INFO, "Registering new user ...");
+        User user = (User) parameters.get("user");
+
+        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+        Transaction transaction = session.beginTransaction();
+        user.setId((Integer) session.save(user.toDatabaseAccessObject()));
+        transaction.commit();
+
+        // creating new token and inserting it to database
+        user = this.generateToken(user, (String) parameters.get("ipAddress"), (String) parameters.get("system"),
+                parameters.containsKey("isMobile") && (boolean) parameters.get("isMobile"));
+
+        return new ConnectionResult<>(user);
+    }
+
 //    public ConnectionResult<Void> changePassword(Logger logger, Map<String, Object> parameters) throws Exception {
 //        logger.log(Level.INFO, "Changing Users Password ...");
 //        User user = (User) parameters.get("user");

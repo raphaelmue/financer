@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Set;
 
-public class DatabaseUser implements Serializable {
+public class DatabaseUser implements Serializable, DatabaseAccessObject {
     private static final long serialVersionUID = 8551108621522985674L;
 
     private int id;

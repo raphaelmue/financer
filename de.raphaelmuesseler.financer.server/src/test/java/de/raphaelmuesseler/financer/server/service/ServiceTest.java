@@ -120,4 +120,35 @@ public class ServiceTest {
         result = service.checkCredentials(logger, parameters);
         Assertions.assertNull(result.getResult());
     }
+
+    @Test
+    public void testRegisterUser() {
+        HashMap<String, Object> parameters = new HashMap<>();
+        User _user = new User(0,
+                "other.email@test.com",
+                "6406b2e97a97f64910aca76370ee35a92087806da1aa878e8a9ae0f4dc3949af",
+                "I2HoOYJmqKfGboyJAdCEQwulUkxmhVH5",
+                "Test",
+                "User",
+                LocalDate.now(),
+                User.Gender.NOT_SPECIFIED);
+        parameters.put("user", _user);
+        parameters.put("ipAddress", token.getIpAddress());
+        parameters.put("system", token.getSystem());
+        parameters.put("isMobile", token.getIsMobile());
+        ConnectionResult<User> result = service.registerUser(logger, parameters);
+        Assertions.assertNotNull(result.getResult());
+        Assertions.assertNull(result.getException());
+        Assertions.assertTrue(result.getResult().getId() > 0);
+        Assertions.assertEquals(1, result.getResult().getTokens().size());
+
+        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+        Transaction transaction = session.beginTransaction();
+        User userToAssert = new User(session.get(DatabaseUser.class, 2));
+
+        Assertions.assertEquals(_user.getEmail(), userToAssert.getEmail());
+        Assertions.assertEquals(_user.getFullName(), userToAssert.getFullName());
+
+        transaction.commit();
+    }
 }

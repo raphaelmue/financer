@@ -34,8 +34,8 @@ public class User extends DatabaseUser {
             }
             return null;
         }
-    }
 
+    }
     private final Settings settings;
 
     public User(DatabaseUser databaseUser) {
@@ -76,6 +76,21 @@ public class User extends DatabaseUser {
                 this.settings.setValueByProperty(Settings.Property.getPropertyByName(databaseSettings.getProperty()), databaseSettings.getValue());
             }
         }
+    }
+
+    @Override
+    public DatabaseUser toDatabaseAccessObject() {
+        DatabaseUser databaseUser = new DatabaseUser();
+        databaseUser.setId(this.getId());
+        databaseUser.setEmail(this.getEmail());
+        databaseUser.setPassword(this.getPassword());
+        databaseUser.setSalt(this.getSalt());
+        databaseUser.setName(this.getName());
+        databaseUser.setSurname(this.getSurname());
+        databaseUser.setBirthDate(this.getBirthDate());
+        databaseUser.setGenderName(this.getGender().getName());
+        databaseUser.setTokens(this.getTokens());
+        return databaseUser;
     }
 
     public String getFullName() {
