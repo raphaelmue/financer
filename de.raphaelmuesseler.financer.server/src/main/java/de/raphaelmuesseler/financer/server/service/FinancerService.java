@@ -22,10 +22,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -273,7 +270,7 @@ public class FinancerService {
             } else {
                 if (!TreeUtil.insertByValue(baseCategory.getCategoryTreeByCategoryClass(category.getCategoryClass()), new CategoryTreeImpl(new Category(databaseCategory)),
                         (o1, o2) -> Integer.compare(o1.getParentId(), o2.getId()))) {
-                    throw new IllegalArgumentException("Category \"" + category.getName() + "\"could not be inserted into CategoryTree");
+                    throw new IllegalArgumentException("Category \"" + category.getName() + "\" could not be inserted into CategoryTree");
                 }
             }
         }
@@ -300,44 +297,76 @@ public class FinancerService {
         return new ConnectionResult<>(category);
     }
 
-//    public ConnectionResult<Void> updateCategory(Logger logger, Map<String, Object> parameters) throws Exception {
-//        logger.log(Level.INFO, "Updating users categories ...");
-//        CategoryTree category = (CategoryTree) parameters.get("category");
-//
-//        Map<String, Object> where = new HashMap<>();
-//        where.put("id", category.getValue().getId());
-//
-//        Map<String, Object> values = new HashMap<>();
-//        values.put("name", category.getValue().getName());
-//
-//        this.database.update(Database.Table.USERS_CATEGORIES, where, values);
-//
-//        return new ConnectionResult<>(null);
-//    }
-//
-//    public ConnectionResult<Void> deleteCategory(Logger logger, Map<String, Object> parameters) throws Exception {
-//        logger.log(Level.INFO, "Deleting category ...");
-//        CategoryTreeImpl category = (CategoryTreeImpl) parameters.get("category");
-//
-//        Map<String, Object> where = new HashMap<>();
-//        where.put("id", category.getValue().getId());
-//        this.database.delete(Database.Table.USERS_CATEGORIES, where);
-//
-//        where.clear();
-//        where.put("parent_id", category.getValue().getId());
-//        this.database.delete(Database.Table.USERS_CATEGORIES, where);
-//
-//        where.clear();
-//        where.put("cat_id", category.getValue().getId());
-//        if (category.getCategoryClass().isFixed()) {
-//            this.database.delete(Database.Table.FIXED_TRANSACTIONS, where);
-//        } else {
-//            this.database.delete(Database.Table.TRANSACTIONS, where);
-//        }
-//
-//        return new ConnectionResult<>(null);
-//    }
-//
+    /**
+     * Updates a category.
+     *
+     * @param parameters [Category category]
+     * @return void
+     */
+    public ConnectionResult<Void> updateCategory(Logger logger, Map<String, Object> parameters) {
+        logger.log(Level.INFO, "Updating users categories ...");
+        Category category = (Category) parameters.get("category");
+
+        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+        Transaction transaction = session.beginTransaction();
+        session.update(category.toDatabaseAccessObject());
+        transaction.commit();
+
+        return new ConnectionResult<>(null);
+    }
+
+    /**
+     * Deletes a category and all its children as well as all transactions.
+     *
+     * @param parameters [Category category]
+     * @return void
+     */
+    public ConnectionResult<Void> deleteCategory(Logger logger, Map<String, Object> parameters) {
+        logger.log(Level.INFO, "Deleting category ...");
+        Category category = (Category) parameters.get("category");
+
+        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+        Transaction transaction = session.beginTransaction();
+        session.delete(category.toDatabaseAccessObject());
+        transaction.commit();
+
+        this.deleteCategoryChildren(category);
+
+        session = HibernateUtil.getSessionFactory().getCurrentSession();
+        transaction = session.beginTransaction();
+        session.createQuery("delete from DatabaseFixedTransaction where category = :categoryId")
+                .setParameter("categoryId", category.getId());
+        session.createQuery("delete from DatabaseTransaction where category = :categoryId")
+                .setParameter("categoryId", category.getId());
+        transaction.commit();
+
+        return new ConnectionResult<>(null);
+    }
+
+    /**
+     * Deletes all children of a given category.
+     *
+     * @param category category to delete children
+     */
+    private void deleteCategoryChildren(Category category) {
+        List<DatabaseCategory> categories;
+        int parentId = category.getId();
+        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+        Transaction transaction = session.beginTransaction();
+        categories = session.createQuery("from DatabaseCategory where parentId = :parentId", DatabaseCategory.class)
+                .setParameter("parentId", parentId).list();
+        transaction.commit();
+        if (categories.size() > 0) {
+            for (DatabaseCategory databaseCategory : categories) {
+                session = HibernateUtil.getSessionFactory().getCurrentSession();
+                transaction = session.beginTransaction();
+                session.delete(databaseCategory);
+                transaction.commit();
+                deleteCategoryChildren(new Category(databaseCategory));
+            }
+        }
+    }
+
 //    public ConnectionResult<List<VariableTransaction>> getTransactions(Logger logger, Map<String, Object> parameters) throws Exception {
 //        logger.log(Level.INFO, "Fetching users transaction ...");
 //        List<VariableTransaction> transactions = new ArrayList<>();

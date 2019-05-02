@@ -33,7 +33,7 @@ public class ServiceTest {
     private static DatabaseUser user;
     private static DatabaseToken token;
     private static DatabaseSettings settings;
-    private static Set<DatabaseCategory> categories;
+    private static DatabaseCategory databaseCategory;
 
     @BeforeAll
     public static void beforeAll() {
@@ -83,8 +83,8 @@ public class ServiceTest {
         session = HibernateUtil.getSessionFactory().getCurrentSession();
         transaction = session.beginTransaction();
 
-        categories = new HashSet<>();
-        DatabaseCategory databaseCategory = new DatabaseCategory();
+        Set<DatabaseCategory> categories = new HashSet<>();
+        databaseCategory = new DatabaseCategory();
         databaseCategory.setUser(user);
         databaseCategory.setCategoryRoot(0);
         databaseCategory.setName("First Layer");
@@ -292,7 +292,7 @@ public class ServiceTest {
     }
 
     @Test
-    public void addCategory() {
+    public void testAddCategory() {
         Category category = new Category();
         category.setUser(user);
         category.setCategoryClass(BaseCategory.CategoryClass.FIXED_REVENUE);
@@ -307,6 +307,32 @@ public class ServiceTest {
         parameters.clear();
         parameters.put("userId", user.getId());
         Assertions.assertEquals(2, service.getUsersCategories(logger, parameters).getResult()
+                .getCategoryTreeByCategoryClass(BaseCategory.CategoryClass.FIXED_REVENUE).getChildren().size());
+    }
+
+    @Test
+    public void testUpdateCategory() {
+        databaseCategory.setName("New Name");
+
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("category", new Category(databaseCategory));
+        service.updateCategory(logger, parameters);
+
+        parameters.clear();
+        parameters.put("userId", user.getId());
+        Assertions.assertEquals("New Name", service.getUsersCategories(logger, parameters).getResult()
+                .getCategoryTreeByCategoryClass(BaseCategory.CategoryClass.FIXED_REVENUE).getChildren().get(0).getValue().getName());
+    }
+
+    @Test
+    public void testDeleteCategory() {
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("category", new Category(databaseCategory));
+        service.deleteCategory(logger, parameters);
+
+        parameters.clear();
+        parameters.put("userId", user.getId());
+        Assertions.assertEquals(0, service.getUsersCategories(logger, parameters).getResult()
                 .getCategoryTreeByCategoryClass(BaseCategory.CategoryClass.FIXED_REVENUE).getChildren().size());
     }
 }

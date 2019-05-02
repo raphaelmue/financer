@@ -1,6 +1,5 @@
 package de.raphaelmuesseler.financer.shared.model.categories;
 
-import de.raphaelmuesseler.financer.shared.model.db.DatabaseAccessObject;
 import de.raphaelmuesseler.financer.shared.model.db.DatabaseCategory;
 
 import java.io.Serializable;
@@ -20,6 +19,7 @@ public class Category extends DatabaseCategory implements Serializable {
                 databaseCategory.getName(),
                 databaseCategory.getParentId(),
                 BaseCategory.CategoryClass.getCategoryClassByIndex(databaseCategory.getCategoryRoot()));
+        this.setUser(databaseCategory.getUser());
     }
 
     public Category(String name) {
