@@ -2,9 +2,9 @@ package de.raphaelmuesseler.financer.shared.model.db;
 
 import java.time.LocalDate;
 
-public class DatabaseVariableTransaction implements DatabaseAccessObject {
+public class VariableTransactionDAO implements DataAccessObject {
     private int id;
-    private DatabaseCategory category;
+    private CategoryDAO category;
     private LocalDate valueDate;
     private double amount;
     private String product;
@@ -20,11 +20,11 @@ public class DatabaseVariableTransaction implements DatabaseAccessObject {
         this.id = id;
     }
 
-    public DatabaseCategory getCategory() {
+    public CategoryDAO getCategory() {
         return category;
     }
 
-    public void setCategory(DatabaseCategory category) {
+    public void setCategory(CategoryDAO category) {
         this.category = category;
     }
 

@@ -1,15 +1,15 @@
 package de.raphaelmuesseler.financer.shared.model.transactions;
 
 import de.raphaelmuesseler.financer.shared.model.categories.CategoryTree;
-import de.raphaelmuesseler.financer.shared.model.db.DatabaseFixedTransaction;
-import de.raphaelmuesseler.financer.shared.model.db.DatabaseTransactionAttachment;
+import de.raphaelmuesseler.financer.shared.model.db.FixedTransactionDAO;
+import de.raphaelmuesseler.financer.shared.model.db.TransactionAttachmentDAO;
 import de.raphaelmuesseler.financer.util.date.DateUtil;
 
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
-public class FixedTransaction extends DatabaseFixedTransaction implements Transaction {
+public class FixedTransaction extends FixedTransactionDAO implements Transaction {
     private CategoryTree categoryTree;
     private final Set<Attachment> attachments;
     private final Set<TransactionAmount> transactionAmounts;
@@ -104,7 +104,7 @@ public class FixedTransaction extends DatabaseFixedTransaction implements Transa
     }
 
     @Override
-    public Set<? extends DatabaseTransactionAttachment> getAttachments() {
+    public Set<? extends TransactionAttachmentDAO> getAttachments() {
         return this.attachments;
     }
 

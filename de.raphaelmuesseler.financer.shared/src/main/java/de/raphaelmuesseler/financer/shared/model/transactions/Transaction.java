@@ -1,13 +1,13 @@
 package de.raphaelmuesseler.financer.shared.model.transactions;
 
 import de.raphaelmuesseler.financer.shared.model.categories.CategoryTree;
-import de.raphaelmuesseler.financer.shared.model.db.DatabaseAccessObject;
-import de.raphaelmuesseler.financer.shared.model.db.DatabaseTransactionAttachment;
+import de.raphaelmuesseler.financer.shared.model.db.DataAccessObject;
+import de.raphaelmuesseler.financer.shared.model.db.TransactionAttachmentDAO;
 
 import java.io.Serializable;
 import java.util.Set;
 
-public interface Transaction extends Serializable, AmountProvider, DatabaseAccessObject {
+public interface Transaction extends Serializable, AmountProvider, DataAccessObject {
 
     /**
      * Returns the parent category tree to which this transaction belongs.
@@ -56,6 +56,6 @@ public interface Transaction extends Serializable, AmountProvider, DatabaseAcces
      *
      * @return set of attachments
      */
-    Set<? extends DatabaseTransactionAttachment> getAttachments();
+    Set<? extends TransactionAttachmentDAO> getAttachments();
 
 }

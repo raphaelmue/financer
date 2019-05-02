@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Set;
 
-public class DatabaseUser implements Serializable, DatabaseAccessObject {
+public class UserDAO implements Serializable, DataAccessObject {
     private static final long serialVersionUID = 8551108621522985674L;
 
     private int id;
@@ -15,9 +15,9 @@ public class DatabaseUser implements Serializable, DatabaseAccessObject {
     private String surname;
     private LocalDate birthDate;
     private String genderName;
-    private Set<DatabaseCategory> categories;
-    private Set<DatabaseSettings> databaseSettings;
-    private Set<DatabaseToken> tokens;
+    private Set<CategoryDAO> categories;
+    private Set<SettingsDAO> databaseSettings;
+    private Set<TokenDAO> tokens;
 
     public int getId() {
         return id;
@@ -83,27 +83,27 @@ public class DatabaseUser implements Serializable, DatabaseAccessObject {
         this.genderName = gender;
     }
 
-    public Set<DatabaseCategory> getCategories() {
+    public Set<CategoryDAO> getCategories() {
         return categories;
     }
 
-    public void setCategories(Set<DatabaseCategory> categories) {
+    public void setCategories(Set<CategoryDAO> categories) {
         this.categories = categories;
     }
 
-    public Set<DatabaseSettings> getDatabaseSettings() {
+    public Set<SettingsDAO> getDatabaseSettings() {
         return databaseSettings;
     }
 
-    public void setDatabaseSettings(Set<DatabaseSettings> settings) {
+    public void setDatabaseSettings(Set<SettingsDAO> settings) {
         this.databaseSettings = settings;
     }
 
-    public Set<DatabaseToken> getTokens() {
+    public Set<TokenDAO> getTokens() {
         return tokens;
     }
 
-    public void setTokens(Set<DatabaseToken> tokens) {
+    public void setTokens(Set<TokenDAO> tokens) {
         this.tokens = tokens;
     }
 }

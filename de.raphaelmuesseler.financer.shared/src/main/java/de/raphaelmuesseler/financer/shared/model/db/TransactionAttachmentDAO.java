@@ -2,7 +2,7 @@ package de.raphaelmuesseler.financer.shared.model.db;
 
 import java.time.LocalDate;
 
-public class DatabaseTransactionAttachment {
+public class TransactionAttachmentDAO {
     private int id;
     private String name;
     private LocalDate uploadDate;

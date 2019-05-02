@@ -1,6 +1,6 @@
 package de.raphaelmuesseler.financer.shared.model.db;
 
-public interface DatabaseAccessObject {
+public interface DataAccessObject {
 
     int getId();
 
@@ -9,7 +9,7 @@ public interface DatabaseAccessObject {
      *
      * @return DAO
      */
-    default DatabaseAccessObject toDatabaseAccessObject() {
+    default DataAccessObject toDatabaseAccessObject() {
         throw new IllegalArgumentException("No implementation defined");
     }
 }

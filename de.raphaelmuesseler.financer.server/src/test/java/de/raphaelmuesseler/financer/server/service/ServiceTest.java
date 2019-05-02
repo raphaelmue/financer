@@ -29,11 +29,11 @@ public class ServiceTest {
     private final FinancerService service = FinancerService.getInstance();
     private final Logger logger = Logger.getLogger("Test");
 
-    private static DatabaseUser user;
-    private static DatabaseToken token;
-    private static DatabaseSettings settings;
-    private static DatabaseCategory databaseCategory;
-    private static DatabaseVariableTransaction variableTransaction;
+    private static UserDAO user;
+    private static TokenDAO token;
+    private static SettingsDAO settings;
+    private static CategoryDAO databaseCategory;
+    private static VariableTransactionDAO variableTransaction;
 
     @BeforeAll
     public static void beforeAll() {
@@ -50,7 +50,7 @@ public class ServiceTest {
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
         Transaction transaction = session.beginTransaction();
 
-        user = new DatabaseUser();
+        user = new UserDAO();
         user.setEmail("max@mustermann.com");
         user.setPassword("6406b2e97a97f64910aca76370ee35a92087806da1aa878e8a9ae0f4dc3949af");
         user.setSalt("I2HoOYJmqKfGboyJAdCEQwulUkxmhVH5");
@@ -59,7 +59,7 @@ public class ServiceTest {
         user.setBirthDate(LocalDate.of(1989, 5, 28));
         user.setGenderName(User.Gender.MALE.getName());
 
-        token = new DatabaseToken();
+        token = new TokenDAO();
         token.setToken("UrsVQcFmbje2lijl51mKMdAYCQciWoEmp07oLBrPoJwnEeREOBGVVsTAJeN3KiEY");
         token.setIpAddress("127.0.0.1");
         token.setSystem("Windows 10");
@@ -70,7 +70,7 @@ public class ServiceTest {
         user.setTokens(new HashSet<>());
         user.getTokens().add(token);
 
-        settings = new DatabaseSettings();
+        settings = new SettingsDAO();
         settings.setProperty(Settings.Property.CURRENCY.getName());
         settings.setValue("EUR");
         settings.setUser(user);
@@ -83,8 +83,8 @@ public class ServiceTest {
         session = HibernateUtil.getSessionFactory().getCurrentSession();
         transaction = session.beginTransaction();
 
-        Set<DatabaseCategory> categories = new HashSet<>();
-        databaseCategory = new DatabaseCategory();
+        Set<CategoryDAO> categories = new HashSet<>();
+        databaseCategory = new CategoryDAO();
         databaseCategory.setUser(user);
         databaseCategory.setCategoryRoot(0);
         databaseCategory.setName("First Layer");
@@ -92,7 +92,7 @@ public class ServiceTest {
         categories.add(databaseCategory);
         session.save(databaseCategory);
 
-        DatabaseCategory databaseCategory2 = new DatabaseCategory();
+        CategoryDAO databaseCategory2 = new CategoryDAO();
         databaseCategory2.setUser(user);
         databaseCategory2.setCategoryRoot(0);
         databaseCategory2.setName("Second Layer");
@@ -100,7 +100,7 @@ public class ServiceTest {
         session.save(databaseCategory2);
         categories.add(databaseCategory2);
 
-        DatabaseCategory databaseCategory3 = new DatabaseCategory();
+        CategoryDAO databaseCategory3 = new CategoryDAO();
         databaseCategory3.setUser(user);
         databaseCategory3.setCategoryRoot(0);
         databaseCategory3.setName("Third Layer (1)");
@@ -108,7 +108,7 @@ public class ServiceTest {
         session.save(databaseCategory3);
         categories.add(databaseCategory3);
 
-        DatabaseCategory databaseCategory4 = new DatabaseCategory();
+        CategoryDAO databaseCategory4 = new CategoryDAO();
         databaseCategory4.setUser(user);
         databaseCategory4.setCategoryRoot(0);
         databaseCategory4.setName("Third Layer (2)");
@@ -122,7 +122,7 @@ public class ServiceTest {
         session = HibernateUtil.getSessionFactory().getCurrentSession();
         transaction = session.beginTransaction();
 
-        variableTransaction = new DatabaseVariableTransaction();
+        variableTransaction = new VariableTransactionDAO();
         variableTransaction.setAmount(50.0);
         variableTransaction.setCategory(databaseCategory);
         variableTransaction.setProduct("Test Product");
@@ -140,7 +140,7 @@ public class ServiceTest {
         User userToAssert = service.checkUsersToken(logger, parameters);
         Assertions.assertNotNull(userToAssert);
         Assertions.assertEquals(1, userToAssert.getTokens().size());
-        for (DatabaseToken _token : userToAssert.getTokens()) {
+        for (TokenDAO _token : userToAssert.getTokens()) {
             Assertions.assertEquals(tokenString, _token.getToken());
         }
 
@@ -158,7 +158,7 @@ public class ServiceTest {
         // test updating token
         _user = service.generateToken(_user, token.getIpAddress(), token.getSystem(), token.getIsMobile());
         Assertions.assertEquals(1, _user.getTokens().size());
-        for (DatabaseToken _token : _user.getTokens()) {
+        for (TokenDAO _token : _user.getTokens()) {
             Assertions.assertNotEquals(tokenString, _token.getToken());
         }
 
@@ -175,7 +175,7 @@ public class ServiceTest {
 
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
         Transaction transaction = session.beginTransaction();
-        User userToAssert = new User(session.get(DatabaseUser.class, user.getId()));
+        User userToAssert = new User(session.get(UserDAO.class, user.getId()));
 
         Assertions.assertEquals(0, userToAssert.getTokens().size());
 
@@ -226,7 +226,7 @@ public class ServiceTest {
 
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
         Transaction transaction = session.beginTransaction();
-        User userToAssert = new User(session.get(DatabaseUser.class, result.getResult().getId()));
+        User userToAssert = new User(session.get(UserDAO.class, result.getResult().getId()));
 
         Assertions.assertEquals(_user.getEmail(), userToAssert.getEmail());
         Assertions.assertEquals(_user.getFullName(), userToAssert.getFullName());
@@ -260,7 +260,7 @@ public class ServiceTest {
     public void testGetUsersSettings() {
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
         Transaction transaction = session.beginTransaction();
-        User userToAssert = new User(session.get(DatabaseUser.class, user.getId()));
+        User userToAssert = new User(session.get(UserDAO.class, user.getId()));
 
         Assertions.assertEquals(settings.getValue(), userToAssert.getSettings().getValueByProperty(Settings.Property.CURRENCY));
         transaction.commit();
@@ -268,7 +268,7 @@ public class ServiceTest {
 
     @Test
     public void testUpdateUsersSettings() {
-        DatabaseSettings databaseSettings = new DatabaseSettings();
+        SettingsDAO databaseSettings = new SettingsDAO();
         databaseSettings.setUser(user);
         databaseSettings.setProperty(Settings.Property.SHOW_CURRENCY_SIGN.getName());
         databaseSettings.setValue(Boolean.toString(true));
@@ -406,7 +406,7 @@ public class ServiceTest {
 
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
         Transaction transaction = session.beginTransaction();
-        VariableTransaction variableTransactionToAssert = new VariableTransaction(session.get(DatabaseVariableTransaction.class,
+        VariableTransaction variableTransactionToAssert = new VariableTransaction(session.get(VariableTransactionDAO.class,
                 variableTransaction.getId()));
         Assertions.assertEquals(newProduct, variableTransactionToAssert.getProduct());
         transaction.commit();

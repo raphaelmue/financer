@@ -3,24 +3,24 @@ package de.raphaelmuesseler.financer.shared.model.transactions;
 import de.raphaelmuesseler.financer.shared.model.categories.Category;
 import de.raphaelmuesseler.financer.shared.model.categories.CategoryTree;
 import de.raphaelmuesseler.financer.shared.model.categories.CategoryTreeImpl;
-import de.raphaelmuesseler.financer.shared.model.db.DatabaseTransactionAttachment;
-import de.raphaelmuesseler.financer.shared.model.db.DatabaseVariableTransaction;
+import de.raphaelmuesseler.financer.shared.model.db.TransactionAttachmentDAO;
+import de.raphaelmuesseler.financer.shared.model.db.VariableTransactionDAO;
 import de.raphaelmuesseler.financer.util.date.DateUtil;
 
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
-public class VariableTransaction extends DatabaseVariableTransaction implements Transaction {
+public class VariableTransaction extends VariableTransactionDAO implements Transaction {
     private CategoryTree categoryTree;
     private final Set<Attachment> attachments;
 
-    public VariableTransaction(DatabaseVariableTransaction databaseVariableTransaction) {
+    public VariableTransaction(VariableTransactionDAO databaseVariableTransaction) {
         this(databaseVariableTransaction,
                 new CategoryTreeImpl(new Category(databaseVariableTransaction.getCategory())));
     }
 
-    public VariableTransaction(DatabaseVariableTransaction databaseVariableTransaction, CategoryTree categoryTree) {
+    public VariableTransaction(VariableTransactionDAO databaseVariableTransaction, CategoryTree categoryTree) {
         this(databaseVariableTransaction.getId(),
                 databaseVariableTransaction.getAmount(),
                 databaseVariableTransaction.getValueDate(),
@@ -53,7 +53,7 @@ public class VariableTransaction extends DatabaseVariableTransaction implements 
     }
 
     @Override
-    public Set<? extends DatabaseTransactionAttachment> getAttachments() {
+    public Set<? extends TransactionAttachmentDAO> getAttachments() {
         return this.attachments;
     }
 
@@ -73,8 +73,8 @@ public class VariableTransaction extends DatabaseVariableTransaction implements 
     }
 
     @Override
-    public DatabaseVariableTransaction toDatabaseAccessObject() {
-        DatabaseVariableTransaction databaseVariableTransaction = new DatabaseVariableTransaction();
+    public VariableTransactionDAO toDatabaseAccessObject() {
+        VariableTransactionDAO databaseVariableTransaction = new VariableTransactionDAO();
         databaseVariableTransaction.setId(this.getId());
         databaseVariableTransaction.setValueDate(this.getValueDate());
         databaseVariableTransaction.setAmount(this.getAmount());

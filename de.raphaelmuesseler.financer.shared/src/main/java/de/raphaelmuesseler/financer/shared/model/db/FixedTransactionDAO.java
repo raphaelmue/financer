@@ -2,10 +2,10 @@ package de.raphaelmuesseler.financer.shared.model.db;
 
 import java.time.LocalDate;
 
-public class DatabaseFixedTransaction {
+public class FixedTransactionDAO {
     private int id;
-    private DatabaseUser user;
-    private DatabaseCategory category;
+    private UserDAO user;
+    private CategoryDAO category;
     private double amount;
     private LocalDate startDate;
     private LocalDate endDate;
@@ -22,19 +22,19 @@ public class DatabaseFixedTransaction {
         this.id = id;
     }
 
-    public DatabaseUser getUser() {
+    public UserDAO getUser() {
         return user;
     }
 
-    public void setUser(DatabaseUser user) {
+    public void setUser(UserDAO user) {
         this.user = user;
     }
 
-    public DatabaseCategory getCategory() {
+    public CategoryDAO getCategory() {
         return category;
     }
 
-    public void setCategory(DatabaseCategory category) {
+    public void setCategory(CategoryDAO category) {
         this.category = category;
     }
 

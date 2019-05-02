@@ -3,12 +3,12 @@
         "http://hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping package="de.raphaelmuesseler.financer.shared.model.db">
-    <class name="DatabaseSettings" table="users_settings">
+    <class name="de.raphaelmuesseler.financer.shared.model.db.SettingsDAO" table="users_settings">
         <id name="id" type="int">
             <column name="id" />
             <generator class="increment" />
         </id>
-        <many-to-one name="user" class="DatabaseUser" fetch="select">
+        <many-to-one name="user" class="UserDAO" fetch="select">
             <column name="user_id" not-null="true"/>
         </many-to-one>
         <property name="property" type="java.lang.String">

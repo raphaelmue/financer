@@ -3,15 +3,15 @@
         "http://hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping package="de.raphaelmuesseler.financer.shared.model.db">
-    <class name="DatabaseFixedTransaction" table="fixed_transactions">
+    <class name="de.raphaelmuesseler.financer.shared.model.db.FixedTransactionDAO" table="fixed_transactions">
         <id name="id" type="int">
             <column name="id"/>
             <generator class="increment"/>
         </id>
-        <many-to-one name="user" class="DatabaseUser" insert="false" update="false">
+        <many-to-one name="user" class="UserDAO" insert="false" update="false">
             <column name="user_id"/>
         </many-to-one>
-        <many-to-one name="category" class="DatabaseCategory" insert="false" update="false">
+        <many-to-one name="category" class="de.raphaelmuesseler.financer.shared.model.db.CategoryDAO" insert="false" update="false">
             <column name="cat_id" />
         </many-to-one>
         <property name="amount" type="double">

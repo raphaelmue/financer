@@ -3,7 +3,7 @@
         "http://hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping package="de.raphaelmuesseler.financer.shared.model.db">
-    <class name="DatabaseUser" table="users">
+    <class name="UserDAO" table="users">
         <id name="id" type="int">
             <column name="id" not-null="true"/>
             <generator class="increment"/>
@@ -31,15 +31,15 @@
         </property>
         <set name="categories" table="users_categories" lazy="true" inverse="true" cascade="all" fetch="select" order-by="">
             <key column="user_id" not-null="true"/>
-            <one-to-many class="DatabaseCategory"/>
+            <one-to-many class="de.raphaelmuesseler.financer.shared.model.db.CategoryDAO"/>
         </set>
         <set name="databaseSettings" table="users_settings"  lazy="true" inverse="true" cascade="all" fetch="select">
             <key column="user_id" not-null="true"/>
-            <one-to-many class="DatabaseSettings"/>
+            <one-to-many class="de.raphaelmuesseler.financer.shared.model.db.SettingsDAO"/>
         </set>
         <set name="tokens" table="users_tokens" lazy="true" inverse="true" cascade="all" fetch="select">
             <key column="user_id" not-null="true" />
-            <one-to-many class="DatabaseToken" />
+            <one-to-many class="de.raphaelmuesseler.financer.shared.model.db.TokenDAO" />
         </set>
     </class>
 </hibernate-mapping>

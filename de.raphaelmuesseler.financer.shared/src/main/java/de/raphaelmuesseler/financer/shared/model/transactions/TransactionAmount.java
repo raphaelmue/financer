@@ -1,12 +1,12 @@
 package de.raphaelmuesseler.financer.shared.model.transactions;
 
-import de.raphaelmuesseler.financer.shared.model.db.DatabaseFixedTransactionAmount;
+import de.raphaelmuesseler.financer.shared.model.db.FixedTransactionAmountDAO;
 import de.raphaelmuesseler.financer.util.date.DateUtil;
 
 import java.io.Serializable;
 import java.time.LocalDate;
 
-public class TransactionAmount extends DatabaseFixedTransactionAmount implements Serializable, AmountProvider {
+public class TransactionAmount extends FixedTransactionAmountDAO implements Serializable, AmountProvider {
     private static final long serialVersionUID = -6751558797407170754L;
 
     public TransactionAmount(int id, double amount, LocalDate valueDate) {

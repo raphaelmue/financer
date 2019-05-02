@@ -1,10 +1,10 @@
 package de.raphaelmuesseler.financer.shared.model.categories;
 
-import de.raphaelmuesseler.financer.shared.model.db.DatabaseCategory;
+import de.raphaelmuesseler.financer.shared.model.db.CategoryDAO;
 
 import java.io.Serializable;
 
-public class Category extends DatabaseCategory implements Serializable {
+public class Category extends CategoryDAO implements Serializable {
     private static final long serialVersionUID = -5776418454648469541L;
     private String prefix = null;
     private BaseCategory.CategoryClass categoryClass;
@@ -14,7 +14,7 @@ public class Category extends DatabaseCategory implements Serializable {
         this.categoryClass = BaseCategory.CategoryClass.getCategoryClassByIndex(this.getCategoryRoot());
     }
 
-    public Category(DatabaseCategory databaseCategory) {
+    public Category(CategoryDAO databaseCategory) {
         this(databaseCategory.getId(),
                 databaseCategory.getName(),
                 databaseCategory.getParentId(),
@@ -59,8 +59,8 @@ public class Category extends DatabaseCategory implements Serializable {
     }
 
     @Override
-    public DatabaseCategory toDatabaseAccessObject() {
-        DatabaseCategory databaseCategory = new DatabaseCategory();
+    public CategoryDAO toDatabaseAccessObject() {
+        CategoryDAO databaseCategory = new CategoryDAO();
         databaseCategory.setId(this.getId());
         databaseCategory.setUser(this.getUser());
         databaseCategory.setCategoryRoot(this.getCategoryClass().getIndex());

@@ -55,16 +55,16 @@ public class FinancerService {
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
         Transaction transaction = session.beginTransaction();
         CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
-        CriteriaQuery<DatabaseToken> criteriaQuery = criteriaBuilder.createQuery(DatabaseToken.class);
-        Root<DatabaseToken> root = criteriaQuery.from(DatabaseToken.class);
+        CriteriaQuery<TokenDAO> criteriaQuery = criteriaBuilder.createQuery(TokenDAO.class);
+        Root<TokenDAO> root = criteriaQuery.from(TokenDAO.class);
         criteriaQuery.select(root).where(criteriaBuilder.equal(root.get("token"), parameters.get("token")));
         try {
-            DatabaseToken databaseToken = session.createQuery(criteriaQuery).getSingleResult();
+            TokenDAO databaseToken = session.createQuery(criteriaQuery).getSingleResult();
             if (databaseToken != null) {
                 Token token = new Token(databaseToken);
                 if (token.isValid()) {
                     logger.log(Level.INFO, "Token of user '" + token.getUser().getFullName() + "' is approved");
-                    user = new User(session.get(DatabaseUser.class, token.getUser().getId()));
+                    user = new User(session.get(UserDAO.class, token.getUser().getId()));
 
                     // needs to be called to avoid LazyInitializationException
                     user.getTokens().size();
@@ -92,11 +92,11 @@ public class FinancerService {
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
         Transaction transaction = session.beginTransaction();
 
-        user = new User(session.load(DatabaseUser.class, user.getId()));
+        user = new User(session.load(UserDAO.class, user.getId()));
 
         try {
             boolean foundEntry = false;
-            for (DatabaseToken token : user.getTokens()) {
+            for (TokenDAO token : user.getTokens()) {
                 if (token.getIpAddress().equals(ipAddress)) {
                     foundEntry = true;
                     token.setToken(this.tokenGenerator.nextString());
@@ -107,8 +107,8 @@ public class FinancerService {
 
             // insert if not found
             if (!foundEntry) {
-                DatabaseToken databaseToken;
-                databaseToken = new DatabaseToken();
+                TokenDAO databaseToken;
+                databaseToken = new TokenDAO();
                 databaseToken.setUser(user);
                 databaseToken.setToken(this.tokenGenerator.nextString());
                 databaseToken.setIpAddress(ipAddress);
@@ -138,8 +138,8 @@ public class FinancerService {
         Transaction transaction = session.beginTransaction();
 
         CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
-        CriteriaQuery<DatabaseUser> criteriaQuery = criteriaBuilder.createQuery(DatabaseUser.class);
-        Root<DatabaseUser> root = criteriaQuery.from(DatabaseUser.class);
+        CriteriaQuery<UserDAO> criteriaQuery = criteriaBuilder.createQuery(UserDAO.class);
+        Root<UserDAO> root = criteriaQuery.from(UserDAO.class);
         criteriaQuery.select(root).where(criteriaBuilder.equal(root.get("email"), parameters.get("email")));
         try {
             user = new User(session.createQuery(criteriaQuery).getSingleResult());
@@ -215,7 +215,7 @@ public class FinancerService {
 
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
         Transaction transaction = session.beginTransaction();
-        DatabaseToken token = session.load(DatabaseToken.class, (int) parameters.get("tokenId"));
+        TokenDAO token = session.load(TokenDAO.class, (int) parameters.get("tokenId"));
         session.delete(token);
         transaction.commit();
 
@@ -235,7 +235,7 @@ public class FinancerService {
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
         Transaction transaction = session.beginTransaction();
 
-        for (DatabaseSettings databaseSettings : user.getDatabaseSettings()) {
+        for (SettingsDAO databaseSettings : user.getDatabaseSettings()) {
             session.saveOrUpdate(databaseSettings);
         }
 
@@ -255,14 +255,14 @@ public class FinancerService {
 
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
         Transaction transaction = session.beginTransaction();
-        User user = new User(session.get(DatabaseUser.class, (int) parameters.get("userId")));
+        User user = new User(session.get(UserDAO.class, (int) parameters.get("userId")));
 
-        List<DatabaseCategory> categories = new ArrayList<>(user.getCategories());
+        List<CategoryDAO> categories = new ArrayList<>(user.getCategories());
         Collections.sort(categories);
 
         BaseCategory baseCategory = new BaseCategory();
 
-        for (DatabaseCategory databaseCategory : categories) {
+        for (CategoryDAO databaseCategory : categories) {
             Category category = new Category(databaseCategory);
             if (databaseCategory.getParentId() == -1) {
                 baseCategory.getCategoryTreeByCategoryClass(category.getCategoryClass()).getChildren().add(new CategoryTreeImpl(category));
@@ -333,9 +333,9 @@ public class FinancerService {
 
         session = HibernateUtil.getSessionFactory().getCurrentSession();
         transaction = session.beginTransaction();
-        session.createQuery("delete from DatabaseFixedTransaction where category = :categoryId")
+        session.createQuery("delete from FixedTransactionDAO where category = :categoryId")
                 .setParameter("categoryId", category.getId());
-        session.createQuery("delete from DatabaseVariableTransaction where category = :categoryId")
+        session.createQuery("delete from VariableTransactionDAO where category = :categoryId")
                 .setParameter("categoryId", category.getId());
         transaction.commit();
 
@@ -348,15 +348,15 @@ public class FinancerService {
      * @param category category to delete children
      */
     private void deleteCategoryChildren(Category category) {
-        List<DatabaseCategory> categories;
+        List<CategoryDAO> categories;
         int parentId = category.getId();
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
         Transaction transaction = session.beginTransaction();
-        categories = session.createQuery("from DatabaseCategory where parentId = :parentId", DatabaseCategory.class)
+        categories = session.createQuery("from CategoryDAO where parentId = :parentId", CategoryDAO.class)
                 .setParameter("parentId", parentId).list();
         transaction.commit();
         if (categories.size() > 0) {
-            for (DatabaseCategory databaseCategory : categories) {
+            for (CategoryDAO databaseCategory : categories) {
                 session = HibernateUtil.getSessionFactory().getCurrentSession();
                 transaction = session.beginTransaction();
                 session.delete(databaseCategory);
@@ -381,13 +381,13 @@ public class FinancerService {
         Transaction transaction = session.beginTransaction();
 
         baseCategory.traverse(treeObject -> {
-            List<DatabaseVariableTransaction> databaseVariableTransactions = session
-                    .createQuery("from DatabaseVariableTransaction where category = :category",
-                            DatabaseVariableTransaction.class)
+            List<VariableTransactionDAO> databaseVariableTransactions = session
+                    .createQuery("from VariableTransactionDAO where category = :category",
+                            VariableTransactionDAO.class)
                     .setParameter("category", treeObject.getValue().toDatabaseAccessObject())
                     .list();
             Set<VariableTransaction> variableTransactions = new HashSet<>();
-            for (DatabaseVariableTransaction databaseVariableTransaction : databaseVariableTransactions) {
+            for (VariableTransactionDAO databaseVariableTransaction : databaseVariableTransactions) {
                 variableTransactions.add(new VariableTransaction(databaseVariableTransaction, (CategoryTree) treeObject));
             }
             ((CategoryTree) treeObject).getTransactions().addAll(variableTransactions);

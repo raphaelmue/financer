@@ -3,11 +3,11 @@ package de.raphaelmuesseler.financer.shared.model.db;
 import java.io.Serializable;
 import java.time.LocalDate;
 
-public class DatabaseToken implements Serializable, Cloneable {
+public class TokenDAO implements Serializable, Cloneable {
     private final static long serialVersionUID = 8834445127500149942L;
 
     private int id;
-    private DatabaseUser user;
+    private UserDAO user;
     private String token;
     private LocalDate expireDate;
     private String ipAddress;
@@ -22,11 +22,11 @@ public class DatabaseToken implements Serializable, Cloneable {
         this.id = id;
     }
 
-    public DatabaseUser getUser() {
+    public UserDAO getUser() {
         return user;
     }
 
-    public void setUser(DatabaseUser user) {
+    public void setUser(UserDAO user) {
         this.user = user;
     }
 
@@ -71,9 +71,9 @@ public class DatabaseToken implements Serializable, Cloneable {
     }
 
     @Override
-    public DatabaseToken clone() {
+    public TokenDAO clone() {
         try {
-            return (DatabaseToken) super.clone();
+            return (TokenDAO) super.clone();
         } catch (CloneNotSupportedException e) {
             throw new ClassCastException(e.getMessage());
         }

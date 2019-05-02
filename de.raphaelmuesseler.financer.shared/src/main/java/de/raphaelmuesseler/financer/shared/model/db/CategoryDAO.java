@@ -1,8 +1,8 @@
 package de.raphaelmuesseler.financer.shared.model.db;
 
-public class DatabaseCategory implements Comparable<DatabaseCategory>, DatabaseAccessObject {
+public class CategoryDAO implements Comparable<CategoryDAO>, DataAccessObject {
     private int id;
-    private DatabaseUser user;
+    private UserDAO user;
     private int categoryRoot;
     private int parentId;
     private String name;
@@ -15,11 +15,11 @@ public class DatabaseCategory implements Comparable<DatabaseCategory>, DatabaseA
         this.id = id;
     }
 
-    public DatabaseUser getUser() {
+    public UserDAO getUser() {
         return user;
     }
 
-    public void setUser(DatabaseUser user) {
+    public void setUser(UserDAO user) {
         this.user = user;
     }
 
@@ -48,7 +48,7 @@ public class DatabaseCategory implements Comparable<DatabaseCategory>, DatabaseA
     }
 
     @Override
-    public int compareTo(DatabaseCategory o) {
+    public int compareTo(CategoryDAO o) {
         return Integer.compare(Integer.compare(o.getCategoryRoot(), this.getCategoryRoot()), Integer.compare(o.getParentId(), this.getParentId()));
     }
 }

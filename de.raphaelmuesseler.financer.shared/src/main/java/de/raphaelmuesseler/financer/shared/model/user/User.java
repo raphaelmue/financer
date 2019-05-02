@@ -1,14 +1,14 @@
 package de.raphaelmuesseler.financer.shared.model.user;
 
-import de.raphaelmuesseler.financer.shared.model.db.DatabaseSettings;
-import de.raphaelmuesseler.financer.shared.model.db.DatabaseToken;
-import de.raphaelmuesseler.financer.shared.model.db.DatabaseUser;
+import de.raphaelmuesseler.financer.shared.model.db.SettingsDAO;
+import de.raphaelmuesseler.financer.shared.model.db.TokenDAO;
+import de.raphaelmuesseler.financer.shared.model.db.UserDAO;
 
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
-public class User extends DatabaseUser {
+public class User extends UserDAO {
     private static final long serialVersionUID = 164741396778652317L;
 
     public enum Gender {
@@ -39,7 +39,7 @@ public class User extends DatabaseUser {
 
     private final Settings settings;
 
-    public User(DatabaseUser databaseUser) {
+    public User(UserDAO databaseUser) {
         this(databaseUser.getId(),
                 databaseUser.getEmail(),
                 databaseUser.getPassword(),
@@ -81,8 +81,8 @@ public class User extends DatabaseUser {
     }
 
     @Override
-    public DatabaseUser toDatabaseAccessObject() {
-        DatabaseUser databaseUser = new DatabaseUser();
+    public UserDAO toDatabaseAccessObject() {
+        UserDAO databaseUser = new UserDAO();
         databaseUser.setId(this.getId());
         databaseUser.setEmail(this.getEmail());
         databaseUser.setPassword(this.getPassword());
@@ -102,7 +102,7 @@ public class User extends DatabaseUser {
 
     public Settings getSettings() {
         if (this.getDatabaseSettings() != null) {
-            for (DatabaseSettings databaseSettings : super.getDatabaseSettings()) {
+            for (SettingsDAO databaseSettings : super.getDatabaseSettings()) {
                 this.settings.setValueByProperty(Settings.Property.getPropertyByName(databaseSettings.getProperty()), databaseSettings.getValue());
             }
         }
@@ -114,7 +114,7 @@ public class User extends DatabaseUser {
     }
 
     @Override
-    public Set<DatabaseToken> getTokens() {
+    public Set<TokenDAO> getTokens() {
         if (super.getTokens() == null) {
             this.setTokens(new HashSet<>());
         }
@@ -126,7 +126,7 @@ public class User extends DatabaseUser {
     }
 
     @Override
-    public void setDatabaseSettings(Set<DatabaseSettings> settings) {
+    public void setDatabaseSettings(Set<SettingsDAO> settings) {
         if (settings != null) {
             super.setDatabaseSettings(settings);
         }

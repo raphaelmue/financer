@@ -3,12 +3,12 @@
         "http://hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping package="de.raphaelmuesseler.financer.shared.model.db">
-    <class name="DatabaseVariableTransaction" table="transactions">
+    <class name="de.raphaelmuesseler.financer.shared.model.db.VariableTransactionDAO" table="transactions">
         <id name="id" type="int">
             <column name="id"/>
             <generator class="increment"/>
         </id>
-        <many-to-one name="category" class="DatabaseCategory" fetch="select">
+        <many-to-one name="category" class="de.raphaelmuesseler.financer.shared.model.db.CategoryDAO" fetch="select">
             <column name="cat_id" not-null="true"/>
         </many-to-one>
         <property name="valueDate" type="java.time.LocalDate">
