@@ -5,7 +5,9 @@ import de.raphaelmuesseler.financer.server.db.HibernateUtil;
 import de.raphaelmuesseler.financer.shared.connection.ConnectionResult;
 import de.raphaelmuesseler.financer.shared.model.categories.BaseCategory;
 import de.raphaelmuesseler.financer.shared.model.categories.Category;
+import de.raphaelmuesseler.financer.shared.model.categories.CategoryTreeImpl;
 import de.raphaelmuesseler.financer.shared.model.db.*;
+import de.raphaelmuesseler.financer.shared.model.transactions.VariableTransaction;
 import de.raphaelmuesseler.financer.shared.model.user.Settings;
 import de.raphaelmuesseler.financer.shared.model.user.User;
 import de.raphaelmuesseler.financer.shared.model.user.UserSettings;
@@ -360,5 +362,37 @@ public class ServiceTest {
 
         Assertions.assertEquals(1, result.getResult().getCategoryTreeByCategoryClass(BaseCategory.CategoryClass.FIXED_REVENUE)
             .getChildren().get(0).getTransactions().size());
+        for (de.raphaelmuesseler.financer.shared.model.transactions.Transaction transaction :
+                result.getResult().getCategoryTreeByCategoryClass(BaseCategory.CategoryClass.FIXED_REVENUE)
+                .getChildren().get(0).getTransactions()) {
+            Assertions.assertEquals(transaction.getId(), variableTransaction.getId());
+        }
+    }
+
+    @Test
+    public void testAddTransaction() {
+        VariableTransaction variableTransaction = new VariableTransaction(-1,
+                25.0,
+                LocalDate.now(),
+                new CategoryTreeImpl(new Category(databaseCategory)),
+                "Another Procuct",
+                "",
+                "");
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("variableTransaction", variableTransaction);
+        ConnectionResult<VariableTransaction> result = service.addTransaction(logger, parameters);
+        Assertions.assertTrue(result.getResult().getId() > 0);
+
+
+        parameters.clear();
+        parameters.put("userId", user.getId());
+        BaseCategory baseCategory = service.getUsersCategories(logger, parameters).getResult();
+
+        parameters.clear();
+        parameters.put("userId", user.getId());
+        parameters.put("baseCategory", baseCategory);
+        Assertions.assertEquals(2, service.getTransactions(logger, parameters).getResult()
+                .getCategoryTreeByCategoryClass(BaseCategory.CategoryClass.FIXED_REVENUE)
+                .getChildren().get(0).getTransactions().size());
     }
 }

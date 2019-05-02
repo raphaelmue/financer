@@ -1,12 +1,13 @@
 package de.raphaelmuesseler.financer.shared.model.transactions;
 
 import de.raphaelmuesseler.financer.shared.model.categories.CategoryTree;
+import de.raphaelmuesseler.financer.shared.model.db.DatabaseAccessObject;
 import de.raphaelmuesseler.financer.shared.model.db.DatabaseTransactionAttachment;
 
 import java.io.Serializable;
 import java.util.Set;
 
-public interface Transaction extends Serializable, AmountProvider {
+public interface Transaction extends Serializable, AmountProvider, DatabaseAccessObject {
 
     /**
      * Returns the parent category tree to which this transaction belongs.

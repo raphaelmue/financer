@@ -1,8 +1,8 @@
 package de.raphaelmuesseler.financer.shared.model.transactions;
 
 import de.raphaelmuesseler.financer.shared.model.categories.CategoryTree;
-import de.raphaelmuesseler.financer.shared.model.db.DatabaseVariableTransaction;
 import de.raphaelmuesseler.financer.shared.model.db.DatabaseTransactionAttachment;
+import de.raphaelmuesseler.financer.shared.model.db.DatabaseVariableTransaction;
 import de.raphaelmuesseler.financer.util.date.DateUtil;
 
 import java.time.LocalDate;
@@ -61,5 +61,18 @@ public class VariableTransaction extends DatabaseVariableTransaction implements 
     @Override
     public double getAmount(LocalDate startDate, LocalDate endDate) {
         return (startDate.compareTo(this.getValueDate()) <= 0 && endDate.compareTo(this.getValueDate()) >= 0 ? this.getAmount() : 0);
+    }
+
+    @Override
+    public DatabaseVariableTransaction toDatabaseAccessObject() {
+        DatabaseVariableTransaction databaseVariableTransaction = new DatabaseVariableTransaction();
+        databaseVariableTransaction.setId(this.getId());
+        databaseVariableTransaction.setValueDate(this.getValueDate());
+        databaseVariableTransaction.setAmount(this.getAmount());
+        databaseVariableTransaction.setCategory(this.getCategory());
+        databaseVariableTransaction.setProduct(this.getProduct());
+        databaseVariableTransaction.setPurpose(this.getPurpose());
+        databaseVariableTransaction.setShop(this.getShop());
+        return databaseVariableTransaction;
     }
 }

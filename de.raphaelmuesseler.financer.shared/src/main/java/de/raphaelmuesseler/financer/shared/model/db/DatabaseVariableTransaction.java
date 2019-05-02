@@ -2,7 +2,7 @@ package de.raphaelmuesseler.financer.shared.model.db;
 
 import java.time.LocalDate;
 
-public class DatabaseVariableTransaction {
+public class DatabaseVariableTransaction implements DatabaseAccessObject {
     private int id;
     private DatabaseCategory category;
     private LocalDate valueDate;
@@ -11,6 +11,7 @@ public class DatabaseVariableTransaction {
     private String purpose;
     private String shop;
 
+    @Override
     public int getId() {
         return id;
     }

@@ -397,28 +397,23 @@ public class FinancerService {
         return new ConnectionResult<>(baseCategory);
     }
 
-//    public ConnectionResult<VariableTransaction> addTransaction(Logger logger, Map<String, Object> parameters) throws Exception {
-//        logger.log(Level.INFO, "Adding transaction ...");
-//        User user = (User) parameters.get("user");
-//        VariableTransaction transaction = (VariableTransaction) parameters.get("transaction");
-//
-//        Map<String, Object> values = new HashMap<>();
-//        values.put("user_id", user.getId());
-//        values.put("value_date", transaction.getValueDate());
-//        values.put("amount", transaction.getAmount());
-//        values.put("product", transaction.getProduct());
-//        values.put("purpose", transaction.getPurpose());
-//        values.put("shop", transaction.getShop());
-//        values.put("cat_id", transaction.getCategoryTree().getValue().getId());
-//
-//        this.database.insert(Database.Table.TRANSACTIONS, values);
-//
-//        transaction.setId(this.database.getLatestId(Database.Table.TRANSACTIONS));
-//
-//        return new ConnectionResult<>(transaction);
-//    }
-//
-//
+    /**
+     * Adds a new transaction.
+     * @param parameters [VariableTransaction variableTransaction]
+     * @return variable transaction object
+     */
+    public ConnectionResult<VariableTransaction> addTransaction(Logger logger, Map<String, Object> parameters) {
+        logger.log(Level.INFO, "Adding transaction ...");
+        VariableTransaction variableTransaction = (VariableTransaction) parameters.get("variableTransaction");
+
+        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+        Transaction transaction = session.beginTransaction();
+        variableTransaction.setId((int) session.save(variableTransaction.toDatabaseAccessObject()));
+        transaction.commit();
+
+        return new ConnectionResult<>(variableTransaction);
+    }
+
 //    public ConnectionResult<Void> updateTransaction(Logger logger, Map<String, Object> parameters) throws Exception {
 //        logger.log(Level.INFO, "Adding transaction ...");
 //        VariableTransaction transaction = (VariableTransaction) parameters.get("transaction");
