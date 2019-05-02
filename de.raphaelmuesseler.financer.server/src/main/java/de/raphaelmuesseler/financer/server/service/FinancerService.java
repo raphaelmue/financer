@@ -2,6 +2,7 @@ package de.raphaelmuesseler.financer.server.service;
 
 import de.raphaelmuesseler.financer.server.db.HibernateUtil;
 import de.raphaelmuesseler.financer.shared.connection.ConnectionResult;
+import de.raphaelmuesseler.financer.shared.model.db.DatabaseSettings;
 import de.raphaelmuesseler.financer.shared.model.db.DatabaseToken;
 import de.raphaelmuesseler.financer.shared.model.db.DatabaseUser;
 import de.raphaelmuesseler.financer.shared.model.user.Token;
@@ -217,27 +218,26 @@ public class FinancerService {
         return new ConnectionResult<>(null);
     }
 
-//    public ConnectionResult<User> updateUsersSettings(Logger logger, Map<String, Object> parameters) throws Exception {
-//        logger.log(Level.INFO, "Updating users settings ...");
-//        User user = (User) parameters.get("user");
-//
-//        Map<String, Object> whereParameters = new HashMap<>();
-//        whereParameters.put("user_id", user.getId());
-//        whereParameters.put("property", parameters.get("property"));
-//
-//        Map<String, Object> values = new HashMap<>();
-//        values.put("value", parameters.get("value"));
-//
-//        if (this.database.get(Database.Table.USERS_SETTINGS, whereParameters).length() > 0) {
-//            this.database.update(Database.Table.USERS_SETTINGS, whereParameters, values);
-//        } else {
-//            values.putAll(whereParameters);
-//            this.database.insert(Database.Table.USERS_SETTINGS, values);
-//        }
-//        user.getDatabaseSettings().setValueByProperty((String) parameters.get("property"), (String) parameters.get("value"));
-//
-//        return new ConnectionResult<>(user);
-//    }
+    /**
+     * Updates the settings of a user
+     * @param parameters [User user]
+     * @return void
+     */
+    public ConnectionResult<Void> updateUsersSettings(Logger logger, Map<String, Object> parameters) {
+        logger.log(Level.INFO, "Updating users settings ...");
+        User user = (User) parameters.get("user");
+
+        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+        Transaction transaction = session.beginTransaction();
+
+        for (DatabaseSettings databaseSettings : user.getDatabaseSettings()) {
+            session.saveOrUpdate(databaseSettings);
+        }
+
+        transaction.commit();
+
+        return new ConnectionResult<>(null);
+    }
 //
 //    public ConnectionResult<BaseCategory> getUsersCategories(Logger logger, Map<String, Object> parameters) throws Exception {
 //        logger.log(Level.INFO, "Fetching users categories ...");

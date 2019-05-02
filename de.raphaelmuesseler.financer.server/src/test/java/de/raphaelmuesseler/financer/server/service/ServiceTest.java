@@ -8,6 +8,7 @@ import de.raphaelmuesseler.financer.shared.model.db.DatabaseToken;
 import de.raphaelmuesseler.financer.shared.model.db.DatabaseUser;
 import de.raphaelmuesseler.financer.shared.model.user.Settings;
 import de.raphaelmuesseler.financer.shared.model.user.User;
+import de.raphaelmuesseler.financer.shared.model.user.UserSettings;
 import de.raphaelmuesseler.financer.util.Hash;
 import de.raphaelmuesseler.financer.util.RandomString;
 import org.hibernate.Session;
@@ -115,6 +116,21 @@ public class ServiceTest {
     }
 
     @Test
+    public void testDeleteToken() {
+        HashMap<String, Object> parameters = new HashMap<>();
+        parameters.put("tokenId", token.getId());
+        service.deleteToken(logger, parameters);
+
+        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+        Transaction transaction = session.beginTransaction();
+        User userToAssert = new User(session.get(DatabaseUser.class, user.getId()));
+
+        Assertions.assertEquals(0, userToAssert.getTokens().size());
+
+        transaction.commit();
+    }
+
+    @Test
     public void testCheckCredentials() {
         HashMap<String, Object> parameters = new HashMap<>();
         parameters.put("email", user.getEmail());
@@ -133,16 +149,6 @@ public class ServiceTest {
         parameters.put("email", "test@test.com");
         result = service.checkCredentials(logger, parameters);
         Assertions.assertNull(result.getResult());
-    }
-
-    @Test
-    public void testGetUsersSettings() {
-        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
-        Transaction transaction = session.beginTransaction();
-        User userToAssert = new User(session.get(DatabaseUser.class, user.getId()));
-
-        Assertions.assertEquals(settings.getValue(), userToAssert.getSettings().getValueByProperty(Settings.Property.CURRENCY));
-        transaction.commit();
     }
 
     @Test
@@ -199,17 +205,32 @@ public class ServiceTest {
     }
 
     @Test
-    public void testDeleteToken() {
-        HashMap<String, Object> parameters = new HashMap<>();
-        parameters.put("tokenId", token.getId());
-        service.deleteToken(logger, parameters);
-
+    public void testGetUsersSettings() {
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
         Transaction transaction = session.beginTransaction();
         User userToAssert = new User(session.get(DatabaseUser.class, user.getId()));
 
-        Assertions.assertEquals(0, userToAssert.getTokens().size());
-
+        Assertions.assertEquals(settings.getValue(), userToAssert.getSettings().getValueByProperty(Settings.Property.CURRENCY));
         transaction.commit();
+    }
+
+    @Test
+    public void testUpdateUsersSettings() {
+        DatabaseSettings databaseSettings = new DatabaseSettings();
+        databaseSettings.setUser(user);
+        databaseSettings.setProperty(Settings.Property.SHOW_CURRENCY_SIGN.getName());
+        databaseSettings.setValue(Boolean.toString(true));
+        user.getDatabaseSettings().add(databaseSettings);
+
+        settings.setValue("USD");
+
+        HashMap<String, Object> parameters = new HashMap<>();
+        parameters.put("user", new User(user));
+        service.updateUsersSettings(logger, parameters);
+
+        Assertions.assertEquals(2, user.getDatabaseSettings().size());
+        Assertions.assertEquals(Currency.getInstance("USD"), ((UserSettings) new User(user).getSettings()).getCurrency());
+        Assertions.assertTrue(((UserSettings) new User(user).getSettings()).isShowCurrencySign());
+
     }
 }

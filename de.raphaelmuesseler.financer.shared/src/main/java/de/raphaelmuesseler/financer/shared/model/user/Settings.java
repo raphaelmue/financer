@@ -24,6 +24,11 @@ public interface Settings {
             }
             throw new IllegalArgumentException("No such property with name: " + name);
         }
+
+        @Override
+        public String toString() {
+            return this.getName();
+        }
     }
 
     void setValueByProperty(Property property, String value);
