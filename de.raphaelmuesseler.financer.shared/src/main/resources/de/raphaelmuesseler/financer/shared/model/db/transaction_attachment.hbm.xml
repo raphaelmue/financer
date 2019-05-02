@@ -8,13 +8,16 @@
             <column name="id"/>
             <generator class="increment"/>
         </id>
+        <many-to-one name="transaction" class="VariableTransactionDAO" fetch="select">
+            <column name="transaction_id" not-null="true" />
+        </many-to-one>
         <property name="name" type="java.lang.String">
             <column name="name"/>
         </property>
         <property name="uploadDate" type="java.time.LocalDate">
             <column name="upload_date"/>
         </property>
-        <property name="content" type="blob">
+        <property name="content" type="blob" lazy="true" length="65536">
             <column name="content"/>
         </property>
     </class>

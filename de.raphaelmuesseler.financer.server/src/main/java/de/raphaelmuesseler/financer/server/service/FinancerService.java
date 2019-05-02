@@ -7,6 +7,7 @@ import de.raphaelmuesseler.financer.shared.model.categories.Category;
 import de.raphaelmuesseler.financer.shared.model.categories.CategoryTree;
 import de.raphaelmuesseler.financer.shared.model.categories.CategoryTreeImpl;
 import de.raphaelmuesseler.financer.shared.model.db.*;
+import de.raphaelmuesseler.financer.shared.model.transactions.Attachment;
 import de.raphaelmuesseler.financer.shared.model.transactions.VariableTransaction;
 import de.raphaelmuesseler.financer.shared.model.user.Token;
 import de.raphaelmuesseler.financer.shared.model.user.User;
@@ -20,6 +21,8 @@ import javax.persistence.NoResultException;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+import java.io.File;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.logging.Level;
@@ -433,27 +436,30 @@ public class FinancerService {
         return new ConnectionResult<>(null);
     }
 
-//    public ConnectionResult<AttachmentWithContent> uploadTransactionAttachment(Logger logger, Map<String, Object> parameters) throws Exception {
-//        logger.log(Level.INFO, "Uploading AttachmentWithContent ...");
-//        AttachmentWithContent result = new AttachmentWithContent();
-//        File attachmentFile = (File) parameters.get("attachmentFile");
-//
-//        Map<String, Object> values = new HashMap<>();
-//        values.put("transaction_id", ((VariableTransaction) parameters.get("transaction")).getId());
-//        values.put("name", attachmentFile.getName());
-//        values.put("upload_date", LocalDate.now().toString());
-//        values.put("content", parameters.get("content"));
-//
-//        this.database.insert(Database.Table.TRANSACTIONS_ATTACHMENTS, values);
-//
-//        result.setId(this.database.getLatestId(Database.Table.TRANSACTIONS_ATTACHMENTS));
-//        result.setName(attachmentFile.getName());
-//        result.setUploadDate(LocalDate.now());
-//        //result.setContent((byte[]) parameters.get("content"));
-//
-//        return new ConnectionResult<>(result);
-//    }
-//
+    /**
+     * Uploads a transaction attachment to the database
+     *
+     * @param parameters [File attachmentFile, VariableTransaction transaction, byte[] content]
+     * @return Attachment object
+     */
+    public ConnectionResult<Attachment> uploadTransactionAttachment(Logger logger, Map<String, Object> parameters) throws SQLException {
+        logger.log(Level.INFO, "Uploading AttachmentWithContent ...");
+        Attachment result = new Attachment();
+        File attachmentFile = (File) parameters.get("attachmentFile");
+
+        result.setTransaction((VariableTransaction) parameters.get("transaction"));
+        result.setName(attachmentFile.getName());
+        result.setUploadDate(LocalDate.now());
+        result.setContent((byte[]) parameters.get("content"));
+
+        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+        Transaction transaction = session.beginTransaction();
+        result.setId((int) session.save(result.toDatabaseAccessObject()));
+        transaction.commit();
+
+        return new ConnectionResult<>(new Attachment(result));
+    }
+
 //    public ConnectionResult<AttachmentWithContent> getAttachment(Logger logger, Map<String, Object> parameters) throws Exception {
 //        logger.log(Level.INFO, "Fetching attachment ...");
 //        Map<String, Object> whereParameters = new HashMap<>();

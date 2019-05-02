@@ -7,6 +7,7 @@ import de.raphaelmuesseler.financer.shared.model.categories.BaseCategory;
 import de.raphaelmuesseler.financer.shared.model.categories.Category;
 import de.raphaelmuesseler.financer.shared.model.categories.CategoryTreeImpl;
 import de.raphaelmuesseler.financer.shared.model.db.*;
+import de.raphaelmuesseler.financer.shared.model.transactions.Attachment;
 import de.raphaelmuesseler.financer.shared.model.transactions.VariableTransaction;
 import de.raphaelmuesseler.financer.shared.model.user.Settings;
 import de.raphaelmuesseler.financer.shared.model.user.User;
@@ -20,6 +21,8 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.logging.Logger;
@@ -410,5 +413,20 @@ public class ServiceTest {
                 variableTransaction.getId()));
         Assertions.assertEquals(newProduct, variableTransactionToAssert.getProduct());
         transaction.commit();
+    }
+
+    @Test
+    public void testUploadAttachment() throws SQLException {
+        RandomString randomString = new RandomString(1024);
+        byte[] content = randomString.nextString().getBytes();
+
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("attachmentFile", new File("test.txt"));
+        parameters.put("transaction", new VariableTransaction(variableTransaction));
+        parameters.put("content", content);
+        ConnectionResult<Attachment> result = service.uploadTransactionAttachment(logger, parameters);
+        Assertions.assertNotNull(result.getResult());
+        Assertions.assertNull(result.getException());
+        Assertions.assertTrue(result.getResult().getId() > 0);
     }
 }

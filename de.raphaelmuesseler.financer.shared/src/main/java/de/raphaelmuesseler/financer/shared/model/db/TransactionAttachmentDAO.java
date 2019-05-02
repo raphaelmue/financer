@@ -1,12 +1,14 @@
 package de.raphaelmuesseler.financer.shared.model.db;
 
+import java.sql.Blob;
 import java.time.LocalDate;
 
-public class TransactionAttachmentDAO {
+public class TransactionAttachmentDAO implements DataAccessObject {
     private int id;
+    private VariableTransactionDAO transaction;
     private String name;
     private LocalDate uploadDate;
-    private byte[] content;
+    private Blob content;
 
     public int getId() {
         return id;
@@ -14,6 +16,14 @@ public class TransactionAttachmentDAO {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public VariableTransactionDAO getTransaction() {
+        return transaction;
+    }
+
+    public void setTransaction(VariableTransactionDAO transaction) {
+        this.transaction = transaction;
     }
 
     public String getName() {
@@ -32,11 +42,11 @@ public class TransactionAttachmentDAO {
         this.uploadDate = uploadDate;
     }
 
-    public byte[] getContent() {
+    public Blob getContent() {
         return content;
     }
 
-    public void setContent(byte[] content) {
+    public void setContent(Blob content) {
         this.content = content;
     }
 }
