@@ -1,6 +1,6 @@
 package de.raphaelmuesseler.financer.shared.model.db;
 
-public class DatabaseCategory implements Comparable<DatabaseCategory> {
+public class DatabaseCategory implements Comparable<DatabaseCategory>, DatabaseAccessObject {
     private int id;
     private DatabaseUser user;
     private int categoryRoot;

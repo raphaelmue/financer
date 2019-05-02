@@ -280,26 +280,26 @@ public class FinancerService {
         transaction.commit();
         return new ConnectionResult<>(baseCategory);
     }
-//
-//    public ConnectionResult<Category> addCategory(Logger logger, Map<String, Object> parameters) throws Exception {
-//        logger.log(Level.INFO, "Adding new category ...");
-//        User user = (User) parameters.get("user");
-//        Category category = (Category) parameters.get("category");
-//
-//        Map<String, Object> values = new HashMap<>();
-//        values.put("user_id", user.getId());
-//        values.put("cat_id", category.getRootId());
-//        if (category.getParentId() != -1) {
-//            values.put("parent_id", category.getParentId());
-//        }
-//        values.put("name", category.getName());
-//
-//
-//        this.database.insert(Database.Table.USERS_CATEGORIES, values);
-//
-//        return new ConnectionResult<>((Category) this.database.getObject(Database.Table.USERS_CATEGORIES, Category.class, values).get(0));
-//    }
-//
+
+    /**
+     * Adds a new category.
+     *
+     * @param parameters [User user, Category category]
+     * @return Category object
+     */
+    public ConnectionResult<Category> addCategory(Logger logger, Map<String, Object> parameters) {
+        logger.log(Level.INFO, "Adding new category ...");
+        User user = (User) parameters.get("user");
+        Category category = (Category) parameters.get("category");
+
+        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+        Transaction transaction = session.beginTransaction();
+        category.setId((int) session.save(category.toDatabaseAccessObject()));
+        transaction.commit();
+
+        return new ConnectionResult<>(category);
+    }
+
 //    public ConnectionResult<Void> updateCategory(Logger logger, Map<String, Object> parameters) throws Exception {
 //        logger.log(Level.INFO, "Updating users categories ...");
 //        CategoryTree category = (CategoryTree) parameters.get("category");

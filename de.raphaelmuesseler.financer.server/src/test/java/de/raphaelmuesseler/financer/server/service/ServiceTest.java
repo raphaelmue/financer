@@ -4,6 +4,7 @@ import de.raphaelmuesseler.financer.server.db.DatabaseName;
 import de.raphaelmuesseler.financer.server.db.HibernateUtil;
 import de.raphaelmuesseler.financer.shared.connection.ConnectionResult;
 import de.raphaelmuesseler.financer.shared.model.categories.BaseCategory;
+import de.raphaelmuesseler.financer.shared.model.categories.Category;
 import de.raphaelmuesseler.financer.shared.model.db.DatabaseCategory;
 import de.raphaelmuesseler.financer.shared.model.db.DatabaseSettings;
 import de.raphaelmuesseler.financer.shared.model.db.DatabaseToken;
@@ -21,10 +22,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
-import java.util.Currency;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.logging.Logger;
 
 @SuppressWarnings("WeakerAccess")
@@ -291,5 +289,24 @@ public class ServiceTest {
                 .getChildren().get(0).getChildren().get(0).getValue().getName());
         Assertions.assertEquals(2, result.getResult().getCategoryTreeByCategoryClass(BaseCategory.CategoryClass.FIXED_REVENUE)
                 .getChildren().get(0).getChildren().get(0).getChildren().size());
+    }
+
+    @Test
+    public void addCategory() {
+        Category category = new Category();
+        category.setUser(user);
+        category.setCategoryClass(BaseCategory.CategoryClass.FIXED_REVENUE);
+        category.setName("Another category");
+        category.setParentId(-1);
+
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("user", new User(user));
+        parameters.put("category", category);
+        service.addCategory(logger, parameters);
+
+        parameters.clear();
+        parameters.put("userId", user.getId());
+        Assertions.assertEquals(2, service.getUsersCategories(logger, parameters).getResult()
+                .getCategoryTreeByCategoryClass(BaseCategory.CategoryClass.FIXED_REVENUE).getChildren().size());
     }
 }
