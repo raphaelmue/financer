@@ -1,7 +1,7 @@
 package de.raphaelmuesseler.financer.shared.model.transactions;
 
 import de.raphaelmuesseler.financer.shared.model.categories.CategoryTree;
-import de.raphaelmuesseler.financer.shared.model.db.DatabaseTransaction;
+import de.raphaelmuesseler.financer.shared.model.db.DatabaseVariableTransaction;
 import de.raphaelmuesseler.financer.shared.model.db.DatabaseTransactionAttachment;
 import de.raphaelmuesseler.financer.util.date.DateUtil;
 
@@ -9,9 +9,19 @@ import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
-public class VariableTransaction extends DatabaseTransaction implements Transaction {
+public class VariableTransaction extends DatabaseVariableTransaction implements Transaction {
     private CategoryTree categoryTree;
     private final Set<Attachment> attachments;
+
+    public VariableTransaction(DatabaseVariableTransaction databaseVariableTransaction, CategoryTree categoryTree) {
+        this(databaseVariableTransaction.getId(),
+                databaseVariableTransaction.getAmount(),
+                databaseVariableTransaction.getValueDate(),
+                categoryTree,
+                databaseVariableTransaction.getProduct(),
+                databaseVariableTransaction.getPurpose(),
+                databaseVariableTransaction.getShop());
+    }
 
     public VariableTransaction(int id, double amount, LocalDate valueDate, CategoryTree category, String product, String purpose, String shop) {
         this.setId(id);

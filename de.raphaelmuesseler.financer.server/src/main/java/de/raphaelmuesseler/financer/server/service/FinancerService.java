@@ -4,11 +4,10 @@ import de.raphaelmuesseler.financer.server.db.HibernateUtil;
 import de.raphaelmuesseler.financer.shared.connection.ConnectionResult;
 import de.raphaelmuesseler.financer.shared.model.categories.BaseCategory;
 import de.raphaelmuesseler.financer.shared.model.categories.Category;
+import de.raphaelmuesseler.financer.shared.model.categories.CategoryTree;
 import de.raphaelmuesseler.financer.shared.model.categories.CategoryTreeImpl;
-import de.raphaelmuesseler.financer.shared.model.db.DatabaseCategory;
-import de.raphaelmuesseler.financer.shared.model.db.DatabaseSettings;
-import de.raphaelmuesseler.financer.shared.model.db.DatabaseToken;
-import de.raphaelmuesseler.financer.shared.model.db.DatabaseUser;
+import de.raphaelmuesseler.financer.shared.model.db.*;
+import de.raphaelmuesseler.financer.shared.model.transactions.VariableTransaction;
 import de.raphaelmuesseler.financer.shared.model.user.Token;
 import de.raphaelmuesseler.financer.shared.model.user.User;
 import de.raphaelmuesseler.financer.util.Hash;
@@ -26,7 +25,7 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "WeakerAccess"})
 public class FinancerService {
 
     private static FinancerService INSTANCE = null;
@@ -336,7 +335,7 @@ public class FinancerService {
         transaction = session.beginTransaction();
         session.createQuery("delete from DatabaseFixedTransaction where category = :categoryId")
                 .setParameter("categoryId", category.getId());
-        session.createQuery("delete from DatabaseTransaction where category = :categoryId")
+        session.createQuery("delete from DatabaseVariableTransaction where category = :categoryId")
                 .setParameter("categoryId", category.getId());
         transaction.commit();
 
@@ -367,48 +366,37 @@ public class FinancerService {
         }
     }
 
-//    public ConnectionResult<List<VariableTransaction>> getTransactions(Logger logger, Map<String, Object> parameters) throws Exception {
-//        logger.log(Level.INFO, "Fetching users transaction ...");
-//        List<VariableTransaction> transactions = new ArrayList<>();
-//
-//        Map<String, Object> whereClause = new HashMap<>();
-//        whereClause.put("user_id", ((User) parameters.get("user")).getId());
-//
-//        JSONArray jsonArray = this.database.get(Database.Table.TRANSACTIONS, whereClause);
-//        whereClause.clear();
-//        for (int i = 0; i < jsonArray.length(); i++) {
-//            JSONObject jsonObjectTransaction = jsonArray.getJSONObject(i);
-//
-//            whereClause.put("id", jsonObjectTransaction.getInt("cat_id"));
-//            JSONObject jsonObjectCategory = this.database.get(Database.Table.USERS_CATEGORIES, whereClause).getJSONObject(0);
-//            Category category = new Category(jsonObjectCategory.getInt("id"),
-//                    jsonObjectCategory.getString("name"),
-//                    (jsonObjectCategory.get("parent_id") == "null" ? -1 : jsonObjectCategory.getInt("parent_id")),
-//                    jsonObjectCategory.getInt("cat_id"));
-//
-//            // TODO get real CategoryTreeImpl instance
-//            VariableTransaction transaction = new VariableTransaction(jsonObjectTransaction.getInt("id"),
-//                    jsonObjectTransaction.getDouble("amount"),
-//                    new CategoryTreeImpl(BaseCategory.CategoryClass.getCategoryClassByIndex(category.getRootId() - 1), null, category),
-//                    jsonObjectTransaction.getString("product"),
-//                    jsonObjectTransaction.getString("purpose"),
-//                    ((Date) jsonObjectTransaction.get("value_date")).toLocalDate(),
-//                    jsonObjectTransaction.getString("shop"));
-//
-//            whereClause.clear();
-//            whereClause.put("transaction_id", transaction.getId());
-//            for (DatabaseObject databaseObject : this.database.getObject(Database.Table.TRANSACTIONS_ATTACHMENTS,
-//                    Attachment.class, whereClause, "id, transaction_id, name, upload_date")) {
-//                transaction.getDatabaseAttachments().add((AttachmentWithContent) new AttachmentWithContent().fromDatabaseObject(databaseObject));
-//            }
-//
-//            transactions.add(transaction);
-//
-//            whereClause.clear();
-//        }
-//        return new ConnectionResult<>(transactions);
-//    }
-//
+    /**
+     * Returns all transactions of a user.
+     *
+     * @param parameters [int userId, BaseCategory baseCategory]
+     * @return BaseCategory with transactions
+     */
+    public ConnectionResult<BaseCategory> getTransactions(Logger logger, Map<String, Object> parameters) {
+        logger.log(Level.INFO, "Fetching users transaction ...");
+
+        BaseCategory baseCategory = (BaseCategory) parameters.get("baseCategory");
+
+        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+        Transaction transaction = session.beginTransaction();
+
+        baseCategory.traverse(treeObject -> {
+            List<DatabaseVariableTransaction> databaseVariableTransactions = session
+                    .createQuery("from DatabaseVariableTransaction where category = :category",
+                            DatabaseVariableTransaction.class)
+                    .setParameter("category", treeObject.getValue().toDatabaseAccessObject())
+                    .list();
+            Set<VariableTransaction> variableTransactions = new HashSet<>();
+            for (DatabaseVariableTransaction databaseVariableTransaction : databaseVariableTransactions) {
+                variableTransactions.add(new VariableTransaction(databaseVariableTransaction, (CategoryTree) treeObject));
+            }
+            ((CategoryTree) treeObject).getTransactions().addAll(variableTransactions);
+        });
+
+        transaction.commit();
+        return new ConnectionResult<>(baseCategory);
+    }
+
 //    public ConnectionResult<VariableTransaction> addTransaction(Logger logger, Map<String, Object> parameters) throws Exception {
 //        logger.log(Level.INFO, "Adding transaction ...");
 //        User user = (User) parameters.get("user");

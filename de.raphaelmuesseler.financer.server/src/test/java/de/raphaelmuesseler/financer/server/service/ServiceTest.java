@@ -5,10 +5,7 @@ import de.raphaelmuesseler.financer.server.db.HibernateUtil;
 import de.raphaelmuesseler.financer.shared.connection.ConnectionResult;
 import de.raphaelmuesseler.financer.shared.model.categories.BaseCategory;
 import de.raphaelmuesseler.financer.shared.model.categories.Category;
-import de.raphaelmuesseler.financer.shared.model.db.DatabaseCategory;
-import de.raphaelmuesseler.financer.shared.model.db.DatabaseSettings;
-import de.raphaelmuesseler.financer.shared.model.db.DatabaseToken;
-import de.raphaelmuesseler.financer.shared.model.db.DatabaseUser;
+import de.raphaelmuesseler.financer.shared.model.db.*;
 import de.raphaelmuesseler.financer.shared.model.user.Settings;
 import de.raphaelmuesseler.financer.shared.model.user.User;
 import de.raphaelmuesseler.financer.shared.model.user.UserSettings;
@@ -34,6 +31,7 @@ public class ServiceTest {
     private static DatabaseToken token;
     private static DatabaseSettings settings;
     private static DatabaseCategory databaseCategory;
+    private static DatabaseVariableTransaction variableTransaction;
 
     @BeforeAll
     public static void beforeAll() {
@@ -117,6 +115,17 @@ public class ServiceTest {
         categories.add(databaseCategory4);
 
         user.setCategories(categories);
+
+        transaction.commit();
+        session = HibernateUtil.getSessionFactory().getCurrentSession();
+        transaction = session.beginTransaction();
+
+        variableTransaction = new DatabaseVariableTransaction();
+        variableTransaction.setAmount(50.0);
+        variableTransaction.setCategory(databaseCategory);
+        variableTransaction.setProduct("Test Product");
+        variableTransaction.setValueDate(LocalDate.now());
+        session.save(variableTransaction);
 
         transaction.commit();
     }
@@ -334,5 +343,22 @@ public class ServiceTest {
         parameters.put("userId", user.getId());
         Assertions.assertEquals(0, service.getUsersCategories(logger, parameters).getResult()
                 .getCategoryTreeByCategoryClass(BaseCategory.CategoryClass.FIXED_REVENUE).getChildren().size());
+    }
+
+    @Test
+    public void testGetTransactions() {
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("userId", user.getId());
+        BaseCategory baseCategory = service.getUsersCategories(logger, parameters).getResult();
+
+        parameters.clear();
+        parameters.put("userId", user.getId());
+        parameters.put("baseCategory", baseCategory);
+        ConnectionResult<BaseCategory> result = service.getTransactions(logger, parameters);
+        Assertions.assertNotNull(result.getResult());
+        Assertions.assertNull(result.getException());
+
+        Assertions.assertEquals(1, result.getResult().getCategoryTreeByCategoryClass(BaseCategory.CategoryClass.FIXED_REVENUE)
+            .getChildren().get(0).getTransactions().size());
     }
 }

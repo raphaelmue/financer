@@ -3,16 +3,13 @@
         "http://hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping package="de.raphaelmuesseler.financer.shared.model.db">
-    <class name="DatabaseTransaction" table="transactions">
+    <class name="DatabaseVariableTransaction" table="transactions">
         <id name="id" type="int">
             <column name="id"/>
             <generator class="increment"/>
         </id>
-        <many-to-one name="user" class="DatabaseUser" insert="false" update="false">
-            <column name="user_id"/>
-        </many-to-one>
-        <many-to-one name="category" class="DatabaseCategory" insert="false" update="false">
-            <column name="cat_id"/>
+        <many-to-one name="category" class="DatabaseCategory" fetch="select">
+            <column name="cat_id" not-null="true"/>
         </many-to-one>
         <property name="valueDate" type="java.time.LocalDate">
             <column name="value_date"/>

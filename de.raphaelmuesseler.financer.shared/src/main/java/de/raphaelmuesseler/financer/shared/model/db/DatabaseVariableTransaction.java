@@ -2,9 +2,8 @@ package de.raphaelmuesseler.financer.shared.model.db;
 
 import java.time.LocalDate;
 
-public class DatabaseTransaction {
+public class DatabaseVariableTransaction {
     private int id;
-    private DatabaseUser user;
     private DatabaseCategory category;
     private LocalDate valueDate;
     private double amount;
@@ -18,14 +17,6 @@ public class DatabaseTransaction {
 
     public void setId(int id) {
         this.id = id;
-    }
-
-    public DatabaseUser getUser() {
-        return user;
-    }
-
-    public void setUser(DatabaseUser user) {
-        this.user = user;
     }
 
     public DatabaseCategory getCategory() {
