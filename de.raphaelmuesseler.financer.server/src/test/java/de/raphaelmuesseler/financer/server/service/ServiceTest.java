@@ -383,7 +383,6 @@ public class ServiceTest {
         ConnectionResult<VariableTransaction> result = service.addTransaction(logger, parameters);
         Assertions.assertTrue(result.getResult().getId() > 0);
 
-
         parameters.clear();
         parameters.put("userId", user.getId());
         BaseCategory baseCategory = service.getUsersCategories(logger, parameters).getResult();
@@ -394,5 +393,22 @@ public class ServiceTest {
         Assertions.assertEquals(2, service.getTransactions(logger, parameters).getResult()
                 .getCategoryTreeByCategoryClass(BaseCategory.CategoryClass.FIXED_REVENUE)
                 .getChildren().get(0).getTransactions().size());
+    }
+
+    @Test
+    public void testUpdateTransaction() {
+        final String newProduct = "A different product";
+        variableTransaction.setProduct(newProduct);
+
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("variableTransaction", new VariableTransaction(variableTransaction));
+        service.updateTransaction(logger, parameters);
+
+        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+        Transaction transaction = session.beginTransaction();
+        VariableTransaction variableTransactionToAssert = new VariableTransaction(session.get(DatabaseVariableTransaction.class,
+                variableTransaction.getId()));
+        Assertions.assertEquals(newProduct, variableTransactionToAssert.getProduct());
+        transaction.commit();
     }
 }

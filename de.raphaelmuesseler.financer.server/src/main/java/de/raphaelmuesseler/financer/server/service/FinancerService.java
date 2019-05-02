@@ -399,6 +399,7 @@ public class FinancerService {
 
     /**
      * Adds a new transaction.
+     *
      * @param parameters [VariableTransaction variableTransaction]
      * @return variable transaction object
      */
@@ -414,26 +415,24 @@ public class FinancerService {
         return new ConnectionResult<>(variableTransaction);
     }
 
-//    public ConnectionResult<Void> updateTransaction(Logger logger, Map<String, Object> parameters) throws Exception {
-//        logger.log(Level.INFO, "Adding transaction ...");
-//        VariableTransaction transaction = (VariableTransaction) parameters.get("transaction");
-//
-//        Map<String, Object> where = new HashMap<>();
-//        where.put("id", transaction.getId());
-//
-//        Map<String, Object> values = new HashMap<>();
-//        values.put("value_date", transaction.getValueDate());
-//        values.put("amount", transaction.getAmount());
-//        values.put("product", transaction.getProduct());
-//        values.put("purpose", transaction.getPurpose());
-//        values.put("shop", transaction.getShop());
-//        values.put("cat_id", transaction.getCategoryTree().getValue().getId());
-//
-//        this.database.update(Database.Table.TRANSACTIONS, where, values);
-//
-//        return new ConnectionResult<>(null);
-//    }
-//
+    /**
+     * Updates a variable transaction.
+     *
+     * @param parameters [VariableTransaction variableTransaction]
+     * @return void
+     */
+    public ConnectionResult<Void> updateTransaction(Logger logger, Map<String, Object> parameters) {
+        logger.log(Level.INFO, "Adding transaction ...");
+        VariableTransaction variableTransaction = (VariableTransaction) parameters.get("variableTransaction");
+
+        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+        Transaction transaction = session.beginTransaction();
+        session.update(variableTransaction.toDatabaseAccessObject());
+        transaction.commit();
+
+        return new ConnectionResult<>(null);
+    }
+
 //    public ConnectionResult<AttachmentWithContent> uploadTransactionAttachment(Logger logger, Map<String, Object> parameters) throws Exception {
 //        logger.log(Level.INFO, "Uploading AttachmentWithContent ...");
 //        AttachmentWithContent result = new AttachmentWithContent();

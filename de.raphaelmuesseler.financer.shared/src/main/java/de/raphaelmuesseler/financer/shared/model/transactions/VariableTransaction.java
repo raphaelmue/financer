@@ -1,6 +1,8 @@
 package de.raphaelmuesseler.financer.shared.model.transactions;
 
+import de.raphaelmuesseler.financer.shared.model.categories.Category;
 import de.raphaelmuesseler.financer.shared.model.categories.CategoryTree;
+import de.raphaelmuesseler.financer.shared.model.categories.CategoryTreeImpl;
 import de.raphaelmuesseler.financer.shared.model.db.DatabaseTransactionAttachment;
 import de.raphaelmuesseler.financer.shared.model.db.DatabaseVariableTransaction;
 import de.raphaelmuesseler.financer.util.date.DateUtil;
@@ -12,6 +14,11 @@ import java.util.Set;
 public class VariableTransaction extends DatabaseVariableTransaction implements Transaction {
     private CategoryTree categoryTree;
     private final Set<Attachment> attachments;
+
+    public VariableTransaction(DatabaseVariableTransaction databaseVariableTransaction) {
+        this(databaseVariableTransaction,
+                new CategoryTreeImpl(new Category(databaseVariableTransaction.getCategory())));
+    }
 
     public VariableTransaction(DatabaseVariableTransaction databaseVariableTransaction, CategoryTree categoryTree) {
         this(databaseVariableTransaction.getId(),
@@ -28,11 +35,13 @@ public class VariableTransaction extends DatabaseVariableTransaction implements 
         this.setAmount(amount);
         this.setValueDate(valueDate);
         this.setCategoryTree(category);
-        this.setCategory(this.categoryTree.getValue());
         this.setProduct(product);
         this.setPurpose(purpose);
         this.setShop(shop);
         this.attachments = new HashSet<>();
+        if (this.categoryTree != null) {
+            this.setCategory(this.categoryTree.getValue());
+        }
     }
 
     public CategoryTree getCategoryTree() {
