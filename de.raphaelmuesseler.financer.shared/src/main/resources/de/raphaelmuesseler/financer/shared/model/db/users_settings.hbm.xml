@@ -8,8 +8,8 @@
             <column name="id" />
             <generator class="increment" />
         </id>
-        <many-to-one name="user" class="DatabaseUser" insert="false" update="false">
-            <column name="user_id"/>
+        <many-to-one name="user" class="DatabaseUser" fetch="select">
+            <column name="user_id" not-null="true"/>
         </many-to-one>
         <property name="property" type="java.lang.String">
             <column name="property" />

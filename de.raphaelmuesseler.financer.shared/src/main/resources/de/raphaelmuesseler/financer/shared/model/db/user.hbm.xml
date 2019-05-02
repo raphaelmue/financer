@@ -33,7 +33,7 @@
             <key column="user_id" not-null="true"/>
             <one-to-many class="DatabaseCategory"/>
         </set>
-        <set name="databaseSettings" table="users_settings" fetch="select" cascade="all">
+        <set name="databaseSettings" table="users_settings"  lazy="true" inverse="true" cascade="all" fetch="select">
             <key column="user_id" not-null="true"/>
             <one-to-many class="DatabaseSettings"/>
         </set>

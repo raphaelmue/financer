@@ -1,10 +1,8 @@
 package de.raphaelmuesseler.financer.shared.model.db;
 
-import de.raphaelmuesseler.financer.shared.model.user.User;
-
 public class DatabaseSettings {
     private int id;
-    private User user;
+    private DatabaseUser user;
     private String property;
     private String value;
 
@@ -12,7 +10,7 @@ public class DatabaseSettings {
         return id;
     }
 
-    public User getUser() {
+    public DatabaseUser getUser() {
         return user;
     }
 
@@ -28,7 +26,7 @@ public class DatabaseSettings {
         this.id = id;
     }
 
-    public void setUser(User user) {
+    public void setUser(DatabaseUser user) {
         this.user = user;
     }
 

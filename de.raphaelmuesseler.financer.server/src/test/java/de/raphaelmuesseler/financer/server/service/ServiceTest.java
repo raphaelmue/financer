@@ -3,8 +3,10 @@ package de.raphaelmuesseler.financer.server.service;
 import de.raphaelmuesseler.financer.server.db.DatabaseName;
 import de.raphaelmuesseler.financer.server.db.HibernateUtil;
 import de.raphaelmuesseler.financer.shared.connection.ConnectionResult;
+import de.raphaelmuesseler.financer.shared.model.db.DatabaseSettings;
 import de.raphaelmuesseler.financer.shared.model.db.DatabaseToken;
 import de.raphaelmuesseler.financer.shared.model.db.DatabaseUser;
+import de.raphaelmuesseler.financer.shared.model.user.Settings;
 import de.raphaelmuesseler.financer.shared.model.user.User;
 import de.raphaelmuesseler.financer.util.Hash;
 import de.raphaelmuesseler.financer.util.RandomString;
@@ -16,6 +18,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
+import java.util.Currency;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.logging.Logger;
@@ -27,6 +30,7 @@ public class ServiceTest {
 
     private static DatabaseUser user;
     private static DatabaseToken token;
+    private static DatabaseSettings settings;
 
     @BeforeAll
     public static void beforeAll() {
@@ -62,6 +66,14 @@ public class ServiceTest {
 
         user.setTokens(new HashSet<>());
         user.getTokens().add(token);
+
+        settings = new DatabaseSettings();
+        settings.setProperty(Settings.Property.CURRENCY.getName());
+        settings.setValue("EUR");
+        settings.setUser(user);
+
+        user.setDatabaseSettings(new HashSet<>());
+        user.getDatabaseSettings().add(settings);
 
         session.save(user);
         transaction.commit();
@@ -121,6 +133,16 @@ public class ServiceTest {
         parameters.put("email", "test@test.com");
         result = service.checkCredentials(logger, parameters);
         Assertions.assertNull(result.getResult());
+    }
+
+    @Test
+    public void testGetUsersSettings() {
+        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+        Transaction transaction = session.beginTransaction();
+        User userToAssert = new User(session.get(DatabaseUser.class, user.getId()));
+
+        Assertions.assertEquals(settings.getValue(), userToAssert.getSettings().getValueByProperty(Settings.Property.CURRENCY));
+        transaction.commit();
     }
 
     @Test

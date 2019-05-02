@@ -36,6 +36,7 @@ public class User extends DatabaseUser {
         }
 
     }
+
     private final Settings settings;
 
     public User(DatabaseUser databaseUser) {
@@ -49,6 +50,9 @@ public class User extends DatabaseUser {
                 Gender.getGenderByName(databaseUser.getGenderName()));
         if (databaseUser.getTokens() != null) {
             this.setTokens(databaseUser.getTokens());
+        }
+        if (databaseUser.getDatabaseSettings() != null) {
+            this.setDatabaseSettings(databaseUser.getDatabaseSettings());
         }
     }
 
@@ -71,11 +75,6 @@ public class User extends DatabaseUser {
         }
 
         this.settings = new UserSettings();
-        if (this.getDatabaseSettings() != null) {
-            for (DatabaseSettings databaseSettings : this.getDatabaseSettings()) {
-                this.settings.setValueByProperty(Settings.Property.getPropertyByName(databaseSettings.getProperty()), databaseSettings.getValue());
-            }
-        }
     }
 
     @Override
@@ -90,6 +89,7 @@ public class User extends DatabaseUser {
         databaseUser.setBirthDate(this.getBirthDate());
         databaseUser.setGenderName(this.getGender().getName());
         databaseUser.setTokens(this.getTokens());
+        databaseUser.setDatabaseSettings(this.getDatabaseSettings());
         return databaseUser;
     }
 
@@ -98,6 +98,11 @@ public class User extends DatabaseUser {
     }
 
     public Settings getSettings() {
+        if (this.getDatabaseSettings() != null) {
+            for (DatabaseSettings databaseSettings : super.getDatabaseSettings()) {
+                this.settings.setValueByProperty(Settings.Property.getPropertyByName(databaseSettings.getProperty()), databaseSettings.getValue());
+            }
+        }
         return this.settings;
     }
 
@@ -115,5 +120,12 @@ public class User extends DatabaseUser {
 
     public void setGender(Gender gender) {
         this.setGenderName(gender.getName());
+    }
+
+    @Override
+    public void setDatabaseSettings(Set<DatabaseSettings> settings) {
+        if (settings != null) {
+            super.setDatabaseSettings(settings);
+        }
     }
 }

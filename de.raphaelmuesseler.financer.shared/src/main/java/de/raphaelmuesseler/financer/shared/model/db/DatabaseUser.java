@@ -91,11 +91,11 @@ public class DatabaseUser implements Serializable, DatabaseAccessObject {
         this.categories = categories;
     }
 
-    protected Set<DatabaseSettings> getDatabaseSettings() {
+    public Set<DatabaseSettings> getDatabaseSettings() {
         return databaseSettings;
     }
 
-    protected void setDatabaseSettings(Set<DatabaseSettings> settings) {
+    public void setDatabaseSettings(Set<DatabaseSettings> settings) {
         this.databaseSettings = settings;
     }
 

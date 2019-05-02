@@ -217,19 +217,6 @@ public class FinancerService {
         return new ConnectionResult<>(null);
     }
 
-//    private void getUsersSettings(Logger logger, User user) throws SQLException {
-//        logger.log(Level.INFO, "Fetching users settings ...");
-//
-//        Map<String, Object> whereParameters = new HashMap<>();
-//        whereParameters.put("user_id", user.getId());
-//
-//        JSONArray result = this.database.get(Database.Table.USERS_SETTINGS, whereParameters);
-//        for (int i = 0; i < result.length(); i++) {
-//            user.getDatabaseSettings().setValueByProperty(result.getJSONObject(i).getString("property"),
-//                    result.getJSONObject(i).getString("value"));
-//        }
-//    }
-//
 //    public ConnectionResult<User> updateUsersSettings(Logger logger, Map<String, Object> parameters) throws Exception {
 //        logger.log(Level.INFO, "Updating users settings ...");
 //        User user = (User) parameters.get("user");
