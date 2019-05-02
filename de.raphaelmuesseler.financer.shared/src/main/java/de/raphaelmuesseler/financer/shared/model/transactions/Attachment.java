@@ -28,6 +28,10 @@ public class Attachment extends TransactionAttachmentDAO implements Serializable
         super.setContent(new SerialBlob(content));
     }
 
+    public byte[] getByteContent() throws SQLException {
+        return super.getContent().getBytes(1, (int) super.getContent().length());
+    }
+
     @Override
     public TransactionAttachmentDAO toDatabaseAccessObject() {
         TransactionAttachmentDAO databaseAttachment = new TransactionAttachmentDAO();

@@ -91,7 +91,7 @@ public class FinancerService {
      * @param system    operating system
      * @param isMobile  defines whether operating system is a mobile device
      */
-    User generateToken(User user, String ipAddress, String system, boolean isMobile) {
+    synchronized User generateToken(User user, String ipAddress, String system, boolean isMobile) {
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
         Transaction transaction = session.beginTransaction();
 
@@ -173,7 +173,7 @@ public class FinancerService {
      * @param parameters [User user, String ipAddress, String system, boolean isMobile]
      * @return void
      */
-    public ConnectionResult<User> registerUser(Logger logger, Map<String, Object> parameters) {
+    public synchronized ConnectionResult<User> registerUser(Logger logger, Map<String, Object> parameters) {
         logger.log(Level.INFO, "Registering new user ...");
         User user = (User) parameters.get("user");
 
@@ -195,7 +195,7 @@ public class FinancerService {
      * @param parameters [User user]
      * @return void
      */
-    public ConnectionResult<Void> changePassword(Logger logger, Map<String, Object> parameters) {
+    public synchronized ConnectionResult<Void> changePassword(Logger logger, Map<String, Object> parameters) {
         logger.log(Level.INFO, "Changing Users Password ...");
         User user = (User) parameters.get("user");
 
@@ -213,7 +213,7 @@ public class FinancerService {
      * @param parameters [int tokenId]
      * @return void
      */
-    public ConnectionResult<Void> deleteToken(Logger logger, Map<String, Object> parameters) {
+    public synchronized ConnectionResult<Void> deleteToken(Logger logger, Map<String, Object> parameters) {
         logger.log(Level.INFO, "Deleting users token ...");
 
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
@@ -231,7 +231,7 @@ public class FinancerService {
      * @param parameters [User user]
      * @return void
      */
-    public ConnectionResult<Void> updateUsersSettings(Logger logger, Map<String, Object> parameters) {
+    public synchronized ConnectionResult<Void> updateUsersSettings(Logger logger, Map<String, Object> parameters) {
         logger.log(Level.INFO, "Updating users settings ...");
         User user = (User) parameters.get("user");
 
@@ -253,7 +253,7 @@ public class FinancerService {
      * @param parameters [int userId]
      * @return BaseCategory object
      */
-    public ConnectionResult<BaseCategory> getUsersCategories(Logger logger, Map<String, Object> parameters) throws IllegalArgumentException {
+    public synchronized ConnectionResult<BaseCategory> getUsersCategories(Logger logger, Map<String, Object> parameters) throws IllegalArgumentException {
         logger.log(Level.INFO, "Fetching users categories ...");
 
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
@@ -286,7 +286,7 @@ public class FinancerService {
      * @param parameters [User user, Category category]
      * @return Category object
      */
-    public ConnectionResult<Category> addCategory(Logger logger, Map<String, Object> parameters) {
+    public synchronized ConnectionResult<Category> addCategory(Logger logger, Map<String, Object> parameters) {
         logger.log(Level.INFO, "Adding new category ...");
         User user = (User) parameters.get("user");
         Category category = (Category) parameters.get("category");
@@ -305,7 +305,7 @@ public class FinancerService {
      * @param parameters [Category category]
      * @return void
      */
-    public ConnectionResult<Void> updateCategory(Logger logger, Map<String, Object> parameters) {
+    public synchronized ConnectionResult<Void> updateCategory(Logger logger, Map<String, Object> parameters) {
         logger.log(Level.INFO, "Updating users categories ...");
         Category category = (Category) parameters.get("category");
 
@@ -323,7 +323,7 @@ public class FinancerService {
      * @param parameters [Category category]
      * @return void
      */
-    public ConnectionResult<Void> deleteCategory(Logger logger, Map<String, Object> parameters) {
+    public synchronized ConnectionResult<Void> deleteCategory(Logger logger, Map<String, Object> parameters) {
         logger.log(Level.INFO, "Deleting category ...");
         Category category = (Category) parameters.get("category");
 
@@ -350,7 +350,7 @@ public class FinancerService {
      *
      * @param category category to delete children
      */
-    private void deleteCategoryChildren(Category category) {
+    private synchronized void deleteCategoryChildren(Category category) {
         List<CategoryDAO> categories;
         int parentId = category.getId();
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
@@ -375,7 +375,7 @@ public class FinancerService {
      * @param parameters [int userId, BaseCategory baseCategory]
      * @return BaseCategory with transactions
      */
-    public ConnectionResult<BaseCategory> getTransactions(Logger logger, Map<String, Object> parameters) {
+    public synchronized ConnectionResult<BaseCategory> getTransactions(Logger logger, Map<String, Object> parameters) {
         logger.log(Level.INFO, "Fetching users transaction ...");
 
         BaseCategory baseCategory = (BaseCategory) parameters.get("baseCategory");
@@ -406,7 +406,7 @@ public class FinancerService {
      * @param parameters [VariableTransaction variableTransaction]
      * @return variable transaction object
      */
-    public ConnectionResult<VariableTransaction> addTransaction(Logger logger, Map<String, Object> parameters) {
+    public synchronized ConnectionResult<VariableTransaction> addTransaction(Logger logger, Map<String, Object> parameters) {
         logger.log(Level.INFO, "Adding transaction ...");
         VariableTransaction variableTransaction = (VariableTransaction) parameters.get("variableTransaction");
 
@@ -424,7 +424,7 @@ public class FinancerService {
      * @param parameters [VariableTransaction variableTransaction]
      * @return void
      */
-    public ConnectionResult<Void> updateTransaction(Logger logger, Map<String, Object> parameters) {
+    public synchronized ConnectionResult<Void> updateTransaction(Logger logger, Map<String, Object> parameters) {
         logger.log(Level.INFO, "Adding transaction ...");
         VariableTransaction variableTransaction = (VariableTransaction) parameters.get("variableTransaction");
 
@@ -442,7 +442,7 @@ public class FinancerService {
      * @param parameters [File attachmentFile, VariableTransaction transaction, byte[] content]
      * @return Attachment object
      */
-    public ConnectionResult<Attachment> uploadTransactionAttachment(Logger logger, Map<String, Object> parameters) throws SQLException {
+    public synchronized ConnectionResult<Attachment> uploadTransactionAttachment(Logger logger, Map<String, Object> parameters) throws SQLException {
         logger.log(Level.INFO, "Uploading AttachmentWithContent ...");
         Attachment result = new Attachment();
         File attachmentFile = (File) parameters.get("attachmentFile");
@@ -460,28 +460,44 @@ public class FinancerService {
         return new ConnectionResult<>(new Attachment(result));
     }
 
-//    public ConnectionResult<AttachmentWithContent> getAttachment(Logger logger, Map<String, Object> parameters) throws Exception {
-//        logger.log(Level.INFO, "Fetching attachment ...");
-//        Map<String, Object> whereParameters = new HashMap<>();
-//        whereParameters.put("id", parameters.get("id"));
-//
-//        List<DatabaseObject> result = this.database.getObject(Database.Table.TRANSACTIONS_ATTACHMENTS, AttachmentWithContent.class, whereParameters);
-//        if (result != null && result.size() > 0) {
-//            return new ConnectionResult<>((AttachmentWithContent) result.get(0));
-//        }
-//
-//        return new ConnectionResult<>(null);
-//    }
-//
-//    public ConnectionResult<Void> deleteAttachment(Logger logger, Map<String, Object> parameters) throws Exception {
-//        logger.log(Level.INFO, "Deleting attachment ...");
-//        Map<String, Object> whereParamters = new HashMap<>();
-//        whereParamters.put("id", parameters.get("id"));
-//
-//        this.database.delete(Database.Table.TRANSACTIONS_ATTACHMENTS, whereParamters);
-//
-//        return new ConnectionResult<>(null);
-//    }
+    /**
+     * Returns an attachment with content.
+     *
+     * @param parameters [int attachmentId]
+     * @return Attachment object or null, if none found
+     */
+    public ConnectionResult<Attachment> getAttachment(Logger logger, Map<String, Object> parameters) throws SQLException {
+        logger.log(Level.INFO, "Fetching attachment ...");
+
+        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+        Transaction transaction = session.beginTransaction();
+        TransactionAttachmentDAO databaseAttachment = session.get(TransactionAttachmentDAO.class, (int) parameters.get("attachmentId"));
+        Attachment attachment = null;
+        if (databaseAttachment != null) {
+            attachment = new Attachment(databaseAttachment);
+        }
+        transaction.commit();
+
+        return new ConnectionResult<>(attachment);
+    }
+
+    /**
+     * Deletes a attachment.
+     *
+     * @param parameters [int attachmentId]
+     * @return void
+     */
+    public ConnectionResult<Void> deleteAttachment(Logger logger, Map<String, Object> parameters) {
+        logger.log(Level.INFO, "Deleting attachment ...");
+
+        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+        Transaction transaction = session.beginTransaction();
+        session.createQuery("delete from TransactionAttachmentDAO where id = :attachmentId")
+                .setParameter("attachmentId", parameters.get("attachmentId"));
+        transaction.commit();
+
+        return new ConnectionResult<>(null);
+    }
 //
 //    public ConnectionResult<Void> deleteTransaction(Logger logger, Map<String, Object> parameters) throws Exception {
 //        logger.log(Level.INFO, "Adding transaction ...");

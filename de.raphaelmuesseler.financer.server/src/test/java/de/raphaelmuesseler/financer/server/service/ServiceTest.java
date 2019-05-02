@@ -429,4 +429,26 @@ public class ServiceTest {
         Assertions.assertNull(result.getException());
         Assertions.assertTrue(result.getResult().getId() > 0);
     }
+
+    @Test
+    public void testGetAttachment() throws SQLException {
+        testUploadAttachment();
+
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("attachmentId", 1);
+        ConnectionResult<Attachment> result = service.getAttachment(logger, parameters);
+        Assertions.assertNotNull(result.getResult());
+        Assertions.assertNull(result.getException());
+        Assertions.assertTrue(result.getResult().getByteContent() != null && result.getResult().getByteContent().length == 1024);
+    }
+
+    @Test
+    public void testDeleteAttachment() throws SQLException {
+        testUploadAttachment();
+
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("attachmentId", 1);
+        service.deleteAttachment(logger, parameters);
+        Assertions.assertNull(service.getAttachment(logger, parameters).getResult());
+    }
 }

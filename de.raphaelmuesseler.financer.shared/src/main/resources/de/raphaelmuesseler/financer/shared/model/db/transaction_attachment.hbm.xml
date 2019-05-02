@@ -3,7 +3,7 @@
         "http://hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping package="de.raphaelmuesseler.financer.shared.model.db">
-    <class name="de.raphaelmuesseler.financer.shared.model.db.TransactionAttachmentDAO" table="transactions_attachments">
+    <class name="TransactionAttachmentDAO" table="transactions_attachments">
         <id name="id" type="int">
             <column name="id"/>
             <generator class="increment"/>
