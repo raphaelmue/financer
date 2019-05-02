@@ -3,6 +3,8 @@ package de.raphaelmuesseler.financer.server.service;
 import de.raphaelmuesseler.financer.server.db.DatabaseName;
 import de.raphaelmuesseler.financer.server.db.HibernateUtil;
 import de.raphaelmuesseler.financer.shared.connection.ConnectionResult;
+import de.raphaelmuesseler.financer.shared.model.categories.BaseCategory;
+import de.raphaelmuesseler.financer.shared.model.db.DatabaseCategory;
 import de.raphaelmuesseler.financer.shared.model.db.DatabaseSettings;
 import de.raphaelmuesseler.financer.shared.model.db.DatabaseToken;
 import de.raphaelmuesseler.financer.shared.model.db.DatabaseUser;
@@ -22,6 +24,7 @@ import java.time.LocalDate;
 import java.util.Currency;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Set;
 import java.util.logging.Logger;
 
 @SuppressWarnings("WeakerAccess")
@@ -32,6 +35,7 @@ public class ServiceTest {
     private static DatabaseUser user;
     private static DatabaseToken token;
     private static DatabaseSettings settings;
+    private static Set<DatabaseCategory> categories;
 
     @BeforeAll
     public static void beforeAll() {
@@ -72,11 +76,50 @@ public class ServiceTest {
         settings.setProperty(Settings.Property.CURRENCY.getName());
         settings.setValue("EUR");
         settings.setUser(user);
-
         user.setDatabaseSettings(new HashSet<>());
         user.getDatabaseSettings().add(settings);
 
         session.save(user);
+
+        transaction.commit();
+        session = HibernateUtil.getSessionFactory().getCurrentSession();
+        transaction = session.beginTransaction();
+
+        categories = new HashSet<>();
+        DatabaseCategory databaseCategory = new DatabaseCategory();
+        databaseCategory.setUser(user);
+        databaseCategory.setCategoryRoot(0);
+        databaseCategory.setName("First Layer");
+        databaseCategory.setParentId(-1);
+        categories.add(databaseCategory);
+        session.save(databaseCategory);
+
+        DatabaseCategory databaseCategory2 = new DatabaseCategory();
+        databaseCategory2.setUser(user);
+        databaseCategory2.setCategoryRoot(0);
+        databaseCategory2.setName("Second Layer");
+        databaseCategory2.setParentId(databaseCategory.getId());
+        session.save(databaseCategory2);
+        categories.add(databaseCategory2);
+
+        DatabaseCategory databaseCategory3 = new DatabaseCategory();
+        databaseCategory3.setUser(user);
+        databaseCategory3.setCategoryRoot(0);
+        databaseCategory3.setName("Third Layer (1)");
+        databaseCategory3.setParentId(databaseCategory2.getId());
+        session.save(databaseCategory3);
+        categories.add(databaseCategory3);
+
+        DatabaseCategory databaseCategory4 = new DatabaseCategory();
+        databaseCategory4.setUser(user);
+        databaseCategory4.setCategoryRoot(0);
+        databaseCategory4.setName("Third Layer (2)");
+        databaseCategory4.setParentId(databaseCategory2.getId());
+        session.save(databaseCategory4);
+        categories.add(databaseCategory4);
+
+        user.setCategories(categories);
+
         transaction.commit();
     }
 
@@ -231,6 +274,22 @@ public class ServiceTest {
         Assertions.assertEquals(2, user.getDatabaseSettings().size());
         Assertions.assertEquals(Currency.getInstance("USD"), ((UserSettings) new User(user).getSettings()).getCurrency());
         Assertions.assertTrue(((UserSettings) new User(user).getSettings()).isShowCurrencySign());
+    }
 
+    @Test
+    public void testGetUsersCategories() {
+        HashMap<String, Object> parameters = new HashMap<>();
+        parameters.put("userId", user.getId());
+        ConnectionResult<BaseCategory> result = service.getUsersCategories(logger, parameters);
+        Assertions.assertNotNull(result.getResult());
+        Assertions.assertNull(result.getException());
+        Assertions.assertEquals(1, result.getResult().getCategoryTreeByCategoryClass(BaseCategory.CategoryClass.FIXED_REVENUE).getChildren().size());
+
+        Assertions.assertEquals("First Layer", result.getResult().getCategoryTreeByCategoryClass(BaseCategory.CategoryClass.FIXED_REVENUE)
+                .getChildren().get(0).getValue().getName());
+        Assertions.assertEquals("Second Layer", result.getResult().getCategoryTreeByCategoryClass(BaseCategory.CategoryClass.FIXED_REVENUE)
+                .getChildren().get(0).getChildren().get(0).getValue().getName());
+        Assertions.assertEquals(2, result.getResult().getCategoryTreeByCategoryClass(BaseCategory.CategoryClass.FIXED_REVENUE)
+                .getChildren().get(0).getChildren().get(0).getChildren().size());
     }
 }

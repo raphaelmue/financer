@@ -2,6 +2,10 @@ package de.raphaelmuesseler.financer.server.service;
 
 import de.raphaelmuesseler.financer.server.db.HibernateUtil;
 import de.raphaelmuesseler.financer.shared.connection.ConnectionResult;
+import de.raphaelmuesseler.financer.shared.model.categories.BaseCategory;
+import de.raphaelmuesseler.financer.shared.model.categories.Category;
+import de.raphaelmuesseler.financer.shared.model.categories.CategoryTreeImpl;
+import de.raphaelmuesseler.financer.shared.model.db.DatabaseCategory;
 import de.raphaelmuesseler.financer.shared.model.db.DatabaseSettings;
 import de.raphaelmuesseler.financer.shared.model.db.DatabaseToken;
 import de.raphaelmuesseler.financer.shared.model.db.DatabaseUser;
@@ -9,6 +13,7 @@ import de.raphaelmuesseler.financer.shared.model.user.Token;
 import de.raphaelmuesseler.financer.shared.model.user.User;
 import de.raphaelmuesseler.financer.util.Hash;
 import de.raphaelmuesseler.financer.util.RandomString;
+import de.raphaelmuesseler.financer.util.collections.TreeUtil;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
@@ -17,6 +22,9 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -220,6 +228,7 @@ public class FinancerService {
 
     /**
      * Updates the settings of a user
+     *
      * @param parameters [User user]
      * @return void
      */
@@ -238,42 +247,39 @@ public class FinancerService {
 
         return new ConnectionResult<>(null);
     }
-//
-//    public ConnectionResult<BaseCategory> getUsersCategories(Logger logger, Map<String, Object> parameters) throws Exception {
-//        logger.log(Level.INFO, "Fetching users categories ...");
-//
-//        Map<String, Object> whereClause = new HashMap<>();
-//        whereClause.put("user_id", ((User) parameters.get("user")).getId());
-//
-//        BaseCategory baseCategory = new BaseCategory();
-//
-//        for (BaseCategory.CategoryClass categoryClass : BaseCategory.CategoryClass.values()) {
-//            whereClause.put("cat_id", categoryClass.getIndex());
-//            JSONArray jsonArray = this.database.get(Database.Table.USERS_CATEGORIES, whereClause,
-//                    "cat_id ASC, parent_id ASC");
-//
-//            for (int j = 0; j < jsonArray.length(); j++) {
-//                JSONObject jsonObject = jsonArray.getJSONObject(j);
-//
-//                if (jsonObject.get("parent_id").equals("null")) {
-//                    baseCategory.getCategoryTreeByCategoryClass(categoryClass).getChildren().add(
-//                            new CategoryTreeImpl(categoryClass, baseCategory.getCategoryTreeByCategoryClass(categoryClass),
-//                                    new Category(jsonObject.getInt("id"),
-//                                            jsonObject.getString("name"),
-//                                            (jsonObject.get("parent_id") == "null" ? -1 : jsonObject.getInt("parent_id")),
-//                                            jsonObject.getInt("cat_id"))));
-//                } else {
-//                    TreeUtil.insertByValue(baseCategory.getCategoryTreeByCategoryClass(categoryClass), new CategoryTreeImpl(categoryClass, null,
-//                                    new Category(jsonObject.getInt("id"),
-//                                            jsonObject.getString("name"),
-//                                            jsonObject.getInt("parent_id"),
-//                                            jsonObject.getInt("cat_id"))),
-//                            (o1, o2) -> Integer.compare(o1.getParentId(), o2.getId()));
-//                }
-//            }
-//        }
-//        return new ConnectionResult<>(baseCategory);
-//    }
+
+    /**
+     * Returns the users categories as BaseCategory
+     *
+     * @param parameters [int userId]
+     * @return BaseCategory object
+     */
+    public ConnectionResult<BaseCategory> getUsersCategories(Logger logger, Map<String, Object> parameters) throws IllegalArgumentException {
+        logger.log(Level.INFO, "Fetching users categories ...");
+
+        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+        Transaction transaction = session.beginTransaction();
+        User user = new User(session.get(DatabaseUser.class, (int) parameters.get("userId")));
+
+        List<DatabaseCategory> categories = new ArrayList<>(user.getCategories());
+        Collections.sort(categories);
+
+        BaseCategory baseCategory = new BaseCategory();
+
+        for (DatabaseCategory databaseCategory : categories) {
+            Category category = new Category(databaseCategory);
+            if (databaseCategory.getParentId() == -1) {
+                baseCategory.getCategoryTreeByCategoryClass(category.getCategoryClass()).getChildren().add(new CategoryTreeImpl(category));
+            } else {
+                if (!TreeUtil.insertByValue(baseCategory.getCategoryTreeByCategoryClass(category.getCategoryClass()), new CategoryTreeImpl(new Category(databaseCategory)),
+                        (o1, o2) -> Integer.compare(o1.getParentId(), o2.getId()))) {
+                    throw new IllegalArgumentException("Category \"" + category.getName() + "\"could not be inserted into CategoryTree");
+                }
+            }
+        }
+        transaction.commit();
+        return new ConnectionResult<>(baseCategory);
+    }
 //
 //    public ConnectionResult<Category> addCategory(Logger logger, Map<String, Object> parameters) throws Exception {
 //        logger.log(Level.INFO, "Adding new category ...");

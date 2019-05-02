@@ -29,7 +29,7 @@
         <property name="genderName" type="java.lang.String">
             <column name="gender"/>
         </property>
-        <set name="categories" table="users_categories" fetch="select" cascade="all">
+        <set name="categories" table="users_categories" lazy="true" inverse="true" cascade="all" fetch="select" order-by="">
             <key column="user_id" not-null="true"/>
             <one-to-many class="DatabaseCategory"/>
         </set>

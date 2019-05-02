@@ -5,11 +5,11 @@
 <hibernate-mapping package="de.raphaelmuesseler.financer.shared.model.db">
     <class name="DatabaseCategory" table="users_categories">
         <id name="id" type="int">
-            <column name="id"/>
+            <column name="id" not-null="true"/>
             <generator class="increment"/>
         </id>
-        <many-to-one name="user" class="DatabaseUser" insert="false" update="false">
-            <column name="user_id" />
+        <many-to-one name="user" class="DatabaseUser" fetch="select">
+            <column name="user_id" not-null="true" />
         </many-to-one>
         <property name="categoryRoot" type="int">
             <column name="cat_id"/>

@@ -54,6 +54,9 @@ public class User extends DatabaseUser {
         if (databaseUser.getDatabaseSettings() != null) {
             this.setDatabaseSettings(databaseUser.getDatabaseSettings());
         }
+        if (databaseUser.getCategories() != null) {
+            this.setCategories(databaseUser.getCategories());
+        }
     }
 
     public User() {

@@ -1,6 +1,6 @@
 package de.raphaelmuesseler.financer.shared.model.db;
 
-public class DatabaseCategory {
+public class DatabaseCategory implements Comparable<DatabaseCategory> {
     private int id;
     private DatabaseUser user;
     private int categoryRoot;
@@ -23,11 +23,11 @@ public class DatabaseCategory {
         this.user = user;
     }
 
-    protected int getCategoryRoot() {
+    public int getCategoryRoot() {
         return categoryRoot;
     }
 
-    protected void setCategoryRoot(int categoryClass) {
+    public void setCategoryRoot(int categoryClass) {
         this.categoryRoot = categoryClass;
     }
 
@@ -47,4 +47,8 @@ public class DatabaseCategory {
         this.name = name;
     }
 
+    @Override
+    public int compareTo(DatabaseCategory o) {
+        return Integer.compare(Integer.compare(o.getCategoryRoot(), this.getCategoryRoot()), Integer.compare(o.getParentId(), this.getParentId()));
+    }
 }

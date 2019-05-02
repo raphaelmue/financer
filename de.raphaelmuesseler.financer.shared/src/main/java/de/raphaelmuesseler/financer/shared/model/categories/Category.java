@@ -14,6 +14,13 @@ public class Category extends DatabaseCategory implements Serializable {
         this.categoryClass = BaseCategory.CategoryClass.getCategoryClassByIndex(this.getCategoryRoot());
     }
 
+    public Category(DatabaseCategory databaseCategory) {
+        this(databaseCategory.getId(),
+                databaseCategory.getName(),
+                databaseCategory.getParentId(),
+                BaseCategory.CategoryClass.getCategoryClassByIndex(databaseCategory.getCategoryRoot()));
+    }
+
     public Category(String name) {
         this(-1, name, -1, null);
     }
