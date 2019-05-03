@@ -437,6 +437,25 @@ public class FinancerService {
     }
 
     /**
+     * Deletes a transaction.
+     *
+     * @param parameters [int variableTransactionId]
+     * @return
+     */
+    public ConnectionResult<Void> deleteTransaction(Logger logger, Map<String, Object> parameters) {
+        logger.log(Level.INFO, "Adding transaction ...");
+
+        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+        Transaction transaction = session.beginTransaction();
+        session.createQuery("delete from VariableTransactionDAO where id = :variableTransactionId")
+                .setParameter("variableTransactionId", parameters.get("variableTransactionId"))
+                .executeUpdate();
+        transaction.commit();
+
+        return new ConnectionResult<>(null);
+    }
+
+    /**
      * Uploads a transaction attachment to the database
      *
      * @param parameters [File attachmentFile, VariableTransaction transaction, byte[] content]
@@ -498,19 +517,7 @@ public class FinancerService {
 
         return new ConnectionResult<>(null);
     }
-//
-//    public ConnectionResult<Void> deleteTransaction(Logger logger, Map<String, Object> parameters) throws Exception {
-//        logger.log(Level.INFO, "Adding transaction ...");
-//        VariableTransaction transaction = (VariableTransaction) parameters.get("transaction");
-//
-//        Map<String, Object> where = new HashMap<>();
-//        where.put("id", transaction.getId());
-//
-//        this.database.delete(Database.Table.TRANSACTIONS, where);
-//
-//        return new ConnectionResult<>(null);
-//    }
-//
+
 //    public ConnectionResult<List<FixedTransaction>> getFixedTransactions(Logger logger, Map<String, Object> parameters) throws Exception {
 //        logger.log(Level.INFO, "Fetching fixed transactions ...");
 //

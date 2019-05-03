@@ -416,6 +416,26 @@ public class ServiceTest {
     }
 
     @Test
+    public void testDeleteTransaction() {
+        this.testAddTransaction();
+
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("variableTransactionId", variableTransaction.getId());
+        service.deleteTransaction(logger, parameters);
+
+        parameters.clear();
+        parameters.put("userId", user.getId());
+        BaseCategory baseCategory = service.getUsersCategories(logger, parameters).getResult();
+
+        parameters.clear();
+        parameters.put("userId", user.getId());
+        parameters.put("baseCategory", baseCategory);
+        Assertions.assertEquals(1, service.getTransactions(logger, parameters).getResult()
+                .getCategoryTreeByCategoryClass(BaseCategory.CategoryClass.FIXED_REVENUE)
+                .getChildren().get(0).getTransactions().size());
+    }
+
+    @Test
     public void testUploadAttachment() throws SQLException {
         RandomString randomString = new RandomString(1024);
         byte[] content = randomString.nextString().getBytes();
