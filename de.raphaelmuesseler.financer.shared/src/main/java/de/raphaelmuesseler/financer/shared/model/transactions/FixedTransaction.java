@@ -34,7 +34,7 @@ public class FixedTransaction extends FixedTransactionDAO implements Transaction
                 new HashSet<>());
         if (fixedTransactionDAO.getTransactionAmounts() != null) {
             for (FixedTransactionAmountDAO transactionAmountDAO : fixedTransactionDAO.getTransactionAmounts()) {
-                this.transactionAmounts.add((TransactionAmount) transactionAmountDAO);
+                this.transactionAmounts.add(new TransactionAmount(transactionAmountDAO));
             }
         }
     }

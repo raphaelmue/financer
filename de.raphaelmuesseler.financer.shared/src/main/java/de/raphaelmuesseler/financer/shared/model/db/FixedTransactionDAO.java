@@ -4,6 +4,8 @@ import java.time.LocalDate;
 import java.util.Set;
 
 public class FixedTransactionDAO implements DataAccessObject {
+    private final static long serialVersionUID = 8295185142317654835L;
+
     private int id;
     private CategoryDAO category;
     private double amount;

@@ -3,6 +3,8 @@ package de.raphaelmuesseler.financer.shared.model.db;
 import java.time.LocalDate;
 
 public class FixedTransactionAmountDAO implements DataAccessObject {
+    private final static long serialVersionUID = -3901962625430867317L;
+
     private int id;
     private FixedTransactionDAO fixedTransaction;
     private LocalDate valueDate;

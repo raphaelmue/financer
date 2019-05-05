@@ -1,6 +1,7 @@
 package de.raphaelmuesseler.financer.shared.model.db;
 
-public class SettingsDAO {
+public class SettingsDAO implements DataAccessObject {
+    private final static long serialVersionUID = 3324663296387062431L;
     private int id;
     private UserDAO user;
     private String property;

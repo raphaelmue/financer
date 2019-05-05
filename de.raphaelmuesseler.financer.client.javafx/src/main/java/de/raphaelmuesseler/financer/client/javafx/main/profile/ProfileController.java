@@ -282,7 +282,7 @@ public class ProfileController implements Initializable {
         return new TextFieldTreeCellImpl(new StringConverter<>() {
             @Override
             public String toString(CategoryTree object) {
-                return object.getValue().getName().equals(object.getValue().getCategoryClass().getName()) ? I18N.get(object.toString()) : object.toString();
+                return object.getValue().getName().equals(object.getValue().getCategoryClass().getName()) ? I18N.get(object.getValue().getName()) : object.toString();
             }
 
             @Override

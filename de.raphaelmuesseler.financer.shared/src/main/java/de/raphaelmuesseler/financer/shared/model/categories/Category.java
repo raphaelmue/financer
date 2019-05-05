@@ -4,7 +4,7 @@ import de.raphaelmuesseler.financer.shared.model.db.CategoryDAO;
 
 import java.io.Serializable;
 
-public class Category extends CategoryDAO implements Serializable {
+public class Category extends CategoryDAO {
     private static final long serialVersionUID = -5776418454648469541L;
     private String prefix = null;
     private BaseCategory.CategoryClass categoryClass;

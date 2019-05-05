@@ -9,6 +9,12 @@ import java.time.LocalDate;
 public class TransactionAmount extends FixedTransactionAmountDAO implements Serializable, AmountProvider {
     private static final long serialVersionUID = -6751558797407170754L;
 
+    public TransactionAmount(FixedTransactionAmountDAO fixedTransactionAmountDAO) {
+        this(fixedTransactionAmountDAO.getId(),
+                fixedTransactionAmountDAO.getAmount(),
+                fixedTransactionAmountDAO.getValueDate());
+    }
+
     public TransactionAmount(int id, double amount, LocalDate valueDate) {
         this.setId(id);
         this.setAmount(amount);

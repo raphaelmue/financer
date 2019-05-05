@@ -1,6 +1,10 @@
 package de.raphaelmuesseler.financer.shared.model.db;
 
+import java.util.Comparator;
+
 public class CategoryDAO implements Comparable<CategoryDAO>, DataAccessObject {
+    private final static long serialVersionUID = 5491420625985358596L;
+
     private int id;
     private UserDAO user;
     private int categoryRoot;
@@ -49,6 +53,9 @@ public class CategoryDAO implements Comparable<CategoryDAO>, DataAccessObject {
 
     @Override
     public int compareTo(CategoryDAO o) {
-        return Integer.compare(Integer.compare(o.getCategoryRoot(), this.getCategoryRoot()), Integer.compare(o.getParentId(), this.getParentId()));
+        return Comparator.comparing(CategoryDAO::getCategoryRoot)
+                .thenComparing(CategoryDAO::getParentId)
+                .thenComparing(CategoryDAO::getId)
+                .compare(this, o);
     }
 }

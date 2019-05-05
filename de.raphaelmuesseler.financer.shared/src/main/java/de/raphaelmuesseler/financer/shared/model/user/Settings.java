@@ -5,6 +5,7 @@ public interface Settings {
         LANGUAGE("language", "en"),
         CURRENCY("currency", "USD"),
         SHOW_CURRENCY_SIGN("showCurrencySign", "false"),
+        CHANGE_AMOUNT_SIGH_AUTOMATICALLY("changeAmountSignAutomatically", "false"),
         THEME("theme", "");
 
         private final String name, defaultValue;

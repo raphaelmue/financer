@@ -9,7 +9,6 @@ import de.raphaelmuesseler.financer.shared.model.user.User;
 import java.io.*;
 import java.lang.reflect.Method;
 import java.net.Socket;
-import java.sql.SQLException;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;

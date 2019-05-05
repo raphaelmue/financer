@@ -1,6 +1,8 @@
 package de.raphaelmuesseler.financer.shared.model.db;
 
-public interface DataAccessObject {
+import java.io.Serializable;
+
+public interface DataAccessObject extends Serializable {
 
     int getId();
 

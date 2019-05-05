@@ -94,7 +94,7 @@ public final class I18N {
     }
 
     public static Locale getLocale() {
-        if (I18N.localStorage.readObject("localSettings") != null) {
+        if (I18N.localStorage.readObject("user") != null) {
             return ((User) I18N.localStorage.readObject("user")).getSettings().getLanguage();
         } else {
             return Locale.ENGLISH;

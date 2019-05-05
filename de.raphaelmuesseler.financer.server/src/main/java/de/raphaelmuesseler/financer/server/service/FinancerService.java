@@ -20,9 +20,6 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 
 import javax.persistence.NoResultException;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
 import java.io.File;
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -59,12 +56,9 @@ public class FinancerService {
 
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
         Transaction transaction = session.beginTransaction();
-        CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
-        CriteriaQuery<TokenDAO> criteriaQuery = criteriaBuilder.createQuery(TokenDAO.class);
-        Root<TokenDAO> root = criteriaQuery.from(TokenDAO.class);
-        criteriaQuery.select(root).where(criteriaBuilder.equal(root.get("token"), parameters.get("token")));
         try {
-            TokenDAO databaseToken = session.createQuery(criteriaQuery).getSingleResult();
+            TokenDAO databaseToken = session.createQuery("from TokenDAO where token = :token", TokenDAO.class)
+                    .setParameter("token", (String) parameters.get("token")).getSingleResult();
             if (databaseToken != null) {
                 Token token = new Token(databaseToken);
                 if (token.isValid()) {
@@ -72,10 +66,12 @@ public class FinancerService {
                     user = new User(session.get(UserDAO.class, token.getUser().getId()));
 
                     // needs to be called to avoid LazyInitializationException
+                    user.setActiveToken(token);
                     user.getTokens().size();
                 }
             }
-        } catch (NoResultException ignored) {
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
         transaction.commit();
@@ -97,7 +93,7 @@ public class FinancerService {
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
         Transaction transaction = session.beginTransaction();
 
-        user = new User(session.load(UserDAO.class, user.getId()));
+        user = new User(session.get(UserDAO.class, user.getId()));
 
         try {
             boolean foundEntry = false;
@@ -125,6 +121,8 @@ public class FinancerService {
                 user.getTokens().add(databaseToken);
                 user.setActiveToken(new Token(databaseToken));
             }
+
+            user.getDatabaseSettings().size();
         } finally {
             transaction.commit();
         }
@@ -144,12 +142,9 @@ public class FinancerService {
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
         Transaction transaction = session.beginTransaction();
 
-        CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
-        CriteriaQuery<UserDAO> criteriaQuery = criteriaBuilder.createQuery(UserDAO.class);
-        Root<UserDAO> root = criteriaQuery.from(UserDAO.class);
-        criteriaQuery.select(root).where(criteriaBuilder.equal(root.get("email"), parameters.get("email")));
         try {
-            user = new User(session.createQuery(criteriaQuery).getSingleResult());
+            user = new User(session.createQuery("from UserDAO where email = :email", UserDAO.class)
+                    .setParameter("email", parameters.get("email")).getSingleResult());
             String password = Hash.create((String) parameters.get("password"), user.getSalt());
             if (password.equals(user.getPassword())) {
                 logger.log(Level.INFO, "Credentials of user '" + user.getFullName() + "' are approved.");
@@ -391,9 +386,9 @@ public class FinancerService {
             CategoryTree categoryTree = (CategoryTree) treeObject;
             if (!categoryTree.getValue().getCategoryClass().isFixed()) {
                 List<VariableTransactionDAO> databaseVariableTransactions = session
-                        .createQuery("from VariableTransactionDAO where category = :category",
+                        .createQuery("from VariableTransactionDAO where category.id = :categoryId",
                                 VariableTransactionDAO.class)
-                        .setParameter("category", treeObject.getValue().toDatabaseAccessObject())
+                        .setParameter("categoryId", treeObject.getValue().getId())
                         .list();
                 Set<VariableTransaction> variableTransactions = new HashSet<>();
                 for (VariableTransactionDAO databaseVariableTransaction : databaseVariableTransactions) {
@@ -543,9 +538,9 @@ public class FinancerService {
             CategoryTree categoryTree = (CategoryTree) treeObject;
             if (categoryTree.getValue().getCategoryClass().isFixed()) {
                 List<FixedTransactionDAO> databaseFixedTransactions = session
-                        .createQuery("from FixedTransactionDAO where category = :category",
+                        .createQuery("from FixedTransactionDAO where category.id = :categoryId",
                                 FixedTransactionDAO.class)
-                        .setParameter("category", treeObject.getValue().toDatabaseAccessObject())
+                        .setParameter("categoryId", treeObject.getValue().getId())
                         .list();
                 Set<FixedTransaction> variableTransactions = new HashSet<>();
                 for (FixedTransactionDAO databaseFixedTransaction : databaseFixedTransactions) {

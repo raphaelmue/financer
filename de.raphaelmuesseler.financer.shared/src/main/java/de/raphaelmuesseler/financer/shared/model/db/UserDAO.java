@@ -1,10 +1,9 @@
 package de.raphaelmuesseler.financer.shared.model.db;
 
-import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Set;
 
-public class UserDAO implements Serializable, DataAccessObject {
+public class UserDAO implements DataAccessObject {
     private static final long serialVersionUID = 8551108621522985674L;
 
     private int id;

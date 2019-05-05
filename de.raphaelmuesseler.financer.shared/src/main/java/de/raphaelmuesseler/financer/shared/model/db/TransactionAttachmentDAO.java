@@ -4,6 +4,8 @@ import java.sql.Blob;
 import java.time.LocalDate;
 
 public class TransactionAttachmentDAO implements DataAccessObject {
+    private final static long serialVersionUID = 7758316425770345150L;
+
     private int id;
     private VariableTransactionDAO transaction;
     private String name;
