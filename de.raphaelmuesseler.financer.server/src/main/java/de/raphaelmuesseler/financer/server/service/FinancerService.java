@@ -8,6 +8,7 @@ import de.raphaelmuesseler.financer.shared.model.categories.CategoryTree;
 import de.raphaelmuesseler.financer.shared.model.categories.CategoryTreeImpl;
 import de.raphaelmuesseler.financer.shared.model.db.*;
 import de.raphaelmuesseler.financer.shared.model.transactions.Attachment;
+import de.raphaelmuesseler.financer.shared.model.transactions.FixedTransaction;
 import de.raphaelmuesseler.financer.shared.model.transactions.VariableTransaction;
 import de.raphaelmuesseler.financer.shared.model.user.Token;
 import de.raphaelmuesseler.financer.shared.model.user.User;
@@ -384,16 +385,19 @@ public class FinancerService {
         Transaction transaction = session.beginTransaction();
 
         baseCategory.traverse(treeObject -> {
-            List<VariableTransactionDAO> databaseVariableTransactions = session
-                    .createQuery("from VariableTransactionDAO where category = :category",
-                            VariableTransactionDAO.class)
-                    .setParameter("category", treeObject.getValue().toDatabaseAccessObject())
-                    .list();
-            Set<VariableTransaction> variableTransactions = new HashSet<>();
-            for (VariableTransactionDAO databaseVariableTransaction : databaseVariableTransactions) {
-                variableTransactions.add(new VariableTransaction(databaseVariableTransaction, (CategoryTree) treeObject));
+            CategoryTree categoryTree = (CategoryTree) treeObject;
+            if (!categoryTree.getValue().getCategoryClass().isFixed()) {
+                List<VariableTransactionDAO> databaseVariableTransactions = session
+                        .createQuery("from VariableTransactionDAO where category = :category",
+                                VariableTransactionDAO.class)
+                        .setParameter("category", treeObject.getValue().toDatabaseAccessObject())
+                        .list();
+                Set<VariableTransaction> variableTransactions = new HashSet<>();
+                for (VariableTransactionDAO databaseVariableTransaction : databaseVariableTransactions) {
+                    variableTransactions.add(new VariableTransaction(databaseVariableTransaction, categoryTree));
+                }
+                categoryTree.getTransactions().addAll(variableTransactions);
             }
-            ((CategoryTree) treeObject).getTransactions().addAll(variableTransactions);
         });
 
         transaction.commit();
@@ -518,62 +522,41 @@ public class FinancerService {
         return new ConnectionResult<>(null);
     }
 
-//    public ConnectionResult<List<FixedTransaction>> getFixedTransactions(Logger logger, Map<String, Object> parameters) throws Exception {
-//        logger.log(Level.INFO, "Fetching fixed transactions ...");
-//
-//        Map<String, Object> whereClause = new HashMap<>();
-//        whereClause.put("user_id", ((User) parameters.get("user")).getId());
-//
-//        List<FixedTransaction> fixedTransactions = new ArrayList<>();
-//
-//        JSONArray jsonArray = this.database.get(Database.Table.FIXED_TRANSACTIONS, whereClause, "start_date DESC");
-//        for (int i = 0; i < jsonArray.length(); i++) {
-//            whereClause.clear();
-//
-//            JSONObject jsonObjectTransaction = jsonArray.getJSONObject(i);
-//
-//            // fetching category object
-//            whereClause.put("id", jsonObjectTransaction.getInt("cat_id"));
-//            JSONObject jsonObjectCategory = this.database.get(Database.Table.USERS_CATEGORIES, whereClause).getJSONObject(0);
-//            whereClause.clear();
-//            Category category = new Category(jsonObjectCategory.getInt("id"),
-//                    jsonObjectCategory.getString("name"),
-//                    (jsonObjectCategory.get("parent_id") == "null" ? -1 : jsonObjectCategory.getInt("parent_id")),
-//                    jsonObjectCategory.getInt("cat_id"));
-//
-//            // fetching respective transaction amounts if the flag "is_variable" is true
-//            List<TransactionAmount> transactionAmounts = new ArrayList<>();
-//            if (jsonObjectTransaction.getInt("is_variable") == 1) {
-//                whereClause.clear();
-//                whereClause.put("fixed_transaction_id", jsonObjectTransaction.getInt("id"));
-//                JSONArray jsonArrayTransactionAmount = this.database.get(Database.Table.FIXED_TRANSACTIONS_AMOUNTS, whereClause,
-//                        "value_date DESC");
-//                for (int j = 0; j < jsonArrayTransactionAmount.length(); j++) {
-//                    JSONObject jsonObjectTransactionAmount = jsonArrayTransactionAmount.getJSONObject(j);
-//                    transactionAmounts.add(new TransactionAmount(jsonObjectTransactionAmount.getInt("id"),
-//                            jsonObjectTransactionAmount.getDouble("amount"),
-//                            ((Date) jsonObjectTransactionAmount.get("value_date")).toLocalDate()));
-//                }
-//            }
-//
-//            transactionAmounts.sort(Comparator.comparing(TransactionAmount::getValueDate).reversed());
-//
-//            // TODO get real CategoryTreeImpl instance
-//            fixedTransactions.add(new FixedTransaction(jsonObjectTransaction.getInt("id"),
-//                    (jsonObjectTransaction.get("amount") == "null" ? 0 : jsonObjectTransaction.getDouble("amount")),
-//                    new CategoryTreeImpl(BaseCategory.CategoryClass.getCategoryClassByIndex(category.getRootId() - 1), null, category),
-//                    (jsonObjectTransaction.get("product") == "null" ? null : jsonObjectTransaction.getString("product")),
-//                    (jsonObjectTransaction.get("purpose") == "null" ? null : jsonObjectTransaction.getString("purpose")),
-//                    ((Date) jsonObjectTransaction.get("start_date")).toLocalDate(),
-//                    (jsonObjectTransaction.get("end_date") == "null" ? null : ((Date) jsonObjectTransaction.get("end_date")).toLocalDate()),
-//                    (jsonObjectTransaction.getInt("is_variable") == 1),
-//                    jsonObjectTransaction.getInt("day"),
-//                    transactionAmounts));
-//        }
-//
-//        return new ConnectionResult<>(fixedTransactions);
-//    }
-//
+    /**
+     * Returns a BaseCategory object with all fixed transactions.
+     *
+     * @param parameters [int userId, BaseCategory baseCategory]
+     * @return BaseCategory object with fixed transactions
+     */
+    public ConnectionResult<BaseCategory> getFixedTransactions(Logger logger, Map<String, Object> parameters) {
+        logger.log(Level.INFO, "Fetching fixed transactions ...");
+
+        BaseCategory baseCategory = (BaseCategory) parameters.get("baseCategory");
+
+        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+        Transaction transaction = session.beginTransaction();
+
+        baseCategory.traverse(treeObject -> {
+            CategoryTree categoryTree = (CategoryTree) treeObject;
+            if (categoryTree.getValue().getCategoryClass().isFixed()) {
+                List<FixedTransactionDAO> databaseFixedTransactions = session
+                        .createQuery("from FixedTransactionDAO where category = :category",
+                                FixedTransactionDAO.class)
+                        .setParameter("category", treeObject.getValue().toDatabaseAccessObject())
+                        .list();
+                Set<FixedTransaction> variableTransactions = new HashSet<>();
+                for (FixedTransactionDAO databaseFixedTransaction : databaseFixedTransactions) {
+                    variableTransactions.add(new FixedTransaction(databaseFixedTransaction, categoryTree));
+                }
+                categoryTree.getTransactions().addAll(variableTransactions);
+            }
+        });
+
+        transaction.commit();
+
+        return new ConnectionResult<>(baseCategory);
+    }
+
 //    public ConnectionResult<FixedTransaction> addFixedTransactions(Logger logger, Map<String, Object> parameters) throws Exception {
 //        logger.log(Level.INFO, "Adding fixed transactions ...");
 //        User user = (User) parameters.get("user");

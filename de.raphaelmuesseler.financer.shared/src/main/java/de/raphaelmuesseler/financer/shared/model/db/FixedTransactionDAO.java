@@ -1,10 +1,10 @@
 package de.raphaelmuesseler.financer.shared.model.db;
 
 import java.time.LocalDate;
+import java.util.Set;
 
-public class FixedTransactionDAO {
+public class FixedTransactionDAO implements DataAccessObject {
     private int id;
-    private UserDAO user;
     private CategoryDAO category;
     private double amount;
     private LocalDate startDate;
@@ -13,6 +13,7 @@ public class FixedTransactionDAO {
     private String purpose;
     private boolean isVariable;
     private int day;
+    private Set<? extends FixedTransactionAmountDAO> transactionAmounts;
 
     public int getId() {
         return id;
@@ -20,14 +21,6 @@ public class FixedTransactionDAO {
 
     public void setId(int id) {
         this.id = id;
-    }
-
-    public UserDAO getUser() {
-        return user;
-    }
-
-    public void setUser(UserDAO user) {
-        this.user = user;
     }
 
     public CategoryDAO getCategory() {
@@ -92,5 +85,13 @@ public class FixedTransactionDAO {
 
     public void setDay(int day) {
         this.day = day;
+    }
+
+    public Set<? extends FixedTransactionAmountDAO> getTransactionAmounts() {
+        return transactionAmounts;
+    }
+
+    public void setTransactionAmounts(Set<? extends FixedTransactionAmountDAO> transactionAmounts) {
+        this.transactionAmounts = transactionAmounts;
     }
 }

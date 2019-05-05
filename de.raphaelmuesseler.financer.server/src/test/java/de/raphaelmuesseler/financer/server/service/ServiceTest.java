@@ -8,6 +8,7 @@ import de.raphaelmuesseler.financer.shared.model.categories.Category;
 import de.raphaelmuesseler.financer.shared.model.categories.CategoryTreeImpl;
 import de.raphaelmuesseler.financer.shared.model.db.*;
 import de.raphaelmuesseler.financer.shared.model.transactions.Attachment;
+import de.raphaelmuesseler.financer.shared.model.transactions.FixedTransaction;
 import de.raphaelmuesseler.financer.shared.model.transactions.VariableTransaction;
 import de.raphaelmuesseler.financer.shared.model.user.Settings;
 import de.raphaelmuesseler.financer.shared.model.user.User;
@@ -35,8 +36,9 @@ public class ServiceTest {
     private static UserDAO user;
     private static TokenDAO token;
     private static SettingsDAO settings;
-    private static CategoryDAO databaseCategory;
+    private static CategoryDAO fixedCategory, variableCategory;
     private static VariableTransactionDAO variableTransaction;
+    private static FixedTransactionDAO fixedTransaction;
 
     @BeforeAll
     public static void beforeAll() {
@@ -87,19 +89,27 @@ public class ServiceTest {
         transaction = session.beginTransaction();
 
         Set<CategoryDAO> categories = new HashSet<>();
-        databaseCategory = new CategoryDAO();
-        databaseCategory.setUser(user);
-        databaseCategory.setCategoryRoot(0);
-        databaseCategory.setName("First Layer");
-        databaseCategory.setParentId(-1);
-        categories.add(databaseCategory);
-        session.save(databaseCategory);
+        fixedCategory = new CategoryDAO();
+        fixedCategory.setUser(user);
+        fixedCategory.setCategoryRoot(0);
+        fixedCategory.setName("First Layer");
+        fixedCategory.setParentId(-1);
+        categories.add(fixedCategory);
+        session.save(fixedCategory);
+
+        variableCategory = new CategoryDAO();
+        variableCategory.setUser(user);
+        variableCategory.setCategoryRoot(1);
+        variableCategory.setName("First Layer");
+        variableCategory.setParentId(-1);
+        categories.add(variableCategory);
+        session.save(variableCategory);
 
         CategoryDAO databaseCategory2 = new CategoryDAO();
         databaseCategory2.setUser(user);
         databaseCategory2.setCategoryRoot(0);
         databaseCategory2.setName("Second Layer");
-        databaseCategory2.setParentId(databaseCategory.getId());
+        databaseCategory2.setParentId(fixedCategory.getId());
         session.save(databaseCategory2);
         categories.add(databaseCategory2);
 
@@ -127,10 +137,19 @@ public class ServiceTest {
 
         variableTransaction = new VariableTransactionDAO();
         variableTransaction.setAmount(50.0);
-        variableTransaction.setCategory(databaseCategory);
+        variableTransaction.setCategory(variableCategory);
         variableTransaction.setProduct("Test Product");
         variableTransaction.setValueDate(LocalDate.now());
         session.save(variableTransaction);
+
+        fixedTransaction = new FixedTransactionDAO();
+        fixedTransaction.setAmount(50.0);
+        fixedTransaction.setCategory(fixedCategory);
+        fixedTransaction.setProduct("Fixed Transaction Product");
+        fixedTransaction.setStartDate(LocalDate.now().minusMonths(5));
+        fixedTransaction.setIsVariable(false);
+        fixedTransaction.setDay(0);
+        session.save(fixedTransaction);
 
         transaction.commit();
     }
@@ -310,7 +329,7 @@ public class ServiceTest {
         Category category = new Category();
         category.setUser(user);
         category.setCategoryClass(BaseCategory.CategoryClass.FIXED_REVENUE);
-        category.setName("Another category");
+        category.setName("Another fixedCategory");
         category.setParentId(-1);
 
         Map<String, Object> parameters = new HashMap<>();
@@ -326,10 +345,10 @@ public class ServiceTest {
 
     @Test
     public void testUpdateCategory() {
-        databaseCategory.setName("New Name");
+        fixedCategory.setName("New Name");
 
         Map<String, Object> parameters = new HashMap<>();
-        parameters.put("category", new Category(databaseCategory));
+        parameters.put("category", new Category(fixedCategory));
         service.updateCategory(logger, parameters);
 
         parameters.clear();
@@ -341,7 +360,7 @@ public class ServiceTest {
     @Test
     public void testDeleteCategory() {
         Map<String, Object> parameters = new HashMap<>();
-        parameters.put("category", new Category(databaseCategory));
+        parameters.put("category", new Category(fixedCategory));
         service.deleteCategory(logger, parameters);
 
         parameters.clear();
@@ -363,12 +382,14 @@ public class ServiceTest {
         Assertions.assertNotNull(result.getResult());
         Assertions.assertNull(result.getException());
 
-        Assertions.assertEquals(1, result.getResult().getCategoryTreeByCategoryClass(BaseCategory.CategoryClass.FIXED_REVENUE)
+        Assertions.assertEquals(1, result.getResult().getCategoryTreeByCategoryClass(BaseCategory.CategoryClass.VARIABLE_REVENUE)
             .getChildren().get(0).getTransactions().size());
         for (de.raphaelmuesseler.financer.shared.model.transactions.Transaction transaction :
-                result.getResult().getCategoryTreeByCategoryClass(BaseCategory.CategoryClass.FIXED_REVENUE)
+                result.getResult().getCategoryTreeByCategoryClass(BaseCategory.CategoryClass.VARIABLE_REVENUE)
                 .getChildren().get(0).getTransactions()) {
-            Assertions.assertEquals(transaction.getId(), variableTransaction.getId());
+            if (transaction instanceof VariableTransaction) {
+                Assertions.assertEquals(transaction.getId(), variableTransaction.getId());
+            }
         }
     }
 
@@ -377,7 +398,7 @@ public class ServiceTest {
         VariableTransaction variableTransaction = new VariableTransaction(-1,
                 25.0,
                 LocalDate.now(),
-                new CategoryTreeImpl(new Category(databaseCategory)),
+                new CategoryTreeImpl(new Category(variableCategory)),
                 "Another Procuct",
                 "",
                 "");
@@ -394,7 +415,7 @@ public class ServiceTest {
         parameters.put("userId", user.getId());
         parameters.put("baseCategory", baseCategory);
         Assertions.assertEquals(2, service.getTransactions(logger, parameters).getResult()
-                .getCategoryTreeByCategoryClass(BaseCategory.CategoryClass.FIXED_REVENUE)
+                .getCategoryTreeByCategoryClass(BaseCategory.CategoryClass.VARIABLE_REVENUE)
                 .getChildren().get(0).getTransactions().size());
     }
 
@@ -431,7 +452,7 @@ public class ServiceTest {
         parameters.put("userId", user.getId());
         parameters.put("baseCategory", baseCategory);
         Assertions.assertEquals(1, service.getTransactions(logger, parameters).getResult()
-                .getCategoryTreeByCategoryClass(BaseCategory.CategoryClass.FIXED_REVENUE)
+                .getCategoryTreeByCategoryClass(BaseCategory.CategoryClass.VARIABLE_REVENUE)
                 .getChildren().get(0).getTransactions().size());
     }
 
@@ -470,5 +491,29 @@ public class ServiceTest {
         parameters.put("attachmentId", 1);
         service.deleteAttachment(logger, parameters);
         Assertions.assertNull(service.getAttachment(logger, parameters).getResult());
+    }
+
+    @Test
+    public void testGetFixedTransactions() {
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("userId", user.getId());
+        BaseCategory baseCategory = service.getUsersCategories(logger, parameters).getResult();
+
+        parameters.clear();
+        parameters.put("userId", user.getId());
+        parameters.put("baseCategory", baseCategory);
+        ConnectionResult<BaseCategory> result = service.getFixedTransactions(logger, parameters);
+        Assertions.assertNotNull(result.getResult());
+        Assertions.assertNull(result.getException());
+
+        Assertions.assertEquals(1, result.getResult().getCategoryTreeByCategoryClass(BaseCategory.CategoryClass.FIXED_REVENUE)
+                .getChildren().get(0).getTransactions().size());
+        for (de.raphaelmuesseler.financer.shared.model.transactions.Transaction transaction :
+                result.getResult().getCategoryTreeByCategoryClass(BaseCategory.CategoryClass.FIXED_REVENUE)
+                        .getChildren().get(0).getTransactions()) {
+            if (transaction instanceof FixedTransaction) {
+                Assertions.assertEquals(transaction.getId(), fixedTransaction.getId());
+            }
+        }
     }
 }

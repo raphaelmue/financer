@@ -3,12 +3,12 @@
         "http://hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping package="de.raphaelmuesseler.financer.shared.model.db">
-    <class name="de.raphaelmuesseler.financer.shared.model.db.FixedTransactionAmountDAO" table="fixed_transactions_amounts">
+    <class name="FixedTransactionAmountDAO" table="fixed_transactions_amounts">
         <id name="id" type="int">
             <column name="id"/>
             <generator class="increment"/>
         </id>
-        <many-to-one name="fixedTransaction" class="de.raphaelmuesseler.financer.shared.model.db.FixedTransactionDAO">
+        <many-to-one name="fixedTransaction" class="FixedTransactionDAO">
             <column name="fixed_transaction_id"/>
         </many-to-one>
         <property name="valueDate" type="java.time.LocalDate">

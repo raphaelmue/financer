@@ -3,16 +3,13 @@
         "http://hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping package="de.raphaelmuesseler.financer.shared.model.db">
-    <class name="de.raphaelmuesseler.financer.shared.model.db.FixedTransactionDAO" table="fixed_transactions">
+    <class name="FixedTransactionDAO" table="fixed_transactions">
         <id name="id" type="int">
             <column name="id"/>
             <generator class="increment"/>
         </id>
-        <many-to-one name="user" class="UserDAO" insert="false" update="false">
-            <column name="user_id"/>
-        </many-to-one>
-        <many-to-one name="category" class="de.raphaelmuesseler.financer.shared.model.db.CategoryDAO" insert="false" update="false">
-            <column name="cat_id" />
+        <many-to-one name="category" class="CategoryDAO" fetch="select">
+            <column name="cat_id" not-null="true" />
         </many-to-one>
         <property name="amount" type="double">
             <column name="amount"/>
@@ -35,5 +32,9 @@
         <property name="day" type="int">
             <column name="day"/>
         </property>
+        <set name="transactionAmounts" lazy="true" inverse="true" cascade="all" fetch="select">
+            <key column="fixed_transaction_id" not-null="true"/>
+            <one-to-many class="FixedTransactionAmountDAO"/>
+        </set>
     </class>
 </hibernate-mapping>
