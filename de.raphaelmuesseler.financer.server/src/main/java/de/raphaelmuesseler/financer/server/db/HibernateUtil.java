@@ -8,8 +8,6 @@ import org.hibernate.cfg.Configuration;
 import org.hibernate.query.Query;
 import org.hibernate.service.ServiceRegistry;
 
-import java.util.TimeZone;
-
 public class HibernateUtil {
     private enum Table {
         FIXED_TRANSACTIONS("fixed_transactions"),
@@ -85,7 +83,7 @@ public class HibernateUtil {
 
     public static void cleanDatabase() {
         if (databaseName == DatabaseName.TEST) {
-            Session session = getSessionFactory().getCurrentSession();
+            Session session = getSessionFactory().openSession();
             Transaction transaction = session.beginTransaction();
             for (Table table : Table.values()) {
                 String hql = String.format("truncate table %s", table.getTableName());
@@ -93,6 +91,7 @@ public class HibernateUtil {
                 query.executeUpdate();
             }
             transaction.commit();
+            session.close();
         } else {
             throw new IllegalArgumentException("It is only allowed to clean the test database");
         }

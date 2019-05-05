@@ -18,10 +18,7 @@ import de.raphaelmuesseler.financer.util.Hash;
 import de.raphaelmuesseler.financer.util.RandomString;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import java.io.File;
 import java.sql.SQLException;
@@ -40,10 +37,12 @@ public class ServiceTest {
     private static CategoryDAO fixedCategory, variableCategory;
     private static VariableTransactionDAO variableTransaction;
     private static FixedTransactionDAO fixedTransaction;
+    
+    private static Session session;
 
     @BeforeAll
     public static void beforeAll() {
-        HibernateUtil.setIsHostLocal(false);
+        HibernateUtil.setIsHostLocal(true);
         HibernateUtil.setDatabaseName(DatabaseName.TEST);
     }
 
@@ -53,7 +52,7 @@ public class ServiceTest {
         HibernateUtil.cleanDatabase();
 
         // inserting mock data
-        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+        Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = session.beginTransaction();
 
         user = new UserDAO();
@@ -86,7 +85,6 @@ public class ServiceTest {
         session.save(user);
 
         transaction.commit();
-        session = HibernateUtil.getSessionFactory().getCurrentSession();
         transaction = session.beginTransaction();
 
         Set<CategoryDAO> categories = new HashSet<>();
@@ -133,7 +131,6 @@ public class ServiceTest {
         user.setCategories(categories);
 
         transaction.commit();
-        session = HibernateUtil.getSessionFactory().getCurrentSession();
         transaction = session.beginTransaction();
 
         variableTransaction = new VariableTransactionDAO();
@@ -153,6 +150,13 @@ public class ServiceTest {
         session.save(fixedTransaction);
 
         transaction.commit();
+        session.close();
+        ServiceTest.session = HibernateUtil.getSessionFactory().openSession();
+    }
+    
+    @AfterEach
+    public void tearDown() {
+        session.close();
     }
 
     @Test
@@ -160,7 +164,7 @@ public class ServiceTest {
         HashMap<String, Object> parameters = new HashMap<>();
         parameters.put("token", token.getToken());
         final String tokenString = token.getToken();
-        User userToAssert = service.checkUsersToken(logger, parameters);
+        User userToAssert = service.checkUsersToken(logger, session, parameters);
         Assertions.assertNotNull(userToAssert);
         Assertions.assertEquals(1, userToAssert.getTokens().size());
         for (TokenDAO _token : userToAssert.getTokens()) {
@@ -168,7 +172,7 @@ public class ServiceTest {
         }
 
         parameters.put("token", "testToken");
-        userToAssert = service.checkUsersToken(logger, parameters);
+        userToAssert = service.checkUsersToken(logger, session, parameters);
         Assertions.assertNull(userToAssert);
 
     }
@@ -179,7 +183,7 @@ public class ServiceTest {
         final String tokenString = token.getToken();
 
         // test updating token
-        _user = service.generateToken(_user, token.getIpAddress(), token.getSystem(), token.getIsMobile());
+        _user = service.generateToken(session, _user, token.getIpAddress(), token.getSystem(), token.getIsMobile());
         Assertions.assertEquals(1, _user.getTokens().size());
         Assertions.assertNotNull(_user.getActiveToken());
         for (TokenDAO _token : _user.getTokens()) {
@@ -187,7 +191,7 @@ public class ServiceTest {
         }
 
         // test inserting new token
-        _user = service.generateToken(_user, "123.456.789.0", token.getSystem(), token.getIsMobile());
+        _user = service.generateToken(session, _user, "123.456.789.0", token.getSystem(), token.getIsMobile());
         Assertions.assertEquals(2, _user.getTokens().size());
     }
 
@@ -195,9 +199,8 @@ public class ServiceTest {
     public void testDeleteToken() {
         HashMap<String, Object> parameters = new HashMap<>();
         parameters.put("tokenId", token.getId());
-        service.deleteToken(logger, parameters);
+        service.deleteToken(logger, session, parameters);
 
-        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
         Transaction transaction = session.beginTransaction();
         User userToAssert = new User(session.get(UserDAO.class, user.getId()));
 
@@ -214,16 +217,16 @@ public class ServiceTest {
         parameters.put("ipAddress", token.getIpAddress());
         parameters.put("system", token.getSystem());
         parameters.put("isMobile", token.getIsMobile());
-        ConnectionResult<User> result = service.checkCredentials(logger, parameters);
+        ConnectionResult<User> result = service.checkCredentials(logger, session, parameters);
         Assertions.assertNotNull(result.getResult());
         Assertions.assertNull(result.getException());
 
         parameters.put("password", "wrongPassword");
-        result = service.checkCredentials(logger, parameters);
+        result = service.checkCredentials(logger, session, parameters);
         Assertions.assertNull(result.getResult());
 
         parameters.put("email", "test@test.com");
-        result = service.checkCredentials(logger, parameters);
+        result = service.checkCredentials(logger, session, parameters);
         Assertions.assertNull(result.getResult());
     }
 
@@ -242,13 +245,12 @@ public class ServiceTest {
         parameters.put("ipAddress", token.getIpAddress());
         parameters.put("system", token.getSystem());
         parameters.put("isMobile", token.getIsMobile());
-        ConnectionResult<User> result = service.registerUser(logger, parameters);
+        ConnectionResult<User> result = service.registerUser(logger, session, parameters);
         Assertions.assertNotNull(result.getResult());
         Assertions.assertNull(result.getException());
         Assertions.assertTrue(result.getResult().getId() > 0);
         Assertions.assertEquals(1, result.getResult().getTokens().size());
 
-        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
         Transaction transaction = session.beginTransaction();
         User userToAssert = new User(session.get(UserDAO.class, result.getResult().getId()));
 
@@ -267,7 +269,7 @@ public class ServiceTest {
 
         HashMap<String, Object> parameters = new HashMap<>();
         parameters.put("user", new User(user));
-        service.changePassword(logger, parameters);
+        service.changePassword(logger, session, parameters);
 
         parameters.clear();
         parameters.put("email", user.getEmail());
@@ -275,14 +277,13 @@ public class ServiceTest {
         parameters.put("ipAddress", token.getIpAddress());
         parameters.put("system", token.getSystem());
         parameters.put("isMobile", token.getIsMobile());
-        ConnectionResult<User> result = service.checkCredentials(logger, parameters);
+        ConnectionResult<User> result = service.checkCredentials(logger, session, parameters);
         Assertions.assertNotNull(result.getResult());
         Assertions.assertNull(result.getException());
     }
 
     @Test
     public void testGetUsersSettings() {
-        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
         Transaction transaction = session.beginTransaction();
         User userToAssert = new User(session.get(UserDAO.class, user.getId()));
 
@@ -302,7 +303,7 @@ public class ServiceTest {
 
         HashMap<String, Object> parameters = new HashMap<>();
         parameters.put("user", new User(user));
-        service.updateUsersSettings(logger, parameters);
+        service.updateUsersSettings(logger, session, parameters);
 
         Assertions.assertEquals(2, user.getDatabaseSettings().size());
         Assertions.assertEquals(Currency.getInstance("USD"), ((UserSettings) new User(user).getSettings()).getCurrency());
@@ -313,7 +314,7 @@ public class ServiceTest {
     public void testGetUsersCategories() {
         HashMap<String, Object> parameters = new HashMap<>();
         parameters.put("userId", user.getId());
-        ConnectionResult<BaseCategory> result = service.getUsersCategories(logger, parameters);
+        ConnectionResult<BaseCategory> result = service.getUsersCategories(logger, session, parameters);
         Assertions.assertNotNull(result.getResult());
         Assertions.assertNull(result.getException());
         Assertions.assertEquals(1, result.getResult().getCategoryTreeByCategoryClass(BaseCategory.CategoryClass.FIXED_REVENUE).getChildren().size());
@@ -336,11 +337,11 @@ public class ServiceTest {
 
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("category", category);
-        service.addCategory(logger, parameters);
+        service.addCategory(logger, session, parameters);
 
         parameters.clear();
         parameters.put("userId", user.getId());
-        Assertions.assertEquals(2, service.getUsersCategories(logger, parameters).getResult()
+        Assertions.assertEquals(2, service.getUsersCategories(logger, session, parameters).getResult()
                 .getCategoryTreeByCategoryClass(BaseCategory.CategoryClass.FIXED_REVENUE).getChildren().size());
     }
 
@@ -350,11 +351,11 @@ public class ServiceTest {
 
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("category", new Category(fixedCategory));
-        service.updateCategory(logger, parameters);
+        service.updateCategory(logger, session, parameters);
 
         parameters.clear();
         parameters.put("userId", user.getId());
-        Assertions.assertEquals("New Name", service.getUsersCategories(logger, parameters).getResult()
+        Assertions.assertEquals("New Name", service.getUsersCategories(logger, session, parameters).getResult()
                 .getCategoryTreeByCategoryClass(BaseCategory.CategoryClass.FIXED_REVENUE).getChildren().get(0).getValue().getName());
     }
 
@@ -362,11 +363,11 @@ public class ServiceTest {
     public void testDeleteCategory() {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("categoryId", fixedCategory.getId());
-        service.deleteCategory(logger, parameters);
+        service.deleteCategory(logger, session, parameters);
 
         parameters.clear();
         parameters.put("userId", user.getId());
-        Assertions.assertEquals(0, service.getUsersCategories(logger, parameters).getResult()
+        Assertions.assertEquals(0, service.getUsersCategories(logger, session, parameters).getResult()
                 .getCategoryTreeByCategoryClass(BaseCategory.CategoryClass.FIXED_REVENUE).getChildren().size());
     }
 
@@ -374,12 +375,12 @@ public class ServiceTest {
     public void testGetTransactions() {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("userId", user.getId());
-        BaseCategory baseCategory = service.getUsersCategories(logger, parameters).getResult();
+        BaseCategory baseCategory = service.getUsersCategories(logger, session, parameters).getResult();
 
         parameters.clear();
         parameters.put("userId", user.getId());
         parameters.put("baseCategory", baseCategory);
-        ConnectionResult<BaseCategory> result = service.getTransactions(logger, parameters);
+        ConnectionResult<BaseCategory> result = service.getTransactions(logger, session, parameters);
         Assertions.assertNotNull(result.getResult());
         Assertions.assertNull(result.getException());
 
@@ -405,17 +406,17 @@ public class ServiceTest {
                 "");
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("variableTransaction", variableTransaction);
-        ConnectionResult<VariableTransaction> result = service.addTransaction(logger, parameters);
+        ConnectionResult<VariableTransaction> result = service.addTransaction(logger, session, parameters);
         Assertions.assertTrue(result.getResult().getId() > 0);
 
         parameters.clear();
         parameters.put("userId", user.getId());
-        BaseCategory baseCategory = service.getUsersCategories(logger, parameters).getResult();
+        BaseCategory baseCategory = service.getUsersCategories(logger, session, parameters).getResult();
 
         parameters.clear();
         parameters.put("userId", user.getId());
         parameters.put("baseCategory", baseCategory);
-        Assertions.assertEquals(2, service.getTransactions(logger, parameters).getResult()
+        Assertions.assertEquals(2, service.getTransactions(logger, session, parameters).getResult()
                 .getCategoryTreeByCategoryClass(BaseCategory.CategoryClass.VARIABLE_REVENUE)
                 .getChildren().get(0).getTransactions().size());
     }
@@ -427,9 +428,8 @@ public class ServiceTest {
 
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("variableTransaction", new VariableTransaction(variableTransaction));
-        service.updateTransaction(logger, parameters);
+        service.updateTransaction(logger, session, parameters);
 
-        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
         Transaction transaction = session.beginTransaction();
         VariableTransaction variableTransactionToAssert = new VariableTransaction(session.get(VariableTransactionDAO.class,
                 variableTransaction.getId()));
@@ -443,16 +443,16 @@ public class ServiceTest {
 
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("variableTransactionId", variableTransaction.getId());
-        service.deleteTransaction(logger, parameters);
+        service.deleteTransaction(logger, session, parameters);
 
         parameters.clear();
         parameters.put("userId", user.getId());
-        BaseCategory baseCategory = service.getUsersCategories(logger, parameters).getResult();
+        BaseCategory baseCategory = service.getUsersCategories(logger, session, parameters).getResult();
 
         parameters.clear();
         parameters.put("userId", user.getId());
         parameters.put("baseCategory", baseCategory);
-        Assertions.assertEquals(1, service.getTransactions(logger, parameters).getResult()
+        Assertions.assertEquals(1, service.getTransactions(logger, session, parameters).getResult()
                 .getCategoryTreeByCategoryClass(BaseCategory.CategoryClass.VARIABLE_REVENUE)
                 .getChildren().get(0).getTransactions().size());
     }
@@ -466,7 +466,7 @@ public class ServiceTest {
         parameters.put("attachmentFile", new File("test.txt"));
         parameters.put("transaction", new VariableTransaction(variableTransaction));
         parameters.put("content", content);
-        ConnectionResult<Attachment> result = service.uploadTransactionAttachment(logger, parameters);
+        ConnectionResult<Attachment> result = service.uploadTransactionAttachment(logger, session, parameters);
         Assertions.assertNotNull(result.getResult());
         Assertions.assertNull(result.getException());
         Assertions.assertTrue(result.getResult().getId() > 0);
@@ -478,7 +478,7 @@ public class ServiceTest {
 
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("attachmentId", 1);
-        ConnectionResult<Attachment> result = service.getAttachment(logger, parameters);
+        ConnectionResult<Attachment> result = service.getAttachment(logger, session, parameters);
         Assertions.assertNotNull(result.getResult());
         Assertions.assertNull(result.getException());
         Assertions.assertTrue(result.getResult().getByteContent() != null && result.getResult().getByteContent().length == 1024);
@@ -490,20 +490,20 @@ public class ServiceTest {
 
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("attachmentId", 1);
-        service.deleteAttachment(logger, parameters);
-        Assertions.assertNull(service.getAttachment(logger, parameters).getResult());
+        service.deleteAttachment(logger, session, parameters);
+        Assertions.assertNull(service.getAttachment(logger, session, parameters).getResult());
     }
 
     @Test
     public void testGetFixedTransactions() {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("userId", user.getId());
-        BaseCategory baseCategory = service.getUsersCategories(logger, parameters).getResult();
+        BaseCategory baseCategory = service.getUsersCategories(logger, session, parameters).getResult();
 
         parameters.clear();
         parameters.put("userId", user.getId());
         parameters.put("baseCategory", baseCategory);
-        ConnectionResult<BaseCategory> result = service.getFixedTransactions(logger, parameters);
+        ConnectionResult<BaseCategory> result = service.getFixedTransactions(logger, session, parameters);
         Assertions.assertNotNull(result.getResult());
         Assertions.assertNull(result.getException());
 
@@ -538,12 +538,11 @@ public class ServiceTest {
 
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("fixedTransaction", _fixedTransaction);
-        ConnectionResult<FixedTransaction> result = service.addFixedTransactions(logger, parameters);
+        ConnectionResult<FixedTransaction> result = service.addFixedTransactions(logger, session, parameters);
         Assertions.assertNotNull(result.getResult());
         Assertions.assertNull(result.getException());
         Assertions.assertTrue(result.getResult().getId() > 0);
 
-        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
         Transaction transaction = session.beginTransaction();
         Assertions.assertEquals(LocalDate.now(), session.get(FixedTransactionDAO.class, fixedTransaction.getId()).getEndDate());
         transaction.commit();
@@ -556,8 +555,8 @@ public class ServiceTest {
 
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("fixedTransaction", new FixedTransaction(fixedTransaction));
-        service.updateFixedTransaction(logger, parameters);
-        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+        service.updateFixedTransaction(logger, session, parameters);
+        
         Transaction transaction = session.beginTransaction();
         Assertions.assertEquals(amount, session.get(FixedTransactionDAO.class, fixedTransaction.getId()).getAmount());
         transaction.commit();
@@ -567,16 +566,16 @@ public class ServiceTest {
     public void testDeleteFixedTransaction() {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("fixedTransactionId", fixedTransaction.getId());
-        service.deleteFixedTransaction(logger, parameters);
+        service.deleteFixedTransaction(logger, session, parameters);
 
         parameters.clear();
         parameters.put("userId", user.getId());
-        BaseCategory baseCategory = service.getUsersCategories(logger, parameters).getResult();
+        BaseCategory baseCategory = service.getUsersCategories(logger, session, parameters).getResult();
 
         parameters.clear();
         parameters.put("userId", user.getId());
         parameters.put("baseCategory", baseCategory);
-        ConnectionResult<BaseCategory> result = service.getFixedTransactions(logger, parameters);
+        ConnectionResult<BaseCategory> result = service.getFixedTransactions(logger, session, parameters);
         Assertions.assertNotNull(result.getResult());
         Assertions.assertNull(result.getException());
 

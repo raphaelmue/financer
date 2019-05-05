@@ -11,10 +11,10 @@
         <property name="hibernate.connection.password"/>
 
         <!-- Connection Pool Size -->
-        <property name="hibernate.connection.pool_size">1</property>
+        <property name="hibernate.connection.pool_size">4</property>
 
         <!-- org.hibernate.HibernateException: No CurrentSessionContext configured! -->
-        <property name="hibernate.current_session_context_class">thread</property>
+        <property name="hibernate.current_session_context_class">managed</property>
 
         <!-- Outputs the SQL queries, should be disabled in Production -->
         <property name="hibernate.show_sql">false</property>

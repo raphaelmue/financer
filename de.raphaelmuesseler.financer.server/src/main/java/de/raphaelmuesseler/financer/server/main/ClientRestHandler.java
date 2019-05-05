@@ -1,9 +1,11 @@
 package de.raphaelmuesseler.financer.server.main;
 
+import de.raphaelmuesseler.financer.server.db.HibernateUtil;
 import de.raphaelmuesseler.financer.server.service.FinancerService;
 import de.raphaelmuesseler.financer.shared.connection.ConnectionResult;
 import de.raphaelmuesseler.financer.shared.exceptions.NotAuthorizedException;
 import de.raphaelmuesseler.financer.shared.model.user.User;
+import org.hibernate.Session;
 
 import java.lang.reflect.Method;
 import java.util.Map;
@@ -28,9 +30,9 @@ public class ClientRestHandler implements Callable<ConnectionResult> {
         this.logger.log(Level.INFO, "New client request.");
 
         ConnectionResult<Object> result = null;
-        try {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             if (!methodName.equals("checkCredentials") && !methodName.equals("registerUser")) {
-                User user = FinancerService.getInstance().checkUsersToken(this.logger, parameters);
+                User user = FinancerService.getInstance().checkUsersToken(this.logger, session, parameters);
                 if (user == null || user.getId() != ((User) parameters.get("user")).getId()) {
                     throw new NotAuthorizedException("Token '" + parameters.get("token") + "' is invalid.");
                 }
@@ -39,7 +41,7 @@ public class ClientRestHandler implements Callable<ConnectionResult> {
             Method method;
             try {
                 method = FinancerService.class.getMethod(methodName, Logger.class, Map.class);
-                result = (ConnectionResult<Object>) method.invoke(this.service, this.logger, parameters);
+                result = (ConnectionResult<Object>) method.invoke(this.service, this.logger, session, parameters);
                 this.logger.log(Level.INFO, "Request has been successfully handled.");
             } catch (Exception exception) {
                 this.logger.log(Level.SEVERE, exception.getMessage(), exception);
