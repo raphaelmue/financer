@@ -557,71 +557,69 @@ public class FinancerService {
         return new ConnectionResult<>(baseCategory);
     }
 
-//    public ConnectionResult<FixedTransaction> addFixedTransactions(Logger logger, Map<String, Object> parameters) throws Exception {
-//        logger.log(Level.INFO, "Adding fixed transactions ...");
-//        User user = (User) parameters.get("user");
-//        FixedTransaction fixedTransaction = (FixedTransaction) parameters.get("fixedTransaction");
-//
-//        Map<String, Object> whereParameters = new HashMap<>();
-//        whereParameters.put("user_id", user.getId());
-//        whereParameters.put("cat_id", fixedTransaction.getCategoryTree().getValue().getId());
-//        whereParameters.put("end_date", null);
-//
-//        Map<String, Object> values = new HashMap<>();
-//        values.put("end_date", fixedTransaction.getStartDate());
-//
-//        this.database.update(Database.Table.FIXED_TRANSACTIONS, whereParameters, values);
-//
-//        values.clear();
-//        values.put("user_id", user.getId());
-//        values.put("amount", (fixedTransaction.isVariable() ? null : fixedTransaction.getAmount()));
-//        values.put("cat_id", fixedTransaction.getCategoryTree().getValue().getId());
-//        values.put("start_date", fixedTransaction.getStartDate());
-//        values.put("end_date", fixedTransaction.getEndDate());
-//        values.put("is_variable", (fixedTransaction.isVariable() ? 1 : 0));
-//        values.put("day", fixedTransaction.getDay());
-//
-//        this.database.insert(Database.Table.FIXED_TRANSACTIONS, values);
-//
-//        fixedTransaction.setId(this.database.getLatestId(Database.Table.FIXED_TRANSACTIONS));
-//        this.updateOrCreateTransactionAmounts(fixedTransaction);
-//
-//        return new ConnectionResult<>(fixedTransaction);
-//    }
-//
-//
-//    public ConnectionResult<Void> updateFixedTransaction(Logger logger, Map<String, Object> parameters) throws Exception {
-//        logger.log(Level.INFO, "Updating fixed transaction ...");
-//        FixedTransaction fixedTransaction = (FixedTransaction) parameters.get("fixedTransaction");
-//
-//        Map<String, Object> whereParameters = new HashMap<>();
-//        whereParameters.put("id", fixedTransaction.getId());
-//
-//        Map<String, Object> values = new HashMap<>();
-//        values.put("amount", (fixedTransaction.isVariable() ? null : fixedTransaction.getAmount()));
-//        values.put("start_date", fixedTransaction.getStartDate());
-//        values.put("end_date", fixedTransaction.getEndDate());
-//        values.put("is_variable", (fixedTransaction.isVariable() ? 1 : 0));
-//        values.put("day", fixedTransaction.getDay());
-//
-//        this.database.update(Database.Table.FIXED_TRANSACTIONS, whereParameters, values);
-//
-//        this.updateOrCreateTransactionAmounts(fixedTransaction);
-//
-//        return new ConnectionResult<>(null);
-//    }
-//
-//    public ConnectionResult<Void> deleteFixedTransaction(Logger logger, Map<String, Object> parameters) throws Exception {
-//        logger.log(Level.INFO, "Deleting fixed transaction ...");
-//        Map<String, Object> whereParameters = new HashMap<>();
-//        whereParameters.put("id", ((FixedTransaction) parameters.get("fixedTransaction")).getId());
-//        this.database.delete(Database.Table.FIXED_TRANSACTIONS, whereParameters);
-//
-//        whereParameters.clear();
-//        whereParameters.put("fixed_transaction_id", ((FixedTransaction) parameters.get("fixedTransaction")).getId());
-//        this.database.delete(Database.Table.FIXED_TRANSACTIONS_AMOUNTS, whereParameters);
-//        return new ConnectionResult<>(null);
-//    }
+    /**
+     * Adds a new fixed transaction and stops the old.
+     *
+     * @param parameters [FixedTransaction fixedTransaction]
+     * @return FixedTransaction object
+     */
+    public ConnectionResult<FixedTransaction> addFixedTransactions(Logger logger, Map<String, Object> parameters) {
+        logger.log(Level.INFO, "Adding fixed transactions ...");
+        FixedTransaction fixedTransaction = (FixedTransaction) parameters.get("fixedTransaction");
+
+        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+        Transaction transaction = session.beginTransaction();
+
+        FixedTransactionDAO oldFixedTransaction = session.createQuery("from FixedTransactionDAO where category = :categoryId " +
+                "and endDate = null ", FixedTransactionDAO.class)
+                .setParameter("categoryId", fixedTransaction.getCategoryTree().getValue())
+                .uniqueResult();
+        oldFixedTransaction.setEndDate(LocalDate.now());
+        session.update(oldFixedTransaction);
+
+        fixedTransaction.setId((int) session.save(fixedTransaction.toDatabaseAccessObject()));
+
+        transaction.commit();
+
+        return new ConnectionResult<>(fixedTransaction);
+    }
+
+    /**
+     * Updates a fixed transaction.
+     *
+     * @param parameters [FixedTransaction fixedTransaction]
+     * @return void
+     */
+    public ConnectionResult<Void> updateFixedTransaction(Logger logger, Map<String, Object> parameters) {
+        logger.log(Level.INFO, "Updating fixed transaction ...");
+        FixedTransaction fixedTransaction = (FixedTransaction) parameters.get("fixedTransaction");
+
+        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+        Transaction transaction = session.beginTransaction();
+        session.update(fixedTransaction.toDatabaseAccessObject());
+        transaction.commit();
+
+        return new ConnectionResult<>(null);
+    }
+
+    /**
+     * Deletes a fixed transaction.
+     *
+     * @param parameters [int fixedTransactionId]
+     * @return void
+     */
+    public ConnectionResult<Void> deleteFixedTransaction(Logger logger, Map<String, Object> parameters) {
+        logger.log(Level.INFO, "Deleting fixed transaction ...");
+
+        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+        Transaction transaction = session.beginTransaction();
+        session.createQuery("delete from FixedTransactionDAO where id = :fixedTransactionId")
+                .setParameter("fixedTransactionId", parameters.get("fixedTransactionId"))
+                .executeUpdate();
+        transaction.commit();
+
+        return new ConnectionResult<>(null);
+    }
 //
 //    private void updateOrCreateTransactionAmounts(FixedTransaction fixedTransaction) throws SQLException {
 //        Map<String, Object> whereParameters = new HashMap<>();

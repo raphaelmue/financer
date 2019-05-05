@@ -125,6 +125,11 @@ public class FixedTransaction extends FixedTransactionDAO implements Transaction
         return amount;
     }
 
+    public boolean isActive() {
+        return LocalDate.now().compareTo(this.getStartDate()) >= 0 &&
+                (this.getEndDate() == null || (LocalDate.now().compareTo(this.getEndDate()) <= 0));
+    }
+
     @Override
     public FixedTransactionDAO toDatabaseAccessObject() {
         FixedTransactionDAO fixedTransactionDAO = new FixedTransactionDAO();

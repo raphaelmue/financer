@@ -383,10 +383,10 @@ public class ServiceTest {
         Assertions.assertNull(result.getException());
 
         Assertions.assertEquals(1, result.getResult().getCategoryTreeByCategoryClass(BaseCategory.CategoryClass.VARIABLE_REVENUE)
-            .getChildren().get(0).getTransactions().size());
+                .getChildren().get(0).getTransactions().size());
         for (de.raphaelmuesseler.financer.shared.model.transactions.Transaction transaction :
                 result.getResult().getCategoryTreeByCategoryClass(BaseCategory.CategoryClass.VARIABLE_REVENUE)
-                .getChildren().get(0).getTransactions()) {
+                        .getChildren().get(0).getTransactions()) {
             if (transaction instanceof VariableTransaction) {
                 Assertions.assertEquals(transaction.getId(), variableTransaction.getId());
             }
@@ -515,5 +515,66 @@ public class ServiceTest {
                 Assertions.assertEquals(transaction.getId(), fixedTransaction.getId());
             }
         }
+    }
+
+    @Test
+    public void testAddFixedTransaction() {
+        FixedTransaction _fixedTransaction = new FixedTransaction(-1,
+                50.0,
+                new CategoryTreeImpl(new Category(fixedCategory)),
+                LocalDate.now(),
+                null,
+                "Product",
+                "Purpose",
+                false,
+                1,
+                new HashSet<>());
+
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("fixedTransaction", _fixedTransaction);
+        ConnectionResult<FixedTransaction> result = service.addFixedTransactions(logger, parameters);
+        Assertions.assertNotNull(result.getResult());
+        Assertions.assertNull(result.getException());
+        Assertions.assertTrue(result.getResult().getId() > 0);
+
+        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+        Transaction transaction = session.beginTransaction();
+        Assertions.assertEquals(LocalDate.now(), session.get(FixedTransactionDAO.class, fixedTransaction.getId()).getEndDate());
+        transaction.commit();
+    }
+
+    @Test
+    public void testUpdateFixedTransaction() {
+        final double amount = 100.0;
+        fixedTransaction.setAmount(amount);
+
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("fixedTransaction", new FixedTransaction(fixedTransaction));
+        service.updateFixedTransaction(logger, parameters);
+        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+        Transaction transaction = session.beginTransaction();
+        Assertions.assertEquals(amount, session.get(FixedTransactionDAO.class, fixedTransaction.getId()).getAmount());
+        transaction.commit();
+    }
+
+    @Test
+    public void testDeleteFixedTransaction() {
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("fixedTransactionId", fixedTransaction.getId());
+        service.deleteFixedTransaction(logger, parameters);
+
+        parameters.clear();
+        parameters.put("userId", user.getId());
+        BaseCategory baseCategory = service.getUsersCategories(logger, parameters).getResult();
+
+        parameters.clear();
+        parameters.put("userId", user.getId());
+        parameters.put("baseCategory", baseCategory);
+        ConnectionResult<BaseCategory> result = service.getFixedTransactions(logger, parameters);
+        Assertions.assertNotNull(result.getResult());
+        Assertions.assertNull(result.getException());
+
+        Assertions.assertEquals(0, result.getResult().getCategoryTreeByCategoryClass(BaseCategory.CategoryClass.FIXED_REVENUE)
+                .getChildren().get(0).getTransactions().size());
     }
 }
