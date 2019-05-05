@@ -8,6 +8,7 @@ import de.raphaelmuesseler.financer.util.date.DateUtil;
 
 import java.time.LocalDate;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 public class VariableTransaction extends VariableTransactionDAO implements Transaction {
@@ -82,5 +83,15 @@ public class VariableTransaction extends VariableTransactionDAO implements Trans
         databaseVariableTransaction.setPurpose(this.getPurpose());
         databaseVariableTransaction.setShop(this.getShop());
         return databaseVariableTransaction;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(this.getId());
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof VariableTransaction && ((VariableTransaction) obj).getId() == this.getId();
     }
 }

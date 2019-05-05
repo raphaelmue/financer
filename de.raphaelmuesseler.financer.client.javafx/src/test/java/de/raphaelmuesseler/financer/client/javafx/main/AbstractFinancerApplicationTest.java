@@ -21,6 +21,7 @@ import de.raphaelmuesseler.financer.shared.model.transactions.FixedTransaction;
 import de.raphaelmuesseler.financer.shared.model.transactions.TransactionAmount;
 import de.raphaelmuesseler.financer.shared.model.transactions.VariableTransaction;
 import de.raphaelmuesseler.financer.shared.model.user.User;
+import de.raphaelmuesseler.financer.util.collections.TreeUtil;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
@@ -34,6 +35,7 @@ import org.testfx.framework.junit5.ApplicationTest;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Predicate;
@@ -184,6 +186,8 @@ class AbstractFinancerApplicationTest extends ApplicationTest {
         confirmDialog();
 
         sleep(500);
+        category.getValue().setId(TreeUtil.getByValue((BaseCategory) LocalStorageImpl.getInstance().readObject("categories"),
+                category, Comparator.comparing(Category::getName)).getValue().getId());
     }
 
     void addFixedTransaction(FixedTransaction fixedTransaction) {

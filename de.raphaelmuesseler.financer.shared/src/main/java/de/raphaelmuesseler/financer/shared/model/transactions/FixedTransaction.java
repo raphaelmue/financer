@@ -10,6 +10,7 @@ import de.raphaelmuesseler.financer.util.date.DateUtil;
 
 import java.time.LocalDate;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 public class FixedTransaction extends FixedTransactionDAO implements Transaction {
@@ -163,5 +164,15 @@ public class FixedTransaction extends FixedTransactionDAO implements Transaction
     @Override
     public Set<TransactionAmount> getTransactionAmounts() {
         return transactionAmounts;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(this.getId());
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof FixedTransaction && ((FixedTransaction) obj).getId() == this.getId();
     }
 }

@@ -375,11 +375,9 @@ public class FinancerService {
                                 VariableTransactionDAO.class)
                         .setParameter("categoryId", treeObject.getValue().getId())
                         .list();
-                Set<VariableTransaction> variableTransactions = new HashSet<>();
                 for (VariableTransactionDAO databaseVariableTransaction : databaseVariableTransactions) {
-                    variableTransactions.add(new VariableTransaction(databaseVariableTransaction, categoryTree));
+                    categoryTree.getTransactions().add(new VariableTransaction(databaseVariableTransaction, categoryTree));
                 }
-                categoryTree.getTransactions().addAll(variableTransactions);
             }
         });
 
@@ -519,11 +517,9 @@ public class FinancerService {
                                 FixedTransactionDAO.class)
                         .setParameter("categoryId", treeObject.getValue().getId())
                         .list();
-                Set<FixedTransaction> variableTransactions = new HashSet<>();
                 for (FixedTransactionDAO databaseFixedTransaction : databaseFixedTransactions) {
-                    variableTransactions.add(new FixedTransaction(databaseFixedTransaction, categoryTree));
+                    categoryTree.getTransactions().add(new FixedTransaction(databaseFixedTransaction, categoryTree));
                 }
-                categoryTree.getTransactions().addAll(variableTransactions);
             }
         });
 

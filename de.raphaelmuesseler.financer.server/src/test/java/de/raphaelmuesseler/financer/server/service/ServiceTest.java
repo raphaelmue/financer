@@ -42,7 +42,7 @@ public class ServiceTest {
 
     @BeforeAll
     public static void beforeAll() {
-        HibernateUtil.setIsHostLocal(true);
+        HibernateUtil.setIsHostLocal(false);
         HibernateUtil.setDatabaseName(DatabaseName.TEST);
     }
 
