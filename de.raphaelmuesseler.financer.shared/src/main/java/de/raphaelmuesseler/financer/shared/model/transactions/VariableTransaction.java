@@ -3,7 +3,6 @@ package de.raphaelmuesseler.financer.shared.model.transactions;
 import de.raphaelmuesseler.financer.shared.model.categories.Category;
 import de.raphaelmuesseler.financer.shared.model.categories.CategoryTree;
 import de.raphaelmuesseler.financer.shared.model.categories.CategoryTreeImpl;
-import de.raphaelmuesseler.financer.shared.model.db.TransactionAttachmentDAO;
 import de.raphaelmuesseler.financer.shared.model.db.VariableTransactionDAO;
 import de.raphaelmuesseler.financer.util.date.DateUtil;
 
@@ -53,7 +52,7 @@ public class VariableTransaction extends VariableTransactionDAO implements Trans
     }
 
     @Override
-    public Set<? extends TransactionAttachmentDAO> getAttachments() {
+    public Set<Attachment> getAttachments() {
         return this.attachments;
     }
 

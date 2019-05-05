@@ -3,7 +3,6 @@ package de.raphaelmuesseler.financer.shared.model.transactions;
 import de.raphaelmuesseler.financer.shared.model.categories.Category;
 import de.raphaelmuesseler.financer.shared.model.categories.CategoryTree;
 import de.raphaelmuesseler.financer.shared.model.categories.CategoryTreeImpl;
-import de.raphaelmuesseler.financer.shared.model.db.CategoryDAO;
 import de.raphaelmuesseler.financer.shared.model.db.FixedTransactionAmountDAO;
 import de.raphaelmuesseler.financer.shared.model.db.FixedTransactionDAO;
 import de.raphaelmuesseler.financer.shared.model.db.TransactionAttachmentDAO;

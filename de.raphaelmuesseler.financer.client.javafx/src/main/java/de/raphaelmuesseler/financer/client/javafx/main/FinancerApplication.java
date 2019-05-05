@@ -4,8 +4,7 @@ import de.raphaelmuesseler.financer.client.connection.ServerRequest;
 import de.raphaelmuesseler.financer.client.format.I18N;
 import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
 import de.raphaelmuesseler.financer.client.javafx.login.LoginApplication;
-import de.raphaelmuesseler.financer.client.javafx.util.ApplicationHelper;
-import de.raphaelmuesseler.financer.client.local.LocalSettings;
+import de.raphaelmuesseler.financer.shared.model.user.User;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -45,7 +44,7 @@ public class FinancerApplication extends Application {
             // setting up language
             I18N.setLocalStorage(LocalStorageImpl.getInstance());
             ResourceBundle resourceBundle = ResourceBundle.getBundle("Financer",
-                    ApplicationHelper.getLocale((LocalSettings) LocalStorageImpl.getInstance().readObject("localSettings")));
+                    ((User) LocalStorageImpl.getInstance().readObject("user")).getSettings().getLanguage());
 
             Parent root = FXMLLoader.load(getClass().getResource("views/financer.fxml"), resourceBundle);
 

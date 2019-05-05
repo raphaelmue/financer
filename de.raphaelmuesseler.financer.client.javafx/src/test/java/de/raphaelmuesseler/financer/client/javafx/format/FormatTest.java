@@ -3,8 +3,6 @@ package de.raphaelmuesseler.financer.client.javafx.format;
 import de.raphaelmuesseler.financer.client.format.Formatter;
 import de.raphaelmuesseler.financer.client.format.I18N;
 import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
-import de.raphaelmuesseler.financer.client.local.LocalSettings;
-import de.raphaelmuesseler.financer.client.local.LocalSettingsImpl;
 import de.raphaelmuesseler.financer.shared.model.categories.Category;
 import de.raphaelmuesseler.financer.shared.model.user.User;
 import org.junit.jupiter.api.Assertions;
@@ -17,22 +15,20 @@ import java.util.Locale;
 
 @SuppressWarnings("WeakerAccess")
 public class FormatTest {
-    private static LocalSettings settings;
     private static User user;
     private static Formatter formatter;
 
     @BeforeEach
     public void init() {
-        settings = new LocalSettingsImpl();
         user = new User();
 
         I18N.setLocalStorage(LocalStorageImpl.getInstance());
 
-        settings.setLanguage(Locale.ENGLISH);
-        user.getDatabaseSettings().setShowCurrencySign(false);
-        user.getDatabaseSettings().setCurrency(Currency.getInstance("USD"));
+        user.getSettings().setLanguage(Locale.ENGLISH);
+        user.getSettings().setShowCurrencySign(false);
+        user.getSettings().setCurrency(Currency.getInstance("USD"));
 
-        formatter = new JavaFXFormatter(settings, user);
+        formatter = new JavaFXFormatter(user);
     }
 
     @Test
@@ -42,12 +38,12 @@ public class FormatTest {
         String currencyFormat = formatter.formatCurrency(amount);
         Assertions.assertEquals(String.format(Locale.ENGLISH, "%.2f", amount) + " " + Currency.getInstance("USD").getCurrencyCode(), currencyFormat);
 
-        user.getDatabaseSettings().setShowCurrencySign(true);
+        user.getSettings().setShowCurrencySign(true);
 
         currencyFormat = formatter.formatCurrency(amount);
         Assertions.assertEquals(String.format(Locale.ENGLISH, "%.2f", amount) + " " + Currency.getInstance("USD").getSymbol(), currencyFormat);
 
-        settings.setLanguage(Locale.GERMAN);
+        user.getSettings().setLanguage(Locale.GERMAN);
 
         currencyFormat = formatter.formatCurrency(amount);
         Assertions.assertEquals(String.format(Locale.GERMAN, "%.2f", amount).replace(".", ",") + " " +
@@ -56,13 +52,13 @@ public class FormatTest {
 
     @Test
     public void testCategoryFormat() {
-        final Category category = new Category(1, "testCategory", 1, 0);
+        final Category category = new Category("testCategory");
         category.setPrefix("testPrefix1");
 
         String categoryFormat = formatter.formatCategoryName(category);
         Assertions.assertEquals(category.getPrefix() + " " + category.getName(), categoryFormat);
 
-        final Category categoryClass = new Category(2, "fixedExpenses", 1, -1);
+        final Category categoryClass = new Category("fixedExpenses");
         categoryClass.setPrefix("testPrefix2");
 
         categoryFormat = formatter.formatCategoryName(categoryClass);
@@ -74,7 +70,7 @@ public class FormatTest {
         final LocalDate localDate = LocalDate.of(2019, 3, 20);
         Assertions.assertEquals("Mar 20, 2019", formatter.formatDate(localDate));
 
-        settings.setLanguage(Locale.GERMAN);
+        user.getSettings().setLanguage(Locale.GERMAN);
 
         Assertions.assertEquals("20.03.2019", formatter.formatDate(localDate));
     }

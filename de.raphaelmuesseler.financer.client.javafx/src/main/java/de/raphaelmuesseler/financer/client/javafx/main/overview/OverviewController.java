@@ -60,7 +60,7 @@ public class OverviewController implements Initializable {
         double balanceAmount = 0;
         int counter = 0;
         for (Tree<Category> root : categories.getChildren()) {
-            this.balanceGridPane.add(new Label(I18N.get(((CategoryTree) root).getCategoryClass().getName())), 0, counter);
+            this.balanceGridPane.add(new Label(I18N.get(root.getValue().getCategoryClass().getName())), 0, counter);
             Label baseCategoryLabel = formatter.formatAmountLabel(((CategoryTree) root).getAmount(LocalDate.now()));
             balanceAmount += ((CategoryTree) root).getAmount(LocalDate.now());
             GridPane.setHalignment(baseCategoryLabel, HPos.RIGHT);

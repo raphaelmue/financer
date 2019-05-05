@@ -15,7 +15,7 @@ import de.raphaelmuesseler.financer.shared.connection.ConnectionResult;
 import de.raphaelmuesseler.financer.shared.model.categories.BaseCategory;
 import de.raphaelmuesseler.financer.shared.model.categories.Category;
 import de.raphaelmuesseler.financer.shared.model.categories.CategoryTree;
-import de.raphaelmuesseler.financer.shared.model.transactions.AttachmentWithContent;
+import de.raphaelmuesseler.financer.shared.model.transactions.Attachment;
 import de.raphaelmuesseler.financer.shared.model.transactions.VariableTransaction;
 import de.raphaelmuesseler.financer.shared.model.user.User;
 import de.raphaelmuesseler.financer.util.collections.TreeUtil;
@@ -34,6 +34,8 @@ import org.controlsfx.glyphfont.GlyphFontRegistry;
 
 import java.awt.*;
 import java.io.*;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
@@ -47,7 +49,7 @@ class TransactionDialog extends FinancerDialog<VariableTransaction> {
     private TextField purposeField;
     private TextField shopField;
     private JFXDatePicker valueDateField;
-    private ListView<AttachmentWithContent> attachmentListView;
+    private ListView<Attachment> attachmentListView;
     private BaseCategory categories;
 
     TransactionDialog(VariableTransaction transaction, BaseCategory categories) {
@@ -141,7 +143,7 @@ class TransactionDialog extends FinancerDialog<VariableTransaction> {
             this.attachmentListView = new ListView<>();
             this.attachmentListView.setCellFactory(param -> new ListCell<>() {
                 @Override
-                protected void updateItem(AttachmentWithContent item, boolean empty) {
+                protected void updateItem(Attachment item, boolean empty) {
                     super.updateItem(item, empty);
 
                     if (item == null || empty) {
@@ -164,8 +166,8 @@ class TransactionDialog extends FinancerDialog<VariableTransaction> {
     @Override
     protected void prepareDialogContent() {
         categories.traverse(treeItem -> {
-            if (!treeItem.isRoot() && (((CategoryTree) treeItem).getCategoryClass() == BaseCategory.CategoryClass.VARIABLE_EXPENSES ||
-                    ((CategoryTree) treeItem).getCategoryClass() == BaseCategory.CategoryClass.VARIABLE_REVENUE)) {
+            if (!treeItem.isRoot() && (treeItem.getValue().getCategoryClass() == BaseCategory.CategoryClass.VARIABLE_EXPENSES ||
+                    treeItem.getValue().getCategoryClass() == BaseCategory.CategoryClass.VARIABLE_REVENUE)) {
                 categoryComboBox.getItems().add((CategoryTree) treeItem);
             }
         });
@@ -190,7 +192,7 @@ class TransactionDialog extends FinancerDialog<VariableTransaction> {
             this.shopField.setText(this.getValue().getShop());
             this.valueDateField.setValue(this.getValue().getValueDate());
 
-            this.attachmentListView.getItems().addAll(this.getValue().getDatabaseAttachments());
+            this.attachmentListView.getItems().addAll(new ArrayList<>(this.getValue().getAttachments()));
         }
     }
 
@@ -214,9 +216,13 @@ class TransactionDialog extends FinancerDialog<VariableTransaction> {
     @Override
     protected VariableTransaction onConfirm() {
         if (this.getValue() == null) {
-            this.setValue(new VariableTransaction(-1, Double.valueOf(this.amountField.getText()),
-                    this.categoryComboBox.getSelectionModel().getSelectedItem(), this.productField.getText(),
-                    this.purposeField.getText(), this.valueDateField.getValue(), this.shopField.getText()));
+            this.setValue(new VariableTransaction(0,
+                    Double.valueOf(this.amountField.getText()),
+                    this.valueDateField.getValue(),
+                    this.categoryComboBox.getSelectionModel().getSelectedItem(),
+                    this.productField.getText(),
+                    this.purposeField.getText(),
+                    this.shopField.getText()));
             this.getValue().getCategoryTree().getTransactions().add(this.getValue());
         } else {
             this.getValue().setAmount(Double.valueOf(this.amountField.getText()));
@@ -245,8 +251,8 @@ class TransactionDialog extends FinancerDialog<VariableTransaction> {
                             "uploadTransactionAttachment", parameters, new JavaFXAsyncConnectionCall() {
                         @Override
                         public void onSuccess(ConnectionResult result) {
-                            attachmentListView.getItems().add((AttachmentWithContent) result.getResult());
-                            getValue().getDatabaseAttachments().add((AttachmentWithContent) result.getResult());
+                            attachmentListView.getItems().add((Attachment) result.getResult());
+                            getValue().getAttachments().add((Attachment) result.getResult());
                         }
 
                         @Override
@@ -286,9 +292,9 @@ class TransactionDialog extends FinancerDialog<VariableTransaction> {
                 @Override
                 public void onSuccess(ConnectionResult result) {
                     try (FileOutputStream fileOutputStream = new FileOutputStream(file)) {
-                        fileOutputStream.write(((AttachmentWithContent) result.getResult()).getContent());
+                        fileOutputStream.write(((Attachment) result.getResult()).getByteContent());
                         Desktop.getDesktop().open(file);
-                    } catch (IOException e) {
+                    } catch (IOException | SQLException e) {
                         new FinancerExceptionDialog("Financer", e).showAndWait();
                         e.printStackTrace();
                     }

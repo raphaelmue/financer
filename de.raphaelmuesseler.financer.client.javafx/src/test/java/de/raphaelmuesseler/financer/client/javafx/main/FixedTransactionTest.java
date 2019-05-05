@@ -29,7 +29,7 @@ public class FixedTransactionTest extends AbstractFinancerApplicationTest {
     @Test
     public void testAddFixedTransaction() {
         register(user, password);
-        category.setCategoryClass(BaseCategory.CategoryClass.FIXED_EXPENSES);
+        category.getValue().setCategoryClass(BaseCategory.CategoryClass.FIXED_EXPENSES);
         addCategory(category);
         addFixedTransaction(fixedTransaction);
 
@@ -52,7 +52,7 @@ public class FixedTransactionTest extends AbstractFinancerApplicationTest {
     @Test
     public void testEditFixedTransaction() {
         register(user, password);
-        category.setCategoryClass(BaseCategory.CategoryClass.FIXED_EXPENSES);
+        category.getValue().setCategoryClass(BaseCategory.CategoryClass.FIXED_EXPENSES);
         addCategory(category);
         addFixedTransaction(fixedTransaction);
 
@@ -77,14 +77,14 @@ public class FixedTransactionTest extends AbstractFinancerApplicationTest {
 
         Assertions.assertNotNull(find((Label label) -> label.getText().contains(formatter.formatCurrency(amount))));
         Assertions.assertEquals(1, ((CategoryTree) TreeUtil.getByValue(((BaseCategory) LocalStorageImpl.getInstance().readObject("categories"))
-                        .getCategoryTreeByCategoryClass(fixedTransaction.getCategoryTree().getCategoryClass()),
+                        .getCategoryTreeByCategoryClass(fixedTransaction.getCategoryTree().getValue().getCategoryClass()),
                 fixedTransaction.getCategoryTree(), (o1, o2) -> String.CASE_INSENSITIVE_ORDER.compare(o1.getName(), o2.getName()))).getTransactions().size());
     }
 
     @Test
     public void testDeleteFixedTransaction() {
         register(user, password);
-        category.setCategoryClass(BaseCategory.CategoryClass.FIXED_EXPENSES);
+        category.getValue().setCategoryClass(BaseCategory.CategoryClass.FIXED_EXPENSES);
         addCategory(category);
         addFixedTransaction(fixedTransaction);
 
@@ -113,11 +113,11 @@ public class FixedTransactionTest extends AbstractFinancerApplicationTest {
 
     @Test
     public void testAddFixedVariableTransaction() {
-        fixedTransaction.setVariable(true);
+        fixedTransaction.setIsVariable(true);
         fixedTransaction.getTransactionAmounts().add(new TransactionAmount(-1, 450.0, LocalDate.now().withDayOfMonth(1)));
 
         register(user, password);
-        category.setCategoryClass(BaseCategory.CategoryClass.FIXED_EXPENSES);
+        category.getValue().setCategoryClass(BaseCategory.CategoryClass.FIXED_EXPENSES);
         addCategory(category);
         addFixedTransaction(fixedTransaction);
 
@@ -132,7 +132,10 @@ public class FixedTransactionTest extends AbstractFinancerApplicationTest {
         sleep(500);
 
         Assertions.assertNotNull(find((Label label) -> label.getText().contains(I18N.get("active"))));
-        Assertions.assertEquals(450.0, fixedTransaction.getTransactionAmounts().get(0).getAmount());
+        Assertions.assertEquals(1, fixedTransaction.getTransactionAmounts().size());
+        for (TransactionAmount transactionAmount : fixedTransaction.getTransactionAmounts()) {
+            Assertions.assertEquals(450.0, transactionAmount.getAmount());
+        }
         // TODO: works locally, but not on server; needs to be fixed
         // Assertions.assertNotNull(find((Label label) -> label.getText().contains(Formatter.formatCurrency(
         //        fixedTransaction.getTransactionAmounts().get(0).getAmount()))));

@@ -10,13 +10,15 @@ import de.raphaelmuesseler.financer.client.javafx.components.IntegerField;
 import de.raphaelmuesseler.financer.client.javafx.format.JavaFXFormatter;
 import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
 import de.raphaelmuesseler.financer.client.javafx.login.LoginApplication;
+import de.raphaelmuesseler.financer.server.db.DatabaseName;
+import de.raphaelmuesseler.financer.server.db.HibernateUtil;
 import de.raphaelmuesseler.financer.server.main.Server;
 import de.raphaelmuesseler.financer.shared.model.categories.Category;
 import de.raphaelmuesseler.financer.shared.model.categories.CategoryTree;
 import de.raphaelmuesseler.financer.shared.model.categories.CategoryTreeImpl;
 import de.raphaelmuesseler.financer.shared.model.transactions.FixedTransaction;
-import de.raphaelmuesseler.financer.shared.model.transactions.VariableTransaction;
 import de.raphaelmuesseler.financer.shared.model.transactions.TransactionAmount;
+import de.raphaelmuesseler.financer.shared.model.transactions.VariableTransaction;
 import de.raphaelmuesseler.financer.shared.model.user.User;
 import javafx.scene.Node;
 import javafx.scene.control.*;
@@ -32,7 +34,7 @@ import org.testfx.framework.junit5.ApplicationTest;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.time.LocalDate;
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Predicate;
 
@@ -40,7 +42,7 @@ class AbstractFinancerApplicationTest extends ApplicationTest {
     private static Server server;
 
     final String password = "password";
-    final User user = new User(
+    final User user = new User(0,
             "max@mustermann.com",
             "6406b2e97a97f64910aca76370ee35a92087806da1aa878e8a9ae0f4dc3949af",
             "I2HoOYJmqKfGboyJAdCEQwulUkxmhVH5",
@@ -48,33 +50,44 @@ class AbstractFinancerApplicationTest extends ApplicationTest {
             "Mustermann",
             LocalDate.of(1989, 5, 28),
             User.Gender.MALE);
-    final CategoryTree category = new CategoryTreeImpl(new Category(-1, "TestCategory", -1, -1));
-    final VariableTransaction transaction = new VariableTransaction(-1, 52.5,
-            category, "ProductName",
-            "Purpose", LocalDate.of(2018, 5, 19), "Shop");
-    final FixedTransaction fixedTransaction = new FixedTransaction(-1, 570.0, category, "TestProduct",
-            "TestPurpose", LocalDate.of(2018, 2, 5), null, false, 3,
-            new ArrayList<>());
+    final CategoryTree category = new CategoryTreeImpl(new Category("TestCategory"));
+    final VariableTransaction transaction = new VariableTransaction(0,
+            52.5,
+            LocalDate.of(2018, 5, 19),
+            category,
+            "ProductName",
+            "Purpose",
+            "Shop");
+    final FixedTransaction fixedTransaction = new FixedTransaction(0,
+            570.0,
+            category,
+            LocalDate.of(2018, 2, 5),
+            null,
+            "TestProduct",
+            "TestPurpose",
+            false,
+            3,
+            new HashSet<>());
 
     static JavaFXFormatter formatter;
 
     @BeforeAll
-    static void setUp() throws SQLException, IOException {
+    static void setUp() throws IOException {
         server = new Server(3505);
         ServerRequest.setPort(3505);
         new Thread(server::run).start();
 
         LocalStorageImpl.getInstance().deleteAllData();
 
-        Database.setDbName(Database.DatabaseName.TEST);
-        Database.setHost(false);
-        Database.getInstance().clearDatabase();
+        HibernateUtil.setDatabaseName(DatabaseName.TEST);
+        HibernateUtil.setIsHostLocal(false);
+        HibernateUtil.cleanDatabase();
     }
 
     @BeforeEach
     void setUpEach() throws Exception {
         LocalStorageImpl.getInstance().deleteAllData();
-        Database.getInstance().clearDatabase();
+        HibernateUtil.cleanDatabase();
     }
 
     final <T extends Node> T find(final String query) {
@@ -95,7 +108,7 @@ class AbstractFinancerApplicationTest extends ApplicationTest {
         clickOn((TextField) find("#registerEmailTextField"));
         write(user.getEmail());
         JFXDatePicker birthDatePicker = find("#registerBirthDatePicker");
-        birthDatePicker.setValue(user.getBirthDateAsLocalDate());
+        birthDatePicker.setValue(user.getBirthDate());
         clickOn((ComboBox) find("#genderComboBox"));
         press(KeyCode.DOWN).release(KeyCode.DOWN);
         press(KeyCode.ENTER).release(KeyCode.ENTER);
@@ -131,7 +144,7 @@ class AbstractFinancerApplicationTest extends ApplicationTest {
         sleep(250);
 
         Button newCategoryBtn = find("#newCategoryBtn");
-        clickOn(I18N.get(category.getCategoryClass().getName()));
+        clickOn(I18N.get(category.getValue().getCategoryClass().getName()));
         clickOn(newCategoryBtn);
 
         JFXTextField categoryNameField = find("#inputDialogTextField");
@@ -189,7 +202,7 @@ class AbstractFinancerApplicationTest extends ApplicationTest {
         write(Integer.toString(fixedTransaction.getDay()));
         JFXDatePicker datePicker = find("#startDateDatePicker");
         datePicker.setValue(fixedTransaction.getStartDate());
-        if (fixedTransaction.isVariable()) {
+        if (fixedTransaction.getIsVariable()) {
             clickOn((CheckBox) find("#isVariableCheckbox"));
 
             sleep(100);

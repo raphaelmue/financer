@@ -137,8 +137,8 @@ public class StatisticsController implements Initializable {
             }
 
             @Override
-            public CategoryTree fromString(String s) {
-                return new CategoryTreeImpl(null, new Category(-1, s, -1, -1));
+            public CategoryTree fromString(String string) {
+                return new CategoryTreeImpl(null, new Category(string));
             }
         });
     }

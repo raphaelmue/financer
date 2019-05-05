@@ -7,9 +7,7 @@ import de.raphaelmuesseler.financer.client.connection.ServerRequestHandler;
 import de.raphaelmuesseler.financer.client.format.I18N;
 import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
 import de.raphaelmuesseler.financer.client.javafx.login.LoginApplication;
-import de.raphaelmuesseler.financer.client.javafx.util.ApplicationHelper;
 import de.raphaelmuesseler.financer.client.local.Application;
-import de.raphaelmuesseler.financer.client.local.LocalSettings;
 import de.raphaelmuesseler.financer.shared.model.user.User;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -70,8 +68,7 @@ public class FinancerController implements Initializable, Application {
         User user = (User) this.localStorage.readObject("user");
 
         // setting up language
-        this.resourceBundle = ResourceBundle.getBundle("Financer",
-                ApplicationHelper.getLocale((LocalSettings) localStorage.readObject("localSettings")));
+        this.resourceBundle = ResourceBundle.getBundle("Financer", user.getSettings().getLanguage());
 
         this.snackbar = new JFXSnackbar(this.rootLayout);
 

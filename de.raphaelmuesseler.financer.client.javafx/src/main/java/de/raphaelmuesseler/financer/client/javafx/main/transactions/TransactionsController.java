@@ -17,8 +17,8 @@ import de.raphaelmuesseler.financer.shared.connection.ConnectionResult;
 import de.raphaelmuesseler.financer.shared.model.categories.BaseCategory;
 import de.raphaelmuesseler.financer.shared.model.categories.Category;
 import de.raphaelmuesseler.financer.shared.model.categories.CategoryTree;
-import de.raphaelmuesseler.financer.shared.model.transactions.AbstractTransaction;
 import de.raphaelmuesseler.financer.shared.model.transactions.FixedTransaction;
+import de.raphaelmuesseler.financer.shared.model.transactions.Transaction;
 import de.raphaelmuesseler.financer.shared.model.transactions.VariableTransaction;
 import de.raphaelmuesseler.financer.shared.model.user.User;
 import de.raphaelmuesseler.financer.util.concurrency.FinancerExecutor;
@@ -124,7 +124,7 @@ public class TransactionsController implements Initializable {
                 } else {
                     Label categoryLabel;
                     if (item.isRoot()) {
-                        categoryLabel = new Label((item.getCategoryClass().getIndex() + 1) + ". " + I18N.get(item.getCategoryClass().getName()));
+                        categoryLabel = new Label((item.getValue().getCategoryClass().getIndex() + 1) + ". " + I18N.get(item.getValue().getCategoryClass().getName()));
                         categoryLabel.setStyle("-fx-font-weight: 700");
                     } else {
                         categoryLabel = new Label(formatter.formatCategoryName(item.getValue()));
@@ -282,9 +282,8 @@ public class TransactionsController implements Initializable {
         if (this.categories != null) {
 //            transactionsTableView.getItems().clear();
             this.categories.traverse(treeItem -> {
-                if ((((CategoryTree) treeItem).getCategoryClass() == BaseCategory.CategoryClass.VARIABLE_EXPENSES ||
-                        ((CategoryTree) treeItem).getCategoryClass() == BaseCategory.CategoryClass.VARIABLE_REVENUE)) {
-                    for (AbstractTransaction abstractTransaction : ((CategoryTree) treeItem).getTransactions()) {
+                if (!treeItem.getValue().getCategoryClass().isFixed()) {
+                    for (Transaction abstractTransaction : ((CategoryTree) treeItem).getTransactions()) {
                         if (abstractTransaction instanceof VariableTransaction) {
                             transactions.add((VariableTransaction) abstractTransaction);
                         }
@@ -317,8 +316,7 @@ public class TransactionsController implements Initializable {
         if (this.categories != null) {
             categoriesListView.getItems().clear();
             this.categories.traverse(treeItem -> {
-                if ((((CategoryTree) treeItem).getCategoryClass() == BaseCategory.CategoryClass.FIXED_EXPENSES ||
-                        ((CategoryTree) treeItem).getCategoryClass() == BaseCategory.CategoryClass.FIXED_REVENUE)) {
+                if (treeItem.getValue().getCategoryClass().isFixed()) {
                     categoriesListView.getItems().add((CategoryTree) treeItem);
                 }
             });
@@ -332,7 +330,7 @@ public class TransactionsController implements Initializable {
     public void handleRefreshTransactions() {
         RetrievalServiceImpl.getInstance().fetchTransactions(this.user, new AsyncCall<>() {
             @Override
-            public void onSuccess(List<VariableTransaction> result) {
+            public void onSuccess(BaseCategory result) {
             }
 
             @Override
@@ -353,7 +351,7 @@ public class TransactionsController implements Initializable {
     public void handleRefreshFixedTransactions() {
         RetrievalServiceImpl.getInstance().fetchFixedTransactions(this.user, new AsyncCall<>() {
             @Override
-            public void onSuccess(List<FixedTransaction> result) {
+            public void onSuccess(BaseCategory result) {
             }
 
             @Override
@@ -417,8 +415,8 @@ public class TransactionsController implements Initializable {
                 .showAndGetResult();
         if (fixedTransaction != null) {
 
-            if ((fixedTransaction.getCategoryTree().getCategoryClass().isRevenue() && fixedTransaction.getAmount() < 0) ||
-                    (!fixedTransaction.getCategoryTree().getCategoryClass().isRevenue() && fixedTransaction.getAmount() >= 0)) {
+            if ((fixedTransaction.getCategoryTree().getValue().getCategoryClass().isRevenue() && fixedTransaction.getAmount() < 0) ||
+                    (!fixedTransaction.getCategoryTree().getValue().getCategoryClass().isRevenue() && fixedTransaction.getAmount() >= 0)) {
                 fixedTransaction.setAmount(fixedTransaction.getAmount() * (-1));
             }
 
@@ -489,10 +487,7 @@ public class TransactionsController implements Initializable {
                 .showAndGetResult();
         if (fixedTransaction != null) {
 
-            if ((fixedTransaction.getCategoryTree().getValue().getRootId() == 0 && fixedTransaction.getAmount() < 0) ||
-                    (fixedTransaction.getCategoryTree().getValue().getRootId() == 2 && fixedTransaction.getAmount() >= 0)) {
-                fixedTransaction.setAmount(fixedTransaction.getAmount() * (-1));
-            }
+            this.correctTransactionAmount(fixedTransaction);
 
             Map<String, Object> parameters = new HashMap<>();
             parameters.put("fixedTransaction", fixedTransaction);
@@ -599,7 +594,7 @@ public class TransactionsController implements Initializable {
     private void showFixedTransactions(CategoryTree category) {
         if (category != null) {
             this.fixedTransactionsListView.getItems().clear();
-            for (AbstractTransaction abstractTransaction : category.getTransactions()) {
+            for (Transaction abstractTransaction : category.getTransactions()) {
                 if (abstractTransaction instanceof FixedTransaction) {
                     this.fixedTransactionsListView.getItems().add((FixedTransaction) abstractTransaction);
                 }
@@ -611,9 +606,9 @@ public class TransactionsController implements Initializable {
     }
 
 
-    private void correctTransactionAmount(AbstractTransaction transaction) {
-        if ((transaction.getCategoryTree().getCategoryClass().equals(BaseCategory.CategoryClass.VARIABLE_REVENUE) && transaction.getAmount() < 0) ||
-                (transaction.getCategoryTree().getCategoryClass().equals(BaseCategory.CategoryClass.VARIABLE_EXPENSES) && transaction.getAmount() >= 0)) {
+    private void correctTransactionAmount(Transaction transaction) {
+        if ((transaction.getCategoryTree().getValue().getCategoryClass().isRevenue() && transaction.getAmount() < 0) ||
+                (!transaction.getCategoryTree().getValue().getCategoryClass().isRevenue() && transaction.getAmount() >= 0)) {
             transaction.setAmount(transaction.getAmount() * (-1));
         }
     }
@@ -682,21 +677,18 @@ public class TransactionsController implements Initializable {
                     this.dateLabel.setText(item.getStartDate() + " - " + item.getEndDate());
                 }
 
-                if (item.isVariable() && item.getTransactionAmounts() != null &&
+                if (item.getIsVariable() && item.getTransactionAmounts() != null &&
                         item.getTransactionAmounts().size() > 0) {
-                    formatter.formatAmountLabel(this.amountLabel, item.getTransactionAmounts().get(0).getAmount());
-                    if (item.getTransactionAmounts().size() > 1) {
-                        formatter.formatAmountLabel(this.lastAmountLabel, item.getTransactionAmounts().get(1).getAmount());
-                        if (item.getTransactionAmounts().size() > 2) {
-                            formatter.formatAmountLabel(this.preLastAmountLabel, item.getTransactionAmounts().get(2).getAmount());
-                        }
-                    }
+                    LocalDate valueDate = (item.isActive() ? LocalDate.now() : item.getEndDate());
+                    formatter.formatAmountLabel(this.amountLabel, item.getAmount(valueDate));
+                    formatter.formatAmountLabel(this.lastAmountLabel, item.getAmount(valueDate.minusMonths(1)));
+                    formatter.formatAmountLabel(this.preLastAmountLabel, item.getAmount(valueDate.minusMonths(2)));
                 } else {
                     formatter.formatAmountLabel(this.amountLabel, item.getAmount());
                 }
 
                 this.isVariableLabel.setText(I18N.get("isVariable") + ": " +
-                        (item.isVariable() ? I18N.get("yes") : I18N.get("no")));
+                        (item.getIsVariable() ? I18N.get("yes") : I18N.get("no")));
                 this.dayLabel.setText(I18N.get("valueDate") + ": " + item.getDay());
 
 
@@ -728,7 +720,7 @@ public class TransactionsController implements Initializable {
             this.amountLabel.getStyleClass().add("list-cell-title");
             vBoxRight.getChildren().add(this.amountLabel);
 
-            if (item.isVariable()) {
+            if (item.getIsVariable()) {
                 this.lastAmountLabel = new Label();
                 this.lastAmountLabel.setAlignment(Pos.CENTER_RIGHT);
                 vBoxRight.getChildren().add(this.lastAmountLabel);

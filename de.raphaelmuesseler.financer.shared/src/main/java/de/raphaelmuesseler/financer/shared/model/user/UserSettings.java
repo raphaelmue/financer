@@ -12,7 +12,7 @@ public class UserSettings implements Serializable, Settings {
 
     @Override
     public String getValueByProperty(Property property) {
-        return this.properties.get(property.getName());
+        return this.properties.getOrDefault(property.getName(), property.getDefaultValue());
     }
 
     public Locale getLanguage() {

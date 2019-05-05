@@ -5,7 +5,9 @@ import de.raphaelmuesseler.financer.shared.model.db.TokenDAO;
 import de.raphaelmuesseler.financer.shared.model.db.UserDAO;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class User extends UserDAO {
@@ -124,6 +126,14 @@ public class User extends UserDAO {
             this.setTokens(new HashSet<>());
         }
         return super.getTokens();
+    }
+
+    public List<Token> getTokenList() {
+        List<Token> result = new ArrayList<>();
+        for (TokenDAO tokenDAO : this.getTokens()) {
+            result.add(new Token(tokenDAO));
+        }
+        return result;
     }
 
     public void setGender(Gender gender) {

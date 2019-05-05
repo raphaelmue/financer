@@ -29,6 +29,7 @@ import org.controlsfx.glyphfont.GlyphFontRegistry;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashSet;
 
 public class FixedTransactionDialog extends FinancerDialog<FixedTransaction> {
 
@@ -194,8 +195,8 @@ public class FixedTransactionDialog extends FinancerDialog<FixedTransaction> {
             this.dayField.setValue(this.getValue().getDay());
             this.startDateField.setValue(this.getValue().getStartDate());
             this.endDateField.setValue(this.getValue().getEndDate());
-            if (this.getValue().isVariable()) {
-                this.isVariableCheckbox.setSelected(this.getValue().isVariable());
+            if (this.getValue().getIsVariable()) {
+                this.isVariableCheckbox.setSelected(this.getValue().getIsVariable());
                 this.toggleTransactionAmountContainer(false);
 
                 if (this.getValue().getTransactionAmounts() != null && this.getValue().getTransactionAmounts().size() > 0) {
@@ -232,18 +233,18 @@ public class FixedTransactionDialog extends FinancerDialog<FixedTransaction> {
             this.setValue(new FixedTransaction(-1,
                     Double.valueOf(this.amountField.getText()),
                     this.categoryTree,
-                    "", "",
                     this.startDateField.getValue(),
                     this.endDateField.getValue(),
+                    "", "",
                     this.isVariableCheckbox.isSelected(),
                     this.dayField.getValue(),
-                    (this.isVariableCheckbox.isSelected() ? new ArrayList<>(transactionAmountListView.getItems()) : null)));
+                    (this.isVariableCheckbox.isSelected() ? new HashSet<>(transactionAmountListView.getItems()) : null)));
         } else {
             this.getValue().getTransactionAmounts().clear();
             this.getValue().getTransactionAmounts().addAll(new ArrayList<>(this.transactionAmountListView.getItems()));
             this.getValue().setStartDate(this.startDateField.getValue());
             this.getValue().setEndDate(this.endDateField.getValue());
-            this.getValue().setVariable(this.isVariableCheckbox.isSelected());
+            this.getValue().setIsVariable(this.isVariableCheckbox.isSelected());
             this.getValue().setDay(this.dayField.getValue());
             this.getValue().setAmount(Double.valueOf(this.amountField.getText()));
         }

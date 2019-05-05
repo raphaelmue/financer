@@ -18,7 +18,7 @@ public class JavaFXFormatter extends FormatterImpl {
         super(localStorage);
     }
 
-    public JavaFXFormatter(LocalSettings localSettings, User user) {
+    public JavaFXFormatter(User user) {
         super(user);
     }
 

@@ -12,6 +12,7 @@ import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -37,8 +38,7 @@ public class LoginApplication extends Application {
             }
         } else {
             // setting up language
-            ResourceBundle resourceBundle = ResourceBundle.getBundle("Financer",
-                    ApplicationHelper.getLocale((LocalSettings) LocalStorageImpl.getInstance().readObject("localSettings")));
+            ResourceBundle resourceBundle = ResourceBundle.getBundle("Financer", Locale.ENGLISH);
 
             // loading FXML file
             Parent root = FXMLLoader.load(getClass().getResource("/de/raphaelmuesseler/financer/client/javafx/main/views/login.fxml"), resourceBundle);

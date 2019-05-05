@@ -2,7 +2,6 @@ package de.raphaelmuesseler.financer.client.javafx.main;
 
 import de.raphaelmuesseler.financer.client.format.I18N;
 import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
-import de.raphaelmuesseler.financer.client.local.LocalSettings;
 import de.raphaelmuesseler.financer.shared.model.user.User;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
@@ -24,7 +23,7 @@ public class SettingsTest extends AbstractFinancerApplicationTest {
     }
 
     @Test
-    public void testChangeLanguage() throws Exception {
+    public void testChangeLanguage() {
         register(this.user, this.password);
         clickOn((Button) find("#settingTabBtn"));
 
@@ -33,8 +32,9 @@ public class SettingsTest extends AbstractFinancerApplicationTest {
 
         clickOn(languageComboBox.getItems().get(1).getName());
 
+        User userToAssert = (User) LocalStorageImpl.getInstance().readObject("user");
         Assertions.assertEquals(languageComboBox.getItems().get(1).getLocale(),
-                ((LocalSettings) LocalStorageImpl.getInstance().readObject("localSettings")).getLanguage());
+                userToAssert.getSettings().getLanguage());
 
         confirmDialog();
 
@@ -43,7 +43,7 @@ public class SettingsTest extends AbstractFinancerApplicationTest {
 
         clickOn((Button) find("#settingTabBtn"));
         languageComboBox = find("#languageMenuComboBox");
-        Assertions.assertEquals(((LocalSettings) LocalStorageImpl.getInstance().readObject("localSettings")).getLanguage(),
+        Assertions.assertEquals(userToAssert.getSettings().getLanguage(),
                 languageComboBox.getSelectionModel().getSelectedItem().getLocale());
     }
 
@@ -63,7 +63,7 @@ public class SettingsTest extends AbstractFinancerApplicationTest {
         press(KeyCode.ENTER).release(KeyCode.ENTER);
 
         Assertions.assertEquals(currencyComboBox.getItems().get(0), ((User) LocalStorageImpl.getInstance().readObject("user"))
-                .getDatabaseSettings().getCurrency());
+                .getSettings().getCurrency());
 
         clickOn((Button) find("#transactionsTabBtn"));
 
@@ -71,9 +71,10 @@ public class SettingsTest extends AbstractFinancerApplicationTest {
         press(KeyCode.RIGHT).release(KeyCode.RIGHT);
         press(KeyCode.RIGHT).release(KeyCode.RIGHT);
 
+        User userToAssert = (User) LocalStorageImpl.getInstance().readObject("user");
         Assertions.assertNotNull(clickOn("-" +
-                String.format(((LocalSettings) LocalStorageImpl.getInstance().readObject("localSettings")).getLanguage(), "%.2f", transaction.getAmount()) +
-                " " + ((User) LocalStorageImpl.getInstance().readObject("user")).getDatabaseSettings().getCurrency().getCurrencyCode()));
+                String.format(userToAssert.getSettings().getLanguage(), "%.2f", transaction.getAmount()) +
+                " " + userToAssert.getSettings().getCurrency().getCurrencyCode()));
     }
 
     @Test
@@ -97,7 +98,7 @@ public class SettingsTest extends AbstractFinancerApplicationTest {
         clickOn(showCurrencySignCheckbox);
         sleep(500);
         Assertions.assertEquals(showCurrencySignCheckbox.isSelected(), ((User) LocalStorageImpl.getInstance().readObject("user"))
-                .getDatabaseSettings().isShowCurrencySign());
+                .getSettings().isShowCurrencySign());
 
         clickOn((Button) find("#transactionsTabBtn"));
 
@@ -105,8 +106,10 @@ public class SettingsTest extends AbstractFinancerApplicationTest {
         press(KeyCode.RIGHT).release(KeyCode.RIGHT);
         press(KeyCode.RIGHT).release(KeyCode.RIGHT);
         sleep(500);
+
+        User userToAssert = (User) LocalStorageImpl.getInstance().readObject("user");
         Assertions.assertNotNull(clickOn("-" +
-                String.format(((LocalSettings) LocalStorageImpl.getInstance().readObject("localSettings")).getLanguage(), "%.2f", transaction.getAmount()) +
-                " " + ((User) LocalStorageImpl.getInstance().readObject("user")).getDatabaseSettings().getCurrency().getSymbol()));
+                String.format(userToAssert.getSettings().getLanguage(), "%.2f", transaction.getAmount()) +
+                " " + userToAssert.getSettings().getCurrency().getSymbol()));
     }
 }

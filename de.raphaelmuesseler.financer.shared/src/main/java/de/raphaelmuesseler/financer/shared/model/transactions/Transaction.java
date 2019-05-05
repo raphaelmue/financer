@@ -10,6 +10,20 @@ import java.util.Set;
 public interface Transaction extends Serializable, AmountProvider, DataAccessObject {
 
     /**
+     * Returns the amount of this transaction.
+     *
+     * @return amount
+     */
+    double getAmount();
+
+    /**
+     * Sets the amount of this transaction
+     *
+     * @param amount amount
+     */
+    void setAmount(double amount);
+
+    /**
      * Returns the parent category tree to which this transaction belongs.
      *
      * @return category tree
