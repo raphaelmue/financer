@@ -8,7 +8,7 @@ pipeline {
         }
         stage('Preparing tests') {
             steps {
-                sh 'cp /var/lib/jenkins/workspace/hibernatecfg.xml ./de.raphaelmuesseler.financer.server/src/main/resources/de/raphaelmuesseler/financer/server/db/config/'
+                sh 'cp /var/lib/jenkins/workspace/hibernate.cfg.xml ./de.raphaelmuesseler.financer.server/src/main/resources/de/raphaelmuesseler/financer/server/db/config/'
                 sh 'mvn clean install -DskipTests'
             }
         }
