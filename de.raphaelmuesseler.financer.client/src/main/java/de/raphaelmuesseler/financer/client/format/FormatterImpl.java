@@ -1,6 +1,5 @@
 package de.raphaelmuesseler.financer.client.format;
 
-import de.raphaelmuesseler.financer.client.local.LocalSettings;
 import de.raphaelmuesseler.financer.client.local.LocalStorage;
 import de.raphaelmuesseler.financer.shared.exceptions.FinancerException;
 import de.raphaelmuesseler.financer.shared.model.categories.Category;
@@ -12,17 +11,14 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 
 public abstract class FormatterImpl implements Formatter {
-    private final LocalSettings localSettings;
     private final User user;
 
 
     public FormatterImpl(LocalStorage localStorage) {
-        this.localSettings = (LocalSettings) localStorage.readObject("localSettings");
         this.user = (User) localStorage.readObject("user");
     }
 
-    public FormatterImpl(LocalSettings localSettings, User user) {
-        this.localSettings = localSettings;
+    public FormatterImpl(User user) {
         this.user = user;
     }
 
@@ -33,13 +29,13 @@ public abstract class FormatterImpl implements Formatter {
 
     @Override
     public String formatCurrency(Double amount) {
-        StringBuilder result = new StringBuilder(String.format(localSettings.getLanguage(), "%.2f", amount));
-        if (this.user.getDatabaseSettings().getCurrency() != null) {
+        StringBuilder result = new StringBuilder(String.format(user.getSettings().getLanguage(), "%.2f", amount));
+        if (this.user.getSettings().getCurrency() != null) {
             result.append(" ");
-            if (this.user.getDatabaseSettings().isShowCurrencySign()) {
-                result.append(this.user.getDatabaseSettings().getCurrency().getSymbol());
+            if (this.user.getSettings().isShowCurrencySign()) {
+                result.append(this.user.getSettings().getCurrency().getSymbol());
             } else {
-                result.append(this.user.getDatabaseSettings().getCurrency().getCurrencyCode());
+                result.append(this.user.getSettings().getCurrency().getCurrencyCode());
             }
         }
         return result.toString();
@@ -59,7 +55,7 @@ public abstract class FormatterImpl implements Formatter {
 
     @Override
     public String formatDate(LocalDate localDate) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(localSettings.getLanguage());
+        DateTimeFormatter formatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(user.getSettings().getLanguage());
         return localDate.format(formatter);
     }
 }

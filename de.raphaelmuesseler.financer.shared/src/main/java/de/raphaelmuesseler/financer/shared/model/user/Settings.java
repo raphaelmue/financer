@@ -2,18 +2,24 @@ package de.raphaelmuesseler.financer.shared.model.user;
 
 public interface Settings {
     enum Property {
-        CURRENCY("currency"),
-        SHOW_CURRENCY_SIGN("showCurrencySign"),
-        THEME("theme");
+        LANGUAGE("language", "en"),
+        CURRENCY("currency", "USD"),
+        SHOW_CURRENCY_SIGN("showCurrencySign", "false"),
+        THEME("theme", "");
 
-        private final String name;
+        private final String name, defaultValue;
 
-        Property(String name) {
+        Property(String name, String defaultValue) {
             this.name = name;
+            this.defaultValue = defaultValue;
         }
 
         public String getName() {
             return name;
+        }
+
+        public String getDefaultValue() {
+            return defaultValue;
         }
 
         public static Property getPropertyByName(String name) {

@@ -1,8 +1,7 @@
 package de.raphaelmuesseler.financer.client.format;
 
-import de.raphaelmuesseler.financer.client.local.LocalSettings;
 import de.raphaelmuesseler.financer.client.local.LocalStorage;
-import de.raphaelmuesseler.financer.shared.model.user.UserSettings;
+import de.raphaelmuesseler.financer.shared.model.user.User;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.StringBinding;
 import javafx.beans.property.ObjectProperty;
@@ -96,7 +95,7 @@ public final class I18N {
 
     public static Locale getLocale() {
         if (I18N.localStorage.readObject("localSettings") != null) {
-            return ((LocalSettings) I18N.localStorage.readObject("localSettings")).getLanguage();
+            return ((User) I18N.localStorage.readObject("user")).getSettings().getLanguage();
         } else {
             return Locale.ENGLISH;
         }

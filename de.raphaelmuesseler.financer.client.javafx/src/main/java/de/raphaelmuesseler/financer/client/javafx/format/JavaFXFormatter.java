@@ -19,7 +19,7 @@ public class JavaFXFormatter extends FormatterImpl {
     }
 
     public JavaFXFormatter(LocalSettings localSettings, User user) {
-        super(localSettings, user);
+        super(user);
     }
 
     public Label formatAmountLabel(Double amount) {

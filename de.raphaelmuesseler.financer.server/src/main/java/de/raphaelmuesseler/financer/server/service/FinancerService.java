@@ -106,6 +106,7 @@ public class FinancerService {
                     foundEntry = true;
                     token.setToken(this.tokenGenerator.nextString());
                     session.merge(token);
+                    user.setActiveToken(new Token(token));
                     break;
                 }
             }
@@ -122,6 +123,7 @@ public class FinancerService {
                 databaseToken.setIsMobile(isMobile);
                 databaseToken.setId((int) session.save(databaseToken));
                 user.getTokens().add(databaseToken);
+                user.setActiveToken(new Token(databaseToken));
             }
         } finally {
             transaction.commit();

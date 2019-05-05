@@ -3,6 +3,7 @@ package de.raphaelmuesseler.financer.shared.model.user;
 import java.io.Serializable;
 import java.util.Currency;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 public class UserSettings implements Serializable, Settings {
@@ -12,6 +13,10 @@ public class UserSettings implements Serializable, Settings {
     @Override
     public String getValueByProperty(Property property) {
         return this.properties.get(property.getName());
+    }
+
+    public Locale getLanguage() {
+        return Locale.forLanguageTag(this.getValueByProperty(Property.LANGUAGE));
     }
 
     public Currency getCurrency() {
@@ -29,6 +34,10 @@ public class UserSettings implements Serializable, Settings {
     @Override
     public void setValueByProperty(Property property, String value) {
        this.properties.put(property.getName(), value);
+    }
+
+    public void setLanguage(Locale locale) {
+        this.properties.put(Property.LANGUAGE.getName(), locale.toLanguageTag());
     }
 
     public void setCurrency(Currency currency) {

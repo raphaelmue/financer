@@ -6,11 +6,7 @@ import java.util.Locale;
 
 public interface LocalSettings extends Settings {
 
-    Locale getLanguage();
-
-    void setLanguage(Locale locale);
-
-    String getTheme();
+    // TODO create local settings
 
 }
 

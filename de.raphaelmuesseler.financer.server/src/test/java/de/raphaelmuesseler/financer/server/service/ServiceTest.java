@@ -181,6 +181,7 @@ public class ServiceTest {
         // test updating token
         _user = service.generateToken(_user, token.getIpAddress(), token.getSystem(), token.getIsMobile());
         Assertions.assertEquals(1, _user.getTokens().size());
+        Assertions.assertNotNull(_user.getActiveToken());
         for (TokenDAO _token : _user.getTokens()) {
             Assertions.assertNotEquals(tokenString, _token.getToken());
         }

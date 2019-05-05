@@ -38,6 +38,7 @@ public class User extends UserDAO {
     }
 
     private final Settings settings;
+    private Token activeToken;
 
     public User(UserDAO databaseUser) {
         this(databaseUser.getId(),
@@ -100,17 +101,21 @@ public class User extends UserDAO {
         return this.getName() + " " + this.getSurname();
     }
 
-    public Settings getSettings() {
+    public UserSettings getSettings() {
         if (this.getDatabaseSettings() != null) {
             for (SettingsDAO databaseSettings : super.getDatabaseSettings()) {
                 this.settings.setValueByProperty(Settings.Property.getPropertyByName(databaseSettings.getProperty()), databaseSettings.getValue());
             }
         }
-        return this.settings;
+        return (UserSettings) this.settings;
     }
 
     public Gender getGender() {
         return Gender.getGenderByName(this.getGenderName());
+    }
+
+    public Token getActiveToken() {
+        return activeToken;
     }
 
     @Override
@@ -130,5 +135,9 @@ public class User extends UserDAO {
         if (settings != null) {
             super.setDatabaseSettings(settings);
         }
+    }
+
+    public void setActiveToken(Token activeToken) {
+        this.activeToken = activeToken;
     }
 }

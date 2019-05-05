@@ -28,7 +28,7 @@ public class ServerRequest {
     }
 
     ServerRequest(User user, String methodName, Map<String, Object> parameters) {
-        parameters.put("token", user.getToken());
+        parameters.put("token", user.getActiveToken());
         parameters.put("system", System.getProperty("os.name"));
 
         this.connectionCall = new ConnectionCall(methodName, parameters);
