@@ -9,6 +9,7 @@ import de.raphaelmuesseler.financer.shared.model.categories.CategoryTreeImpl;
 import de.raphaelmuesseler.financer.shared.model.db.*;
 import de.raphaelmuesseler.financer.shared.model.transactions.Attachment;
 import de.raphaelmuesseler.financer.shared.model.transactions.FixedTransaction;
+import de.raphaelmuesseler.financer.shared.model.transactions.TransactionAmount;
 import de.raphaelmuesseler.financer.shared.model.transactions.VariableTransaction;
 import de.raphaelmuesseler.financer.shared.model.user.Token;
 import de.raphaelmuesseler.financer.shared.model.user.User;
@@ -577,9 +578,25 @@ public class FinancerService {
         oldFixedTransaction.setEndDate(LocalDate.now());
         session.update(oldFixedTransaction);
 
+        Set<TransactionAmount> transactionAmounts = new HashSet<>(fixedTransaction.getTransactionAmounts());
+        fixedTransaction.getTransactionAmounts().clear();
+
         fixedTransaction.setId((int) session.save(fixedTransaction.toDatabaseAccessObject()));
 
         transaction.commit();
+
+        if (fixedTransaction.getIsVariable()) {
+            session = HibernateUtil.getSessionFactory().getCurrentSession();
+            transaction = session.beginTransaction();
+
+            for (TransactionAmount transactionAmount : transactionAmounts) {
+                transactionAmount.setFixedTransaction(fixedTransaction);
+                session.saveOrUpdate(transactionAmount.toDatabaseAccessObject());
+            }
+
+            transaction.commit();
+        }
+
 
         return new ConnectionResult<>(fixedTransaction);
     }
@@ -620,24 +637,4 @@ public class FinancerService {
 
         return new ConnectionResult<>(null);
     }
-//
-//    private void updateOrCreateTransactionAmounts(FixedTransaction fixedTransaction) throws SQLException {
-//        Map<String, Object> whereParameters = new HashMap<>();
-//        Map<String, Object> values = new HashMap<>();
-//
-//        if (fixedTransaction.isVariable() && fixedTransaction.getTransactionAmounts() != null) {
-//            for (TransactionAmount transactionAmount : fixedTransaction.getTransactionAmounts()) {
-//                whereParameters.put("id", transactionAmount.getId());
-//
-//                values.put("fixed_transaction_id", fixedTransaction.getId());
-//                values.put("value_date", transactionAmount.getValueDate());
-//                values.put("amount", transactionAmount.getAmount());
-//                if (transactionAmount.getId() < 0) {
-//                    this.database.insert(Database.Table.FIXED_TRANSACTIONS_AMOUNTS, values);
-//                } else {
-//                    this.database.update(Database.Table.FIXED_TRANSACTIONS_AMOUNTS, whereParameters, values);
-//                }
-//            }
-//        }
-//    }
 }

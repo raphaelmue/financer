@@ -31,6 +31,16 @@ public class TransactionAmount extends FixedTransactionAmountDAO implements Seri
     }
 
     @Override
+    public FixedTransactionAmountDAO toDatabaseAccessObject() {
+        FixedTransactionAmountDAO fixedTransactionAmountDAO = new FixedTransactionAmountDAO();
+        fixedTransactionAmountDAO.setId(this.getId());
+        fixedTransactionAmountDAO.setFixedTransaction(this.getFixedTransaction());
+        fixedTransactionAmountDAO.setAmount(this.getAmount());
+        fixedTransactionAmountDAO.setValueDate(this.getValueDate());
+        return fixedTransactionAmountDAO;
+    }
+
+    @Override
     public String toString() {
         return this.getAmount() + " [ " + this.getValueDate() + " ]";
     }

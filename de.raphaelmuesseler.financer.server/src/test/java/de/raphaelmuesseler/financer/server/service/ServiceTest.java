@@ -9,6 +9,7 @@ import de.raphaelmuesseler.financer.shared.model.categories.CategoryTreeImpl;
 import de.raphaelmuesseler.financer.shared.model.db.*;
 import de.raphaelmuesseler.financer.shared.model.transactions.Attachment;
 import de.raphaelmuesseler.financer.shared.model.transactions.FixedTransaction;
+import de.raphaelmuesseler.financer.shared.model.transactions.TransactionAmount;
 import de.raphaelmuesseler.financer.shared.model.transactions.VariableTransaction;
 import de.raphaelmuesseler.financer.shared.model.user.Settings;
 import de.raphaelmuesseler.financer.shared.model.user.User;
@@ -519,16 +520,21 @@ public class ServiceTest {
 
     @Test
     public void testAddFixedTransaction() {
-        FixedTransaction _fixedTransaction = new FixedTransaction(-1,
+        Set<TransactionAmount> transactionAmounts = new HashSet<>();
+        TransactionAmount transactionAmount = new TransactionAmount(0, 2.0, LocalDate.now().withDayOfMonth(1));
+        transactionAmounts.add(transactionAmount);
+        FixedTransaction _fixedTransaction = new FixedTransaction(0,
                 50.0,
                 new CategoryTreeImpl(new Category(fixedCategory)),
                 LocalDate.now(),
                 null,
                 "Product",
                 "Purpose",
-                false,
+                true,
                 1,
-                new HashSet<>());
+                transactionAmounts);
+
+        transactionAmount.setFixedTransaction(_fixedTransaction.toDatabaseAccessObject());
 
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("fixedTransaction", _fixedTransaction);

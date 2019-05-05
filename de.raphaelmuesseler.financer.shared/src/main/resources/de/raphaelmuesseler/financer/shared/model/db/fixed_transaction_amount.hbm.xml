@@ -8,8 +8,8 @@
             <column name="id"/>
             <generator class="increment"/>
         </id>
-        <many-to-one name="fixedTransaction" class="FixedTransactionDAO">
-            <column name="fixed_transaction_id"/>
+        <many-to-one name="fixedTransaction" class="FixedTransactionDAO" fetch="select">
+            <column name="fixed_transaction_id" not-null="true"/>
         </many-to-one>
         <property name="valueDate" type="java.time.LocalDate">
             <column name="value_date"/>

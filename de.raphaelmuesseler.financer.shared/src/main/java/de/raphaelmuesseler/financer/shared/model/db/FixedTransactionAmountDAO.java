@@ -2,7 +2,7 @@ package de.raphaelmuesseler.financer.shared.model.db;
 
 import java.time.LocalDate;
 
-public class FixedTransactionAmountDAO {
+public class FixedTransactionAmountDAO implements DataAccessObject {
     private int id;
     private FixedTransactionDAO fixedTransaction;
     private LocalDate valueDate;
