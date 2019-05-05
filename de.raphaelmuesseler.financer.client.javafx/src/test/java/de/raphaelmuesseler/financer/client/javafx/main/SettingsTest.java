@@ -62,8 +62,8 @@ public class SettingsTest extends AbstractFinancerApplicationTest {
         press(KeyCode.DOWN).release(KeyCode.DOWN);
         press(KeyCode.ENTER).release(KeyCode.ENTER);
 
-        Assertions.assertEquals(currencyComboBox.getItems().get(0), ((User) LocalStorageImpl.getInstance().readObject("user"))
-                .getSettings().getCurrency());
+        User userToAssert = (User) LocalStorageImpl.getInstance().readObject("user");
+        Assertions.assertEquals(currencyComboBox.getSelectionModel().getSelectedItem(), userToAssert.getSettings().getCurrency());
 
         clickOn((Button) find("#transactionsTabBtn"));
 
@@ -71,7 +71,6 @@ public class SettingsTest extends AbstractFinancerApplicationTest {
         press(KeyCode.RIGHT).release(KeyCode.RIGHT);
         press(KeyCode.RIGHT).release(KeyCode.RIGHT);
 
-        User userToAssert = (User) LocalStorageImpl.getInstance().readObject("user");
         Assertions.assertNotNull(clickOn("-" +
                 String.format(userToAssert.getSettings().getLanguage(), "%.2f", transaction.getAmount()) +
                 " " + userToAssert.getSettings().getCurrency().getCurrencyCode()));
@@ -88,17 +87,14 @@ public class SettingsTest extends AbstractFinancerApplicationTest {
 
         ComboBox<Currency> currencyComboBox = find("#currencyComboBox");
         CheckBox showCurrencySignCheckbox = find("#showSignCheckbox");
-        Assertions.assertTrue(showCurrencySignCheckbox.isDisabled());
 
         clickOn(currencyComboBox);
-        for (int i = 0; i < 63; i++) {
-            press(KeyCode.DOWN).release(KeyCode.DOWN);
-        }
+        press(KeyCode.DOWN).release(KeyCode.DOWN);
         press(KeyCode.ENTER).release(KeyCode.ENTER);
         clickOn(showCurrencySignCheckbox);
         sleep(500);
-        Assertions.assertEquals(showCurrencySignCheckbox.isSelected(), ((User) LocalStorageImpl.getInstance().readObject("user"))
-                .getSettings().isShowCurrencySign());
+        User userToAssert = (User) LocalStorageImpl.getInstance().readObject("user");
+        Assertions.assertEquals(showCurrencySignCheckbox.isSelected(), userToAssert.getSettings().isShowCurrencySign());
 
         clickOn((Button) find("#transactionsTabBtn"));
 
@@ -107,7 +103,6 @@ public class SettingsTest extends AbstractFinancerApplicationTest {
         press(KeyCode.RIGHT).release(KeyCode.RIGHT);
         sleep(500);
 
-        User userToAssert = (User) LocalStorageImpl.getInstance().readObject("user");
         Assertions.assertNotNull(clickOn("-" +
                 String.format(userToAssert.getSettings().getLanguage(), "%.2f", transaction.getAmount()) +
                 " " + userToAssert.getSettings().getCurrency().getSymbol()));

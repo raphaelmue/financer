@@ -380,8 +380,7 @@ public class TransactionsController implements Initializable {
             this.correctTransactionAmount(transaction);
 
             Map<String, Object> parameters = new HashMap<>();
-            parameters.put("user", this.user);
-            parameters.put("transaction", transaction);
+            parameters.put("variableTransaction", transaction);
 
             FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "addTransaction", parameters, new JavaFXAsyncConnectionCall() {
                 @Override
