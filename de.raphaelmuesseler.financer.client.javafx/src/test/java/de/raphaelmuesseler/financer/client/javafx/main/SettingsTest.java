@@ -31,7 +31,7 @@ public class SettingsTest extends AbstractFinancerApplicationTest {
         clickOn(languageComboBox);
 
         clickOn(languageComboBox.getItems().get(1).getName());
-
+        sleep(500);
         User userToAssert = (User) LocalStorageImpl.getInstance().readObject("user");
         Assertions.assertEquals(languageComboBox.getItems().get(1).getLocale(),
                 userToAssert.getSettings().getLanguage());

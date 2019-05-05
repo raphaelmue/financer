@@ -80,7 +80,7 @@ class AbstractFinancerApplicationTest extends ApplicationTest {
         LocalStorageImpl.getInstance().deleteAllData();
 
         HibernateUtil.setDatabaseName(DatabaseName.TEST);
-        HibernateUtil.setIsHostLocal(true);
+        HibernateUtil.setIsHostLocal(false);
     }
 
     @BeforeEach

@@ -346,11 +346,10 @@ public class FinancerService {
         int categoryId = (int) parameters.get("categoryId");
 
         synchronized (this.lock) {
-
             Session session = HibernateUtil.getSessionFactory().getCurrentSession();
             Transaction transaction = session.beginTransaction();
             session.createQuery("delete from CategoryDAO where id = :categoryId")
-                    .setParameter("categoryId", categoryId);
+                    .setParameter("categoryId", categoryId).executeUpdate();
             transaction.commit();
 
             this.deleteCategoryChildren(categoryId);

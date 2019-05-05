@@ -43,7 +43,7 @@ public class ServiceTest {
 
     @BeforeAll
     public static void beforeAll() {
-        HibernateUtil.setIsHostLocal(true);
+        HibernateUtil.setIsHostLocal(false);
         HibernateUtil.setDatabaseName(DatabaseName.TEST);
     }
 
@@ -361,7 +361,7 @@ public class ServiceTest {
     @Test
     public void testDeleteCategory() {
         Map<String, Object> parameters = new HashMap<>();
-        parameters.put("category", new Category(fixedCategory));
+        parameters.put("categoryId", fixedCategory.getId());
         service.deleteCategory(logger, parameters);
 
         parameters.clear();

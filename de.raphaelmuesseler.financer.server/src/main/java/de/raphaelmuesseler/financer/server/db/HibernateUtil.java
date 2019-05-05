@@ -56,7 +56,7 @@ public class HibernateUtil {
             Configuration configuration = new Configuration();
             configuration.configure("/de/raphaelmuesseler/financer/server/db/config/hibernate" + (isHostLocal ? ".local" : "") + ".cfg.xml");
             String url = configuration.getProperty("hibernate.connection.url");
-            configuration.setProperty("hibernate.connection.url", url.substring(0, url.indexOf('_') - 8) + databaseName.getName());
+            configuration.setProperty("hibernate.connection.url", url.replace(DatabaseName.DEV.getName(), databaseName.getName()));
 
             // load mappings
             configuration.addResource("/de/raphaelmuesseler/financer/shared/model/db/category.hbm.xml");
