@@ -1,10 +1,9 @@
 package de.raphaelmuesseler.financer.client.javafx.login;
 
 import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
-import de.raphaelmuesseler.financer.client.javafx.util.ApplicationHelper;
 import de.raphaelmuesseler.financer.client.javafx.main.FinancerApplication;
+import de.raphaelmuesseler.financer.client.javafx.util.ApplicationHelper;
 import de.raphaelmuesseler.financer.client.local.LocalSettings;
-import de.raphaelmuesseler.financer.shared.model.user.UserSettings;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
