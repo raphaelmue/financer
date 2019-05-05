@@ -13,6 +13,6 @@ public interface RetrievalService {
     void fetchAllData(User user, Action<Void> action);
 
     void fetchCategories(User user, AsyncCall<BaseCategory> asyncConnectionCall);
-    void fetchTransactions(User user, AsyncCall<List<VariableTransaction>> asyncConnectionCall);
-    void fetchFixedTransactions(User user, AsyncCall<List<FixedTransaction>> asyncConnectionCall);
+    void fetchTransactions(User user, AsyncCall<BaseCategory> asyncConnectionCall);
+    void fetchFixedTransactions(User user, AsyncCall<BaseCategory> asyncConnectionCall);
 }
