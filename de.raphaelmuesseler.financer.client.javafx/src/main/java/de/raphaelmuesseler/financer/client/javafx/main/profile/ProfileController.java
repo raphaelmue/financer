@@ -164,7 +164,7 @@ public class ProfileController implements Initializable {
                         new Category(0, categoryName, currentItem.getValue().getValue().getId(), currentItem.getValue().getValue().getCategoryClass()));
 
                 Map<String, Object> parameters = new HashMap<>();
-                parameters.put("user", this.user);
+                categoryTree.getValue().setUser(user.toDatabaseAccessObject());
                 parameters.put("category", categoryTree.getValue());
 
                 FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "addCategory", parameters, new JavaFXAsyncConnectionCall() {
@@ -211,7 +211,7 @@ public class ProfileController implements Initializable {
 
     private void handleUpdateCategory(CategoryTree category) {
         Map<String, Object> parameters = new HashMap<>();
-        parameters.put("category", category);
+        parameters.put("category", category.getValue());
 
         FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "updateCategory", parameters, new JavaFXAsyncConnectionCall() {
             @Override
@@ -282,7 +282,7 @@ public class ProfileController implements Initializable {
         return new TextFieldTreeCellImpl(new StringConverter<>() {
             @Override
             public String toString(CategoryTree object) {
-                return object.getValue().getName().equals(object.getValue().getCategoryClass().getName()) ? I18N.get(object.getValue().getName()) : object.toString();
+                return object.getValue().getName().equals(object.getValue().getCategoryClass().getName()) ? I18N.get(object.getValue().getName()) : object.getValue().getName();
             }
 
             @Override

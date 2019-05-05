@@ -335,7 +335,6 @@ public class ServiceTest {
         category.setParentId(-1);
 
         Map<String, Object> parameters = new HashMap<>();
-        parameters.put("user", new User(user));
         parameters.put("category", category);
         service.addCategory(logger, parameters);
 

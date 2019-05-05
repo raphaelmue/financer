@@ -282,12 +282,11 @@ public class FinancerService {
     /**
      * Adds a new category.
      *
-     * @param parameters [User user, Category category]
+     * @param parameters [Category category]
      * @return Category object
      */
     public synchronized ConnectionResult<Category> addCategory(Logger logger, Map<String, Object> parameters) {
         logger.log(Level.INFO, "Adding new category ...");
-        User user = (User) parameters.get("user");
         Category category = (Category) parameters.get("category");
 
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
@@ -319,26 +318,27 @@ public class FinancerService {
     /**
      * Deletes a category and all its children as well as all transactions.
      *
-     * @param parameters [Category category]
+     * @param parameters [int categoryId]
      * @return void
      */
     public synchronized ConnectionResult<Void> deleteCategory(Logger logger, Map<String, Object> parameters) {
         logger.log(Level.INFO, "Deleting category ...");
-        Category category = (Category) parameters.get("category");
+        int categoryId = (int) parameters.get("categoryId");
 
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
         Transaction transaction = session.beginTransaction();
-        session.delete(category.toDatabaseAccessObject());
+        session.createQuery("delete from CategoryDAO where id = :categoryId")
+            .setParameter("categoryId", categoryId);
         transaction.commit();
 
-        this.deleteCategoryChildren(category);
+        this.deleteCategoryChildren(categoryId);
 
         session = HibernateUtil.getSessionFactory().getCurrentSession();
         transaction = session.beginTransaction();
-        session.createQuery("delete from FixedTransactionDAO where category = :categoryId")
-                .setParameter("categoryId", category.getId());
-        session.createQuery("delete from VariableTransactionDAO where category = :categoryId")
-                .setParameter("categoryId", category.getId());
+        session.createQuery("delete from FixedTransactionDAO where category.id = :categoryId")
+                .setParameter("categoryId", categoryId);
+        session.createQuery("delete from VariableTransactionDAO where category.id = :categoryId")
+                .setParameter("categoryId", categoryId);
         transaction.commit();
 
         return new ConnectionResult<>(null);
@@ -347,15 +347,14 @@ public class FinancerService {
     /**
      * Deletes all children of a given category.
      *
-     * @param category category to delete children
+     * @param categoryId category id to delete children
      */
-    private synchronized void deleteCategoryChildren(Category category) {
+    private synchronized void deleteCategoryChildren(int categoryId) {
         List<CategoryDAO> categories;
-        int parentId = category.getId();
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
         Transaction transaction = session.beginTransaction();
         categories = session.createQuery("from CategoryDAO where parentId = :parentId", CategoryDAO.class)
-                .setParameter("parentId", parentId).list();
+                .setParameter("parentId", categoryId).list();
         transaction.commit();
         if (categories.size() > 0) {
             for (CategoryDAO databaseCategory : categories) {
@@ -363,7 +362,7 @@ public class FinancerService {
                 transaction = session.beginTransaction();
                 session.delete(databaseCategory);
                 transaction.commit();
-                deleteCategoryChildren(new Category(databaseCategory));
+                deleteCategoryChildren(databaseCategory.getId());
             }
         }
     }

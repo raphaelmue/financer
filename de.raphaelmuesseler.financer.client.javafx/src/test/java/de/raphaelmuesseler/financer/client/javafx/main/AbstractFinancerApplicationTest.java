@@ -13,6 +13,7 @@ import de.raphaelmuesseler.financer.client.javafx.login.LoginApplication;
 import de.raphaelmuesseler.financer.server.db.DatabaseName;
 import de.raphaelmuesseler.financer.server.db.HibernateUtil;
 import de.raphaelmuesseler.financer.server.main.Server;
+import de.raphaelmuesseler.financer.shared.model.categories.BaseCategory;
 import de.raphaelmuesseler.financer.shared.model.categories.Category;
 import de.raphaelmuesseler.financer.shared.model.categories.CategoryTree;
 import de.raphaelmuesseler.financer.shared.model.categories.CategoryTreeImpl;
@@ -32,7 +33,6 @@ import org.testfx.api.FxToolkit;
 import org.testfx.framework.junit5.ApplicationTest;
 
 import java.io.IOException;
-import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.concurrent.TimeoutException;
@@ -50,7 +50,7 @@ class AbstractFinancerApplicationTest extends ApplicationTest {
             "Mustermann",
             LocalDate.of(1989, 5, 28),
             User.Gender.MALE);
-    final CategoryTree category = new CategoryTreeImpl(new Category("TestCategory"));
+    final CategoryTree category = new CategoryTreeImpl(new Category("TestCategory", BaseCategory.CategoryClass.VARIABLE_EXPENSES));
     final VariableTransaction transaction = new VariableTransaction(0,
             52.5,
             LocalDate.of(2018, 5, 19),

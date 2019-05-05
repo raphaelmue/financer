@@ -8,14 +8,7 @@ pipeline {
         }
         stage('Preparing tests') {
             steps {
-                sh 'mkdir ./de.raphaelmuesseler.financer.server/src/main/resources'
-                sh 'mkdir ./de.raphaelmuesseler.financer.server/src/main/resources/de'
-                sh 'mkdir ./de.raphaelmuesseler.financer.server/src/main/resources/de/raphaelmuesseler'
-                sh 'mkdir ./de.raphaelmuesseler.financer.server/src/main/resources/de/raphaelmuesseler/financer'
-                sh 'mkdir ./de.raphaelmuesseler.financer.server/src/main/resources/de/raphaelmuesseler/financer/server'
-                sh 'mkdir ./de.raphaelmuesseler.financer.server/src/main/resources/de/raphaelmuesseler/financer/server/db'
-                sh 'mkdir ./de.raphaelmuesseler.financer.server/src/main/resources/de/raphaelmuesseler/financer/server/db/config'
-                sh 'cp /var/lib/jenkins/workspace/database.conf ./de.raphaelmuesseler.financer.server/src/main/resources/de/raphaelmuesseler/financer/server/db/config/'
+                sh 'cp /var/lib/jenkins/workspace/hibernatecfg.xml ./de.raphaelmuesseler.financer.server/src/main/resources/de/raphaelmuesseler/financer/server/db/config/'
                 sh 'mvn clean install -DskipTests'
             }
         }
