@@ -45,6 +45,10 @@ import java.util.function.Predicate;
 class AbstractFinancerApplicationTest extends ApplicationTest {
     private static Server server;
 
+    static final int SHORT_SLEEP = 500;
+    static final int MEDIUM_SLEEP = 1000;
+    private static final int LONG_SLEEP = 5000;
+
     final String password = "password";
     final User user = new User(0,
             "max@mustermann.com",
@@ -73,7 +77,7 @@ class AbstractFinancerApplicationTest extends ApplicationTest {
             3,
             new HashSet<>());
 
-    static JavaFXFormatter formatter;
+    JavaFXFormatter formatter;
 
     @BeforeAll
     static void setUp() throws IOException {
@@ -124,7 +128,7 @@ class AbstractFinancerApplicationTest extends ApplicationTest {
         write(password);
         confirmDialog();
 
-        sleep(2000);
+        sleep(LONG_SLEEP);
         formatter = new JavaFXFormatter(LocalStorageImpl.getInstance());
     }
 
@@ -144,10 +148,10 @@ class AbstractFinancerApplicationTest extends ApplicationTest {
 
     void addCategory(CategoryTree category) {
         clickOn((Button) find("#profileTabBtn"));
-        press(KeyCode.RIGHT).release(KeyCode.RIGHT);
-        press(KeyCode.RIGHT).release(KeyCode.RIGHT);
+        sleep(MEDIUM_SLEEP);
 
-        sleep(250);
+        press(KeyCode.RIGHT).release(KeyCode.RIGHT);
+        press(KeyCode.RIGHT).release(KeyCode.RIGHT);
 
         Button newCategoryBtn = find("#newCategoryBtn");
         clickOn(I18N.get(category.getValue().getCategoryClass().getName()));
@@ -160,16 +164,16 @@ class AbstractFinancerApplicationTest extends ApplicationTest {
 
         confirmDialog();
 
-        sleep(1000);
+        sleep(MEDIUM_SLEEP);
     }
 
     void addTransaction(VariableTransaction transaction) {
         clickOn((Button) find("#transactionsTabBtn"));
+        sleep(MEDIUM_SLEEP);
         press(KeyCode.RIGHT).release(KeyCode.RIGHT);
         press(KeyCode.RIGHT).release(KeyCode.RIGHT);
 
         clickOn((Button) find("#newTransactionBtn"));
-        sleep(500);
         TextField amountTextField = find("#amountTextField");
         clickOn(amountTextField);
         press(KeyCode.BACK_SPACE).release(KeyCode.BACK_SPACE);
@@ -190,22 +194,22 @@ class AbstractFinancerApplicationTest extends ApplicationTest {
 
         confirmDialog();
 
-        sleep(500);
+        sleep(MEDIUM_SLEEP);
         category.getValue().setId(TreeUtil.getByValue((BaseCategory) LocalStorageImpl.getInstance().readObject("categories"),
                 category, Comparator.comparing(Category::getName)).getValue().getId());
     }
 
     void addFixedTransaction(FixedTransaction fixedTransaction) {
         clickOn((Button) find("#transactionsTabBtn"));
+        sleep(MEDIUM_SLEEP);
         press(KeyCode.RIGHT).release(KeyCode.RIGHT);
         press(KeyCode.RIGHT).release(KeyCode.RIGHT);
         press(KeyCode.RIGHT).release(KeyCode.RIGHT);
 
-        sleep(500);
         clickOn(find((Label label) -> label.getText().contains(fixedTransaction.getCategoryTree().getValue().getName())));
 
         clickOn((Button) find("#newFixedTransactionBtn"));
-        sleep(500);
+        sleep(SHORT_SLEEP);
         clickOn((IntegerField) find("#dayTextField"));
         write(Integer.toString(fixedTransaction.getDay()));
         JFXDatePicker datePicker = find("#startDateDatePicker");
@@ -232,6 +236,14 @@ class AbstractFinancerApplicationTest extends ApplicationTest {
         }
 
         confirmDialog();
+
+        sleep(SHORT_SLEEP);
+    }
+
+    final CategoryTree getCategoryTree() {
+        return ((CategoryTree) TreeUtil.getByValue(((BaseCategory) LocalStorageImpl.getInstance().readObject("categories"))
+                        .getCategoryTreeByCategoryClass(fixedTransaction.getCategoryTree().getValue().getCategoryClass()),
+                fixedTransaction.getCategoryTree(), (o1, o2) -> String.CASE_INSENSITIVE_ORDER.compare(o1.getName(), o2.getName())));
     }
 
     final void confirmDialog() {

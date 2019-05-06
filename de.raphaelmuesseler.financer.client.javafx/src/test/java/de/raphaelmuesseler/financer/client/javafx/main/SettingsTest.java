@@ -29,21 +29,18 @@ public class SettingsTest extends AbstractFinancerApplicationTest {
     public void testChangeLanguage() {
         register(this.user, this.password);
         clickOn((Button) find("#settingTabBtn"));
-
         ComboBox<I18N.Language> languageComboBox = find("#languageMenuComboBox");
         clickOn(languageComboBox);
-
         clickOn(languageComboBox.getItems().get(1).getName());
-        sleep(500);
+        sleep(MEDIUM_SLEEP);
+
         User userToAssert = (User) LocalStorageImpl.getInstance().readObject("user");
         Assertions.assertEquals(languageComboBox.getItems().get(1).getLocale(),
                 userToAssert.getSettings().getLanguage());
 
         confirmDialog();
-
-        sleep(1000);
+        sleep(MEDIUM_SLEEP);
         Assertions.assertNotNull(clickOn("Überblick"));
-
         clickOn((Button) find("#settingTabBtn"));
         languageComboBox = find("#languageMenuComboBox");
         Assertions.assertEquals(userToAssert.getSettings().getLanguage(),
@@ -55,13 +52,9 @@ public class SettingsTest extends AbstractFinancerApplicationTest {
         register(this.user, this.password);
         addCategory(category);
         addTransaction(transaction);
-
-        sleep(500);
         clickOn((Button) find("#settingTabBtn"));
-
         ComboBox<Currency> currencyComboBox = find("#currencyComboBox");
         clickOn(currencyComboBox);
-
         press(KeyCode.DOWN).release(KeyCode.DOWN);
         press(KeyCode.ENTER).release(KeyCode.ENTER);
 
@@ -69,11 +62,9 @@ public class SettingsTest extends AbstractFinancerApplicationTest {
         Assertions.assertEquals(currencyComboBox.getSelectionModel().getSelectedItem(), userToAssert.getSettings().getCurrency());
 
         clickOn((Button) find("#transactionsTabBtn"));
-
-        sleep(1000);
+        sleep(MEDIUM_SLEEP);
         press(KeyCode.RIGHT).release(KeyCode.RIGHT);
         press(KeyCode.RIGHT).release(KeyCode.RIGHT);
-
         Assertions.assertNotNull(clickOn("-" +
                 String.format(userToAssert.getSettings().getLanguage(), "%.2f", transaction.getAmount()) +
                 " " + userToAssert.getSettings().getCurrency().getCurrencyCode()));
@@ -85,7 +76,7 @@ public class SettingsTest extends AbstractFinancerApplicationTest {
         addCategory(category);
         addTransaction(transaction);
 
-        sleep(500);
+        sleep(SHORT_SLEEP);
         clickOn((Button) find("#settingTabBtn"));
 
         ComboBox<Currency> currencyComboBox = find("#currencyComboBox");
@@ -95,16 +86,16 @@ public class SettingsTest extends AbstractFinancerApplicationTest {
         press(KeyCode.DOWN).release(KeyCode.DOWN);
         press(KeyCode.ENTER).release(KeyCode.ENTER);
         clickOn(showCurrencySignCheckbox);
-        sleep(500);
+        sleep(SHORT_SLEEP);
         User userToAssert = (User) LocalStorageImpl.getInstance().readObject("user");
         Assertions.assertEquals(showCurrencySignCheckbox.isSelected(), userToAssert.getSettings().isShowCurrencySign());
 
         clickOn((Button) find("#transactionsTabBtn"));
 
-        sleep(1000);
+        sleep(MEDIUM_SLEEP);
         press(KeyCode.RIGHT).release(KeyCode.RIGHT);
         press(KeyCode.RIGHT).release(KeyCode.RIGHT);
-        sleep(500);
+        sleep(SHORT_SLEEP);
 
         Assertions.assertNotNull(clickOn("-" +
                 String.format(userToAssert.getSettings().getLanguage(), "%.2f", transaction.getAmount()) +

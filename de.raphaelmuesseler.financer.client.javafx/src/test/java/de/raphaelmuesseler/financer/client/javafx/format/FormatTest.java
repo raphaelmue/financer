@@ -15,7 +15,7 @@ import java.util.Currency;
 import java.util.Locale;
 
 @SuppressWarnings("WeakerAccess")
-@Tag("unit")
+@Tag("uit")
 public class FormatTest {
     private static User user;
     private static Formatter formatter;

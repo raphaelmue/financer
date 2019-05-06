@@ -56,13 +56,9 @@ public class TransactionTest extends AbstractFinancerApplicationTest {
         register(this.user, this.password);
         addCategory(category);
         addTransaction(transaction);
-        clickOn((Button) find("#refreshTransactionsBtn"));
-        sleep(500);
-
         clickOn(transaction.getProduct());
         clickOn((Button) find("#editTransactionBtn"));
         final double amount = transaction.getAmount() / 2;
-
         TextField amountTextField = find("#amountTextField");
         clickOn(amountTextField);
         press(KeyCode.BACK_SPACE).release(KeyCode.BACK_SPACE);
@@ -70,11 +66,9 @@ public class TransactionTest extends AbstractFinancerApplicationTest {
         press(KeyCode.BACK_SPACE).release(KeyCode.BACK_SPACE);
         press(KeyCode.BACK_SPACE).release(KeyCode.BACK_SPACE);
         write(Double.toString(amount));
-
         confirmDialog();
-        sleep(500);
         clickOn((Button) find("#refreshTransactionsBtn"));
-        sleep(1000);
+        sleep(MEDIUM_SLEEP);
 
         Assertions.assertNotNull(clickOn("-" + formatter.formatCurrency(amount)));
         BaseCategory baseCategory = (BaseCategory) LocalStorageImpl.getInstance().readObject("categories");
@@ -94,15 +88,12 @@ public class TransactionTest extends AbstractFinancerApplicationTest {
         addCategory(this.category);
         addTransaction(this.transaction);
         clickOn((Button) find("#refreshTransactionsBtn"));
-        sleep(500);
-
+        sleep(MEDIUM_SLEEP);
         clickOn(transaction.getProduct());
         clickOn((JFXButton) find("#deleteTransactionBtn"));
         confirmDialog();
-
-        sleep(500);
+        sleep(MEDIUM_SLEEP);
         Assertions.assertEquals(0, ((TableView) find("#transactionsTableView")).getItems().size());
-
         BaseCategory baseCategory = (BaseCategory) LocalStorageImpl.getInstance().readObject("categories");
         Assertions.assertEquals(0, ((CategoryTree) TreeUtil.getByValue(baseCategory, transaction.getCategoryTree(),
                 Comparator.comparingInt(Category::getId))).getTransactions().size());
