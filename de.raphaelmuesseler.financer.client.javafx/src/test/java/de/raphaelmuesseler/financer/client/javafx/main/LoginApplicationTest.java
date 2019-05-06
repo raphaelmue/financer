@@ -5,9 +5,12 @@ import de.raphaelmuesseler.financer.client.javafx.login.LoginApplication;
 import de.raphaelmuesseler.financer.shared.model.user.User;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.testfx.framework.junit5.ApplicationTest;
 
+@SuppressWarnings("WeakerAccess")
+@Tag("integration")
 public class LoginApplicationTest extends AbstractFinancerApplicationTest {
 
     @BeforeEach

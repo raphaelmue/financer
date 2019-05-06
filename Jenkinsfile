@@ -14,12 +14,12 @@ pipeline {
         }
         stage('JUnit Tests') {
             steps {
-                sh 'mvn test -pl de.raphaelmuesseler.financer.util,de.raphaelmuesseler.financer.shared,de.raphaelmuesseler.financer.server,de.raphaelmuesseler.financer.client'
+                sh 'mvn test -P unitTests'
             }
         }
         stage('JavaFX Tests') {
            steps {
-                sh 'mvn test -pl de.raphaelmuesseler.financer.client.javafx -Dtestfx.robot=glass -Dglass.platform=Monocle -Dmonocle.platform=Headless'
+                sh 'mvn test -P integrationTests,headlessTesting'
                 sh 'rm ./de.raphaelmuesseler.financer.server/src/main/resources/de/raphaelmuesseler/financer/server/db/config/database.conf'
             }
         }

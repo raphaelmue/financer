@@ -7,6 +7,45 @@
     <artifactId>financer</artifactId>
     <packaging>pom</packaging>
     <version>1.0-SNAPSHOT</version>
+
+    <properties>
+        <java.version>11</java.version>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <project.testing.localhost>false</project.testing.localhost>
+        <project.testing.tags>unit, integration</project.testing.tags>
+        <project.testing.argLine/>
+    </properties>
+
+    <profiles>
+        <profile>
+            <id>unitTests</id>
+            <properties>
+                <project.testing.tags>unit</project.testing.tags>
+            </properties>
+        </profile>
+        <profile>
+            <id>integrationTests</id>
+            <properties>
+                <project.testing.tags>integration</project.testing.tags>
+            </properties>
+        </profile>
+        <profile>
+            <id>localTesting</id>
+            <properties>
+                <project.testing.localhost>true</project.testing.localhost>
+            </properties>
+        </profile>
+        <profile>
+            <id>headlessTesting</id>
+            <properties>
+                <project.testing.argLine>-Dtestfx.robot=glass -Dglass.platform=Monocle -Dmonocle.platform=Headless</project.testing.argLine>
+            </properties>
+        </profile>
+    </profiles>
+
     <build>
         <plugins>
             <plugin>
@@ -15,7 +54,42 @@
                 <version>2.22.0</version>
                 <configuration>
                     <redirectTestOutputToFile>true</redirectTestOutputToFile>
+                    <groups>${project.testing.tags}</groups>
+                    <argLine>${project.testing.argLine}</argLine>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>3.0.0-M3</version>
+                <executions>
+                    <execution>
+                        <id>integration-testing</id>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                        <configuration>
+                            <groups>integration</groups>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>properties-maven-plugin</artifactId>
+                <version>1.0.0</version>
+                <executions>
+                    <execution>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>write-project-properties</goal>
+                        </goals>
+                        <configuration>
+                            <outputFile>${project.basedir}/target/classes/testing.properties</outputFile>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -49,56 +123,12 @@
         </plugins>
     </build>
     <modules>
+        <module>de.raphaelmuesseler.financer.client</module>
+        <module>de.raphaelmuesseler.financer.client.javafx</module>
+        <module>de.raphaelmuesseler.financer.server</module>
         <module>de.raphaelmuesseler.financer.shared</module>
+        <module>de.raphaelmuesseler.financer.util</module>
     </modules>
-
-    <properties>
-        <java.version>11</java.version>
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
-
-    <profiles>
-        <profile>
-            <id>backend</id>
-            <modules>
-                <module>de.raphaelmuesseler.financer.server</module>
-                <module>de.raphaelmuesseler.financer.shared</module>
-            </modules>
-        </profile>
-        <profile>
-            <id>frontend</id>
-            <modules>
-                <module>de.raphaelmuesseler.financer.client</module>
-                <module>de.raphaelmuesseler.financer.client.javafx</module>
-                <module>de.raphaelmuesseler.financer.shared</module>
-            </modules>
-        </profile>
-        <profile>
-            <id>java</id>
-            <modules>
-                <module>de.raphaelmuesseler.financer.client</module>
-                <module>de.raphaelmuesseler.financer.client.javafx</module>
-                <module>de.raphaelmuesseler.financer.server</module>
-                <module>de.raphaelmuesseler.financer.shared</module>
-                <module>de.raphaelmuesseler.financer.util</module>
-            </modules>
-        </profile>
-        <profile>
-            <id>all</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <modules>
-                <module>de.raphaelmuesseler.financer.client</module>
-                <module>de.raphaelmuesseler.financer.client.javafx</module>
-                <module>de.raphaelmuesseler.financer.server</module>
-                <module>de.raphaelmuesseler.financer.shared</module>
-                <module>de.raphaelmuesseler.financer.util</module>
-            </modules>
-        </profile>
-    </profiles>
 
     <dependencies>
         <dependency>

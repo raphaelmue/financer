@@ -21,12 +21,15 @@ import org.hibernate.Transaction;
 import org.junit.jupiter.api.*;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.logging.Logger;
 
 @SuppressWarnings("WeakerAccess")
+@Tag("unit")
 public class ServiceTest {
     private final FinancerService service = FinancerService.getInstance();
     private final Logger logger = Logger.getLogger("Test");
@@ -41,8 +44,11 @@ public class ServiceTest {
     private static Session session;
 
     @BeforeAll
-    public static void beforeAll() {
-        HibernateUtil.setIsHostLocal(false);
+    public static void beforeAll() throws IOException {
+        InputStream inputStream = ServiceTest.class.getResourceAsStream("/testing.properties");
+        Properties properties = new Properties();
+        properties.load(inputStream);
+        HibernateUtil.setIsHostLocal(Boolean.valueOf(properties.getProperty("project.testing.localhost")));
         HibernateUtil.setDatabaseName(DatabaseName.TEST);
     }
 

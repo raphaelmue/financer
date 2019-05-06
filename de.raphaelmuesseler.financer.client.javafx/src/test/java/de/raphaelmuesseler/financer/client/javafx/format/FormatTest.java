@@ -7,6 +7,7 @@ import de.raphaelmuesseler.financer.shared.model.categories.Category;
 import de.raphaelmuesseler.financer.shared.model.user.User;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
@@ -14,6 +15,7 @@ import java.util.Currency;
 import java.util.Locale;
 
 @SuppressWarnings("WeakerAccess")
+@Tag("unit")
 public class FormatTest {
     private static User user;
     private static Formatter formatter;

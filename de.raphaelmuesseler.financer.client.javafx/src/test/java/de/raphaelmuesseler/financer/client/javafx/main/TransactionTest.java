@@ -14,12 +14,15 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.testfx.framework.junit5.ApplicationTest;
 
 import java.util.Comparator;
 import java.util.Set;
 
+@SuppressWarnings("WeakerAccess")
+@Tag("integration")
 public class TransactionTest extends AbstractFinancerApplicationTest {
 
     @BeforeEach
