@@ -8,7 +8,6 @@ import de.raphaelmuesseler.financer.shared.model.categories.CategoryTreeImpl;
 import de.raphaelmuesseler.financer.shared.model.db.*;
 import de.raphaelmuesseler.financer.shared.model.transactions.Attachment;
 import de.raphaelmuesseler.financer.shared.model.transactions.FixedTransaction;
-import de.raphaelmuesseler.financer.shared.model.transactions.TransactionAmount;
 import de.raphaelmuesseler.financer.shared.model.transactions.VariableTransaction;
 import de.raphaelmuesseler.financer.shared.model.user.Token;
 import de.raphaelmuesseler.financer.shared.model.user.User;
@@ -22,7 +21,10 @@ import javax.persistence.NoResultException;
 import java.io.File;
 import java.sql.SQLException;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -534,33 +536,23 @@ public class FinancerService {
      * @param parameters [FixedTransaction fixedTransaction]
      * @return FixedTransaction object
      */
-    public ConnectionResult<FixedTransaction> addFixedTransactions(Logger logger, Session session, Map<String, Object> parameters) {
+    public synchronized ConnectionResult<FixedTransaction> addFixedTransactions(Logger logger, Session session, Map<String, Object> parameters) {
         logger.log(Level.INFO, "Adding fixed transactions ...");
         FixedTransaction fixedTransaction = (FixedTransaction) parameters.get("fixedTransaction");
 
         Transaction transaction = session.beginTransaction();
-        FixedTransactionDAO oldFixedTransaction = session.createQuery("from FixedTransactionDAO where category = :categoryId " +
+        FixedTransactionDAO oldFixedTransaction = session.createQuery("from FixedTransactionDAO where category.id = :categoryId " +
                 "and endDate = null ", FixedTransactionDAO.class)
-                .setParameter("categoryId", fixedTransaction.getCategoryTree().getValue())
+                .setParameter("categoryId", fixedTransaction.getCategoryTree().getValue().getId())
                 .uniqueResult();
-        oldFixedTransaction.setEndDate(LocalDate.now());
-        session.update(oldFixedTransaction);
-
-        Set<TransactionAmount> transactionAmounts = new HashSet<>(fixedTransaction.getTransactionAmounts());
-        fixedTransaction.getTransactionAmounts().clear();
+        if (oldFixedTransaction != null) {
+            oldFixedTransaction.setEndDate(LocalDate.now());
+            session.update(oldFixedTransaction);
+        }
+        transaction.commit();
+        transaction = session.beginTransaction();
         fixedTransaction.setId((int) session.save(fixedTransaction.toDatabaseAccessObject()));
         transaction.commit();
-
-        if (fixedTransaction.getIsVariable()) {
-            transaction = session.beginTransaction();
-
-            for (TransactionAmount transactionAmount : transactionAmounts) {
-                transactionAmount.setFixedTransaction(fixedTransaction);
-                session.saveOrUpdate(transactionAmount.toDatabaseAccessObject());
-            }
-
-            transaction.commit();
-        }
 
         return new ConnectionResult<>(fixedTransaction);
     }

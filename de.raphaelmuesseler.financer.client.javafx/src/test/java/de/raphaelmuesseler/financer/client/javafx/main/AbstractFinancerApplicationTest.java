@@ -160,7 +160,7 @@ class AbstractFinancerApplicationTest extends ApplicationTest {
 
         confirmDialog();
 
-        sleep(500);
+        sleep(1000);
     }
 
     void addTransaction(VariableTransaction transaction) {

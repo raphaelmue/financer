@@ -124,7 +124,7 @@ public class FixedTransactionTest extends AbstractFinancerApplicationTest {
         addCategory(category);
         addFixedTransaction(fixedTransaction);
 
-        sleep(500);
+        sleep(1500);
 
         clickOn((JFXButton) find("#refreshFixedTransactionsBtn"));
         clickOn((JFXListView) find("#categoriesListView"));

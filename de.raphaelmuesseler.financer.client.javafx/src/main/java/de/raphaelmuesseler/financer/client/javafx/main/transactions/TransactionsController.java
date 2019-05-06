@@ -420,7 +420,6 @@ public class TransactionsController implements Initializable {
             }
 
             Map<String, Object> parameters = new HashMap<>();
-            parameters.put("user", this.user);
             parameters.put("fixedTransaction", fixedTransaction);
 
             FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "addFixedTransactions", parameters, new JavaFXAsyncConnectionCall() {
@@ -557,16 +556,17 @@ public class TransactionsController implements Initializable {
         boolean result = new FinancerConfirmDialog(I18N.get("confirmDeleteFixedTransaction")).showAndGetResult();
         if (result) {
             Map<String, Object> parameters = new HashMap<>();
-            parameters.put("fixedTransaction", this.fixedTransactionsListView.getSelectionModel().getSelectedItem());
-
-            this.fixedTransactionsListView.getItems().remove(this.fixedTransactionsListView.getSelectionModel().getSelectedItem());
+            parameters.put("fixedTransactionId", this.fixedTransactionsListView.getSelectionModel().getSelectedItem().getId());
 
             FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "deleteFixedTransaction",
                     parameters, new JavaFXAsyncConnectionCall() {
                 @Override
                 public void onSuccess(ConnectionResult result) {
-                    fixedTransactionsListView.getSelectionModel().getSelectedItem().getCategoryTree().getTransactions().remove(
-                            fixedTransactionsListView.getSelectionModel().getSelectedItem());
+                    Platform.runLater(() ->  {
+                        fixedTransactionsListView.getSelectionModel().getSelectedItem().getCategoryTree().getTransactions().remove(
+                                fixedTransactionsListView.getSelectionModel().getSelectedItem());
+                        fixedTransactionsListView.getItems().remove(fixedTransactionsListView.getSelectionModel().getSelectedItem());
+                    });
                     localStorage.writeObject("categories", categories);
 
                     fixedTransactionsListView.refresh();

@@ -124,6 +124,7 @@ public class FixedTransactionDialog extends FinancerDialog<FixedTransaction> {
         newTransactionAmountBtn.setOnAction(event -> {
             TransactionAmount transactionAmount = new TransactionAmountDialog(null, transactionAmountListView.getItems()).showAndGetResult();
             if (transactionAmount != null) {
+                transactionAmount.setFixedTransaction(this.getValue());
                 transactionAmountListView.getItems().add(transactionAmount);
                 transactionAmountListView.getItems().sort(Comparator.comparing(TransactionAmount::getValueDate).reversed());
             }
@@ -230,7 +231,7 @@ public class FixedTransactionDialog extends FinancerDialog<FixedTransaction> {
     @Override
     protected FixedTransaction onConfirm() {
         if (this.getValue() == null) {
-            this.setValue(new FixedTransaction(-1,
+            this.setValue(new FixedTransaction(0,
                     Double.valueOf(this.amountField.getText()),
                     this.categoryTree,
                     this.startDateField.getValue(),

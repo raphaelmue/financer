@@ -77,7 +77,7 @@ public class TransactionAmountDialog extends FinancerDialog<TransactionAmount> {
     @Override
     protected TransactionAmount onConfirm() {
         if (this.getValue() == null) {
-            this.setValue(new TransactionAmount(-1, Double.valueOf(this.amountField.getText()),
+            this.setValue(new TransactionAmount(0, Double.valueOf(this.amountField.getText()),
                     this.valueDateField.getValue()));
         } else {
             this.getValue().setValueDate(this.valueDateField.getValue());
