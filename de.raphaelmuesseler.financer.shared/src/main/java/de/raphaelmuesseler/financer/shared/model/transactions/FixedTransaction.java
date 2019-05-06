@@ -143,9 +143,11 @@ public class FixedTransaction extends FixedTransactionDAO implements Transaction
         fixedTransactionDAO.setIsVariable(this.getIsVariable());
         fixedTransactionDAO.setDay(this.getDay());
         Set<FixedTransactionAmountDAO> transactionAmountDAOS = new HashSet<>();
-        for (TransactionAmount transactionAmount : this.getTransactionAmounts()) {
-            transactionAmount.setFixedTransaction(fixedTransactionDAO);
-            transactionAmountDAOS.add(transactionAmount.toDatabaseAccessObject());
+        if (this.getTransactionAmounts() != null) {
+            for (TransactionAmount transactionAmount : this.getTransactionAmounts()) {
+                transactionAmount.setFixedTransaction(fixedTransactionDAO);
+                transactionAmountDAOS.add(transactionAmount.toDatabaseAccessObject());
+            }
         }
         fixedTransactionDAO.setTransactionAmounts(transactionAmountDAOS);
         return fixedTransactionDAO;
