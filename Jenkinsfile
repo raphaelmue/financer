@@ -20,7 +20,7 @@ pipeline {
         stage('JavaFX Tests') {
            steps {
                 sh 'mvn test -P integrationTests,headlessTesting'
-                sh 'rm ./de.raphaelmuesseler.financer.server/src/main/resources/de/raphaelmuesseler/financer/server/db/config/database.conf'
+                sh 'rm ./de.raphaelmuesseler.financer.server/src/main/resources/de/raphaelmuesseler/financer/server/db/config/hibernate.cfg.xml'
             }
         }
         stage('Deploy') {
