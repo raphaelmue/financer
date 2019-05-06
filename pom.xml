@@ -17,6 +17,11 @@
         <project.testing.localhost>false</project.testing.localhost>
         <project.testing.tags>unit, integration</project.testing.tags>
         <project.testing.argLine/>
+
+        <project.testing.jacoco.reportPath>${project.basedir}/../target/jacoco-ut.exec
+        </project.testing.jacoco.reportPath>
+        <project.testing.jacoco.itReportPath>${project.basedir}/../target/jacoco-it.exec
+        </project.testing.jacoco.itReportPath>
     </properties>
 
     <profiles>
@@ -41,13 +46,33 @@
         <profile>
             <id>headlessTesting</id>
             <properties>
-                <project.testing.argLine>-Dtestfx.robot=glass -Dglass.platform=Monocle -Dmonocle.platform=Headless</project.testing.argLine>
+                <argLine>-Dtestfx.robot=glass -Dglass.platform=Monocle -Dmonocle.platform=Headless</argLine>
             </properties>
         </profile>
     </profiles>
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.3</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <!-- attached to Maven test phase -->
+                    <execution>
+                        <id>report</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
@@ -56,7 +81,6 @@
                     <redirectTestOutputToFile>true</redirectTestOutputToFile>
                     <excludedGroups>skip</excludedGroups>
                     <groups>${project.testing.tags}</groups>
-                    <argLine>${project.testing.argLine}</argLine>
                 </configuration>
             </plugin>
             <plugin>
@@ -68,9 +92,9 @@
                         <id>integration-testing</id>
                         <goals>
                             <goal>integration-test</goal>
-                            <goal>verify</goal>
                         </goals>
                         <configuration>
+                            <argLine>${project.testing.argLine}</argLine>
                             <groups>integration</groups>
                         </configuration>
                     </execution>
@@ -101,25 +125,6 @@
                     <target>11</target>
                 </configuration>
             </plugin>
-            <!--<plugin>-->
-                <!--<groupId>org.jacoco</groupId>-->
-                <!--<artifactId>jacoco-maven-plugin</artifactId>-->
-                <!--<version>0.8.2</version>-->
-                <!--<executions>-->
-                    <!--<execution>-->
-                        <!--<goals>-->
-                            <!--<goal>prepare-agent</goal>-->
-                        <!--</goals>-->
-                    <!--</execution>-->
-                    <!--<execution>-->
-                        <!--<id>report</id>-->
-                        <!--<phase>test</phase>-->
-                        <!--<goals>-->
-                            <!--<goal>report</goal>-->
-                        <!--</goals>-->
-                    <!--</execution>-->
-                <!--</executions>-->
-            <!--</plugin>-->
         </plugins>
     </build>
     <modules>
