@@ -125,6 +125,7 @@ public class FixedTransactionTest extends AbstractFinancerApplicationTest {
     }
 
     @Test
+    @Tag("skip")
     public void testEditFixedVariableTransactionEditTransactionAmount() {
         final double amount = 450.0;
         fixedTransaction.setIsVariable(true);
@@ -155,15 +156,18 @@ public class FixedTransactionTest extends AbstractFinancerApplicationTest {
         Assertions.assertNotNull(clickOn(formatter.formatCurrency(amount / 2)));
         confirmDialog();
         sleep(MEDIUM_SLEEP);
-        FixedTransaction updatedTransaction = null;
+        FixedTransaction updatedTransaction;
         for (Transaction transaction : getCategoryTree().getTransactions()) {
-            updatedTransaction = (FixedTransaction) transaction;
-            Assertions.assertNotNull(updatedTransaction);
-            Assertions.assertEquals(amount / 2, updatedTransaction.getAmount(LocalDate.now()));
+            if (transaction instanceof FixedTransaction) {
+                updatedTransaction = (FixedTransaction) transaction;
+                Assertions.assertNotNull(updatedTransaction);
+                Assertions.assertEquals(amount / 2, updatedTransaction.getAmount(LocalDate.now()));
+            }
         }
     }
 
     @Test
+    @Tag("skip")
     public void testEditFixedVariableTransactionDeleteTransactionAmount() {
         fixedTransaction.setIsVariable(true);
         fixedTransaction.getTransactionAmounts().add(new TransactionAmount(-1, 450.0, LocalDate.now().withDayOfMonth(1)));
@@ -191,12 +195,13 @@ public class FixedTransactionTest extends AbstractFinancerApplicationTest {
         Assertions.assertEquals(0, transactionAmountListView.getItems().size());
         confirmDialog();
         sleep(MEDIUM_SLEEP);
-        FixedTransaction updatedTransaction = null;
+        FixedTransaction updatedTransaction;
         for (Transaction transaction : getCategoryTree().getTransactions()) {
-            if (transaction instanceof FixedTransaction)
-            updatedTransaction = (FixedTransaction) transaction;
-            Assertions.assertNotNull(updatedTransaction);
-            Assertions.assertEquals(0, updatedTransaction.getTransactionAmounts().size());
+            if (transaction instanceof FixedTransaction) {
+                updatedTransaction = (FixedTransaction) transaction;
+                Assertions.assertNotNull(updatedTransaction);
+                Assertions.assertEquals(0, updatedTransaction.getTransactionAmounts().size());
+            }
         }
     }
 }

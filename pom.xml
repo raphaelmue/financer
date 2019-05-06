@@ -54,6 +54,7 @@
                 <version>2.22.0</version>
                 <configuration>
                     <redirectTestOutputToFile>true</redirectTestOutputToFile>
+                    <excludedGroups>skip</excludedGroups>
                     <groups>${project.testing.tags}</groups>
                     <argLine>${project.testing.argLine}</argLine>
                 </configuration>
