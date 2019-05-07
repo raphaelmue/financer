@@ -78,7 +78,7 @@ public class TransactionTest extends AbstractFinancerApplicationTest {
         for (Transaction transaction : transactions) {
             Assertions.assertTrue(transaction instanceof VariableTransaction);
             Assertions.assertTrue(transaction.getId() > 0);
-            Assertions.assertEquals(-amount, transaction.getAmount());
+            Assertions.assertEquals(amount, transaction.getAmount());
         }
     }
 
