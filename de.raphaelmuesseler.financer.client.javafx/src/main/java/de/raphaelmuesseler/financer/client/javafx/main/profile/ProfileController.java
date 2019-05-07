@@ -13,10 +13,10 @@ import de.raphaelmuesseler.financer.client.javafx.main.FinancerController;
 import de.raphaelmuesseler.financer.client.local.Application;
 import de.raphaelmuesseler.financer.shared.connection.AsyncCall;
 import de.raphaelmuesseler.financer.shared.connection.ConnectionResult;
-import de.raphaelmuesseler.financer.shared.model.BaseCategory;
-import de.raphaelmuesseler.financer.shared.model.Category;
-import de.raphaelmuesseler.financer.shared.model.CategoryTree;
-import de.raphaelmuesseler.financer.shared.model.CategoryTreeImpl;
+import de.raphaelmuesseler.financer.shared.model.categories.BaseCategory;
+import de.raphaelmuesseler.financer.shared.model.categories.Category;
+import de.raphaelmuesseler.financer.shared.model.categories.CategoryTree;
+import de.raphaelmuesseler.financer.shared.model.categories.CategoryTreeImpl;
 import de.raphaelmuesseler.financer.shared.model.user.User;
 import de.raphaelmuesseler.financer.util.collections.Tree;
 import de.raphaelmuesseler.financer.util.collections.TreeUtil;
@@ -64,8 +64,8 @@ public class ProfileController implements Initializable {
         if (user != null) {
             this.fullNameLabel.setText(user.getFullName());
             this.emailLabel.setText(user.getEmail());
-            this.birthDateLabel.setText(new JavaFXFormatter(localStorage).formatDate(this.user.getBirthDateAsLocalDate()));
-            this.genderLabel.setText(I18N.get(this.user.getGenderObject().getName()));
+            this.birthDateLabel.setText(new JavaFXFormatter(localStorage).formatDate(this.user.getBirthDate()));
+            this.genderLabel.setText(I18N.get(this.user.getGender().getName()));
         }
 
         this.changePasswordLink.setOnAction(event -> {
@@ -142,7 +142,7 @@ public class ProfileController implements Initializable {
                     categoriesTreeView.setOnEditCommit(event -> {
                         event.getNewValue().getValue().setId(event.getOldValue().getValue().getId());
                         event.getNewValue().getValue().setParentId(event.getOldValue().getValue().getParentId());
-                        event.getNewValue().getValue().setRootId(event.getOldValue().getValue().getRootId());
+                        event.getNewValue().getValue().setCategoryClass(event.getOldValue().getValue().getCategoryClass());
                         handleUpdateCategory(event.getNewValue());
                     });
                 });
@@ -159,12 +159,12 @@ public class ProfileController implements Initializable {
             String categoryName = new FinancerTextInputDialog(I18N.get("enterCategoryName"), I18N.get("newCategory"))
                     .showAndGetResult();
             if (categoryName != null) {
-                CategoryTree categoryTree = new CategoryTreeImpl(categoriesTreeView.getSelectionModel().getSelectedItem().getValue().getCategoryClass(),
+                CategoryTree categoryTree = new CategoryTreeImpl(
                         categoriesTreeView.getSelectionModel().getSelectedItem().getValue(),
-                        new Category(-1, categoryName, currentItem.getValue().getValue().getId(), currentItem.getValue().getCategoryClass().getIndex()));
+                        new Category(0, categoryName, currentItem.getValue().getValue().getId(), currentItem.getValue().getValue().getCategoryClass()));
 
                 Map<String, Object> parameters = new HashMap<>();
-                parameters.put("user", this.user);
+                categoryTree.getValue().setUser(user.toDatabaseAccessObject());
                 parameters.put("category", categoryTree.getValue());
 
                 FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "addCategory", parameters, new JavaFXAsyncConnectionCall() {
@@ -173,7 +173,7 @@ public class ProfileController implements Initializable {
                         categoryTree.getValue().setId(((Category) result.getResult()).getId());
                         categoryTree.getValue().setPrefix(categoryTree.getParent().getValue().getPrefix() + (categoryTree.getParent().getChildren().size() + 1) + ".");
                         if (categoriesTreeView.getSelectionModel().getSelectedItem().getValue().isRoot()) {
-                            categories.getCategoryTreeByCategoryClass(categoriesTreeView.getSelectionModel().getSelectedItem().getValue().getCategoryClass()).getChildren().add(categoryTree);
+                            categories.getCategoryTreeByCategoryClass(categoriesTreeView.getSelectionModel().getSelectedItem().getValue().getValue().getCategoryClass()).getChildren().add(categoryTree);
                         } else {
                             TreeUtil.insertByValue(categories, categoryTree, (o1, o2) -> Integer.compare(o1.getParentId(), o2.getId()));
                         }
@@ -211,7 +211,7 @@ public class ProfileController implements Initializable {
 
     private void handleUpdateCategory(CategoryTree category) {
         Map<String, Object> parameters = new HashMap<>();
-        parameters.put("category", category);
+        parameters.put("category", category.getValue());
 
         FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "updateCategory", parameters, new JavaFXAsyncConnectionCall() {
             @Override
@@ -238,8 +238,8 @@ public class ProfileController implements Initializable {
             if (new FinancerConfirmDialog(I18N.get("confirmDeleteCategory")).showAndGetResult()) {
 
                 Map<String, Object> parameters = new HashMap<>();
-                parameters.put("category", this.categoriesTreeView.getSelectionModel()
-                        .getSelectedItem().getValue());
+                parameters.put("categoryId", this.categoriesTreeView.getSelectionModel()
+                        .getSelectedItem().getValue().getValue().getId());
 
                 FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "deleteCategory", parameters, new JavaFXAsyncConnectionCall() {
                     @Override
@@ -262,7 +262,7 @@ public class ProfileController implements Initializable {
     }
 
     private void createTreeView() {
-        this.treeStructure = new TreeItem<>(new CategoryTreeImpl(null, new Category(-1, "root", -1, -1)));
+        this.treeStructure = new TreeItem<>(new CategoryTreeImpl(null, new Category("root")));
         for (BaseCategory.CategoryClass categoryClass : BaseCategory.CategoryClass.values()) {
             this.createTreeView(treeStructure, this.categories.getCategoryTreeByCategoryClass(categoryClass));
         }
@@ -282,12 +282,12 @@ public class ProfileController implements Initializable {
         return new TextFieldTreeCellImpl(new StringConverter<>() {
             @Override
             public String toString(CategoryTree object) {
-                return object.getValue().getName().equals(object.getCategoryClass().getName()) ? I18N.get(object.toString()) : object.toString();
+                return object.getValue().getName().equals(object.getValue().getCategoryClass().getName()) ? I18N.get(object.getValue().getName()) : object.getValue().getName();
             }
 
             @Override
             public CategoryTree fromString(String string) {
-                return new CategoryTreeImpl(null, new Category(-1, string, -1, -1));
+                return new CategoryTreeImpl(null, new Category(string));
             }
         });
     }
@@ -313,7 +313,7 @@ public class ProfileController implements Initializable {
             this.contextMenu.getItems().add(addMenuItem);
 
             MenuItem addMenuItemDelete = new MenuItem(I18N.get("new"));
-            addMenuItemDelete.setOnAction(t -> getTreeItem().getChildren().add(new TreeItem<>(new CategoryTreeImpl(null, new Category(-1, "newCategory", -1, -1)))));
+            addMenuItemDelete.setOnAction(t -> getTreeItem().getChildren().add(new TreeItem<>(new CategoryTreeImpl(null, new Category("newCategory")))));
             this.deleteContextMenu.getItems().add(addMenuItemDelete);
 
             MenuItem deleteMenuItem = new MenuItem(I18N.get("delete"));

@@ -2,57 +2,62 @@ package de.raphaelmuesseler.financer.shared.model.user;
 
 import java.io.Serializable;
 import java.util.Currency;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
 
 public class UserSettings implements Serializable, Settings {
     private static final long serialVersionUID = 2201611667506790486L;
-    private Currency currency;
-    private boolean showCurrencySign;
-    private String theme = "Main Theme";
+    private final Map<String, String> properties = new HashMap<>();
 
     @Override
-    public String getValueByProperty(String property) {
-        switch (property) {
-            case "currency":
-                return this.getCurrency().getCurrencyCode();
-            case "showCurrencySign":
-                return Boolean.toString(this.isShowCurrencySign());
-        }
-        return null;
+    public String getValueByProperty(Property property) {
+        return this.properties.getOrDefault(property.getName(), property.getDefaultValue());
+    }
+
+    public Locale getLanguage() {
+        return Locale.forLanguageTag(this.getValueByProperty(Property.LANGUAGE));
     }
 
     public Currency getCurrency() {
-        return currency;
+        return Currency.getInstance(this.getValueByProperty(Property.CURRENCY));
     }
 
     public String getTheme() {
-        return theme;
+        return this.getValueByProperty(Property.THEME);
     }
 
     public boolean isShowCurrencySign() {
-        return showCurrencySign;
+        return Boolean.valueOf(this.getValueByProperty(Property.SHOW_CURRENCY_SIGN));
+    }
+
+    public boolean isChangeAmountSignAutomatically() {
+        return Boolean.valueOf(this.getValueByProperty(Property.CHANGE_AMOUNT_SIGN_AUTOMATICALLY));
     }
 
     @Override
-    public void setValueByProperty(String property, String value) {
-        switch (property) {
-            case "currency":
-                this.setCurrency(Currency.getInstance(value));
-                break;
-            case "showCurrencySign":
-                this.setShowCurrencySign(Boolean.valueOf(value));
-                break;
-        }
+    public void setValueByProperty(Property property, String value) {
+        this.properties.put(property.getName(), value);
+    }
+
+    public void setLanguage(Locale locale) {
+        this.properties.put(Property.LANGUAGE.getName(), locale.toLanguageTag());
     }
 
     public void setCurrency(Currency currency) {
-        this.currency = currency;
+        this.setValueByProperty(Property.CURRENCY, currency.getCurrencyCode());
     }
 
+
     public void setShowCurrencySign(boolean showCurrencySign) {
-        this.showCurrencySign = showCurrencySign;
+        this.setValueByProperty(Property.SHOW_CURRENCY_SIGN, Boolean.toString(showCurrencySign));
     }
 
     public void setTheme(String theme) {
-        this.theme = theme;
+        this.setValueByProperty(Property.THEME, theme);
+    }
+
+    public void setChangeAmountSignAutomatically(boolean changeAmountSignAutomatically) {
+        this.setValueByProperty(Property.CHANGE_AMOUNT_SIGN_AUTOMATICALLY, Boolean.toString(changeAmountSignAutomatically));
     }
 }

@@ -8,10 +8,10 @@ import de.raphaelmuesseler.financer.client.javafx.format.JavaFXFormatter;
 import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
 import de.raphaelmuesseler.financer.client.javafx.main.FinancerController;
 import de.raphaelmuesseler.financer.client.local.LocalStorage;
-import de.raphaelmuesseler.financer.shared.model.BaseCategory;
-import de.raphaelmuesseler.financer.shared.model.Category;
-import de.raphaelmuesseler.financer.shared.model.CategoryTree;
-import de.raphaelmuesseler.financer.shared.model.CategoryTreeImpl;
+import de.raphaelmuesseler.financer.shared.model.categories.BaseCategory;
+import de.raphaelmuesseler.financer.shared.model.categories.Category;
+import de.raphaelmuesseler.financer.shared.model.categories.CategoryTree;
+import de.raphaelmuesseler.financer.shared.model.categories.CategoryTreeImpl;
 import de.raphaelmuesseler.financer.util.collections.Tree;
 import de.raphaelmuesseler.financer.util.date.DateUtil;
 import javafx.collections.FXCollections;
@@ -137,8 +137,8 @@ public class StatisticsController implements Initializable {
             }
 
             @Override
-            public CategoryTree fromString(String s) {
-                return new CategoryTreeImpl(null, new Category(-1, s, -1, -1));
+            public CategoryTree fromString(String string) {
+                return new CategoryTreeImpl(null, new Category(string));
             }
         });
     }

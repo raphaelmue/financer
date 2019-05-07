@@ -124,7 +124,8 @@ public class RegisterDialog extends FinancerDialog<User> {
         String salt = new RandomString(32).nextString();
         String password = Hash.create(this.passwordField.getText(), salt);
 
-        this.setValue(new User(this.emailField.getText(),
+        this.setValue(new User(0,
+                this.emailField.getText(),
                 password,
                 salt,
                 this.nameField.getText(),

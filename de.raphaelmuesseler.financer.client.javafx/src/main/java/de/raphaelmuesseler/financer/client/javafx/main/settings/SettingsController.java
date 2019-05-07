@@ -11,12 +11,11 @@ import de.raphaelmuesseler.financer.client.javafx.util.ApplicationHelper;
 import de.raphaelmuesseler.financer.client.local.LocalSettings;
 import de.raphaelmuesseler.financer.client.local.LocalStorage;
 import de.raphaelmuesseler.financer.shared.connection.ConnectionResult;
-import de.raphaelmuesseler.financer.shared.model.db.Token;
+import de.raphaelmuesseler.financer.shared.model.user.Token;
 import de.raphaelmuesseler.financer.shared.model.user.User;
-import de.raphaelmuesseler.financer.util.collections.CollectionUtil;
 import de.raphaelmuesseler.financer.util.concurrency.FinancerExecutor;
 import javafx.application.Platform;
-import javafx.collections.ObservableList;
+import javafx.collections.FXCollections;
 import javafx.fxml.Initializable;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
@@ -30,31 +29,38 @@ import org.controlsfx.glyphfont.GlyphFont;
 import org.controlsfx.glyphfont.GlyphFontRegistry;
 
 import java.net.URL;
-import java.util.*;
+import java.util.Currency;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.ResourceBundle;
 
 public class SettingsController implements Initializable {
     public ComboBox<I18N.Language> languageMenuComboBox;
     public ComboBox<Currency> currencyComboBox;
     public CheckBox showSignCheckbox;
+
+    public ComboBox<Integer> maxNumberOfMonthsDisplayedComboBox;
+
+
     public JFXButton logoutFromDeviceBtn;
     public JFXListView<Token> devicesListView;
+    public CheckBox changeAmountSignAutomaticallyCheckBox;
+
 
     private LocalStorage localStorage = LocalStorageImpl.getInstance();
     private User user = (User) localStorage.readObject("user");
     private LocalSettings localSettings = (LocalSettings) localStorage.readObject("localSettings");
-    private ObservableList<Token> tokens;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         GlyphFont fontAwesome = GlyphFontRegistry.font("FontAwesome");
         this.logoutFromDeviceBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.SIGN_OUT));
 
-
         this.languageMenuComboBox.getItems().addAll(I18N.Language.getAll());
-        this.languageMenuComboBox.getSelectionModel().select(I18N.Language.getLanguageByLocale(this.localSettings.getLanguage()));
+        this.languageMenuComboBox.getSelectionModel().select(I18N.Language.getLanguageByLocale(this.user.getSettings().getLanguage()));
         this.languageMenuComboBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            localSettings.setLanguage(newValue.getLocale());
-            localStorage.writeObject("localSettings", localSettings);
+            user.getSettings().setLanguage(newValue.getLocale());
+            updateSettings();
 
             if (new FinancerConfirmDialog(I18N.get("warnChangesAfterRestart")).showAndGetResult()) {
                 ApplicationHelper.restartApplication((Stage) languageMenuComboBox.getScene().getWindow());
@@ -67,10 +73,7 @@ public class SettingsController implements Initializable {
         this.currencyComboBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             user.getSettings().setCurrency(newValue);
             showSignCheckbox.setDisable(false);
-            Map<String, Object> parameters = new HashMap<>();
-            parameters.put("property", "currency");
-            parameters.put("value", currencyComboBox.getValue().getCurrencyCode());
-            updateSettings(parameters);
+            updateSettings();
         });
 
         if (user.getSettings().getCurrency() == null) {
@@ -79,10 +82,20 @@ public class SettingsController implements Initializable {
         this.showSignCheckbox.setSelected(this.user.getSettings().isShowCurrencySign());
         this.showSignCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
             user.getSettings().setShowCurrencySign(newValue);
-            Map<String, Object> parameters = new HashMap<>();
-            parameters.put("property", "showCurrencySign");
-            parameters.put("value", Boolean.toString(showSignCheckbox.isSelected()));
-            updateSettings(parameters);
+            updateSettings();
+        });
+
+        for (int i = 3; i <= 8; i++) this.maxNumberOfMonthsDisplayedComboBox.getItems().add(i);
+        this.maxNumberOfMonthsDisplayedComboBox.getSelectionModel().select((Integer) localSettings.getMaxNumberOfMonthsDisplayed());
+        this.maxNumberOfMonthsDisplayedComboBox.getSelectionModel().selectedItemProperty().addListener((observableValue, oldValue, newValue) -> {
+            localSettings.setMaxNumberOfMonthsDisplayed(newValue);
+            localStorage.writeObject("localSettings", localSettings);
+        });
+
+        this.changeAmountSignAutomaticallyCheckBox.setSelected(this.user.getSettings().isChangeAmountSignAutomatically());
+        this.changeAmountSignAutomaticallyCheckBox.selectedProperty().addListener((observableValue, oldValue, newValue) -> {
+            user.getSettings().setChangeAmountSignAutomatically(newValue);
+            updateSettings();
         });
 
         this.loadTokenListView();
@@ -92,32 +105,17 @@ public class SettingsController implements Initializable {
         this.devicesListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) ->
                 logoutFromDeviceBtn.setDisable(false));
 
-        HashMap<String, Object> parameters = new HashMap<>();
-        parameters.put("user", this.user);
-        FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "getUsersTokens", parameters, new JavaFXAsyncConnectionCall() {
-            @Override
-            public void onSuccess(ConnectionResult result) {
-                tokens = CollectionUtil.castObjectListToObservable((List<Object>) result.getResult());
-
-                Platform.runLater(() -> {
-                    devicesListView.setItems(tokens);
-                    devicesListView.setCellFactory(param -> new TokenListViewImpl());
-                });
-            }
-
-            @Override
-            public void onFailure(Exception exception) {
-                JavaFXAsyncConnectionCall.super.onFailure(exception);
-            }
-        }));
-
+        devicesListView.setItems(FXCollections.observableArrayList(user.getTokenList()));
+        devicesListView.setCellFactory(param -> new TokenListViewImpl());
     }
 
-    private void updateSettings(Map<String, Object> parameters) {
+    private void updateSettings() {
+        Map<String, Object> parameters = new HashMap<>();
         parameters.put("user", user);
         FinancerExecutor.getExecutor().execute(new ServerRequestHandler(user, "updateUsersSettings", parameters, new JavaFXAsyncConnectionCall() {
             @Override
-            public void onSuccess(ConnectionResult result) {}
+            public void onSuccess(ConnectionResult result) {
+            }
 
             @Override
             public void onFailure(Exception exception) {
@@ -162,7 +160,7 @@ public class SettingsController implements Initializable {
                 VBox left = new VBox();
                 Label systemLabel = new Label(item.getSystem());
                 GlyphFont fontAwesome = GlyphFontRegistry.font("FontAwesome");
-                systemLabel.setGraphic(fontAwesome.create(item.isMobile() ? FontAwesome.Glyph.MOBILE : FontAwesome.Glyph.DESKTOP));
+                systemLabel.setGraphic(fontAwesome.create(item.getIsMobile() ? FontAwesome.Glyph.MOBILE : FontAwesome.Glyph.DESKTOP));
                 systemLabel.getStyleClass().add("list-cell-title");
                 left.getChildren().add(systemLabel);
                 Label ipAddressLabel = new Label(item.getIpAddress());

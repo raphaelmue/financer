@@ -3,10 +3,10 @@ package de.raphaelmuesseler.financer.client.javafx.main.overview;
 import de.raphaelmuesseler.financer.client.format.I18N;
 import de.raphaelmuesseler.financer.client.javafx.format.JavaFXFormatter;
 import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
-import de.raphaelmuesseler.financer.shared.model.BaseCategory;
-import de.raphaelmuesseler.financer.shared.model.Category;
-import de.raphaelmuesseler.financer.shared.model.CategoryTree;
-import de.raphaelmuesseler.financer.shared.model.transactions.Transaction;
+import de.raphaelmuesseler.financer.shared.model.categories.BaseCategory;
+import de.raphaelmuesseler.financer.shared.model.categories.Category;
+import de.raphaelmuesseler.financer.shared.model.categories.CategoryTree;
+import de.raphaelmuesseler.financer.shared.model.transactions.VariableTransaction;
 import de.raphaelmuesseler.financer.util.collections.Tree;
 import javafx.fxml.Initializable;
 import javafx.geometry.HPos;
@@ -34,11 +34,11 @@ public class OverviewController implements Initializable {
             categories = new BaseCategory();
         }
 
-        List<Transaction> transactions = this.localStorage.readList("transactions");
+        List<VariableTransaction> transactions = this.localStorage.readList("transactions");
         this.lastTransactionsGridPane.setVgap(8);
         if (transactions != null && transactions.size() > 0) {
             int counter = 0;
-            for (Transaction transaction : transactions) {
+            for (VariableTransaction transaction : transactions) {
                 // LAST TRANSACTIONS
                 if (counter > 5) {
                     break;
@@ -60,7 +60,7 @@ public class OverviewController implements Initializable {
         double balanceAmount = 0;
         int counter = 0;
         for (Tree<Category> root : categories.getChildren()) {
-            this.balanceGridPane.add(new Label(I18N.get(((CategoryTree) root).getCategoryClass().getName())), 0, counter);
+            this.balanceGridPane.add(new Label(I18N.get(root.getValue().getCategoryClass().getName())), 0, counter);
             Label baseCategoryLabel = formatter.formatAmountLabel(((CategoryTree) root).getAmount(LocalDate.now()));
             balanceAmount += ((CategoryTree) root).getAmount(LocalDate.now());
             GridPane.setHalignment(baseCategoryLabel, HPos.RIGHT);

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC
+        "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+        "http://hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+    <session-factory>
+        <!-- Database connection properties - Driver, URL, user, password -->
+        <property name="hibernate.connection.driver_class">com.mysql.cj.jdbc.Driver</property>
+        <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/financer_dev?useTimezone=true&amp;useUnicode=true&amp;useLegacyDatetimeCode=false&amp;serverTimezone=Europe/Berlin</property>
+        <property name="hibernate.connection.username">root</property>
+        <property name="hibernate.connection.password"/>
+
+        <!-- Connection Pool Size -->
+        <property name="hibernate.connection.pool_size">4</property>
+
+        <!-- org.hibernate.HibernateException: No CurrentSessionContext configured! -->
+        <property name="hibernate.current_session_context_class">managed</property>
+
+        <!-- Outputs the SQL queries, should be disabled in Production -->
+        <property name="hibernate.show_sql">false</property>
+
+        <!-- Dialect is required to let Hibernate know the Database Type, MySQL, Oracle etc
+            Hibernate 4 automatically figure out Dialect from Database Connection Metadata -->
+        <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
+
+    </session-factory>
+</hibernate-configuration>

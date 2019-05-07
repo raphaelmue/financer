@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="de.raphaelmuesseler.financer.shared.model.db">
+    <class name="FixedTransactionDAO" table="fixed_transactions">
+        <id name="id" type="int">
+            <column name="id"/>
+            <generator class="increment"/>
+        </id>
+        <many-to-one name="category" class="CategoryDAO" fetch="select" cascade="all">
+            <column name="cat_id" not-null="true" />
+        </many-to-one>
+        <property name="amount" type="double">
+            <column name="amount"/>
+        </property>
+        <property name="startDate" type="java.time.LocalDate">
+            <column name="start_date"/>
+        </property>
+        <property name="endDate" type="java.time.LocalDate">
+            <column name="end_date"/>
+        </property>
+        <property name="product" type="java.lang.String">
+            <column name="product"/>
+        </property>
+        <property name="purpose" type="java.lang.String">
+            <column name="purpose"/>
+        </property>
+        <property name="isVariable" type="boolean">
+            <column name="is_variable"/>
+        </property>
+        <property name="day" type="int">
+            <column name="day"/>
+        </property>
+        <set name="transactionAmounts" lazy="true" inverse="true" cascade="all" fetch="select">
+            <key column="fixed_transaction_id" not-null="true"/>
+            <one-to-many class="FixedTransactionAmountDAO"/>
+        </set>
+    </class>
+</hibernate-mapping>

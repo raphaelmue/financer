@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="de.raphaelmuesseler.financer.shared.model.db">
+    <class name="de.raphaelmuesseler.financer.shared.model.db.CategoryDAO" table="users_categories">
+        <id name="id" type="int">
+            <column name="id" not-null="true"/>
+            <generator class="increment"/>
+        </id>
+        <many-to-one name="user" class="UserDAO" fetch="select">
+            <column name="user_id" not-null="true" />
+        </many-to-one>
+        <property name="categoryRoot" type="int">
+            <column name="cat_id"/>
+        </property>
+        <property name="parentId" type="int">
+            <column name="parent_id"/>
+        </property>
+        <property name="name" type="java.lang.String">
+            <column name="name"/>
+        </property>
+    </class>
+</hibernate-mapping>

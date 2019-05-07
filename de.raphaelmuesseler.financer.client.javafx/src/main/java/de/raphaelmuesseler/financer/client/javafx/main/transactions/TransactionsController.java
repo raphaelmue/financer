@@ -12,14 +12,15 @@ import de.raphaelmuesseler.financer.client.javafx.format.JavaFXFormatter;
 import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
 import de.raphaelmuesseler.financer.client.javafx.main.FinancerController;
 import de.raphaelmuesseler.financer.client.local.Application;
+import de.raphaelmuesseler.financer.client.local.LocalSettingsImpl;
 import de.raphaelmuesseler.financer.shared.connection.AsyncCall;
 import de.raphaelmuesseler.financer.shared.connection.ConnectionResult;
-import de.raphaelmuesseler.financer.shared.model.BaseCategory;
-import de.raphaelmuesseler.financer.shared.model.Category;
-import de.raphaelmuesseler.financer.shared.model.CategoryTree;
-import de.raphaelmuesseler.financer.shared.model.transactions.AbstractTransaction;
+import de.raphaelmuesseler.financer.shared.model.categories.BaseCategory;
+import de.raphaelmuesseler.financer.shared.model.categories.Category;
+import de.raphaelmuesseler.financer.shared.model.categories.CategoryTree;
 import de.raphaelmuesseler.financer.shared.model.transactions.FixedTransaction;
 import de.raphaelmuesseler.financer.shared.model.transactions.Transaction;
+import de.raphaelmuesseler.financer.shared.model.transactions.VariableTransaction;
 import de.raphaelmuesseler.financer.shared.model.user.User;
 import de.raphaelmuesseler.financer.util.concurrency.FinancerExecutor;
 import javafx.application.Platform;
@@ -54,7 +55,7 @@ public class TransactionsController implements Initializable {
     public JFXButton newTransactionBtn;
     public JFXButton editTransactionBtn;
     public JFXButton deleteTransactionBtn;
-    public TableView<Transaction> transactionsTableView;
+    public TableView<VariableTransaction> transactionsTableView;
     public JFXTextField filterTransactionsTextField;
     public JFXButton refreshFixedTransactionsBtn;
     public JFXButton newFixedTransactionBtn;
@@ -109,7 +110,8 @@ public class TransactionsController implements Initializable {
     }
 
     private void initializeTransactionsOverviewTable() {
-        final int numberOfMaxMonths = 6;
+        final int numberOfMaxMonths = ((LocalSettingsImpl) localStorage.readObject("localSettings")).getMaxNumberOfMonthsDisplayed();
+        ;
         final List<TableColumn<TransactionOverviewRow, String>> monthColumns = new ArrayList<>(numberOfMaxMonths);
 
         TableColumn<TransactionOverviewRow, CategoryTree> categoryColumn = new TableColumn<>(I18N.get("category"));
@@ -124,7 +126,7 @@ public class TransactionsController implements Initializable {
                 } else {
                     Label categoryLabel;
                     if (item.isRoot()) {
-                        categoryLabel = new Label((item.getCategoryClass().getIndex() + 1) + ". " + I18N.get(item.getCategoryClass().getName()));
+                        categoryLabel = new Label((item.getValue().getCategoryClass().getIndex() + 1) + ". " + I18N.get(item.getValue().getCategoryClass().getName()));
                         categoryLabel.setStyle("-fx-font-weight: 700");
                     } else {
                         categoryLabel = new Label(formatter.formatCategoryName(item.getValue()));
@@ -138,7 +140,7 @@ public class TransactionsController implements Initializable {
 
         for (int i = 0; i < numberOfMaxMonths; i++) {
             TableColumn<TransactionOverviewRow, String> column = new TableColumn<>(I18N.get(Objects.requireNonNull(getMonthByNumber(LocalDate.now().minusMonths(i).getMonthValue())).getName()));
-            this.adjustColumnWidth(column, this.transactionsOverviewTableView, 8);
+            this.adjustColumnWidth(column, this.transactionsOverviewTableView, numberOfMaxMonths + 2);
             column.setStyle("-fx-alignment: CENTER-RIGHT;");
             column.setSortable(false);
             int index = i;
@@ -158,12 +160,12 @@ public class TransactionsController implements Initializable {
 
     private void initializeTransactionsTable() {
 
-        TableColumn<Transaction, Category> categoryColumn = new TableColumn<>(I18N.get("category"));
-        TableColumn<Transaction, LocalDate> valueDateColumn = new TableColumn<>(I18N.get("valueDate"));
-        TableColumn<Transaction, Double> amountColumn = new TableColumn<>(I18N.get("amount"));
-        TableColumn<Transaction, String> productColumn = new TableColumn<>(I18N.get("product"));
-        TableColumn<Transaction, String> purposeColumn = new TableColumn<>(I18N.get("purpose"));
-        TableColumn<Transaction, String> shopColumn = new TableColumn<>(I18N.get("shop"));
+        TableColumn<VariableTransaction, Category> categoryColumn = new TableColumn<>(I18N.get("category"));
+        TableColumn<VariableTransaction, LocalDate> valueDateColumn = new TableColumn<>(I18N.get("valueDate"));
+        TableColumn<VariableTransaction, Double> amountColumn = new TableColumn<>(I18N.get("amount"));
+        TableColumn<VariableTransaction, String> productColumn = new TableColumn<>(I18N.get("product"));
+        TableColumn<VariableTransaction, String> purposeColumn = new TableColumn<>(I18N.get("purpose"));
+        TableColumn<VariableTransaction, String> shopColumn = new TableColumn<>(I18N.get("shop"));
 
         valueDateColumn.setCellValueFactory(new PropertyValueFactory<>("valueDate"));
         valueDateColumn.setSortable(true);
@@ -206,7 +208,7 @@ public class TransactionsController implements Initializable {
         this.transactionsTableView.getColumns().add(shopColumn);
 
         this.transactionsTableView.setRowFactory(param -> {
-            TableRow<Transaction> row = new TableRow<>();
+            TableRow<VariableTransaction> row = new TableRow<>();
             row.setOnMouseClicked(event -> {
                 if (event.getClickCount() == 2 && (!row.isEmpty())) {
                     handleEditTransaction();
@@ -278,22 +280,21 @@ public class TransactionsController implements Initializable {
     }
 
     private void loadTransactionTableData() {
-        ObservableList<Transaction> transactions = FXCollections.observableArrayList();
+        ObservableList<VariableTransaction> transactions = FXCollections.observableArrayList();
         if (this.categories != null) {
 //            transactionsTableView.getItems().clear();
             this.categories.traverse(treeItem -> {
-                if ((((CategoryTree) treeItem).getCategoryClass() == BaseCategory.CategoryClass.VARIABLE_EXPENSES ||
-                        ((CategoryTree) treeItem).getCategoryClass() == BaseCategory.CategoryClass.VARIABLE_REVENUE)) {
-                    for (AbstractTransaction abstractTransaction : ((CategoryTree) treeItem).getTransactions()) {
-                        if (abstractTransaction instanceof Transaction) {
-                            transactions.add((Transaction) abstractTransaction);
+                if (!treeItem.getValue().getCategoryClass().isFixed()) {
+                    for (Transaction abstractTransaction : ((CategoryTree) treeItem).getTransactions()) {
+                        if (abstractTransaction instanceof VariableTransaction) {
+                            transactions.add((VariableTransaction) abstractTransaction);
                         }
                     }
                 }
             });
         }
 
-        FilteredList<Transaction> filteredData = new FilteredList<>(transactions, transaction -> true);
+        FilteredList<VariableTransaction> filteredData = new FilteredList<>(transactions, transaction -> true);
         filterTransactionsTextField.textProperty().addListener((observable, oldValue, newValue) ->
                 filteredData.setPredicate(transaction -> {
                     if (newValue == null || newValue.isEmpty()) {
@@ -306,7 +307,7 @@ public class TransactionsController implements Initializable {
                             transaction.getPurpose().toLowerCase().contains(newValue.toLowerCase());
                 }));
 
-        SortedList<Transaction> sortedData = new SortedList<>(filteredData);
+        SortedList<VariableTransaction> sortedData = new SortedList<>(filteredData);
         sortedData.comparatorProperty().bind(transactionsTableView.comparatorProperty());
 
         transactionsTableView.setItems(sortedData);
@@ -317,8 +318,7 @@ public class TransactionsController implements Initializable {
         if (this.categories != null) {
             categoriesListView.getItems().clear();
             this.categories.traverse(treeItem -> {
-                if ((((CategoryTree) treeItem).getCategoryClass() == BaseCategory.CategoryClass.FIXED_EXPENSES ||
-                        ((CategoryTree) treeItem).getCategoryClass() == BaseCategory.CategoryClass.FIXED_REVENUE)) {
+                if (treeItem.getValue().getCategoryClass().isFixed()) {
                     categoriesListView.getItems().add((CategoryTree) treeItem);
                 }
             });
@@ -332,7 +332,7 @@ public class TransactionsController implements Initializable {
     public void handleRefreshTransactions() {
         RetrievalServiceImpl.getInstance().fetchTransactions(this.user, new AsyncCall<>() {
             @Override
-            public void onSuccess(List<Transaction> result) {
+            public void onSuccess(BaseCategory result) {
             }
 
             @Override
@@ -353,7 +353,7 @@ public class TransactionsController implements Initializable {
     public void handleRefreshFixedTransactions() {
         RetrievalServiceImpl.getInstance().fetchFixedTransactions(this.user, new AsyncCall<>() {
             @Override
-            public void onSuccess(List<FixedTransaction> result) {
+            public void onSuccess(BaseCategory result) {
             }
 
             @Override
@@ -376,19 +376,20 @@ public class TransactionsController implements Initializable {
     }
 
     public void handleNewTransaction() {
-        Transaction transaction = new TransactionDialog(null, this.categories).showAndGetResult();
+        VariableTransaction transaction = new TransactionDialog(null, this.categories).showAndGetResult();
         if (transaction != null) {
 
-            this.correctTransactionAmount(transaction);
+            if (user.getSettings().isChangeAmountSignAutomatically()) {
+                transaction.adjustAmountSign();
+            }
 
             Map<String, Object> parameters = new HashMap<>();
-            parameters.put("user", this.user);
-            parameters.put("transaction", transaction);
+            parameters.put("variableTransaction", transaction);
 
             FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "addTransaction", parameters, new JavaFXAsyncConnectionCall() {
                 @Override
                 public void onSuccess(ConnectionResult result) {
-                    transaction.setId(((Transaction) result.getResult()).getId());
+                    transaction.setId(((VariableTransaction) result.getResult()).getId());
                     localStorage.writeObject("categories", categories);
 
                     FinancerController.getInstance().showToast(Application.MessageType.SUCCESS, I18N.get("succAddedTransaction"));
@@ -417,13 +418,11 @@ public class TransactionsController implements Initializable {
                 .showAndGetResult();
         if (fixedTransaction != null) {
 
-            if ((fixedTransaction.getCategoryTree().getCategoryClass().isRevenue() && fixedTransaction.getAmount() < 0) ||
-                    (!fixedTransaction.getCategoryTree().getCategoryClass().isRevenue() && fixedTransaction.getAmount() >= 0)) {
-                fixedTransaction.setAmount(fixedTransaction.getAmount() * (-1));
+            if (user.getSettings().isChangeAmountSignAutomatically()) {
+                fixedTransaction.adjustAmountSign();
             }
 
             Map<String, Object> parameters = new HashMap<>();
-            parameters.put("user", this.user);
             parameters.put("fixedTransaction", fixedTransaction);
 
             FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "addFixedTransactions", parameters, new JavaFXAsyncConnectionCall() {
@@ -448,15 +447,16 @@ public class TransactionsController implements Initializable {
     }
 
     public void handleEditTransaction() {
-        Transaction transaction = new TransactionDialog(this.transactionsTableView.getSelectionModel().getSelectedItem(),
+        VariableTransaction transaction = new TransactionDialog(this.transactionsTableView.getSelectionModel().getSelectedItem(),
                 this.categories).showAndGetResult();
         if (transaction != null) {
 
-            this.correctTransactionAmount(transaction);
+            if (user.getSettings().isChangeAmountSignAutomatically()) {
+                transaction.adjustAmountSign();
+            }
 
             Map<String, Object> parameters = new HashMap<>();
-            parameters.put("user", this.user);
-            parameters.put("transaction", transaction);
+            parameters.put("variableTransaction", transaction);
 
             FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "updateTransaction",
                     parameters, new JavaFXAsyncConnectionCall() {
@@ -489,12 +489,12 @@ public class TransactionsController implements Initializable {
                 .showAndGetResult();
         if (fixedTransaction != null) {
 
-            if ((fixedTransaction.getCategoryTree().getValue().getRootId() == 0 && fixedTransaction.getAmount() < 0) ||
-                    (fixedTransaction.getCategoryTree().getValue().getRootId() == 2 && fixedTransaction.getAmount() >= 0)) {
-                fixedTransaction.setAmount(fixedTransaction.getAmount() * (-1));
+            if (user.getSettings().isChangeAmountSignAutomatically()) {
+                fixedTransaction.adjustAmountSign();
             }
 
             Map<String, Object> parameters = new HashMap<>();
+            parameters.put("user", this.user);
             parameters.put("fixedTransaction", fixedTransaction);
 
             FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "updateFixedTransaction", parameters, new JavaFXAsyncConnectionCall() {
@@ -528,10 +528,10 @@ public class TransactionsController implements Initializable {
 
     public void handleDeleteTransaction() {
         if (new FinancerConfirmDialog(I18N.get("confirmDeleteTransaction")).showAndGetResult()) {
-            Transaction transaction = this.transactionsTableView.getSelectionModel().getSelectedItem();
+            VariableTransaction transaction = this.transactionsTableView.getSelectionModel().getSelectedItem();
             if (transaction != null) {
                 Map<String, Object> parameters = new HashMap<>();
-                parameters.put("transaction", transaction);
+                parameters.put("variableTransactionId", transaction.getId());
 
                 FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "deleteTransaction", parameters, new JavaFXAsyncConnectionCall() {
                     @Override
@@ -564,16 +564,17 @@ public class TransactionsController implements Initializable {
         boolean result = new FinancerConfirmDialog(I18N.get("confirmDeleteFixedTransaction")).showAndGetResult();
         if (result) {
             Map<String, Object> parameters = new HashMap<>();
-            parameters.put("fixedTransaction", this.fixedTransactionsListView.getSelectionModel().getSelectedItem());
-
-            this.fixedTransactionsListView.getItems().remove(this.fixedTransactionsListView.getSelectionModel().getSelectedItem());
+            parameters.put("fixedTransactionId", this.fixedTransactionsListView.getSelectionModel().getSelectedItem().getId());
 
             FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "deleteFixedTransaction",
                     parameters, new JavaFXAsyncConnectionCall() {
                 @Override
                 public void onSuccess(ConnectionResult result) {
-                    fixedTransactionsListView.getSelectionModel().getSelectedItem().getCategoryTree().getTransactions().remove(
-                            fixedTransactionsListView.getSelectionModel().getSelectedItem());
+                    Platform.runLater(() -> {
+                        fixedTransactionsListView.getSelectionModel().getSelectedItem().getCategoryTree().getTransactions().remove(
+                                fixedTransactionsListView.getSelectionModel().getSelectedItem());
+                        fixedTransactionsListView.getItems().remove(fixedTransactionsListView.getSelectionModel().getSelectedItem());
+                    });
                     localStorage.writeObject("categories", categories);
 
                     fixedTransactionsListView.refresh();
@@ -599,7 +600,7 @@ public class TransactionsController implements Initializable {
     private void showFixedTransactions(CategoryTree category) {
         if (category != null) {
             this.fixedTransactionsListView.getItems().clear();
-            for (AbstractTransaction abstractTransaction : category.getTransactions()) {
+            for (Transaction abstractTransaction : category.getTransactions()) {
                 if (abstractTransaction instanceof FixedTransaction) {
                     this.fixedTransactionsListView.getItems().add((FixedTransaction) abstractTransaction);
                 }
@@ -608,14 +609,6 @@ public class TransactionsController implements Initializable {
 
         this.fixedTransactionsListView.setCellFactory(param -> new FixedTransactionListCellImpl());
         fixedTransactionsListView.getItems().sort(Comparator.comparing(FixedTransaction::getStartDate).reversed());
-    }
-
-
-    private void correctTransactionAmount(AbstractTransaction transaction) {
-        if ((transaction.getCategoryTree().getCategoryClass().equals(BaseCategory.CategoryClass.VARIABLE_REVENUE) && transaction.getAmount() < 0) ||
-                (transaction.getCategoryTree().getCategoryClass().equals(BaseCategory.CategoryClass.VARIABLE_EXPENSES) && transaction.getAmount() >= 0)) {
-            transaction.setAmount(transaction.getAmount() * (-1));
-        }
     }
 
     private <S, T> void adjustColumnWidth(TableColumn<S, T> column, TableView<S> tableView, double ratio) {
@@ -682,21 +675,18 @@ public class TransactionsController implements Initializable {
                     this.dateLabel.setText(item.getStartDate() + " - " + item.getEndDate());
                 }
 
-                if (item.isVariable() && item.getTransactionAmounts() != null &&
+                if (item.getIsVariable() && item.getTransactionAmounts() != null &&
                         item.getTransactionAmounts().size() > 0) {
-                    formatter.formatAmountLabel(this.amountLabel, item.getTransactionAmounts().get(0).getAmount());
-                    if (item.getTransactionAmounts().size() > 1) {
-                        formatter.formatAmountLabel(this.lastAmountLabel, item.getTransactionAmounts().get(1).getAmount());
-                        if (item.getTransactionAmounts().size() > 2) {
-                            formatter.formatAmountLabel(this.preLastAmountLabel, item.getTransactionAmounts().get(2).getAmount());
-                        }
-                    }
+                    LocalDate valueDate = (item.isActive() ? LocalDate.now() : item.getEndDate());
+                    formatter.formatAmountLabel(this.amountLabel, item.getAmount(valueDate));
+                    formatter.formatAmountLabel(this.lastAmountLabel, item.getAmount(valueDate.minusMonths(1)));
+                    formatter.formatAmountLabel(this.preLastAmountLabel, item.getAmount(valueDate.minusMonths(2)));
                 } else {
                     formatter.formatAmountLabel(this.amountLabel, item.getAmount());
                 }
 
                 this.isVariableLabel.setText(I18N.get("isVariable") + ": " +
-                        (item.isVariable() ? I18N.get("yes") : I18N.get("no")));
+                        (item.getIsVariable() ? I18N.get("yes") : I18N.get("no")));
                 this.dayLabel.setText(I18N.get("valueDate") + ": " + item.getDay());
 
 
@@ -728,7 +718,7 @@ public class TransactionsController implements Initializable {
             this.amountLabel.getStyleClass().add("list-cell-title");
             vBoxRight.getChildren().add(this.amountLabel);
 
-            if (item.isVariable()) {
+            if (item.getIsVariable()) {
                 this.lastAmountLabel = new Label();
                 this.lastAmountLabel.setAlignment(Pos.CENTER_RIGHT);
                 vBoxRight.getChildren().add(this.lastAmountLabel);
@@ -749,10 +739,11 @@ public class TransactionsController implements Initializable {
 
     private class TransactionOverviewRow {
         private CategoryTree categoryTree;
-        private double[] amounts = new double[6];
+        private double[] amounts;
 
         TransactionOverviewRow(CategoryTree categoryTree) {
             this.categoryTree = categoryTree;
+            this.amounts = new double[((LocalSettingsImpl) localStorage.readObject("localSettings")).getMaxNumberOfMonthsDisplayed()];
         }
 
         CategoryTree getCategory() {

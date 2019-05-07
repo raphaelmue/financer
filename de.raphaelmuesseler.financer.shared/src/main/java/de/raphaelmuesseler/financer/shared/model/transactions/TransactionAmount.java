@@ -1,56 +1,49 @@
 package de.raphaelmuesseler.financer.shared.model.transactions;
 
-import de.raphaelmuesseler.financer.shared.model.AmountProvider;
+import de.raphaelmuesseler.financer.shared.model.db.FixedTransactionAmountDAO;
 import de.raphaelmuesseler.financer.util.date.DateUtil;
 
 import java.io.Serializable;
 import java.time.LocalDate;
 
-public class TransactionAmount implements Serializable, AmountProvider {
+public class TransactionAmount extends FixedTransactionAmountDAO implements Serializable, AmountProvider {
     private static final long serialVersionUID = -6751558797407170754L;
-    private int id;
-    private double amount;
-    private LocalDate valueDate;
 
-    public TransactionAmount(int id, double amount, LocalDate valueDate) {
-        this.id = id;
-        this.amount = amount;
-        this.valueDate = valueDate;
+    public TransactionAmount(FixedTransactionAmountDAO fixedTransactionAmountDAO) {
+        this(fixedTransactionAmountDAO.getId(),
+                fixedTransactionAmountDAO.getAmount(),
+                fixedTransactionAmountDAO.getValueDate());
     }
 
-    public int getId() {
-        return id;
+    public TransactionAmount(int id, double amount, LocalDate valueDate) {
+        this.setId(id);
+        this.setAmount(amount);
+        this.setValueDate(valueDate);
     }
 
     @Override
     public double getAmount() {
-        return amount;
+        return super.getAmount();
     }
 
     @Override
     public double getAmount(LocalDate localDate) {
-        return (DateUtil.checkIfMonthsAreEqual(localDate, this.valueDate) ? this.getAmount() : 0);
+        return (DateUtil.checkIfMonthsAreEqual(localDate, this.getValueDate()) ? this.getAmount() : 0);
     }
 
     @Override
     public double getAmount(LocalDate startDate, LocalDate endDate) {
-        return (startDate.compareTo(this.valueDate) <= 0 && endDate.compareTo(this.valueDate) >= 0 ? this.getAmount() : 0);
+        return (startDate.compareTo(this.getValueDate()) <= 0 && endDate.compareTo(this.getValueDate()) >= 0 ? this.getAmount() : 0);
     }
 
-    public LocalDate getValueDate() {
-        return valueDate;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public void setAmount(double amount) {
-        this.amount = amount;
-    }
-
-    public void setValueDate(LocalDate valueDate) {
-        this.valueDate = valueDate;
+    @Override
+    public FixedTransactionAmountDAO toDatabaseAccessObject() {
+        FixedTransactionAmountDAO fixedTransactionAmountDAO = new FixedTransactionAmountDAO();
+        fixedTransactionAmountDAO.setId(this.getId());
+        fixedTransactionAmountDAO.setFixedTransaction(this.getFixedTransaction());
+        fixedTransactionAmountDAO.setAmount(this.getAmount());
+        fixedTransactionAmountDAO.setValueDate(this.getValueDate());
+        return fixedTransactionAmountDAO;
     }
 
     @Override

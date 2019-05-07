@@ -1,6 +1,7 @@
-package de.raphaelmuesseler.financer.shared.model;
+package de.raphaelmuesseler.financer.shared.model.categories;
 
-import de.raphaelmuesseler.financer.shared.model.transactions.AbstractTransaction;
+import de.raphaelmuesseler.financer.shared.model.transactions.AmountProvider;
+import de.raphaelmuesseler.financer.shared.model.transactions.Transaction;
 import de.raphaelmuesseler.financer.util.collections.Tree;
 
 import java.io.Serializable;
@@ -15,16 +16,14 @@ public class CategoryTreeImpl implements Serializable, CategoryTree {
 
     private final Category category;
     private final List<CategoryTree> children = new ArrayList<>();
-    private Set<AbstractTransaction> transactions = new HashSet<>();
-    private BaseCategory.CategoryClass categoryClass;
+    private Set<Transaction> transactions = new HashSet<>();
     private CategoryTree parent;
 
-    public CategoryTreeImpl(BaseCategory.CategoryClass categoryClass, Category category) {
-        this(categoryClass, null, category);
+    public CategoryTreeImpl(Category category) {
+        this(null, category);
     }
 
-    public CategoryTreeImpl(BaseCategory.CategoryClass categoryClass, CategoryTree parent, Category category) {
-        this.categoryClass = categoryClass;
+    public CategoryTreeImpl(CategoryTree parent, Category category) {
         this.parent = parent;
         this.category = category;
     }
@@ -88,10 +87,6 @@ public class CategoryTreeImpl implements Serializable, CategoryTree {
      * GETTER
      */
 
-    public BaseCategory.CategoryClass getCategoryClass() {
-        return categoryClass;
-    }
-
     @Override
     public Category getValue() {
         return this.category;
@@ -107,7 +102,7 @@ public class CategoryTreeImpl implements Serializable, CategoryTree {
         return this.children;
     }
 
-    public Set<AbstractTransaction> getTransactions() {
+    public Set<Transaction> getTransactions() {
         if (this.transactions == null) {
             this.transactions = new HashSet<>();
         }
@@ -121,10 +116,6 @@ public class CategoryTreeImpl implements Serializable, CategoryTree {
     @Override
     public void setParent(Tree<Category> parent) {
         this.parent = (CategoryTree) parent;
-    }
-
-    public void setCategoryClass(BaseCategory.CategoryClass categoryClass) {
-        this.categoryClass = categoryClass;
     }
 
     @Override

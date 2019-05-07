@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="de.raphaelmuesseler.financer.shared.model.db">
+    <class name="UserDAO" table="users">
+        <id name="id" type="int">
+            <column name="id" not-null="true"/>
+            <generator class="increment"/>
+        </id>
+        <property name="email" type="java.lang.String">
+            <column name="email"/>
+        </property>
+        <property name="password" type="java.lang.String">
+            <column name="password"/>
+        </property>
+        <property name="salt" type="java.lang.String">
+            <column name="salt"/>
+        </property>
+        <property name="name" type="java.lang.String">
+            <column name="name"/>
+        </property>
+        <property name="surname" type="java.lang.String">
+            <column name="surname"/>
+        </property>
+        <property name="birthDate" type="java.time.LocalDate">
+            <column name="birthdate"/>
+        </property>
+        <property name="genderName" type="java.lang.String">
+            <column name="gender"/>
+        </property>
+        <set name="categories" table="users_categories" lazy="true" inverse="true" cascade="all" fetch="select" order-by="">
+            <key column="user_id" not-null="true"/>
+            <one-to-many class="de.raphaelmuesseler.financer.shared.model.db.CategoryDAO"/>
+        </set>
+        <set name="databaseSettings" table="users_settings"  lazy="true" inverse="true" cascade="all" fetch="select">
+            <key column="user_id" not-null="true"/>
+            <one-to-many class="de.raphaelmuesseler.financer.shared.model.db.SettingsDAO"/>
+        </set>
+        <set name="tokens" table="users_tokens" lazy="true" inverse="true" cascade="all" fetch="select">
+            <key column="user_id" not-null="true" />
+            <one-to-many class="de.raphaelmuesseler.financer.shared.model.db.TokenDAO" />
+        </set>
+    </class>
+</hibernate-mapping>

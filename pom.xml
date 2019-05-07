@@ -7,29 +7,56 @@
     <artifactId>financer</artifactId>
     <packaging>pom</packaging>
     <version>1.0-SNAPSHOT</version>
+
+    <properties>
+        <java.version>11</java.version>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <project.testing.localhost>false</project.testing.localhost>
+        <project.testing.tags>unit, integration</project.testing.tags>
+        <project.testing.argLine/>
+
+        <project.testing.jacoco.reportPath>${project.basedir}/../target/jacoco-ut.exec
+        </project.testing.jacoco.reportPath>
+        <project.testing.jacoco.itReportPath>${project.basedir}/../target/jacoco-it.exec
+        </project.testing.jacoco.itReportPath>
+    </properties>
+
+    <profiles>
+        <profile>
+            <id>unitTests</id>
+            <properties>
+                <project.testing.tags>unit</project.testing.tags>
+            </properties>
+        </profile>
+        <profile>
+            <id>integrationTests</id>
+            <properties>
+                <project.testing.tags>integration</project.testing.tags>
+            </properties>
+        </profile>
+        <profile>
+            <id>localTesting</id>
+            <properties>
+                <project.testing.localhost>true</project.testing.localhost>
+            </properties>
+        </profile>
+        <profile>
+            <id>headlessTesting</id>
+            <properties>
+                <argLine>-Dtestfx.robot=glass -Dglass.platform=Monocle -Dmonocle.platform=Headless</argLine>
+            </properties>
+        </profile>
+    </profiles>
+
     <build>
         <plugins>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.22.0</version>
-                <configuration>
-                    <redirectTestOutputToFile>true</redirectTestOutputToFile>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.1</version>
-                <configuration>
-                    <source>11</source>
-                    <target>11</target>
-                </configuration>
-            </plugin>
-            <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.2</version>
+                <version>0.8.3</version>
                 <executions>
                     <execution>
                         <goals>
@@ -46,59 +73,67 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.22.0</version>
+                <configuration>
+                    <redirectTestOutputToFile>true</redirectTestOutputToFile>
+                    <excludedGroups>skip</excludedGroups>
+                    <groups>${project.testing.tags}</groups>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>3.0.0-M3</version>
+                <executions>
+                    <execution>
+                        <id>integration-testing</id>
+                        <goals>
+                            <goal>integration-test</goal>
+                        </goals>
+                        <configuration>
+                            <argLine>${project.testing.argLine}</argLine>
+                            <groups>integration</groups>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>properties-maven-plugin</artifactId>
+                <version>1.0.0</version>
+                <executions>
+                    <execution>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>write-project-properties</goal>
+                        </goals>
+                        <configuration>
+                            <outputFile>${project.basedir}/target/classes/testing.properties</outputFile>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.1</version>
+                <configuration>
+                    <source>11</source>
+                    <target>11</target>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
     <modules>
+        <module>de.raphaelmuesseler.financer.client</module>
+        <module>de.raphaelmuesseler.financer.client.javafx</module>
+        <module>de.raphaelmuesseler.financer.server</module>
         <module>de.raphaelmuesseler.financer.shared</module>
+        <module>de.raphaelmuesseler.financer.util</module>
     </modules>
-
-    <properties>
-        <java.version>11</java.version>
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
-
-    <profiles>
-        <profile>
-            <id>backend</id>
-            <modules>
-                <module>de.raphaelmuesseler.financer.server</module>
-                <module>de.raphaelmuesseler.financer.shared</module>
-            </modules>
-        </profile>
-        <profile>
-            <id>frontend</id>
-            <modules>
-                <module>de.raphaelmuesseler.financer.client</module>
-                <module>de.raphaelmuesseler.financer.client.javafx</module>
-                <module>de.raphaelmuesseler.financer.shared</module>
-            </modules>
-        </profile>
-        <profile>
-            <id>java</id>
-            <modules>
-                <module>de.raphaelmuesseler.financer.client</module>
-                <module>de.raphaelmuesseler.financer.client.javafx</module>
-                <module>de.raphaelmuesseler.financer.server</module>
-                <module>de.raphaelmuesseler.financer.shared</module>
-                <module>de.raphaelmuesseler.financer.util</module>
-            </modules>
-        </profile>
-        <profile>
-            <id>all</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <modules>
-                <module>de.raphaelmuesseler.financer.client</module>
-                <module>de.raphaelmuesseler.financer.client.javafx</module>
-                <module>de.raphaelmuesseler.financer.server</module>
-                <module>de.raphaelmuesseler.financer.shared</module>
-                <module>de.raphaelmuesseler.financer.util</module>
-            </modules>
-        </profile>
-    </profiles>
 
     <dependencies>
         <dependency>

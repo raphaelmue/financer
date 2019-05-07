@@ -1,10 +1,9 @@
 package de.raphaelmuesseler.financer.client.javafx.login;
 
 import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
-import de.raphaelmuesseler.financer.client.javafx.util.ApplicationHelper;
 import de.raphaelmuesseler.financer.client.javafx.main.FinancerApplication;
+import de.raphaelmuesseler.financer.client.javafx.util.ApplicationHelper;
 import de.raphaelmuesseler.financer.client.local.LocalSettings;
-import de.raphaelmuesseler.financer.shared.model.user.UserSettings;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -13,6 +12,7 @@ import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -38,8 +38,7 @@ public class LoginApplication extends Application {
             }
         } else {
             // setting up language
-            ResourceBundle resourceBundle = ResourceBundle.getBundle("Financer",
-                    ApplicationHelper.getLocale((LocalSettings) LocalStorageImpl.getInstance().readObject("localSettings")));
+            ResourceBundle resourceBundle = ResourceBundle.getBundle("Financer", Locale.ENGLISH);
 
             // loading FXML file
             Parent root = FXMLLoader.load(getClass().getResource("/de/raphaelmuesseler/financer/client/javafx/main/views/login.fxml"), resourceBundle);

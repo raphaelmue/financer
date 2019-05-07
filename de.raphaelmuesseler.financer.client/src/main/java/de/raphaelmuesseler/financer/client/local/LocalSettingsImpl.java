@@ -1,56 +1,31 @@
 package de.raphaelmuesseler.financer.client.local;
 
 import java.io.Serializable;
-import java.util.Locale;
+import java.util.HashMap;
+import java.util.Map;
 
 public class LocalSettingsImpl implements Serializable, LocalSettings {
     private static final long serialVersionUID = -7328386947589105017L;
 
-    private Locale language;
-    private String theme;
+    private final Map<String, String> properties = new HashMap<>();
 
     @Override
-    public Locale getLanguage() {
-        if (this.language ==  null) {
-            this.language = Locale.ENGLISH;
-        }
-        return language;
+    public String getValueByProperty(Property property) {
+        return this.properties.getOrDefault(property.getName(), property.getDefaultValue());
     }
 
     @Override
-    public String getValueByProperty(String property) {
-        switch (property) {
-            case "language":
-                return this.getLanguage().toLanguageTag();
-            case "theme":
-                return this.getTheme();
-        }
-        return null;
+    public void setValueByProperty(Property property, String value) {
+        this.properties.put(property.getName(), value);
     }
 
     @Override
-    public String getTheme() {
-        return getTheme();
+    public int getMaxNumberOfMonthsDisplayed() {
+        return Integer.valueOf(this.getValueByProperty(Property.MAX_NUMBER_OF_MONTHS_DISPLAYED));
     }
 
     @Override
-    public void setValueByProperty(String property, String value) {
-        switch (property) {
-            case "language":
-                this.setLanguage(Locale.forLanguageTag(value));
-                break;
-            case "theme":
-                this.setTheme(value);
-                break;
-        }
-    }
-
-    @Override
-    public void setLanguage(Locale language) {
-        this.language = language;
-    }
-
-    public void setTheme(String theme) {
-        this.theme = theme;
+    public void setMaxNumberOfMonthsDisplayed(int maxNumberOfMonthsDisplayed) {
+        this.setValueByProperty(Property.MAX_NUMBER_OF_MONTHS_DISPLAYED, Integer.toString(maxNumberOfMonthsDisplayed));
     }
 }
