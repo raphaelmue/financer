@@ -46,15 +46,7 @@ public class LoginController implements Initializable, Application {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         LocalSettings settings = (LocalSettings) this.localStorage.readObject("localSettings");
-        if (settings != null) {
-            for (MenuItem item : this.languageMenu.getItems()) {
-                RadioMenuItem radioMenuItem = (RadioMenuItem) item;
-                if (radioMenuItem.getUserData().equals(settings.getLanguage().getLanguage())) {
-                    radioMenuItem.setSelected(true);
-                    break;
-                }
-            }
-        } else {
+        if (settings == null) {
             settings = new LocalSettingsImpl();
             this.localStorage.writeObject("localSettings", settings);
         }
@@ -63,13 +55,11 @@ public class LoginController implements Initializable, Application {
         ServerRequestHandler.setApplication(this);
         ServerRequestHandler.setLocalStorage(this.localStorage);
 
-        Platform.runLater(() -> {
-            this.gridPane.getScene().setOnKeyPressed(e -> {
-                if (e.getCode() == KeyCode.ENTER) {
-                    handleSignInButtonAction();
-                }
-            });
-        });
+        Platform.runLater(() -> this.gridPane.getScene().setOnKeyPressed(e -> {
+            if (e.getCode() == KeyCode.ENTER) {
+                handleSignInButtonAction();
+            }
+        }));
 
         Platform.runLater(() -> this.gridPane.getScene().setOnKeyPressed(e -> {
             if (e.getCode() == KeyCode.ENTER) {

@@ -23,18 +23,21 @@ import java.util.Objects;
 
 import de.raphaelmuesseler.financer.client.app.R;
 import de.raphaelmuesseler.financer.client.app.connection.RetrievalServiceImpl;
+import de.raphaelmuesseler.financer.client.app.format.AndroidFormatter;
 import de.raphaelmuesseler.financer.client.app.local.LocalStorageImpl;
 import de.raphaelmuesseler.financer.client.format.Formatter;
-import de.raphaelmuesseler.financer.client.format.FormatterImpl;
 import de.raphaelmuesseler.financer.shared.connection.AsyncCall;
-import de.raphaelmuesseler.financer.shared.model.BaseCategory;
+import de.raphaelmuesseler.financer.shared.model.categories.BaseCategory;
+import de.raphaelmuesseler.financer.shared.model.categories.CategoryTree;
 import de.raphaelmuesseler.financer.shared.model.transactions.Transaction;
+import de.raphaelmuesseler.financer.shared.model.transactions.VariableTransaction;
 import de.raphaelmuesseler.financer.shared.model.user.User;
+import de.raphaelmuesseler.financer.util.collections.TreeUtil;
 
 public class TransactionsTabFragment extends Fragment {
 
-    private final Formatter formatter = new FormatterImpl(LocalStorageImpl.getInstance());
-    private List<Transaction> transactions = new ArrayList<>();
+    private final Formatter formatter = new AndroidFormatter(LocalStorageImpl.getInstance(), getContext());
+    private List<VariableTransaction> transactions = new ArrayList<>();
 
     private ListView transactionListView;
     private SwipeRefreshLayout swipeRefreshLayoutTransactions;
@@ -67,7 +70,7 @@ public class TransactionsTabFragment extends Fragment {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_transactions_tab, container, false);
 
-        List<Transaction> storedTransactions = LocalStorageImpl.getInstance().readList("transactions");
+        List<VariableTransaction> storedTransactions = LocalStorageImpl.getInstance().readList("transactions");
         if (storedTransactions != null) {
             transactions.addAll(storedTransactions);
         }
@@ -115,18 +118,22 @@ public class TransactionsTabFragment extends Fragment {
 
     private void refreshTransactions() {
         this.runningRefreshTask = true;
-        RetrievalServiceImpl.getInstance().fetchTransactions((User) LocalStorageImpl.getInstance().readObject("user"), new AsyncCall<List<Transaction>>() {
+        RetrievalServiceImpl.getInstance().fetchTransactions((User) LocalStorageImpl.getInstance().readObject("user"), new AsyncCall<BaseCategory>() {
             @Override
-            public void onSuccess(List<Transaction> result) {
+            public void onSuccess(BaseCategory result) {
                 transactions.clear();
-                transactions.addAll(result);
+                TreeUtil.traverse(result.getCategoryTreeByCategoryClass(BaseCategory.CategoryClass.VARIABLE_EXPENSES), categoryTree -> {
+                    for (Transaction transaction : ((CategoryTree) categoryTree).getTransactions()) {
+                        transactions.add((VariableTransaction) transaction);
+                    }
+                });
             }
 
             @Override
             public void onFailure(Exception exception) {
                 exception.printStackTrace();
                 transactions.clear();
-                List<Transaction> storedTransactions = LocalStorageImpl.getInstance().readList("transactions");
+                List<VariableTransaction> storedTransactions = LocalStorageImpl.getInstance().readList("transactions");
                 if (storedTransactions != null) {
                     transactions.addAll(storedTransactions);
                 }
@@ -144,16 +151,16 @@ public class TransactionsTabFragment extends Fragment {
         });
     }
 
-    private class TransactionListViewAdapter extends ArrayAdapter<Transaction> {
+    private class TransactionListViewAdapter extends ArrayAdapter<VariableTransaction> {
 
-        TransactionListViewAdapter(Context context, List<Transaction> transactions) {
+        TransactionListViewAdapter(Context context, List<VariableTransaction> transactions) {
             super(context, R.layout.list_item_transaction, transactions);
         }
 
         @NonNull
         @Override
         public View getView(int position, View convertView, @NonNull ViewGroup parent) {
-            Transaction transaction = getItem(position);
+            VariableTransaction transaction = getItem(position);
 
             View listItem = convertView;
             if (listItem == null) {

@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="de.raphaelmuesseler.financer.shared.model.db">
+    <class name="de.raphaelmuesseler.financer.shared.model.db.VariableTransactionDAO" table="transactions">
+        <id name="id" type="int">
+            <column name="id"/>
+            <generator class="increment"/>
+        </id>
+        <many-to-one name="category" class="de.raphaelmuesseler.financer.shared.model.db.CategoryDAO" fetch="select">
+            <column name="cat_id" not-null="true"/>
+        </many-to-one>
+        <property name="valueDate" type="java.time.LocalDate">
+            <column name="value_date"/>
+        </property>
+        <property name="amount" type="double">
+            <column name="amount"/>
+        </property>
+        <property name="product" type="java.lang.String">
+            <column name="product"/>
+        </property>
+        <property name="purpose" type="java.lang.String">
+            <column name="purpose"/>
+        </property>
+        <property name="shop" type="java.lang.String">
+            <column name="shop"/>
+        </property>
+    </class>
+</hibernate-mapping>

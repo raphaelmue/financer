@@ -1,45 +1,72 @@
 package de.raphaelmuesseler.financer.shared.model.transactions;
 
-import de.raphaelmuesseler.financer.shared.model.AmountProvider;
-import de.raphaelmuesseler.financer.shared.model.CategoryTree;
+import de.raphaelmuesseler.financer.shared.model.categories.Category;
+import de.raphaelmuesseler.financer.shared.model.categories.CategoryTree;
+import de.raphaelmuesseler.financer.shared.model.categories.CategoryTreeImpl;
+import de.raphaelmuesseler.financer.shared.model.db.FixedTransactionAmountDAO;
+import de.raphaelmuesseler.financer.shared.model.db.FixedTransactionDAO;
+import de.raphaelmuesseler.financer.shared.model.db.TransactionAttachmentDAO;
 import de.raphaelmuesseler.financer.util.date.DateUtil;
 
 import java.time.LocalDate;
-import java.util.Comparator;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
 
-public class FixedTransaction extends AbstractTransaction {
+public class FixedTransaction extends FixedTransactionDAO implements Transaction {
+    private CategoryTree categoryTree;
+    private final Set<Attachment> attachments;
+    private final Set<TransactionAmount> transactionAmounts;
 
-    private LocalDate startDate, endDate;
-    private boolean isVariable;
-    private int day;
-    private final List<TransactionAmount> transactionAmounts;
-
-    public FixedTransaction(int id, double amount, CategoryTree category, String product, String purpose, LocalDate startDate,
-                            LocalDate endDate, boolean isVariable, int day, List<TransactionAmount> transactionAmounts) {
-        super(id, amount, category, product, purpose);
-        this.startDate = startDate;
-        this.endDate = endDate;
-        this.isVariable = isVariable;
-        this.day = day;
-        this.transactionAmounts = transactionAmounts;
+    public FixedTransaction(FixedTransactionDAO fixedTransactionDAO) {
+        this(fixedTransactionDAO, new CategoryTreeImpl(new Category(fixedTransactionDAO.getCategory())));
     }
 
-    public void sortTransactionAmounts() {
-        this.getTransactionAmounts().sort(Comparator.comparing(TransactionAmount::getValueDate).reversed());
+    public FixedTransaction(FixedTransactionDAO fixedTransactionDAO, CategoryTree categoryTree) {
+        this(fixedTransactionDAO.getId(),
+                fixedTransactionDAO.getAmount(),
+                categoryTree,
+                fixedTransactionDAO.getStartDate(),
+                fixedTransactionDAO.getEndDate(),
+                fixedTransactionDAO.getProduct(),
+                fixedTransactionDAO.getPurpose(),
+                fixedTransactionDAO.getIsVariable(),
+                fixedTransactionDAO.getDay(),
+                new HashSet<>());
+        if (fixedTransactionDAO.getTransactionAmounts() != null) {
+            for (FixedTransactionAmountDAO transactionAmountDAO : fixedTransactionDAO.getTransactionAmounts()) {
+                this.transactionAmounts.add(new TransactionAmount(transactionAmountDAO));
+            }
+        }
+    }
+
+    public FixedTransaction(int id, double amount, CategoryTree category, LocalDate startDate, LocalDate endDate, String product, String purpose,
+                            boolean isVariable, int day, Set<TransactionAmount> transactionAmounts) {
+        this.setId(id);
+        this.setAmount(amount);
+        this.setCategory(category.getValue());
+        this.setCategoryTree(category);
+        this.setStartDate(startDate);
+        this.setEndDate(endDate);
+        this.setProduct(product);
+        this.setPurpose(purpose);
+        this.setIsVariable(isVariable);
+        this.setDay(day);
+        this.attachments = new HashSet<>();
+        this.transactionAmounts = transactionAmounts;
     }
 
     @Override
     public double getAmount(LocalDate localDate) {
         double amount = 0;
 
-        if (this.endDate == null || this.endDate.compareTo(LocalDate.now()) >= 0) {
-            if (this.isVariable && this.transactionAmounts != null) {
-                for (AmountProvider amountProvider : this.transactionAmounts) {
+        if (this.getEndDate() == null || this.getEndDate().compareTo(LocalDate.now()) >= 0) {
+            if (this.getIsVariable() && this.getTransactionAmounts() != null) {
+                for (AmountProvider amountProvider : this.getTransactionAmounts()) {
                     amount += amountProvider.getAmount(localDate);
                 }
             }
-            if (!this.isVariable) {
+            if (!this.getIsVariable()) {
                 amount = super.getAmount();
             }
         }
@@ -51,13 +78,13 @@ public class FixedTransaction extends AbstractTransaction {
     public double getAmount() {
         double amount = 0;
 
-        if (this.endDate == null || this.endDate.compareTo(LocalDate.now()) >= 0) {
-            if (this.isVariable && this.transactionAmounts != null) {
-                for (AmountProvider amountProvider : this.transactionAmounts) {
+        if (this.getEndDate() == null || this.getEndDate().compareTo(LocalDate.now()) >= 0) {
+            if (this.getIsVariable() && this.getTransactionAmounts() != null) {
+                for (AmountProvider amountProvider : this.getTransactionAmounts()) {
                     amount += amountProvider.getAmount();
                 }
             }
-            if (!this.isVariable) {
+            if (!this.getIsVariable()) {
                 amount = super.getAmount();
             }
         }
@@ -69,27 +96,27 @@ public class FixedTransaction extends AbstractTransaction {
     public double getAmount(LocalDate startDate, LocalDate endDate) {
         double amount = 0;
 
-        if (this.endDate == null || this.endDate.compareTo(startDate) >= 0) {
-            if (this.isVariable && this.transactionAmounts != null) {
-                for (AmountProvider amountProvider : this.transactionAmounts) {
+        if (this.getEndDate() == null || this.getEndDate().compareTo(startDate) >= 0) {
+            if (this.getIsVariable() && this.getTransactionAmounts() != null) {
+                for (AmountProvider amountProvider : this.getTransactionAmounts()) {
                     amount += amountProvider.getAmount(startDate, endDate);
                 }
             } else {
                 LocalDate maxStartDate, minEndDate;
-                if (this.endDate == null) {
+                if (this.getEndDate() == null) {
                     minEndDate = endDate;
                 } else {
-                    if (endDate.compareTo(this.endDate) <= 0) {
+                    if (endDate.compareTo(this.getEndDate()) <= 0) {
                         minEndDate = endDate;
                     } else {
-                        minEndDate = this.endDate;
+                        minEndDate = this.getEndDate();
                     }
                 }
 
-                if (startDate.compareTo(this.startDate) >= 0) {
+                if (startDate.compareTo(this.getStartDate()) >= 0) {
                     maxStartDate = startDate;
                 } else {
-                    maxStartDate = this.startDate;
+                    maxStartDate = this.getStartDate();
                 }
                 amount = super.getAmount() * DateUtil.getMonthDifference(maxStartDate, minEndDate);
             }
@@ -98,39 +125,79 @@ public class FixedTransaction extends AbstractTransaction {
         return amount;
     }
 
-    public LocalDate getStartDate() {
-        return startDate;
+    public boolean isActive() {
+        return LocalDate.now().compareTo(this.getStartDate()) >= 0 &&
+                (this.getEndDate() == null || (LocalDate.now().compareTo(this.getEndDate()) <= 0));
     }
 
-    public LocalDate getEndDate() {
-        return endDate;
+    @Override
+    public void adjustAmountSign() {
+        if (this.getIsVariable()) {
+            for (TransactionAmount transactionAmount : this.getTransactionAmounts()) {
+                if ((this.getCategoryTree().getValue().getCategoryClass().isRevenue() && transactionAmount.getAmount() < 0) ||
+                        (!this.getCategoryTree().getValue().getCategoryClass().isRevenue() && transactionAmount.getAmount() >= 0)) {
+                    transactionAmount.setAmount(transactionAmount.getAmount() * (-1));
+                }
+            }
+        } else {
+            if ((this.getCategoryTree().getValue().getCategoryClass().isRevenue() && this.getAmount() < 0) ||
+                    (!this.getCategoryTree().getValue().getCategoryClass().isRevenue() && this.getAmount() >= 0)) {
+                this.setAmount(this.getAmount() * (-1));
+            }
+        }
     }
 
-    public boolean isVariable() {
-        return isVariable;
+
+    @Override
+    public FixedTransactionDAO toDatabaseAccessObject() {
+        FixedTransactionDAO fixedTransactionDAO = new FixedTransactionDAO();
+        fixedTransactionDAO.setId(this.getId());
+        fixedTransactionDAO.setAmount(this.getAmount());
+        fixedTransactionDAO.setCategory(this.getCategoryTree().getValue());
+        fixedTransactionDAO.setStartDate(this.getStartDate());
+        fixedTransactionDAO.setEndDate(this.getEndDate());
+        fixedTransactionDAO.setProduct(this.getProduct());
+        fixedTransactionDAO.setPurpose(this.getPurpose());
+        fixedTransactionDAO.setIsVariable(this.getIsVariable());
+        fixedTransactionDAO.setDay(this.getDay());
+        Set<FixedTransactionAmountDAO> transactionAmountDAOS = new HashSet<>();
+        if (this.getTransactionAmounts() != null) {
+            for (TransactionAmount transactionAmount : this.getTransactionAmounts()) {
+                transactionAmount.setFixedTransaction(fixedTransactionDAO);
+                transactionAmountDAOS.add(transactionAmount.toDatabaseAccessObject());
+            }
+        }
+        fixedTransactionDAO.setTransactionAmounts(transactionAmountDAOS);
+        return fixedTransactionDAO;
     }
 
-    public int getDay() {
-        return day;
+    @Override
+    public CategoryTree getCategoryTree() {
+        return categoryTree;
     }
 
-    public List<TransactionAmount> getTransactionAmounts() {
+    @Override
+    public Set<? extends TransactionAttachmentDAO> getAttachments() {
+        return this.attachments;
+    }
+
+    @Override
+    public void setCategoryTree(CategoryTree categoryTree) {
+        this.categoryTree = categoryTree;
+    }
+
+    @Override
+    public Set<TransactionAmount> getTransactionAmounts() {
         return transactionAmounts;
     }
 
-    public void setStartDate(LocalDate startDate) {
-        this.startDate = startDate;
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(this.getId());
     }
 
-    public void setEndDate(LocalDate endDate) {
-        this.endDate = endDate;
-    }
-
-    public void setVariable(boolean variable) {
-        isVariable = variable;
-    }
-
-    public void setDay(int day) {
-        this.day = day;
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof FixedTransaction && ((FixedTransaction) obj).getId() == this.getId();
     }
 }

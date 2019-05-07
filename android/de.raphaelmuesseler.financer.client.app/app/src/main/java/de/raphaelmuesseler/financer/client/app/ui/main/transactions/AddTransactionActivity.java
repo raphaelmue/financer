@@ -33,11 +33,11 @@ import de.raphaelmuesseler.financer.client.app.ui.main.FinancerActivity;
 import de.raphaelmuesseler.financer.client.connection.ServerRequestHandler;
 import de.raphaelmuesseler.financer.client.format.Formatter;
 import de.raphaelmuesseler.financer.client.local.Application;
-import de.raphaelmuesseler.financer.client.local.LocalSettings;
 import de.raphaelmuesseler.financer.shared.connection.ConnectionResult;
-import de.raphaelmuesseler.financer.shared.model.BaseCategory;
-import de.raphaelmuesseler.financer.shared.model.CategoryTree;
+import de.raphaelmuesseler.financer.shared.model.categories.BaseCategory;
+import de.raphaelmuesseler.financer.shared.model.categories.CategoryTree;
 import de.raphaelmuesseler.financer.shared.model.transactions.Transaction;
+import de.raphaelmuesseler.financer.shared.model.transactions.VariableTransaction;
 import de.raphaelmuesseler.financer.shared.model.user.User;
 import de.raphaelmuesseler.financer.util.collections.TreeUtil;
 import de.raphaelmuesseler.financer.util.concurrency.FinancerExecutor;
@@ -126,13 +126,13 @@ public class AddTransactionActivity extends AppCompatActivity {
         }
 
         if (!cancel) {
-            final Transaction transaction = new Transaction(-1,
+            final VariableTransaction transaction = new VariableTransaction(0,
                     Double.valueOf(amountEditText.getText().toString().replace(",", ".")),
+                    LocalDate.parse(valueDateEditText.getText().toString(), DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)
+                            .withLocale(getResources().getConfiguration().locale)),
                     (CategoryTree) categorySpinner.getSelectedItem(),
                     productEditText.getText().toString(),
                     purposeEditText.getText().toString(),
-                    LocalDate.parse(valueDateEditText.getText().toString(), DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)
-                            .withLocale(((LocalSettings) LocalStorageImpl.getInstance().readObject("localSettings")).getLanguage())),
                     shopEditText.getText().toString());
 
             finish();

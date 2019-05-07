@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="de.raphaelmuesseler.financer.shared.model.db">
+    <class name="TransactionAttachmentDAO" table="transactions_attachments">
+        <id name="id" type="int">
+            <column name="id"/>
+            <generator class="increment"/>
+        </id>
+        <many-to-one name="transaction" class="VariableTransactionDAO" fetch="select">
+            <column name="transaction_id" not-null="true" />
+        </many-to-one>
+        <property name="name" type="java.lang.String">
+            <column name="name"/>
+        </property>
+        <property name="uploadDate" type="java.time.LocalDate">
+            <column name="upload_date"/>
+        </property>
+        <property name="content" type="blob" lazy="true" length="65536">
+            <column name="content"/>
+        </property>
+    </class>
+</hibernate-mapping>

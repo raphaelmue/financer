@@ -3,21 +3,21 @@ package de.raphaelmuesseler.financer.client.javafx.main.transactions;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXDatePicker;
 import de.raphaelmuesseler.financer.client.connection.ServerRequestHandler;
-import de.raphaelmuesseler.financer.client.format.FormatterImpl;
 import de.raphaelmuesseler.financer.client.format.I18N;
 import de.raphaelmuesseler.financer.client.javafx.components.DoubleField;
 import de.raphaelmuesseler.financer.client.javafx.connection.JavaFXAsyncConnectionCall;
 import de.raphaelmuesseler.financer.client.javafx.dialogs.FinancerConfirmDialog;
 import de.raphaelmuesseler.financer.client.javafx.dialogs.FinancerDialog;
 import de.raphaelmuesseler.financer.client.javafx.dialogs.FinancerExceptionDialog;
+import de.raphaelmuesseler.financer.client.javafx.format.JavaFXFormatter;
 import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
 import de.raphaelmuesseler.financer.shared.connection.ConnectionResult;
-import de.raphaelmuesseler.financer.shared.model.BaseCategory;
-import de.raphaelmuesseler.financer.shared.model.Category;
-import de.raphaelmuesseler.financer.shared.model.CategoryTree;
+import de.raphaelmuesseler.financer.shared.model.categories.BaseCategory;
+import de.raphaelmuesseler.financer.shared.model.categories.Category;
+import de.raphaelmuesseler.financer.shared.model.categories.CategoryTree;
+import de.raphaelmuesseler.financer.shared.model.transactions.Attachment;
+import de.raphaelmuesseler.financer.shared.model.transactions.VariableTransaction;
 import de.raphaelmuesseler.financer.shared.model.user.User;
-import de.raphaelmuesseler.financer.shared.model.transactions.AttachmentWithContent;
-import de.raphaelmuesseler.financer.shared.model.transactions.Transaction;
 import de.raphaelmuesseler.financer.util.collections.TreeUtil;
 import de.raphaelmuesseler.financer.util.concurrency.FinancerExecutor;
 import javafx.scene.Node;
@@ -34,12 +34,14 @@ import org.controlsfx.glyphfont.GlyphFontRegistry;
 
 import java.awt.*;
 import java.io.*;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Executors;
 
-class TransactionDialog extends FinancerDialog<Transaction> {
+class TransactionDialog extends FinancerDialog<VariableTransaction> {
 
     private DoubleField amountField;
     private ComboBox<CategoryTree> categoryComboBox;
@@ -47,10 +49,10 @@ class TransactionDialog extends FinancerDialog<Transaction> {
     private TextField purposeField;
     private TextField shopField;
     private JFXDatePicker valueDateField;
-    private ListView<AttachmentWithContent> attachmentListView;
+    private ListView<Attachment> attachmentListView;
     private BaseCategory categories;
 
-    TransactionDialog(Transaction transaction, BaseCategory categories) {
+    TransactionDialog(VariableTransaction transaction, BaseCategory categories) {
         super(transaction);
 
         this.categories = categories;
@@ -141,7 +143,7 @@ class TransactionDialog extends FinancerDialog<Transaction> {
             this.attachmentListView = new ListView<>();
             this.attachmentListView.setCellFactory(param -> new ListCell<>() {
                 @Override
-                protected void updateItem(AttachmentWithContent item, boolean empty) {
+                protected void updateItem(Attachment item, boolean empty) {
                     super.updateItem(item, empty);
 
                     if (item == null || empty) {
@@ -164,8 +166,8 @@ class TransactionDialog extends FinancerDialog<Transaction> {
     @Override
     protected void prepareDialogContent() {
         categories.traverse(treeItem -> {
-            if (!treeItem.isRoot() && (((CategoryTree) treeItem).getCategoryClass() == BaseCategory.CategoryClass.VARIABLE_EXPENSES ||
-                    ((CategoryTree) treeItem).getCategoryClass() == BaseCategory.CategoryClass.VARIABLE_REVENUE)) {
+            if (!treeItem.isRoot() && (treeItem.getValue().getCategoryClass() == BaseCategory.CategoryClass.VARIABLE_EXPENSES ||
+                    treeItem.getValue().getCategoryClass() == BaseCategory.CategoryClass.VARIABLE_REVENUE)) {
                 categoryComboBox.getItems().add((CategoryTree) treeItem);
             }
         });
@@ -174,7 +176,7 @@ class TransactionDialog extends FinancerDialog<Transaction> {
             protected void updateItem(CategoryTree item, boolean empty) {
                 super.updateItem(item, empty);
                 if (!empty) {
-                    setText(new FormatterImpl(LocalStorageImpl.getInstance()).formatCategoryName(item.getValue()));
+                    setText(new JavaFXFormatter(LocalStorageImpl.getInstance()).formatCategoryName(item.getValue()));
                 } else {
                     setText(null);
                 }
@@ -190,7 +192,7 @@ class TransactionDialog extends FinancerDialog<Transaction> {
             this.shopField.setText(this.getValue().getShop());
             this.valueDateField.setValue(this.getValue().getValueDate());
 
-            this.attachmentListView.getItems().addAll(this.getValue().getAttachments());
+            this.attachmentListView.getItems().addAll(new ArrayList<>(this.getValue().getAttachments()));
         }
     }
 
@@ -212,11 +214,15 @@ class TransactionDialog extends FinancerDialog<Transaction> {
     }
 
     @Override
-    protected Transaction onConfirm() {
+    protected VariableTransaction onConfirm() {
         if (this.getValue() == null) {
-            this.setValue(new Transaction(-1, Double.valueOf(this.amountField.getText()),
-                    this.categoryComboBox.getSelectionModel().getSelectedItem(), this.productField.getText(),
-                    this.purposeField.getText(), this.valueDateField.getValue(), this.shopField.getText()));
+            this.setValue(new VariableTransaction(0,
+                    Double.valueOf(this.amountField.getText()),
+                    this.valueDateField.getValue(),
+                    this.categoryComboBox.getSelectionModel().getSelectedItem(),
+                    this.productField.getText(),
+                    this.purposeField.getText(),
+                    this.shopField.getText()));
             this.getValue().getCategoryTree().getTransactions().add(this.getValue());
         } else {
             this.getValue().setAmount(Double.valueOf(this.amountField.getText()));
@@ -245,8 +251,8 @@ class TransactionDialog extends FinancerDialog<Transaction> {
                             "uploadTransactionAttachment", parameters, new JavaFXAsyncConnectionCall() {
                         @Override
                         public void onSuccess(ConnectionResult result) {
-                            attachmentListView.getItems().add((AttachmentWithContent) result.getResult());
-                            getValue().getAttachments().add((AttachmentWithContent) result.getResult());
+                            attachmentListView.getItems().add((Attachment) result.getResult());
+                            getValue().getAttachments().add((Attachment) result.getResult());
                         }
 
                         @Override
@@ -286,9 +292,9 @@ class TransactionDialog extends FinancerDialog<Transaction> {
                 @Override
                 public void onSuccess(ConnectionResult result) {
                     try (FileOutputStream fileOutputStream = new FileOutputStream(file)) {
-                        fileOutputStream.write(((AttachmentWithContent) result.getResult()).getContent());
+                        fileOutputStream.write(((Attachment) result.getResult()).getByteContent());
                         Desktop.getDesktop().open(file);
-                    } catch (IOException e) {
+                    } catch (IOException | SQLException e) {
                         new FinancerExceptionDialog("Financer", e).showAndWait();
                         e.printStackTrace();
                     }

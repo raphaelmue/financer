@@ -8,9 +8,12 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.testfx.framework.junit5.ApplicationTest;
 
+@SuppressWarnings("WeakerAccess")
+@Tag("integration")
 public class ProfileTest extends AbstractFinancerApplicationTest {
 
     @BeforeEach
@@ -26,7 +29,7 @@ public class ProfileTest extends AbstractFinancerApplicationTest {
         register(user, password);
 
         clickOn((Button) find("#profileTabBtn"));
-        sleep(500);
+        sleep(SHORT_SLEEP);
         clickOn((Hyperlink) find("#changePasswordLink"));
 
         clickOn((JFXPasswordField) find("#oldPasswordField"));
@@ -38,7 +41,7 @@ public class ProfileTest extends AbstractFinancerApplicationTest {
 
         confirmDialog();
 
-        sleep(500);
+        sleep(SHORT_SLEEP);
 
         Assertions.assertEquals(Hash.create(newPassword, ((User)LocalStorageImpl.getInstance().readObject("user")).getSalt()),
                 ((User)LocalStorageImpl.getInstance().readObject("user")).getPassword());

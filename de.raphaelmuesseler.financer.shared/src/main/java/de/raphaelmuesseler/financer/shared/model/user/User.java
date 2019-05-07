@@ -1,14 +1,17 @@
 package de.raphaelmuesseler.financer.shared.model.user;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import de.raphaelmuesseler.financer.shared.model.db.DatabaseObject;
-import de.raphaelmuesseler.financer.shared.model.db.DatabaseUser;
-import de.raphaelmuesseler.financer.shared.model.db.Token;
+import de.raphaelmuesseler.financer.shared.model.db.SettingsDAO;
+import de.raphaelmuesseler.financer.shared.model.db.TokenDAO;
+import de.raphaelmuesseler.financer.shared.model.db.UserDAO;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
-@JsonIgnoreProperties(ignoreUnknown = true, value = { "birthDateAsLocalDate" })
-public class User extends DatabaseUser {
+public class User extends UserDAO {
+    private static final long serialVersionUID = 164741396778652317L;
 
     public enum Gender {
         MALE("male"),
@@ -33,62 +36,118 @@ public class User extends DatabaseUser {
             }
             return null;
         }
+
     }
 
-    private Token token;
-    private UserSettings settings;
+    private final Settings settings;
+    private Token activeToken;
+
+    public User(UserDAO databaseUser) {
+        this(databaseUser.getId(),
+                databaseUser.getEmail(),
+                databaseUser.getPassword(),
+                databaseUser.getSalt(),
+                databaseUser.getName(),
+                databaseUser.getSurname(),
+                databaseUser.getBirthDate(),
+                Gender.getGenderByName(databaseUser.getGenderName()));
+        if (databaseUser.getTokens() != null) {
+            this.setTokens(databaseUser.getTokens());
+        }
+        if (databaseUser.getDatabaseSettings() != null) {
+            this.setDatabaseSettings(databaseUser.getDatabaseSettings());
+        }
+        if (databaseUser.getCategories() != null) {
+            this.setCategories(databaseUser.getCategories());
+        }
+    }
 
     public User() {
-        super();
+        this(-1, null, null, null, null, null, null, null);
     }
 
-    public User(String email, String password, String salt, String name, String surname, LocalDate birthDate, Gender gender) {
-        super(email, password, salt, name, surname, birthDate.toString(), gender.getName());
+    public User(int id, String email, String password, String salt, String name, String surname, LocalDate birthDate, Gender gender) {
+        this.setId(id);
+        this.setEmail(email);
+        this.setPassword(password);
+        this.setSalt(salt);
+        this.setName(name);
+        this.setSurname(surname);
+        this.setBirthDate(birthDate);
+        if (gender != null) {
+            this.setGenderName(gender.getName());
+        } else {
+            this.setGenderName(null);
+        }
+
+        this.settings = new UserSettings();
     }
 
     @Override
-    public DatabaseObject fromDatabaseObject(DatabaseObject databaseObject) {
-        if (databaseObject instanceof DatabaseUser) {
-            this.setId(databaseObject.getId());
-            this.setName(((DatabaseUser) databaseObject).getName());
-            this.setSurname(((DatabaseUser) databaseObject).getSurname());
-            this.setEmail(((DatabaseUser) databaseObject).getEmail());
-            this.setPassword(((DatabaseUser) databaseObject).getPassword());
-            this.setSalt(((DatabaseUser) databaseObject).getSalt());
-            this.setBirthDate(((DatabaseUser) databaseObject).getBirthDate());
-            this.setGender(((DatabaseUser) databaseObject).getGender());
-        }
-        return this;
+    public UserDAO toDatabaseAccessObject() {
+        UserDAO databaseUser = new UserDAO();
+        databaseUser.setId(this.getId());
+        databaseUser.setEmail(this.getEmail());
+        databaseUser.setPassword(this.getPassword());
+        databaseUser.setSalt(this.getSalt());
+        databaseUser.setName(this.getName());
+        databaseUser.setSurname(this.getSurname());
+        databaseUser.setBirthDate(this.getBirthDate());
+        databaseUser.setGenderName(this.getGender().getName());
+        databaseUser.setTokens(this.getTokens());
+        databaseUser.setDatabaseSettings(this.getDatabaseSettings());
+        return databaseUser;
     }
 
-    public Token getToken() {
-        return token;
+    public String getFullName() {
+        return this.getName() + " " + this.getSurname();
     }
 
     public UserSettings getSettings() {
-        if (settings == null) {
-            settings = new UserSettings();
+        if (this.getDatabaseSettings() != null) {
+            for (SettingsDAO databaseSettings : super.getDatabaseSettings()) {
+                this.settings.setValueByProperty(Settings.Property.getPropertyByName(databaseSettings.getProperty()), databaseSettings.getValue());
+            }
         }
-        return settings;
+        return (UserSettings) this.settings;
     }
 
-    public Gender getGenderObject() {
-        return Gender.getGenderByName(super.getGender());
+    public Gender getGender() {
+        return Gender.getGenderByName(this.getGenderName());
     }
 
-    public void setToken(Token token) {
-        this.token = token;
+    public Token getActiveToken() {
+        return activeToken;
     }
 
-    public void setSettings(UserSettings settings) {
-        this.settings = settings;
+    @Override
+    public Set<TokenDAO> getTokens() {
+        if (super.getTokens() == null) {
+            this.setTokens(new HashSet<>());
+        }
+        return super.getTokens();
     }
 
-    public LocalDate getBirthDateAsLocalDate() {
-        return LocalDate.parse(super.getBirthDate());
+    public List<Token> getTokenList() {
+        List<Token> result = new ArrayList<>();
+        for (TokenDAO tokenDAO : this.getTokens()) {
+            result.add(new Token(tokenDAO));
+        }
+        return result;
     }
 
-    public void setBirthDate(LocalDate birthDate) {
-        super.setBirthDate(birthDate.toString());
+    public void setGender(Gender gender) {
+        this.setGenderName(gender.getName());
+    }
+
+    @Override
+    public void setDatabaseSettings(Set<SettingsDAO> settings) {
+        if (settings != null) {
+            super.setDatabaseSettings(settings);
+        }
+    }
+
+    public void setActiveToken(Token activeToken) {
+        this.activeToken = activeToken;
     }
 }

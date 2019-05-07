@@ -1,45 +1,81 @@
 package de.raphaelmuesseler.financer.shared.model.transactions;
 
-import de.raphaelmuesseler.financer.shared.model.CategoryTree;
-import de.raphaelmuesseler.financer.util.date.DateUtil;
+import de.raphaelmuesseler.financer.shared.model.categories.CategoryTree;
+import de.raphaelmuesseler.financer.shared.model.db.DataAccessObject;
+import de.raphaelmuesseler.financer.shared.model.db.TransactionAttachmentDAO;
 
-import java.time.LocalDate;
-import java.util.List;
+import java.io.Serializable;
+import java.util.Set;
 
-public class Transaction extends AbstractTransaction {
-    private String shop;
-    private LocalDate valueDate;
+public interface Transaction extends Serializable, AmountProvider, DataAccessObject {
 
+    /**
+     * Returns the amount of this transaction.
+     *
+     * @return amount
+     */
+    double getAmount();
 
-    public Transaction(int id, double amount, CategoryTree category, String product, String purpose, LocalDate valueDate, String shop) {
-        super(id, amount, category, product, purpose);
-        this.valueDate = valueDate;
-        this.shop = shop;
-    }
+    /**
+     * Sets the amount of this transaction
+     *
+     * @param amount amount
+     */
+    void setAmount(double amount);
 
-    public String getShop() {
-        return shop;
-    }
+    /**
+     * Returns the parent category tree to which this transaction belongs.
+     *
+     * @return category tree
+     */
+    CategoryTree getCategoryTree();
 
-    public LocalDate getValueDate() {
-        return valueDate;
-    }
+    /**
+     * Sets the category tree of this transaction.
+     *
+     * @param categoryTree category tree
+     */
+    void setCategoryTree(CategoryTree categoryTree);
 
-    public void setShop(String shop) {
-        this.shop = shop;
-    }
+    /**
+     * Returns the product of this transaction.
+     *
+     * @return product
+     */
+    String getProduct();
 
-    public void setValueDate(LocalDate valueDate) {
-        this.valueDate = valueDate;
-    }
+    /**
+     * Sets the product for this transaction.
+     *
+     * @param product product
+     */
+    void setProduct(String product);
 
-    @Override
-    public double getAmount(LocalDate localDate) {
-        return (DateUtil.checkIfMonthsAreEqual(localDate, this.valueDate) ? this.getAmount() : 0);
-    }
+    /**
+     * Returns the purpose of this transaction.
+     *
+     * @return purpose
+     */
+    String getPurpose();
 
-    @Override
-    public double getAmount(LocalDate startDate, LocalDate endDate) {
-        return (startDate.compareTo(this.valueDate) <= 0 && endDate.compareTo(this.valueDate) >= 0 ? this.getAmount() : 0);
+    /**
+     * Sets the purpose of this transaction.
+     *
+     * @param purpose purpose
+     */
+    void setPurpose(String purpose);
+
+    /**
+     * Retuns a set of attachments of this transaction.
+     *
+     * @return set of attachments
+     */
+    Set<? extends TransactionAttachmentDAO> getAttachments();
+
+    default void adjustAmountSign() {
+        if ((this.getCategoryTree().getValue().getCategoryClass().isRevenue() && this.getAmount() < 0) ||
+                (!this.getCategoryTree().getValue().getCategoryClass().isRevenue() && this.getAmount() >= 0)) {
+            this.setAmount(this.getAmount() * (-1));
+        }
     }
 }

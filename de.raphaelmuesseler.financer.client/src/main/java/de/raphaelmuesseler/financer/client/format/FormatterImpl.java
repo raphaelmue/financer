@@ -1,31 +1,24 @@
 package de.raphaelmuesseler.financer.client.format;
 
-import de.raphaelmuesseler.financer.client.local.LocalSettings;
 import de.raphaelmuesseler.financer.client.local.LocalStorage;
 import de.raphaelmuesseler.financer.shared.exceptions.FinancerException;
-import de.raphaelmuesseler.financer.shared.model.Category;
-import de.raphaelmuesseler.financer.shared.model.CategoryTree;
+import de.raphaelmuesseler.financer.shared.model.categories.Category;
+import de.raphaelmuesseler.financer.shared.model.categories.CategoryTree;
 import de.raphaelmuesseler.financer.shared.model.user.User;
 
-import java.sql.Date;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 
-public class FormatterImpl implements Formatter {
-    private final LocalSettings localSettings;
+public abstract class FormatterImpl implements Formatter {
     private final User user;
 
 
     public FormatterImpl(LocalStorage localStorage) {
-        this.localSettings = (LocalSettings) localStorage.readObject("localSettings");
         this.user = (User) localStorage.readObject("user");
     }
 
-    public FormatterImpl(LocalSettings localSettings, User user) {
-        this.localSettings = localSettings;
+    public FormatterImpl(User user) {
         this.user = user;
     }
 
@@ -36,7 +29,7 @@ public class FormatterImpl implements Formatter {
 
     @Override
     public String formatCurrency(Double amount) {
-        StringBuilder result = new StringBuilder(String.format(localSettings.getLanguage(), "%.2f", amount));
+        StringBuilder result = new StringBuilder(String.format(user.getSettings().getLanguage(), "%.2f", amount));
         if (this.user.getSettings().getCurrency() != null) {
             result.append(" ");
             if (this.user.getSettings().isShowCurrencySign()) {
@@ -58,20 +51,11 @@ public class FormatterImpl implements Formatter {
     }
 
     @Override
-    public String formatCategoryName(CategoryTree categoryTree) {
-        if (categoryTree.getValue().getPrefix() != null) {
-            return categoryTree.getValue().getPrefix() + " " +
-                    (categoryTree.getValue().getName().equals(categoryTree.getCategoryClass().getName()) ?
-                            I18N.get(categoryTree.getValue().getName()) : categoryTree.getValue().getName());
-        } else {
-            return (categoryTree.getValue().getName().equals(categoryTree.getCategoryClass().getName()) ?
-                    I18N.get(categoryTree.getValue().getName()) : categoryTree.getValue().getName());
-        }
-    }
+    public abstract String formatCategoryName(CategoryTree categoryTree);
 
     @Override
     public String formatDate(LocalDate localDate) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(localSettings.getLanguage());
+        DateTimeFormatter formatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(user.getSettings().getLanguage());
         return localDate.format(formatter);
     }
 }

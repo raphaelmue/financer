@@ -34,7 +34,6 @@ import de.raphaelmuesseler.financer.client.app.ui.main.FinancerActivity;
 import de.raphaelmuesseler.financer.client.connection.ServerRequestHandler;
 import de.raphaelmuesseler.financer.client.format.Formatter;
 import de.raphaelmuesseler.financer.client.local.Application;
-import de.raphaelmuesseler.financer.client.local.LocalSettings;
 import de.raphaelmuesseler.financer.shared.connection.ConnectionResult;
 import de.raphaelmuesseler.financer.shared.exceptions.EmailAlreadyInUseException;
 import de.raphaelmuesseler.financer.shared.model.user.User;
@@ -122,13 +121,14 @@ public class RegisterActivity extends AppCompatActivity implements Application {
             String salt = new RandomString(32).nextString();
             String password = Hash.create(this.passwordEditText.getText().toString(), salt);
 
-            User user = new User(this.emailEditText.getText().toString(),
+            User user = new User(0,
+                    this.emailEditText.getText().toString(),
                     password,
                     salt,
                     this.nameEditText.getText().toString(),
                     this.surnameEditText.getText().toString(),
                     LocalDate.parse(birthDateTextView.getText().toString(), DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)
-                            .withLocale(((LocalSettings) LocalStorageImpl.getInstance().readObject("localSettings")).getLanguage())),
+                            .withLocale(getResources().getConfiguration().locale)),
                     (User.Gender) this.genderSpinner.getSelectedItem());
 
             Map<String, Object> parameters = new HashMap<>();

@@ -1,15 +1,16 @@
 package de.raphaelmuesseler.financer.server.main;
 
+import de.raphaelmuesseler.financer.server.db.HibernateUtil;
 import de.raphaelmuesseler.financer.server.service.FinancerService;
 import de.raphaelmuesseler.financer.shared.connection.ConnectionCall;
 import de.raphaelmuesseler.financer.shared.connection.ConnectionResult;
 import de.raphaelmuesseler.financer.shared.exceptions.NotAuthorizedException;
 import de.raphaelmuesseler.financer.shared.model.user.User;
+import org.hibernate.Session;
 
 import java.io.*;
 import java.lang.reflect.Method;
 import java.net.Socket;
-import java.sql.SQLException;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -36,10 +37,9 @@ public class ClientHandler implements Runnable {
         try {
             ConnectionCall connectionCall = (ConnectionCall) this.inputStream.readObject();
             ConnectionResult<Object> result = null;
-
-            try {
+            try (Session session = HibernateUtil.getSessionFactory().openSession()) {
                 if (!connectionCall.getMethodName().equals("checkCredentials") && !connectionCall.getMethodName().equals("registerUser")) {
-                    User user = FinancerService.getInstance().checkUsersToken(this.logger, connectionCall.getParameters());
+                    User user = this.service.checkUsersToken(this.logger, session, connectionCall.getParameters());
                     if (user == null) {
                         throw new NotAuthorizedException("Token '" + connectionCall.getParameters().get("token") + "' is invalid.");
                     }
@@ -47,9 +47,10 @@ public class ClientHandler implements Runnable {
 
                 Method method;
                 try {
-                    method = FinancerService.class.getMethod(connectionCall.getMethodName(), Logger.class, Map.class);
+                    method = FinancerService.class.getMethod(connectionCall.getMethodName(), Logger.class, Session.class, Map.class);
                     connectionCall.getParameters().put("ipAddress", client.getInetAddress().toString());
-                    result = (ConnectionResult<Object>) method.invoke(this.service, this.logger, connectionCall.getParameters());
+                    //noinspection unchecked
+                    result = (ConnectionResult<Object>) method.invoke(this.service, this.logger, session, connectionCall.getParameters());
                     this.logger.log(Level.INFO, "Request has been successfully handled.");
                 } catch (Exception exception) {
                     this.logger.log(Level.SEVERE, exception.getMessage(), exception);
@@ -67,7 +68,7 @@ public class ClientHandler implements Runnable {
                 this.client.close();
                 this.logger.log(Level.INFO, "Connection to Client (" + client.getRemoteSocketAddress() + ") has been closed.");
             }
-        } catch (IOException | ClassNotFoundException | SQLException e) {
+        } catch (IOException | ClassNotFoundException  e) {
             this.logger.log(Level.SEVERE, e.getMessage(), e);
         }
     }

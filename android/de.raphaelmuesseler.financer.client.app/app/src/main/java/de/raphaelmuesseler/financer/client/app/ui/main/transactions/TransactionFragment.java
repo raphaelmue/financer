@@ -11,7 +11,7 @@ import android.view.ViewGroup;
 
 import de.raphaelmuesseler.financer.client.app.R;
 import de.raphaelmuesseler.financer.client.app.local.LocalStorageImpl;
-import de.raphaelmuesseler.financer.shared.model.BaseCategory;
+import de.raphaelmuesseler.financer.shared.model.categories.BaseCategory;
 
 public class TransactionFragment extends Fragment {
 

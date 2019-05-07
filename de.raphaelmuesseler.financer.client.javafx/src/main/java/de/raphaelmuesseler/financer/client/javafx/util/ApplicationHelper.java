@@ -10,15 +10,15 @@ import java.util.Locale;
 
 public class ApplicationHelper {
 
-    public static Locale getLocale(LocalSettings settings) {
-        Locale locale;
-        if (settings != null) {
-            locale = settings.getLanguage();
-        } else {
-            locale = Locale.ENGLISH;
-        }
-        return locale;
-    }
+//    public static Locale getLocale(LocalSettings settings) {
+//        Locale locale;
+//        if (settings != null) {
+//            locale = settings.getLanguage();
+//        } else {
+//            locale = Locale.ENGLISH;
+//        }
+//        return locale;
+//    }
 
     public static void restartApplication(Stage stage) {
         stage.close();

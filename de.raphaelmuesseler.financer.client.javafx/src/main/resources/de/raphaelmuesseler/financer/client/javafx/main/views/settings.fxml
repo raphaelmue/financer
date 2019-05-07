@@ -35,10 +35,29 @@
                         </GridPane>
                     </VBox>
                 </Tab>
+                <Tab fx:id="transactionSettingsTab" text="%transactionsSettings" closable="false" styleClass="tab">
+                    <VBox styleClass="tab-content">
+                        <Label text="%settings" styleClass="content-heading"/>
+
+                        <GridPane maxWidth="Infinity" maxHeight="Infinity" vgap="8">
+                            <Label text="%changeAmountSignAutomatically" GridPane.columnIndex="0" GridPane.rowIndex="0"
+                                   GridPane.hgrow="ALWAYS"
+                                   VBox.vgrow="ALWAYS"/>
+                            <CheckBox fx:id="changeAmountSignAutomaticallyCheckBox" GridPane.columnIndex="1"
+                                      GridPane.rowIndex="0" GridPane.hgrow="ALWAYS" VBox.vgrow="ALWAYS"/>
+                            <Label text="%maxNumberOfMonthsDisplayed" GridPane.columnIndex="0" GridPane.rowIndex="1"
+                                   GridPane.hgrow="ALWAYS"
+                                   VBox.vgrow="ALWAYS"/>
+                            <ComboBox fx:id="maxNumberOfMonthsDisplayedComboBox" GridPane.columnIndex="1"
+                                      GridPane.rowIndex="1" GridPane.hgrow="ALWAYS" VBox.vgrow="ALWAYS"/>
+                        </GridPane>
+                    </VBox>
+                </Tab>
                 <Tab fx:id="devicesTab" text="%devices" closable="false" styleClass="tab">
                     <VBox styleClass="tab-content">
                         <HBox styleClass="tool-btn-bar">
-                            <JFXButton fx:id="logoutFromDeviceBtn" text="%logoutFromDevice" disable="true" onAction="#handleLogoutFromDevice"/>
+                            <JFXButton fx:id="logoutFromDeviceBtn" text="%logoutFromDevice" disable="true"
+                                       onAction="#handleLogoutFromDevice"/>
                         </HBox>
                         <JFXListView fx:id="devicesListView"/>
                     </VBox>

@@ -6,11 +6,9 @@ import java.util.Locale;
 
 public interface LocalSettings extends Settings {
 
-    Locale getLanguage();
+    int getMaxNumberOfMonthsDisplayed();
 
-    void setLanguage(Locale locale);
-
-    String getTheme();
+    void setMaxNumberOfMonthsDisplayed(int maxNumberOfMonthsDisplayed);
 
 }
 
