@@ -2,8 +2,13 @@ package de.raphaelmuesseler.financer.client.javafx.main;
 
 import de.raphaelmuesseler.financer.client.format.I18N;
 import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
+import de.raphaelmuesseler.financer.shared.model.categories.BaseCategory;
+import de.raphaelmuesseler.financer.shared.model.categories.Category;
+import de.raphaelmuesseler.financer.shared.model.categories.CategoryTree;
 import de.raphaelmuesseler.financer.shared.model.transactions.Transaction;
+import de.raphaelmuesseler.financer.shared.model.transactions.VariableTransaction;
 import de.raphaelmuesseler.financer.shared.model.user.User;
+import de.raphaelmuesseler.financer.util.collections.TreeUtil;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
@@ -14,7 +19,9 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.testfx.framework.junit5.ApplicationTest;
 
+import java.util.Comparator;
 import java.util.Currency;
+import java.util.Set;
 
 @SuppressWarnings("WeakerAccess")
 @Tag("integration")
@@ -121,7 +128,14 @@ public class SettingsTest extends AbstractFinancerApplicationTest {
 
         Assertions.assertNotNull(clickOn(formatter.formatCurrency(-transaction.getAmount())));
 
-        Transaction insertedTransaction = (Transaction) LocalStorageImpl.getInstance().readList("transactions").get(0);
-        Assertions.assertEquals(-transaction.getAmount(), insertedTransaction.getAmount());
+        BaseCategory baseCategory = (BaseCategory) LocalStorageImpl.getInstance().readObject("categories");
+        Set<Transaction> transactions = ((CategoryTree) TreeUtil.getByValue(baseCategory, category,
+                Comparator.comparingInt(Category::getId))).getTransactions();
+        Assertions.assertEquals(1, transactions.size());
+        for (Transaction transactionToAssert : transactions) {
+            Assertions.assertTrue(transactionToAssert instanceof VariableTransaction);
+            Assertions.assertTrue(transactionToAssert.getId() > 0);
+            Assertions.assertEquals(-transaction.getAmount(), transactionToAssert.getAmount());
+        }
     }
 }
