@@ -31,9 +31,13 @@ public class UserSettings implements Serializable, Settings {
         return Boolean.valueOf(this.getValueByProperty(Property.SHOW_CURRENCY_SIGN));
     }
 
+    public boolean isChangeAmountSignAutomatically() {
+        return Boolean.valueOf(this.getValueByProperty(Property.CHANGE_AMOUNT_SIGN_AUTOMATICALLY));
+    }
+
     @Override
     public void setValueByProperty(Property property, String value) {
-       this.properties.put(property.getName(), value);
+        this.properties.put(property.getName(), value);
     }
 
     public void setLanguage(Locale locale) {
@@ -44,11 +48,16 @@ public class UserSettings implements Serializable, Settings {
         this.setValueByProperty(Property.CURRENCY, currency.getCurrencyCode());
     }
 
+
     public void setShowCurrencySign(boolean showCurrencySign) {
         this.setValueByProperty(Property.SHOW_CURRENCY_SIGN, Boolean.toString(showCurrencySign));
     }
 
     public void setTheme(String theme) {
         this.setValueByProperty(Property.THEME, theme);
+    }
+
+    public void setChangeAmountSignAutomatically(boolean changeAmountSignAutomatically) {
+        this.setValueByProperty(Property.CHANGE_AMOUNT_SIGN_AUTOMATICALLY, Boolean.toString(changeAmountSignAutomatically));
     }
 }

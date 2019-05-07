@@ -398,6 +398,7 @@ public class FinancerService {
         VariableTransaction variableTransaction = (VariableTransaction) parameters.get("variableTransaction");
 
         Transaction transaction = session.beginTransaction();
+        this.adjustTransactionAmount(session, variableTransaction);
         variableTransaction.setId((int) session.save(variableTransaction.toDatabaseAccessObject()));
         transaction.commit();
 
@@ -415,8 +416,10 @@ public class FinancerService {
         VariableTransaction variableTransaction = (VariableTransaction) parameters.get("variableTransaction");
 
         Transaction transaction = session.beginTransaction();
+        this.adjustTransactionAmount(session, variableTransaction);
         session.update(variableTransaction.toDatabaseAccessObject());
         transaction.commit();
+
 
         return new ConnectionResult<>(null);
     }
@@ -551,6 +554,7 @@ public class FinancerService {
         }
         transaction.commit();
         transaction = session.beginTransaction();
+        this.adjustTransactionAmount(session, fixedTransaction);
         fixedTransaction.setId((int) session.save(fixedTransaction.toDatabaseAccessObject()));
         transaction.commit();
 
@@ -565,9 +569,11 @@ public class FinancerService {
      */
     public ConnectionResult<Void> updateFixedTransaction(Logger logger, Session session, Map<String, Object> parameters) {
         logger.log(Level.INFO, "Updating fixed transaction ...");
+        User user = (User) parameters.get("user");
         FixedTransaction fixedTransaction = (FixedTransaction) parameters.get("fixedTransaction");
 
         Transaction transaction = session.beginTransaction();
+        this.adjustTransactionAmount(session, fixedTransaction);
         session.update(fixedTransaction.toDatabaseAccessObject());
         transaction.commit();
 
@@ -590,5 +596,12 @@ public class FinancerService {
         transaction.commit();
 
         return new ConnectionResult<>(null);
+    }
+
+    private void adjustTransactionAmount(Session session, de.raphaelmuesseler.financer.shared.model.transactions.Transaction transaction) {
+        User user = new User(session.get(UserDAO.class, transaction.getCategoryTree().getValue().getUser().getId()));
+        if (user.getSettings().isChangeAmountSignAutomatically()) {
+            transaction.adjustAmountSign();
+        }
     }
 }

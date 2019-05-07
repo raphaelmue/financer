@@ -39,7 +39,7 @@ public class TransactionTest extends AbstractFinancerApplicationTest {
         clickOn((Button) find("#refreshTransactionsBtn"));
         sleep(1000);
 
-        Assertions.assertNotNull(clickOn("-" + formatter.formatCurrency(transaction.getAmount())));
+        Assertions.assertNotNull(clickOn(formatter.formatCurrency(transaction.getAmount())));
 
         BaseCategory baseCategory = (BaseCategory) LocalStorageImpl.getInstance().readObject("categories");
         Set<Transaction> transactions = ((CategoryTree) TreeUtil.getByValue(baseCategory, category,
@@ -70,7 +70,7 @@ public class TransactionTest extends AbstractFinancerApplicationTest {
         clickOn((Button) find("#refreshTransactionsBtn"));
         sleep(MEDIUM_SLEEP);
 
-        Assertions.assertNotNull(clickOn("-" + formatter.formatCurrency(amount)));
+        Assertions.assertNotNull(clickOn(formatter.formatCurrency(amount)));
         BaseCategory baseCategory = (BaseCategory) LocalStorageImpl.getInstance().readObject("categories");
         Set<Transaction> transactions = ((CategoryTree) TreeUtil.getByValue(baseCategory, category,
                 Comparator.comparingInt(Category::getId))).getTransactions();

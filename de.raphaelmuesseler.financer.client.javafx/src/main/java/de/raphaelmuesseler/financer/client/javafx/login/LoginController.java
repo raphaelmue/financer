@@ -9,6 +9,8 @@ import de.raphaelmuesseler.financer.client.javafx.dialogs.FinancerExceptionDialo
 import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
 import de.raphaelmuesseler.financer.client.javafx.main.FinancerApplication;
 import de.raphaelmuesseler.financer.client.local.Application;
+import de.raphaelmuesseler.financer.client.local.LocalSettings;
+import de.raphaelmuesseler.financer.client.local.LocalSettingsImpl;
 import de.raphaelmuesseler.financer.shared.connection.ConnectionResult;
 import de.raphaelmuesseler.financer.shared.model.user.User;
 import de.raphaelmuesseler.financer.util.concurrency.FinancerExecutor;
@@ -43,6 +45,11 @@ public class LoginController implements Initializable, Application {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        LocalSettings settings = (LocalSettings) this.localStorage.readObject("localSettings");
+        if (settings == null) {
+            settings = new LocalSettingsImpl();
+            this.localStorage.writeObject("localSettings", settings);
+        }
         I18N.setLocalStorage(this.localStorage);
 
         ServerRequestHandler.setApplication(this);

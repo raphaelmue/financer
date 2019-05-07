@@ -131,6 +131,24 @@ public class FixedTransaction extends FixedTransactionDAO implements Transaction
     }
 
     @Override
+    public void adjustAmountSign() {
+        if (this.getIsVariable()) {
+            for (TransactionAmount transactionAmount : this.getTransactionAmounts()) {
+                if ((this.getCategoryTree().getValue().getCategoryClass().isRevenue() && transactionAmount.getAmount() < 0) ||
+                        (!this.getCategoryTree().getValue().getCategoryClass().isRevenue() && transactionAmount.getAmount() >= 0)) {
+                    transactionAmount.setAmount(transactionAmount.getAmount() * (-1));
+                }
+            }
+        } else {
+            if ((this.getCategoryTree().getValue().getCategoryClass().isRevenue() && this.getAmount() < 0) ||
+                    (!this.getCategoryTree().getValue().getCategoryClass().isRevenue() && this.getAmount() >= 0)) {
+                this.setAmount(this.getAmount() * (-1));
+            }
+        }
+    }
+
+
+    @Override
     public FixedTransactionDAO toDatabaseAccessObject() {
         FixedTransactionDAO fixedTransactionDAO = new FixedTransactionDAO();
         fixedTransactionDAO.setId(this.getId());

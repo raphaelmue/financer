@@ -12,6 +12,7 @@ import de.raphaelmuesseler.financer.client.javafx.format.JavaFXFormatter;
 import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
 import de.raphaelmuesseler.financer.client.javafx.main.FinancerController;
 import de.raphaelmuesseler.financer.client.local.Application;
+import de.raphaelmuesseler.financer.client.local.LocalSettingsImpl;
 import de.raphaelmuesseler.financer.shared.connection.AsyncCall;
 import de.raphaelmuesseler.financer.shared.connection.ConnectionResult;
 import de.raphaelmuesseler.financer.shared.model.categories.BaseCategory;
@@ -109,7 +110,8 @@ public class TransactionsController implements Initializable {
     }
 
     private void initializeTransactionsOverviewTable() {
-        final int numberOfMaxMonths = 6;
+        final int numberOfMaxMonths = ((LocalSettingsImpl) localStorage.readObject("localSettings")).getMaxNumberOfMonthsDisplayed();
+        ;
         final List<TableColumn<TransactionOverviewRow, String>> monthColumns = new ArrayList<>(numberOfMaxMonths);
 
         TableColumn<TransactionOverviewRow, CategoryTree> categoryColumn = new TableColumn<>(I18N.get("category"));
@@ -138,7 +140,7 @@ public class TransactionsController implements Initializable {
 
         for (int i = 0; i < numberOfMaxMonths; i++) {
             TableColumn<TransactionOverviewRow, String> column = new TableColumn<>(I18N.get(Objects.requireNonNull(getMonthByNumber(LocalDate.now().minusMonths(i).getMonthValue())).getName()));
-            this.adjustColumnWidth(column, this.transactionsOverviewTableView, 8);
+            this.adjustColumnWidth(column, this.transactionsOverviewTableView, numberOfMaxMonths + 2);
             column.setStyle("-fx-alignment: CENTER-RIGHT;");
             column.setSortable(false);
             int index = i;
@@ -377,7 +379,9 @@ public class TransactionsController implements Initializable {
         VariableTransaction transaction = new TransactionDialog(null, this.categories).showAndGetResult();
         if (transaction != null) {
 
-            this.correctTransactionAmount(transaction);
+            if (user.getSettings().isChangeAmountSignAutomatically()) {
+                transaction.adjustAmountSign();
+            }
 
             Map<String, Object> parameters = new HashMap<>();
             parameters.put("variableTransaction", transaction);
@@ -414,9 +418,8 @@ public class TransactionsController implements Initializable {
                 .showAndGetResult();
         if (fixedTransaction != null) {
 
-            if ((fixedTransaction.getCategoryTree().getValue().getCategoryClass().isRevenue() && fixedTransaction.getAmount() < 0) ||
-                    (!fixedTransaction.getCategoryTree().getValue().getCategoryClass().isRevenue() && fixedTransaction.getAmount() >= 0)) {
-                fixedTransaction.setAmount(fixedTransaction.getAmount() * (-1));
+            if (user.getSettings().isChangeAmountSignAutomatically()) {
+                fixedTransaction.adjustAmountSign();
             }
 
             Map<String, Object> parameters = new HashMap<>();
@@ -448,7 +451,9 @@ public class TransactionsController implements Initializable {
                 this.categories).showAndGetResult();
         if (transaction != null) {
 
-            this.correctTransactionAmount(transaction);
+            if (user.getSettings().isChangeAmountSignAutomatically()) {
+                transaction.adjustAmountSign();
+            }
 
             Map<String, Object> parameters = new HashMap<>();
             parameters.put("variableTransaction", transaction);
@@ -484,9 +489,12 @@ public class TransactionsController implements Initializable {
                 .showAndGetResult();
         if (fixedTransaction != null) {
 
-            this.correctTransactionAmount(fixedTransaction);
+            if (user.getSettings().isChangeAmountSignAutomatically()) {
+                fixedTransaction.adjustAmountSign();
+            }
 
             Map<String, Object> parameters = new HashMap<>();
+            parameters.put("user", this.user);
             parameters.put("fixedTransaction", fixedTransaction);
 
             FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "updateFixedTransaction", parameters, new JavaFXAsyncConnectionCall() {
@@ -562,7 +570,7 @@ public class TransactionsController implements Initializable {
                     parameters, new JavaFXAsyncConnectionCall() {
                 @Override
                 public void onSuccess(ConnectionResult result) {
-                    Platform.runLater(() ->  {
+                    Platform.runLater(() -> {
                         fixedTransactionsListView.getSelectionModel().getSelectedItem().getCategoryTree().getTransactions().remove(
                                 fixedTransactionsListView.getSelectionModel().getSelectedItem());
                         fixedTransactionsListView.getItems().remove(fixedTransactionsListView.getSelectionModel().getSelectedItem());
@@ -601,14 +609,6 @@ public class TransactionsController implements Initializable {
 
         this.fixedTransactionsListView.setCellFactory(param -> new FixedTransactionListCellImpl());
         fixedTransactionsListView.getItems().sort(Comparator.comparing(FixedTransaction::getStartDate).reversed());
-    }
-
-
-    private void correctTransactionAmount(Transaction transaction) {
-        if ((transaction.getCategoryTree().getValue().getCategoryClass().isRevenue() && transaction.getAmount() < 0) ||
-                (!transaction.getCategoryTree().getValue().getCategoryClass().isRevenue() && transaction.getAmount() >= 0)) {
-            transaction.setAmount(transaction.getAmount() * (-1));
-        }
     }
 
     private <S, T> void adjustColumnWidth(TableColumn<S, T> column, TableView<S> tableView, double ratio) {
@@ -739,10 +739,11 @@ public class TransactionsController implements Initializable {
 
     private class TransactionOverviewRow {
         private CategoryTree categoryTree;
-        private double[] amounts = new double[6];
+        private double[] amounts;
 
         TransactionOverviewRow(CategoryTree categoryTree) {
             this.categoryTree = categoryTree;
+            this.amounts = new double[((LocalSettingsImpl) localStorage.readObject("localSettings")).getMaxNumberOfMonthsDisplayed()];
         }
 
         CategoryTree getCategory() {

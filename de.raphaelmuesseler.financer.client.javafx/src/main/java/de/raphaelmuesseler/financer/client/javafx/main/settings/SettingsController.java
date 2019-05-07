@@ -8,6 +8,7 @@ import de.raphaelmuesseler.financer.client.javafx.connection.JavaFXAsyncConnecti
 import de.raphaelmuesseler.financer.client.javafx.dialogs.FinancerConfirmDialog;
 import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
 import de.raphaelmuesseler.financer.client.javafx.util.ApplicationHelper;
+import de.raphaelmuesseler.financer.client.local.LocalSettings;
 import de.raphaelmuesseler.financer.client.local.LocalStorage;
 import de.raphaelmuesseler.financer.shared.connection.ConnectionResult;
 import de.raphaelmuesseler.financer.shared.model.user.Token;
@@ -37,17 +38,23 @@ public class SettingsController implements Initializable {
     public ComboBox<I18N.Language> languageMenuComboBox;
     public ComboBox<Currency> currencyComboBox;
     public CheckBox showSignCheckbox;
+
+    public ComboBox<Integer> maxNumberOfMonthsDisplayedComboBox;
+
+
     public JFXButton logoutFromDeviceBtn;
     public JFXListView<Token> devicesListView;
+    public CheckBox changeAmountSignAutomaticallyCheckBox;
+
 
     private LocalStorage localStorage = LocalStorageImpl.getInstance();
     private User user = (User) localStorage.readObject("user");
+    private LocalSettings localSettings = (LocalSettings) localStorage.readObject("localSettings");
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         GlyphFont fontAwesome = GlyphFontRegistry.font("FontAwesome");
         this.logoutFromDeviceBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.SIGN_OUT));
-
 
         this.languageMenuComboBox.getItems().addAll(I18N.Language.getAll());
         this.languageMenuComboBox.getSelectionModel().select(I18N.Language.getLanguageByLocale(this.user.getSettings().getLanguage()));
@@ -75,6 +82,19 @@ public class SettingsController implements Initializable {
         this.showSignCheckbox.setSelected(this.user.getSettings().isShowCurrencySign());
         this.showSignCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
             user.getSettings().setShowCurrencySign(newValue);
+            updateSettings();
+        });
+
+        for (int i = 3; i <= 8; i++) this.maxNumberOfMonthsDisplayedComboBox.getItems().add(i);
+        this.maxNumberOfMonthsDisplayedComboBox.getSelectionModel().select((Integer) localSettings.getMaxNumberOfMonthsDisplayed());
+        this.maxNumberOfMonthsDisplayedComboBox.getSelectionModel().selectedItemProperty().addListener((observableValue, oldValue, newValue) -> {
+            localSettings.setMaxNumberOfMonthsDisplayed(newValue);
+            localStorage.writeObject("localSettings", localSettings);
+        });
+
+        this.changeAmountSignAutomaticallyCheckBox.setSelected(this.user.getSettings().isChangeAmountSignAutomatically());
+        this.changeAmountSignAutomaticallyCheckBox.selectedProperty().addListener((observableValue, oldValue, newValue) -> {
+            user.getSettings().setChangeAmountSignAutomatically(newValue);
             updateSettings();
         });
 

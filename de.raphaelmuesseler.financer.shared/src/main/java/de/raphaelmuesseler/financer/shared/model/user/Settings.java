@@ -5,7 +5,8 @@ public interface Settings {
         LANGUAGE("language", "en"),
         CURRENCY("currency", "USD"),
         SHOW_CURRENCY_SIGN("showCurrencySign", "false"),
-        CHANGE_AMOUNT_SIGH_AUTOMATICALLY("changeAmountSignAutomatically", "false"),
+        CHANGE_AMOUNT_SIGN_AUTOMATICALLY("changeAmountSignAutomatically", "false"),
+        MAX_NUMBER_OF_MONTHS_DISPLAYED("maxNumberOfMonthsDisplayed", "6"),
         THEME("theme", "");
 
         private final String name, defaultValue;

@@ -72,4 +72,10 @@ public interface Transaction extends Serializable, AmountProvider, DataAccessObj
      */
     Set<? extends TransactionAttachmentDAO> getAttachments();
 
+    default void adjustAmountSign() {
+        if ((this.getCategoryTree().getValue().getCategoryClass().isRevenue() && this.getAmount() < 0) ||
+                (!this.getCategoryTree().getValue().getCategoryClass().isRevenue() && this.getAmount() >= 0)) {
+            this.setAmount(this.getAmount() * (-1));
+        }
+    }
 }

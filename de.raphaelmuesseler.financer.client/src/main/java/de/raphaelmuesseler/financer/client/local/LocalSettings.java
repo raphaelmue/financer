@@ -6,7 +6,9 @@ import java.util.Locale;
 
 public interface LocalSettings extends Settings {
 
-    // TODO create local settings
+    int getMaxNumberOfMonthsDisplayed();
+
+    void setMaxNumberOfMonthsDisplayed(int maxNumberOfMonthsDisplayed);
 
 }
 
