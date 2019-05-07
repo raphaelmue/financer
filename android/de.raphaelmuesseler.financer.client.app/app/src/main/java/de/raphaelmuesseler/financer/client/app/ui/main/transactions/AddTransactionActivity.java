@@ -2,6 +2,7 @@ package de.raphaelmuesseler.financer.client.app.ui.main.transactions;
 
 import android.app.DatePickerDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -21,26 +22,17 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import de.raphaelmuesseler.financer.client.app.R;
-import de.raphaelmuesseler.financer.client.app.connection.AndroidAsyncConnectionCall;
 import de.raphaelmuesseler.financer.client.app.format.AndroidFormatter;
 import de.raphaelmuesseler.financer.client.app.local.LocalStorageImpl;
-import de.raphaelmuesseler.financer.client.app.ui.main.FinancerActivity;
-import de.raphaelmuesseler.financer.client.connection.ServerRequestHandler;
 import de.raphaelmuesseler.financer.client.format.Formatter;
-import de.raphaelmuesseler.financer.client.local.Application;
-import de.raphaelmuesseler.financer.shared.connection.ConnectionResult;
 import de.raphaelmuesseler.financer.shared.model.categories.BaseCategory;
 import de.raphaelmuesseler.financer.shared.model.categories.CategoryTree;
-import de.raphaelmuesseler.financer.shared.model.transactions.Transaction;
 import de.raphaelmuesseler.financer.shared.model.transactions.VariableTransaction;
 import de.raphaelmuesseler.financer.shared.model.user.User;
 import de.raphaelmuesseler.financer.util.collections.TreeUtil;
-import de.raphaelmuesseler.financer.util.concurrency.FinancerExecutor;
 
 public class AddTransactionActivity extends AppCompatActivity {
 
@@ -129,33 +121,19 @@ public class AddTransactionActivity extends AppCompatActivity {
             final VariableTransaction transaction = new VariableTransaction(0,
                     Double.valueOf(amountEditText.getText().toString().replace(",", ".")),
                     LocalDate.parse(valueDateEditText.getText().toString(), DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)
-                            .withLocale(getResources().getConfiguration().locale)),
+                            .withLocale(((User) LocalStorageImpl.getInstance().readObject("user")).getSettings().getLanguage())),
                     (CategoryTree) categorySpinner.getSelectedItem(),
                     productEditText.getText().toString(),
                     purposeEditText.getText().toString(),
                     shopEditText.getText().toString());
 
+
+            ((CategoryTree) categorySpinner.getSelectedItem()).getTransactions().add(transaction);
+            Intent data = new Intent();
+            data.putExtra("variableTransaction", transaction);
+            setResult(RESULT_OK, data);
+
             finish();
-
-            Map<String, Object> parameters = new HashMap<>();
-            parameters.put("user", user);
-            parameters.put("transaction", transaction);
-
-            FinancerExecutor.getExecutor().execute(new ServerRequestHandler(user, "addTransaction", parameters, new AndroidAsyncConnectionCall() {
-                @Override
-                public void onSuccess(ConnectionResult connectionResult) {
-                    ((CategoryTree) categorySpinner.getSelectedItem()).getTransactions().add(transaction);
-                    LocalStorageImpl.getInstance().writeObject("categories", baseCategory);
-                    List<Transaction> transactionList = LocalStorageImpl.getInstance().readList("transactions");
-                    transactionList.add(transaction);
-                    LocalStorageImpl.getInstance().writeObject("transactions", transactionList);
-                }
-
-                @Override
-                public void onFailure(Exception exception) {
-                    FinancerActivity.getFinancerApplication().showToast(Application.MessageType.ERROR, getString(R.string.something_went_wrong));
-                }
-            }));
         }
     }
 
