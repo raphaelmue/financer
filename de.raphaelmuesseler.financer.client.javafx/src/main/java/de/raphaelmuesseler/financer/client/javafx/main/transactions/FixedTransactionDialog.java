@@ -202,6 +202,7 @@ public class FixedTransactionDialog extends FinancerDialog<FixedTransaction> {
 
                 if (this.getValue().getTransactionAmounts() != null && this.getValue().getTransactionAmounts().size() > 0) {
                     this.transactionAmountListView.getItems().addAll(this.getValue().getTransactionAmounts());
+                    this.transactionAmountListView.getItems().sort((o1, o2) -> o2.getValueDate().compareTo(o1.getValueDate()));
                 }
                 this.amountField.setDisable(true);
             } else {

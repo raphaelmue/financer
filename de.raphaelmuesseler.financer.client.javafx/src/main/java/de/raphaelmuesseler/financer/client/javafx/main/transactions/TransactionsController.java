@@ -670,9 +670,9 @@ public class TransactionsController implements Initializable {
                 }
 
                 if (item.getEndDate() == null) {
-                    this.dateLabel.setText(I18N.get("since") + " " + item.getStartDate());
+                    this.dateLabel.setText(I18N.get("since") + " " + formatter.formatDate(item.getStartDate()));
                 } else {
-                    this.dateLabel.setText(item.getStartDate() + " - " + item.getEndDate());
+                    this.dateLabel.setText(formatter.formatDate(item.getStartDate()) + " - " + formatter.formatDate(item.getEndDate()));
                 }
 
                 LocalDate valueDate = (item.isActive() ? LocalDate.now() : item.getEndDate());
