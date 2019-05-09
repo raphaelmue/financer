@@ -675,14 +675,11 @@ public class TransactionsController implements Initializable {
                     this.dateLabel.setText(item.getStartDate() + " - " + item.getEndDate());
                 }
 
-                if (item.getIsVariable() && item.getTransactionAmounts() != null &&
-                        item.getTransactionAmounts().size() > 0) {
-                    LocalDate valueDate = (item.isActive() ? LocalDate.now() : item.getEndDate());
-                    formatter.formatAmountLabel(this.amountLabel, item.getAmount(valueDate));
+                LocalDate valueDate = (item.isActive() ? LocalDate.now() : item.getEndDate());
+                formatter.formatAmountLabel(this.amountLabel, item.getAmount(valueDate));
+                if (item.getIsVariable()) {
                     formatter.formatAmountLabel(this.lastAmountLabel, item.getAmount(valueDate.minusMonths(1)));
                     formatter.formatAmountLabel(this.preLastAmountLabel, item.getAmount(valueDate.minusMonths(2)));
-                } else {
-                    formatter.formatAmountLabel(this.amountLabel, item.getAmount());
                 }
 
                 this.isVariableLabel.setText(I18N.get("isVariable") + ": " +
