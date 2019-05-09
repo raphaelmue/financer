@@ -284,7 +284,7 @@ class TransactionDialog extends FinancerDialog<VariableTransaction> {
             }
 
             Map<String, Object> parameters = new HashMap<>();
-            parameters.put("id", this.attachmentListView.getSelectionModel().getSelectedItem().getId());
+            parameters.put("attachmentId", this.attachmentListView.getSelectionModel().getSelectedItem().getId());
 
             FinancerExecutor.getExecutor().execute(new ServerRequestHandler(
                     (User) LocalStorageImpl.getInstance().readObject("user"),
@@ -294,7 +294,7 @@ class TransactionDialog extends FinancerDialog<VariableTransaction> {
                     try (FileOutputStream fileOutputStream = new FileOutputStream(file)) {
                         fileOutputStream.write(((Attachment) result.getResult()).getByteContent());
                         Desktop.getDesktop().open(file);
-                    } catch (IOException | SQLException e) {
+                    } catch (IOException e) {
                         new FinancerExceptionDialog("Financer", e).showAndWait();
                         e.printStackTrace();
                     }

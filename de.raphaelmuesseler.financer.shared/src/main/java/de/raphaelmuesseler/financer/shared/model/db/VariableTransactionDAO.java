@@ -1,6 +1,7 @@
 package de.raphaelmuesseler.financer.shared.model.db;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 public class VariableTransactionDAO implements DataAccessObject {
     private final static long serialVersionUID = -118658876074097774L;
@@ -12,6 +13,7 @@ public class VariableTransactionDAO implements DataAccessObject {
     private String product;
     private String purpose;
     private String shop;
+    private Set<? extends TransactionAttachmentDAO> attachments;
 
     @Override
     public int getId() {
@@ -68,5 +70,13 @@ public class VariableTransactionDAO implements DataAccessObject {
 
     public void setShop(String shop) {
         this.shop = shop;
+    }
+
+    public Set<? extends TransactionAttachmentDAO> getAttachments() {
+        return attachments;
+    }
+
+    public void setAttachments(Set<? extends TransactionAttachmentDAO> attachments) {
+        this.attachments = attachments;
     }
 }

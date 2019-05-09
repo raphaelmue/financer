@@ -380,6 +380,7 @@ public class FinancerService {
                         .setParameter("categoryId", treeObject.getValue().getId())
                         .list();
                 for (VariableTransactionDAO databaseVariableTransaction : databaseVariableTransactions) {
+                    databaseVariableTransaction.getAttachments().size();
                     categoryTree.getTransactions().add(new VariableTransaction(databaseVariableTransaction, categoryTree));
                 }
             }
