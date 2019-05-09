@@ -12,6 +12,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 import java.net.URI;
 import java.util.concurrent.ExecutorService;
 import java.util.logging.Level;
@@ -84,9 +85,14 @@ public class Server {
                 DataInputStream input = new DataInputStream(client.getInputStream());
                 DataOutputStream output = new DataOutputStream(client.getOutputStream());
                 FinancerExecutor.getExecutor().execute(new ClientHandler(client, input, output));
+            } catch (SocketException e) {
+                if (e.getMessage().equals("Interrupted function call: accept failed")) {
+                    logger.log(Level.SEVERE, "Server has stopped.");
+                    break;
+                }
+                e.printStackTrace();
             } catch (Exception e) {
-                this.logger.log(Level.SEVERE, e.getMessage());
-                break;
+                e.printStackTrace();
             }
         }
     }
