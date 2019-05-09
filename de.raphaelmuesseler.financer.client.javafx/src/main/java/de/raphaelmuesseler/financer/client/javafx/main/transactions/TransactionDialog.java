@@ -34,7 +34,6 @@ import org.controlsfx.glyphfont.GlyphFontRegistry;
 
 import java.awt.*;
 import java.io.*;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -318,7 +317,14 @@ class TransactionDialog extends FinancerDialog<VariableTransaction> {
                     parameters, new JavaFXAsyncConnectionCall() {
                 @Override
                 public void onSuccess(ConnectionResult result) {
-                    attachmentListView.getItems().remove(attachmentListView.getSelectionModel().getSelectedItem());
+                    File file = new File(LocalStorageImpl.LocalStorageFile.TRANSACTIONS.getFile().getParent() +
+                            "/transactions/" + attachmentListView.getSelectionModel().getSelectedItem().getTransaction().getId() +
+                            "/attachments/" + attachmentListView.getSelectionModel().getSelectedItem().getName());
+                    if (file.delete()) {
+                        attachmentListView.getItems().remove(attachmentListView.getSelectionModel().getSelectedItem());
+                    } else {
+                        new FinancerExceptionDialog("Financer", new IOException("File could not be deleted")).showAndWait();
+                    }
                 }
 
                 @Override
