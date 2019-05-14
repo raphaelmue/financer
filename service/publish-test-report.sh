@@ -9,10 +9,10 @@ echo "------------------------------------------"
 
 for module in "${MODULES[@]}"
 do
-    if [[ -f "de.dashup.${module}/target/site/jacoco/jacoco.xml" ]]; then
+    if [[ -f "de.raphaelmuesseler.financer.${module}/target/site/jacoco/jacoco.xml" ]]; then
         echo "Report file for module ${module} was found! Publishing report ..."
-        ./codacy-coverage-reporter report -l Java -r de.dashup.${module}/target/site/jacoco/jacoco.xml --partial --project-token "04d1080111264ec39df730a62933b92e"
-        echo "Published report file \"de.dashup.${module}/target/site/jacoco/jacoco.xml\" successfully!"
+        ./codacy-coverage-reporter report -l Java -r de.raphaelmuesseler.financer.${module}/target/site/jacoco/jacoco.xml --partial --project-token "04d1080111264ec39df730a62933b92e"
+        echo "Published report file \"de.raphaelmuesseler.financer.${module}/target/site/jacoco/jacoco.xml\" successfully!"
     else
         echo "No report file for module ${module} was found!"
     fi
