@@ -3,6 +3,7 @@ package de.raphaelmuesseler.financer.client.javafx.main.transactions;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXDatePicker;
 import com.jfoenix.controls.JFXListView;
+import com.jfoenix.controls.JFXTextField;
 import de.raphaelmuesseler.financer.client.format.I18N;
 import de.raphaelmuesseler.financer.client.javafx.components.DoubleField;
 import de.raphaelmuesseler.financer.client.javafx.components.IntegerField;
@@ -38,6 +39,7 @@ public class FixedTransactionDialog extends FinancerDialog<FixedTransaction> {
     private Label categoryLabel;
     private IntegerField dayField;
     private JFXDatePicker startDateField, endDateField;
+    private JFXTextField productField, purposeField;
     private CheckBox isVariableCheckbox;
     private DoubleField amountField;
     private VBox transactionAmountContainer;
@@ -105,6 +107,16 @@ public class FixedTransactionDialog extends FinancerDialog<FixedTransaction> {
         this.amountField = new DoubleField();
         this.amountField.setId("amountTextField");
         gridPane.add(this.amountField, 1, 5);
+
+        gridPane.add(new Label(I18N.get("product")), 0, 6);
+        this.productField = new JFXTextField();
+        this.productField.setId("productTextField");
+        gridPane.add(this.productField, 1, 6);
+
+        gridPane.add(new Label(I18N.get("purpose")), 0, 7);
+        this.purposeField = new JFXTextField();
+        this.purposeField.setId("purposeTextField");
+        gridPane.add(this.purposeField, 1, 7);
 
         hBox.getChildren().add(gridPane);
 
@@ -196,6 +208,8 @@ public class FixedTransactionDialog extends FinancerDialog<FixedTransaction> {
             this.dayField.setValue(this.getValue().getDay());
             this.startDateField.setValue(this.getValue().getStartDate());
             this.endDateField.setValue(this.getValue().getEndDate());
+            this.productField.setText(this.getValue().getProduct());
+            this.purposeField.setText(this.getValue().getPurpose());
             if (this.getValue().getIsVariable()) {
                 this.isVariableCheckbox.setSelected(this.getValue().getIsVariable());
                 this.toggleTransactionAmountContainer(false);
@@ -237,7 +251,8 @@ public class FixedTransactionDialog extends FinancerDialog<FixedTransaction> {
                     this.categoryTree,
                     this.startDateField.getValue(),
                     this.endDateField.getValue(),
-                    "", "",
+                    this.productField.getText(),
+                    this.purposeField.getText(),
                     this.isVariableCheckbox.isSelected(),
                     this.dayField.getValue(),
                     (this.isVariableCheckbox.isSelected() ? new HashSet<>(transactionAmountListView.getItems()) : null)));
@@ -246,6 +261,8 @@ public class FixedTransactionDialog extends FinancerDialog<FixedTransaction> {
             this.getValue().getTransactionAmounts().addAll(new ArrayList<>(this.transactionAmountListView.getItems()));
             this.getValue().setStartDate(this.startDateField.getValue());
             this.getValue().setEndDate(this.endDateField.getValue());
+            this.getValue().setProduct(this.productField.getText());
+            this.getValue().setPurpose(this.purposeField.getText());
             this.getValue().setIsVariable(this.isVariableCheckbox.isSelected());
             this.getValue().setDay(this.dayField.getValue());
             this.getValue().setAmount(Double.valueOf(this.amountField.getText()));
