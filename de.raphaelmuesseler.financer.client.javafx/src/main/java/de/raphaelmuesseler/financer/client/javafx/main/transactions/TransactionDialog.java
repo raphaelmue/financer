@@ -191,7 +191,9 @@ class TransactionDialog extends FinancerDialog<VariableTransaction> {
             this.shopField.setText(this.getValue().getShop());
             this.valueDateField.setValue(this.getValue().getValueDate());
 
-            this.attachmentListView.getItems().addAll(new ArrayList<>(this.getValue().getAttachments()));
+            if (this.getValue().getAttachments() != null) {
+                this.attachmentListView.getItems().addAll(new ArrayList<>(this.getValue().getAttachments()));
+            }
         }
     }
 
