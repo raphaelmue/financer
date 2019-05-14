@@ -1,5 +1,6 @@
 # Financer
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/04d1080111264ec39df730a62933b92e)](https://app.codacy.com/app/raphaelmue/financer?utm_source=github.com&utm_medium=referral&utm_content=raphaelmue/financer&utm_campaign=Badge_Grade_Settings)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/822eba04be69461ba9232a30693e6e32)](https://app.codacy.com/app/raphaelmue/financer?utm_source=github.com&utm_medium=referral&utm_content=raphaelmue/financer&utm_campaign=Badge_Grade_Dashboard)
 
 ## Content
