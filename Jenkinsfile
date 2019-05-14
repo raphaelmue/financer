@@ -23,6 +23,14 @@ pipeline {
                 sh 'rm ./de.raphaelmuesseler.financer.server/src/main/resources/de/raphaelmuesseler/financer/server/db/config/hibernate.cfg.xml'
             }
         }
+        stage('Publish test results') {
+            when {
+                branch 'master'
+            }
+            steps {
+                sh 'bash service/publish-test-report.sh'
+            }
+        }
         stage('Deploy') {
             when {
                 branch 'deployment'
