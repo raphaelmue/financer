@@ -34,7 +34,6 @@ import org.controlsfx.glyphfont.GlyphFontRegistry;
 
 import java.awt.*;
 import java.io.*;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -192,7 +191,9 @@ class TransactionDialog extends FinancerDialog<VariableTransaction> {
             this.shopField.setText(this.getValue().getShop());
             this.valueDateField.setValue(this.getValue().getValueDate());
 
-            this.attachmentListView.getItems().addAll(new ArrayList<>(this.getValue().getAttachments()));
+            if (this.getValue().getAttachments() != null) {
+                this.attachmentListView.getItems().addAll(new ArrayList<>(this.getValue().getAttachments()));
+            }
         }
     }
 
@@ -284,7 +285,7 @@ class TransactionDialog extends FinancerDialog<VariableTransaction> {
             }
 
             Map<String, Object> parameters = new HashMap<>();
-            parameters.put("id", this.attachmentListView.getSelectionModel().getSelectedItem().getId());
+            parameters.put("attachmentId", this.attachmentListView.getSelectionModel().getSelectedItem().getId());
 
             FinancerExecutor.getExecutor().execute(new ServerRequestHandler(
                     (User) LocalStorageImpl.getInstance().readObject("user"),
@@ -294,7 +295,7 @@ class TransactionDialog extends FinancerDialog<VariableTransaction> {
                     try (FileOutputStream fileOutputStream = new FileOutputStream(file)) {
                         fileOutputStream.write(((Attachment) result.getResult()).getByteContent());
                         Desktop.getDesktop().open(file);
-                    } catch (IOException | SQLException e) {
+                    } catch (IOException e) {
                         new FinancerExceptionDialog("Financer", e).showAndWait();
                         e.printStackTrace();
                     }
@@ -318,7 +319,14 @@ class TransactionDialog extends FinancerDialog<VariableTransaction> {
                     parameters, new JavaFXAsyncConnectionCall() {
                 @Override
                 public void onSuccess(ConnectionResult result) {
-                    attachmentListView.getItems().remove(attachmentListView.getSelectionModel().getSelectedItem());
+                    File file = new File(LocalStorageImpl.LocalStorageFile.TRANSACTIONS.getFile().getParent() +
+                            "/transactions/" + attachmentListView.getSelectionModel().getSelectedItem().getTransaction().getId() +
+                            "/attachments/" + attachmentListView.getSelectionModel().getSelectedItem().getName());
+                    if (file.delete()) {
+                        attachmentListView.getItems().remove(attachmentListView.getSelectionModel().getSelectedItem());
+                    } else {
+                        new FinancerExceptionDialog("Financer", new IOException("File could not be deleted")).showAndWait();
+                    }
                 }
 
                 @Override

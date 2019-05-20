@@ -57,31 +57,18 @@ public class FixedTransaction extends FixedTransactionDAO implements Transaction
     }
 
     @Override
-    public double getAmount(LocalDate localDate) {
-        double amount = 0;
-
-        if (this.getEndDate() == null || this.getEndDate().compareTo(LocalDate.now()) >= 0) {
-            if (this.getIsVariable() && this.getTransactionAmounts() != null) {
-                for (AmountProvider amountProvider : this.getTransactionAmounts()) {
-                    amount += amountProvider.getAmount(localDate);
-                }
-            }
-            if (!this.getIsVariable()) {
-                amount = super.getAmount();
-            }
-        }
-
-        return amount;
+    public double getAmount() {
+        return this.getAmount(LocalDate.now());
     }
 
     @Override
-    public double getAmount() {
+    public double getAmount(LocalDate localDate) {
         double amount = 0;
 
-        if (this.getEndDate() == null || this.getEndDate().compareTo(LocalDate.now()) >= 0) {
+        if (this.getEndDate() == null || this.getEndDate().compareTo(localDate) >= 0) {
             if (this.getIsVariable() && this.getTransactionAmounts() != null) {
                 for (AmountProvider amountProvider : this.getTransactionAmounts()) {
-                    amount += amountProvider.getAmount();
+                    amount += amountProvider.getAmount(localDate);
                 }
             }
             if (!this.getIsVariable()) {

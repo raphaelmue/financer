@@ -34,6 +34,8 @@ public class FixedTransactionTest extends AbstractFinancerApplicationTest {
 
     @Test
     public void testAddFixedTransaction() {
+        fixedTransaction.setProduct("Test Product");
+        fixedTransaction.setPurpose("Test Purpose");
         register(user, password);
         category.getValue().setCategoryClass(BaseCategory.CategoryClass.FIXED_EXPENSES);
         addCategory(category);
@@ -49,7 +51,7 @@ public class FixedTransactionTest extends AbstractFinancerApplicationTest {
         Assertions.assertNotNull(find((Label label) -> label.getText().contains(I18N.get("active"))));
         Assertions.assertNotNull(find((Label label) -> label.getText().contains(formatter.formatCurrency(fixedTransaction.getAmount()))));
         Assertions.assertNotNull(find((Label label) -> label.getText().contains(I18N.get("since") + " " +
-                fixedTransaction.getStartDate().toString())));
+                formatter.formatDate(fixedTransaction.getStartDate()))));
     }
 
     @Test

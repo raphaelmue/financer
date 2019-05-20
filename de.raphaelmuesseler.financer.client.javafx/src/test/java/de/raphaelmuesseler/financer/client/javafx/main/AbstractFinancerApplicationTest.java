@@ -234,6 +234,10 @@ class AbstractFinancerApplicationTest extends ApplicationTest {
             eraseText(3);
             write(Double.toString(fixedTransaction.getAmount()));
         }
+        clickOn((JFXTextField) find("#productTextField"));
+        write(fixedTransaction.getProduct());
+        clickOn((JFXTextField) find("#purposeTextField"));
+        write(fixedTransaction.getPurpose());
 
         confirmDialog();
 
