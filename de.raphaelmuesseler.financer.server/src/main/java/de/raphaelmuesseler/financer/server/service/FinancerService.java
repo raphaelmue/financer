@@ -262,7 +262,9 @@ public class FinancerService {
         for (CategoryDAO databaseCategory : categories) {
             Category category = new Category(databaseCategory);
             if (databaseCategory.getParentId() == -1) {
-                baseCategory.getCategoryTreeByCategoryClass(category.getCategoryClass()).getChildren().add(new CategoryTreeImpl(category));
+                CategoryTree categoryTree = new CategoryTreeImpl(category);
+                categoryTree.setParent(baseCategory.getCategoryTreeByCategoryClass(category.getCategoryClass()));
+                baseCategory.getCategoryTreeByCategoryClass(category.getCategoryClass()).getChildren().add(categoryTree);
             } else {
                 if (!TreeUtil.insertByValue(baseCategory.getCategoryTreeByCategoryClass(category.getCategoryClass()), new CategoryTreeImpl(new Category(databaseCategory)),
                         (o1, o2) -> Integer.compare(o1.getParentId(), o2.getId()))) {
@@ -378,6 +380,9 @@ public class FinancerService {
                         .setParameter("categoryId", treeObject.getValue().getId())
                         .list();
                 for (VariableTransactionDAO databaseVariableTransaction : databaseVariableTransactions) {
+                    if (databaseVariableTransaction.getAttachments() != null) {
+                        databaseVariableTransaction.getAttachments().size();
+                    }
                     categoryTree.getTransactions().add(new VariableTransaction(databaseVariableTransaction, categoryTree));
                 }
             }

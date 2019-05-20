@@ -3,6 +3,7 @@ package de.raphaelmuesseler.financer.shared.model.transactions;
 import de.raphaelmuesseler.financer.shared.model.categories.Category;
 import de.raphaelmuesseler.financer.shared.model.categories.CategoryTree;
 import de.raphaelmuesseler.financer.shared.model.categories.CategoryTreeImpl;
+import de.raphaelmuesseler.financer.shared.model.db.TransactionAttachmentDAO;
 import de.raphaelmuesseler.financer.shared.model.db.VariableTransactionDAO;
 import de.raphaelmuesseler.financer.util.date.DateUtil;
 
@@ -13,7 +14,6 @@ import java.util.Set;
 
 public class VariableTransaction extends VariableTransactionDAO implements Transaction {
     private CategoryTree categoryTree;
-    private final Set<Attachment> attachments;
 
     public VariableTransaction(VariableTransactionDAO databaseVariableTransaction) {
         this(databaseVariableTransaction,
@@ -28,6 +28,12 @@ public class VariableTransaction extends VariableTransactionDAO implements Trans
                 databaseVariableTransaction.getProduct(),
                 databaseVariableTransaction.getPurpose(),
                 databaseVariableTransaction.getShop());
+        if (databaseVariableTransaction.getAttachments() != null) {
+            this.setAttachments(new HashSet<>());
+            for (TransactionAttachmentDAO transactionAttachmentDAO : databaseVariableTransaction.getAttachments()) {
+                this.getAttachments().add(new Attachment(transactionAttachmentDAO));
+            }
+        }
     }
 
     public VariableTransaction(int id, double amount, LocalDate valueDate, CategoryTree category, String product, String purpose, String shop) {
@@ -38,7 +44,6 @@ public class VariableTransaction extends VariableTransactionDAO implements Trans
         this.setProduct(product);
         this.setPurpose(purpose);
         this.setShop(shop);
-        this.attachments = new HashSet<>();
         if (this.categoryTree != null) {
             this.setCategory(this.categoryTree.getValue());
         }
@@ -54,7 +59,8 @@ public class VariableTransaction extends VariableTransactionDAO implements Trans
 
     @Override
     public Set<Attachment> getAttachments() {
-        return this.attachments;
+        //noinspection unchecked
+        return (Set<Attachment>) super.getAttachments();
     }
 
     @Override
