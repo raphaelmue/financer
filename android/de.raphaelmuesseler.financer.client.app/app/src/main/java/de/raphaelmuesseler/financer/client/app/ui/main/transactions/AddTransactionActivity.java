@@ -127,6 +127,9 @@ public class AddTransactionActivity extends AppCompatActivity {
                     purposeEditText.getText().toString(),
                     shopEditText.getText().toString());
 
+            if (user.getSettings().isChangeAmountSignAutomatically()) {
+                transaction.adjustAmountSign();
+            }
 
             ((CategoryTree) categorySpinner.getSelectedItem()).getTransactions().add(transaction);
             Intent data = new Intent();
