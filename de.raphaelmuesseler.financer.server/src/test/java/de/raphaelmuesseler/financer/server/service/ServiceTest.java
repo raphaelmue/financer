@@ -7,7 +7,7 @@ import de.raphaelmuesseler.financer.shared.model.categories.BaseCategory;
 import de.raphaelmuesseler.financer.shared.model.categories.Category;
 import de.raphaelmuesseler.financer.shared.model.categories.CategoryTreeImpl;
 import de.raphaelmuesseler.financer.shared.model.db.*;
-import de.raphaelmuesseler.financer.shared.model.transactions.Attachment;
+import de.raphaelmuesseler.financer.shared.model.transactions.ContentAttachment;
 import de.raphaelmuesseler.financer.shared.model.transactions.FixedTransaction;
 import de.raphaelmuesseler.financer.shared.model.transactions.TransactionAmount;
 import de.raphaelmuesseler.financer.shared.model.transactions.VariableTransaction;
@@ -19,7 +19,6 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.junit.jupiter.api.*;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
@@ -473,13 +472,15 @@ public class ServiceTest {
     @Test
     public void testUploadAttachment() throws SQLException {
         RandomString randomString = new RandomString(1024);
-        byte[] content = randomString.nextString().getBytes();
+        ContentAttachment content = new ContentAttachment();
+        content.setTransaction(variableTransaction);
+        content.setName("Test Attachment");
+        content.setContent(randomString.nextString().getBytes());
 
         Map<String, Object> parameters = new HashMap<>();
-        parameters.put("attachmentFile", new File("test.txt"));
+        parameters.put("attachment", content);
         parameters.put("transaction", new VariableTransaction(variableTransaction));
-        parameters.put("content", content);
-        ConnectionResult<Attachment> result = service.uploadTransactionAttachment(logger, session, parameters);
+        ConnectionResult<ContentAttachment> result = service.uploadTransactionAttachment(logger, session, parameters);
         Assertions.assertNotNull(result.getResult());
         Assertions.assertNull(result.getException());
         Assertions.assertTrue(result.getResult().getId() > 0);
@@ -491,7 +492,7 @@ public class ServiceTest {
 
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("attachmentId", 1);
-        ConnectionResult<Attachment> result = service.getAttachment(logger, session, parameters);
+        ConnectionResult<ContentAttachment> result = service.getAttachment(logger, session, parameters);
         Assertions.assertNotNull(result.getResult());
         Assertions.assertNull(result.getException());
         Assertions.assertTrue(result.getResult().getContent() != null && result.getResult().getContent().length == 1024);
@@ -504,6 +505,8 @@ public class ServiceTest {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("attachmentId", 1);
         service.deleteAttachment(logger, session, parameters);
+        session.close();
+        session = HibernateUtil.getSessionFactory().openSession();
         Assertions.assertNull(service.getAttachment(logger, session, parameters).getResult());
     }
 

@@ -2,7 +2,7 @@ package de.raphaelmuesseler.financer.shared.model.transactions;
 
 import de.raphaelmuesseler.financer.shared.model.categories.CategoryTree;
 import de.raphaelmuesseler.financer.shared.model.db.DataEntity;
-import de.raphaelmuesseler.financer.shared.model.db.TransactionAttachmentEntity;
+import de.raphaelmuesseler.financer.shared.model.db.AttachmentEntity;
 
 import java.io.Serializable;
 import java.util.Set;
@@ -70,7 +70,7 @@ public interface Transaction extends Serializable, AmountProvider, DataEntity {
      *
      * @return set of attachments
      */
-    Set<? extends TransactionAttachmentEntity> getAttachments();
+    Set<? extends AttachmentEntity> getAttachments();
 
     default void adjustAmountSign() {
         if ((this.getCategoryTree().getValue().getCategoryClass().isRevenue() && this.getAmount() < 0) ||

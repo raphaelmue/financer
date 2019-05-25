@@ -7,6 +7,7 @@ import de.raphaelmuesseler.financer.shared.model.categories.CategoryTree;
 import de.raphaelmuesseler.financer.shared.model.categories.CategoryTreeImpl;
 import de.raphaelmuesseler.financer.shared.model.db.*;
 import de.raphaelmuesseler.financer.shared.model.transactions.Attachment;
+import de.raphaelmuesseler.financer.shared.model.transactions.ContentAttachment;
 import de.raphaelmuesseler.financer.shared.model.transactions.FixedTransaction;
 import de.raphaelmuesseler.financer.shared.model.transactions.VariableTransaction;
 import de.raphaelmuesseler.financer.shared.model.user.Token;
@@ -18,7 +19,6 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 
 import javax.persistence.NoResultException;
-import java.io.File;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -455,24 +455,21 @@ public class FinancerService {
     /**
      * Uploads a transaction attachment to the database
      *
-     * @param parameters [File attachmentFile, VariableTransaction transaction, byte[] content]
-     * @return Attachment object
+     * @param parameters [VariableTransaction transaction, ContentAttachment attachment]
+     * @return ContentAttachment object
      */
-    public ConnectionResult<Attachment> uploadTransactionAttachment(Logger logger, Session session, Map<String, Object> parameters) throws SQLException {
+    public ConnectionResult<ContentAttachment> uploadTransactionAttachment(Logger logger, Session session, Map<String, Object> parameters) throws SQLException {
         logger.log(Level.INFO, "Uploading AttachmentWithContent ...");
-        Attachment result = new Attachment();
-        File attachmentFile = (File) parameters.get("attachmentFile");
+        ContentAttachment attachment = (ContentAttachment) parameters.get("attachment");
 
-        result.setTransaction((VariableTransaction) parameters.get("transaction"));
-        result.setName(attachmentFile.getName());
-        result.setUploadDate(LocalDate.now());
-        result.setContent((byte[]) parameters.get("content"));
+        attachment.setTransaction((VariableTransaction) parameters.get("transaction"));
+        attachment.setUploadDate(LocalDate.now());
 
         Transaction transaction = session.beginTransaction();
-        result.setId((int) session.save(result.toEntity()));
+        attachment.setId((int) session.save(attachment.toEntity()));
         transaction.commit();
 
-        return new ConnectionResult<>(new Attachment(result));
+        return new ConnectionResult<>(attachment);
     }
 
     /**
@@ -481,14 +478,14 @@ public class FinancerService {
      * @param parameters [int attachmentId]
      * @return Attachment object or null, if none found
      */
-    public ConnectionResult<Attachment> getAttachment(Logger logger, Session session, Map<String, Object> parameters) throws SQLException {
+    public ConnectionResult<ContentAttachment> getAttachment(Logger logger, Session session, Map<String, Object> parameters) throws SQLException {
         logger.log(Level.INFO, "Fetching attachment ...");
 
-        Attachment attachment = null;
+        ContentAttachment attachment = null;
         Transaction transaction = session.beginTransaction();
-        TransactionAttachmentEntity databaseAttachment = session.get(TransactionAttachmentEntity.class, (int) parameters.get("attachmentId"));
-        if (databaseAttachment != null) {
-            attachment = new Attachment(databaseAttachment);
+        ContentAttachmentEntity attachmentEntity = session.get(ContentAttachmentEntity.class, (int) parameters.get("attachmentId"));
+        if (attachmentEntity != null) {
+            attachment = new ContentAttachment(attachmentEntity);
         }
         transaction.commit();
 
@@ -505,9 +502,9 @@ public class FinancerService {
         logger.log(Level.INFO, "Deleting attachment ...");
 
         Transaction transaction = session.beginTransaction();
-        TransactionAttachmentEntity transactionAttachmentEntity = session.get(TransactionAttachmentEntity.class,
+        AttachmentEntity attachmentEntity = session.get(AttachmentEntity.class,
                 (int) parameters.get("attachmentId"));
-        session.delete(transactionAttachmentEntity);
+        session.delete(attachmentEntity);
         transaction.commit();
 
         return new ConnectionResult<>(null);

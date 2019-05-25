@@ -5,7 +5,7 @@ import de.raphaelmuesseler.financer.shared.model.categories.CategoryTree;
 import de.raphaelmuesseler.financer.shared.model.categories.CategoryTreeImpl;
 import de.raphaelmuesseler.financer.shared.model.db.FixedTransactionAmountEntity;
 import de.raphaelmuesseler.financer.shared.model.db.FixedTransactionEntity;
-import de.raphaelmuesseler.financer.shared.model.db.TransactionAttachmentEntity;
+import de.raphaelmuesseler.financer.shared.model.db.AttachmentEntity;
 import de.raphaelmuesseler.financer.util.date.DateUtil;
 
 import java.time.LocalDate;
@@ -164,7 +164,7 @@ public class FixedTransaction extends FixedTransactionEntity implements Transact
     }
 
     @Override
-    public Set<? extends TransactionAttachmentEntity> getAttachments() {
+    public Set<? extends AttachmentEntity> getAttachments() {
         return this.attachments;
     }
 

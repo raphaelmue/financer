@@ -3,10 +3,8 @@ package de.raphaelmuesseler.financer.shared.model.db;
 import javax.persistence.*;
 import java.time.LocalDate;
 
-@Entity
-@Table(name = "transactions_attachments")
-public class TransactionAttachmentEntity implements DataEntity {
-    private final static long serialVersionUID = 7758316425770345150L;
+@MappedSuperclass
+public abstract class AbstractAttachment implements DataEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,9 +20,6 @@ public class TransactionAttachmentEntity implements DataEntity {
     @Column(name = "upload_date")
     private LocalDate uploadDate;
 
-    @Column(name = "content")
-    @Lob
-    private byte[] content;
 
     @Override
     public int getId() {
@@ -57,13 +52,5 @@ public class TransactionAttachmentEntity implements DataEntity {
 
     public void setUploadDate(LocalDate uploadDate) {
         this.uploadDate = uploadDate;
-    }
-
-    public byte[] getContent() {
-        return content;
-    }
-
-    public void setContent(byte[] content) {
-        this.content = content;
     }
 }

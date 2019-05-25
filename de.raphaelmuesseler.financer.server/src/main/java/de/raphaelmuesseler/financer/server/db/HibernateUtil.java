@@ -54,12 +54,13 @@ public class HibernateUtil {
             // Create the SessionFactory from hibernate.cfg.xml
             Configuration configuration = new Configuration();
             configuration.configure("/de/raphaelmuesseler/financer/server/db/config/hibernate" + (isHostLocal ? ".local" : "") + ".cfg.xml")
+                    .addAnnotatedClass(AttachmentEntity.class)
                     .addAnnotatedClass(CategoryEntity.class)
+                    .addAnnotatedClass(ContentAttachmentEntity.class)
                     .addAnnotatedClass(FixedTransactionAmountEntity.class)
                     .addAnnotatedClass(FixedTransactionEntity.class)
                     .addAnnotatedClass(SettingsEntity.class)
                     .addAnnotatedClass(TokenEntity.class)
-                    .addAnnotatedClass(TransactionAttachmentEntity.class)
                     .addAnnotatedClass(UserEntity.class)
                     .addAnnotatedClass(VariableTransactionEntity.class);
             String url = configuration.getProperty("hibernate.connection.url");

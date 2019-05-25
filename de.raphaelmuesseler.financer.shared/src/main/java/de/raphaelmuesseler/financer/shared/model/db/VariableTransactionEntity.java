@@ -34,7 +34,7 @@ public class VariableTransactionEntity implements DataEntity {
     private String shop;
 
     @OneToMany(mappedBy = "transaction")
-    private Set<TransactionAttachmentEntity> attachments;
+    private Set<AttachmentEntity> attachments;
 
     @Override
     public int getId() {
@@ -93,11 +93,11 @@ public class VariableTransactionEntity implements DataEntity {
         this.shop = shop;
     }
 
-    public Set<? extends TransactionAttachmentEntity> getAttachments() {
+    public Set<? extends AttachmentEntity> getAttachments() {
         return attachments;
     }
 
-    public void setAttachments(Set<TransactionAttachmentEntity> attachments) {
+    public void setAttachments(Set<AttachmentEntity> attachments) {
         this.attachments = attachments;
     }
 }

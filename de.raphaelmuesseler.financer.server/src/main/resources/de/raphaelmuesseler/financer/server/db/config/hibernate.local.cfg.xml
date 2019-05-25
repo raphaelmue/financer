@@ -28,7 +28,7 @@
         <mapping class="de.raphaelmuesseler.financer.shared.model.db.FixedTransactionEntity"/>
         <mapping class="de.raphaelmuesseler.financer.shared.model.db.FixedTransactionAmountEntity"/>
         <mapping class="de.raphaelmuesseler.financer.shared.model.db.TokenEntity"/>
-        <mapping class="de.raphaelmuesseler.financer.shared.model.db.TransactionAttachmentEntity"/>
+        <mapping class="de.raphaelmuesseler.financer.shared.model.db.AttachmentEntity"/>
         <mapping class="de.raphaelmuesseler.financer.shared.model.db.VariableTransactionEntity"/>
         <mapping class="de.raphaelmuesseler.financer.shared.model.db.UserEntity"/>
         <mapping class="de.raphaelmuesseler.financer.shared.model.db.SettingsEntity"/>

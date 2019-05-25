@@ -3,7 +3,7 @@ package de.raphaelmuesseler.financer.shared.model.transactions;
 import de.raphaelmuesseler.financer.shared.model.categories.Category;
 import de.raphaelmuesseler.financer.shared.model.categories.CategoryTree;
 import de.raphaelmuesseler.financer.shared.model.categories.CategoryTreeImpl;
-import de.raphaelmuesseler.financer.shared.model.db.TransactionAttachmentEntity;
+import de.raphaelmuesseler.financer.shared.model.db.AttachmentEntity;
 import de.raphaelmuesseler.financer.shared.model.db.VariableTransactionEntity;
 import de.raphaelmuesseler.financer.util.date.DateUtil;
 
@@ -30,8 +30,8 @@ public class VariableTransaction extends VariableTransactionEntity implements Tr
                 databaseVariableTransaction.getShop());
         if (databaseVariableTransaction.getAttachments() != null) {
             this.setAttachments(new HashSet<>());
-            for (TransactionAttachmentEntity transactionAttachmentEntity : databaseVariableTransaction.getAttachments()) {
-                this.getAttachments().add(new Attachment(transactionAttachmentEntity));
+            for (AttachmentEntity attachmentEntity : databaseVariableTransaction.getAttachments()) {
+                this.getAttachments().add(new Attachment(attachmentEntity));
             }
         }
     }
