@@ -1,8 +1,8 @@
 package de.raphaelmuesseler.financer.shared.model.user;
 
-import de.raphaelmuesseler.financer.shared.model.db.SettingsDAO;
-import de.raphaelmuesseler.financer.shared.model.db.TokenDAO;
-import de.raphaelmuesseler.financer.shared.model.db.UserDAO;
+import de.raphaelmuesseler.financer.shared.model.db.SettingsEntity;
+import de.raphaelmuesseler.financer.shared.model.db.TokenEntity;
+import de.raphaelmuesseler.financer.shared.model.db.UserEntity;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -10,7 +10,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class User extends UserDAO {
+public class User extends UserEntity {
     private static final long serialVersionUID = 164741396778652317L;
 
     public enum Gender {
@@ -42,7 +42,7 @@ public class User extends UserDAO {
     private final Settings settings;
     private Token activeToken;
 
-    public User(UserDAO databaseUser) {
+    public User(UserEntity databaseUser) {
         this(databaseUser.getId(),
                 databaseUser.getEmail(),
                 databaseUser.getPassword(),
@@ -84,8 +84,8 @@ public class User extends UserDAO {
     }
 
     @Override
-    public UserDAO toDatabaseAccessObject() {
-        UserDAO databaseUser = new UserDAO();
+    public UserEntity toEntity() {
+        UserEntity databaseUser = new UserEntity();
         databaseUser.setId(this.getId());
         databaseUser.setEmail(this.getEmail());
         databaseUser.setPassword(this.getPassword());
@@ -105,7 +105,7 @@ public class User extends UserDAO {
 
     public UserSettings getSettings() {
         if (this.getDatabaseSettings() != null) {
-            for (SettingsDAO databaseSettings : super.getDatabaseSettings()) {
+            for (SettingsEntity databaseSettings : super.getDatabaseSettings()) {
                 this.settings.setValueByProperty(Settings.Property.getPropertyByName(databaseSettings.getProperty()), databaseSettings.getValue());
             }
         }
@@ -121,7 +121,7 @@ public class User extends UserDAO {
     }
 
     @Override
-    public Set<TokenDAO> getTokens() {
+    public Set<TokenEntity> getTokens() {
         if (super.getTokens() == null) {
             this.setTokens(new HashSet<>());
         }
@@ -130,8 +130,8 @@ public class User extends UserDAO {
 
     public List<Token> getTokenList() {
         List<Token> result = new ArrayList<>();
-        for (TokenDAO tokenDAO : this.getTokens()) {
-            result.add(new Token(tokenDAO));
+        for (TokenEntity tokenEntity : this.getTokens()) {
+            result.add(new Token(tokenEntity));
         }
         return result;
     }
@@ -141,7 +141,7 @@ public class User extends UserDAO {
     }
 
     @Override
-    public void setDatabaseSettings(Set<SettingsDAO> settings) {
+    public void setDatabaseSettings(Set<SettingsEntity> settings) {
         if (settings != null) {
             super.setDatabaseSettings(settings);
         }

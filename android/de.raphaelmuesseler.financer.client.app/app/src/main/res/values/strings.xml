@@ -3,26 +3,46 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="action_settings">Settings</string>
-    <string name="title_activity_login">Sign in</string>
-    <!-- Strings related to login -->
-    <string name="prompt_email">Email</string>
-    <string name="prompt_password">Password</string>
+    <string name="sign_in">Sign in</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
     <string name="action_sign_in">Sign in</string>
-    <string name="error_invalid_email">This email address is invalid</string>
-    <string name="error_invalid_password">This password is too short</string>
-    <string name="error_incorrect_password">This password is incorrect.</string>
-    <string name="error_field_required">This field is required.</string>
-    <string name="permission_rationale">"Contacts permissions are needed for providing email completions.     "</string>
+    <string name="error_invalid_credentials">Your credentials are invalid. </string>
     <string name="overview">Overview</string>
     <string name="transactions">Transactions</string>
     <string name="statistics">Statistics</string>
     <string name="settings">Settings</string>
     <string name="profile">Profile</string>
     <string name="logout">Logout</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="fixed_transactions">Fixed Transactions</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="enter_credentials">Please enter your Credentials</string>
+    <string name="error_field_required">Field is required.</string>
+    <string name="error_invalid_email">Invalid email address.</string>
+    <string name="add_transaction">Add Transaction</string>
+    <string name="product">Product</string>
+    <string name="purpose">Purpose</string>
+    <string name="shop">Shop</string>
+    <string name="value_date">Value Date</string>
+    <string name="category">Category</string>
+    <string name="amount">Amount</string>
+    <string name="submit">Submit</string>
+    <string name="loading">Loading ...</string>
+    <string name="refresh">Refresh</string>
+    <string name="fixed_expenses">Fixed Expenses</string>
+    <string name="variable_expenses">Variable Expenses</string>
+    <string name="fixed_revenue">Fixed Revenue</string>
+    <string name="variable_revenue">Variable Revenue</string>
+    <string name="something_went_wrong">Something went wrong ...</string>
+    <string name="register">Register</string>
+    <string name="name">Name</string>
+    <string name="surname">Surname</string>
+    <string name="repeat_password">Repeat Password</string>
+    <string name="passwords_do_not_match">Passwords do not match.</string>
+    <string name="birth_date">Birth date</string>
+    <string name="gender">Gender</string>
+    <string name="male">Male</string>
+    <string name="female">Female</string>
+    <string name="not_specified">Not specified</string>
+    <string name="email_already_in_use">Email is already in use.</string>
+    <string name="password_too_short">Password is too short (min 4 characters).</string>
 </resources>

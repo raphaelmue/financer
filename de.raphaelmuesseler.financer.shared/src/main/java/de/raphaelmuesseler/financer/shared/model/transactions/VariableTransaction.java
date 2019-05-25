@@ -3,8 +3,8 @@ package de.raphaelmuesseler.financer.shared.model.transactions;
 import de.raphaelmuesseler.financer.shared.model.categories.Category;
 import de.raphaelmuesseler.financer.shared.model.categories.CategoryTree;
 import de.raphaelmuesseler.financer.shared.model.categories.CategoryTreeImpl;
-import de.raphaelmuesseler.financer.shared.model.db.TransactionAttachmentDAO;
-import de.raphaelmuesseler.financer.shared.model.db.VariableTransactionDAO;
+import de.raphaelmuesseler.financer.shared.model.db.AttachmentEntity;
+import de.raphaelmuesseler.financer.shared.model.db.VariableTransactionEntity;
 import de.raphaelmuesseler.financer.util.date.DateUtil;
 
 import java.time.LocalDate;
@@ -12,15 +12,15 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-public class VariableTransaction extends VariableTransactionDAO implements Transaction {
+public class VariableTransaction extends VariableTransactionEntity implements Transaction {
     private CategoryTree categoryTree;
 
-    public VariableTransaction(VariableTransactionDAO databaseVariableTransaction) {
+    public VariableTransaction(VariableTransactionEntity databaseVariableTransaction) {
         this(databaseVariableTransaction,
                 new CategoryTreeImpl(new Category(databaseVariableTransaction.getCategory())));
     }
 
-    public VariableTransaction(VariableTransactionDAO databaseVariableTransaction, CategoryTree categoryTree) {
+    public VariableTransaction(VariableTransactionEntity databaseVariableTransaction, CategoryTree categoryTree) {
         this(databaseVariableTransaction.getId(),
                 databaseVariableTransaction.getAmount(),
                 databaseVariableTransaction.getValueDate(),
@@ -30,8 +30,8 @@ public class VariableTransaction extends VariableTransactionDAO implements Trans
                 databaseVariableTransaction.getShop());
         if (databaseVariableTransaction.getAttachments() != null) {
             this.setAttachments(new HashSet<>());
-            for (TransactionAttachmentDAO transactionAttachmentDAO : databaseVariableTransaction.getAttachments()) {
-                this.getAttachments().add(new Attachment(transactionAttachmentDAO));
+            for (AttachmentEntity attachmentEntity : databaseVariableTransaction.getAttachments()) {
+                this.getAttachments().add(new Attachment(attachmentEntity));
             }
         }
     }
@@ -79,8 +79,8 @@ public class VariableTransaction extends VariableTransactionDAO implements Trans
     }
 
     @Override
-    public VariableTransactionDAO toDatabaseAccessObject() {
-        VariableTransactionDAO databaseVariableTransaction = new VariableTransactionDAO();
+    public VariableTransactionEntity toEntity() {
+        VariableTransactionEntity databaseVariableTransaction = new VariableTransactionEntity();
         databaseVariableTransaction.setId(this.getId());
         databaseVariableTransaction.setValueDate(this.getValueDate());
         databaseVariableTransaction.setAmount(this.getAmount());

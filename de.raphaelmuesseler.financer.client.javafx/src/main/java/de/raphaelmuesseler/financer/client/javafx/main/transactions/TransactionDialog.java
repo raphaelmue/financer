@@ -16,6 +16,7 @@ import de.raphaelmuesseler.financer.shared.model.categories.BaseCategory;
 import de.raphaelmuesseler.financer.shared.model.categories.Category;
 import de.raphaelmuesseler.financer.shared.model.categories.CategoryTree;
 import de.raphaelmuesseler.financer.shared.model.transactions.Attachment;
+import de.raphaelmuesseler.financer.shared.model.transactions.ContentAttachment;
 import de.raphaelmuesseler.financer.shared.model.transactions.VariableTransaction;
 import de.raphaelmuesseler.financer.shared.model.user.User;
 import de.raphaelmuesseler.financer.util.collections.TreeUtil;
@@ -293,7 +294,7 @@ class TransactionDialog extends FinancerDialog<VariableTransaction> {
                 @Override
                 public void onSuccess(ConnectionResult result) {
                     try (FileOutputStream fileOutputStream = new FileOutputStream(file)) {
-                        fileOutputStream.write(((Attachment) result.getResult()).getByteContent());
+                        fileOutputStream.write(((ContentAttachment) result.getResult()).getContent());
                         Desktop.getDesktop().open(file);
                     } catch (IOException e) {
                         new FinancerExceptionDialog("Financer", e).showAndWait();

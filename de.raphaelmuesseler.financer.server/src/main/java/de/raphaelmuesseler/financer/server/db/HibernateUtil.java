@@ -1,5 +1,6 @@
 package de.raphaelmuesseler.financer.server.db;
 
+import de.raphaelmuesseler.financer.shared.model.db.*;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -52,19 +53,18 @@ public class HibernateUtil {
         try {
             // Create the SessionFactory from hibernate.cfg.xml
             Configuration configuration = new Configuration();
-            configuration.configure("/de/raphaelmuesseler/financer/server/db/config/hibernate" + (isHostLocal ? ".local" : "") + ".cfg.xml");
+            configuration.configure("/de/raphaelmuesseler/financer/server/db/config/hibernate" + (isHostLocal ? ".local" : "") + ".cfg.xml")
+                    .addAnnotatedClass(AttachmentEntity.class)
+                    .addAnnotatedClass(CategoryEntity.class)
+                    .addAnnotatedClass(ContentAttachmentEntity.class)
+                    .addAnnotatedClass(FixedTransactionAmountEntity.class)
+                    .addAnnotatedClass(FixedTransactionEntity.class)
+                    .addAnnotatedClass(SettingsEntity.class)
+                    .addAnnotatedClass(TokenEntity.class)
+                    .addAnnotatedClass(UserEntity.class)
+                    .addAnnotatedClass(VariableTransactionEntity.class);
             String url = configuration.getProperty("hibernate.connection.url");
             configuration.setProperty("hibernate.connection.url", url.replace(DatabaseName.DEV.getName(), databaseName.getName()));
-
-            // load mappings
-            configuration.addResource("/de/raphaelmuesseler/financer/shared/model/db/category.hbm.xml");
-            configuration.addResource("/de/raphaelmuesseler/financer/shared/model/db/fixed_transaction.hbm.xml");
-            configuration.addResource("/de/raphaelmuesseler/financer/shared/model/db/fixed_transaction_amount.hbm.xml");
-            configuration.addResource("/de/raphaelmuesseler/financer/shared/model/db/token.hbm.xml");
-            configuration.addResource("/de/raphaelmuesseler/financer/shared/model/db/transaction.hbm.xml");
-            configuration.addResource("/de/raphaelmuesseler/financer/shared/model/db/transaction_attachment.hbm.xml");
-            configuration.addResource("/de/raphaelmuesseler/financer/shared/model/db/user.hbm.xml");
-            configuration.addResource("/de/raphaelmuesseler/financer/shared/model/db/users_settings.hbm.xml");
 
             ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder().applySettings(configuration.getProperties()).build();
 

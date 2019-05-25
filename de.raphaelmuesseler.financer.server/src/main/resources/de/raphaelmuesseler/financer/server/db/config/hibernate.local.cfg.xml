@@ -23,5 +23,16 @@
             Hibernate 4 automatically figure out Dialect from Database Connection Metadata -->
         <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
 
+        <!-- mapping file, we can use Bean annotations too -->
+        <mapping class="de.raphaelmuesseler.financer.shared.model.db.CategoryEntity"/>
+        <mapping class="de.raphaelmuesseler.financer.shared.model.db.FixedTransactionEntity"/>
+        <mapping class="de.raphaelmuesseler.financer.shared.model.db.FixedTransactionAmountEntity"/>
+        <mapping class="de.raphaelmuesseler.financer.shared.model.db.TokenEntity"/>
+        <mapping class="de.raphaelmuesseler.financer.shared.model.db.AttachmentEntity"/>
+        <mapping class="de.raphaelmuesseler.financer.shared.model.db.VariableTransactionEntity"/>
+        <mapping class="de.raphaelmuesseler.financer.shared.model.db.UserEntity"/>
+        <mapping class="de.raphaelmuesseler.financer.shared.model.db.SettingsEntity"/>
+        <mapping class="de.raphaelmuesseler.financer.shared.model.db.FixedTransactionEntity"/>
+
     </session-factory>
 </hibernate-configuration>

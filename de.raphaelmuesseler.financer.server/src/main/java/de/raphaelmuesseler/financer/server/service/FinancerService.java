@@ -7,6 +7,7 @@ import de.raphaelmuesseler.financer.shared.model.categories.CategoryTree;
 import de.raphaelmuesseler.financer.shared.model.categories.CategoryTreeImpl;
 import de.raphaelmuesseler.financer.shared.model.db.*;
 import de.raphaelmuesseler.financer.shared.model.transactions.Attachment;
+import de.raphaelmuesseler.financer.shared.model.transactions.ContentAttachment;
 import de.raphaelmuesseler.financer.shared.model.transactions.FixedTransaction;
 import de.raphaelmuesseler.financer.shared.model.transactions.VariableTransaction;
 import de.raphaelmuesseler.financer.shared.model.user.Token;
@@ -18,7 +19,6 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 
 import javax.persistence.NoResultException;
-import java.io.File;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -57,13 +57,13 @@ public class FinancerService {
 
         Transaction transaction = session.beginTransaction();
         try {
-            TokenDAO databaseToken = session.createQuery("from TokenDAO where token = :token", TokenDAO.class)
+            TokenEntity databaseToken = session.createQuery("from TokenEntity where token = :token", TokenEntity.class)
                     .setParameter("token", parameters.get("token")).getSingleResult();
             if (databaseToken != null) {
                 Token token = new Token(databaseToken);
                 if (token.isValid()) {
                     logger.log(Level.INFO, "Token of user '" + token.getUser().getFullName() + "' is approved");
-                    user = new User(session.get(UserDAO.class, token.getUser().getId()));
+                    user = new User(session.get(UserEntity.class, token.getUser().getId()));
 
                     // needs to be called to avoid LazyInitializationException
                     user.setActiveToken(token);
@@ -93,11 +93,11 @@ public class FinancerService {
      */
     User generateToken(Session session, User user, String ipAddress, String system, boolean isMobile) {
         Transaction transaction = session.beginTransaction();
-        user = new User(session.get(UserDAO.class, user.getId()));
+        user = new User(session.get(UserEntity.class, user.getId()));
 
         try {
             boolean foundEntry = false;
-            for (TokenDAO token : user.getTokens()) {
+            for (TokenEntity token : user.getTokens()) {
                 if (token.getIpAddress().equals(ipAddress)) {
                     foundEntry = true;
                     token.setToken(this.tokenGenerator.nextString());
@@ -109,8 +109,8 @@ public class FinancerService {
 
             // insert if not found
             if (!foundEntry) {
-                TokenDAO databaseToken;
-                databaseToken = new TokenDAO();
+                TokenEntity databaseToken;
+                databaseToken = new TokenEntity();
                 databaseToken.setUser(user);
                 databaseToken.setToken(this.tokenGenerator.nextString());
                 databaseToken.setIpAddress(ipAddress);
@@ -144,7 +144,7 @@ public class FinancerService {
         Transaction transaction = session.beginTransaction();
 
         try {
-            user = new User(session.createQuery("from UserDAO where email = :email", UserDAO.class)
+            user = new User(session.createQuery("from UserEntity where email = :email", UserEntity.class)
                     .setParameter("email", parameters.get("email")).getSingleResult());
             String password = Hash.create((String) parameters.get("password"), user.getSalt());
             if (password.equals(user.getPassword())) {
@@ -178,7 +178,7 @@ public class FinancerService {
         User user = (User) parameters.get("user");
 
         Transaction transaction = session.beginTransaction();
-        user.setId((Integer) session.save(user.toDatabaseAccessObject()));
+        user.setId((Integer) session.save(user.toEntity()));
         transaction.commit();
 
         // creating new token and inserting it to database
@@ -199,7 +199,7 @@ public class FinancerService {
         User user = (User) parameters.get("user");
 
         Transaction transaction = session.beginTransaction();
-        session.merge(user.toDatabaseAccessObject());
+        session.merge(user.toEntity());
         transaction.commit();
 
         return new ConnectionResult<>(null);
@@ -215,7 +215,7 @@ public class FinancerService {
         logger.log(Level.INFO, "Deleting users token ...");
 
         Transaction transaction = session.beginTransaction();
-        TokenDAO token = session.load(TokenDAO.class, (int) parameters.get("tokenId"));
+        TokenEntity token = session.load(TokenEntity.class, (int) parameters.get("tokenId"));
         session.delete(token);
         transaction.commit();
 
@@ -226,20 +226,25 @@ public class FinancerService {
      * Updates the settings of a user
      *
      * @param parameters [User user]
-     * @return void
+     * @return User object
      */
-    public ConnectionResult<Void> updateUsersSettings(Logger logger, Session session, Map<String, Object> parameters) {
+    public ConnectionResult<User> updateUsersSettings(Logger logger, Session session, Map<String, Object> parameters) {
         logger.log(Level.INFO, "Updating users settings ...");
         User user = (User) parameters.get("user");
 
         Transaction transaction = session.beginTransaction();
-        for (SettingsDAO databaseSettings : user.getDatabaseSettings()) {
-            session.saveOrUpdate(databaseSettings);
+        for (SettingsEntity settingsEntity : user.getSettings().getProperties().values()) {
+            settingsEntity.setUser(user);
+            if (settingsEntity.getId() > 0) {
+                session.merge(settingsEntity.toEntity());
+            } else {
+                settingsEntity.setId((int) session.save(settingsEntity.toEntity()));
+            }
         }
 
         transaction.commit();
 
-        return new ConnectionResult<>(null);
+        return new ConnectionResult<>(user);
     }
 
     /**
@@ -253,13 +258,13 @@ public class FinancerService {
         BaseCategory baseCategory;
 
         Transaction transaction = session.beginTransaction();
-        User user = new User(session.get(UserDAO.class, (int) parameters.get("userId")));
-        List<CategoryDAO> categories = new ArrayList<>(user.getCategories());
+        User user = new User(session.get(UserEntity.class, (int) parameters.get("userId")));
+        List<CategoryEntity> categories = new ArrayList<>(user.getCategories());
         Collections.sort(categories);
 
         baseCategory = new BaseCategory();
 
-        for (CategoryDAO databaseCategory : categories) {
+        for (CategoryEntity databaseCategory : categories) {
             Category category = new Category(databaseCategory);
             if (databaseCategory.getParentId() == -1) {
                 CategoryTree categoryTree = new CategoryTreeImpl(category);
@@ -287,7 +292,7 @@ public class FinancerService {
         Category category = (Category) parameters.get("category");
 
         Transaction transaction = session.beginTransaction();
-        category.setId((int) session.save(category.toDatabaseAccessObject()));
+        category.setId((int) session.save(category.toEntity()));
         transaction.commit();
 
         return new ConnectionResult<>(category);
@@ -304,7 +309,7 @@ public class FinancerService {
         Category category = (Category) parameters.get("category");
 
         Transaction transaction = session.beginTransaction();
-        session.update(category.toDatabaseAccessObject());
+        session.update(category.toEntity());
         transaction.commit();
 
         return new ConnectionResult<>(null);
@@ -321,16 +326,16 @@ public class FinancerService {
         int categoryId = (int) parameters.get("categoryId");
 
         Transaction transaction = session.beginTransaction();
-        session.createQuery("delete from CategoryDAO where id = :categoryId")
+        session.createQuery("delete from CategoryEntity where id = :categoryId")
                 .setParameter("categoryId", categoryId).executeUpdate();
         transaction.commit();
 
         this.deleteCategoryChildren(session, categoryId);
 
         transaction = session.beginTransaction();
-        session.createQuery("delete from FixedTransactionDAO where category.id = :categoryId")
+        session.createQuery("delete from FixedTransactionEntity where category.id = :categoryId")
                 .setParameter("categoryId", categoryId);
-        session.createQuery("delete from VariableTransactionDAO where category.id = :categoryId")
+        session.createQuery("delete from VariableTransactionEntity where category.id = :categoryId")
                 .setParameter("categoryId", categoryId);
         transaction.commit();
 
@@ -343,14 +348,14 @@ public class FinancerService {
      * @param categoryId category id to delete children
      */
     private void deleteCategoryChildren(Session session, int categoryId) {
-        List<CategoryDAO> categories;
+        List<CategoryEntity> categories;
 
         Transaction transaction = session.beginTransaction();
-        categories = session.createQuery("from CategoryDAO where parentId = :parentId", CategoryDAO.class)
+        categories = session.createQuery("from CategoryEntity where parentId = :parentId", CategoryEntity.class)
                 .setParameter("parentId", categoryId).list();
         transaction.commit();
         if (categories.size() > 0) {
-            for (CategoryDAO databaseCategory : categories) {
+            for (CategoryEntity databaseCategory : categories) {
                 transaction = session.beginTransaction();
                 session.delete(databaseCategory);
                 transaction.commit();
@@ -374,12 +379,12 @@ public class FinancerService {
         baseCategory.traverse(treeObject -> {
             CategoryTree categoryTree = (CategoryTree) treeObject;
             if (!categoryTree.getValue().getCategoryClass().isFixed()) {
-                List<VariableTransactionDAO> databaseVariableTransactions = session
-                        .createQuery("from VariableTransactionDAO where category.id = :categoryId",
-                                VariableTransactionDAO.class)
+                List<VariableTransactionEntity> databaseVariableTransactions = session
+                        .createQuery("from VariableTransactionEntity where category.id = :categoryId",
+                                VariableTransactionEntity.class)
                         .setParameter("categoryId", treeObject.getValue().getId())
                         .list();
-                for (VariableTransactionDAO databaseVariableTransaction : databaseVariableTransactions) {
+                for (VariableTransactionEntity databaseVariableTransaction : databaseVariableTransactions) {
                     if (databaseVariableTransaction.getAttachments() != null) {
                         databaseVariableTransaction.getAttachments().size();
                     }
@@ -404,7 +409,7 @@ public class FinancerService {
 
         Transaction transaction = session.beginTransaction();
         this.adjustTransactionAmount(session, variableTransaction);
-        variableTransaction.setId((int) session.save(variableTransaction.toDatabaseAccessObject()));
+        variableTransaction.setId((int) session.save(variableTransaction.toEntity()));
         transaction.commit();
 
         return new ConnectionResult<>(variableTransaction);
@@ -422,7 +427,7 @@ public class FinancerService {
 
         Transaction transaction = session.beginTransaction();
         this.adjustTransactionAmount(session, variableTransaction);
-        session.update(variableTransaction.toDatabaseAccessObject());
+        session.update(variableTransaction.toEntity());
         transaction.commit();
 
 
@@ -439,7 +444,7 @@ public class FinancerService {
         logger.log(Level.INFO, "Adding transaction ...");
 
         Transaction transaction = session.beginTransaction();
-        session.createQuery("delete from VariableTransactionDAO where id = :variableTransactionId")
+        session.createQuery("delete from VariableTransactionEntity where id = :variableTransactionId")
                 .setParameter("variableTransactionId", parameters.get("variableTransactionId"))
                 .executeUpdate();
         transaction.commit();
@@ -450,24 +455,21 @@ public class FinancerService {
     /**
      * Uploads a transaction attachment to the database
      *
-     * @param parameters [File attachmentFile, VariableTransaction transaction, byte[] content]
-     * @return Attachment object
+     * @param parameters [VariableTransaction transaction, ContentAttachment attachment]
+     * @return ContentAttachment object
      */
-    public ConnectionResult<Attachment> uploadTransactionAttachment(Logger logger, Session session, Map<String, Object> parameters) throws SQLException {
+    public ConnectionResult<ContentAttachment> uploadTransactionAttachment(Logger logger, Session session, Map<String, Object> parameters) throws SQLException {
         logger.log(Level.INFO, "Uploading AttachmentWithContent ...");
-        Attachment result = new Attachment();
-        File attachmentFile = (File) parameters.get("attachmentFile");
+        ContentAttachment attachment = (ContentAttachment) parameters.get("attachment");
 
-        result.setTransaction((VariableTransaction) parameters.get("transaction"));
-        result.setName(attachmentFile.getName());
-        result.setUploadDate(LocalDate.now());
-        result.setContent((byte[]) parameters.get("content"));
+        attachment.setTransaction((VariableTransaction) parameters.get("transaction"));
+        attachment.setUploadDate(LocalDate.now());
 
         Transaction transaction = session.beginTransaction();
-        result.setId((int) session.save(result.toDatabaseAccessObject()));
+        attachment.setId((int) session.save(attachment.toEntity()));
         transaction.commit();
 
-        return new ConnectionResult<>(new Attachment(result));
+        return new ConnectionResult<>(attachment);
     }
 
     /**
@@ -476,14 +478,14 @@ public class FinancerService {
      * @param parameters [int attachmentId]
      * @return Attachment object or null, if none found
      */
-    public ConnectionResult<Attachment> getAttachment(Logger logger, Session session, Map<String, Object> parameters) throws SQLException {
+    public ConnectionResult<ContentAttachment> getAttachment(Logger logger, Session session, Map<String, Object> parameters) throws SQLException {
         logger.log(Level.INFO, "Fetching attachment ...");
 
-        Attachment attachment = null;
+        ContentAttachment attachment = null;
         Transaction transaction = session.beginTransaction();
-        TransactionAttachmentDAO databaseAttachment = session.get(TransactionAttachmentDAO.class, (int) parameters.get("attachmentId"));
-        if (databaseAttachment != null) {
-            attachment = new Attachment(databaseAttachment);
+        ContentAttachmentEntity attachmentEntity = session.get(ContentAttachmentEntity.class, (int) parameters.get("attachmentId"));
+        if (attachmentEntity != null) {
+            attachment = new ContentAttachment(attachmentEntity);
         }
         transaction.commit();
 
@@ -500,8 +502,9 @@ public class FinancerService {
         logger.log(Level.INFO, "Deleting attachment ...");
 
         Transaction transaction = session.beginTransaction();
-        session.createQuery("delete from TransactionAttachmentDAO where id = :attachmentId")
-                .setParameter("attachmentId", parameters.get("attachmentId"));
+        AttachmentEntity attachmentEntity = session.get(AttachmentEntity.class,
+                (int) parameters.get("attachmentId"));
+        session.delete(attachmentEntity);
         transaction.commit();
 
         return new ConnectionResult<>(null);
@@ -513,7 +516,7 @@ public class FinancerService {
      * @param parameters [int userId, BaseCategory baseCategory]
      * @return BaseCategory object with fixed transactions
      */
-    public ConnectionResult<BaseCategory> getFixedTransactions(Logger logger, Session session, Map<String, Object> parameters) {
+    public ConnectionResult<BaseCategory> getFixedTransactions(Logger logger, final Session session, Map<String, Object> parameters) {
         logger.log(Level.INFO, "Fetching fixed transactions ...");
         BaseCategory baseCategory;
         baseCategory = (BaseCategory) parameters.get("baseCategory");
@@ -522,13 +525,14 @@ public class FinancerService {
         baseCategory.traverse(treeObject -> {
             CategoryTree categoryTree = (CategoryTree) treeObject;
             if (categoryTree.getValue().getCategoryClass().isFixed()) {
-                List<FixedTransactionDAO> databaseFixedTransactions = session
-                        .createQuery("from FixedTransactionDAO where category.id = :categoryId",
-                                FixedTransactionDAO.class)
+                List<FixedTransactionEntity> databaseFixedTransactions = session
+                        .createQuery("from FixedTransactionEntity where category.id = :categoryId",
+                                FixedTransactionEntity.class)
                         .setParameter("categoryId", treeObject.getValue().getId())
                         .list();
-                for (FixedTransactionDAO databaseFixedTransaction : databaseFixedTransactions) {
-                    categoryTree.getTransactions().add(new FixedTransaction(databaseFixedTransaction, categoryTree));
+                for (FixedTransactionEntity fixedTransactionEntity : databaseFixedTransactions) {
+                    fixedTransactionEntity.getTransactionAmounts().size();
+                    categoryTree.getTransactions().add(new FixedTransaction(fixedTransactionEntity, categoryTree));
                 }
             }
         });
@@ -549,8 +553,8 @@ public class FinancerService {
         FixedTransaction fixedTransaction = (FixedTransaction) parameters.get("fixedTransaction");
 
         Transaction transaction = session.beginTransaction();
-        FixedTransactionDAO oldFixedTransaction = session.createQuery("from FixedTransactionDAO where category.id = :categoryId " +
-                "and endDate = null ", FixedTransactionDAO.class)
+        FixedTransactionEntity oldFixedTransaction = session.createQuery("from FixedTransactionEntity where category.id = :categoryId " +
+                "and endDate = null ", FixedTransactionEntity.class)
                 .setParameter("categoryId", fixedTransaction.getCategoryTree().getValue().getId())
                 .uniqueResult();
         if (oldFixedTransaction != null) {
@@ -560,7 +564,7 @@ public class FinancerService {
         transaction.commit();
         transaction = session.beginTransaction();
         this.adjustTransactionAmount(session, fixedTransaction);
-        fixedTransaction.setId((int) session.save(fixedTransaction.toDatabaseAccessObject()));
+        fixedTransaction.setId((int) session.save(fixedTransaction.toEntity()));
         transaction.commit();
 
         return new ConnectionResult<>(fixedTransaction);
@@ -579,7 +583,7 @@ public class FinancerService {
 
         Transaction transaction = session.beginTransaction();
         this.adjustTransactionAmount(session, fixedTransaction);
-        session.update(fixedTransaction.toDatabaseAccessObject());
+        session.update(fixedTransaction.toEntity());
         transaction.commit();
 
         return new ConnectionResult<>(null);
@@ -595,7 +599,7 @@ public class FinancerService {
         logger.log(Level.INFO, "Deleting fixed transaction ...");
 
         Transaction transaction = session.beginTransaction();
-        session.createQuery("delete from FixedTransactionDAO where id = :fixedTransactionId")
+        session.createQuery("delete from FixedTransactionEntity where id = :fixedTransactionId")
                 .setParameter("fixedTransactionId", parameters.get("fixedTransactionId"))
                 .executeUpdate();
         transaction.commit();
@@ -604,7 +608,7 @@ public class FinancerService {
     }
 
     private void adjustTransactionAmount(Session session, de.raphaelmuesseler.financer.shared.model.transactions.Transaction transaction) {
-        User user = new User(session.get(UserDAO.class, transaction.getCategoryTree().getValue().getUser().getId()));
+        User user = new User(session.get(UserEntity.class, transaction.getCategoryTree().getValue().getUser().getId()));
         if (user.getSettings().isChangeAmountSignAutomatically()) {
             transaction.adjustAmountSign();
         }
