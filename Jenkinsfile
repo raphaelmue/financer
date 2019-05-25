@@ -36,7 +36,7 @@ pipeline {
                 branch 'deployment'
             }
             steps {
-                sh ' bash ./service/start-financer-server.sh'
+                sh 'JENKINS_NODE_COOKIE=dontKillMe nohup bash ./service/start-financer-server.sh'
             }
         }
     }
