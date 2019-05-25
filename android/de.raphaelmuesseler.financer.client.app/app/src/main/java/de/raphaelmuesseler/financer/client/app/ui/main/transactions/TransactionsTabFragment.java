@@ -46,7 +46,7 @@ import static android.app.Activity.RESULT_OK;
 
 public class TransactionsTabFragment extends Fragment {
 
-    static final int ADD_TRANSACTION_REQUEST = 1;  // The request code
+    private static final int ADD_TRANSACTION_REQUEST = 1;  // The request code
 
     private final Formatter formatter = new AndroidFormatter(LocalStorageImpl.getInstance(), getContext());
     private List<VariableTransaction> transactions = new ArrayList<>();
