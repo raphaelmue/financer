@@ -1,15 +1,29 @@
 package de.raphaelmuesseler.financer.shared.model.db;
 
+import javax.persistence.*;
 import java.time.LocalDate;
 
-public class FixedTransactionAmountDAO implements DataAccessObject {
+@Entity
+@Table(name = "fixed_transactions_amounts")
+public class FixedTransactionAmountEntity implements DataEntity {
     private final static long serialVersionUID = -3901962625430867317L;
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private int id;
-    private FixedTransactionDAO fixedTransaction;
+
+    @ManyToOne()
+    @JoinColumn(name = "fixed_transaction_id", nullable = false)
+    private FixedTransactionEntity fixedTransaction;
+
+    @Column(name = "value_date")
     private LocalDate valueDate;
+
+    @Column(name = "amount")
     private double amount;
 
+    @Override
     public int getId() {
         return id;
     }
@@ -18,11 +32,11 @@ public class FixedTransactionAmountDAO implements DataAccessObject {
         this.id = id;
     }
 
-    public FixedTransactionDAO getFixedTransaction() {
+    protected FixedTransactionEntity getFixedTransaction() {
         return fixedTransaction;
     }
 
-    public void setFixedTransaction(FixedTransactionDAO fixedTransaction) {
+    public void setFixedTransaction(FixedTransactionEntity fixedTransaction) {
         this.fixedTransaction = fixedTransaction;
     }
 

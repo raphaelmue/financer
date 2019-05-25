@@ -1,18 +1,37 @@
 package de.raphaelmuesseler.financer.shared.model.db;
 
+import javax.persistence.*;
 import java.time.LocalDate;
 
-public class TokenDAO implements DataAccessObject, Cloneable {
+@Entity
+@Table(name = "users_tokens")
+public class TokenEntity implements DataEntity, Cloneable {
     private final static long serialVersionUID = 8834445127500149942L;
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private int id;
-    private UserDAO user;
+
+    @ManyToOne()
+    private UserEntity user;
+
+    @Column(name = "token")
     private String token;
+
+    @Column(name = "expire_date")
     private LocalDate expireDate;
+
+    @Column(name = "ip_address")
     private String ipAddress;
+
+    @Column(name = "system")
     private String system;
+
+    @Column(name = "is_mobile")
     private boolean isMobile;
 
+    @Override
     public int getId() {
         return id;
     }
@@ -21,11 +40,11 @@ public class TokenDAO implements DataAccessObject, Cloneable {
         this.id = id;
     }
 
-    public UserDAO getUser() {
+    public UserEntity getUser() {
         return user;
     }
 
-    public void setUser(UserDAO user) {
+    public void setUser(UserEntity user) {
         this.user = user;
     }
 
@@ -70,9 +89,9 @@ public class TokenDAO implements DataAccessObject, Cloneable {
     }
 
     @Override
-    public TokenDAO clone() {
+    public TokenEntity clone() {
         try {
-            return (TokenDAO) super.clone();
+            return (TokenEntity) super.clone();
         } catch (CloneNotSupportedException e) {
             throw new ClassCastException(e.getMessage());
         }

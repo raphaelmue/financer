@@ -1,19 +1,40 @@
 package de.raphaelmuesseler.financer.shared.model.db;
 
+import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.Set;
 
-public class VariableTransactionDAO implements DataAccessObject {
+@Entity
+@Table(name = "transactions")
+public class VariableTransactionEntity implements DataEntity {
     private final static long serialVersionUID = -118658876074097774L;
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private int id;
-    private CategoryDAO category;
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "cat_id", nullable = false)
+    private CategoryEntity category;
+
+    @Column(name = "value_date")
     private LocalDate valueDate;
+
+    @Column(name = "amount")
     private double amount;
+
+    @Column(name = "product")
     private String product;
+
+    @Column(name = "purpose")
     private String purpose;
+
+    @Column(name = "shop")
     private String shop;
-    private Set<? extends TransactionAttachmentDAO> attachments;
+
+    @OneToMany(mappedBy = "transaction")
+    private Set<TransactionAttachmentEntity> attachments;
 
     @Override
     public int getId() {
@@ -24,11 +45,11 @@ public class VariableTransactionDAO implements DataAccessObject {
         this.id = id;
     }
 
-    public CategoryDAO getCategory() {
+    public CategoryEntity getCategory() {
         return category;
     }
 
-    public void setCategory(CategoryDAO category) {
+    public void setCategory(CategoryEntity category) {
         this.category = category;
     }
 
@@ -72,11 +93,11 @@ public class VariableTransactionDAO implements DataAccessObject {
         this.shop = shop;
     }
 
-    public Set<? extends TransactionAttachmentDAO> getAttachments() {
+    public Set<? extends TransactionAttachmentEntity> getAttachments() {
         return attachments;
     }
 
-    public void setAttachments(Set<? extends TransactionAttachmentDAO> attachments) {
+    public void setAttachments(Set<TransactionAttachmentEntity> attachments) {
         this.attachments = attachments;
     }
 }

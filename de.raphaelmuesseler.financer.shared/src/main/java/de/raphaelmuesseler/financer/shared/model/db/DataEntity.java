@@ -2,7 +2,7 @@ package de.raphaelmuesseler.financer.shared.model.db;
 
 import java.io.Serializable;
 
-public interface DataAccessObject extends Serializable {
+public interface DataEntity extends Serializable {
 
     int getId();
 
@@ -11,7 +11,7 @@ public interface DataAccessObject extends Serializable {
      *
      * @return DAO
      */
-    default DataAccessObject toDatabaseAccessObject() {
+    default DataEntity toEntity() {
         throw new IllegalArgumentException("No implementation defined");
     }
 }

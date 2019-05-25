@@ -1,14 +1,14 @@
 package de.raphaelmuesseler.financer.shared.model.user;
 
-import de.raphaelmuesseler.financer.shared.model.db.TokenDAO;
+import de.raphaelmuesseler.financer.shared.model.db.TokenEntity;
 
 import java.io.Serializable;
 import java.time.LocalDate;
 
-public class Token extends TokenDAO implements Serializable {
+public class Token extends TokenEntity implements Serializable {
     private static final long serialVersionUID = -769078637730799395L;
 
-    public Token(TokenDAO databaseToken) {
+    public Token(TokenEntity databaseToken) {
         this(databaseToken.getId(),
                 databaseToken.getToken(),
                 databaseToken.getIpAddress(),

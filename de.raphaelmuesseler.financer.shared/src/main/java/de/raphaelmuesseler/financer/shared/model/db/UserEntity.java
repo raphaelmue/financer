@@ -1,23 +1,50 @@
 package de.raphaelmuesseler.financer.shared.model.db;
 
+import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.Set;
 
-public class UserDAO implements DataAccessObject {
+@Entity
+@Table(name = "users")
+public class UserEntity implements DataEntity {
     private static final long serialVersionUID = 8551108621522985674L;
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private int id;
-    private String email;
-    private String password;
-    private String salt;
-    private String name;
-    private String surname;
-    private LocalDate birthDate;
-    private String genderName;
-    private Set<CategoryDAO> categories;
-    private Set<SettingsDAO> databaseSettings;
-    private Set<TokenDAO> tokens;
 
+    @Column(name = "email")
+    private String email;
+
+    @Column(name = "password")
+    private String password;
+
+    @Column(name = "salt")
+    private String salt;
+
+    @Column(name = "name")
+    private String name;
+
+    @Column(name = "surname")
+    private String surname;
+
+    @Column(name = "birthdate")
+    private LocalDate birthDate;
+
+    @Column(name = "gender")
+    private String genderName;
+
+    @OneToMany(mappedBy = "user")
+    private Set<CategoryEntity> categories;
+
+    @OneToMany(mappedBy = "user")
+    private Set<SettingsEntity> databaseSettings;
+
+    @OneToMany(mappedBy = "user")
+    private Set<TokenEntity> tokens;
+
+    @Override
     public int getId() {
         return id;
     }
@@ -82,27 +109,27 @@ public class UserDAO implements DataAccessObject {
         this.genderName = gender;
     }
 
-    public Set<CategoryDAO> getCategories() {
+    public Set<CategoryEntity> getCategories() {
         return categories;
     }
 
-    public void setCategories(Set<CategoryDAO> categories) {
+    public void setCategories(Set<CategoryEntity> categories) {
         this.categories = categories;
     }
 
-    public Set<SettingsDAO> getDatabaseSettings() {
+    public Set<SettingsEntity> getDatabaseSettings() {
         return databaseSettings;
     }
 
-    public void setDatabaseSettings(Set<SettingsDAO> settings) {
+    public void setDatabaseSettings(Set<SettingsEntity> settings) {
         this.databaseSettings = settings;
     }
 
-    public Set<TokenDAO> getTokens() {
+    public Set<TokenEntity> getTokens() {
         return tokens;
     }
 
-    public void setTokens(Set<TokenDAO> tokens) {
+    public void setTokens(Set<TokenEntity> tokens) {
         this.tokens = tokens;
     }
 }

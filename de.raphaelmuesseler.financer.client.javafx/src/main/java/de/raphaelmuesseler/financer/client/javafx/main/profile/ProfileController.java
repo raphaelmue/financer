@@ -164,7 +164,7 @@ public class ProfileController implements Initializable {
                         new Category(0, categoryName, currentItem.getValue().getValue().getId(), currentItem.getValue().getValue().getCategoryClass()));
 
                 Map<String, Object> parameters = new HashMap<>();
-                categoryTree.getValue().setUser(user.toDatabaseAccessObject());
+                categoryTree.getValue().setUser(user.toEntity());
                 parameters.put("category", categoryTree.getValue());
 
                 FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "addCategory", parameters, new JavaFXAsyncConnectionCall() {

@@ -1,18 +1,18 @@
 package de.raphaelmuesseler.financer.shared.model.transactions;
 
-import de.raphaelmuesseler.financer.shared.model.db.FixedTransactionAmountDAO;
+import de.raphaelmuesseler.financer.shared.model.db.FixedTransactionAmountEntity;
 import de.raphaelmuesseler.financer.util.date.DateUtil;
 
 import java.io.Serializable;
 import java.time.LocalDate;
 
-public class TransactionAmount extends FixedTransactionAmountDAO implements Serializable, AmountProvider {
+public class TransactionAmount extends FixedTransactionAmountEntity implements Serializable, AmountProvider {
     private static final long serialVersionUID = -6751558797407170754L;
 
-    public TransactionAmount(FixedTransactionAmountDAO fixedTransactionAmountDAO) {
-        this(fixedTransactionAmountDAO.getId(),
-                fixedTransactionAmountDAO.getAmount(),
-                fixedTransactionAmountDAO.getValueDate());
+    public TransactionAmount(FixedTransactionAmountEntity fixedTransactionAmountEntity) {
+        this(fixedTransactionAmountEntity.getId(),
+                fixedTransactionAmountEntity.getAmount(),
+                fixedTransactionAmountEntity.getValueDate());
     }
 
     public TransactionAmount(int id, double amount, LocalDate valueDate) {
@@ -37,13 +37,13 @@ public class TransactionAmount extends FixedTransactionAmountDAO implements Seri
     }
 
     @Override
-    public FixedTransactionAmountDAO toDatabaseAccessObject() {
-        FixedTransactionAmountDAO fixedTransactionAmountDAO = new FixedTransactionAmountDAO();
-        fixedTransactionAmountDAO.setId(this.getId());
-        fixedTransactionAmountDAO.setFixedTransaction(this.getFixedTransaction());
-        fixedTransactionAmountDAO.setAmount(this.getAmount());
-        fixedTransactionAmountDAO.setValueDate(this.getValueDate());
-        return fixedTransactionAmountDAO;
+    public FixedTransactionAmountEntity toEntity() {
+        FixedTransactionAmountEntity fixedTransactionAmountEntity = new FixedTransactionAmountEntity();
+        fixedTransactionAmountEntity.setId(this.getId());
+        fixedTransactionAmountEntity.setFixedTransaction(this.getFixedTransaction());
+        fixedTransactionAmountEntity.setAmount(this.getAmount());
+        fixedTransactionAmountEntity.setValueDate(this.getValueDate());
+        return fixedTransactionAmountEntity;
     }
 
     @Override

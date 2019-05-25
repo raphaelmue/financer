@@ -1,22 +1,48 @@
 package de.raphaelmuesseler.financer.shared.model.db;
 
+import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.Set;
 
-public class FixedTransactionDAO implements DataAccessObject {
+@Entity
+@Table(name = "fixed_transactions")
+public class FixedTransactionEntity implements DataEntity {
     private final static long serialVersionUID = 8295185142317654835L;
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private int id;
-    private CategoryDAO category;
-    private double amount;
-    private LocalDate startDate;
-    private LocalDate endDate;
-    private String product;
-    private String purpose;
-    private boolean isVariable;
-    private int day;
-    private Set<? extends FixedTransactionAmountDAO> transactionAmounts;
 
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "cat_id", nullable = false)
+    private CategoryEntity category;
+
+    @Column(name = "amount")
+    private double amount;
+
+    @Column(name = "start_date")
+    private LocalDate startDate;
+
+    @Column(name = "end_date")
+    private LocalDate endDate;
+
+    @Column(name = "product")
+    private String product;
+
+    @Column(name = "purpose")
+    private String purpose;
+
+    @Column(name = "is_variable")
+    private boolean isVariable;
+
+    @Column(name = "day")
+    private int day;
+
+    @OneToMany(mappedBy = "fixedTransaction")
+    private Set<FixedTransactionAmountEntity> transactionAmounts;
+
+    @Override
     public int getId() {
         return id;
     }
@@ -25,11 +51,11 @@ public class FixedTransactionDAO implements DataAccessObject {
         this.id = id;
     }
 
-    public CategoryDAO getCategory() {
+    public CategoryEntity getCategory() {
         return category;
     }
 
-    public void setCategory(CategoryDAO category) {
+    public void setCategory(CategoryEntity category) {
         this.category = category;
     }
 
@@ -89,11 +115,11 @@ public class FixedTransactionDAO implements DataAccessObject {
         this.day = day;
     }
 
-    public Set<? extends FixedTransactionAmountDAO> getTransactionAmounts() {
+    public Set<? extends FixedTransactionAmountEntity> getTransactionAmounts() {
         return transactionAmounts;
     }
 
-    public void setTransactionAmounts(Set<? extends FixedTransactionAmountDAO> transactionAmounts) {
+    public void setTransactionAmounts(Set<FixedTransactionAmountEntity> transactionAmounts) {
         this.transactionAmounts = transactionAmounts;
     }
 }

@@ -1,13 +1,13 @@
 package de.raphaelmuesseler.financer.shared.model.transactions;
 
 import de.raphaelmuesseler.financer.shared.model.categories.CategoryTree;
-import de.raphaelmuesseler.financer.shared.model.db.DataAccessObject;
-import de.raphaelmuesseler.financer.shared.model.db.TransactionAttachmentDAO;
+import de.raphaelmuesseler.financer.shared.model.db.DataEntity;
+import de.raphaelmuesseler.financer.shared.model.db.TransactionAttachmentEntity;
 
 import java.io.Serializable;
 import java.util.Set;
 
-public interface Transaction extends Serializable, AmountProvider, DataAccessObject {
+public interface Transaction extends Serializable, AmountProvider, DataEntity {
 
     /**
      * Returns the amount of this transaction.
@@ -70,7 +70,7 @@ public interface Transaction extends Serializable, AmountProvider, DataAccessObj
      *
      * @return set of attachments
      */
-    Set<? extends TransactionAttachmentDAO> getAttachments();
+    Set<? extends TransactionAttachmentEntity> getAttachments();
 
     default void adjustAmountSign() {
         if ((this.getCategoryTree().getValue().getCategoryClass().isRevenue() && this.getAmount() < 0) ||

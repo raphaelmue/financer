@@ -293,7 +293,7 @@ class TransactionDialog extends FinancerDialog<VariableTransaction> {
                 @Override
                 public void onSuccess(ConnectionResult result) {
                     try (FileOutputStream fileOutputStream = new FileOutputStream(file)) {
-                        fileOutputStream.write(((Attachment) result.getResult()).getByteContent());
+                        fileOutputStream.write(((Attachment) result.getResult()).getContent());
                         Desktop.getDesktop().open(file);
                     } catch (IOException e) {
                         new FinancerExceptionDialog("Financer", e).showAndWait();

@@ -34,13 +34,13 @@ public class ServiceTest {
     private final FinancerService service = FinancerService.getInstance();
     private final Logger logger = Logger.getLogger("Test");
 
-    private static UserDAO user;
-    private static TokenDAO token;
-    private static SettingsDAO settings;
-    private static CategoryDAO fixedCategory, variableCategory;
-    private static VariableTransactionDAO variableTransaction;
-    private static FixedTransactionDAO fixedTransaction;
-    
+    private static UserEntity user;
+    private static TokenEntity token;
+    private static SettingsEntity settings;
+    private static CategoryEntity fixedCategory, variableCategory;
+    private static VariableTransactionEntity variableTransaction;
+    private static FixedTransactionEntity fixedTransaction;
+
     private static Session session;
 
     @BeforeAll
@@ -48,7 +48,8 @@ public class ServiceTest {
         InputStream inputStream = ServiceTest.class.getResourceAsStream("/testing.properties");
         Properties properties = new Properties();
         properties.load(inputStream);
-        HibernateUtil.setIsHostLocal(Boolean.valueOf(properties.getProperty("project.testing.localhost")));
+//        HibernateUtil.setIsHostLocal(Boolean.valueOf(properties.getProperty("project.testing.localhost")));
+        HibernateUtil.setIsHostLocal(true);
         HibernateUtil.setDatabaseName(DatabaseName.TEST);
     }
 
@@ -61,7 +62,7 @@ public class ServiceTest {
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = session.beginTransaction();
 
-        user = new UserDAO();
+        user = new UserEntity();
         user.setEmail("max@mustermann.com");
         user.setPassword("6406b2e97a97f64910aca76370ee35a92087806da1aa878e8a9ae0f4dc3949af");
         user.setSalt("I2HoOYJmqKfGboyJAdCEQwulUkxmhVH5");
@@ -70,7 +71,11 @@ public class ServiceTest {
         user.setBirthDate(LocalDate.of(1989, 5, 28));
         user.setGenderName(User.Gender.MALE.getName());
 
-        token = new TokenDAO();
+        user.setId((int) session.save(user));
+        transaction.commit();
+        transaction = session.beginTransaction();
+
+        token = new TokenEntity();
         token.setToken("UrsVQcFmbje2lijl51mKMdAYCQciWoEmp07oLBrPoJwnEeREOBGVVsTAJeN3KiEY");
         token.setIpAddress("127.0.0.1");
         token.setSystem("Windows 10");
@@ -78,47 +83,50 @@ public class ServiceTest {
         token.setIsMobile(false);
         token.setUser(user);
 
-        user.setTokens(new HashSet<>());
-        user.getTokens().add(token);
-
-        settings = new SettingsDAO();
+        settings = new SettingsEntity();
         settings.setProperty(Settings.Property.CURRENCY.getName());
         settings.setValue("EUR");
         settings.setUser(user);
+
+        session.save(token);
+        session.save(settings);
+
+        transaction.commit();
+
         user.setDatabaseSettings(new HashSet<>());
         user.getDatabaseSettings().add(settings);
 
-        session.save(user);
+        user.setTokens(new HashSet<>());
+        user.getTokens().add(token);
 
-        transaction.commit();
         transaction = session.beginTransaction();
 
-        Set<CategoryDAO> categories = new HashSet<>();
-        fixedCategory = new CategoryDAO();
+        Set<CategoryEntity> categories = new HashSet<>();
+        fixedCategory = new CategoryEntity();
         fixedCategory.setUser(user);
         fixedCategory.setCategoryRoot(0);
         fixedCategory.setName("First Layer");
         fixedCategory.setParentId(-1);
         categories.add(fixedCategory);
-        session.save(fixedCategory);
+        fixedCategory.setId((int) session.save(fixedCategory));
 
-        variableCategory = new CategoryDAO();
+        variableCategory = new CategoryEntity();
         variableCategory.setUser(user);
         variableCategory.setCategoryRoot(1);
         variableCategory.setName("First Layer");
         variableCategory.setParentId(-1);
         categories.add(variableCategory);
-        session.save(variableCategory);
+        variableCategory.setId((int) session.save(variableCategory));
 
-        CategoryDAO databaseCategory2 = new CategoryDAO();
+        CategoryEntity databaseCategory2 = new CategoryEntity();
         databaseCategory2.setUser(user);
         databaseCategory2.setCategoryRoot(0);
         databaseCategory2.setName("Second Layer");
         databaseCategory2.setParentId(fixedCategory.getId());
-        session.save(databaseCategory2);
+        databaseCategory2.setId((int) session.save(databaseCategory2));
         categories.add(databaseCategory2);
 
-        CategoryDAO databaseCategory3 = new CategoryDAO();
+        CategoryEntity databaseCategory3 = new CategoryEntity();
         databaseCategory3.setUser(user);
         databaseCategory3.setCategoryRoot(0);
         databaseCategory3.setName("Third Layer (1)");
@@ -126,7 +134,7 @@ public class ServiceTest {
         session.save(databaseCategory3);
         categories.add(databaseCategory3);
 
-        CategoryDAO databaseCategory4 = new CategoryDAO();
+        CategoryEntity databaseCategory4 = new CategoryEntity();
         databaseCategory4.setUser(user);
         databaseCategory4.setCategoryRoot(0);
         databaseCategory4.setName("Third Layer (2)");
@@ -139,27 +147,28 @@ public class ServiceTest {
         transaction.commit();
         transaction = session.beginTransaction();
 
-        variableTransaction = new VariableTransactionDAO();
+        variableTransaction = new VariableTransactionEntity();
         variableTransaction.setAmount(50.0);
         variableTransaction.setCategory(variableCategory);
         variableTransaction.setProduct("Test Product");
         variableTransaction.setValueDate(LocalDate.now());
         session.save(variableTransaction);
 
-        fixedTransaction = new FixedTransactionDAO();
+        fixedTransaction = new FixedTransactionEntity();
         fixedTransaction.setAmount(50.0);
         fixedTransaction.setCategory(fixedCategory);
         fixedTransaction.setProduct("Fixed Transaction Product");
         fixedTransaction.setStartDate(LocalDate.now().minusMonths(5));
         fixedTransaction.setIsVariable(false);
         fixedTransaction.setDay(0);
+        fixedTransaction.setTransactionAmounts(new HashSet<>());
         session.save(fixedTransaction);
 
         transaction.commit();
         session.close();
         ServiceTest.session = HibernateUtil.getSessionFactory().openSession();
     }
-    
+
     @AfterEach
     public void tearDown() {
         session.close();
@@ -173,7 +182,7 @@ public class ServiceTest {
         User userToAssert = service.checkUsersToken(logger, session, parameters);
         Assertions.assertNotNull(userToAssert);
         Assertions.assertEquals(1, userToAssert.getTokens().size());
-        for (TokenDAO _token : userToAssert.getTokens()) {
+        for (TokenEntity _token : userToAssert.getTokens()) {
             Assertions.assertEquals(tokenString, _token.getToken());
         }
 
@@ -192,7 +201,7 @@ public class ServiceTest {
         _user = service.generateToken(session, _user, token.getIpAddress(), token.getSystem(), token.getIsMobile());
         Assertions.assertEquals(1, _user.getTokens().size());
         Assertions.assertNotNull(_user.getActiveToken());
-        for (TokenDAO _token : _user.getTokens()) {
+        for (TokenEntity _token : _user.getTokens()) {
             Assertions.assertNotEquals(tokenString, _token.getToken());
         }
 
@@ -208,7 +217,7 @@ public class ServiceTest {
         service.deleteToken(logger, session, parameters);
 
         Transaction transaction = session.beginTransaction();
-        User userToAssert = new User(session.get(UserDAO.class, user.getId()));
+        User userToAssert = new User(session.get(UserEntity.class, user.getId()));
 
         Assertions.assertEquals(0, userToAssert.getTokens().size());
 
@@ -258,7 +267,7 @@ public class ServiceTest {
         Assertions.assertEquals(1, result.getResult().getTokens().size());
 
         Transaction transaction = session.beginTransaction();
-        User userToAssert = new User(session.get(UserDAO.class, result.getResult().getId()));
+        User userToAssert = new User(session.get(UserEntity.class, result.getResult().getId()));
 
         Assertions.assertEquals(_user.getEmail(), userToAssert.getEmail());
         Assertions.assertEquals(_user.getFullName(), userToAssert.getFullName());
@@ -291,7 +300,7 @@ public class ServiceTest {
     @Test
     public void testGetUsersSettings() {
         Transaction transaction = session.beginTransaction();
-        User userToAssert = new User(session.get(UserDAO.class, user.getId()));
+        User userToAssert = new User(session.get(UserEntity.class, user.getId()));
 
         Assertions.assertEquals(settings.getValue(), userToAssert.getSettings().getValueByProperty(Settings.Property.CURRENCY));
         transaction.commit();
@@ -299,7 +308,7 @@ public class ServiceTest {
 
     @Test
     public void testUpdateUsersSettings() {
-        SettingsDAO databaseSettings = new SettingsDAO();
+        SettingsEntity databaseSettings = new SettingsEntity();
         databaseSettings.setUser(user);
         databaseSettings.setProperty(Settings.Property.SHOW_CURRENCY_SIGN.getName());
         databaseSettings.setValue(Boolean.toString(true));
@@ -437,7 +446,7 @@ public class ServiceTest {
         service.updateTransaction(logger, session, parameters);
 
         Transaction transaction = session.beginTransaction();
-        VariableTransaction variableTransactionToAssert = new VariableTransaction(session.get(VariableTransactionDAO.class,
+        VariableTransaction variableTransactionToAssert = new VariableTransaction(session.get(VariableTransactionEntity.class,
                 variableTransaction.getId()));
         Assertions.assertEquals(newProduct, variableTransactionToAssert.getProduct());
         transaction.commit();
@@ -487,7 +496,7 @@ public class ServiceTest {
         ConnectionResult<Attachment> result = service.getAttachment(logger, session, parameters);
         Assertions.assertNotNull(result.getResult());
         Assertions.assertNull(result.getException());
-        Assertions.assertTrue(result.getResult().getByteContent() != null && result.getResult().getByteContent().length == 1024);
+        Assertions.assertTrue(result.getResult().getContent() != null && result.getResult().getContent().length == 1024);
     }
 
     @Test
@@ -540,7 +549,7 @@ public class ServiceTest {
                 1,
                 transactionAmounts);
 
-        transactionAmount.setFixedTransaction(_fixedTransaction.toDatabaseAccessObject());
+        transactionAmount.setFixedTransaction(_fixedTransaction.toEntity());
 
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("fixedTransaction", _fixedTransaction);
@@ -550,7 +559,7 @@ public class ServiceTest {
         Assertions.assertTrue(result.getResult().getId() > 0);
 
         Transaction transaction = session.beginTransaction();
-        Assertions.assertEquals(LocalDate.now(), session.get(FixedTransactionDAO.class, fixedTransaction.getId()).getEndDate());
+        Assertions.assertEquals(LocalDate.now(), session.get(FixedTransactionEntity.class, fixedTransaction.getId()).getEndDate());
         transaction.commit();
     }
 
@@ -562,9 +571,9 @@ public class ServiceTest {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("fixedTransaction", new FixedTransaction(fixedTransaction));
         service.updateFixedTransaction(logger, session, parameters);
-        
+
         Transaction transaction = session.beginTransaction();
-        Assertions.assertEquals(amount, session.get(FixedTransactionDAO.class, fixedTransaction.getId()).getAmount());
+        Assertions.assertEquals(amount, session.get(FixedTransactionEntity.class, fixedTransaction.getId()).getAmount());
         transaction.commit();
     }
 

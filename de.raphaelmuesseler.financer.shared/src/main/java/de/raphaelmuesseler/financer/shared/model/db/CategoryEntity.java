@@ -1,16 +1,31 @@
 package de.raphaelmuesseler.financer.shared.model.db;
 
+import javax.persistence.*;
 import java.util.Comparator;
 
-public class CategoryDAO implements Comparable<CategoryDAO>, DataAccessObject {
+@Entity
+@Table(name = "users_categories")
+public class CategoryEntity implements Comparable<CategoryEntity>, DataEntity {
     private final static long serialVersionUID = 5491420625985358596L;
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private int id;
-    private UserDAO user;
+
+    @ManyToOne(targetEntity = UserEntity.class)
+    private UserEntity user;
+
+    @Column(name = "cat_id")
     private int categoryRoot;
+
+    @Column(name = "parent_id")
     private int parentId;
+
+    @Column(name = "name")
     private String name;
 
+    @Override
     public int getId() {
         return id;
     }
@@ -19,11 +34,11 @@ public class CategoryDAO implements Comparable<CategoryDAO>, DataAccessObject {
         this.id = id;
     }
 
-    public UserDAO getUser() {
+    public UserEntity getUser() {
         return user;
     }
 
-    public void setUser(UserDAO user) {
+    public void setUser(UserEntity user) {
         this.user = user;
     }
 
@@ -52,10 +67,10 @@ public class CategoryDAO implements Comparable<CategoryDAO>, DataAccessObject {
     }
 
     @Override
-    public int compareTo(CategoryDAO o) {
-        return Comparator.comparing(CategoryDAO::getCategoryRoot)
-                .thenComparing(CategoryDAO::getParentId)
-                .thenComparing(CategoryDAO::getId)
+    public int compareTo(CategoryEntity o) {
+        return Comparator.comparing(CategoryEntity::getCategoryRoot)
+                .thenComparing(CategoryEntity::getParentId)
+                .thenComparing(CategoryEntity::getId)
                 .compare(this, o);
     }
 }

@@ -1,10 +1,8 @@
 package de.raphaelmuesseler.financer.shared.model.categories;
 
-import de.raphaelmuesseler.financer.shared.model.db.CategoryDAO;
+import de.raphaelmuesseler.financer.shared.model.db.CategoryEntity;
 
-import java.io.Serializable;
-
-public class Category extends CategoryDAO {
+public class Category extends CategoryEntity {
     private static final long serialVersionUID = -5776418454648469541L;
     private String prefix = null;
     private BaseCategory.CategoryClass categoryClass;
@@ -14,7 +12,7 @@ public class Category extends CategoryDAO {
         this.categoryClass = BaseCategory.CategoryClass.getCategoryClassByIndex(this.getCategoryRoot());
     }
 
-    public Category(CategoryDAO databaseCategory) {
+    public Category(CategoryEntity databaseCategory) {
         this(databaseCategory.getId(),
                 databaseCategory.getName(),
                 databaseCategory.getParentId(),
@@ -59,8 +57,8 @@ public class Category extends CategoryDAO {
     }
 
     @Override
-    public CategoryDAO toDatabaseAccessObject() {
-        CategoryDAO databaseCategory = new CategoryDAO();
+    public CategoryEntity toEntity() {
+        CategoryEntity databaseCategory = new CategoryEntity();
         databaseCategory.setId(this.getId());
         databaseCategory.setUser(this.getUser());
         databaseCategory.setCategoryRoot(this.getCategoryClass().getIndex());

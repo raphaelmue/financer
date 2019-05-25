@@ -3,9 +3,9 @@ package de.raphaelmuesseler.financer.shared.model.transactions;
 import de.raphaelmuesseler.financer.shared.model.categories.Category;
 import de.raphaelmuesseler.financer.shared.model.categories.CategoryTree;
 import de.raphaelmuesseler.financer.shared.model.categories.CategoryTreeImpl;
-import de.raphaelmuesseler.financer.shared.model.db.FixedTransactionAmountDAO;
-import de.raphaelmuesseler.financer.shared.model.db.FixedTransactionDAO;
-import de.raphaelmuesseler.financer.shared.model.db.TransactionAttachmentDAO;
+import de.raphaelmuesseler.financer.shared.model.db.FixedTransactionAmountEntity;
+import de.raphaelmuesseler.financer.shared.model.db.FixedTransactionEntity;
+import de.raphaelmuesseler.financer.shared.model.db.TransactionAttachmentEntity;
 import de.raphaelmuesseler.financer.util.date.DateUtil;
 
 import java.time.LocalDate;
@@ -13,29 +13,29 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-public class FixedTransaction extends FixedTransactionDAO implements Transaction {
+public class FixedTransaction extends FixedTransactionEntity implements Transaction {
     private CategoryTree categoryTree;
     private final Set<Attachment> attachments;
     private final Set<TransactionAmount> transactionAmounts;
 
-    public FixedTransaction(FixedTransactionDAO fixedTransactionDAO) {
-        this(fixedTransactionDAO, new CategoryTreeImpl(new Category(fixedTransactionDAO.getCategory())));
+    public FixedTransaction(FixedTransactionEntity fixedTransactionEntity) {
+        this(fixedTransactionEntity, new CategoryTreeImpl(new Category(fixedTransactionEntity.getCategory())));
     }
 
-    public FixedTransaction(FixedTransactionDAO fixedTransactionDAO, CategoryTree categoryTree) {
-        this(fixedTransactionDAO.getId(),
-                fixedTransactionDAO.getAmount(),
+    public FixedTransaction(FixedTransactionEntity fixedTransactionEntity, CategoryTree categoryTree) {
+        this(fixedTransactionEntity.getId(),
+                fixedTransactionEntity.getAmount(),
                 categoryTree,
-                fixedTransactionDAO.getStartDate(),
-                fixedTransactionDAO.getEndDate(),
-                fixedTransactionDAO.getProduct(),
-                fixedTransactionDAO.getPurpose(),
-                fixedTransactionDAO.getIsVariable(),
-                fixedTransactionDAO.getDay(),
+                fixedTransactionEntity.getStartDate(),
+                fixedTransactionEntity.getEndDate(),
+                fixedTransactionEntity.getProduct(),
+                fixedTransactionEntity.getPurpose(),
+                fixedTransactionEntity.getIsVariable(),
+                fixedTransactionEntity.getDay(),
                 new HashSet<>());
-        if (fixedTransactionDAO.getTransactionAmounts() != null) {
-            for (FixedTransactionAmountDAO transactionAmountDAO : fixedTransactionDAO.getTransactionAmounts()) {
-                this.transactionAmounts.add(new TransactionAmount(transactionAmountDAO));
+        if (fixedTransactionEntity.getTransactionAmounts() != null) {
+            for (FixedTransactionAmountEntity fixedTransactionAmountEntity : fixedTransactionEntity.getTransactionAmounts()) {
+                this.transactionAmounts.add(new TransactionAmount(fixedTransactionAmountEntity));
             }
         }
     }
@@ -136,26 +136,26 @@ public class FixedTransaction extends FixedTransactionDAO implements Transaction
 
 
     @Override
-    public FixedTransactionDAO toDatabaseAccessObject() {
-        FixedTransactionDAO fixedTransactionDAO = new FixedTransactionDAO();
-        fixedTransactionDAO.setId(this.getId());
-        fixedTransactionDAO.setAmount(this.getAmount());
-        fixedTransactionDAO.setCategory(this.getCategoryTree().getValue());
-        fixedTransactionDAO.setStartDate(this.getStartDate());
-        fixedTransactionDAO.setEndDate(this.getEndDate());
-        fixedTransactionDAO.setProduct(this.getProduct());
-        fixedTransactionDAO.setPurpose(this.getPurpose());
-        fixedTransactionDAO.setIsVariable(this.getIsVariable());
-        fixedTransactionDAO.setDay(this.getDay());
-        Set<FixedTransactionAmountDAO> transactionAmountDAOS = new HashSet<>();
+    public FixedTransactionEntity toEntity() {
+        FixedTransactionEntity fixedTransactionEntity = new FixedTransactionEntity();
+        fixedTransactionEntity.setId(this.getId());
+        fixedTransactionEntity.setAmount(this.getAmount());
+        fixedTransactionEntity.setCategory(this.getCategoryTree().getValue());
+        fixedTransactionEntity.setStartDate(this.getStartDate());
+        fixedTransactionEntity.setEndDate(this.getEndDate());
+        fixedTransactionEntity.setProduct(this.getProduct());
+        fixedTransactionEntity.setPurpose(this.getPurpose());
+        fixedTransactionEntity.setIsVariable(this.getIsVariable());
+        fixedTransactionEntity.setDay(this.getDay());
+        Set<FixedTransactionAmountEntity> transactionAmountDAOS = new HashSet<>();
         if (this.getTransactionAmounts() != null) {
             for (TransactionAmount transactionAmount : this.getTransactionAmounts()) {
-                transactionAmount.setFixedTransaction(fixedTransactionDAO);
-                transactionAmountDAOS.add(transactionAmount.toDatabaseAccessObject());
+                transactionAmount.setFixedTransaction(fixedTransactionEntity);
+                transactionAmountDAOS.add(transactionAmount.toEntity());
             }
         }
-        fixedTransactionDAO.setTransactionAmounts(transactionAmountDAOS);
-        return fixedTransactionDAO;
+        fixedTransactionEntity.setTransactionAmounts(transactionAmountDAOS);
+        return fixedTransactionEntity;
     }
 
     @Override
@@ -164,7 +164,7 @@ public class FixedTransaction extends FixedTransactionDAO implements Transaction
     }
 
     @Override
-    public Set<? extends TransactionAttachmentDAO> getAttachments() {
+    public Set<? extends TransactionAttachmentEntity> getAttachments() {
         return this.attachments;
     }
 
