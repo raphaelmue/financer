@@ -13,7 +13,6 @@ import de.raphaelmuesseler.financer.shared.model.transactions.TransactionAmount;
 import de.raphaelmuesseler.financer.shared.model.transactions.VariableTransaction;
 import de.raphaelmuesseler.financer.shared.model.user.Settings;
 import de.raphaelmuesseler.financer.shared.model.user.User;
-import de.raphaelmuesseler.financer.shared.model.user.UserSettings;
 import de.raphaelmuesseler.financer.util.Hash;
 import de.raphaelmuesseler.financer.util.RandomString;
 import org.hibernate.Session;
@@ -320,8 +319,8 @@ public class ServiceTest {
         service.updateUsersSettings(logger, session, parameters);
 
         Assertions.assertEquals(2, user.getDatabaseSettings().size());
-        Assertions.assertEquals(Currency.getInstance("USD"), ((UserSettings) new User(user).getSettings()).getCurrency());
-        Assertions.assertTrue(((UserSettings) new User(user).getSettings()).isShowCurrencySign());
+        Assertions.assertEquals(Currency.getInstance("USD"), new User(user).getSettings().getCurrency());
+        Assertions.assertTrue(new User(user).getSettings().isShowCurrencySign());
     }
 
     @Test

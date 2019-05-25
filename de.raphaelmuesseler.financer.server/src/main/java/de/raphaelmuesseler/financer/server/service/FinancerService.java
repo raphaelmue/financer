@@ -19,7 +19,6 @@ import org.hibernate.Transaction;
 
 import javax.persistence.NoResultException;
 import java.io.File;
-import java.io.Serializable;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -227,20 +226,25 @@ public class FinancerService {
      * Updates the settings of a user
      *
      * @param parameters [User user]
-     * @return void
+     * @return User object
      */
-    public ConnectionResult<Void> updateUsersSettings(Logger logger, Session session, Map<String, Object> parameters) {
+    public ConnectionResult<User> updateUsersSettings(Logger logger, Session session, Map<String, Object> parameters) {
         logger.log(Level.INFO, "Updating users settings ...");
         User user = (User) parameters.get("user");
 
         Transaction transaction = session.beginTransaction();
-        for (SettingsEntity databaseSettings : user.getDatabaseSettings()) {
-            session.saveOrUpdate(databaseSettings);
+        for (SettingsEntity settingsEntity : user.getSettings().getProperties().values()) {
+            settingsEntity.setUser(user);
+            if (settingsEntity.getId() > 0) {
+                session.merge(settingsEntity.toEntity());
+            } else {
+                settingsEntity.setId((int) session.save(settingsEntity.toEntity()));
+            }
         }
 
         transaction.commit();
 
-        return new ConnectionResult<>(null);
+        return new ConnectionResult<>(user);
     }
 
     /**

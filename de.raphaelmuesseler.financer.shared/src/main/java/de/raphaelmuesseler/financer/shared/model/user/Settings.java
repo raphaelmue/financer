@@ -1,18 +1,22 @@
 package de.raphaelmuesseler.financer.shared.model.user;
 
+import java.util.*;
+
 public interface Settings {
     enum Property {
-        LANGUAGE("language", "en"),
-        CURRENCY("currency", "USD"),
-        SHOW_CURRENCY_SIGN("showCurrencySign", "false"),
-        CHANGE_AMOUNT_SIGN_AUTOMATICALLY("changeAmountSignAutomatically", "false"),
-        MAX_NUMBER_OF_MONTHS_DISPLAYED("maxNumberOfMonthsDisplayed", "6"),
-        THEME("theme", "");
+        LANGUAGE("language", true, "en"),
+        CURRENCY("currency", true, "USD"),
+        SHOW_CURRENCY_SIGN("showCurrencySign", true, "false"),
+        CHANGE_AMOUNT_SIGN_AUTOMATICALLY("changeAmountSignAutomatically", true, "false"),
+        MAX_NUMBER_OF_MONTHS_DISPLAYED("maxNumberOfMonthsDisplayed", false, "6"),
+        THEME("theme", true, "");
 
         private final String name, defaultValue;
+        private final boolean isUserProperty;
 
-        Property(String name, String defaultValue) {
+        Property(String name, boolean isUserProperty, String defaultValue) {
             this.name = name;
+            this.isUserProperty = isUserProperty;
             this.defaultValue = defaultValue;
         }
 
@@ -24,6 +28,10 @@ public interface Settings {
             return defaultValue;
         }
 
+        public boolean isUserProperty() {
+            return isUserProperty;
+        }
+
         public static Property getPropertyByName(String name) {
             for (Property property : values()) {
                 if (property.getName().equals(name)) {
@@ -31,6 +39,12 @@ public interface Settings {
                 }
             }
             throw new IllegalArgumentException("No such property with name: " + name);
+        }
+
+        public static Set<Property> getUserProperties() {
+            Set<Property> result = new HashSet<>(Arrays.asList(values()));
+            result.removeIf(Property::isUserProperty);
+            return result;
         }
 
         @Override

@@ -3,7 +3,8 @@ package de.raphaelmuesseler.financer.shared.model.db;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "users_settings")
+@Table(name = "users_settings",
+        uniqueConstraints={@UniqueConstraint(columnNames={"user_id","property"})})
 public class SettingsEntity implements DataEntity {
     private final static long serialVersionUID = 3324663296387062431L;
 

@@ -1,5 +1,8 @@
 package de.raphaelmuesseler.financer.shared.model.db;
 
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.Set;
@@ -38,7 +41,7 @@ public class UserEntity implements DataEntity {
     @OneToMany(mappedBy = "user")
     private Set<CategoryEntity> categories;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private Set<SettingsEntity> databaseSettings;
 
     @OneToMany(mappedBy = "user")

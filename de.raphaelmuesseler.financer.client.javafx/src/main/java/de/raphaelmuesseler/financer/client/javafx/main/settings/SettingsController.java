@@ -115,6 +115,8 @@ public class SettingsController implements Initializable {
         FinancerExecutor.getExecutor().execute(new ServerRequestHandler(user, "updateUsersSettings", parameters, new JavaFXAsyncConnectionCall() {
             @Override
             public void onSuccess(ConnectionResult result) {
+                localStorage.writeObject("user", result.getResult());
+                user = (User) result.getResult();
             }
 
             @Override

@@ -8,11 +8,11 @@ import java.util.Map;
 
 public class UserSettings implements Serializable, Settings {
     private static final long serialVersionUID = 2201611667506790486L;
-    private final Map<String, String> properties = new HashMap<>();
+    private final Map<String, SettingsEntry> properties = new HashMap<>();
 
     @Override
     public String getValueByProperty(Property property) {
-        return this.properties.getOrDefault(property.getName(), property.getDefaultValue());
+        return this.properties.getOrDefault(property.getName(), new SettingsEntry(0, null, property)).getValue();
     }
 
     public Locale getLanguage() {
@@ -37,11 +37,16 @@ public class UserSettings implements Serializable, Settings {
 
     @Override
     public void setValueByProperty(Property property, String value) {
-        this.properties.put(property.getName(), value);
+        SettingsEntry settingsEntry = this.properties.get(property.getName());
+        if (settingsEntry == null) {
+            this.properties.put(property.getName(), new SettingsEntry(0, null, property, value));
+        } else {
+            settingsEntry.setValue(value);
+        }
     }
 
     public void setLanguage(Locale locale) {
-        this.properties.put(Property.LANGUAGE.getName(), locale.toLanguageTag());
+        this.setValueByProperty(Property.LANGUAGE, locale.toLanguageTag());
     }
 
     public void setCurrency(Currency currency) {
@@ -59,5 +64,9 @@ public class UserSettings implements Serializable, Settings {
 
     public void setChangeAmountSignAutomatically(boolean changeAmountSignAutomatically) {
         this.setValueByProperty(Property.CHANGE_AMOUNT_SIGN_AUTOMATICALLY, Boolean.toString(changeAmountSignAutomatically));
+    }
+
+    public Map<String, SettingsEntry> getProperties() {
+        return properties;
     }
 }
