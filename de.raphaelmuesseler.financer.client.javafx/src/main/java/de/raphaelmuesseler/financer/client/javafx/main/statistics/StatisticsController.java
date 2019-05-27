@@ -86,6 +86,7 @@ public class StatisticsController implements Initializable {
                 -> this.loadProgressChartData(progressChartDefaultCategoryComboBox.getValue(), progressFromDatePicker.getValue(), newValue));
 
         this.initializeCategoryComboBox(this.progressChartDefaultCategoryComboBox);
+        this.progressChartDefaultCategoryComboBox.getSelectionModel().select(0);
 
         this.addCategoryBtn.setOnAction(event -> {
             addCategoryBtn.setDisable(true);
