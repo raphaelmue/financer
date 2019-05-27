@@ -40,6 +40,11 @@
     -fx-padding: 10 10 20 0;
 }
 
+.scroll-pane {
+    -fx-background-color: transparent;
+    -fx-label-padding: 0 0 10px 0;
+}
+
 .tab-container .headers-region {
     -fx-background-color: #ffffff;
 }
