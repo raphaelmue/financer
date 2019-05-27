@@ -9,6 +9,7 @@ import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
 import de.raphaelmuesseler.financer.client.javafx.login.LoginApplication;
 import de.raphaelmuesseler.financer.client.local.Application;
 import de.raphaelmuesseler.financer.shared.model.user.User;
+import javafx.animation.Transition;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -46,6 +47,7 @@ public class FinancerController implements Initializable, Application {
     public JFXHamburger hamburgerBtn;
     public Label contentLabel;
     public Label offlineLabel;
+    public VBox navigationBox;
 
     private static Application INSTANCE;
 
@@ -96,7 +98,8 @@ public class FinancerController implements Initializable, Application {
         this.logoutBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.SIGN_OUT));
 
         HamburgerSlideCloseTransition burgerTask = new HamburgerSlideCloseTransition(this.hamburgerBtn);
-        burgerTask.setRate(-1);
+        burgerTask.setRate(1);
+        this.hamburgerBtn.setAnimation(burgerTask);
         this.hamburgerBtn.addEventHandler(MouseEvent.MOUSE_PRESSED, (e) -> {
             burgerTask.setRate(burgerTask.getRate() * -1);
             burgerTask.play();
@@ -225,6 +228,8 @@ public class FinancerController implements Initializable, Application {
         }
     }
 
-    public void onToggleNavigationBar(MouseEvent mouseEvent) {
+    public void onToggleNavigationBar() {
+        navigationBox.setManaged(!navigationBox.isManaged());
+        navigationBox.setVisible(!navigationBox.isVisible());
     }
 }

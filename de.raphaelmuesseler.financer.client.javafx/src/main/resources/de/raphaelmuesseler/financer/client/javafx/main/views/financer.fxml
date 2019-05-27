@@ -42,7 +42,7 @@
             <BorderPane fx:id="header" styleClass="header">
                 <left>
                     <HBox>
-                        <JFXHamburger fx:id="hamburgerBtn" onMouseClicked="#onToggleNavigationBar" alignment="CENTER_LEFT"/>
+                        <JFXHamburger fx:id="hamburgerBtn" onMouseClicked="#onToggleNavigationBar"  alignment="CENTER_LEFT"/>
                         <Label fx:id="financerLabel" text="F I N A N C E R" alignment="CENTER"/>
                     </HBox>
                 </left>

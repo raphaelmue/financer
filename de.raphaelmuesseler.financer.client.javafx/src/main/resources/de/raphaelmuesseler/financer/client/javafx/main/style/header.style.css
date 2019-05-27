@@ -15,7 +15,7 @@
 
 #hamburgerBtn StackPane {
     -fx-background-color: #ffffff;
-    -fx-pref-width: 18px;
+    -fx-pref-width: 20px;
     -fx-pref-height: 2px;
     -fx-background-radius: 2px;
 }
