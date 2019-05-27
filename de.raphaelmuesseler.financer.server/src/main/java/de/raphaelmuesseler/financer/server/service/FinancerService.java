@@ -6,10 +6,7 @@ import de.raphaelmuesseler.financer.shared.model.categories.Category;
 import de.raphaelmuesseler.financer.shared.model.categories.CategoryTree;
 import de.raphaelmuesseler.financer.shared.model.categories.CategoryTreeImpl;
 import de.raphaelmuesseler.financer.shared.model.db.*;
-import de.raphaelmuesseler.financer.shared.model.transactions.Attachment;
-import de.raphaelmuesseler.financer.shared.model.transactions.ContentAttachment;
-import de.raphaelmuesseler.financer.shared.model.transactions.FixedTransaction;
-import de.raphaelmuesseler.financer.shared.model.transactions.VariableTransaction;
+import de.raphaelmuesseler.financer.shared.model.transactions.*;
 import de.raphaelmuesseler.financer.shared.model.user.Token;
 import de.raphaelmuesseler.financer.shared.model.user.User;
 import de.raphaelmuesseler.financer.util.Hash;
@@ -612,5 +609,23 @@ public class FinancerService {
         if (user.getSettings().isChangeAmountSignAutomatically()) {
             transaction.adjustAmountSign();
         }
+    }
+
+    /**
+     * Adds a new transaction amount.
+     *
+     * @param parameters [TransactionAmount transactionAmount]
+     * @return TransactionAmount object
+     */
+    public ConnectionResult<TransactionAmount> addTransactionAmount(Logger logger, Session session, Map<String, Object> parameters) {
+        logger.log(Level.INFO, "Adding new transaction amount ...");
+
+        TransactionAmount transactionAmount = (TransactionAmount) parameters.get("transactionAmount");
+
+        Transaction transaction = session.beginTransaction();
+        transactionAmount.setId((int) session.save(transactionAmount.toEntity()));
+        transaction.commit();
+
+        return new ConnectionResult<>(transactionAmount);
     }
 }

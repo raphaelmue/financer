@@ -20,6 +20,7 @@
             <VBox styleClass="content-box" prefWidth="250" prefHeight="200"
                   GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS">
                 <Label text="%upcomingFixedTransactions" styleClass="content-heading"/>
+                <GridPane fx:id="upcomingFixedTransactionGridPane" maxWidth="Infinity" maxHeight="Infinity" vgap="8"/>
             </VBox>
             <VBox styleClass="content-box" prefWidth="250" prefHeight="200"
                   GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS">

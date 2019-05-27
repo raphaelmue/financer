@@ -598,4 +598,15 @@ public class ServiceTest {
         Assertions.assertEquals(0, result.getResult().getCategoryTreeByCategoryClass(BaseCategory.CategoryClass.FIXED_REVENUE)
                 .getChildren().get(0).getTransactions().size());
     }
+
+    @Test
+    public void testAddTransactionAmount() {
+        Map<String, Object> parameters = new HashMap<>();
+        TransactionAmount transactionAmount = new TransactionAmount(0, 5.5, LocalDate.now());
+        transactionAmount.setFixedTransaction(fixedTransaction);
+        parameters.put("transactionAmount", transactionAmount);
+
+        ConnectionResult<TransactionAmount> result = service.addTransactionAmount(logger, session, parameters);
+        Assertions.assertTrue(result.getResult().getId() > 0);
+    }
 }
