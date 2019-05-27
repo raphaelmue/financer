@@ -7,7 +7,6 @@
 .content-box {
     -fx-padding: 5 20;
     -fx-background-color: #ffffff;
-    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.2), 3, 0, 0, 2);
     -fx-border-radius: 2;
     -fx-background-radius: 2;
 }
@@ -27,7 +26,6 @@
 
 .tab-box {
     -fx-background-color: #ffffff;
-    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.2), 3, 0, 0, 2);
     -fx-border-radius: 2;
     -fx-background-radius: 2;
 }
