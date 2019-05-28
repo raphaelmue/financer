@@ -17,6 +17,7 @@ import de.raphaelmuesseler.financer.util.date.DateUtil;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.PieChart;
 import javafx.scene.chart.XYChart;
@@ -78,14 +79,25 @@ public class StatisticsController implements Initializable {
         this.loadFixedExpensesDistributionChart(this.variableExpensesFromDatePicker.getValue(), this.variableExpensesToDatePicker.getValue());
 
         this.progressFromDatePicker.setValue(LocalDate.now().minusMonths(6));
-        this.progressFromDatePicker.valueProperty().addListener((observable, oldValue, newValue)
-                -> this.loadProgressChartData(progressChartDefaultCategoryComboBox.getValue(), newValue, progressToDatePicker.getValue()));
+        this.progressFromDatePicker.valueProperty().addListener((observable, oldValue, newValue) -> {
+            this.progressLineChart.getData().clear();
+            for (Node node : categoriesContainer.getChildren()) {
+                //noinspection unchecked
+                this.loadProgressChartData(((ComboBox<CategoryTree>) ((HBox) node).getChildren().get(0)).getValue(), newValue, progressToDatePicker.getValue());
+            }
+        });
 
         this.progressToDatePicker.setValue(LocalDate.now());
-        this.progressToDatePicker.valueProperty().addListener((observableValue, oldValue, newValue)
-                -> this.loadProgressChartData(progressChartDefaultCategoryComboBox.getValue(), progressFromDatePicker.getValue(), newValue));
+        this.progressToDatePicker.valueProperty().addListener((observableValue, oldValue, newValue) -> {
+            this.progressLineChart.getData().clear();
+            for (Node node : categoriesContainer.getChildren()) {
+                //noinspection unchecked
+                this.loadProgressChartData(((ComboBox<CategoryTree>) ((HBox) node).getChildren().get(0)).getValue(), progressFromDatePicker.getValue(), newValue);
+            }
+        });
 
         this.initializeCategoryComboBox(this.progressChartDefaultCategoryComboBox);
+        this.progressChartDefaultCategoryComboBox.getSelectionModel().select(0);
 
         this.addCategoryBtn.setOnAction(event -> {
             addCategoryBtn.setDisable(true);
