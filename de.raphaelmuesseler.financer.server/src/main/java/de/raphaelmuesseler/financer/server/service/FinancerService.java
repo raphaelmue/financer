@@ -458,7 +458,7 @@ public class FinancerService {
      * @param parameters [VariableTransaction transaction, ContentAttachment attachment]
      * @return ContentAttachment object
      */
-    public ConnectionResult<ContentAttachment> uploadTransactionAttachment(Logger logger, Session session, Map<String, Object> parameters) throws SQLException {
+    public ConnectionResult<Attachment> uploadTransactionAttachment(Logger logger, Session session, Map<String, Object> parameters) {
         logger.log(Level.INFO, "Uploading AttachmentWithContent ...");
         ContentAttachment attachment = (ContentAttachment) parameters.get("attachment");
 
@@ -469,7 +469,10 @@ public class FinancerService {
         attachment.setId((int) session.save(attachment.toEntity()));
         transaction.commit();
 
-        return new ConnectionResult<>(attachment);
+        return new ConnectionResult<>(new Attachment(attachment.getId(),
+                (VariableTransaction) parameters.get("transaction"),
+                attachment.getName(),
+                attachment.getUploadDate()));
     }
 
     /**
@@ -478,7 +481,7 @@ public class FinancerService {
      * @param parameters [int attachmentId]
      * @return Attachment object or null, if none found
      */
-    public ConnectionResult<ContentAttachment> getAttachment(Logger logger, Session session, Map<String, Object> parameters) throws SQLException {
+    public ConnectionResult<ContentAttachment> getAttachment(Logger logger, Session session, Map<String, Object> parameters) {
         logger.log(Level.INFO, "Fetching attachment ...");
 
         ContentAttachment attachment = null;
