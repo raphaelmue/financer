@@ -8,7 +8,7 @@
       xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" styleClass="content">
     <ScrollPane fitToWidth="true" hbarPolicy="NEVER">
         <JFXMasonryPane>
-            <VBox styleClass="content-box" prefWidth="1000" prefHeight="500">
+            <VBox styleClass="content-box" prefWidth="1000" prefHeight="550">
                 <Label text="%progress" styleClass="content-heading"/>
                 <BorderPane>
                     <left>
@@ -28,7 +28,7 @@
                         </VBox>
                     </right>
                 </BorderPane>
-                <LineChart fx:id="progressLineChart">
+                <LineChart fx:id="progressLineChart" prefHeight="500">
                     <xAxis>
                         <CategoryAxis side="BOTTOM" label="%valueDate"/>
                     </xAxis>
