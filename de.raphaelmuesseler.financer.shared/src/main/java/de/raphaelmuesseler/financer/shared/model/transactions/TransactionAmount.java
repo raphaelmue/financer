@@ -33,7 +33,7 @@ public class TransactionAmount extends FixedTransactionAmountEntity implements S
 
     @Override
     public double getAmount(LocalDate startDate, LocalDate endDate) {
-        return (startDate.compareTo(this.getValueDate()) <= 0 && endDate.compareTo(this.getValueDate()) >= 0 ? this.getAmount() : 0);
+        return (startDate.compareTo(this.getValueDate().withDayOfMonth(1)) <= 0 && endDate.compareTo(this.getValueDate()) >= 0 ? this.getAmount() : 0);
     }
 
     @Override
