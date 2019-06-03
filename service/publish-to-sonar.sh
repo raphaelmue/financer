@@ -16,8 +16,8 @@ if [[ ${BRANCH_NAME} == PR-* ]] ; then
     mvn sonar:sonar -P sonar -Dsonar.projectKey=financer -Dsonar.github.pullRequest=${PR_NUMBER}
 else
     if [[ ${BRANCH_NAME} == "master" ]]; then
-        mvn sonar:sonar -P sonar -Dsonar.projectKey=financer -Dsonar.branch.name=${BRANCH_NAME}
+        mvn sonar:sonar -P sonar -Dsonar.projectKey=financer -Dsonar.branch.name=${BRANCH_NAME} -Dsonar.verbose=true
     else
-        mvn sonar:sonar -P sonar -Dsonar.projectKey=financer -Dsonar.branch.name=${BRANCH_NAME} -Dsonar.branch.target=master
+        mvn sonar:sonar -P sonar -Dsonar.projectKey=financer -Dsonar.branch.name=${BRANCH_NAME} -Dsonar.branch.target=master -Dsonar.verbose=true
     fi
 fi
