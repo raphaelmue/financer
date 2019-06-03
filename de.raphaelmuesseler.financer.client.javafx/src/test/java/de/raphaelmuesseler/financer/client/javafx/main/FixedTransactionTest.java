@@ -127,7 +127,6 @@ public class FixedTransactionTest extends AbstractFinancerApplicationTest {
     }
 
     @Test
-    @Tag("skip")
     public void testEditFixedVariableTransactionEditTransactionAmount() {
         final double amount = 450.0;
         fixedTransaction.setIsVariable(true);
@@ -169,7 +168,6 @@ public class FixedTransactionTest extends AbstractFinancerApplicationTest {
     }
 
     @Test
-    @Tag("skip")
     public void testEditFixedVariableTransactionDeleteTransactionAmount() {
         fixedTransaction.setIsVariable(true);
         fixedTransaction.getTransactionAmounts().add(new TransactionAmount(-1, 450.0, LocalDate.now().withDayOfMonth(1)));

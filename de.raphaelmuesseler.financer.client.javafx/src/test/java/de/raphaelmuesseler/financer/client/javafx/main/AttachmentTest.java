@@ -15,7 +15,9 @@ import java.io.*;
 import java.util.concurrent.TimeoutException;
 
 @SuppressWarnings("WeakerAccess")
-@Tag("integration")
+//@Tag("integration")
+@Tag("skip")
+// These tests are currently not working in headless mode
 public class AttachmentTest extends AbstractFinancerApplicationTest {
 
     private static String content;
