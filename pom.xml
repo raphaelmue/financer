@@ -53,12 +53,13 @@
             <id>sonar</id>
             <properties>
                 <!-- General sonar information -->
-                <sonar.organization>raphaelmue-github</sonar.organization>
-                <sonar.host.url>https://sonarqube.raphael-muesseler.de</sonar.host.url>
+                <sonar.host.url>http://sonarqube.raphael-muesseler.de</sonar.host.url>
                 <sonar.login>c8ccfb5a736d7a54f3ca401c50537a98a8d07dac</sonar.login>
 
                 <sonar.sources>src/main</sonar.sources>
                 <sonar.tests>src/test</sonar.tests>
+
+                <sonar.pullrequest.provider>github</sonar.pullrequest.provider>
 
                 <!-- Sending code coverage to sonar -->
                 <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
