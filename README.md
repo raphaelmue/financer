@@ -1,8 +1,9 @@
 # Financer
 
 [![Build Status](http://jenkins.raphael-muesseler.de/job/financer/job/master/badge/icon)](http://jenkins.raphael-muesseler.de/job/financer/job/master/)
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/822eba04be69461ba9232a30693e6e32)](https://app.codacy.com/app/raphaelmue/financer?utm_source=github.com&utm_medium=referral&utm_content=raphaelmue/financer&utm_campaign=Badge_Grade_Dashboard)
-[![Codacy Badge](https://api.codacy.com/project/badge/Coverage/07918240c2f74369b1efbdcbdcab80d6)](https://www.codacy.com/app/raphaelmue/financer?utm_source=github.com&utm_medium=referral&utm_content=raphaelmue/financer&utm_campaign=Badge_Coverage)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=financer&metric=alert_status)](https://sonarcloud.io/dashboard?id=financer)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=financer&metric=coverage)](https://sonarcloud.io/dashboard?id=financer)
+
 
 ## Content
 
