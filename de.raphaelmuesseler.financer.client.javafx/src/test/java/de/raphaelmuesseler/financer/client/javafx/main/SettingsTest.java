@@ -66,6 +66,7 @@ public class SettingsTest extends AbstractFinancerApplicationTest {
         press(KeyCode.DOWN).release(KeyCode.DOWN);
         press(KeyCode.ENTER).release(KeyCode.ENTER);
 
+        sleep(SHORT_SLEEP);
         User userToAssert = (User) LocalStorageImpl.getInstance().readObject("user");
         Assertions.assertEquals(currencyComboBox.getSelectionModel().getSelectedItem(), userToAssert.getSettings().getCurrency());
 
@@ -82,20 +83,12 @@ public class SettingsTest extends AbstractFinancerApplicationTest {
         register(this.user, this.password);
         addCategory(category);
         addTransaction(transaction);
-
-        sleep(SHORT_SLEEP);
         clickOn((Button) find("#settingTabBtn"));
 
-        ComboBox<Currency> currencyComboBox = find("#currencyComboBox");
-        CheckBox showCurrencySignCheckbox = find("#showSignCheckbox");
-
-        clickOn(currencyComboBox);
-        press(KeyCode.DOWN).release(KeyCode.DOWN);
-        press(KeyCode.ENTER).release(KeyCode.ENTER);
-        clickOn(showCurrencySignCheckbox);
+        clickOn((CheckBox) find("#showSignCheckbox"));
         sleep(SHORT_SLEEP);
         User userToAssert = (User) LocalStorageImpl.getInstance().readObject("user");
-        Assertions.assertEquals(showCurrencySignCheckbox.isSelected(), userToAssert.getSettings().isShowCurrencySign());
+        Assertions.assertTrue(userToAssert.getSettings().isShowCurrencySign());
 
         clickOn((Button) find("#transactionsTabBtn"));
 
@@ -111,21 +104,21 @@ public class SettingsTest extends AbstractFinancerApplicationTest {
     @Test
     public void testChangeChangeAmountSignAutomatically() {
         register(this.user, this.password);
+        addCategory(category);
 
         clickOn((Button) find("#settingTabBtn"));
         clickOn("Transaction Settings");
-        sleep(500);
+        sleep(SHORT_SLEEP);
 
         CheckBox changeAmountSignAutomaticallyCheckBox = find("#changeAmountSignAutomaticallyCheckBox");
         Assertions.assertFalse(changeAmountSignAutomaticallyCheckBox.isSelected());
 
         clickOn(changeAmountSignAutomaticallyCheckBox);
+        sleep(SHORT_SLEEP);
+        User userToAssert = (User) LocalStorageImpl.getInstance().readObject("user");
+        Assertions.assertTrue(userToAssert.getSettings().isChangeAmountSignAutomatically());
 
-        addCategory(category);
         addTransaction(transaction);
-        clickOn((Button) find("#refreshTransactionsBtn"));
-        sleep(500);
-
         Assertions.assertNotNull(clickOn(formatter.formatCurrency(-transaction.getAmount())));
 
         BaseCategory baseCategory = (BaseCategory) LocalStorageImpl.getInstance().readObject("categories");

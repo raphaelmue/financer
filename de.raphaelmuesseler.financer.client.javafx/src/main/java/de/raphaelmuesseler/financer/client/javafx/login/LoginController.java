@@ -179,13 +179,10 @@ public class LoginController implements Initializable, Application {
 
     @Override
     public void setOffline() {
-        throw new UnsupportedOperationException("Settings application offline is not implemented yet!");
     }
 
     @Override
     public void setOnline() {
-        throw new UnsupportedOperationException("Setting application online is not implemented yet!");
-
     }
 
     @Override
