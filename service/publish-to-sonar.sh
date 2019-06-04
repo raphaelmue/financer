@@ -13,10 +13,10 @@ echo "Current branch: ${BRANCH_NAME}"
 if [[ ${BRANCH_NAME} == PR-* ]] ; then
     PR_NUMBER="${BRANCH_NAME//PR-/}"
     echo "Pull Request number: ${PR_NUMBER}"
-    mvn sonar:sonar -P sonar -Dsonar.projectKey=financer -Dsonar.github.pullRequest=${PR_NUMBER}
+    mvn sonar:sonar -P sonar -Dsonar.projectKey=financer -Dsonar.github.pullRequest=${PR_NUMBER} -Dsonar.pullrequest.key=${PR_NUMBER} sonar.pullrequest.base=master
 else
     if [[ ${BRANCH_NAME} == "master" ]]; then
-        mvn sonar:sonar -P sonar -Dsonar.projectKey=financer -Dsonar.branch.name=${BRANCH_NAME}
+        mvn sonar:sonar -P sonar -Dsonar.projectKey=financer
     else
         mvn sonar:sonar -P sonar -Dsonar.projectKey=financer -Dsonar.branch.name=${BRANCH_NAME} -Dsonar.branch.target=master
     fi
