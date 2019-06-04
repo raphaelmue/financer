@@ -31,9 +31,17 @@ pipeline {
                 sh 'bash service/publish-test-report.sh'
             }
         }
-        stage('Analyze Project') {
+        stage('SonarQube Analysis') {
+            environment {
+                scannerHome = tool 'SonarQube Scanner'
+            }
             steps {
-                sh 'bash service/publish-to-sonar.sh'
+                withSonarQubeEnv('sonarqube') {
+                    sh "${scannerHome}/bin/sonar-scanner"
+                }
+                timeout(time: 10, unit: 'MINUTES') {
+                    waitForQualityGate abortPipeline: true
+                }
             }
         }
         stage('Deploy') {
