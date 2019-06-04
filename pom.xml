@@ -63,8 +63,6 @@
                 <!-- Sending code coverage to sonar -->
                 <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
                 <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
-                <sonar.coverage.jacoco.xmlReportPaths>${project.basedir}/../target/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
-                <sonar.surefire.reportsPath>../${project.artifactId}/target/surefire-reports/</sonar.surefire.reportsPath>
                 <sonar.language>java</sonar.language>
             </properties>
         </profile>
