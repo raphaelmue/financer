@@ -63,7 +63,7 @@
                 <!-- Sending code coverage to sonar -->
                 <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
                 <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
-                <sonar.jacoco.reportPath>${project.basedir}/../target/jacoco.exec</sonar.jacoco.reportPath>
+                <sonar.coverage.jacoco.xmlReportPaths>${project.basedir}/../target/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
                 <sonar.surefire.reportsPath>../${project.artifactId}/target/surefire-reports/</sonar.surefire.reportsPath>
                 <sonar.language>java</sonar.language>
             </properties>
@@ -76,10 +76,6 @@
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <version>0.8.3</version>
-                <configuration>
-                    <destFile>${project.basedir}/../target/jacoco.exec</destFile>
-                    <append>true</append>
-                </configuration>
                 <executions>
                     <execution>
                         <goals>
