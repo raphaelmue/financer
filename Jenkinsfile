@@ -18,7 +18,7 @@ pipeline {
             }
         }
         stage('JavaFX Tests') {
-           steps {
+            steps {
                 sh 'mvn test -P integrationTests,headlessTesting'
                 sh 'rm ./de.raphaelmuesseler.financer.server/src/main/resources/de/raphaelmuesseler/financer/server/db/config/hibernate.cfg.xml'
             }
@@ -38,7 +38,23 @@ pipeline {
             steps {
                 sh 'git fetch origin master'
                 withSonarQubeEnv('SonarQubeServer') {
-                    sh "${scannerHome}/bin/sonar-scanner -Dsonar.branch.name=${BRANCH_NAME} -Dsonar.branch.target=master"
+                    if (env.CHANGE_ID) {
+                        sh "${scannerHome}/bin/sonar-scanner " +
+                                "-Dsonar.pullrequest.base=master " +
+                                "-Dsonar.pullrequest.key=${env.CHANGE_ID} " +
+                                "-Dsonar.pullrequest.branch=${env.BRANCH_NAME} " +
+                                "-Dsonar.pullrequest.provider=github " +
+                                "-Dsonar.pullrequest.github.repository=raphaelmue/financer"
+                    } else {
+                        if (env.BRANCH_NAME != 'master') {
+                            sh "${scannerHome}/bin/sonar-scanner " +
+                                    "-Dsonar.branch.name=${env.BRANCH_NAME} " +
+                                    "-Dsonar.branch.target=master"
+                        } else {
+                            sh "${scannerHome}/bin/sonar-scanner " +
+                                    "-Dsonar.branch.name=${env.BRANCH_NAME} "
+                        }
+                    }
                 }
             }
         }
@@ -54,8 +70,7 @@ pipeline {
     post {
         always {
             junit '**/target/surefire-reports/TEST-*.xml'
-            step( [ $class: 'JacocoPublisher' ] )
-            //publishCoverage adapters: [jacocoAdapter('**/target/sites/jacoco/jacoco.xml')], sourceFileResolver: sourceFiles('STORE_ALL_BUILD')
+            step([$class: 'JacocoPublisher'])
         }
     }
 }
