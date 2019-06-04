@@ -36,6 +36,7 @@ pipeline {
                 scannerHome = tool 'SonarQubeScanner'
             }
             steps {
+                sh 'git fetch origin master'
                 withSonarQubeEnv('SonarQubeServer') {
                     sh "${scannerHome}/bin/sonar-scanner -Dsonar.branch.name=${BRANCH_NAME} -Dsonar.branch.target=master"
                 }

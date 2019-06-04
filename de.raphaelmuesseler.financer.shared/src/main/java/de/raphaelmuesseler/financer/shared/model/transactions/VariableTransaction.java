@@ -13,6 +13,8 @@ import java.util.Objects;
 import java.util.Set;
 
 public class VariableTransaction extends VariableTransactionEntity implements Transaction {
+    private static final long serialVersionUID = 3715986504163631743L;
+
     private CategoryTree categoryTree;
 
     public VariableTransaction(VariableTransactionEntity databaseVariableTransaction) {

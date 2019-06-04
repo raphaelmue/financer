@@ -10,7 +10,7 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.*;
 
-public class BaseCategory implements Serializable, CategoryTree {
+public class BaseCategory implements CategoryTree {
     public enum CategoryClass {
         FIXED_REVENUE(0, "fixedRevenue"),
         VARIABLE_REVENUE(1, "variableRevenue"),

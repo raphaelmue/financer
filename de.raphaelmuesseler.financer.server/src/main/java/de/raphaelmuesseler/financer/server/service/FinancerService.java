@@ -257,7 +257,7 @@ public class FinancerService {
         BaseCategory baseCategory;
 
         Transaction transaction = session.beginTransaction();
-        User user = new User(session.get(UserEntity.class, (int) parameters.get("userId")));
+        User user = new User(session.get(UserEntity.class, parameters.get("userId")));
         List<CategoryEntity> categories = new ArrayList<>(user.getCategories());
         Collections.sort(categories);
 
@@ -502,7 +502,7 @@ public class FinancerService {
 
         Transaction transaction = session.beginTransaction();
         AttachmentEntity attachmentEntity = session.get(AttachmentEntity.class,
-                (int) parameters.get("attachmentId"));
+                parameters.get("attachmentId"));
         session.delete(attachmentEntity);
         transaction.commit();
 
