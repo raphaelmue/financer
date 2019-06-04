@@ -40,6 +40,8 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Executors;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 class TransactionDialog extends FinancerDialog<VariableTransaction> {
 
@@ -51,6 +53,8 @@ class TransactionDialog extends FinancerDialog<VariableTransaction> {
     private JFXDatePicker valueDateField;
     private ListView<Attachment> attachmentListView;
     private BaseCategory categories;
+
+    private final Logger logger = Logger.getLogger("FinancerApplication");
 
     TransactionDialog(VariableTransaction transaction, BaseCategory categories) {
         super(transaction);
@@ -264,7 +268,7 @@ class TransactionDialog extends FinancerDialog<VariableTransaction> {
                     }));
                 }
             } catch (IOException e) {
-                e.printStackTrace();
+                logger.log(Level.SEVERE, e.getMessage(), e);
             }
         }
     }
@@ -298,7 +302,7 @@ class TransactionDialog extends FinancerDialog<VariableTransaction> {
                         Desktop.getDesktop().open(file);
                     } catch (IOException e) {
                         new FinancerExceptionDialog("Financer", e).showAndWait();
-                        e.printStackTrace();
+                        logger.log(Level.SEVERE, e.getMessage(), e);
                     }
                 }
 

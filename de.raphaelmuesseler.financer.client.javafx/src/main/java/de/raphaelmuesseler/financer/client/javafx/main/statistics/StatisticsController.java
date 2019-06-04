@@ -16,6 +16,7 @@ import de.raphaelmuesseler.financer.util.collections.Tree;
 import de.raphaelmuesseler.financer.util.date.DateUtil;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.PieChart;
@@ -34,21 +35,36 @@ import java.time.LocalDate;
 import java.util.ResourceBundle;
 
 public class StatisticsController implements Initializable {
+
+    @FXML
     public JFXDatePicker variableExpensesFromDatePicker;
+    @FXML
     public JFXDatePicker variableExpensesToDatePicker;
+    @FXML
     public PieChart fixedExpensesDistributionChart;
+    @FXML
     public Label fixedExpensesNoDataLabel;
 
+    @FXML
     public JFXDatePicker fixedExpensesFromDatePicker;
+    @FXML
     public JFXDatePicker fixedExpensesToDatePicker;
+    @FXML
     public PieChart variableExpensesDistributionChart;
+    @FXML
     public Label variableExpensesNoDataLabel;
 
+    @FXML
     public JFXDatePicker progressFromDatePicker;
+    @FXML
     public JFXDatePicker progressToDatePicker;
+    @FXML
     public LineChart<String, Number> progressLineChart;
+    @FXML
     public VBox categoriesContainer;
+    @FXML
     public JFXButton addCategoryBtn;
+    @FXML
     public ComboBox<CategoryTree> progressChartDefaultCategoryComboBox;
 
     private LocalStorage localStorage = LocalStorageImpl.getInstance();

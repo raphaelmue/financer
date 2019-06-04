@@ -30,24 +30,43 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.concurrent.Executors;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class FinancerController implements Initializable, Application {
+
+    @FXML
     public BorderPane rootLayout;
+    @FXML
     public BorderPane header;
     private static VBox loadingBox;
+    @FXML
     public Button overviewTabBtn;
+    @FXML
     public Button transactionsTabBtn;
+    @FXML
     public Button statisticsTabBtn;
+    @FXML
     public Button profileTabBtn;
+    @FXML
     public Button settingTabBtn;
+    @FXML
     public Label userNameLabel;
+    @FXML
     public MenuButton accountMenuBtn;
+    @FXML
     public MenuItem logoutBtn;
+    @FXML
     public JFXHamburger hamburgerBtn;
+    @FXML
     public Label contentLabel;
+    @FXML
     public Label offlineLabel;
 
     private static Application INSTANCE;
+
+    private final static Logger logger = Logger.getLogger("FinancerApplication");
+
 
     private ResourceBundle resourceBundle;
     private LocalStorageImpl localStorage = (LocalStorageImpl) LocalStorageImpl.getInstance();
@@ -62,7 +81,7 @@ public class FinancerController implements Initializable, Application {
         try {
             ServerRequestHandler.makeRequests(Executors.newCachedThreadPool());
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.log(Level.SEVERE, e.getMessage(), e);
         }
 
         User user = (User) this.localStorage.readObject("user");
@@ -75,7 +94,7 @@ public class FinancerController implements Initializable, Application {
         try {
             loadingBox = FXMLLoader.load(getClass().getResource("/de/raphaelmuesseler/financer/client/javafx/main/views/loading.fxml"), this.resourceBundle);
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.log(Level.SEVERE, e.getMessage(), e);
         }
 
         this.userNameLabel.setText(user.getFullName());
@@ -204,7 +223,7 @@ public class FinancerController implements Initializable, Application {
             BorderPane.setMargin(stackPane, new Insets(20));
             // TODO bring center to back
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.log(Level.SEVERE, e.getMessage(), e);
         }
     }
 
@@ -221,7 +240,7 @@ public class FinancerController implements Initializable, Application {
         try {
             new LoginApplication().start(new Stage());
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.log(Level.SEVERE, e.getMessage(), e);
         }
     }
 

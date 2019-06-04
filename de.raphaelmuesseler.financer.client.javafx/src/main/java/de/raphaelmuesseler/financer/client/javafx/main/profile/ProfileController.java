@@ -22,6 +22,7 @@ import de.raphaelmuesseler.financer.util.collections.Tree;
 import de.raphaelmuesseler.financer.util.collections.TreeUtil;
 import de.raphaelmuesseler.financer.util.concurrency.FinancerExecutor;
 import javafx.application.Platform;
+import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldTreeCell;
@@ -40,16 +41,27 @@ import java.util.logging.Logger;
 
 public class ProfileController implements Initializable {
 
+    @FXML
     public Label fullNameLabel;
+    @FXML
     public Label emailLabel;
+    @FXML
     public Label birthDateLabel;
+    @FXML
     public Label addressLabel;
+    @FXML
     public Label genderLabel;
+    @FXML
     public Hyperlink changePasswordLink;
+    @FXML
     public TreeView<CategoryTree> categoriesTreeView;
+    @FXML
     public JFXButton refreshCategoriesBtn;
+    @FXML
     public JFXButton newCategoryBtn;
+    @FXML
     public JFXButton editCategoryBtn;
+    @FXML
     public JFXButton deleteCategoryBtn;
 
     private User user;

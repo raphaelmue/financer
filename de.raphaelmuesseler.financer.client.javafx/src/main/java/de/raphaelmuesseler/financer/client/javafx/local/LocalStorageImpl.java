@@ -6,9 +6,13 @@ import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class LocalStorageImpl implements LocalStorage {
     private static LocalStorageImpl INSTANCE = null;
+
+    private final Logger logger = Logger.getLogger("FinancerApplication");
 
     public enum LocalStorageFile {
         USERDATA("/usr/usr.fnc", "user"),
@@ -63,7 +67,7 @@ public class LocalStorageImpl implements LocalStorage {
             try {
                 return file.getParentFile().mkdirs() && file.createNewFile() ? null : null;
             } catch (IOException e) {
-                e.printStackTrace();
+                logger.log(Level.SEVERE, e.getMessage(), e);
             }
         }
 
@@ -83,26 +87,26 @@ public class LocalStorageImpl implements LocalStorage {
                 file.getParentFile().mkdirs();
                 file.createNewFile();
             } catch (IOException e) {
-                e.printStackTrace();
+                logger.log(Level.SEVERE, e.getMessage(), e);
             }
         }
         try (ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream(file))) {
             outputStream.writeObject(data);
             result = true;
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.log(Level.SEVERE, e.getMessage(), e);
         }
         return result;
     }
 
     @Override
-    public synchronized Object readObject(String key) {
+    public synchronized Serializable readObject(String key) {
         return (this.readFile(Objects.requireNonNull(LocalStorageFile.getFileByKey(key))) == null) ?
-                null : Objects.requireNonNull(this.readFile(Objects.requireNonNull(LocalStorageFile.getFileByKey(key)))).get(key);
+                null : (Serializable) Objects.requireNonNull(this.readFile(Objects.requireNonNull(LocalStorageFile.getFileByKey(key)))).get(key);
     }
 
     @Override
-    public synchronized boolean writeObject(String key, Object object) {
+    public synchronized boolean writeObject(String key, Serializable object) {
         Map<String, Object> map = this.readFile(Objects.requireNonNull(LocalStorageFile.getFileByKey(key)));
         if (map == null) {
             map = new HashMap<>();

@@ -15,6 +15,7 @@ import de.raphaelmuesseler.financer.shared.connection.ConnectionResult;
 import de.raphaelmuesseler.financer.shared.model.user.User;
 import de.raphaelmuesseler.financer.util.concurrency.FinancerExecutor;
 import javafx.application.Platform;
+import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
@@ -33,11 +34,17 @@ import java.util.logging.Logger;
 
 public class LoginController implements Initializable, Application {
 
+    @FXML
     public TextField loginEmailTextField;
+    @FXML
     public PasswordField loginPasswordField;
+    @FXML
     public Label loginErrorLabel;
+    @FXML
     public GridPane gridPane;
+    @FXML
     public VBox progressIndicatorBox;
+    @FXML
     public Menu languageMenu;
 
     private Logger logger = Logger.getLogger("LoginApplication");
@@ -158,7 +165,7 @@ public class LoginController implements Initializable, Application {
             try {
                 new FinancerApplication().start(new Stage());
             } catch (IOException e) {
-                e.printStackTrace();
+                logger.log(Level.SEVERE, e.getMessage(), e);
             }
         }));
     }

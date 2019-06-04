@@ -23,7 +23,7 @@ public class Server {
     private static final int PORT = 3500;
     private static final int REST_PORT = 3501;
 
-    private Logger logger = Logger.getLogger("Server");
+    private static final Logger logger = Logger.getLogger("Server");
     private ServerSocket serverSocket;
     private ExecutorService executor = FinancerExecutor.getExecutor();
 
@@ -35,7 +35,7 @@ public class Server {
                 if (arg.contains("--port=")) {
                     port = Integer.parseInt(arg.substring(7));
                     if (port < 1000 || port > 5000) {
-                        System.out.println("Please enter a port number between 1000 and 5000");
+                        logger.log(Level.SEVERE, "Please enter a port number between 1000 and 5000");
                         return;
                     }
                 } else if (arg.contains("--db-host=")) {
@@ -57,9 +57,9 @@ public class Server {
             server.startHttpServer();
             server.run();
         } catch (NumberFormatException e) {
-            System.out.println("Please enter a real port!");
+            logger.log(Level.SEVERE, "Please enter a real port!");
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.log(Level.SEVERE, e.getMessage(), e);
         }
     }
 
@@ -71,7 +71,7 @@ public class Server {
      */
     public Server(int port) throws IOException {
         this.serverSocket = new ServerSocket(port);
-        this.logger.log(Level.INFO, "Java Socket Server started and is running on port " + port);
+        logger.log(Level.INFO, "Java Socket Server started and is running on port " + port);
     }
 
     /**
@@ -79,7 +79,7 @@ public class Server {
      */
     public void run() {
         while (true) {
-            this.logger.log(Level.INFO, "Waiting for client ...");
+            logger.log(Level.INFO, "Waiting for client ...");
             try {
                 Socket client = this.serverSocket.accept();
                 DataInputStream input = new DataInputStream(client.getInputStream());
@@ -90,14 +90,14 @@ public class Server {
                     logger.log(Level.SEVERE, "Server has stopped.");
                     break;
                 }
-                e.printStackTrace();
+                logger.log(Level.SEVERE, e.getMessage(), e);
             } catch (Exception e) {
-                e.printStackTrace();
+                logger.log(Level.SEVERE, e.getMessage(), e);
             }
         }
     }
 
-    public void startHttpServer() {
+    private void startHttpServer() {
         // create a resource config that scans for JAX-RS resources and providers
         // in packages
         final ResourceConfig rc = new ResourceConfig().register(new FinancerRestService(executor));
@@ -110,7 +110,7 @@ public class Server {
      * Stops the server after the next client that will be handled.
      */
     public void stop() {
-        this.logger.log(Level.INFO, "Server will be stopped.");
+        logger.log(Level.INFO, "Server will be stopped.");
         try {
             serverSocket.close();
         } catch (IOException ignored) {

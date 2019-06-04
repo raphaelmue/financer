@@ -34,7 +34,7 @@ public class LoginApplication extends Application {
             try {
                 new FinancerApplication().start(new Stage());
             } catch (IOException e) {
-                e.printStackTrace();
+                logger.log(Level.SEVERE, e.getMessage(), e);
             }
         } else {
             // setting up language

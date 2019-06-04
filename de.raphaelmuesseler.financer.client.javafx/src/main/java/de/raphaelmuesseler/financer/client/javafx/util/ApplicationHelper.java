@@ -7,26 +7,17 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ApplicationHelper {
-
-//    public static Locale getLocale(LocalSettings settings) {
-//        Locale locale;
-//        if (settings != null) {
-//            locale = settings.getLanguage();
-//        } else {
-//            locale = Locale.ENGLISH;
-//        }
-//        return locale;
-//    }
-
     public static void restartApplication(Stage stage) {
         stage.close();
-        Platform.runLater( () -> {
+        Platform.runLater(() -> {
             try {
-                new FinancerApplication().start( new Stage() );
+                new FinancerApplication().start(new Stage());
             } catch (IOException e) {
-                e.printStackTrace();
+                Logger.getLogger("FinancerApplication").log(Level.SEVERE, e.getMessage(), e);
             }
         });
     }

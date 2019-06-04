@@ -30,6 +30,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
+import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
@@ -51,18 +52,31 @@ import static de.raphaelmuesseler.financer.util.date.Month.getMonthByNumber;
 
 public class TransactionsController implements Initializable {
 
+    @FXML
     public JFXButton refreshTransactionsBtn;
+    @FXML
     public JFXButton newTransactionBtn;
+    @FXML
     public JFXButton editTransactionBtn;
+    @FXML
     public JFXButton deleteTransactionBtn;
+    @FXML
     public TableView<VariableTransaction> transactionsTableView;
+    @FXML
     public JFXTextField filterTransactionsTextField;
+    @FXML
     public JFXButton refreshFixedTransactionsBtn;
+    @FXML
     public JFXButton newFixedTransactionBtn;
+    @FXML
     public JFXButton editFixedTransactionBtn;
+    @FXML
     public JFXButton deleteFixedTransactionBtn;
+    @FXML
     public JFXListView<CategoryTree> categoriesListView;
+    @FXML
     public JFXListView<FixedTransaction> fixedTransactionsListView;
+    @FXML
     public TableView<TransactionOverviewRow> transactionsOverviewTableView;
 
     private User user;
@@ -140,7 +154,7 @@ public class TransactionsController implements Initializable {
 
         for (int i = 0; i < numberOfMaxMonths; i++) {
             TableColumn<TransactionOverviewRow, String> column = new TableColumn<>(I18N.get(Objects.requireNonNull(getMonthByNumber(LocalDate.now().minusMonths(i).getMonthValue())).getName()));
-            this.adjustColumnWidth(column, this.transactionsOverviewTableView, numberOfMaxMonths + 2);
+            this.adjustColumnWidth(column, this.transactionsOverviewTableView, numberOfMaxMonths + 2.0);
             column.setStyle("-fx-alignment: CENTER-RIGHT;");
             column.setSortable(false);
             int index = i;

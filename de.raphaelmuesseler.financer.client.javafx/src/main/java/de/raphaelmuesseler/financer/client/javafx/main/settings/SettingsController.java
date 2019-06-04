@@ -16,6 +16,7 @@ import de.raphaelmuesseler.financer.shared.model.user.User;
 import de.raphaelmuesseler.financer.util.concurrency.FinancerExecutor;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
+import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
@@ -35,17 +36,21 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 public class SettingsController implements Initializable {
+
+    @FXML
     public ComboBox<I18N.Language> languageMenuComboBox;
+    @FXML
     public ComboBox<Currency> currencyComboBox;
+    @FXML
     public CheckBox showSignCheckbox;
-
+    @FXML
     public ComboBox<Integer> maxNumberOfMonthsDisplayedComboBox;
-
-
+    @FXML
     public JFXButton logoutFromDeviceBtn;
+    @FXML
     public JFXListView<Token> devicesListView;
+    @FXML
     public CheckBox changeAmountSignAutomaticallyCheckBox;
-
 
     private LocalStorage localStorage = LocalStorageImpl.getInstance();
     private User user = (User) localStorage.readObject("user");
