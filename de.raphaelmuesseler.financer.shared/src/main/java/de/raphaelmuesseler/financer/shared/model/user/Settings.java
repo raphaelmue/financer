@@ -12,7 +12,8 @@ public interface Settings extends Serializable {
         MAX_NUMBER_OF_MONTHS_DISPLAYED("maxNumberOfMonthsDisplayed", false, "6"),
         THEME("theme", true, "");
 
-        private final String name, defaultValue;
+        private final String name;
+        private final String defaultValue;
         private final boolean isUserProperty;
 
         Property(String name, boolean isUserProperty, String defaultValue) {

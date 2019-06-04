@@ -11,7 +11,7 @@ public interface Tree<T> {
     List<? extends Tree<T>> getChildren();
 
     default boolean isLeaf() {
-        return (getChildren().size() == 0);
+        return !getChildren().isEmpty();
     }
 
     default boolean isRoot() {

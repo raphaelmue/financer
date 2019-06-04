@@ -67,7 +67,7 @@ public class BaseCategory implements Serializable, CategoryTree {
     private final Category value = new Category("root");
 
     public BaseCategory() {
-        this.categories = new HashMap<>(4);
+        this.categories = new EnumMap<>(CategoryClass.class);
         this.value.setPrefix("0.");
 
         for (CategoryClass categoryClass : CategoryClass.values()) {

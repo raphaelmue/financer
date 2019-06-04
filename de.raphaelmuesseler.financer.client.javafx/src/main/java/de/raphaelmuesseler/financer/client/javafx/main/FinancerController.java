@@ -63,9 +63,9 @@ public class FinancerController implements Initializable, Application {
     @FXML
     public Label offlineLabel;
 
-    private static Application INSTANCE;
+    private static Application instance;
 
-    private final static Logger logger = Logger.getLogger("FinancerApplication");
+    private static final Logger logger = Logger.getLogger("FinancerApplication");
 
 
     private ResourceBundle resourceBundle;
@@ -74,7 +74,7 @@ public class FinancerController implements Initializable, Application {
 
     @FXML
     public void initialize(URL location, ResourceBundle resources) {
-        INSTANCE = this;
+        instance = this;
         ServerRequestHandler.setApplication(this);
         ServerRequestHandler.setLocalStorage(this.localStorage);
 
@@ -116,7 +116,7 @@ public class FinancerController implements Initializable, Application {
 
         HamburgerSlideCloseTransition burgerTask = new HamburgerSlideCloseTransition(this.hamburgerBtn);
         burgerTask.setRate(-1);
-        this.hamburgerBtn.addEventHandler(MouseEvent.MOUSE_PRESSED, (e) -> {
+        this.hamburgerBtn.addEventHandler(MouseEvent.MOUSE_PRESSED, e -> {
             burgerTask.setRate(burgerTask.getRate() * -1);
             burgerTask.play();
         });
@@ -125,7 +125,7 @@ public class FinancerController implements Initializable, Application {
     }
 
     public static Application getInstance() {
-        return INSTANCE;
+        return instance;
     }
 
     @Override
@@ -202,16 +202,17 @@ public class FinancerController implements Initializable, Application {
     }
 
     private void removeSelectedStyleClass() {
+        final String navBtnClass = "nav-btn";
         this.overviewTabBtn.getStyleClass().clear();
-        this.overviewTabBtn.getStyleClass().add("nav-btn");
+        this.overviewTabBtn.getStyleClass().add(navBtnClass);
         this.transactionsTabBtn.getStyleClass().clear();
-        this.transactionsTabBtn.getStyleClass().add("nav-btn");
+        this.transactionsTabBtn.getStyleClass().add(navBtnClass);
         this.statisticsTabBtn.getStyleClass().clear();
-        this.statisticsTabBtn.getStyleClass().add("nav-btn");
+        this.statisticsTabBtn.getStyleClass().add(navBtnClass);
         this.profileTabBtn.getStyleClass().clear();
-        this.profileTabBtn.getStyleClass().add("nav-btn");
+        this.profileTabBtn.getStyleClass().add(navBtnClass);
         this.settingTabBtn.getStyleClass().clear();
-        this.settingTabBtn.getStyleClass().add("nav-btn");
+        this.settingTabBtn.getStyleClass().add(navBtnClass);
     }
 
     private void loadFXML(URL url) {
@@ -221,7 +222,6 @@ public class FinancerController implements Initializable, Application {
             stackPane.getChildren().add(loadingBox);
             this.rootLayout.setCenter(stackPane);
             BorderPane.setMargin(stackPane, new Insets(20));
-            // TODO bring center to back
         } catch (IOException e) {
             logger.log(Level.SEVERE, e.getMessage(), e);
         }
@@ -245,5 +245,6 @@ public class FinancerController implements Initializable, Application {
     }
 
     public void onToggleNavigationBar(MouseEvent mouseEvent) {
+        throw new UnsupportedOperationException("Toggling navigation bar is not possible yet!");
     }
 }

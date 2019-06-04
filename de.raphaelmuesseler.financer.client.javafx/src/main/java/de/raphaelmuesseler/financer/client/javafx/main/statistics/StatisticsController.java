@@ -12,7 +12,6 @@ import de.raphaelmuesseler.financer.shared.model.categories.BaseCategory;
 import de.raphaelmuesseler.financer.shared.model.categories.Category;
 import de.raphaelmuesseler.financer.shared.model.categories.CategoryTree;
 import de.raphaelmuesseler.financer.shared.model.categories.CategoryTreeImpl;
-import de.raphaelmuesseler.financer.util.collections.Tree;
 import de.raphaelmuesseler.financer.util.date.DateUtil;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -176,15 +175,15 @@ public class StatisticsController implements Initializable {
 
     private void loadVariableExpensesDistributionChart(LocalDate startDate, LocalDate endDate) {
         ObservableList<PieChart.Data> variableExpensesData = FXCollections.observableArrayList();
-        for (Tree<Category> categoryTree : this.categories.getCategoryTreeByCategoryClass(
+        for (CategoryTree categoryTree : this.categories.getCategoryTreeByCategoryClass(
                 BaseCategory.CategoryClass.VARIABLE_EXPENSES).getChildren()) {
-            double amount = ((CategoryTreeImpl) categoryTree).getAmount(startDate, endDate);
+            double amount = categoryTree.getAmount(startDate, endDate);
             if (amount != 0) {
                 variableExpensesData.add(new PieChart.Data(categoryTree.getValue().getName(), Math.abs(amount)));
             }
         }
 
-        if (variableExpensesData.size() > 0) {
+        if (!variableExpensesData.isEmpty()) {
             this.variableExpensesDistributionChart.setManaged(true);
             this.variableExpensesDistributionChart.setVisible(true);
             this.variableExpensesNoDataLabel.setManaged(false);
@@ -200,9 +199,9 @@ public class StatisticsController implements Initializable {
 
     private void loadFixedExpensesDistributionChart(LocalDate startDate, LocalDate endDate) {
         ObservableList<PieChart.Data> variableExpensesData = FXCollections.observableArrayList();
-        for (Tree<Category> categoryTree : this.categories.getCategoryTreeByCategoryClass(
+        for (CategoryTree categoryTree : this.categories.getCategoryTreeByCategoryClass(
                 BaseCategory.CategoryClass.FIXED_EXPENSES).getChildren()) {
-            double amount = ((CategoryTreeImpl) categoryTree).getAmount(startDate, endDate);
+            double amount = categoryTree.getAmount(startDate, endDate);
             if (amount != 0) {
                 variableExpensesData.add(new PieChart.Data(categoryTree.getValue().getName(), Math.abs(amount)));
             }

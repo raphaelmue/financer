@@ -89,7 +89,8 @@ public class FixedTransaction extends FixedTransactionEntity implements Transact
                     amount += amountProvider.getAmount(startDate, endDate);
                 }
             } else {
-                LocalDate maxStartDate, minEndDate;
+                LocalDate maxStartDate;
+                LocalDate minEndDate;
                 if (this.getEndDate() == null) {
                     minEndDate = endDate;
                 } else {

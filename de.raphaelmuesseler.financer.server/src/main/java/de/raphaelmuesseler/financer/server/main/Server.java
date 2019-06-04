@@ -40,10 +40,8 @@ public class Server {
                     }
                 } else if (arg.contains("--db-host=")) {
                     HibernateUtil.setIsHostLocal(arg.substring(10).equals("local"));
-                } else if (arg.contains("--database=")) {
-                    if (DatabaseName.getByShortCut(arg.substring(11)) != null) {
-                        databaseName = DatabaseName.getByShortCut(arg.substring(11));
-                    }
+                } else if (arg.contains("--database=") && (DatabaseName.getByShortCut(arg.substring(11)) != null)) {
+                    databaseName = DatabaseName.getByShortCut(arg.substring(11));
                 }
             }
 
@@ -71,7 +69,7 @@ public class Server {
      */
     public Server(int port) throws IOException {
         this.serverSocket = new ServerSocket(port);
-        logger.log(Level.INFO, "Java Socket Server started and is running on port " + port);
+        logger.log(Level.INFO, "Java Socket Server started and is running on port {0}!", port);
     }
 
     /**

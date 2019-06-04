@@ -35,6 +35,7 @@ import org.controlsfx.glyphfont.GlyphFontRegistry;
 
 import java.awt.*;
 import java.io.*;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -245,7 +246,7 @@ class TransactionDialog extends FinancerDialog<VariableTransaction> {
     private void onUploadAttachment(File attachmentFile) {
 
         if (attachmentFile != null) {
-            Map<String, Object> parameters = new HashMap<>();
+            Map<String, Serializable> parameters = new HashMap<>();
             parameters.put("transaction", this.getValue());
             parameters.put("attachmentFile", attachmentFile);
 
@@ -289,7 +290,7 @@ class TransactionDialog extends FinancerDialog<VariableTransaction> {
                 file.getParentFile().mkdirs();
             }
 
-            Map<String, Object> parameters = new HashMap<>();
+            Map<String, Serializable> parameters = new HashMap<>();
             parameters.put("attachmentId", this.attachmentListView.getSelectionModel().getSelectedItem().getId());
 
             FinancerExecutor.getExecutor().execute(new ServerRequestHandler(
@@ -316,7 +317,7 @@ class TransactionDialog extends FinancerDialog<VariableTransaction> {
 
     private void onDeleteAttachment() {
         if (new FinancerConfirmDialog(I18N.get("confirmDeleteAttachment")).showAndGetResult()) {
-            Map<String, Object> parameters = new HashMap<>();
+            Map<String, Serializable> parameters = new HashMap<>();
             parameters.put("id", this.attachmentListView.getSelectionModel().getSelectedItem().getId());
 
             FinancerExecutor.getExecutor().execute(new ServerRequestHandler(
@@ -327,9 +328,11 @@ class TransactionDialog extends FinancerDialog<VariableTransaction> {
                     File file = new File(LocalStorageImpl.LocalStorageFile.TRANSACTIONS.getFile().getParent() +
                             "/transactions/" + attachmentListView.getSelectionModel().getSelectedItem().getTransaction().getId() +
                             "/attachments/" + attachmentListView.getSelectionModel().getSelectedItem().getName());
-                    if (file.delete()) {
-                        attachmentListView.getItems().remove(attachmentListView.getSelectionModel().getSelectedItem());
-                    } else {
+                    try {
+                        Files.delete(file.toPath());
+                            attachmentListView.getItems().remove(attachmentListView.getSelectionModel().getSelectedItem());
+                    } catch (IOException e) {
+                        logger.log(Level.SEVERE, e.getMessage(), e);
                         new FinancerExceptionDialog("Financer", new IOException("File could not be deleted")).showAndWait();
                     }
                 }

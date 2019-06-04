@@ -4,14 +4,13 @@ import de.raphaelmuesseler.financer.shared.model.transactions.AmountProvider;
 import de.raphaelmuesseler.financer.shared.model.transactions.Transaction;
 import de.raphaelmuesseler.financer.util.collections.Tree;
 
-import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class CategoryTreeImpl implements Serializable, CategoryTree {
+public class CategoryTreeImpl implements CategoryTree {
     private static final long serialVersionUID = -5848321222290793608L;
 
     private final Category category;

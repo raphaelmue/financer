@@ -64,11 +64,6 @@ public class VariableTransaction extends VariableTransactionEntity implements Tr
     }
 
     @Override
-    public double getAmount() {
-        return super.getAmount();
-    }
-
-    @Override
     public double getAmount(LocalDate localDate) {
         return (DateUtil.checkIfMonthsAreEqual(localDate, this.getValueDate()) ? this.getAmount() : 0);
     }

@@ -116,7 +116,7 @@ public class SettingsController implements Initializable {
     }
 
     private void updateSettings() {
-        Map<String, Object> parameters = new HashMap<>();
+        Map<String, Serializable> parameters = new HashMap<>();
         parameters.put("user", user);
         FinancerExecutor.getExecutor().execute(new ServerRequestHandler(user, "updateUsersSettings", parameters, new JavaFXAsyncConnectionCall() {
             @Override
@@ -139,7 +139,7 @@ public class SettingsController implements Initializable {
 
     public void handleLogoutFromDevice() {
         if (new FinancerConfirmDialog(I18N.get("confirmLogDeviceOut")).showAndGetResult()) {
-            HashMap<String, Object> parameters = new HashMap<>();
+            HashMap<String, Serializable> parameters = new HashMap<>();
             parameters.put("tokenId", this.devicesListView.getSelectionModel().getSelectedItem().getId());
             FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "deleteToken", parameters, new JavaFXAsyncConnectionCall() {
                 @Override

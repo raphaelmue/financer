@@ -12,7 +12,9 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 
 class ChangePasswordDialog extends FinancerDialog<User> {
-    private JFXPasswordField oldPasswordField, newPasswordField, repeatNewPasswordField;
+    private JFXPasswordField oldPasswordField;
+    private JFXPasswordField newPasswordField;
+    private JFXPasswordField repeatNewPasswordField;
 
     ChangePasswordDialog(User user) {
         super(user);

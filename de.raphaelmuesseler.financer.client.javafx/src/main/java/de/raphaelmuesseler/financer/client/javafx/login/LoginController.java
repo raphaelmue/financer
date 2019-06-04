@@ -24,6 +24,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Locale;
@@ -76,7 +77,7 @@ public class LoginController implements Initializable, Application {
     }
 
     public void handleSignInButtonAction() {
-        Map<String, Object> parameters = new HashMap<>();
+        Map<String, Serializable> parameters = new HashMap<>();
         parameters.put("email", this.loginEmailTextField.getText());
         parameters.put("password", this.loginPasswordField.getText());
         logger.log(Level.INFO, "User's credentials will be checked ...");
@@ -112,14 +113,13 @@ public class LoginController implements Initializable, Application {
 
     private void changeLanguage(Locale locale) {
         new FinancerAlert(Alert.AlertType.INFORMATION, I18N.get("language"), I18N.get("warnChangesAfterRestart")).showAndWait();
-        // TODO to be implemented
     }
 
     public void handleOpenRegisterDialog() {
         User user = new RegisterDialog().showAndGetResult();
 
         if (user != null) {
-            Map<String, Object> parameters = new HashMap<>();
+            Map<String, Serializable> parameters = new HashMap<>();
             parameters.put("user", user);
 
             FinancerExecutor.getExecutor().execute(new ServerRequestHandler("registerUser", parameters, new JavaFXAsyncConnectionCall() {
@@ -132,11 +132,6 @@ public class LoginController implements Initializable, Application {
                 public void onFailure(Exception exception) {
                     logger.log(Level.SEVERE, exception.getMessage(), exception);
                     JavaFXAsyncConnectionCall.super.onFailure(exception, () -> handleOpenRegisterDialog());
-                }
-
-                @Override
-                public void onAfter() {
-
                 }
             }));
         }
@@ -184,16 +179,17 @@ public class LoginController implements Initializable, Application {
 
     @Override
     public void setOffline() {
-
+        throw new UnsupportedOperationException("Settings application offline is not implemented yet!");
     }
 
     @Override
     public void setOnline() {
+        throw new UnsupportedOperationException("Setting application online is not implemented yet!");
 
     }
 
     @Override
     public void showToast(MessageType messageType, String message) {
-
+        throw new UnsupportedOperationException("Showing a toast is not implemented yet!");
     }
 }
