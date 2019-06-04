@@ -7,6 +7,7 @@ import de.raphaelmuesseler.financer.shared.connection.ConnectionResult;
 import de.raphaelmuesseler.financer.shared.model.user.User;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.net.ConnectException;
 import java.util.ArrayList;
 import java.util.List;
@@ -72,7 +73,7 @@ public class ServerRequestHandler implements Runnable {
                     calls = new ArrayList<>();
                 }
                 calls.add(this.serverRequest.getConnectionCall());
-                localStorage.writeObject("requests", calls);
+                localStorage.writeObject("requests", (Serializable) calls);
             }
         } finally {
             this.asyncCall.onAfter();

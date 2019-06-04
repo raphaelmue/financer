@@ -1,8 +1,9 @@
 package de.raphaelmuesseler.financer.shared.model.user;
 
+import java.io.Serializable;
 import java.util.*;
 
-public interface Settings {
+public interface Settings extends Serializable {
     enum Property {
         LANGUAGE("language", true, "en"),
         CURRENCY("currency", true, "USD"),

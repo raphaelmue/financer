@@ -29,6 +29,7 @@ import org.controlsfx.glyphfont.FontAwesome;
 import org.controlsfx.glyphfont.GlyphFont;
 import org.controlsfx.glyphfont.GlyphFontRegistry;
 
+import java.io.Serializable;
 import java.net.URL;
 import java.util.Currency;
 import java.util.HashMap;
@@ -120,7 +121,7 @@ public class SettingsController implements Initializable {
         FinancerExecutor.getExecutor().execute(new ServerRequestHandler(user, "updateUsersSettings", parameters, new JavaFXAsyncConnectionCall() {
             @Override
             public void onSuccess(ConnectionResult result) {
-                localStorage.writeObject("user", result.getResult());
+                localStorage.writeObject("user", (Serializable) result.getResult());
                 user = (User) result.getResult();
             }
 
