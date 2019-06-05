@@ -132,7 +132,7 @@ public class FinancerActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         Fragment fragment;
         Class fragmentClass = null;
-        AppBarLayout appBarLayout= findViewById(R.id.toolbarContainer);
+        AppBarLayout appBarLayout = findViewById(R.id.toolbarContainer);
 
         switch (item.getItemId()) {
             case R.id.nav_overview:

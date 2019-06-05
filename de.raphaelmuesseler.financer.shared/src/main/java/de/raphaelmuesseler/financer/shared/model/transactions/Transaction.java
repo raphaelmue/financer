@@ -1,13 +1,12 @@
 package de.raphaelmuesseler.financer.shared.model.transactions;
 
 import de.raphaelmuesseler.financer.shared.model.categories.CategoryTree;
-import de.raphaelmuesseler.financer.shared.model.db.DataEntity;
 import de.raphaelmuesseler.financer.shared.model.db.AttachmentEntity;
+import de.raphaelmuesseler.financer.shared.model.db.DataEntity;
 
-import java.io.Serializable;
 import java.util.Set;
 
-public interface Transaction extends Serializable, AmountProvider, DataEntity {
+public interface Transaction extends AmountProvider, DataEntity {
 
     /**
      * Returns the amount of this transaction.

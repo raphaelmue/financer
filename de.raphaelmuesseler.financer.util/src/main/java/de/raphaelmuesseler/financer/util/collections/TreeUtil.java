@@ -4,6 +4,10 @@ import java.util.Comparator;
 import java.util.List;
 
 public class TreeUtil {
+    private TreeUtil() {
+        super();
+    }
+
     public static <T> boolean insertByValue(Tree<T> root, Tree<T> treeItem, Comparator<T> comparator) {
         for (Tree<T> item : root.getChildren()) {
             if (comparator.compare(treeItem.getValue(), item.getValue()) == 0) {

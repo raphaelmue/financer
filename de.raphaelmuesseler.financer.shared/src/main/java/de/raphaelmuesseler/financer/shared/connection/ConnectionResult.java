@@ -8,7 +8,7 @@ import java.io.Serializable;
  * @param <T> Result Type
  * @author Raphael Müßeler
  */
-public class ConnectionResult<T> implements Serializable {
+public class ConnectionResult<T extends Serializable> implements Serializable {
     private static final long serialVersionUID = 5566504159960287868L;
     private final T result;
     private final Exception exception;

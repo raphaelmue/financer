@@ -18,6 +18,7 @@ import org.junit.jupiter.api.*;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.logging.Logger;
@@ -169,7 +170,7 @@ public class ServiceTest {
 
     @Test
     public void testCheckUsersToken() {
-        HashMap<String, Object> parameters = new HashMap<>();
+        Map<String, Serializable> parameters = new HashMap<>();
         parameters.put("token", token.getToken());
         final String tokenString = token.getToken();
         User userToAssert = service.checkUsersToken(logger, session, parameters);
@@ -205,7 +206,7 @@ public class ServiceTest {
 
     @Test
     public void testDeleteToken() {
-        HashMap<String, Object> parameters = new HashMap<>();
+        HashMap<String, Serializable> parameters = new HashMap<>();
         parameters.put("tokenId", token.getId());
         service.deleteToken(logger, session, parameters);
 
@@ -219,7 +220,7 @@ public class ServiceTest {
 
     @Test
     public void testCheckCredentials() {
-        HashMap<String, Object> parameters = new HashMap<>();
+        HashMap<String, Serializable> parameters = new HashMap<>();
         parameters.put("email", user.getEmail());
         parameters.put("password", "password");
         parameters.put("ipAddress", token.getIpAddress());
@@ -240,7 +241,7 @@ public class ServiceTest {
 
     @Test
     public void testRegisterUser() {
-        HashMap<String, Object> parameters = new HashMap<>();
+        HashMap<String, Serializable> parameters = new HashMap<>();
         User _user = new User(0,
                 "other.email@test.com",
                 "6406b2e97a97f64910aca76370ee35a92087806da1aa878e8a9ae0f4dc3949af",
@@ -275,7 +276,7 @@ public class ServiceTest {
         user.setPassword(password);
         user.setSalt(salt);
 
-        HashMap<String, Object> parameters = new HashMap<>();
+        HashMap<String, Serializable> parameters = new HashMap<>();
         parameters.put("user", new User(user));
         service.changePassword(logger, session, parameters);
 
@@ -309,7 +310,7 @@ public class ServiceTest {
 
         settings.setValue("USD");
 
-        HashMap<String, Object> parameters = new HashMap<>();
+        HashMap<String, Serializable> parameters = new HashMap<>();
         parameters.put("user", new User(user));
         service.updateUsersSettings(logger, session, parameters);
 
@@ -320,7 +321,7 @@ public class ServiceTest {
 
     @Test
     public void testGetUsersCategories() {
-        HashMap<String, Object> parameters = new HashMap<>();
+        HashMap<String, Serializable> parameters = new HashMap<>();
         parameters.put("userId", user.getId());
         ConnectionResult<BaseCategory> result = service.getUsersCategories(logger, session, parameters);
         Assertions.assertNotNull(result.getResult());
@@ -343,7 +344,7 @@ public class ServiceTest {
         category.setName("Another fixedCategory");
         category.setParentId(-1);
 
-        Map<String, Object> parameters = new HashMap<>();
+        Map<String, Serializable> parameters = new HashMap<>();
         parameters.put("category", category);
         service.addCategory(logger, session, parameters);
 
@@ -357,7 +358,7 @@ public class ServiceTest {
     public void testUpdateCategory() {
         fixedCategory.setName("New Name");
 
-        Map<String, Object> parameters = new HashMap<>();
+        Map<String, Serializable> parameters = new HashMap<>();
         parameters.put("category", new Category(fixedCategory));
         service.updateCategory(logger, session, parameters);
 
@@ -369,7 +370,7 @@ public class ServiceTest {
 
     @Test
     public void testDeleteCategory() {
-        Map<String, Object> parameters = new HashMap<>();
+        Map<String, Serializable> parameters = new HashMap<>();
         parameters.put("categoryId", fixedCategory.getId());
         service.deleteCategory(logger, session, parameters);
 
@@ -381,7 +382,7 @@ public class ServiceTest {
 
     @Test
     public void testGetTransactions() {
-        Map<String, Object> parameters = new HashMap<>();
+        Map<String, Serializable> parameters = new HashMap<>();
         parameters.put("userId", user.getId());
         BaseCategory baseCategory = service.getUsersCategories(logger, session, parameters).getResult();
 
@@ -412,7 +413,7 @@ public class ServiceTest {
                 "Another Procuct",
                 "",
                 "");
-        Map<String, Object> parameters = new HashMap<>();
+        Map<String, Serializable> parameters = new HashMap<>();
         parameters.put("variableTransaction", variableTransaction);
         ConnectionResult<VariableTransaction> result = service.addTransaction(logger, session, parameters);
         Assertions.assertTrue(result.getResult().getId() > 0);
@@ -434,7 +435,7 @@ public class ServiceTest {
         final String newProduct = "A different product";
         variableTransaction.setProduct(newProduct);
 
-        Map<String, Object> parameters = new HashMap<>();
+        Map<String, Serializable> parameters = new HashMap<>();
         parameters.put("variableTransaction", new VariableTransaction(variableTransaction));
         service.updateTransaction(logger, session, parameters);
 
@@ -449,7 +450,7 @@ public class ServiceTest {
     public void testDeleteTransaction() {
         this.testAddTransaction();
 
-        Map<String, Object> parameters = new HashMap<>();
+        Map<String, Serializable> parameters = new HashMap<>();
         parameters.put("variableTransactionId", variableTransaction.getId());
         service.deleteTransaction(logger, session, parameters);
 
@@ -473,7 +474,7 @@ public class ServiceTest {
         content.setName("Test Attachment");
         content.setContent(randomString.nextString().getBytes());
 
-        Map<String, Object> parameters = new HashMap<>();
+        Map<String, Serializable> parameters = new HashMap<>();
         parameters.put("attachment", content);
         parameters.put("transaction", new VariableTransaction(variableTransaction));
         ConnectionResult<Attachment> result = service.uploadTransactionAttachment(logger, session, parameters);
@@ -486,7 +487,7 @@ public class ServiceTest {
     public void testGetAttachment() {
         testUploadAttachment();
 
-        Map<String, Object> parameters = new HashMap<>();
+        Map<String, Serializable> parameters = new HashMap<>();
         parameters.put("attachmentId", 1);
         ConnectionResult<ContentAttachment> result = service.getAttachment(logger, session, parameters);
         Assertions.assertNotNull(result.getResult());
@@ -498,7 +499,7 @@ public class ServiceTest {
     public void testDeleteAttachment() {
         testUploadAttachment();
 
-        Map<String, Object> parameters = new HashMap<>();
+        Map<String, Serializable> parameters = new HashMap<>();
         parameters.put("attachmentId", 1);
         service.deleteAttachment(logger, session, parameters);
         session.close();
@@ -508,7 +509,7 @@ public class ServiceTest {
 
     @Test
     public void testGetFixedTransactions() {
-        Map<String, Object> parameters = new HashMap<>();
+        Map<String, Serializable> parameters = new HashMap<>();
         parameters.put("userId", user.getId());
         BaseCategory baseCategory = service.getUsersCategories(logger, session, parameters).getResult();
 
@@ -548,7 +549,7 @@ public class ServiceTest {
 
         transactionAmount.setFixedTransaction(_fixedTransaction.toEntity());
 
-        Map<String, Object> parameters = new HashMap<>();
+        Map<String, Serializable> parameters = new HashMap<>();
         parameters.put("fixedTransaction", _fixedTransaction);
         ConnectionResult<FixedTransaction> result = service.addFixedTransactions(logger, session, parameters);
         Assertions.assertNotNull(result.getResult());
@@ -565,7 +566,7 @@ public class ServiceTest {
         final double amount = 100.0;
         fixedTransaction.setAmount(amount);
 
-        Map<String, Object> parameters = new HashMap<>();
+        Map<String, Serializable> parameters = new HashMap<>();
         parameters.put("fixedTransaction", new FixedTransaction(fixedTransaction));
         service.updateFixedTransaction(logger, session, parameters);
 
@@ -576,7 +577,7 @@ public class ServiceTest {
 
     @Test
     public void testDeleteFixedTransaction() {
-        Map<String, Object> parameters = new HashMap<>();
+        Map<String, Serializable> parameters = new HashMap<>();
         parameters.put("fixedTransactionId", fixedTransaction.getId());
         service.deleteFixedTransaction(logger, session, parameters);
 

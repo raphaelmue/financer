@@ -51,9 +51,6 @@ public abstract class FormatterImpl implements Formatter {
     }
 
     @Override
-    public abstract String formatCategoryName(CategoryTree categoryTree);
-
-    @Override
     public String formatDate(LocalDate localDate) {
         DateTimeFormatter formatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(user.getSettings().getLanguage());
         return localDate.format(formatter);

@@ -9,7 +9,7 @@ import java.util.Map;
 public class ConnectionCall implements Serializable {
     private static final long serialVersionUID = -4886612977513896452L;
     private final String methodName;
-    private final Map<String, Object> parameters;
+    private final Map<String, Serializable> parameters;
 
     /**
      * Instantiates a new ConnectionCall.
@@ -18,7 +18,7 @@ public class ConnectionCall implements Serializable {
      * @param methodName Name of the corresponding FinancerService method. If the method does not exist, an Exception is thrown.
      * @param parameters parameters, which the FinancerService method needs
      */
-    public ConnectionCall(String methodName, Map<String, Object> parameters) {
+    public ConnectionCall(String methodName, Map<String, Serializable> parameters) {
         this.methodName = methodName;
         this.parameters = parameters;
     }
@@ -27,7 +27,7 @@ public class ConnectionCall implements Serializable {
         return methodName;
     }
 
-    public Map<String, Object> getParameters() {
+    public Map<String, Serializable> getParameters() {
         return parameters;
     }
 }

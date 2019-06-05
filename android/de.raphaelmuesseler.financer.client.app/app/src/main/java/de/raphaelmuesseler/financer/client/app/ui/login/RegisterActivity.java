@@ -19,6 +19,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
@@ -137,7 +138,7 @@ public class RegisterActivity extends AppCompatActivity implements Application {
             FinancerExecutor.getExecutor().execute(new ServerRequestHandler("registerUser", parameters, new AndroidAsyncConnectionCall() {
                 @Override
                 public void onSuccess(ConnectionResult connectionResult) {
-                    LocalStorageImpl.getInstance().writeObject("user", connectionResult.getResult());
+                    LocalStorageImpl.getInstance().writeObject("user", (Serializable) connectionResult.getResult());
                     RetrievalServiceImpl.getInstance().fetchAllData((User) connectionResult.getResult(), aVoid -> openFinancerActivity());
                 }
 

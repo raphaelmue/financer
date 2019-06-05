@@ -6,7 +6,7 @@ import java.security.NoSuchAlgorithmException;
 
 public class Hash {
 
-    private final static String HASH_ALGORITHM = "SHA-256";
+    private static final String HASH_ALGORITHM = "SHA-256";
 
     public static String create(String plainText, String salt) {
         return create(plainText + salt);

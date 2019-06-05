@@ -6,7 +6,7 @@ import java.time.LocalDate;
 @Entity
 @Table(name = "fixed_transactions_amounts")
 public class FixedTransactionAmountEntity implements DataEntity {
-    private final static long serialVersionUID = -3901962625430867317L;
+    private static final long serialVersionUID = -3901962625430867317L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

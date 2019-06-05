@@ -1,16 +1,17 @@
 package de.raphaelmuesseler.financer.client.local;
 
+import java.io.Serializable;
 import java.util.List;
 
 public interface LocalStorage {
-    Object readObject(String key);
+    Serializable readObject(String key);
 
     @SuppressWarnings("unchecked")
     default <T> List<T> readList(String key) {
         return (List<T>) this.readObject(key);
     }
 
-    boolean writeObject(String key, Object object);
+    boolean writeObject(String key, Serializable object);
 
     boolean deleteObject(String key);
 

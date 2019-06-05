@@ -41,9 +41,6 @@ public class FixedTransactionTest extends AbstractFinancerApplicationTest {
         addCategory(category);
         addFixedTransaction(fixedTransaction);
         sleep(SHORT_SLEEP);
-        // TODO: related to issue #14
-        // clickOn(find((Label label) -> label.getText().contains(fixedTransaction.getCategoryTree().getValue().getName())));
-        // sleep(500);
         clickOn((JFXListView) find("#categoriesListView"));
         press(KeyCode.DOWN).release(KeyCode.DOWN);
         press(KeyCode.DOWN).release(KeyCode.DOWN);

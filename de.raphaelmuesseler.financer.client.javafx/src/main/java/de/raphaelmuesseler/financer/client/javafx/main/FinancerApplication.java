@@ -23,11 +23,7 @@ public class FinancerApplication extends Application {
     private Logger logger = Logger.getLogger("FinancerApplication");
 
     public static void main(String[] args) {
-        if (args.length > 0 && args[0] != null && args[0].equals("local")) {
-            ServerRequest.setHost(true);
-        } else {
-            ServerRequest.setHost(false);
-        }
+        ServerRequest.setHost((args.length > 0 && args[0] != null && args[0].equals("local")));
         launch(args);
     }
 
@@ -38,7 +34,7 @@ public class FinancerApplication extends Application {
             try {
                 new LoginApplication().start(new Stage());
             } catch (IOException e) {
-                e.printStackTrace();
+                logger.log(Level.SEVERE, e.getMessage(), e);
             }
         } else {
             // setting up language

@@ -19,7 +19,7 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 
 import javax.persistence.NoResultException;
-import java.sql.SQLException;
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -31,17 +31,17 @@ import java.util.logging.Logger;
 @SuppressWarnings({"unused", "WeakerAccess"})
 public class FinancerService {
 
-    private static FinancerService INSTANCE = null;
+    private static FinancerService instance = null;
     private RandomString tokenGenerator = new RandomString(64);
 
     private FinancerService() {
     }
 
     public static FinancerService getInstance() {
-        if (INSTANCE == null) {
-            INSTANCE = new FinancerService();
+        if (instance == null) {
+            instance = new FinancerService();
         }
-        return INSTANCE;
+        return instance;
     }
 
     /**
@@ -50,7 +50,7 @@ public class FinancerService {
      * @param parameters [String token]
      * @return User that has this token
      */
-    public User checkUsersToken(Logger logger, Session session, Map<String, Object> parameters) {
+    public User checkUsersToken(Logger logger, Session session, Map<String, Serializable> parameters) {
         logger.log(Level.INFO, "Checking users token ...");
 
         User user = null;
@@ -71,7 +71,7 @@ public class FinancerService {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.log(Level.SEVERE, e.getMessage(), e);
         }
 
         transaction.commit();
@@ -137,7 +137,7 @@ public class FinancerService {
      * @param parameters [String email, String password, String ipAddress, String system, boolean isMobile]
      * @return User object, if credentials are correct, else null
      */
-    public ConnectionResult<User> checkCredentials(Logger logger, Session session, Map<String, Object> parameters) {
+    public ConnectionResult<User> checkCredentials(Logger logger, Session session, Map<String, Serializable> parameters) {
         logger.log(Level.INFO, "Checking credentials ...");
 
         User user = null;
@@ -173,7 +173,7 @@ public class FinancerService {
      * @param parameters [User user, String ipAddress, String system, boolean isMobile]
      * @return void
      */
-    public ConnectionResult<User> registerUser(Logger logger, Session session, Map<String, Object> parameters) {
+    public ConnectionResult<User> registerUser(Logger logger, Session session, Map<String, Serializable> parameters) {
         logger.log(Level.INFO, "Registering new user ...");
         User user = (User) parameters.get("user");
 
@@ -194,7 +194,7 @@ public class FinancerService {
      * @param parameters [User user]
      * @return void
      */
-    public ConnectionResult<Void> changePassword(Logger logger, Session session, Map<String, Object> parameters) {
+    public ConnectionResult<Serializable> changePassword(Logger logger, Session session, Map<String, Serializable> parameters) {
         logger.log(Level.INFO, "Changing Users Password ...");
         User user = (User) parameters.get("user");
 
@@ -211,7 +211,7 @@ public class FinancerService {
      * @param parameters [int tokenId]
      * @return void
      */
-    public ConnectionResult<Void> deleteToken(Logger logger, Session session, Map<String, Object> parameters) {
+    public ConnectionResult<Serializable> deleteToken(Logger logger, Session session, Map<String, Serializable> parameters) {
         logger.log(Level.INFO, "Deleting users token ...");
 
         Transaction transaction = session.beginTransaction();
@@ -228,7 +228,7 @@ public class FinancerService {
      * @param parameters [User user]
      * @return User object
      */
-    public ConnectionResult<User> updateUsersSettings(Logger logger, Session session, Map<String, Object> parameters) {
+    public ConnectionResult<User> updateUsersSettings(Logger logger, Session session, Map<String, Serializable> parameters) {
         logger.log(Level.INFO, "Updating users settings ...");
         User user = (User) parameters.get("user");
 
@@ -253,12 +253,12 @@ public class FinancerService {
      * @param parameters [int userId]
      * @return BaseCategory object
      */
-    public ConnectionResult<BaseCategory> getUsersCategories(Logger logger, Session session, Map<String, Object> parameters) throws IllegalArgumentException {
+    public ConnectionResult<BaseCategory> getUsersCategories(Logger logger, Session session, Map<String, Serializable> parameters) {
         logger.log(Level.INFO, "Fetching users categories ...");
         BaseCategory baseCategory;
 
         Transaction transaction = session.beginTransaction();
-        User user = new User(session.get(UserEntity.class, (int) parameters.get("userId")));
+        User user = new User(session.get(UserEntity.class, parameters.get("userId")));
         List<CategoryEntity> categories = new ArrayList<>(user.getCategories());
         Collections.sort(categories);
 
@@ -287,7 +287,7 @@ public class FinancerService {
      * @param parameters [Category category]
      * @return Category object
      */
-    public ConnectionResult<Category> addCategory(Logger logger, Session session, Map<String, Object> parameters) {
+    public ConnectionResult<Category> addCategory(Logger logger, Session session, Map<String, Serializable> parameters) {
         logger.log(Level.INFO, "Adding new category ...");
         Category category = (Category) parameters.get("category");
 
@@ -304,7 +304,7 @@ public class FinancerService {
      * @param parameters [Category category]
      * @return void
      */
-    public ConnectionResult<Void> updateCategory(Logger logger, Session session, Map<String, Object> parameters) {
+    public ConnectionResult<Serializable> updateCategory(Logger logger, Session session, Map<String, Serializable> parameters) {
         logger.log(Level.INFO, "Updating users categories ...");
         Category category = (Category) parameters.get("category");
 
@@ -321,7 +321,7 @@ public class FinancerService {
      * @param parameters [int categoryId]
      * @return void
      */
-    public ConnectionResult<Void> deleteCategory(Logger logger, Session session, Map<String, Object> parameters) {
+    public ConnectionResult<Serializable> deleteCategory(Logger logger, Session session, Map<String, Serializable> parameters) {
         logger.log(Level.INFO, "Deleting category ...");
         int categoryId = (int) parameters.get("categoryId");
 
@@ -354,7 +354,7 @@ public class FinancerService {
         categories = session.createQuery("from CategoryEntity where parentId = :parentId", CategoryEntity.class)
                 .setParameter("parentId", categoryId).list();
         transaction.commit();
-        if (categories.size() > 0) {
+        if (!categories.isEmpty()) {
             for (CategoryEntity databaseCategory : categories) {
                 transaction = session.beginTransaction();
                 session.delete(databaseCategory);
@@ -370,7 +370,7 @@ public class FinancerService {
      * @param parameters [int userId, BaseCategory baseCategory]
      * @return BaseCategory with transactions
      */
-    public ConnectionResult<BaseCategory> getTransactions(Logger logger, Session session, Map<String, Object> parameters) {
+    public ConnectionResult<BaseCategory> getTransactions(Logger logger, Session session, Map<String, Serializable> parameters) {
         logger.log(Level.INFO, "Fetching users transaction ...");
         BaseCategory baseCategory;
         baseCategory = (BaseCategory) parameters.get("baseCategory");
@@ -403,7 +403,7 @@ public class FinancerService {
      * @param parameters [VariableTransaction variableTransaction]
      * @return variable transaction object
      */
-    public ConnectionResult<VariableTransaction> addTransaction(Logger logger, Session session, Map<String, Object> parameters) {
+    public ConnectionResult<VariableTransaction> addTransaction(Logger logger, Session session, Map<String, Serializable> parameters) {
         logger.log(Level.INFO, "Adding transaction ...");
         VariableTransaction variableTransaction = (VariableTransaction) parameters.get("variableTransaction");
 
@@ -421,7 +421,7 @@ public class FinancerService {
      * @param parameters [VariableTransaction variableTransaction]
      * @return void
      */
-    public ConnectionResult<Void> updateTransaction(Logger logger, Session session, Map<String, Object> parameters) {
+    public ConnectionResult<Serializable> updateTransaction(Logger logger, Session session, Map<String, Serializable> parameters) {
         logger.log(Level.INFO, "Adding transaction ...");
         VariableTransaction variableTransaction = (VariableTransaction) parameters.get("variableTransaction");
 
@@ -440,7 +440,7 @@ public class FinancerService {
      * @param parameters [int variableTransactionId]
      * @return
      */
-    public ConnectionResult<Void> deleteTransaction(Logger logger, Session session, Map<String, Object> parameters) {
+    public ConnectionResult<Serializable> deleteTransaction(Logger logger, Session session, Map<String, Serializable> parameters) {
         logger.log(Level.INFO, "Adding transaction ...");
 
         Transaction transaction = session.beginTransaction();
@@ -458,7 +458,7 @@ public class FinancerService {
      * @param parameters [VariableTransaction transaction, ContentAttachment attachment]
      * @return ContentAttachment object
      */
-    public ConnectionResult<Attachment> uploadTransactionAttachment(Logger logger, Session session, Map<String, Object> parameters) {
+    public ConnectionResult<Attachment> uploadTransactionAttachment(Logger logger, Session session, Map<String, Serializable> parameters) {
         logger.log(Level.INFO, "Uploading AttachmentWithContent ...");
         ContentAttachment attachment = (ContentAttachment) parameters.get("attachment");
 
@@ -481,7 +481,7 @@ public class FinancerService {
      * @param parameters [int attachmentId]
      * @return Attachment object or null, if none found
      */
-    public ConnectionResult<ContentAttachment> getAttachment(Logger logger, Session session, Map<String, Object> parameters) {
+    public ConnectionResult<ContentAttachment> getAttachment(Logger logger, Session session, Map<String, Serializable> parameters) {
         logger.log(Level.INFO, "Fetching attachment ...");
 
         ContentAttachment attachment = null;
@@ -501,12 +501,12 @@ public class FinancerService {
      * @param parameters [int attachmentId]
      * @return void
      */
-    public ConnectionResult<Void> deleteAttachment(Logger logger, Session session, Map<String, Object> parameters) {
+    public ConnectionResult<Serializable> deleteAttachment(Logger logger, Session session, Map<String, Serializable> parameters) {
         logger.log(Level.INFO, "Deleting attachment ...");
 
         Transaction transaction = session.beginTransaction();
         AttachmentEntity attachmentEntity = session.get(AttachmentEntity.class,
-                (int) parameters.get("attachmentId"));
+                parameters.get("attachmentId"));
         session.delete(attachmentEntity);
         transaction.commit();
 
@@ -519,7 +519,7 @@ public class FinancerService {
      * @param parameters [int userId, BaseCategory baseCategory]
      * @return BaseCategory object with fixed transactions
      */
-    public ConnectionResult<BaseCategory> getFixedTransactions(Logger logger, final Session session, Map<String, Object> parameters) {
+    public ConnectionResult<BaseCategory> getFixedTransactions(Logger logger, final Session session, Map<String, Serializable> parameters) {
         logger.log(Level.INFO, "Fetching fixed transactions ...");
         BaseCategory baseCategory;
         baseCategory = (BaseCategory) parameters.get("baseCategory");
@@ -551,7 +551,7 @@ public class FinancerService {
      * @param parameters [FixedTransaction fixedTransaction]
      * @return FixedTransaction object
      */
-    public synchronized ConnectionResult<FixedTransaction> addFixedTransactions(Logger logger, Session session, Map<String, Object> parameters) {
+    public synchronized ConnectionResult<FixedTransaction> addFixedTransactions(Logger logger, Session session, Map<String, Serializable> parameters) {
         logger.log(Level.INFO, "Adding fixed transactions ...");
         FixedTransaction fixedTransaction = (FixedTransaction) parameters.get("fixedTransaction");
 
@@ -579,7 +579,7 @@ public class FinancerService {
      * @param parameters [FixedTransaction fixedTransaction]
      * @return void
      */
-    public ConnectionResult<Void> updateFixedTransaction(Logger logger, Session session, Map<String, Object> parameters) {
+    public ConnectionResult<Serializable> updateFixedTransaction(Logger logger, Session session, Map<String, Serializable> parameters) {
         logger.log(Level.INFO, "Updating fixed transaction ...");
         User user = (User) parameters.get("user");
         FixedTransaction fixedTransaction = (FixedTransaction) parameters.get("fixedTransaction");
@@ -598,7 +598,7 @@ public class FinancerService {
      * @param parameters [int fixedTransactionId]
      * @return void
      */
-    public ConnectionResult<Void> deleteFixedTransaction(Logger logger, Session session, Map<String, Object> parameters) {
+    public ConnectionResult<Serializable> deleteFixedTransaction(Logger logger, Session session, Map<String, Serializable> parameters) {
         logger.log(Level.INFO, "Deleting fixed transaction ...");
 
         Transaction transaction = session.beginTransaction();
