@@ -15,7 +15,6 @@ import de.raphaelmuesseler.financer.shared.model.transactions.Transaction;
 import de.raphaelmuesseler.financer.shared.model.transactions.TransactionAmount;
 import de.raphaelmuesseler.financer.shared.model.transactions.VariableTransaction;
 import de.raphaelmuesseler.financer.shared.model.user.User;
-import de.raphaelmuesseler.financer.util.collections.Tree;
 import de.raphaelmuesseler.financer.util.concurrency.FinancerExecutor;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -36,6 +35,7 @@ public class OverviewController implements Initializable {
     public GridPane lastTransactionsGridPane;
     @FXML
     public GridPane balanceGridPane;
+    @FXML
     public GridPane upcomingFixedTransactionGridPane;
 
     private LocalStorageImpl localStorage = (LocalStorageImpl) LocalStorageImpl.getInstance();
@@ -119,8 +119,6 @@ public class OverviewController implements Initializable {
     }
 
     private void loadUpcomingFixedTransactions() {
-        final int day = LocalDate.now().getDayOfMonth();
-
         List<FixedTransaction> transactions = new ArrayList<>();
         categories.traverse(categoryTree -> {
             for (Transaction transaction : ((CategoryTree) categoryTree).getTransactions()) {
@@ -131,7 +129,7 @@ public class OverviewController implements Initializable {
             }
         });
 
-        if (transactions.size() > 0) {
+        if (!transactions.isEmpty()) {
             int counter = 0;
             for (FixedTransaction transaction : transactions) {
                 // LAST TRANSACTIONS
@@ -141,31 +139,7 @@ public class OverviewController implements Initializable {
                 final int _counter = counter;
                 if (transaction.getIsVariable()) {
                     Hyperlink link = new Hyperlink(transaction.getCategoryTree().getValue().getName());
-                    link.setOnAction(event -> {
-                        TransactionAmount transactionAmount = new TransactionAmount(0, 0.0, LocalDate.now());
-                        transactionAmount.setFixedTransaction(transaction);
-                        transactionAmount = new TransactionAmountDialog(transactionAmount, new ArrayList<>(transaction.getTransactionAmounts()))
-                                .showAndGetResult();
-
-                        if (transactionAmount != null) {
-                            Map<String, Serializable> parameters = new HashMap<>();
-                            parameters.put("transactionAmount", transactionAmount);
-                            FinancerExecutor.getExecutor().execute(new ServerRequestHandler(user, "addTransactionAmount", parameters, new JavaFXAsyncConnectionCall() {
-                                @Override
-                                public void onSuccess(ConnectionResult result) {
-                                    transaction.getTransactionAmounts().add((TransactionAmount) result.getResult());
-                                    localStorage.writeObject("categories", categories);
-                                    Platform.runLater(() -> upcomingFixedTransactionGridPane.getChildren().clear());
-                                    loadUpcomingFixedTransactions();
-                                }
-
-                                @Override
-                                public void onFailure(Exception exception) {
-                                    JavaFXAsyncConnectionCall.super.onFailure(exception);
-                                }
-                            }));
-                        }
-                    });
+                    link.setOnAction(event -> addTransactionAmount(transaction));
                     Platform.runLater(() -> this.upcomingFixedTransactionGridPane.add(link, 0, _counter));
                 } else {
                     Platform.runLater(() -> this.upcomingFixedTransactionGridPane.add(new Label(transaction.getCategoryTree().getValue().getName()),
@@ -181,6 +155,32 @@ public class OverviewController implements Initializable {
             }
         } else {
             Platform.runLater(() -> this.upcomingFixedTransactionGridPane.add(new Label(I18N.get("noUpcomingTransactions")), 0, 0));
+        }
+    }
+
+    private void addTransactionAmount(FixedTransaction transaction) {
+        TransactionAmount transactionAmount = new TransactionAmount(0, 0.0, LocalDate.now());
+        transactionAmount.setFixedTransaction(transaction);
+        transactionAmount = new TransactionAmountDialog(transactionAmount, new ArrayList<>(transaction.getTransactionAmounts()))
+                .showAndGetResult();
+
+        if (transactionAmount != null) {
+            Map<String, Serializable> parameters = new HashMap<>();
+            parameters.put("transactionAmount", transactionAmount);
+            FinancerExecutor.getExecutor().execute(new ServerRequestHandler(user, "addTransactionAmount", parameters, new JavaFXAsyncConnectionCall() {
+                @Override
+                public void onSuccess(ConnectionResult result) {
+                    transaction.getTransactionAmounts().add((TransactionAmount) result.getResult());
+                    localStorage.writeObject("categories", categories);
+                    Platform.runLater(() -> upcomingFixedTransactionGridPane.getChildren().clear());
+                    loadUpcomingFixedTransactions();
+                }
+
+                @Override
+                public void onFailure(Exception exception) {
+                    JavaFXAsyncConnectionCall.super.onFailure(exception);
+                }
+            }));
         }
     }
 }
