@@ -23,7 +23,8 @@ public enum DatabaseName {
                 return TEST;
             case "prod":
                 return PROD;
+            default:
+                throw new IllegalArgumentException("The shortcut for the database must be 'dev', 'prod' or 'test'!");
         }
-        return null;
     }
 }

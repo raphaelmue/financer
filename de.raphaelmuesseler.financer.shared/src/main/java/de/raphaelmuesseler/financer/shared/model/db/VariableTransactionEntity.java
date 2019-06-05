@@ -7,7 +7,7 @@ import java.util.Set;
 @Entity
 @Table(name = "transactions")
 public class VariableTransactionEntity implements DataEntity {
-    private final static long serialVersionUID = -118658876074097774L;
+    private static final long serialVersionUID = -118658876074097774L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

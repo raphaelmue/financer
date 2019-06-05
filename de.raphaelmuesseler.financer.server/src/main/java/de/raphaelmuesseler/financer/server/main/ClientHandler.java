@@ -36,7 +36,7 @@ public class ClientHandler implements Runnable {
 
         try {
             ConnectionCall connectionCall = (ConnectionCall) this.inputStream.readObject();
-            ConnectionResult<Object> result = null;
+            ConnectionResult<Serializable> result = null;
             try (Session session = HibernateUtil.getSessionFactory().openSession()) {
                 if (!connectionCall.getMethodName().equals("checkCredentials") && !connectionCall.getMethodName().equals("registerUser")) {
                     User user = this.service.checkUsersToken(this.logger, session, connectionCall.getParameters());
@@ -50,7 +50,7 @@ public class ClientHandler implements Runnable {
                     method = FinancerService.class.getMethod(connectionCall.getMethodName(), Logger.class, Session.class, Map.class);
                     connectionCall.getParameters().put("ipAddress", client.getInetAddress().toString());
                     //noinspection unchecked
-                    result = (ConnectionResult<Object>) method.invoke(this.service, this.logger, session, connectionCall.getParameters());
+                    result = (ConnectionResult<Serializable>) method.invoke(this.service, this.logger, session, connectionCall.getParameters());
                     this.logger.log(Level.INFO, "Request has been successfully handled.");
                 } catch (Exception exception) {
                     this.logger.log(Level.SEVERE, exception.getMessage(), exception);

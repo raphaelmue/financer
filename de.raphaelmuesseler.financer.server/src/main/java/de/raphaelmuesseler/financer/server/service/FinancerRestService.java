@@ -9,9 +9,11 @@ import de.raphaelmuesseler.financer.shared.model.user.User;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
@@ -28,8 +30,8 @@ public class FinancerRestService {
     @Path("/checkCredentials")
     @Consumes("application/x-www-form-urlencoded")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response checkCredentials(@FormParam("email") String email, @FormParam("password") String password) throws Exception {
-        Map<String, Object> newParameters = new HashMap<>();
+    public Response checkCredentials(@FormParam("email") String email, @FormParam("password") String password) throws ExecutionException, InterruptedException {
+        Map<String, Serializable> newParameters = new HashMap<>();
         newParameters.put("email", email);
         newParameters.put("password", password);
 
@@ -43,8 +45,8 @@ public class FinancerRestService {
     @Produces(MediaType.APPLICATION_JSON)
     public Response registerUser(@FormParam("email") String email, @FormParam("password") String password,
                                  @FormParam("salt") String salt, @FormParam("name") String name,
-                                 @FormParam("surname") String surname, @FormParam("birthDate") String birthdate) throws Exception {
-        Map<String, Object> newParameters = new HashMap<>();
+                                 @FormParam("surname") String surname, @FormParam("birthDate") String birthdate) throws ExecutionException, InterruptedException {
+        Map<String, Serializable> newParameters = new HashMap<>();
         User user = new User(-1, email, password, salt, name, surname, LocalDate.parse(birthdate), User.Gender.MALE);
         newParameters.put("user", user);
 
@@ -56,8 +58,8 @@ public class FinancerRestService {
     @Path("/getUsersCategories")
     @Consumes("application/x-www-form-urlencoded")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getUsersCategories(@FormParam("user_id") int id, @FormParam("token") String token) throws Exception {
-        Map<String, Object> newParameters = new HashMap<>();
+    public Response getUsersCategories(@FormParam("user_id") int id, @FormParam("token") String token) throws ExecutionException, InterruptedException {
+        Map<String, Serializable> newParameters = new HashMap<>();
         User user = new User();
         user.setId(id);
         newParameters.put("user", user);
@@ -71,8 +73,8 @@ public class FinancerRestService {
     @Path("/getTransactions")
     @Consumes("application/x-www-form-urlencoded")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getTransactions(@FormParam("user_id") int id, @FormParam("token") String token) throws Exception {
-        Map<String, Object> newParameters = new HashMap<>();
+    public Response getTransactions(@FormParam("user_id") int id, @FormParam("token") String token) throws ExecutionException, InterruptedException {
+        Map<String, Serializable> newParameters = new HashMap<>();
         User user = new User();
         user.setId(id);
         newParameters.put("user", user);

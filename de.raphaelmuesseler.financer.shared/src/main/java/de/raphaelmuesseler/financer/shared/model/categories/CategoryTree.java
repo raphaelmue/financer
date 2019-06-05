@@ -4,9 +4,10 @@ import de.raphaelmuesseler.financer.shared.model.transactions.AmountProvider;
 import de.raphaelmuesseler.financer.shared.model.transactions.Transaction;
 import de.raphaelmuesseler.financer.util.collections.Tree;
 
+import java.io.Serializable;
 import java.util.Set;
 
-public interface CategoryTree extends Tree<Category>, AmountProvider {
+public interface CategoryTree extends Tree<Category>, AmountProvider, Serializable {
     Set<Transaction> getTransactions();
 
     @Override
