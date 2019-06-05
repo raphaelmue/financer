@@ -15,6 +15,7 @@ import de.raphaelmuesseler.financer.shared.connection.ConnectionResult;
 import de.raphaelmuesseler.financer.shared.model.user.User;
 import de.raphaelmuesseler.financer.util.concurrency.FinancerExecutor;
 import javafx.application.Platform;
+import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
@@ -23,6 +24,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Locale;
@@ -33,11 +35,17 @@ import java.util.logging.Logger;
 
 public class LoginController implements Initializable, Application {
 
+    @FXML
     public TextField loginEmailTextField;
+    @FXML
     public PasswordField loginPasswordField;
+    @FXML
     public Label loginErrorLabel;
+    @FXML
     public GridPane gridPane;
+    @FXML
     public VBox progressIndicatorBox;
+    @FXML
     public Menu languageMenu;
 
     private Logger logger = Logger.getLogger("LoginApplication");
@@ -69,7 +77,7 @@ public class LoginController implements Initializable, Application {
     }
 
     public void handleSignInButtonAction() {
-        Map<String, Object> parameters = new HashMap<>();
+        Map<String, Serializable> parameters = new HashMap<>();
         parameters.put("email", this.loginEmailTextField.getText());
         parameters.put("password", this.loginPasswordField.getText());
         logger.log(Level.INFO, "User's credentials will be checked ...");
@@ -105,14 +113,13 @@ public class LoginController implements Initializable, Application {
 
     private void changeLanguage(Locale locale) {
         new FinancerAlert(Alert.AlertType.INFORMATION, I18N.get("language"), I18N.get("warnChangesAfterRestart")).showAndWait();
-        // TODO to be implemented
     }
 
     public void handleOpenRegisterDialog() {
         User user = new RegisterDialog().showAndGetResult();
 
         if (user != null) {
-            Map<String, Object> parameters = new HashMap<>();
+            Map<String, Serializable> parameters = new HashMap<>();
             parameters.put("user", user);
 
             FinancerExecutor.getExecutor().execute(new ServerRequestHandler("registerUser", parameters, new JavaFXAsyncConnectionCall() {
@@ -125,11 +132,6 @@ public class LoginController implements Initializable, Application {
                 public void onFailure(Exception exception) {
                     logger.log(Level.SEVERE, exception.getMessage(), exception);
                     JavaFXAsyncConnectionCall.super.onFailure(exception, () -> handleOpenRegisterDialog());
-                }
-
-                @Override
-                public void onAfter() {
-
                 }
             }));
         }
@@ -158,7 +160,7 @@ public class LoginController implements Initializable, Application {
             try {
                 new FinancerApplication().start(new Stage());
             } catch (IOException e) {
-                e.printStackTrace();
+                logger.log(Level.SEVERE, e.getMessage(), e);
             }
         }));
     }
@@ -177,16 +179,14 @@ public class LoginController implements Initializable, Application {
 
     @Override
     public void setOffline() {
-
     }
 
     @Override
     public void setOnline() {
-
     }
 
     @Override
     public void showToast(MessageType messageType, String message) {
-
+        throw new UnsupportedOperationException("Showing a toast is not implemented yet!");
     }
 }

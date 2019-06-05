@@ -6,7 +6,7 @@ import javax.persistence.*;
 @Table(name = "users_settings",
         uniqueConstraints={@UniqueConstraint(columnNames={"user_id","property"})})
 public class SettingsEntity implements DataEntity {
-    private final static long serialVersionUID = 3324663296387062431L;
+    private static final long serialVersionUID = 3324663296387062431L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -9,7 +9,6 @@ import de.raphaelmuesseler.financer.client.javafx.main.FinancerController;
 import de.raphaelmuesseler.financer.client.javafx.main.transactions.TransactionAmountDialog;
 import de.raphaelmuesseler.financer.shared.connection.ConnectionResult;
 import de.raphaelmuesseler.financer.shared.model.categories.BaseCategory;
-import de.raphaelmuesseler.financer.shared.model.categories.Category;
 import de.raphaelmuesseler.financer.shared.model.categories.CategoryTree;
 import de.raphaelmuesseler.financer.shared.model.transactions.FixedTransaction;
 import de.raphaelmuesseler.financer.shared.model.transactions.Transaction;
@@ -19,6 +18,7 @@ import de.raphaelmuesseler.financer.shared.model.user.User;
 import de.raphaelmuesseler.financer.util.collections.Tree;
 import de.raphaelmuesseler.financer.util.concurrency.FinancerExecutor;
 import javafx.application.Platform;
+import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.HPos;
 import javafx.scene.control.Hyperlink;
@@ -26,12 +26,15 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 
+import java.io.Serializable;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.*;
 
 public class OverviewController implements Initializable {
+    @FXML
     public GridPane lastTransactionsGridPane;
+    @FXML
     public GridPane balanceGridPane;
     public GridPane upcomingFixedTransactionGridPane;
 
@@ -66,7 +69,7 @@ public class OverviewController implements Initializable {
         });
         transactions.sort((o1, o2) -> o2.getValueDate().compareTo(o1.getValueDate()));
         this.lastTransactionsGridPane.setVgap(8);
-        if (transactions.size() > 0) {
+        if (!transactions.isEmpty()) {
             int counter = 0;
             for (VariableTransaction transaction : transactions) {
                 // LAST TRANSACTIONS
@@ -92,11 +95,11 @@ public class OverviewController implements Initializable {
     private void loadBalance() {
         double balanceAmount = 0;
         int counter = 0;
-        for (Tree<Category> root : categories.getChildren()) {
+        for (CategoryTree root : categories.getChildren()) {
             final int _counter = counter;
             Platform.runLater(() -> balanceGridPane.add(new Label(I18N.get(root.getValue().getCategoryClass().getName())), 0, _counter));
-            Label baseCategoryLabel = formatter.formatAmountLabel(((CategoryTree) root).getAmount(LocalDate.now()));
-            balanceAmount += ((CategoryTree) root).getAmount(LocalDate.now());
+            Label baseCategoryLabel = formatter.formatAmountLabel(root.getAmount(LocalDate.now()));
+            balanceAmount += root.getAmount(LocalDate.now());
             GridPane.setHalignment(baseCategoryLabel, HPos.RIGHT);
             GridPane.setHgrow(baseCategoryLabel, Priority.ALWAYS);
             GridPane.setVgrow(baseCategoryLabel, Priority.ALWAYS);
@@ -145,7 +148,7 @@ public class OverviewController implements Initializable {
                                 .showAndGetResult();
 
                         if (transactionAmount != null) {
-                            Map<String, Object> parameters = new HashMap<>();
+                            Map<String, Serializable> parameters = new HashMap<>();
                             parameters.put("transactionAmount", transactionAmount);
                             FinancerExecutor.getExecutor().execute(new ServerRequestHandler(user, "addTransactionAmount", parameters, new JavaFXAsyncConnectionCall() {
                                 @Override

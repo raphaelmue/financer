@@ -14,6 +14,8 @@ import java.util.Objects;
 import java.util.Set;
 
 public class FixedTransaction extends FixedTransactionEntity implements Transaction {
+    private static final long serialVersionUID = 5624926843417391780L;
+
     private CategoryTree categoryTree;
     private final Set<Attachment> attachments;
     private final Set<TransactionAmount> transactionAmounts;
@@ -89,7 +91,8 @@ public class FixedTransaction extends FixedTransactionEntity implements Transact
                     amount += amountProvider.getAmount(startDate, endDate);
                 }
             } else {
-                LocalDate maxStartDate, minEndDate;
+                LocalDate maxStartDate;
+                LocalDate minEndDate;
                 if (this.getEndDate() == null) {
                     minEndDate = endDate;
                 } else {

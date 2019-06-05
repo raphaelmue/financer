@@ -3,10 +3,6 @@ package de.raphaelmuesseler.financer.shared.exceptions;
 public abstract class FinancerException extends Exception {
     private String displayMessage;
 
-    FinancerException() {
-        super();
-    }
-
     FinancerException(String message) {
         super(message);
     }

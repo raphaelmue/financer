@@ -12,6 +12,7 @@ import de.raphaelmuesseler.financer.util.collections.Action;
 import de.raphaelmuesseler.financer.util.collections.TreeUtil;
 import de.raphaelmuesseler.financer.util.concurrency.FinancerExecutor;
 
+import java.io.Serializable;
 import java.net.ConnectException;
 import java.util.HashMap;
 import java.util.Map;
@@ -20,16 +21,16 @@ import java.util.logging.Logger;
 
 public class RetrievalServiceImpl implements RetrievalService {
 
-    private static RetrievalService INSTANCE = null;
+    private static RetrievalService instance = null;
     private final LocalStorage localStorage = LocalStorageImpl.getInstance();
     private final Logger logger = Logger.getLogger("FinancerApplication");
 
 
     public static RetrievalService getInstance() {
-        if (INSTANCE == null) {
-            INSTANCE = new RetrievalServiceImpl();
+        if (instance == null) {
+            instance = new RetrievalServiceImpl();
         }
-        return INSTANCE;
+        return instance;
     }
 
     private RetrievalServiceImpl() {
@@ -42,7 +43,7 @@ public class RetrievalServiceImpl implements RetrievalService {
 
     @Override
     public void fetchCategories(User user, AsyncCall<BaseCategory> asyncCall) {
-        Map<String, Object> parameters = new HashMap<>();
+        Map<String, Serializable> parameters = new HashMap<>();
         parameters.put("userId", user.getId());
 
         FinancerExecutor.getExecutor().execute(new ServerRequestHandler(user, "getUsersCategories", parameters,
@@ -51,7 +52,7 @@ public class RetrievalServiceImpl implements RetrievalService {
 
     @Override
     public void fetchTransactions(User user, final AsyncCall<BaseCategory> asyncCall) {
-        Map<String, Object> parameters = new HashMap<>();
+        Map<String, Serializable> parameters = new HashMap<>();
         parameters.put("userId", user.getId());
         parameters.put("baseCategory", localStorage.readObject("categories"));
 
@@ -61,7 +62,7 @@ public class RetrievalServiceImpl implements RetrievalService {
 
     @Override
     public void fetchFixedTransactions(User user, final AsyncCall<BaseCategory> asyncConnectionCall) {
-        Map<String, Object> parameters = new HashMap<>();
+        Map<String, Serializable> parameters = new HashMap<>();
         parameters.put("userId", user.getId());
         parameters.put("baseCategory", localStorage.readObject("categories"));
 

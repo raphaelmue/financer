@@ -13,7 +13,9 @@ import javafx.util.StringConverter;
 
 
 public class RegisterDialog extends FinancerDialog<User> {
-    private TextField nameField, surnameField, emailField;
+    private TextField nameField;
+    private TextField surnameField;
+    private TextField emailField;
     private PasswordField passwordField, passwordRepeatField;
     private JFXDatePicker birthDatePicker;
     private ComboBox<User.Gender> genderComboBox;
@@ -55,19 +57,6 @@ public class RegisterDialog extends FinancerDialog<User> {
         this.genderComboBox = new ComboBox<>();
         this.genderComboBox.setId("genderComboBox");
         this.genderComboBox.getItems().addAll(User.Gender.values());
-//        ListCell<User.Gender> listCell = new ListCell<>() {
-////            @Override
-////            protected void updateItem(User.Gender item, boolean empty) {
-////                super.updateItem(item, empty);
-////
-////                if (!empty && item != null) {
-////                    setText(I18N.get(item.getName()));
-////                } else {
-////                    setText(null);
-////                }
-////            }
-////        };
-////        this.genderComboBox.setCellFactory(param -> listCell);
         this.genderComboBox.setConverter(new StringConverter<>() {
             @Override
             public String toString(User.Gender gender) {

@@ -22,6 +22,7 @@ import de.raphaelmuesseler.financer.util.collections.Tree;
 import de.raphaelmuesseler.financer.util.collections.TreeUtil;
 import de.raphaelmuesseler.financer.util.concurrency.FinancerExecutor;
 import javafx.application.Platform;
+import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldTreeCell;
@@ -30,6 +31,7 @@ import org.controlsfx.glyphfont.FontAwesome;
 import org.controlsfx.glyphfont.GlyphFont;
 import org.controlsfx.glyphfont.GlyphFontRegistry;
 
+import java.io.Serializable;
 import java.net.URL;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -40,16 +42,27 @@ import java.util.logging.Logger;
 
 public class ProfileController implements Initializable {
 
+    @FXML
     public Label fullNameLabel;
+    @FXML
     public Label emailLabel;
+    @FXML
     public Label birthDateLabel;
+    @FXML
     public Label addressLabel;
+    @FXML
     public Label genderLabel;
+    @FXML
     public Hyperlink changePasswordLink;
+    @FXML
     public TreeView<CategoryTree> categoriesTreeView;
+    @FXML
     public JFXButton refreshCategoriesBtn;
+    @FXML
     public JFXButton newCategoryBtn;
+    @FXML
     public JFXButton editCategoryBtn;
+    @FXML
     public JFXButton deleteCategoryBtn;
 
     private User user;
@@ -71,7 +84,7 @@ public class ProfileController implements Initializable {
         this.changePasswordLink.setOnAction(event -> {
             if (new ChangePasswordDialog(user).showAndGetResult() != null) {
 
-                Map<String, Object> parameters = new HashMap<>();
+                Map<String, Serializable> parameters = new HashMap<>();
                 parameters.put("user", user);
 
                 FinancerExecutor.getExecutor().execute(new ServerRequestHandler(user, "changePassword", parameters,
@@ -163,7 +176,7 @@ public class ProfileController implements Initializable {
                         categoriesTreeView.getSelectionModel().getSelectedItem().getValue(),
                         new Category(0, categoryName, currentItem.getValue().getValue().getId(), currentItem.getValue().getValue().getCategoryClass()));
 
-                Map<String, Object> parameters = new HashMap<>();
+                Map<String, Serializable> parameters = new HashMap<>();
                 categoryTree.getValue().setUser(user.toEntity());
                 parameters.put("category", categoryTree.getValue());
 
@@ -210,7 +223,7 @@ public class ProfileController implements Initializable {
     }
 
     private void handleUpdateCategory(CategoryTree category) {
-        Map<String, Object> parameters = new HashMap<>();
+        Map<String, Serializable> parameters = new HashMap<>();
         parameters.put("category", category.getValue());
 
         FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "updateCategory", parameters, new JavaFXAsyncConnectionCall() {
@@ -233,31 +246,27 @@ public class ProfileController implements Initializable {
     }
 
     private void handleDeleteCategory(CategoryTree categoryTree) {
-        if (categoryTree != null && !categoryTree.isRoot()) {
+        if (categoryTree != null && !categoryTree.isRoot() && new FinancerConfirmDialog(I18N.get("confirmDeleteCategory")).showAndGetResult()) {
+            Map<String, Serializable> parameters = new HashMap<>();
+            parameters.put("categoryId", this.categoriesTreeView.getSelectionModel()
+                    .getSelectedItem().getValue().getValue().getId());
 
-            if (new FinancerConfirmDialog(I18N.get("confirmDeleteCategory")).showAndGetResult()) {
+            FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "deleteCategory", parameters, new JavaFXAsyncConnectionCall() {
+                @Override
+                public void onSuccess(ConnectionResult result) {
+                    TreeUtil.deleteByValue(categories,
+                            categoriesTreeView.getSelectionModel().getSelectedItem().getValue(), Comparator.comparingInt(Category::getId));
+                    localStorage.writeObject("categories", categories);
 
-                Map<String, Object> parameters = new HashMap<>();
-                parameters.put("categoryId", this.categoriesTreeView.getSelectionModel()
-                        .getSelectedItem().getValue().getValue().getId());
+                    Platform.runLater(() -> categoriesTreeView.getSelectionModel().getSelectedItem().getParent().getChildren().remove(categoriesTreeView.getSelectionModel().getSelectedItem()));
+                }
 
-                FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "deleteCategory", parameters, new JavaFXAsyncConnectionCall() {
-                    @Override
-                    public void onSuccess(ConnectionResult result) {
-                        TreeUtil.deleteByValue(categories,
-                                categoriesTreeView.getSelectionModel().getSelectedItem().getValue(), Comparator.comparingInt(Category::getId));
-                        localStorage.writeObject("categories", categories);
-
-                        Platform.runLater(() -> categoriesTreeView.getSelectionModel().getSelectedItem().getParent().getChildren().remove(categoriesTreeView.getSelectionModel().getSelectedItem()));
-                    }
-
-                    @Override
-                    public void onFailure(Exception exception) {
-                        JavaFXAsyncConnectionCall.super.onFailure(exception);
-                        logger.log(Level.SEVERE, exception.getMessage(), exception);
-                    }
-                }, true));
-            }
+                @Override
+                public void onFailure(Exception exception) {
+                    JavaFXAsyncConnectionCall.super.onFailure(exception);
+                    logger.log(Level.SEVERE, exception.getMessage(), exception);
+                }
+            }, true));
         }
     }
 

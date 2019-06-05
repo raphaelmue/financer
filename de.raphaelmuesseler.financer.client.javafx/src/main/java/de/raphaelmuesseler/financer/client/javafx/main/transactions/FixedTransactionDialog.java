@@ -38,8 +38,10 @@ public class FixedTransactionDialog extends FinancerDialog<FixedTransaction> {
     private CategoryTree categoryTree;
     private Label categoryLabel;
     private IntegerField dayField;
-    private JFXDatePicker startDateField, endDateField;
-    private JFXTextField productField, purposeField;
+    private JFXDatePicker startDateField;
+    private JFXDatePicker endDateField;
+    private JFXTextField productField;
+    private JFXTextField purposeField;
     private CheckBox isVariableCheckbox;
     private DoubleField amountField;
     private VBox transactionAmountContainer;
@@ -214,7 +216,7 @@ public class FixedTransactionDialog extends FinancerDialog<FixedTransaction> {
                 this.isVariableCheckbox.setSelected(this.getValue().getIsVariable());
                 this.toggleTransactionAmountContainer(false);
 
-                if (this.getValue().getTransactionAmounts() != null && this.getValue().getTransactionAmounts().size() > 0) {
+                if (this.getValue().getTransactionAmounts() != null && !this.getValue().getTransactionAmounts().isEmpty()) {
                     this.transactionAmountListView.getItems().addAll(this.getValue().getTransactionAmounts());
                     this.transactionAmountListView.getItems().sort((o1, o2) -> o2.getValueDate().compareTo(o1.getValueDate()));
                 }

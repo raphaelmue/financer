@@ -12,5 +12,6 @@ public interface AsyncConnectionCall extends AsyncCall<ConnectionResult> {
 
     default void onBefore() {}
 
+    @Override
     default void onAfter() {}
 }

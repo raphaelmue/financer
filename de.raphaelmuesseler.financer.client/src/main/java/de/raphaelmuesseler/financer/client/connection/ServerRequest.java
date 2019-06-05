@@ -10,11 +10,11 @@ import java.util.Map;
 
 public class ServerRequest {
 
-    private final static String HOST_LOCAL = "localhost";
-    private final static String HOST_DEPLOY = "raphael-muesseler.de";
-    private static String HOST;
-    private static int PORT = 3500;
-    private final static int TIMEOUT = 5000;
+    private static final String hostLocal = "localhost";
+    private static final String hostRemote = "raphael-muesseler.de";
+    private static String host;
+    private static int post = 3500;
+    private static final int timeout = 5000;
 
     private final ConnectionCall connectionCall;
 
@@ -22,12 +22,12 @@ public class ServerRequest {
         this.connectionCall = connectionCall;
     }
 
-    ServerRequest(String methodName, Map<String, Object> parameters) {
+    ServerRequest(String methodName, Map<String, Serializable> parameters) {
         parameters.put("system", System.getProperty("os.name"));
         this.connectionCall = new ConnectionCall(methodName, parameters);
     }
 
-    ServerRequest(User user, String methodName, Map<String, Object> parameters) {
+    ServerRequest(User user, String methodName, Map<String, Serializable> parameters) {
         parameters.put("token", user.getActiveToken().getToken());
         parameters.put("system", System.getProperty("os.name"));
 
@@ -35,15 +35,15 @@ public class ServerRequest {
     }
 
     public static void setHost(boolean local) {
-        ServerRequest.HOST = local ? ServerRequest.HOST_LOCAL : ServerRequest.HOST_DEPLOY;
+        ServerRequest.host = local ? ServerRequest.hostLocal : ServerRequest.hostRemote;
     }
 
     public static void setPort(int port) {
-        ServerRequest.PORT = port;
+        ServerRequest.post = port;
     }
 
     ConnectionResult make() throws IOException, ClassNotFoundException {
-        Socket socket = new Socket(HOST, PORT);
+        Socket socket = new Socket(host, post);
 
         ObjectOutputStream output = new ObjectOutputStream(new DataOutputStream(socket.getOutputStream()));
         output.writeObject(this.connectionCall);
@@ -54,8 +54,8 @@ public class ServerRequest {
     }
 
     static boolean testConnection() throws IOException {
-        Socket socket = new Socket(HOST, PORT);
-        return socket.getInetAddress().isReachable(TIMEOUT);
+        Socket socket = new Socket(host, post);
+        return socket.getInetAddress().isReachable(timeout);
     }
 
     ConnectionCall getConnectionCall() {

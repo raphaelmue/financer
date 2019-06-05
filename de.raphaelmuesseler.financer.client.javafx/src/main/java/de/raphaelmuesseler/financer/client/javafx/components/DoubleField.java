@@ -22,7 +22,7 @@ public class DoubleField extends TextField {
             }
         };
 
-        StringConverter<Double> converter = new StringConverter<Double>() {
+        StringConverter<Double> converter = new StringConverter<>() {
 
             @Override
             public Double fromString(String s) {

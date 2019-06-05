@@ -24,10 +24,8 @@ public abstract class FinancerDialog<T> extends Dialog<T> {
         this.setResult(this.value);
 
         this.setTitle("Financer");
-        Platform.runLater(() -> {
-            ((Stage) this.getDialogPane().getScene().getWindow()).getIcons().add(
-                    new Image(LoginApplication.class.getResourceAsStream("/images/icons/financer-icon.png")));
-        });
+        Platform.runLater(() -> ((Stage) this.getDialogPane().getScene().getWindow()).getIcons().add(
+                new Image(LoginApplication.class.getResourceAsStream("/images/icons/financer-icon.png"))));
 
         VBox vBox = new VBox();
         this.errorMessageLabel = new Label();

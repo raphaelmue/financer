@@ -6,9 +6,13 @@ import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class LocalStorageImpl implements LocalStorage {
-    private static LocalStorageImpl INSTANCE = null;
+    private static LocalStorageImpl instance = null;
+
+    private final Logger logger = Logger.getLogger("FinancerApplication");
 
     public enum LocalStorageFile {
         USERDATA("/usr/usr.fnc", "user"),
@@ -50,60 +54,61 @@ public class LocalStorageImpl implements LocalStorage {
         }
     }
 
-    public synchronized static LocalStorage getInstance() {
-        if (INSTANCE == null) {
-            INSTANCE = new LocalStorageImpl();
+    public static synchronized LocalStorage getInstance() {
+        if (instance == null) {
+            instance = new LocalStorageImpl();
         }
-        return INSTANCE;
+        return instance;
     }
 
     @SuppressWarnings("unchecked")
-    private synchronized Map<String, Object> readFile(File file) {
+    private synchronized Map<String, Serializable> readFile(File file) {
         if (!file.exists()) {
             try {
                 return file.getParentFile().mkdirs() && file.createNewFile() ? null : null;
             } catch (IOException e) {
-                e.printStackTrace();
+                logger.log(Level.SEVERE, e.getMessage(), e);
             }
         }
 
-        Map<String, Object> result = null;
+        Map<String, Serializable> result = null;
         try (ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream(file))) {
-            result = (Map<String, Object>) inputStream.readObject();
-        } catch (IOException | ClassNotFoundException ignored) {
+            result = (Map<String, Serializable>) inputStream.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            logger.log(Level.SEVERE, e.getMessage(), e);
         }
 
         return result;
     }
 
-    private synchronized boolean writeFile(File file, Map<String, Object> data) {
+    private synchronized boolean writeFile(File file, Map<String, Serializable> data) {
         boolean result = false;
         if (!file.exists()) {
             try {
                 file.getParentFile().mkdirs();
                 file.createNewFile();
             } catch (IOException e) {
-                e.printStackTrace();
+                logger.log(Level.SEVERE, e.getMessage(), e);
             }
         }
         try (ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream(file))) {
             outputStream.writeObject(data);
             result = true;
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.log(Level.SEVERE, e.getMessage(), e);
         }
         return result;
     }
 
     @Override
-    public synchronized Object readObject(String key) {
+    public synchronized Serializable readObject(String key) {
         return (this.readFile(Objects.requireNonNull(LocalStorageFile.getFileByKey(key))) == null) ?
                 null : Objects.requireNonNull(this.readFile(Objects.requireNonNull(LocalStorageFile.getFileByKey(key)))).get(key);
     }
 
     @Override
-    public synchronized boolean writeObject(String key, Object object) {
-        Map<String, Object> map = this.readFile(Objects.requireNonNull(LocalStorageFile.getFileByKey(key)));
+    public synchronized boolean writeObject(String key, Serializable object) {
+        Map<String, Serializable> map = this.readFile(Objects.requireNonNull(LocalStorageFile.getFileByKey(key)));
         if (map == null) {
             map = new HashMap<>();
         }
@@ -117,7 +122,7 @@ public class LocalStorageImpl implements LocalStorage {
         if (!Objects.requireNonNull(LocalStorageFile.getFileByKey(key)).getParentFile().mkdirs()) {
             return false;
         }
-        Map<String, Object> map = this.readFile(Objects.requireNonNull(LocalStorageFile.getFileByKey(key)));
+        Map<String, Serializable> map = this.readFile(Objects.requireNonNull(LocalStorageFile.getFileByKey(key)));
         if (map == null) {
             map = new HashMap<>();
         }

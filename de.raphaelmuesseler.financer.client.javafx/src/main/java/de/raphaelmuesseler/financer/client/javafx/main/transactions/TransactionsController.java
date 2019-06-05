@@ -30,6 +30,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
+import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
@@ -41,6 +42,7 @@ import org.controlsfx.glyphfont.FontAwesome;
 import org.controlsfx.glyphfont.GlyphFont;
 import org.controlsfx.glyphfont.GlyphFontRegistry;
 
+import java.io.Serializable;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.*;
@@ -51,18 +53,31 @@ import static de.raphaelmuesseler.financer.util.date.Month.getMonthByNumber;
 
 public class TransactionsController implements Initializable {
 
+    @FXML
     public JFXButton refreshTransactionsBtn;
+    @FXML
     public JFXButton newTransactionBtn;
+    @FXML
     public JFXButton editTransactionBtn;
+    @FXML
     public JFXButton deleteTransactionBtn;
+    @FXML
     public TableView<VariableTransaction> transactionsTableView;
+    @FXML
     public JFXTextField filterTransactionsTextField;
+    @FXML
     public JFXButton refreshFixedTransactionsBtn;
+    @FXML
     public JFXButton newFixedTransactionBtn;
+    @FXML
     public JFXButton editFixedTransactionBtn;
+    @FXML
     public JFXButton deleteFixedTransactionBtn;
+    @FXML
     public JFXListView<CategoryTree> categoriesListView;
+    @FXML
     public JFXListView<FixedTransaction> fixedTransactionsListView;
+    @FXML
     public TableView<TransactionOverviewRow> transactionsOverviewTableView;
 
     private User user;
@@ -111,7 +126,6 @@ public class TransactionsController implements Initializable {
 
     private void initializeTransactionsOverviewTable() {
         final int numberOfMaxMonths = ((LocalSettingsImpl) localStorage.readObject("localSettings")).getMaxNumberOfMonthsDisplayed();
-        ;
         final List<TableColumn<TransactionOverviewRow, String>> monthColumns = new ArrayList<>(numberOfMaxMonths);
 
         TableColumn<TransactionOverviewRow, CategoryTree> categoryColumn = new TableColumn<>(I18N.get("category"));
@@ -140,7 +154,7 @@ public class TransactionsController implements Initializable {
 
         for (int i = 0; i < numberOfMaxMonths; i++) {
             TableColumn<TransactionOverviewRow, String> column = new TableColumn<>(I18N.get(Objects.requireNonNull(getMonthByNumber(LocalDate.now().minusMonths(i).getMonthValue())).getName()));
-            this.adjustColumnWidth(column, this.transactionsOverviewTableView, numberOfMaxMonths + 2);
+            this.adjustColumnWidth(column, this.transactionsOverviewTableView, numberOfMaxMonths + 2.0);
             column.setStyle("-fx-alignment: CENTER-RIGHT;");
             column.setSortable(false);
             int index = i;
@@ -233,11 +247,7 @@ public class TransactionsController implements Initializable {
 
         this.categoriesListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             showFixedTransactions(newValue);
-            if (newValue != null && !newValue.isRoot()) {
-                newFixedTransactionBtn.setDisable(false);
-            } else {
-                newFixedTransactionBtn.setDisable(true);
-            }
+            newFixedTransactionBtn.setDisable(!(newValue != null && !newValue.isRoot()));
             editFixedTransactionBtn.setDisable(true);
             deleteFixedTransactionBtn.setDisable(true);
         });
@@ -282,7 +292,6 @@ public class TransactionsController implements Initializable {
     private void loadTransactionTableData() {
         ObservableList<VariableTransaction> transactions = FXCollections.observableArrayList();
         if (this.categories != null) {
-//            transactionsTableView.getItems().clear();
             this.categories.traverse(treeItem -> {
                 if (!treeItem.getValue().getCategoryClass().isFixed()) {
                     for (Transaction abstractTransaction : ((CategoryTree) treeItem).getTransactions()) {
@@ -383,7 +392,7 @@ public class TransactionsController implements Initializable {
                 transaction.adjustAmountSign();
             }
 
-            Map<String, Object> parameters = new HashMap<>();
+            Map<String, Serializable> parameters = new HashMap<>();
             parameters.put("variableTransaction", transaction);
 
             FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "addTransaction", parameters, new JavaFXAsyncConnectionCall() {
@@ -422,7 +431,7 @@ public class TransactionsController implements Initializable {
                 fixedTransaction.adjustAmountSign();
             }
 
-            Map<String, Object> parameters = new HashMap<>();
+            Map<String, Serializable> parameters = new HashMap<>();
             parameters.put("fixedTransaction", fixedTransaction);
 
             FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "addFixedTransactions", parameters, new JavaFXAsyncConnectionCall() {
@@ -455,7 +464,7 @@ public class TransactionsController implements Initializable {
                 transaction.adjustAmountSign();
             }
 
-            Map<String, Object> parameters = new HashMap<>();
+            Map<String, Serializable> parameters = new HashMap<>();
             parameters.put("variableTransaction", transaction);
 
             FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "updateTransaction",
@@ -493,7 +502,7 @@ public class TransactionsController implements Initializable {
                 fixedTransaction.adjustAmountSign();
             }
 
-            Map<String, Object> parameters = new HashMap<>();
+            Map<String, Serializable> parameters = new HashMap<>();
             parameters.put("user", this.user);
             parameters.put("fixedTransaction", fixedTransaction);
 
@@ -518,9 +527,7 @@ public class TransactionsController implements Initializable {
 
                 @Override
                 public void onAfter() {
-                    Platform.runLater(() -> {
-                        loadTransactionOverviewTableData();
-                    });
+                    Platform.runLater(() -> loadTransactionOverviewTableData());
                 }
             }, true));
         }
@@ -530,7 +537,7 @@ public class TransactionsController implements Initializable {
         if (new FinancerConfirmDialog(I18N.get("confirmDeleteTransaction")).showAndGetResult()) {
             VariableTransaction transaction = this.transactionsTableView.getSelectionModel().getSelectedItem();
             if (transaction != null) {
-                Map<String, Object> parameters = new HashMap<>();
+                Map<String, Serializable> parameters = new HashMap<>();
                 parameters.put("variableTransactionId", transaction.getId());
 
                 FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "deleteTransaction", parameters, new JavaFXAsyncConnectionCall() {
@@ -563,7 +570,7 @@ public class TransactionsController implements Initializable {
     public void handleDeleteFixedTransaction() {
         boolean result = new FinancerConfirmDialog(I18N.get("confirmDeleteFixedTransaction")).showAndGetResult();
         if (result) {
-            Map<String, Object> parameters = new HashMap<>();
+            Map<String, Serializable> parameters = new HashMap<>();
             parameters.put("fixedTransactionId", this.fixedTransactionsListView.getSelectionModel().getSelectedItem().getId());
 
             FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "deleteFixedTransaction",
@@ -653,7 +660,13 @@ public class TransactionsController implements Initializable {
 
     private final class FixedTransactionListCellImpl extends ListCell<FixedTransaction> {
         private BorderPane borderPane;
-        private Label activeLabel, dateLabel, amountLabel, isVariableLabel, dayLabel, lastAmountLabel, preLastAmountLabel;
+        private Label activeLabel;
+        private Label dateLabel;
+        private Label amountLabel;
+        private Label isVariableLabel;
+        private Label dayLabel;
+        private Label lastAmountLabel;
+        private Label preLastAmountLabel;
 
         @Override
         protected void updateItem(FixedTransaction item, boolean empty) {
