@@ -28,7 +28,6 @@ pipeline {
                 scannerHome = tool 'SonarQubeScanner'
             }
             steps {
-                sh 'git fetch origin master'
                 withSonarQubeEnv('SonarQubeServer') {
                     script {
                         if (env.CHANGE_ID) {
@@ -44,8 +43,7 @@ pipeline {
                                         "-Dsonar.branch.name=${env.BRANCH_NAME} " +
                                         "-Dsonar.branch.target=master"
                             } else {
-                                sh "${scannerHome}/bin/sonar-scanner " +
-                                        "-Dsonar.branch.name=${env.BRANCH_NAME} "
+                                sh "${scannerHome}/bin/sonar-scanner"
                             }
                         }
                     }
