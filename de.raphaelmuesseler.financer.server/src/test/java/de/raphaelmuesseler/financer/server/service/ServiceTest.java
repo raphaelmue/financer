@@ -602,7 +602,7 @@ public class ServiceTest {
 
     @Test
     public void testAddTransactionAmount() {
-        Map<String, Object> parameters = new HashMap<>();
+        Map<String, Serializable> parameters = new HashMap<>();
         TransactionAmount transactionAmount = new TransactionAmount(0, 5.5, LocalDate.now());
         transactionAmount.setFixedTransaction(fixedTransaction);
         parameters.put("transactionAmount", transactionAmount);
