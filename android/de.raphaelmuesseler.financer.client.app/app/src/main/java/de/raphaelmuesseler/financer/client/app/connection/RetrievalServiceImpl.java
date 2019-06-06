@@ -1,5 +1,6 @@
 package de.raphaelmuesseler.financer.client.app.connection;
 
+import java.io.Serializable;
 import java.net.ConnectException;
 import java.util.HashMap;
 import java.util.Map;
@@ -37,7 +38,7 @@ public class RetrievalServiceImpl implements RetrievalService {
 
     @Override
     public void fetchCategories(User user, AsyncCall<BaseCategory> asyncCall) {
-        Map<String, Object> parameters = new HashMap<>();
+        Map<String, Serializable> parameters = new HashMap<>();
         parameters.put("userId", user.getId());
 
         FinancerExecutor.getExecutor().execute(new ServerRequestHandler(user, "getUsersCategories", parameters, new AndroidAsyncConnectionCall() {
@@ -67,7 +68,7 @@ public class RetrievalServiceImpl implements RetrievalService {
 
     @Override
     public void fetchTransactions(User user, AsyncCall<BaseCategory> asyncCall) {
-        Map<String, Object> parameters = new HashMap<>();
+        Map<String, Serializable> parameters = new HashMap<>();
         parameters.put("userId", user.getId());
         parameters.put("baseCategory", localStorage.readObject("categories"));
 
@@ -97,7 +98,7 @@ public class RetrievalServiceImpl implements RetrievalService {
 
     @Override
     public void fetchFixedTransactions(User user, AsyncCall<BaseCategory> asyncCall) {
-        Map<String, Object> parameters = new HashMap<>();
+        Map<String, Serializable> parameters = new HashMap<>();
         parameters.put("userId", user.getId());
         parameters.put("baseCategory", localStorage.readObject("categories"));
 

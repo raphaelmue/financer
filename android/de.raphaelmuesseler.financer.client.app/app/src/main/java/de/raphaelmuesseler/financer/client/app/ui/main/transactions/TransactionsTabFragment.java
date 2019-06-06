@@ -17,6 +17,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -132,7 +133,7 @@ public class TransactionsTabFragment extends Fragment {
 
                 VariableTransaction transaction = (VariableTransaction) data.getSerializableExtra("variableTransaction");
 
-                Map<String, Object> parameters = new HashMap<>();
+                Map<String, Serializable> parameters = new HashMap<>();
                 parameters.put("variableTransaction", transaction);
 
                 FinancerExecutor.getExecutor().execute(new ServerRequestHandler((User) LocalStorageImpl.getInstance().readObject("user"),
