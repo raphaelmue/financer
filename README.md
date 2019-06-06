@@ -1,8 +1,8 @@
 # Financer
 
 [![Build Status](http://jenkins.raphael-muesseler.de/job/financer/job/master/badge/icon)](http://jenkins.raphael-muesseler.de/job/financer/job/master/)
-[![Quality Gate Status](https://sonarqube.raphael-muesseler.de/api/project_badges/measure?project=financer&metric=alert_status)](https://sonarqube.raphael-muesseler.de/dashboard?id=financer)
-[![Coverage](https://sonarqube.raphael-muesseler.de/api/project_badges/measure?project=financer&metric=coverage)](https://sonarqube.raphael-muesseler.de/dashboard?id=financer)
+[![Quality Gate Status](http://sonarqube.raphael-muesseler.de/api/project_badges/measure?project=financer&metric=alert_status)](http://sonarqube.raphael-muesseler.de/dashboard?id=financer)
+[![Coverage](http://sonarqube.raphael-muesseler.de/api/project_badges/measure?project=financer&metric=coverage)](http://sonarqube.raphael-muesseler.de/dashboard?id=financer)
 
 
 
