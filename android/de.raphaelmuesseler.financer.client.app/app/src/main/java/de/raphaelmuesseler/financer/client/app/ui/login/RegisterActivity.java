@@ -132,13 +132,13 @@ public class RegisterActivity extends AppCompatActivity implements Application {
                             .withLocale(getResources().getConfiguration().locale)),
                     (User.Gender) this.genderSpinner.getSelectedItem());
 
-            Map<String, Object> parameters = new HashMap<>();
+            Map<String, Serializable> parameters = new HashMap<>();
             parameters.put("user", user);
 
             FinancerExecutor.getExecutor().execute(new ServerRequestHandler("registerUser", parameters, new AndroidAsyncConnectionCall() {
                 @Override
                 public void onSuccess(ConnectionResult connectionResult) {
-                    LocalStorageImpl.getInstance().writeObject("user", (Serializable) connectionResult.getResult());
+                    LocalStorageImpl.getInstance().writeObject("user", connectionResult.getResult());
                     RetrievalServiceImpl.getInstance().fetchAllData((User) connectionResult.getResult(), aVoid -> openFinancerActivity());
                 }
 
