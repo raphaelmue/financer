@@ -10,11 +10,11 @@ import java.util.Map;
 
 public class ServerRequest {
 
-    private static final String hostLocal = "localhost";
-    private static final String hostRemote = "raphael-muesseler.de";
+    private static final String HOST_LOCAL = "localhost";
+    private static final String HOST_REMOTE = "raphael-muesseler.de";
     private static String host;
     private static int post = 3500;
-    private static final int timeout = 5000;
+    private static final int TIMEOUT = 5000;
 
     private final ConnectionCall connectionCall;
 
@@ -35,7 +35,7 @@ public class ServerRequest {
     }
 
     public static void setHost(boolean local) {
-        ServerRequest.host = local ? ServerRequest.hostLocal : ServerRequest.hostRemote;
+        ServerRequest.host = local ? ServerRequest.HOST_LOCAL : ServerRequest.HOST_REMOTE;
     }
 
     public static void setPort(int port) {
@@ -55,7 +55,7 @@ public class ServerRequest {
 
     static boolean testConnection() throws IOException {
         Socket socket = new Socket(host, post);
-        return socket.getInetAddress().isReachable(timeout);
+        return socket.getInetAddress().isReachable(TIMEOUT);
     }
 
     ConnectionCall getConnectionCall() {

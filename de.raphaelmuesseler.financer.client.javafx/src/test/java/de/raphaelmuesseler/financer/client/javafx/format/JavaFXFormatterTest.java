@@ -60,11 +60,16 @@ public class JavaFXFormatterTest {
         String categoryFormat = formatter.formatCategoryName(category);
         Assertions.assertEquals(category.getPrefix() + " " + category.getName(), categoryFormat);
 
+        category.setName("root");
+        categoryFormat = formatter.formatCategoryName(category);
+        Assertions.assertEquals(category.getPrefix() + " " + "Balance", categoryFormat);
+
         final Category categoryClass = new Category("fixedExpenses");
         categoryClass.setPrefix("testPrefix2");
 
         categoryFormat = formatter.formatCategoryName(categoryClass);
         Assertions.assertEquals(categoryClass.getPrefix() + " Fixed Expenses", categoryFormat);
+
     }
 
     @Test

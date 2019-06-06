@@ -2,17 +2,11 @@ package de.raphaelmuesseler.financer.client.format;
 
 import de.raphaelmuesseler.financer.client.local.LocalStorage;
 import de.raphaelmuesseler.financer.shared.model.user.User;
-import javafx.beans.binding.Bindings;
-import javafx.beans.binding.StringBinding;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.Tooltip;
 
 import java.text.MessageFormat;
 import java.util.*;
-import java.util.concurrent.Callable;
 
 /**
  * I18N utility class..
