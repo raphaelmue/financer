@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -63,7 +64,7 @@ public class OverviewFragment extends Fragment {
 
                 VariableTransaction transaction = (VariableTransaction) data.getSerializableExtra("variableTransaction");
 
-                Map<String, Object> parameters = new HashMap<>();
+                Map<String, Serializable> parameters = new HashMap<>();
                 parameters.put("variableTransaction", transaction);
 
                 FinancerExecutor.getExecutor().execute(new ServerRequestHandler((User) LocalStorageImpl.getInstance().readObject("user"),

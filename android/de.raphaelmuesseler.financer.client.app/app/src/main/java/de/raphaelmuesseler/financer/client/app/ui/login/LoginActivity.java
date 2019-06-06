@@ -99,7 +99,7 @@ public class LoginActivity extends AppCompatActivity implements Application {
         }
 
         if (!cancel) {
-            Map<String, Object> parameters = new HashMap<>();
+            Map<String, Serializable> parameters = new HashMap<>();
             parameters.put("email", email);
             parameters.put("password", password);
 
