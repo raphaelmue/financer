@@ -28,6 +28,11 @@ pipeline {
                 scannerHome = tool 'SonarQubeScanner'
             }
             steps {
+                sh 'cp target/jacoco.exec de.raphaelmuesseler.financer.client/target/'
+                sh 'cp target/jacoco.exec de.raphaelmuesseler.financer.client.javafx/target/'
+                sh 'cp target/jacoco.exec de.raphaelmuesseler.financer.server/target/'
+                sh 'cp target/jacoco.exec de.raphaelmuesseler.financer.shared/target/'
+                sh 'cp target/jacoco.exec de.raphaelmuesseler.financer.util/target/'
                 withSonarQubeEnv('SonarQubeServer') {
                     script {
                         if (env.CHANGE_ID) {
