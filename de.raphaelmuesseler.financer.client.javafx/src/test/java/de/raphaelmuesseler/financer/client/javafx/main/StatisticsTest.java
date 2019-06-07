@@ -6,6 +6,7 @@ import de.raphaelmuesseler.financer.client.javafx.format.JavaFXFormatter;
 import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
 import de.raphaelmuesseler.financer.shared.model.categories.BaseCategory;
 import javafx.geometry.VerticalDirection;
+import javafx.scene.chart.PieChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
@@ -40,7 +41,8 @@ public class StatisticsTest extends AbstractFinancerApplicationTest {
         clickOn((ScrollPane) find("#statisticsScrollPane"));
         scroll(50, VerticalDirection.DOWN);
 
-        Assertions.assertNotNull(clickOn(new JavaFXFormatter(LocalStorageImpl.getInstance()).formatCategoryName(category)));
+        PieChart pieChart = find("#fixedExpensesDistributionChart");
+        Assertions.assertEquals(1, pieChart.getData().size());
 
         JFXDatePicker fromDatePicker = find("#fixedExpensesFromDatePicker");
         fromDatePicker.setValue(fixedTransaction.getStartDate().minusMonths(5));
@@ -65,7 +67,8 @@ public class StatisticsTest extends AbstractFinancerApplicationTest {
         clickOn((ScrollPane) find("#statisticsScrollPane"));
         scroll(50, VerticalDirection.DOWN);
 
-        Assertions.assertNotNull(clickOn(new JavaFXFormatter(LocalStorageImpl.getInstance()).formatCategoryName(category)));
+        PieChart pieChart = find("#variableExpensesDistributionChart");
+        Assertions.assertEquals(1, pieChart.getData().size());
 
         JFXDatePicker fromDatePicker = find("#variableExpensesFromDatePicker");
         fromDatePicker.setValue(transaction.getValueDate().minusMonths(5));
