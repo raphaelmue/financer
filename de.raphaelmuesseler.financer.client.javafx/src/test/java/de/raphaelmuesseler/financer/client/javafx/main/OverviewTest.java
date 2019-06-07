@@ -24,6 +24,21 @@ public class OverviewTest extends AbstractFinancerApplicationTest {
     }
 
     @Test
+    public void testLastTransactions() {
+        register(user, password);
+        Assertions.assertNotNull(clickOn(I18N.get("noRecentTransactions")));
+        transaction.setValueDate(LocalDate.now().withDayOfMonth(1));
+        addCategory(category);
+        addTransaction(transaction);
+
+        clickOn((Button) find("#overviewTabBtn"));
+        sleep(SHORT_SLEEP);
+
+        GridPane gridPane = find("#lastTransactionsGridPane");
+        Assertions.assertEquals(2, gridPane.getChildren().size());
+    }
+
+    @Test
     public void testUpcomingFixedTransactions() {
         register(user, password);
         Assertions.assertNotNull(clickOn(I18N.get("noUpcomingTransactions")));
