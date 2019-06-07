@@ -74,6 +74,8 @@ public class FixedTransactionTest {
 
         fixedTransaction.setEndDate(LocalDate.now().minusMonths(1));
         Assertions.assertEquals((Math.pow(2, 6) - 1) - (Math.pow(2, 1) - 1), fixedTransaction.getAmount(LocalDate.now().minusMonths(12), LocalDate.now()));
+
+        Assertions.assertEquals(0, fixedTransaction.getAmount(LocalDate.now().minusMonths(24), LocalDate.now().minusMonths(12)));
     }
 
     @Test

@@ -103,12 +103,16 @@ public class FixedTransaction extends FixedTransactionEntity implements Transact
             } else {
                 maxStartDate = this.getStartDate();
             }
-            if (this.getIsVariable() && this.getTransactionAmounts() != null) {
-                for (AmountProvider amountProvider : this.getTransactionAmounts()) {
-                    amount += amountProvider.getAmount(maxStartDate, minEndDate);
+            if (minEndDate.compareTo(maxStartDate) >= 0) {
+                if (this.getIsVariable()) {
+                    if (this.getTransactionAmounts() != null) {
+                        for (AmountProvider amountProvider : this.getTransactionAmounts()) {
+                            amount += amountProvider.getAmount(maxStartDate, minEndDate);
+                        }
+                    }
+                } else {
+                    amount = super.getAmount() * DateUtil.getMonthDifference(maxStartDate, minEndDate);
                 }
-            } else {
-                amount = super.getAmount() * DateUtil.getMonthDifference(maxStartDate, minEndDate);
             }
         }
 
