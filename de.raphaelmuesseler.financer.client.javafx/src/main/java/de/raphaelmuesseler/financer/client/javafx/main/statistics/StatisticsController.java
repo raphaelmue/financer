@@ -201,7 +201,7 @@ public class StatisticsController implements Initializable {
             this.variableExpensesDistributionChart.setVisible(true);
             this.variableExpensesNoDataLabel.setManaged(false);
             this.variableExpensesNoDataLabel.setVisible(false);
-            this.variableExpensesDistributionChart.setData(variableExpensesData);
+            Platform.runLater(() ->this.variableExpensesDistributionChart.setData(variableExpensesData));
         } else {
             this.variableExpensesDistributionChart.setManaged(false);
             this.variableExpensesDistributionChart.setVisible(false);

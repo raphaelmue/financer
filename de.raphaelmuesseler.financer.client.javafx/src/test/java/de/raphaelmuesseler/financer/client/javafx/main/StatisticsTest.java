@@ -15,6 +15,8 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.testfx.framework.junit5.ApplicationTest;
 
+import java.time.LocalDate;
+
 @SuppressWarnings("WeakerAccess")
 @Tag("integration")
 public class StatisticsTest extends AbstractFinancerApplicationTest {
@@ -48,6 +50,32 @@ public class StatisticsTest extends AbstractFinancerApplicationTest {
 
         sleep(MEDIUM_SLEEP);
         Assertions.assertTrue(find("#fixedExpensesNoDataLabel").isVisible());
+    }
+
+    @Test
+    public void testVariableExpensesDistributionChart() {
+        register(user, password);
+        transaction.setValueDate(LocalDate.now().withDayOfMonth(1));
+        addCategory(category);
+        addTransaction(transaction);
+
+        clickOn((Button) find("#statisticsTabBtn"));
+        sleep(SHORT_SLEEP);
+
+        clickOn((ScrollPane) find("#statisticsScrollPane"));
+        scroll(50, VerticalDirection.DOWN);
+
+        Assertions.assertNotNull(clickOn(new JavaFXFormatter(LocalStorageImpl.getInstance()).formatCategoryName(category)));
+
+        JFXDatePicker fromDatePicker = find("#variableExpensesFromDatePicker");
+        fromDatePicker.setValue(transaction.getValueDate().minusMonths(5));
+
+        JFXDatePicker toDatePicker = find("#variableExpensesToDatePicker");
+        toDatePicker.setValue(transaction.getValueDate().minusMonths(4));
+
+        sleep(MEDIUM_SLEEP);
+        Assertions.assertTrue(find("#variableExpensesNoDataLabel").isVisible());
+
     }
 
 }
