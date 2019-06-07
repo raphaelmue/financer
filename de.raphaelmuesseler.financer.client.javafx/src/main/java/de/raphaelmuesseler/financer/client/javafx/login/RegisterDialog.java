@@ -16,7 +16,8 @@ public class RegisterDialog extends FinancerDialog<User> {
     private TextField nameField;
     private TextField surnameField;
     private TextField emailField;
-    private PasswordField passwordField, passwordRepeatField;
+    private PasswordField passwordField;
+    private PasswordField passwordRepeatField;
     private JFXDatePicker birthDatePicker;
     private ComboBox<User.Gender> genderComboBox;
 

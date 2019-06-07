@@ -7,6 +7,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
+
 @SuppressWarnings("WeakerAccess")
 @Tag("unit")
 public class LocalStorageImplTest {
@@ -47,5 +49,20 @@ public class LocalStorageImplTest {
         localStorage.writeObject(key, serializableObject);
         localStorage.deleteAllData();
         Assertions.assertNull(localStorage.readObject(key));
+    }
+
+    @Test
+    public void testReadList() {
+        final RandomString randomString = new RandomString(64);
+        final ArrayList<String> stringList = new ArrayList<>();
+        final String key = "user";
+
+        for (int i = 0; i < 5; i++) {
+            stringList.add(randomString.nextString());
+        }
+
+        localStorage.writeObject(key, stringList);
+
+        Assertions.assertEquals(stringList, localStorage.readList(key));
     }
 }
