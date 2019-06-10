@@ -22,11 +22,6 @@ public class TransactionAmount extends FixedTransactionAmountEntity implements S
     }
 
     @Override
-    public double getAmount() {
-        return super.getAmount();
-    }
-
-    @Override
     public double getAmount(LocalDate localDate) {
         return (DateUtil.checkIfMonthsAreEqual(localDate, this.getValueDate()) ? this.getAmount() : 0);
     }

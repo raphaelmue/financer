@@ -1,12 +1,11 @@
 package de.raphaelmuesseler.financer.shared.model.user;
 
-import java.io.Serializable;
 import java.util.Currency;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-public class UserSettings implements Serializable, Settings {
+public class UserSettings implements Settings {
     private static final long serialVersionUID = 2201611667506790486L;
     private final Map<String, SettingsEntry> properties = new HashMap<>();
 

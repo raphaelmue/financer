@@ -19,6 +19,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
@@ -131,7 +132,7 @@ public class RegisterActivity extends AppCompatActivity implements Application {
                             .withLocale(getResources().getConfiguration().locale)),
                     (User.Gender) this.genderSpinner.getSelectedItem());
 
-            Map<String, Object> parameters = new HashMap<>();
+            Map<String, Serializable> parameters = new HashMap<>();
             parameters.put("user", user);
 
             FinancerExecutor.getExecutor().execute(new ServerRequestHandler("registerUser", parameters, new AndroidAsyncConnectionCall() {

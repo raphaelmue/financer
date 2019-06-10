@@ -13,6 +13,8 @@ import java.util.Objects;
 import java.util.Set;
 
 public class VariableTransaction extends VariableTransactionEntity implements Transaction {
+    private static final long serialVersionUID = 3715986504163631743L;
+
     private CategoryTree categoryTree;
 
     public VariableTransaction(VariableTransactionEntity databaseVariableTransaction) {
@@ -61,11 +63,6 @@ public class VariableTransaction extends VariableTransactionEntity implements Tr
     public Set<Attachment> getAttachments() {
         //noinspection unchecked
         return (Set<Attachment>) super.getAttachments();
-    }
-
-    @Override
-    public double getAmount() {
-        return super.getAmount();
     }
 
     @Override

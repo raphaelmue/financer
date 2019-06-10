@@ -11,6 +11,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -98,7 +99,7 @@ public class LoginActivity extends AppCompatActivity implements Application {
         }
 
         if (!cancel) {
-            Map<String, Object> parameters = new HashMap<>();
+            Map<String, Serializable> parameters = new HashMap<>();
             parameters.put("email", email);
             parameters.put("password", password);
 
@@ -106,7 +107,7 @@ public class LoginActivity extends AppCompatActivity implements Application {
                 @Override
                 public void onSuccess(ConnectionResult connectionResult) {
                     if (connectionResult.getResult() != null) {
-                        LocalStorageImpl.getInstance().writeObject("user", connectionResult.getResult());
+                        LocalStorageImpl.getInstance().writeObject("user", (Serializable) connectionResult.getResult());
                         RetrievalServiceImpl.getInstance().fetchAllData((User) connectionResult.getResult(), aVoid -> openFinancerActivity());
                     } else {
                         runOnUiThread(() -> {

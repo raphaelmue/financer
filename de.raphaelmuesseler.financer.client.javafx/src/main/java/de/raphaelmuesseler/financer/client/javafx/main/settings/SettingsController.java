@@ -16,6 +16,7 @@ import de.raphaelmuesseler.financer.shared.model.user.User;
 import de.raphaelmuesseler.financer.util.concurrency.FinancerExecutor;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
+import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
@@ -28,6 +29,7 @@ import org.controlsfx.glyphfont.FontAwesome;
 import org.controlsfx.glyphfont.GlyphFont;
 import org.controlsfx.glyphfont.GlyphFontRegistry;
 
+import java.io.Serializable;
 import java.net.URL;
 import java.util.Currency;
 import java.util.HashMap;
@@ -35,17 +37,21 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 public class SettingsController implements Initializable {
+
+    @FXML
     public ComboBox<I18N.Language> languageMenuComboBox;
+    @FXML
     public ComboBox<Currency> currencyComboBox;
+    @FXML
     public CheckBox showSignCheckbox;
-
+    @FXML
     public ComboBox<Integer> maxNumberOfMonthsDisplayedComboBox;
-
-
+    @FXML
     public JFXButton logoutFromDeviceBtn;
+    @FXML
     public JFXListView<Token> devicesListView;
+    @FXML
     public CheckBox changeAmountSignAutomaticallyCheckBox;
-
 
     private LocalStorage localStorage = LocalStorageImpl.getInstance();
     private User user = (User) localStorage.readObject("user");
@@ -110,12 +116,12 @@ public class SettingsController implements Initializable {
     }
 
     private void updateSettings() {
-        Map<String, Object> parameters = new HashMap<>();
+        Map<String, Serializable> parameters = new HashMap<>();
         parameters.put("user", user);
         FinancerExecutor.getExecutor().execute(new ServerRequestHandler(user, "updateUsersSettings", parameters, new JavaFXAsyncConnectionCall() {
             @Override
             public void onSuccess(ConnectionResult result) {
-                localStorage.writeObject("user", result.getResult());
+                localStorage.writeObject("user", (Serializable) result.getResult());
                 user = (User) result.getResult();
             }
 
@@ -133,7 +139,7 @@ public class SettingsController implements Initializable {
 
     public void handleLogoutFromDevice() {
         if (new FinancerConfirmDialog(I18N.get("confirmLogDeviceOut")).showAndGetResult()) {
-            HashMap<String, Object> parameters = new HashMap<>();
+            HashMap<String, Serializable> parameters = new HashMap<>();
             parameters.put("tokenId", this.devicesListView.getSelectionModel().getSelectedItem().getId());
             FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "deleteToken", parameters, new JavaFXAsyncConnectionCall() {
                 @Override

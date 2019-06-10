@@ -7,6 +7,7 @@ import de.raphaelmuesseler.financer.shared.connection.ConnectionResult;
 import de.raphaelmuesseler.financer.shared.model.user.User;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.net.ConnectException;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,15 +23,15 @@ public class ServerRequestHandler implements Runnable {
     private static LocalStorage localStorage;
     private static Application application;
 
-    public ServerRequestHandler(User user, String methodName, Map<String, Object> parameters, AsyncConnectionCall asyncCall) {
+    public ServerRequestHandler(User user, String methodName, Map<String, Serializable> parameters, AsyncConnectionCall asyncCall) {
         this(new ServerRequest(user, methodName, parameters), asyncCall, false);
     }
 
-    public ServerRequestHandler(String methodName, Map<String, Object> parameters, AsyncConnectionCall asyncCall) {
+    public ServerRequestHandler(String methodName, Map<String, Serializable> parameters, AsyncConnectionCall asyncCall) {
         this(new ServerRequest(methodName, parameters), asyncCall, false);
     }
 
-    public ServerRequestHandler(User user, String methodName, Map<String, Object> parameters, AsyncConnectionCall asyncCall, boolean runLater) {
+    public ServerRequestHandler(User user, String methodName, Map<String, Serializable> parameters, AsyncConnectionCall asyncCall, boolean runLater) {
         this(new ServerRequest(user, methodName, parameters), asyncCall, runLater);
     }
 
@@ -72,7 +73,7 @@ public class ServerRequestHandler implements Runnable {
                     calls = new ArrayList<>();
                 }
                 calls.add(this.serverRequest.getConnectionCall());
-                localStorage.writeObject("requests", calls);
+                localStorage.writeObject("requests", (Serializable) calls);
             }
         } finally {
             this.asyncCall.onAfter();
@@ -83,7 +84,7 @@ public class ServerRequestHandler implements Runnable {
     public static void makeRequests(Executor executor) throws IOException {
         if (localStorage.readObject("requests") != null) {
             List<Object> calls = localStorage.readList("requests");
-            if (calls != null && calls.size() > 0 && ServerRequest.testConnection()) {
+            if (calls != null && !calls.isEmpty() && ServerRequest.testConnection()) {
                 for (Object object : calls) {
                     ConnectionCall call = (ConnectionCall) object;
                     executor.execute(new ServerRequestHandler(new ServerRequest(call), result -> {}, true));

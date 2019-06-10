@@ -18,17 +18,42 @@ pipeline {
             }
         }
         stage('JavaFX Tests') {
-           steps {
+            steps {
                 sh 'mvn test -P integrationTests,headlessTesting'
                 sh 'rm ./de.raphaelmuesseler.financer.server/src/main/resources/de/raphaelmuesseler/financer/server/db/config/hibernate.cfg.xml'
             }
         }
-        stage('Publish test results') {
-            when {
-                branch 'master'
+        stage('SonarQube Analysis') {
+            environment {
+                scannerHome = tool 'SonarQubeScanner'
             }
             steps {
-                sh 'bash service/publish-test-report.sh'
+                sh 'cp target/jacoco.exec de.raphaelmuesseler.financer.client/target/'
+                sh 'cp target/jacoco.exec de.raphaelmuesseler.financer.client.javafx/target/'
+                sh 'cp target/jacoco.exec de.raphaelmuesseler.financer.server/target/'
+                sh 'cp target/jacoco.exec de.raphaelmuesseler.financer.shared/target/'
+                sh 'cp target/jacoco.exec de.raphaelmuesseler.financer.util/target/'
+                sh 'mvn dependency:copy-dependencies'
+                withSonarQubeEnv('SonarQubeServer') {
+                    script {
+                        if (env.CHANGE_ID) {
+                            sh "${scannerHome}/bin/sonar-scanner " +
+                                    "-Dsonar.pullrequest.base=master " +
+                                    "-Dsonar.pullrequest.key=${env.CHANGE_ID} " +
+                                    "-Dsonar.pullrequest.branch=${env.BRANCH_NAME} " +
+                                    "-Dsonar.pullrequest.provider=github " +
+                                    "-Dsonar.pullrequest.github.repository=raphaelmue/financer"
+                        } else {
+                            if (env.BRANCH_NAME != 'master') {
+                                sh "${scannerHome}/bin/sonar-scanner " +
+                                        "-Dsonar.branch.name=${env.BRANCH_NAME} " +
+                                        "-Dsonar.branch.target=master"
+                            } else {
+                                sh "${scannerHome}/bin/sonar-scanner"
+                            }
+                        }
+                    }
+                }
             }
         }
         stage('Deploy') {
@@ -43,8 +68,7 @@ pipeline {
     post {
         always {
             junit '**/target/surefire-reports/TEST-*.xml'
-            step( [ $class: 'JacocoPublisher' ] )
-            //publishCoverage adapters: [jacocoAdapter('**/target/sites/jacoco/jacoco.xml')], sourceFileResolver: sourceFiles('STORE_ALL_BUILD')
+            step([$class: 'JacocoPublisher'])
         }
     }
 }

@@ -1,10 +1,9 @@
 package de.raphaelmuesseler.financer.client.local;
 
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class LocalSettingsImpl implements Serializable, LocalSettings {
+public class LocalSettingsImpl implements LocalSettings {
     private static final long serialVersionUID = -7328386947589105017L;
 
     private final Map<String, String> properties = new HashMap<>();

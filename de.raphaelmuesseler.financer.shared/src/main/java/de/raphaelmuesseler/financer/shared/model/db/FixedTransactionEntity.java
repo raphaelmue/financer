@@ -7,7 +7,7 @@ import java.util.Set;
 @Entity
 @Table(name = "fixed_transactions")
 public class FixedTransactionEntity implements DataEntity {
-    private final static long serialVersionUID = 8295185142317654835L;
+    private static final long serialVersionUID = 8295185142317654835L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

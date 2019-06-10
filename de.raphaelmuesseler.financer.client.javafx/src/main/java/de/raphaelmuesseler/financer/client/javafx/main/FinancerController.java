@@ -9,7 +9,6 @@ import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
 import de.raphaelmuesseler.financer.client.javafx.login.LoginApplication;
 import de.raphaelmuesseler.financer.client.local.Application;
 import de.raphaelmuesseler.financer.shared.model.user.User;
-import javafx.animation.Transition;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -31,25 +30,44 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.concurrent.Executors;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class FinancerController implements Initializable, Application {
+
+    @FXML
     public BorderPane rootLayout;
+    @FXML
     public BorderPane header;
     private static VBox loadingBox;
+    @FXML
     public Button overviewTabBtn;
+    @FXML
     public Button transactionsTabBtn;
+    @FXML
     public Button statisticsTabBtn;
+    @FXML
     public Button profileTabBtn;
+    @FXML
     public Button settingTabBtn;
+    @FXML
     public Label userNameLabel;
+    @FXML
     public MenuButton accountMenuBtn;
+    @FXML
     public MenuItem logoutBtn;
+    @FXML
     public JFXHamburger hamburgerBtn;
+    @FXML
     public Label contentLabel;
+    @FXML
     public Label offlineLabel;
     public VBox navigationBox;
 
-    private static Application INSTANCE;
+    private static Application instance;
+
+    private static final Logger logger = Logger.getLogger("FinancerApplication");
+
 
     private ResourceBundle resourceBundle;
     private LocalStorageImpl localStorage = (LocalStorageImpl) LocalStorageImpl.getInstance();
@@ -57,14 +75,14 @@ public class FinancerController implements Initializable, Application {
 
     @FXML
     public void initialize(URL location, ResourceBundle resources) {
-        INSTANCE = this;
+        instance = this;
         ServerRequestHandler.setApplication(this);
         ServerRequestHandler.setLocalStorage(this.localStorage);
 
         try {
             ServerRequestHandler.makeRequests(Executors.newCachedThreadPool());
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.log(Level.SEVERE, e.getMessage(), e);
         }
 
         User user = (User) this.localStorage.readObject("user");
@@ -77,7 +95,7 @@ public class FinancerController implements Initializable, Application {
         try {
             loadingBox = FXMLLoader.load(getClass().getResource("/de/raphaelmuesseler/financer/client/javafx/main/views/loading.fxml"), this.resourceBundle);
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.log(Level.SEVERE, e.getMessage(), e);
         }
 
         this.userNameLabel.setText(user.getFullName());
@@ -109,7 +127,7 @@ public class FinancerController implements Initializable, Application {
     }
 
     public static Application getInstance() {
-        return INSTANCE;
+        return instance;
     }
 
     @Override
@@ -186,16 +204,17 @@ public class FinancerController implements Initializable, Application {
     }
 
     private void removeSelectedStyleClass() {
+        final String navBtnClass = "nav-btn";
         this.overviewTabBtn.getStyleClass().clear();
-        this.overviewTabBtn.getStyleClass().add("nav-btn");
+        this.overviewTabBtn.getStyleClass().add(navBtnClass);
         this.transactionsTabBtn.getStyleClass().clear();
-        this.transactionsTabBtn.getStyleClass().add("nav-btn");
+        this.transactionsTabBtn.getStyleClass().add(navBtnClass);
         this.statisticsTabBtn.getStyleClass().clear();
-        this.statisticsTabBtn.getStyleClass().add("nav-btn");
+        this.statisticsTabBtn.getStyleClass().add(navBtnClass);
         this.profileTabBtn.getStyleClass().clear();
-        this.profileTabBtn.getStyleClass().add("nav-btn");
+        this.profileTabBtn.getStyleClass().add(navBtnClass);
         this.settingTabBtn.getStyleClass().clear();
-        this.settingTabBtn.getStyleClass().add("nav-btn");
+        this.settingTabBtn.getStyleClass().add(navBtnClass);
     }
 
     private void loadFXML(URL url) {
@@ -205,9 +224,8 @@ public class FinancerController implements Initializable, Application {
             stackPane.getChildren().add(loadingBox);
             this.rootLayout.setCenter(stackPane);
             BorderPane.setMargin(stackPane, new Insets(20));
-            // TODO bring center to back
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.log(Level.SEVERE, e.getMessage(), e);
         }
     }
 
@@ -224,7 +242,7 @@ public class FinancerController implements Initializable, Application {
         try {
             new LoginApplication().start(new Stage());
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.log(Level.SEVERE, e.getMessage(), e);
         }
     }
 

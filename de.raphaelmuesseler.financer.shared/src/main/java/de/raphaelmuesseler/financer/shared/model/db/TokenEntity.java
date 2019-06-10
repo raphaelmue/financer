@@ -6,7 +6,7 @@ import java.time.LocalDate;
 @Entity
 @Table(name = "users_tokens")
 public class TokenEntity implements DataEntity, Cloneable {
-    private final static long serialVersionUID = 8834445127500149942L;
+    private static final long serialVersionUID = 8834445127500149942L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -41,7 +41,10 @@ public class AddTransactionActivity extends AppCompatActivity {
     private BaseCategory baseCategory;
 
     private TextView valueDateEditText;
-    private EditText amountEditText, productEditText, purposeEditText, shopEditText;
+    private EditText amountEditText;
+    private EditText productEditText;
+    private EditText purposeEditText;
+    private EditText shopEditText;
     private Spinner categorySpinner;
 
     @Override

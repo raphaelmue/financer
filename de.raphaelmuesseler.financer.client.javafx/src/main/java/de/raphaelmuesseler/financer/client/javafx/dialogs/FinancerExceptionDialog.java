@@ -8,6 +8,8 @@ import de.raphaelmuesseler.financer.shared.exceptions.NotAuthorizedException;
 
 import java.net.ConnectException;
 import java.net.UnknownHostException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class FinancerExceptionDialog extends FinancerAlert {
     public FinancerExceptionDialog(String header, Exception exception) {
@@ -27,7 +29,7 @@ public class FinancerExceptionDialog extends FinancerAlert {
         } catch (FinancerException financerException) {
             message = new JavaFXFormatter(LocalStorageImpl.getInstance()).formatExceptionMessage(financerException);
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.getLogger("FinancerApplication").log(Level.SEVERE, e.getMessage(), e);
         } finally {
             this.setContentText(message);
         }

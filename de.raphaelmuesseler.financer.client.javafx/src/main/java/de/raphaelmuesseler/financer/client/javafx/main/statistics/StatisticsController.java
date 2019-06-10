@@ -12,11 +12,12 @@ import de.raphaelmuesseler.financer.shared.model.categories.BaseCategory;
 import de.raphaelmuesseler.financer.shared.model.categories.Category;
 import de.raphaelmuesseler.financer.shared.model.categories.CategoryTree;
 import de.raphaelmuesseler.financer.shared.model.categories.CategoryTreeImpl;
-import de.raphaelmuesseler.financer.util.collections.Tree;
 import de.raphaelmuesseler.financer.util.date.DateUtil;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.PieChart;
 import javafx.scene.chart.XYChart;
@@ -34,21 +35,36 @@ import java.time.LocalDate;
 import java.util.ResourceBundle;
 
 public class StatisticsController implements Initializable {
+
+    @FXML
     public JFXDatePicker variableExpensesFromDatePicker;
+    @FXML
     public JFXDatePicker variableExpensesToDatePicker;
+    @FXML
     public PieChart fixedExpensesDistributionChart;
+    @FXML
     public Label fixedExpensesNoDataLabel;
 
+    @FXML
     public JFXDatePicker fixedExpensesFromDatePicker;
+    @FXML
     public JFXDatePicker fixedExpensesToDatePicker;
+    @FXML
     public PieChart variableExpensesDistributionChart;
+    @FXML
     public Label variableExpensesNoDataLabel;
 
+    @FXML
     public JFXDatePicker progressFromDatePicker;
+    @FXML
     public JFXDatePicker progressToDatePicker;
+    @FXML
     public LineChart<String, Number> progressLineChart;
+    @FXML
     public VBox categoriesContainer;
+    @FXML
     public JFXButton addCategoryBtn;
+    @FXML
     public ComboBox<CategoryTree> progressChartDefaultCategoryComboBox;
 
     private LocalStorage localStorage = LocalStorageImpl.getInstance();
@@ -78,12 +94,22 @@ public class StatisticsController implements Initializable {
         this.loadFixedExpensesDistributionChart(this.variableExpensesFromDatePicker.getValue(), this.variableExpensesToDatePicker.getValue());
 
         this.progressFromDatePicker.setValue(LocalDate.now().minusMonths(6));
-        this.progressFromDatePicker.valueProperty().addListener((observable, oldValue, newValue)
-                -> this.loadProgressChartData(progressChartDefaultCategoryComboBox.getValue(), newValue, progressToDatePicker.getValue()));
+        this.progressFromDatePicker.valueProperty().addListener((observable, oldValue, newValue) -> {
+            this.progressLineChart.getData().clear();
+            for (Node node : categoriesContainer.getChildren()) {
+                //noinspection unchecked
+                this.loadProgressChartData(((ComboBox<CategoryTree>) ((HBox) node).getChildren().get(0)).getValue(), newValue, progressToDatePicker.getValue());
+            }
+        });
 
         this.progressToDatePicker.setValue(LocalDate.now());
-        this.progressToDatePicker.valueProperty().addListener((observableValue, oldValue, newValue)
-                -> this.loadProgressChartData(progressChartDefaultCategoryComboBox.getValue(), progressFromDatePicker.getValue(), newValue));
+        this.progressToDatePicker.valueProperty().addListener((observableValue, oldValue, newValue) -> {
+            this.progressLineChart.getData().clear();
+            for (Node node : categoriesContainer.getChildren()) {
+                //noinspection unchecked
+                this.loadProgressChartData(((ComboBox<CategoryTree>) ((HBox) node).getChildren().get(0)).getValue(), progressFromDatePicker.getValue(), newValue);
+            }
+        });
 
         this.initializeCategoryComboBox(this.progressChartDefaultCategoryComboBox);
         this.progressChartDefaultCategoryComboBox.getSelectionModel().select(0);
@@ -161,15 +187,15 @@ public class StatisticsController implements Initializable {
 
     private void loadVariableExpensesDistributionChart(LocalDate startDate, LocalDate endDate) {
         ObservableList<PieChart.Data> variableExpensesData = FXCollections.observableArrayList();
-        for (Tree<Category> categoryTree : this.categories.getCategoryTreeByCategoryClass(
+        for (CategoryTree categoryTree : this.categories.getCategoryTreeByCategoryClass(
                 BaseCategory.CategoryClass.VARIABLE_EXPENSES).getChildren()) {
-            double amount = ((CategoryTreeImpl) categoryTree).getAmount(startDate, endDate);
+            double amount = categoryTree.getAmount(startDate, endDate);
             if (amount != 0) {
                 variableExpensesData.add(new PieChart.Data(categoryTree.getValue().getName(), Math.abs(amount)));
             }
         }
 
-        if (variableExpensesData.size() > 0) {
+        if (!variableExpensesData.isEmpty()) {
             this.variableExpensesDistributionChart.setManaged(true);
             this.variableExpensesDistributionChart.setVisible(true);
             this.variableExpensesNoDataLabel.setManaged(false);
@@ -185,9 +211,9 @@ public class StatisticsController implements Initializable {
 
     private void loadFixedExpensesDistributionChart(LocalDate startDate, LocalDate endDate) {
         ObservableList<PieChart.Data> variableExpensesData = FXCollections.observableArrayList();
-        for (Tree<Category> categoryTree : this.categories.getCategoryTreeByCategoryClass(
+        for (CategoryTree categoryTree : this.categories.getCategoryTreeByCategoryClass(
                 BaseCategory.CategoryClass.FIXED_EXPENSES).getChildren()) {
-            double amount = ((CategoryTreeImpl) categoryTree).getAmount(startDate, endDate);
+            double amount = categoryTree.getAmount(startDate, endDate);
             if (amount != 0) {
                 variableExpensesData.add(new PieChart.Data(categoryTree.getValue().getName(), Math.abs(amount)));
             }

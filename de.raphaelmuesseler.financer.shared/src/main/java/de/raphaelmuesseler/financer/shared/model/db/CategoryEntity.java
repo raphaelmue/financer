@@ -6,7 +6,7 @@ import java.util.Comparator;
 @Entity
 @Table(name = "users_categories")
 public class CategoryEntity implements Comparable<CategoryEntity>, DataEntity {
-    private final static long serialVersionUID = 5491420625985358596L;
+    private static final long serialVersionUID = 5491420625985358596L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
