@@ -1,5 +1,7 @@
 package de.raphaelmuesseler.financer.client.javafx.login;
 
+import com.jfoenix.controls.JFXPasswordField;
+import com.jfoenix.controls.JFXTextField;
 import de.raphaelmuesseler.financer.client.connection.ServerRequestHandler;
 import de.raphaelmuesseler.financer.client.format.I18N;
 import de.raphaelmuesseler.financer.client.javafx.connection.JavaFXAsyncConnectionCall;
@@ -36,9 +38,9 @@ import java.util.logging.Logger;
 public class LoginController implements Initializable, Application {
 
     @FXML
-    public TextField loginEmailTextField;
+    public JFXTextField loginEmailTextField;
     @FXML
-    public PasswordField loginPasswordField;
+    public JFXPasswordField loginPasswordField;
     @FXML
     public Label loginErrorLabel;
     @FXML

@@ -1,7 +1,9 @@
 package de.raphaelmuesseler.financer.client.javafx.main.settings;
 
 import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXListView;
+import com.jfoenix.controls.JFXToggleButton;
 import de.raphaelmuesseler.financer.client.connection.ServerRequestHandler;
 import de.raphaelmuesseler.financer.client.format.I18N;
 import de.raphaelmuesseler.financer.client.javafx.connection.JavaFXAsyncConnectionCall;
@@ -39,19 +41,19 @@ import java.util.ResourceBundle;
 public class SettingsController implements Initializable {
 
     @FXML
-    public ComboBox<I18N.Language> languageMenuComboBox;
+    public JFXComboBox<I18N.Language> languageMenuComboBox;
     @FXML
-    public ComboBox<Currency> currencyComboBox;
+    public JFXComboBox<Currency> currencyComboBox;
     @FXML
-    public CheckBox showSignCheckbox;
+    public JFXToggleButton showSignCheckbox;
     @FXML
-    public ComboBox<Integer> maxNumberOfMonthsDisplayedComboBox;
+    public JFXComboBox<Integer> maxNumberOfMonthsDisplayedComboBox;
     @FXML
     public JFXButton logoutFromDeviceBtn;
     @FXML
     public JFXListView<Token> devicesListView;
     @FXML
-    public CheckBox changeAmountSignAutomaticallyCheckBox;
+    public JFXToggleButton changeAmountSignAutomaticallyCheckBox;
 
     private LocalStorage localStorage = LocalStorageImpl.getInstance();
     private User user = (User) localStorage.readObject("user");

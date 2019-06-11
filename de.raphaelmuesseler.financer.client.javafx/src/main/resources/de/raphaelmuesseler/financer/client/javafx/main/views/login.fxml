@@ -7,9 +7,12 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
+<?import com.jfoenix.controls.JFXPasswordField?>
+<?import com.jfoenix.controls.JFXTextField?>
+<?import com.jfoenix.controls.JFXButton?>
 <StackPane alignment="center" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1"
            fx:controller="de.raphaelmuesseler.financer.client.javafx.login.LoginController">
-    <VBox>
+    <VBox style="-fx-background-color: -fx-color-white">
         <MenuBar>
             <Menu text="%file">
                 <MenuItem text="%exit"/>
@@ -46,16 +49,16 @@
             <Label fx:id="loginErrorLabel" text="%incorrectCredentials" textAlignment="CENTER" textFill="crimson"
                    visible="false"
                    GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="1"/>
-            <Hyperlink fx:id="openRegisterDialogLink" text="%notRegisteredYet" onAction="#handleOpenRegisterDialog" />
+            <Hyperlink fx:id="openRegisterDialogLink" text="%notRegisteredYet" onAction="#handleOpenRegisterDialog"/>
             <GridPane fx:id="gridPane" alignment="CENTER" hgap="10" vgap="10">
                 <Label text="%email" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
-                <TextField fx:id="loginEmailTextField" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+                <JFXTextField fx:id="loginEmailTextField" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
                 <Label text="%password" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
-                <PasswordField fx:id="loginPasswordField" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+                <JFXPasswordField fx:id="loginPasswordField" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
 
 
                 <HBox alignment="bottom_right" spacing="10" GridPane.columnIndex="1" GridPane.rowIndex="5">
-                    <Button fx:id="loginBtn" onAction="#handleSignInButtonAction" text="%signIn"/>
+                    <JFXButton fx:id="loginBtn" onAction="#handleSignInButtonAction" text="%signIn"/>
                 </HBox>
             </GridPane>
         </VBox>

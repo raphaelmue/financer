@@ -1,5 +1,6 @@
 package de.raphaelmuesseler.financer.client.javafx.main;
 
+import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXHamburger;
 import com.jfoenix.controls.JFXSnackbar;
 import com.jfoenix.transitions.hamburger.HamburgerSlideCloseTransition;
@@ -43,13 +44,13 @@ public class FinancerController implements Initializable, Application {
     @FXML
     public Button overviewTabBtn;
     @FXML
-    public Button transactionsTabBtn;
+    public JFXButton transactionsTabBtn;
     @FXML
-    public Button statisticsTabBtn;
+    public JFXButton statisticsTabBtn;
     @FXML
-    public Button profileTabBtn;
+    public JFXButton profileTabBtn;
     @FXML
-    public Button settingTabBtn;
+    public JFXButton settingTabBtn;
     @FXML
     public Label userNameLabel;
     @FXML
@@ -118,7 +119,7 @@ public class FinancerController implements Initializable, Application {
         HamburgerSlideCloseTransition burgerTask = new HamburgerSlideCloseTransition(this.hamburgerBtn);
         burgerTask.setRate(1);
         this.hamburgerBtn.setAnimation(burgerTask);
-        this.hamburgerBtn.addEventHandler(MouseEvent.MOUSE_PRESSED, (e) -> {
+        this.hamburgerBtn.addEventHandler(MouseEvent.MOUSE_PRESSED, e -> {
             burgerTask.setRate(burgerTask.getRate() * -1);
             burgerTask.play();
         });
