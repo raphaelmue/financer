@@ -7,6 +7,7 @@ import de.raphaelmuesseler.financer.shared.model.categories.Category;
 import de.raphaelmuesseler.financer.shared.model.categories.CategoryTree;
 import de.raphaelmuesseler.financer.shared.model.transactions.Transaction;
 import de.raphaelmuesseler.financer.shared.model.transactions.VariableTransaction;
+import de.raphaelmuesseler.financer.util.RandomString;
 import de.raphaelmuesseler.financer.util.collections.TreeUtil;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableView;
@@ -23,7 +24,7 @@ import java.util.Set;
 
 @SuppressWarnings("WeakerAccess")
 @Tag("integration")
-public class TransactionTest extends AbstractFinancerApplicationTest {
+public class VariableTransactionTest extends AbstractFinancerApplicationTest {
 
     @BeforeEach
     public void setUpEach() throws Exception {

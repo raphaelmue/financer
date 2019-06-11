@@ -21,6 +21,7 @@ import de.raphaelmuesseler.financer.shared.model.transactions.VariableTransactio
 import de.raphaelmuesseler.financer.shared.model.user.User;
 import de.raphaelmuesseler.financer.util.collections.TreeUtil;
 import de.raphaelmuesseler.financer.util.concurrency.FinancerExecutor;
+import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -36,10 +37,8 @@ import org.controlsfx.glyphfont.GlyphFontRegistry;
 import java.awt.*;
 import java.io.*;
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Map;
+import java.time.LocalDate;
+import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -121,8 +120,10 @@ class TransactionDialog extends FinancerDialog<VariableTransaction> {
 
             GlyphFont fontAwesome = GlyphFontRegistry.font("FontAwesome");
             JFXButton uploadAttachmentBtn = new JFXButton(I18N.get("upload"), fontAwesome.create(FontAwesome.Glyph.PLUS));
+            uploadAttachmentBtn.setId("uploadAttachmentBtn");
             JFXButton openFileBtn = new JFXButton(I18N.get("openFile"), fontAwesome.create(FontAwesome.Glyph.FOLDER_OPEN));
             JFXButton deleteAttachmentBtn = new JFXButton(I18N.get("delete"), fontAwesome.create(FontAwesome.Glyph.TRASH));
+            deleteAttachmentBtn.setId("deleteAttachmentBtn");
 
             uploadAttachmentBtn.setOnAction(event -> {
                 FileChooser fileChooser = new FileChooser();
@@ -244,21 +245,22 @@ class TransactionDialog extends FinancerDialog<VariableTransaction> {
     }
 
     private void onUploadAttachment(File attachmentFile) {
-
         if (attachmentFile != null) {
-            Map<String, Serializable> parameters = new HashMap<>();
-            parameters.put("transaction", this.getValue());
-            parameters.put("attachmentFile", attachmentFile);
-
             byte[] attachmentContent = new byte[(int) attachmentFile.length()];
             try (BufferedInputStream bufferedReader = new BufferedInputStream(new FileInputStream(attachmentFile))) {
                 if (bufferedReader.read(attachmentContent, 0, attachmentContent.length) != -1) {
-                    parameters.put("content", attachmentContent);
+                    Map<String, Serializable> parameters = new HashMap<>();
+                    parameters.put("transaction", this.getValue());
+                    parameters.put("attachment", new ContentAttachment(0, this.getValue(),
+                            attachmentFile.getName(), LocalDate.now(), attachmentContent));
                     Executors.newCachedThreadPool().execute(new ServerRequestHandler((User) LocalStorageImpl.getInstance().readObject("user"),
                             "uploadTransactionAttachment", parameters, new JavaFXAsyncConnectionCall() {
                         @Override
                         public void onSuccess(ConnectionResult result) {
                             attachmentListView.getItems().add((Attachment) result.getResult());
+                            if (getValue().getAttachments() == null) {
+                                getValue().setAttachments(new HashSet<>());
+                            }
                             getValue().getAttachments().add((Attachment) result.getResult());
                         }
 
@@ -317,23 +319,26 @@ class TransactionDialog extends FinancerDialog<VariableTransaction> {
 
     private void onDeleteAttachment() {
         if (new FinancerConfirmDialog(I18N.get("confirmDeleteAttachment")).showAndGetResult()) {
+            Attachment attachment = this.attachmentListView.getSelectionModel().getSelectedItem();
+
             Map<String, Serializable> parameters = new HashMap<>();
-            parameters.put("id", this.attachmentListView.getSelectionModel().getSelectedItem().getId());
+            parameters.put("attachmentId", attachment.getId());
 
             FinancerExecutor.getExecutor().execute(new ServerRequestHandler(
                     (User) LocalStorageImpl.getInstance().readObject("user"), "deleteAttachment",
                     parameters, new JavaFXAsyncConnectionCall() {
                 @Override
                 public void onSuccess(ConnectionResult result) {
+                    getValue().getAttachments().remove(attachment);
                     File file = new File(LocalStorageImpl.LocalStorageFile.TRANSACTIONS.getFile().getParent() +
                             "/transactions/" + attachmentListView.getSelectionModel().getSelectedItem().getTransaction().getId() +
                             "/attachments/" + attachmentListView.getSelectionModel().getSelectedItem().getName());
                     try {
                         Files.delete(file.toPath());
-                            attachmentListView.getItems().remove(attachmentListView.getSelectionModel().getSelectedItem());
+                        Platform.runLater(() -> attachmentListView.getItems().remove(attachmentListView.getSelectionModel().getSelectedItem()));
                     } catch (IOException e) {
                         logger.log(Level.SEVERE, e.getMessage(), e);
-                        new FinancerExceptionDialog("Financer", new IOException("File could not be deleted")).showAndWait();
+                        Platform.runLater(() -> new FinancerExceptionDialog("Financer", new IOException("File could not be deleted")).showAndWait());
                     }
                 }
 

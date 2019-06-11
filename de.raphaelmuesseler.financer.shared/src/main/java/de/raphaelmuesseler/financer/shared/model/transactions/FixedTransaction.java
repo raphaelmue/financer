@@ -86,29 +86,33 @@ public class FixedTransaction extends FixedTransactionEntity implements Transact
         double amount = 0;
 
         if (this.getEndDate() == null || this.getEndDate().compareTo(startDate) >= 0) {
-            if (this.getIsVariable() && this.getTransactionAmounts() != null) {
-                for (AmountProvider amountProvider : this.getTransactionAmounts()) {
-                    amount += amountProvider.getAmount(startDate, endDate);
-                }
+            LocalDate maxStartDate;
+            LocalDate minEndDate;
+            if (this.getEndDate() == null) {
+                minEndDate = endDate;
             } else {
-                LocalDate maxStartDate;
-                LocalDate minEndDate;
-                if (this.getEndDate() == null) {
+                if (endDate.compareTo(this.getEndDate()) <= 0) {
                     minEndDate = endDate;
                 } else {
-                    if (endDate.compareTo(this.getEndDate()) <= 0) {
-                        minEndDate = endDate;
-                    } else {
-                        minEndDate = this.getEndDate();
-                    }
+                    minEndDate = this.getEndDate();
                 }
+            }
 
-                if (startDate.compareTo(this.getStartDate()) >= 0) {
-                    maxStartDate = startDate;
+            if (startDate.compareTo(this.getStartDate()) >= 0) {
+                maxStartDate = startDate;
+            } else {
+                maxStartDate = this.getStartDate();
+            }
+            if (minEndDate.compareTo(maxStartDate) >= 0) {
+                if (this.getIsVariable()) {
+                    if (this.getTransactionAmounts() != null) {
+                        for (AmountProvider amountProvider : this.getTransactionAmounts()) {
+                            amount += amountProvider.getAmount(maxStartDate, minEndDate);
+                        }
+                    }
                 } else {
-                    maxStartDate = this.getStartDate();
+                    amount = super.getAmount() * DateUtil.getMonthDifference(maxStartDate, minEndDate);
                 }
-                amount = super.getAmount() * DateUtil.getMonthDifference(maxStartDate, minEndDate);
             }
         }
 

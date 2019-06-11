@@ -1,7 +1,6 @@
 package de.raphaelmuesseler.financer.client.javafx.login;
 
 import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
-import de.raphaelmuesseler.financer.client.javafx.main.FinancerApplication;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -19,28 +18,15 @@ public class LoginApplication extends Application {
 
     private Logger logger = Logger.getLogger("LoginApplication");
 
-    private Scene scene;
-
-    public static void main(String[] args) {
-        launch(args);
-    }
-
     @Override
     public void start(Stage primaryStage) throws IOException {
-        if (LocalStorageImpl.getInstance().readObject("user") != null) {
-            // open main application
-            try {
-                new FinancerApplication().start(new Stage());
-            } catch (IOException e) {
-                logger.log(Level.SEVERE, e.getMessage(), e);
-            }
-        } else {
+        if (LocalStorageImpl.getInstance().readObject("user") == null) {
             // setting up language
             ResourceBundle resourceBundle = ResourceBundle.getBundle("Financer", Locale.ENGLISH);
 
             // loading FXML file
             Parent root = FXMLLoader.load(getClass().getResource("/de/raphaelmuesseler/financer/client/javafx/main/views/login.fxml"), resourceBundle);
-            this.scene = new Scene(root, 500, 575);
+            Scene scene = new Scene(root, 500, 575);
 
             primaryStage.getIcons().add(new Image(LoginApplication.class.getResourceAsStream("/images/icons/financer-icon.png")));
 
@@ -50,9 +36,5 @@ public class LoginApplication extends Application {
 
             this.logger.log(Level.INFO, "Login Application has started.");
         }
-    }
-
-    public Scene getScene() {
-        return scene;
     }
 }

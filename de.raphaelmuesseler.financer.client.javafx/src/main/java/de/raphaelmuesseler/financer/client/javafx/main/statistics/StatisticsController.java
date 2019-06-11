@@ -13,6 +13,7 @@ import de.raphaelmuesseler.financer.shared.model.categories.Category;
 import de.raphaelmuesseler.financer.shared.model.categories.CategoryTree;
 import de.raphaelmuesseler.financer.shared.model.categories.CategoryTreeImpl;
 import de.raphaelmuesseler.financer.util.date.DateUtil;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -200,7 +201,7 @@ public class StatisticsController implements Initializable {
             this.variableExpensesDistributionChart.setVisible(true);
             this.variableExpensesNoDataLabel.setManaged(false);
             this.variableExpensesNoDataLabel.setVisible(false);
-            this.variableExpensesDistributionChart.setData(variableExpensesData);
+            Platform.runLater(() ->this.variableExpensesDistributionChart.setData(variableExpensesData));
         } else {
             this.variableExpensesDistributionChart.setManaged(false);
             this.variableExpensesDistributionChart.setVisible(false);
@@ -219,12 +220,12 @@ public class StatisticsController implements Initializable {
             }
         }
 
-        if (variableExpensesData.size() > 0) {
+        if (!variableExpensesData.isEmpty()) {
             this.fixedExpensesDistributionChart.setManaged(true);
             this.fixedExpensesDistributionChart.setVisible(true);
             this.fixedExpensesNoDataLabel.setManaged(false);
             this.fixedExpensesNoDataLabel.setVisible(false);
-            this.fixedExpensesDistributionChart.setData(variableExpensesData);
+            Platform.runLater(() -> this.fixedExpensesDistributionChart.setData(variableExpensesData));
         } else {
             this.fixedExpensesDistributionChart.setManaged(false);
             this.fixedExpensesDistributionChart.setVisible(false);
