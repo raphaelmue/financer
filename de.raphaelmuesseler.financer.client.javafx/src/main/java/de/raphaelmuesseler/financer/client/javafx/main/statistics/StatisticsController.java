@@ -4,6 +4,7 @@ import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXDatePicker;
 import de.raphaelmuesseler.financer.client.format.Formatter;
 import de.raphaelmuesseler.financer.client.format.I18N;
+import de.raphaelmuesseler.financer.client.javafx.components.DatePicker;
 import de.raphaelmuesseler.financer.client.javafx.format.JavaFXFormatter;
 import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
 import de.raphaelmuesseler.financer.client.javafx.main.FinancerController;
@@ -76,18 +77,22 @@ public class StatisticsController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         this.categories = (BaseCategory) localStorage.readObject("categories");
 
+        this.variableExpensesFromDatePicker = new DatePicker(formatter);
         this.variableExpensesFromDatePicker.setValue(LocalDate.now().minusMonths(1));
         this.variableExpensesFromDatePicker.valueProperty().addListener((observable, oldValue, newValue) ->
                 this.loadVariableExpensesDistributionChart(newValue, variableExpensesToDatePicker.getValue()));
+        this.variableExpensesToDatePicker = new DatePicker(formatter);
         this.variableExpensesToDatePicker.setValue(LocalDate.now());
         this.variableExpensesToDatePicker.valueProperty().addListener((observable, oldValue, newValue) ->
                 this.loadVariableExpensesDistributionChart(variableExpensesFromDatePicker.getValue(), newValue));
 
         this.loadVariableExpensesDistributionChart(this.variableExpensesFromDatePicker.getValue(), this.variableExpensesToDatePicker.getValue());
 
+        this.fixedExpensesFromDatePicker = new DatePicker(formatter);
         this.fixedExpensesFromDatePicker.setValue(LocalDate.now().minusMonths(1));
         this.fixedExpensesFromDatePicker.valueProperty().addListener((observable, oldValue, newValue) ->
                 this.loadFixedExpensesDistributionChart(newValue, variableExpensesToDatePicker.getValue()));
+        this.fixedExpensesToDatePicker = new DatePicker(formatter);
         this.fixedExpensesToDatePicker.setValue(LocalDate.now());
         this.fixedExpensesToDatePicker.valueProperty().addListener((observable, oldValue, newValue) ->
                 this.loadFixedExpensesDistributionChart(variableExpensesFromDatePicker.getValue(), newValue));
@@ -201,7 +206,7 @@ public class StatisticsController implements Initializable {
             this.variableExpensesDistributionChart.setVisible(true);
             this.variableExpensesNoDataLabel.setManaged(false);
             this.variableExpensesNoDataLabel.setVisible(false);
-            Platform.runLater(() ->this.variableExpensesDistributionChart.setData(variableExpensesData));
+            Platform.runLater(() -> this.variableExpensesDistributionChart.setData(variableExpensesData));
         } else {
             this.variableExpensesDistributionChart.setManaged(false);
             this.variableExpensesDistributionChart.setVisible(false);

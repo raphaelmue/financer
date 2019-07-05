@@ -1,10 +1,9 @@
 package de.raphaelmuesseler.financer.client.javafx.main;
 
-import com.jfoenix.controls.JFXButton;
-import com.jfoenix.controls.JFXDatePicker;
-import com.jfoenix.controls.JFXTextField;
+import com.jfoenix.controls.*;
 import de.raphaelmuesseler.financer.client.connection.ServerRequest;
 import de.raphaelmuesseler.financer.client.format.I18N;
+import de.raphaelmuesseler.financer.client.javafx.components.DatePicker;
 import de.raphaelmuesseler.financer.client.javafx.components.DoubleField;
 import de.raphaelmuesseler.financer.client.javafx.components.IntegerField;
 import de.raphaelmuesseler.financer.client.javafx.format.JavaFXFormatter;
@@ -23,7 +22,10 @@ import de.raphaelmuesseler.financer.shared.model.transactions.VariableTransactio
 import de.raphaelmuesseler.financer.shared.model.user.User;
 import de.raphaelmuesseler.financer.util.collections.TreeUtil;
 import javafx.scene.Node;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Hyperlink;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import org.junit.jupiter.api.AfterAll;
@@ -90,7 +92,8 @@ class AbstractFinancerApplicationTest extends ApplicationTest {
         InputStream inputStream = AbstractFinancerApplicationTest.class.getResourceAsStream("/testing.properties");
         Properties properties = new Properties();
         properties.load(inputStream);
-        HibernateUtil.setIsHostLocal(Boolean.valueOf(properties.getProperty("project.testing.localhost")));
+//        HibernateUtil.setIsHostLocal(Boolean.valueOf(properties.getProperty("project.testing.localhost")));
+        HibernateUtil.setIsHostLocal(true);
         HibernateUtil.setDatabaseName(DatabaseName.TEST);
     }
 
@@ -111,20 +114,20 @@ class AbstractFinancerApplicationTest extends ApplicationTest {
     void register(User user, String password) {
         clickOn((Hyperlink) find("#openRegisterDialogLink"));
 
-        clickOn((TextField) find("#registerNameTextField"));
+        clickOn((JFXTextField) find("#registerNameTextField"));
         write(user.getName());
-        clickOn((TextField) find("#registerSurnameTextField"));
+        clickOn((JFXTextField) find("#registerSurnameTextField"));
         write(user.getSurname());
-        clickOn((TextField) find("#registerEmailTextField"));
+        clickOn((JFXTextField) find("#registerEmailTextField"));
         write(user.getEmail());
-        JFXDatePicker birthDatePicker = find("#registerBirthDatePicker");
+        DatePicker birthDatePicker = find("#registerBirthDatePicker");
         birthDatePicker.setValue(user.getBirthDate());
-        clickOn((ComboBox) find("#genderComboBox"));
+        clickOn((JFXComboBox) find("#genderComboBox"));
         press(KeyCode.DOWN).release(KeyCode.DOWN);
         press(KeyCode.ENTER).release(KeyCode.ENTER);
-        clickOn((PasswordField) find("#registerPasswordTextField"));
+        clickOn((JFXPasswordField) find("#registerPasswordTextField"));
         write(password);
-        clickOn((PasswordField) find("#registerRepeatPasswordTextField"));
+        clickOn((JFXPasswordField) find("#registerRepeatPasswordTextField"));
         write(password);
         confirmDialog();
 
@@ -173,21 +176,21 @@ class AbstractFinancerApplicationTest extends ApplicationTest {
         press(KeyCode.RIGHT).release(KeyCode.RIGHT);
         press(KeyCode.RIGHT).release(KeyCode.RIGHT);
 
-        clickOn((Button) find("#newTransactionBtn"));
+        clickOn((JFXButton) find("#newTransactionBtn"));
         TextField amountTextField = find("#amountTextField");
         clickOn(amountTextField);
         press(KeyCode.BACK_SPACE).release(KeyCode.BACK_SPACE);
         press(KeyCode.BACK_SPACE).release(KeyCode.BACK_SPACE);
         press(KeyCode.BACK_SPACE).release(KeyCode.BACK_SPACE);
         write(Double.toString(transaction.getAmount()));
-        clickOn((ComboBox) find("#categoryComboBox"));
+        clickOn((JFXComboBox) find("#categoryComboBox"));
         press(KeyCode.DOWN).release(KeyCode.DOWN);
         press(KeyCode.ENTER).release(KeyCode.ENTER);
-        clickOn((TextField) find("#productTextField"));
+        clickOn((JFXTextField) find("#productTextField"));
         write(transaction.getProduct());
-        clickOn((TextField) find("#purposeTextField"));
+        clickOn((JFXTextField) find("#purposeTextField"));
         write(transaction.getPurpose());
-        clickOn((TextField) find("#shopTextField"));
+        clickOn((JFXTextField) find("#shopTextField"));
         write(transaction.getShop());
         JFXDatePicker valueDatePicker = find("#valueDatePicker");
         valueDatePicker.setValue(transaction.getValueDate());
@@ -208,21 +211,21 @@ class AbstractFinancerApplicationTest extends ApplicationTest {
 
         clickOn(find((Label label) -> label.getText().contains(fixedTransaction.getCategoryTree().getValue().getName())));
 
-        clickOn((Button) find("#newFixedTransactionBtn"));
+        clickOn((JFXButton) find("#newFixedTransactionBtn"));
         sleep(SHORT_SLEEP);
         clickOn((IntegerField) find("#dayTextField"));
         write(Integer.toString(fixedTransaction.getDay()));
-        JFXDatePicker datePicker = find("#startDateDatePicker");
+        DatePicker datePicker = find("#startDateDatePicker");
         datePicker.setValue(fixedTransaction.getStartDate());
         if (fixedTransaction.getIsVariable()) {
-            clickOn((CheckBox) find("#isVariableCheckbox"));
+            clickOn((JFXCheckBox) find("#isVariableCheckbox"));
 
             sleep(100);
 
             for (TransactionAmount transactionAmount : fixedTransaction.getTransactionAmounts()) {
                 clickOn((JFXButton) find("#newTransactionAmountBtn"));
 
-                ((JFXDatePicker) find("#transactionAmountValueDatePicker")).setValue(transactionAmount.getValueDate());
+                ((DatePicker) find("#transactionAmountValueDatePicker")).setValue(transactionAmount.getValueDate());
                 clickOn((DoubleField) find("#transactionAmountTextField"));
                 eraseText(3);
                 write(Double.toString(transactionAmount.getAmount()));
@@ -230,7 +233,7 @@ class AbstractFinancerApplicationTest extends ApplicationTest {
                 press(KeyCode.ENTER).release(KeyCode.ENTER);
             }
         } else {
-            clickOn((TextField) find("#amountTextField"));
+            clickOn((DoubleField) find("#amountTextField"));
             eraseText(3);
             write(Double.toString(fixedTransaction.getAmount()));
         }

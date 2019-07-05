@@ -16,4 +16,6 @@ public interface Formatter {
     String formatCategoryName(CategoryTree categoryTree);
 
     String formatDate(LocalDate localDate);
+
+    LocalDate convertStringToLocalDate(String dateString);
 }

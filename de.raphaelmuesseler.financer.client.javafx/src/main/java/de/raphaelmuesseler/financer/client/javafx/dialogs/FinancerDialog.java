@@ -52,7 +52,7 @@ public abstract class FinancerDialog<T> extends Dialog<T> {
         }
     }
 
-    private final void showErrorMessage() {
+    private void showErrorMessage() {
         this.errorMessageLabel.setText(this.getErrorMessage());
         this.errorMessageLabel.setManaged(true);
     }
@@ -67,7 +67,7 @@ public abstract class FinancerDialog<T> extends Dialog<T> {
         return value;
     }
 
-    public String getErrorMessage() {
+    private String getErrorMessage() {
         return errorMessage;
     }
 
@@ -75,7 +75,7 @@ public abstract class FinancerDialog<T> extends Dialog<T> {
         this.value = value;
     }
 
-    public void setErrorMessage(String errorMessage) {
+    protected void setErrorMessage(String errorMessage) {
         this.errorMessage = errorMessage;
     }
 

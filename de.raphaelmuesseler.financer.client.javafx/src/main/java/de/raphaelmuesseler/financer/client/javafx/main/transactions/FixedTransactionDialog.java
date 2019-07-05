@@ -1,10 +1,12 @@
 package de.raphaelmuesseler.financer.client.javafx.main.transactions;
 
 import com.jfoenix.controls.JFXButton;
-import com.jfoenix.controls.JFXDatePicker;
+import com.jfoenix.controls.JFXCheckBox;
 import com.jfoenix.controls.JFXListView;
 import com.jfoenix.controls.JFXTextField;
+import de.raphaelmuesseler.financer.client.format.Formatter;
 import de.raphaelmuesseler.financer.client.format.I18N;
+import de.raphaelmuesseler.financer.client.javafx.components.DatePicker;
 import de.raphaelmuesseler.financer.client.javafx.components.DoubleField;
 import de.raphaelmuesseler.financer.client.javafx.components.IntegerField;
 import de.raphaelmuesseler.financer.client.javafx.dialogs.FinancerConfirmDialog;
@@ -17,7 +19,6 @@ import de.raphaelmuesseler.financer.shared.model.transactions.TransactionAmount;
 import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.control.ButtonType;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.layout.BorderPane;
@@ -38,14 +39,16 @@ public class FixedTransactionDialog extends FinancerDialog<FixedTransaction> {
     private CategoryTree categoryTree;
     private Label categoryLabel;
     private IntegerField dayField;
-    private JFXDatePicker startDateField;
-    private JFXDatePicker endDateField;
+    private DatePicker startDateField;
+    private DatePicker endDateField;
     private JFXTextField productField;
     private JFXTextField purposeField;
-    private CheckBox isVariableCheckbox;
+    private JFXCheckBox isVariableCheckbox;
     private DoubleField amountField;
     private VBox transactionAmountContainer;
     private JFXListView<TransactionAmount> transactionAmountListView;
+
+    private static final Formatter formatter = new JavaFXFormatter(LocalStorageImpl.getInstance());
 
     FixedTransactionDialog(FixedTransaction value, CategoryTree category) {
         super(value);
@@ -74,23 +77,23 @@ public class FixedTransactionDialog extends FinancerDialog<FixedTransaction> {
         gridPane.add(this.categoryLabel, 1, 0);
 
         gridPane.add(new Label(I18N.get("valueDate")), 0, 1);
-        this.dayField = new IntegerField(0, 30);
+        this.dayField = new IntegerField();
         this.dayField.setId("dayTextField");
         gridPane.add(this.dayField, 1, 1);
 
         gridPane.add(new Label(I18N.get("startDate")), 0, 2);
-        this.startDateField = new JFXDatePicker();
+        this.startDateField = new DatePicker(this.formatter);
         this.startDateField.setId("startDateDatePicker");
         this.startDateField.setValue(LocalDate.now());
         gridPane.add(this.startDateField, 1, 2);
 
         gridPane.add(new Label(I18N.get("endDate")), 0, 3);
-        this.endDateField = new JFXDatePicker();
+        this.endDateField = new DatePicker(formatter);
         this.endDateField.setId("endDateDatePicker");
         gridPane.add(this.endDateField, 1, 3);
 
         gridPane.add(new Label(I18N.get("isVariable")), 0, 4);
-        this.isVariableCheckbox = new CheckBox();
+        this.isVariableCheckbox = new JFXCheckBox();
         this.isVariableCheckbox.setId("isVariableCheckbox");
         this.isVariableCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
             if (this.amountField != null) {
