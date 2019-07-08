@@ -74,51 +74,57 @@ public class StatisticsController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        this.categories = (BaseCategory) localStorage.readObject("categories");
+        FinancerController.setInitializationThread(new Thread(() -> {
+            FinancerController.getInstance().showLoadingBox();
+            this.categories = (BaseCategory) localStorage.readObject("categories");
 
-        this.variableExpensesFromDatePicker.setValue(LocalDate.now().minusMonths(1));
-        this.variableExpensesFromDatePicker.valueProperty().addListener((observable, oldValue, newValue) ->
-                this.loadVariableExpensesDistributionChart(newValue, variableExpensesToDatePicker.getValue()));
-        this.variableExpensesToDatePicker.setValue(LocalDate.now());
-        this.variableExpensesToDatePicker.valueProperty().addListener((observable, oldValue, newValue) ->
-                this.loadVariableExpensesDistributionChart(variableExpensesFromDatePicker.getValue(), newValue));
+            this.variableExpensesFromDatePicker.setValue(LocalDate.now().minusMonths(1));
+            this.variableExpensesFromDatePicker.valueProperty().addListener((observable, oldValue, newValue) ->
+                    this.loadVariableExpensesDistributionChart(newValue, variableExpensesToDatePicker.getValue()));
+            this.variableExpensesToDatePicker.setValue(LocalDate.now());
+            this.variableExpensesToDatePicker.valueProperty().addListener((observable, oldValue, newValue) ->
+                    this.loadVariableExpensesDistributionChart(variableExpensesFromDatePicker.getValue(), newValue));
 
-        this.loadVariableExpensesDistributionChart(this.variableExpensesFromDatePicker.getValue(), this.variableExpensesToDatePicker.getValue());
+            this.loadVariableExpensesDistributionChart(this.variableExpensesFromDatePicker.getValue(), this.variableExpensesToDatePicker.getValue());
 
-        this.fixedExpensesFromDatePicker.setValue(LocalDate.now().minusMonths(1));
-        this.fixedExpensesFromDatePicker.valueProperty().addListener((observable, oldValue, newValue) ->
-                this.loadFixedExpensesDistributionChart(newValue, variableExpensesToDatePicker.getValue()));
-        this.fixedExpensesToDatePicker.setValue(LocalDate.now());
-        this.fixedExpensesToDatePicker.valueProperty().addListener((observable, oldValue, newValue) ->
-                this.loadFixedExpensesDistributionChart(variableExpensesFromDatePicker.getValue(), newValue));
+            this.fixedExpensesFromDatePicker.setValue(LocalDate.now().minusMonths(1));
+            this.fixedExpensesFromDatePicker.valueProperty().addListener((observable, oldValue, newValue) ->
+                    this.loadFixedExpensesDistributionChart(newValue, variableExpensesToDatePicker.getValue()));
+            this.fixedExpensesToDatePicker.setValue(LocalDate.now());
+            this.fixedExpensesToDatePicker.valueProperty().addListener((observable, oldValue, newValue) ->
+                    this.loadFixedExpensesDistributionChart(variableExpensesFromDatePicker.getValue(), newValue));
 
-        this.loadFixedExpensesDistributionChart(this.variableExpensesFromDatePicker.getValue(), this.variableExpensesToDatePicker.getValue());
+            this.loadFixedExpensesDistributionChart(this.variableExpensesFromDatePicker.getValue(), this.variableExpensesToDatePicker.getValue());
 
-        this.progressFromDatePicker.setValue(LocalDate.now().minusMonths(6));
-        this.progressFromDatePicker.valueProperty().addListener((observable, oldValue, newValue) -> {
-            this.progressLineChart.getData().clear();
-            for (Node node : categoriesContainer.getChildren()) {
-                //noinspection unchecked
-                this.loadProgressChartData(((ComboBox<CategoryTree>) ((HBox) node).getChildren().get(0)).getValue(), newValue, progressToDatePicker.getValue());
-            }
-        });
+            this.progressFromDatePicker.setValue(LocalDate.now().minusMonths(6));
+            this.progressFromDatePicker.valueProperty().addListener((observable, oldValue, newValue) -> {
+                this.progressLineChart.getData().clear();
+                for (Node node : categoriesContainer.getChildren()) {
+                    //noinspection unchecked
+                    this.loadProgressChartData(((ComboBox<CategoryTree>) ((HBox) node).getChildren().get(0)).getValue(), newValue, progressToDatePicker.getValue());
+                }
+            });
 
-        this.progressToDatePicker.setValue(LocalDate.now());
-        this.progressToDatePicker.valueProperty().addListener((observableValue, oldValue, newValue) -> {
-            this.progressLineChart.getData().clear();
-            for (Node node : categoriesContainer.getChildren()) {
-                //noinspection unchecked
-                this.loadProgressChartData(((ComboBox<CategoryTree>) ((HBox) node).getChildren().get(0)).getValue(), progressFromDatePicker.getValue(), newValue);
-            }
-        });
+            this.progressToDatePicker.setValue(LocalDate.now());
+            this.progressToDatePicker.valueProperty().addListener((observableValue, oldValue, newValue) -> {
+                this.progressLineChart.getData().clear();
+                for (Node node : categoriesContainer.getChildren()) {
+                    //noinspection unchecked
+                    this.loadProgressChartData(((ComboBox<CategoryTree>) ((HBox) node).getChildren().get(0)).getValue(), progressFromDatePicker.getValue(), newValue);
+                }
+            });
 
-        this.initializeCategoryComboBox(this.progressChartDefaultCategoryComboBox);
-        this.progressChartDefaultCategoryComboBox.getSelectionModel().select(0);
+            this.initializeCategoryComboBox(this.progressChartDefaultCategoryComboBox);
+            Platform.runLater(() -> this.progressChartDefaultCategoryComboBox.getSelectionModel().select(0));
 
-        this.addCategoryBtn.setOnAction(event -> {
-            addCategoryBtn.setDisable(true);
-            categoriesContainer.getChildren().add(initializeCategoryComboBoxContainer());
-        });
+            this.addCategoryBtn.setOnAction(event -> {
+                addCategoryBtn.setDisable(true);
+                categoriesContainer.getChildren().add(initializeCategoryComboBoxContainer());
+            });
+
+            FinancerController.getInstance().hideLoadingBox();
+        }));
+        FinancerController.getInitializationThread().start();
     }
 
     private HBox initializeCategoryComboBoxContainer() {
@@ -182,7 +188,7 @@ public class StatisticsController implements Initializable {
                     Math.abs(categoryTree.getAmount(endDate.minusMonths(i)))));
         }
 
-        this.progressLineChart.getData().add(series);
+        Platform.runLater(() -> this.progressLineChart.getData().add(series));
         FinancerController.getInstance().hideLoadingBox();
     }
 
@@ -201,7 +207,7 @@ public class StatisticsController implements Initializable {
             this.variableExpensesDistributionChart.setVisible(true);
             this.variableExpensesNoDataLabel.setManaged(false);
             this.variableExpensesNoDataLabel.setVisible(false);
-            Platform.runLater(() ->this.variableExpensesDistributionChart.setData(variableExpensesData));
+            Platform.runLater(() -> this.variableExpensesDistributionChart.setData(variableExpensesData));
         } else {
             this.variableExpensesDistributionChart.setManaged(false);
             this.variableExpensesDistributionChart.setVisible(false);

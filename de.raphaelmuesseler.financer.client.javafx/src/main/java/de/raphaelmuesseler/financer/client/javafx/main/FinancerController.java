@@ -65,6 +65,8 @@ public class FinancerController implements Initializable, Application {
 
     private static Application instance;
 
+    private static Thread initializationThread = null;
+
     private static final Logger logger = Logger.getLogger("FinancerApplication");
 
 
@@ -246,5 +248,13 @@ public class FinancerController implements Initializable, Application {
 
     public void onToggleNavigationBar(MouseEvent mouseEvent) {
         throw new UnsupportedOperationException("Toggling navigation bar is not possible yet!");
+    }
+
+    public static Thread getInitializationThread() {
+        return initializationThread;
+    }
+
+    public static void setInitializationThread(Thread initializationThread) {
+        FinancerController.initializationThread = initializationThread;
     }
 }
