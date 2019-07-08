@@ -3,7 +3,6 @@ package de.raphaelmuesseler.financer.client.javafx.login;
 import de.raphaelmuesseler.financer.client.connection.ServerRequestHandler;
 import de.raphaelmuesseler.financer.client.format.I18N;
 import de.raphaelmuesseler.financer.client.javafx.connection.JavaFXAsyncConnectionCall;
-import de.raphaelmuesseler.financer.client.javafx.connection.RetrievalServiceImpl;
 import de.raphaelmuesseler.financer.client.javafx.dialogs.FinancerAlert;
 import de.raphaelmuesseler.financer.client.javafx.dialogs.FinancerExceptionDialog;
 import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
@@ -142,17 +141,10 @@ public class LoginController implements Initializable, Application {
         this.localStorage.writeObject("user", user);
 
         // fetching data
-        RetrievalServiceImpl.getInstance().fetchAllData(user, aVoid -> Platform.runLater(() -> {
-            // open main application
-            Stage stage = (Stage) this.gridPane.getScene().getWindow();
-            stage.close();
+        Stage stage = (Stage) this.gridPane.getScene().getWindow();
+        stage.close();
 
-            try {
-                new FinancerApplication().start(new Stage());
-            } catch (IOException e) {
-                logger.log(Level.SEVERE, e.getMessage(), e);
-            }
-        }));
+        new FinancerApplication().start(new Stage());
     }
 
     @Override
