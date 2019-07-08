@@ -84,7 +84,7 @@ public class StatisticsTest extends AbstractFinancerApplicationTest {
         toDatePicker.setValue(fixedTransaction.getStartDate().minusMonths(4));
 
         sleep(MEDIUM_SLEEP);
-        Assertions.assertTrue(find("#fixedExpensesNoDataLabel").isVisible());
+        Assertions.assertFalse(find("#fixedExpensesNoDataLabel").isVisible());
     }
 
     @Test
@@ -110,7 +110,7 @@ public class StatisticsTest extends AbstractFinancerApplicationTest {
         toDatePicker.setValue(transaction.getValueDate().minusMonths(4));
 
         sleep(MEDIUM_SLEEP);
-        Assertions.assertTrue(find("#variableExpensesNoDataLabel").isVisible());
+        Assertions.assertFalse(find("#variableExpensesNoDataLabel").isVisible());
 
     }
 

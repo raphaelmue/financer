@@ -79,6 +79,7 @@ public class FixedTransactionDialog extends FinancerDialog<FixedTransaction> {
         gridPane.add(new Label(I18N.get("valueDate")), 0, 1);
         this.dayField = new IntegerField();
         this.dayField.setId("dayTextField");
+        this.dayField.setValue(1);
         gridPane.add(this.dayField, 1, 1);
 
         gridPane.add(new Label(I18N.get("startDate")), 0, 2);

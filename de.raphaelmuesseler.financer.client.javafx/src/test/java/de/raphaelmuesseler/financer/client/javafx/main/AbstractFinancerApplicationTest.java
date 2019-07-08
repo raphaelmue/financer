@@ -92,7 +92,8 @@ class AbstractFinancerApplicationTest extends ApplicationTest {
         InputStream inputStream = AbstractFinancerApplicationTest.class.getResourceAsStream("/testing.properties");
         Properties properties = new Properties();
         properties.load(inputStream);
-        HibernateUtil.setIsHostLocal(Boolean.valueOf(properties.getProperty("project.testing.localhost")));
+        HibernateUtil.setIsHostLocal(true);
+//        HibernateUtil.setIsHostLocal(Boolean.valueOf(properties.getProperty("project.testing.localhost")));
         HibernateUtil.setDatabaseName(DatabaseName.TEST);
     }
 
@@ -213,6 +214,7 @@ class AbstractFinancerApplicationTest extends ApplicationTest {
         clickOn((JFXButton) find("#newFixedTransactionBtn"));
         sleep(SHORT_SLEEP);
         clickOn((IntegerField) find("#dayTextField"));
+        eraseText(1);
         write(Integer.toString(fixedTransaction.getDay()));
         DatePicker datePicker = find("#startDateDatePicker");
         datePicker.setValue(fixedTransaction.getStartDate());
