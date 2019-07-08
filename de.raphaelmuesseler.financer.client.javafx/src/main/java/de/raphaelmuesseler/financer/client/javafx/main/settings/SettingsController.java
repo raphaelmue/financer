@@ -20,8 +20,6 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.layout.BorderPane;
@@ -70,9 +68,10 @@ public class SettingsController implements Initializable {
             user.getSettings().setLanguage(newValue.getLocale());
             updateSettings();
 
-            if (new FinancerConfirmDialog(I18N.get("warnChangesAfterRestart")).showAndGetResult()) {
+            FinancerConfirmDialog dialog = new FinancerConfirmDialog(I18N.get("warnChangesAfterRestart"));
+            dialog.setOnConfirm(result -> {
                 ApplicationHelper.restartApplication((Stage) languageMenuComboBox.getScene().getWindow());
-            }
+            });
         });
 
         this.currencyComboBox.getItems().addAll(Currency.getAvailableCurrencies());
@@ -140,7 +139,8 @@ public class SettingsController implements Initializable {
     }
 
     public void handleLogoutFromDevice() {
-        if (new FinancerConfirmDialog(I18N.get("confirmLogDeviceOut")).showAndGetResult()) {
+        FinancerConfirmDialog dialog = new FinancerConfirmDialog(I18N.get("confirmLogDeviceOut"));
+        dialog.setOnConfirm(result -> {
             HashMap<String, Serializable> parameters = new HashMap<>();
             parameters.put("tokenId", this.devicesListView.getSelectionModel().getSelectedItem().getId());
             FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "deleteToken", parameters, new JavaFXAsyncConnectionCall() {
@@ -154,7 +154,7 @@ public class SettingsController implements Initializable {
                     JavaFXAsyncConnectionCall.super.onFailure(exception);
                 }
             }));
-        }
+        });
     }
 
     private final class TokenListViewImpl extends ListCell<Token> {

@@ -161,12 +161,12 @@ public class OverviewController implements Initializable {
     private void addTransactionAmount(FixedTransaction transaction) {
         TransactionAmount transactionAmount = new TransactionAmount(0, 0.0, LocalDate.now());
         transactionAmount.setFixedTransaction(transaction);
-        transactionAmount = new TransactionAmountDialog(transactionAmount, new ArrayList<>(transaction.getTransactionAmounts()))
-                .showAndGetResult();
+        TransactionAmountDialog dialog = new TransactionAmountDialog(transactionAmount, new ArrayList<>(transaction.getTransactionAmounts()));
 
-        if (transactionAmount != null) {
+
+        dialog.setOnConfirm(result -> {
             Map<String, Serializable> parameters = new HashMap<>();
-            parameters.put("transactionAmount", transactionAmount);
+            parameters.put("transactionAmount", result);
             FinancerExecutor.getExecutor().execute(new ServerRequestHandler(user, "addTransactionAmount", parameters, new JavaFXAsyncConnectionCall() {
                 @Override
                 public void onSuccess(ConnectionResult result) {
@@ -181,6 +181,6 @@ public class OverviewController implements Initializable {
                     JavaFXAsyncConnectionCall.super.onFailure(exception);
                 }
             }));
-        }
+        });
     }
 }

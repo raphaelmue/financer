@@ -6,9 +6,12 @@ import de.raphaelmuesseler.financer.client.javafx.dialogs.FinancerDialog;
 import de.raphaelmuesseler.financer.shared.model.user.User;
 import de.raphaelmuesseler.financer.util.Hash;
 import de.raphaelmuesseler.financer.util.RandomString;
-import javafx.scene.Node;
-import javafx.scene.control.*;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Region;
 import javafx.util.StringConverter;
 
 
@@ -16,19 +19,18 @@ public class RegisterDialog extends FinancerDialog<User> {
     private TextField nameField;
     private TextField surnameField;
     private TextField emailField;
-    private PasswordField passwordField, passwordRepeatField;
+    private PasswordField passwordField;
+    private PasswordField passwordRepeatField;
     private JFXDatePicker birthDatePicker;
     private ComboBox<User.Gender> genderComboBox;
 
     RegisterDialog() {
         super(null);
-
-        this.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
-        this.getDialogPane().getButtonTypes().add(ButtonType.OK);
+        this.setDialogTitle(I18N.get("registration"));
     }
 
     @Override
-    protected Node setDialogContent() {
+    protected Region getDialogContent() {
         GridPane gridPane = new GridPane();
         gridPane.setVgap(8);
         gridPane.setHgap(150);
@@ -109,7 +111,7 @@ public class RegisterDialog extends FinancerDialog<User> {
     }
 
     @Override
-    protected User onConfirm() {
+    protected void onConfirm() {
         String salt = new RandomString(32).nextString();
         String password = Hash.create(this.passwordField.getText(), salt);
 
@@ -122,6 +124,6 @@ public class RegisterDialog extends FinancerDialog<User> {
                 this.birthDatePicker.getValue(),
                 this.genderComboBox.getSelectionModel().getSelectedItem()));
 
-        return super.onConfirm();
+        super.onConfirm();
     }
 }

@@ -14,16 +14,10 @@ import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
 import de.raphaelmuesseler.financer.shared.model.categories.CategoryTree;
 import de.raphaelmuesseler.financer.shared.model.transactions.FixedTransaction;
 import de.raphaelmuesseler.financer.shared.model.transactions.TransactionAmount;
-import javafx.application.Platform;
-import javafx.scene.Node;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import org.controlsfx.glyphfont.FontAwesome;
 import org.controlsfx.glyphfont.GlyphFont;
 import org.controlsfx.glyphfont.GlyphFontRegistry;
@@ -52,16 +46,12 @@ public class FixedTransactionDialog extends FinancerDialog<FixedTransaction> {
 
         this.categoryTree = category;
 
-        this.setHeaderText(I18N.get("fixedTransactions"));
-
-        this.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
-        this.getDialogPane().getButtonTypes().add(ButtonType.OK);
-
         this.prepareDialogContent();
+        this.setDialogTitle(I18N.get("fixedTransactions"));
     }
 
     @Override
-    protected Node setDialogContent() {
+    protected Region getDialogContent() {
         HBox hBox = new HBox();
         hBox.setSpacing(15);
 
@@ -96,12 +86,12 @@ public class FixedTransactionDialog extends FinancerDialog<FixedTransaction> {
             if (this.amountField != null) {
                 this.amountField.setDisable(newValue);
             }
-            if (this.getDialogPane() != null) {
-                Platform.runLater(() -> {
-                    toggleTransactionAmountContainer();
-                    getDialogPane().getScene().getWindow().sizeToScene();
-                });
-            }
+//            if (this.getDialogPane() != null) {
+//                Platform.runLater(() -> {
+//                    toggleTransactionAmountContainer();
+//                    getDialogPane().getScene().getWindow().sizeToScene();
+//                });
+//            }
         });
         gridPane.add(this.isVariableCheckbox, 1, 4);
 
@@ -138,26 +128,27 @@ public class FixedTransactionDialog extends FinancerDialog<FixedTransaction> {
         deleteTransactionAmountBtn.setDisable(true);
 
         newTransactionAmountBtn.setOnAction(event -> {
-            TransactionAmount transactionAmount = new TransactionAmountDialog(null, transactionAmountListView.getItems()).showAndGetResult();
-            if (transactionAmount != null) {
+            TransactionAmountDialog dialog = new TransactionAmountDialog(null, transactionAmountListView.getItems());
+            dialog.setOnConfirm(transactionAmount -> {
                 transactionAmount.setFixedTransaction(this.getValue());
                 transactionAmountListView.getItems().add(transactionAmount);
                 transactionAmountListView.getItems().sort(Comparator.comparing(TransactionAmount::getValueDate).reversed());
-            }
+            });
         });
         editTransactionAmountBtn.setOnAction(event -> {
             if (transactionAmountListView.getSelectionModel().getSelectedItem() != null) {
-                new TransactionAmountDialog(transactionAmountListView.getSelectionModel().getSelectedItem(),
-                        transactionAmountListView.getItems())
-                        .showAndGetResult();
-                transactionAmountListView.refresh();
+                TransactionAmountDialog dialog = new TransactionAmountDialog(transactionAmountListView.getSelectionModel().getSelectedItem(),
+                        transactionAmountListView.getItems());
+                dialog.setOnConfirm(result -> transactionAmountListView.refresh());
             }
         });
         deleteTransactionAmountBtn.setOnAction(event -> {
-            if (new FinancerConfirmDialog(I18N.get("confirmDeleteTransactionAmount")).showAndGetResult() &&
-                    transactionAmountListView.getSelectionModel().getSelectedItem() != null) {
-                transactionAmountListView.getItems().remove(transactionAmountListView.getSelectionModel().getSelectedItem());
-            }
+            FinancerConfirmDialog dialog = new FinancerConfirmDialog(I18N.get("confirmDeleteTransactionAmount"));
+            dialog.setOnConfirm(result -> {
+                if (transactionAmountListView.getSelectionModel().getSelectedItem() != null) {
+                    transactionAmountListView.getItems().remove(transactionAmountListView.getSelectionModel().getSelectedItem());
+                }
+            });
         });
 
         HBox toolBox = new HBox();
@@ -246,7 +237,7 @@ public class FixedTransactionDialog extends FinancerDialog<FixedTransaction> {
     }
 
     @Override
-    protected FixedTransaction onConfirm() {
+    protected void onConfirm() {
         if (this.getValue() == null) {
             this.setValue(new FixedTransaction(0,
                     Double.valueOf(this.amountField.getText()),
@@ -270,6 +261,6 @@ public class FixedTransactionDialog extends FinancerDialog<FixedTransaction> {
             this.getValue().setAmount(Double.valueOf(this.amountField.getText()));
         }
 
-        return super.onConfirm();
+        super.onConfirm();
     }
 }

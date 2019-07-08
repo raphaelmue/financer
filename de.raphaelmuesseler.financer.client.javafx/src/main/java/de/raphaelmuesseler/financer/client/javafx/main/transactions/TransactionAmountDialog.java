@@ -5,10 +5,9 @@ import de.raphaelmuesseler.financer.client.format.I18N;
 import de.raphaelmuesseler.financer.client.javafx.components.DoubleField;
 import de.raphaelmuesseler.financer.client.javafx.dialogs.FinancerDialog;
 import de.raphaelmuesseler.financer.shared.model.transactions.TransactionAmount;
-import javafx.scene.Node;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Region;
 
 import java.util.List;
 
@@ -21,16 +20,12 @@ public class TransactionAmountDialog extends FinancerDialog<TransactionAmount> {
         super(value);
         this.transactionAmounts = transactionAmounts;
 
-        this.setHeaderText(I18N.get("transactionAmounts"));
-
-        this.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
-        this.getDialogPane().getButtonTypes().add(ButtonType.OK);
-
         this.prepareDialogContent();
+        this.setDialogTitle(I18N.get("transactionAmounts"));
     }
 
     @Override
-    protected Node setDialogContent() {
+    protected Region getDialogContent() {
         GridPane gridPane = new GridPane();
         gridPane.setHgap(120);
         gridPane.setVgap(10);
@@ -75,7 +70,7 @@ public class TransactionAmountDialog extends FinancerDialog<TransactionAmount> {
     }
 
     @Override
-    protected TransactionAmount onConfirm() {
+    protected void onConfirm() {
         if (this.getValue() == null) {
             this.setValue(new TransactionAmount(0, Double.valueOf(this.amountField.getText()),
                     this.valueDateField.getValue()));
@@ -83,6 +78,6 @@ public class TransactionAmountDialog extends FinancerDialog<TransactionAmount> {
             this.getValue().setValueDate(this.valueDateField.getValue());
             this.getValue().setAmount(Double.valueOf(this.amountField.getText()));
         }
-        return super.onConfirm();
+        super.onConfirm();
     }
 }

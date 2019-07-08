@@ -1,73 +1,101 @@
 package de.raphaelmuesseler.financer.client.javafx.dialogs;
 
-import de.raphaelmuesseler.financer.client.javafx.login.LoginApplication;
-import javafx.application.Platform;
-import javafx.scene.Node;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.Dialog;
+import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXDialog;
+import com.jfoenix.controls.JFXDialogLayout;
+import de.raphaelmuesseler.financer.client.format.I18N;
+import de.raphaelmuesseler.financer.client.javafx.main.FinancerController;
+import de.raphaelmuesseler.financer.util.collections.Action;
+import javafx.geometry.Pos;
 import javafx.scene.control.Label;
-import javafx.scene.image.Image;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
+import javafx.scene.text.Text;
 
-import java.util.Optional;
-
-public abstract class FinancerDialog<T> extends Dialog<T> {
+/**
+ * This class represents a Dialog, aligned with the needs of a general user interaction dialog.
+ * The design is base on the JFXDialog {@link JFXDialog}.
+ *
+ * @param <T> class type that is to be the return type of this dialog
+ */
+public abstract class FinancerDialog<T> extends JFXDialog {
     private T value;
     private Label errorMessageLabel;
     private String errorMessage;
 
+    private JFXDialogLayout dialogLayout;
+    private Action<T> confirmAction;
+    private Action<T> cancelAction;
+
     public FinancerDialog(T value) {
         super();
-
         this.value = value;
-        this.setResult(this.value);
 
-        this.setTitle("Financer");
-        Platform.runLater(() -> ((Stage) this.getDialogPane().getScene().getWindow()).getIcons().add(
-                new Image(LoginApplication.class.getResourceAsStream("/images/icons/financer-icon.png"))));
+        // set container
+        this.setDialogContainer((StackPane) ((FinancerController) FinancerController.getInstance()).getRootLayout().getCenter());
 
-        VBox vBox = new VBox();
+        // set transition type
+        this.setTransitionType(DialogTransition.CENTER);
+
+        // set dialog content
+        this.dialogLayout = new JFXDialogLayout();
+
+        // initialize error message label
         this.errorMessageLabel = new Label();
         this.errorMessageLabel.setStyle("-fx-text-fill: #ff4a39;" +
                 "    -fx-padding: 5 0 15 0;" +
                 "    -fx-font-weight: 700;");
         this.errorMessageLabel.setManaged(false);
-        vBox.getChildren().add(this.errorMessageLabel);
-        vBox.getChildren().add(this.setDialogContent());
-        this.getDialogPane().setContent(vBox);
-    }
 
-    public T showAndGetResult() {
-        Optional<T> result = this.showAndWait();
-        if (result.isPresent() && result.get() == ButtonType.OK) {
-            if (this.checkConsistency()) {
-                return this.onConfirm();
+        Region dialogContent = this.getDialogContent();
+        dialogLayout.setBody(new VBox(this.errorMessageLabel, dialogContent));
+
+        // add action buttons
+        JFXButton okBtn = new JFXButton(I18N.get("ok"));
+        okBtn.setOnAction(event -> {
+            if (checkConsistency()) {
+                onConfirm();
+                close();
             } else {
-                this.showErrorMessage();
-                return this.showAndGetResult();
+                showErrorMessage();
             }
-        } else {
-            return this.onCancel();
-        }
+        });
+
+        JFXButton cancelBtn = new JFXButton(I18N.get("cancel"));
+        cancelBtn.setOnAction(event -> {
+            close();
+            onCancel();
+        });
+        this.dialogLayout.setActions(okBtn, cancelBtn);
+
+        this.setContent(this.dialogLayout);
+
+        // show dialog
+        this.show();
     }
 
-    private final void showErrorMessage() {
+    private void showErrorMessage() {
         this.errorMessageLabel.setText(this.getErrorMessage());
         this.errorMessageLabel.setManaged(true);
     }
 
+    protected final void setDialogTitle(String title) {
+        this.dialogLayout.setHeading(new Text(title));
+    }
+
     protected abstract boolean checkConsistency();
 
-    protected abstract Node setDialogContent();
+    protected abstract Region getDialogContent();
 
-    protected void prepareDialogContent() {}
+    protected void prepareDialogContent() {
+    }
 
-    protected T getValue() {
+    protected final T getValue() {
         return value;
     }
 
-    public String getErrorMessage() {
+    private String getErrorMessage() {
         return errorMessage;
     }
 
@@ -75,15 +103,27 @@ public abstract class FinancerDialog<T> extends Dialog<T> {
         this.value = value;
     }
 
-    public void setErrorMessage(String errorMessage) {
+    protected void setErrorMessage(String errorMessage) {
         this.errorMessage = errorMessage;
     }
 
-    protected T onCancel() {
-        return null;
+    protected void onCancel() {
+        if (this.cancelAction != null) {
+            this.cancelAction.action(getValue());
+        }
     }
 
-    protected T onConfirm() {
-        return this.getValue();
+    protected void onConfirm() {
+        if (this.confirmAction != null) {
+            this.confirmAction.action(getValue());
+        }
+    }
+
+    public void setOnConfirm(Action<T> confirmAction) {
+        this.confirmAction = confirmAction;
+    }
+
+    public void setOnCancel(Action<T> cancelAction) {
+        this.cancelAction = cancelAction;
     }
 }

@@ -118,9 +118,9 @@ public class LoginController implements Initializable, Application {
     }
 
     public void handleOpenRegisterDialog() {
-        User user = new RegisterDialog().showAndGetResult();
+        RegisterDialog dialog = new RegisterDialog();
 
-        if (user != null) {
+        dialog.setOnConfirm(user -> {
             Map<String, Serializable> parameters = new HashMap<>();
             parameters.put("user", user);
 
@@ -136,7 +136,7 @@ public class LoginController implements Initializable, Application {
                     JavaFXAsyncConnectionCall.super.onFailure(exception, () -> handleOpenRegisterDialog());
                 }
             }));
-        }
+        });
     }
 
     private void loginUser(User user) {

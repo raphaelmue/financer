@@ -228,5 +228,10 @@
 
 .jfx-text-field, .jfx-password-field, .jfx-text-area, .jfx-combo-box {
     -jfx-focus-color: -fx-color-primary;
+}
 
+.jfx-dialog-layout {
+    -fx-wrap-text: true;
+    -fx-alignment: CENTER;
+    -fx-font-size: 14px;
 }

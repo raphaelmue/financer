@@ -385,8 +385,8 @@ public class TransactionsController implements Initializable {
     }
 
     public void handleNewTransaction() {
-        VariableTransaction transaction = new TransactionDialog(null, this.categories).showAndGetResult();
-        if (transaction != null) {
+        TransactionDialog dialog = new TransactionDialog(null, this.categories);
+        dialog.setOnConfirm(transaction -> {
 
             if (user.getSettings().isChangeAmountSignAutomatically()) {
                 transaction.adjustAmountSign();
@@ -418,14 +418,13 @@ public class TransactionsController implements Initializable {
                     });
                 }
             }, true));
-        }
+        });
     }
 
     public void handleNewFixedTransaction() {
-        FixedTransaction fixedTransaction = new FixedTransactionDialog(null,
-                (this.categoriesListView.getSelectionModel().getSelectedItem()))
-                .showAndGetResult();
-        if (fixedTransaction != null) {
+        FixedTransactionDialog dialog = new FixedTransactionDialog(null,
+                (this.categoriesListView.getSelectionModel().getSelectedItem()));
+        dialog.setOnConfirm(fixedTransaction -> {
 
             if (user.getSettings().isChangeAmountSignAutomatically()) {
                 fixedTransaction.adjustAmountSign();
@@ -452,13 +451,13 @@ public class TransactionsController implements Initializable {
                     Platform.runLater(() -> loadTransactionOverviewTableData());
                 }
             }, true));
-        }
+        });
     }
 
     public void handleEditTransaction() {
-        VariableTransaction transaction = new TransactionDialog(this.transactionsTableView.getSelectionModel().getSelectedItem(),
-                this.categories).showAndGetResult();
-        if (transaction != null) {
+        TransactionDialog dialog = new TransactionDialog(this.transactionsTableView.getSelectionModel().getSelectedItem(),
+                this.categories);
+        dialog.setOnConfirm(transaction -> {
 
             if (user.getSettings().isChangeAmountSignAutomatically()) {
                 transaction.adjustAmountSign();
@@ -488,15 +487,14 @@ public class TransactionsController implements Initializable {
                     Platform.runLater(() -> loadTransactionOverviewTableData());
                 }
             }, true));
-        }
+        });
     }
 
     public void handleEditFixedTransaction() {
-        FixedTransaction fixedTransaction = new FixedTransactionDialog(
+        FixedTransactionDialog dialog = new FixedTransactionDialog(
                 this.fixedTransactionsListView.getSelectionModel().getSelectedItem(),
-                this.categoriesListView.getSelectionModel().getSelectedItem())
-                .showAndGetResult();
-        if (fixedTransaction != null) {
+                this.categoriesListView.getSelectionModel().getSelectedItem());
+        dialog.setOnConfirm(fixedTransaction -> {
 
             if (user.getSettings().isChangeAmountSignAutomatically()) {
                 fixedTransaction.adjustAmountSign();
@@ -530,11 +528,12 @@ public class TransactionsController implements Initializable {
                     Platform.runLater(() -> loadTransactionOverviewTableData());
                 }
             }, true));
-        }
+        });
     }
 
     public void handleDeleteTransaction() {
-        if (new FinancerConfirmDialog(I18N.get("confirmDeleteTransaction")).showAndGetResult()) {
+        FinancerConfirmDialog dialog = new FinancerConfirmDialog(I18N.get("confirmDeleteTransaction"));
+        dialog.setOnConfirm(result -> {
             VariableTransaction transaction = this.transactionsTableView.getSelectionModel().getSelectedItem();
             if (transaction != null) {
                 Map<String, Serializable> parameters = new HashMap<>();
@@ -564,12 +563,12 @@ public class TransactionsController implements Initializable {
                     }
                 }, true));
             }
-        }
+        });
     }
 
     public void handleDeleteFixedTransaction() {
-        boolean result = new FinancerConfirmDialog(I18N.get("confirmDeleteFixedTransaction")).showAndGetResult();
-        if (result) {
+        FinancerConfirmDialog dialog = new FinancerConfirmDialog(I18N.get("confirmDeleteFixedTransaction"));
+        dialog.setOnConfirm(result -> {
             Map<String, Serializable> parameters = new HashMap<>();
             parameters.put("fixedTransactionId", this.fixedTransactionsListView.getSelectionModel().getSelectedItem().getId());
 
@@ -601,7 +600,7 @@ public class TransactionsController implements Initializable {
                     Platform.runLater(() -> loadTransactionOverviewTableData());
                 }
             }, true));
-        }
+        });
     }
 
     private void showFixedTransactions(CategoryTree category) {

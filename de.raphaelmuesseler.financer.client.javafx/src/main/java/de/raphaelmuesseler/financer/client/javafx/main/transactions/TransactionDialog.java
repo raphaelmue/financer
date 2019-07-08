@@ -21,12 +21,12 @@ import de.raphaelmuesseler.financer.shared.model.transactions.VariableTransactio
 import de.raphaelmuesseler.financer.shared.model.user.User;
 import de.raphaelmuesseler.financer.util.collections.TreeUtil;
 import de.raphaelmuesseler.financer.util.concurrency.FinancerExecutor;
-import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import org.controlsfx.glyphfont.FontAwesome;
@@ -61,17 +61,12 @@ class TransactionDialog extends FinancerDialog<VariableTransaction> {
         super(transaction);
 
         this.categories = categories;
-
-        this.setHeaderText(I18N.get("transaction"));
-
-        this.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
-        this.getDialogPane().getButtonTypes().add(ButtonType.OK);
-
         this.prepareDialogContent();
+        this.setDialogTitle(I18N.get("transaction"));
     }
 
     @Override
-    protected Node setDialogContent() {
+    protected Region getDialogContent() {
         HBox hBox = new HBox();
         hBox.setSpacing(15);
 
@@ -221,7 +216,7 @@ class TransactionDialog extends FinancerDialog<VariableTransaction> {
     }
 
     @Override
-    protected VariableTransaction onConfirm() {
+    protected void onConfirm() {
         if (this.getValue() == null) {
             this.setValue(new VariableTransaction(0,
                     Double.valueOf(this.amountField.getText()),
@@ -240,7 +235,7 @@ class TransactionDialog extends FinancerDialog<VariableTransaction> {
             this.getValue().setShop(this.shopField.getText());
         }
 
-        return super.onConfirm();
+        super.onConfirm();
     }
 
     private void onUploadAttachment(File attachmentFile) {
@@ -316,7 +311,9 @@ class TransactionDialog extends FinancerDialog<VariableTransaction> {
     }
 
     private void onDeleteAttachment() {
-        if (new FinancerConfirmDialog(I18N.get("confirmDeleteAttachment")).showAndGetResult()) {
+        FinancerConfirmDialog confirmDialog = new FinancerConfirmDialog(I18N.get("confirmDeleteAttachment"));
+        confirmDialog.setOnConfirm(result -> {
+
             Map<String, Serializable> parameters = new HashMap<>();
             parameters.put("id", this.attachmentListView.getSelectionModel().getSelectedItem().getId());
 
@@ -342,6 +339,6 @@ class TransactionDialog extends FinancerDialog<VariableTransaction> {
                     JavaFXAsyncConnectionCall.super.onFailure(exception);
                 }
             }));
-        }
+        });
     }
 }

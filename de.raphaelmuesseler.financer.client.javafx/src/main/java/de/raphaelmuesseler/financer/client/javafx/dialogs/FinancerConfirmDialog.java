@@ -1,8 +1,7 @@
 package de.raphaelmuesseler.financer.client.javafx.dialogs;
 
-import javafx.scene.Node;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
+import javafx.scene.layout.Region;
 
 public class FinancerConfirmDialog extends FinancerDialog<Boolean> {
     private Label questionLabel;
@@ -12,14 +11,11 @@ public class FinancerConfirmDialog extends FinancerDialog<Boolean> {
         super(false);
         this.question = question;
 
-        this.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
-        this.getDialogPane().getButtonTypes().add(ButtonType.OK);
-
         this.prepareDialogContent();
     }
 
     @Override
-    protected Node setDialogContent() {
+    protected Region getDialogContent() {
         this.questionLabel = new Label();
         return this.questionLabel;
     }
@@ -35,12 +31,12 @@ public class FinancerConfirmDialog extends FinancerDialog<Boolean> {
     }
 
     @Override
-    protected Boolean onConfirm() {
-        return true;
+    protected void onConfirm() {
+        this.setValue(true);
     }
 
     @Override
-    protected Boolean onCancel() {
-        return false;
+    protected void onCancel() {
+        this.setValue(false);
     }
 }
