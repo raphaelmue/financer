@@ -6,7 +6,6 @@ import com.jfoenix.transitions.hamburger.HamburgerSlideCloseTransition;
 import de.raphaelmuesseler.financer.client.connection.ServerRequestHandler;
 import de.raphaelmuesseler.financer.client.format.I18N;
 import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
-import de.raphaelmuesseler.financer.client.javafx.login.LoginApplication;
 import de.raphaelmuesseler.financer.client.local.Application;
 import de.raphaelmuesseler.financer.shared.model.user.User;
 import javafx.fxml.FXML;
@@ -238,7 +237,7 @@ public class FinancerController implements Initializable, Application {
         LocalStorageImpl.getInstance().deleteAllData();
 
         try {
-            new LoginApplication().start(new Stage());
+            new FinancerApplication().start(new Stage());
         } catch (IOException e) {
             logger.log(Level.SEVERE, e.getMessage(), e);
         }

@@ -1,6 +1,6 @@
 package de.raphaelmuesseler.financer.client.javafx.dialogs;
 
-import de.raphaelmuesseler.financer.client.javafx.login.LoginApplication;
+import de.raphaelmuesseler.financer.client.javafx.main.FinancerApplication;
 import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.control.ButtonType;
@@ -25,7 +25,7 @@ public abstract class FinancerDialog<T> extends Dialog<T> {
 
         this.setTitle("Financer");
         Platform.runLater(() -> ((Stage) this.getDialogPane().getScene().getWindow()).getIcons().add(
-                new Image(LoginApplication.class.getResourceAsStream("/images/icons/financer-icon.png"))));
+                new Image(FinancerApplication.class.getResourceAsStream("/images/icons/financer-icon.png"))));
 
         VBox vBox = new VBox();
         this.errorMessageLabel = new Label();

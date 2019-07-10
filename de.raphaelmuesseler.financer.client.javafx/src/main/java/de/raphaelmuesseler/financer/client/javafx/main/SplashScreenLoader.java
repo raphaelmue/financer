@@ -88,6 +88,9 @@ public class SplashScreenLoader extends Preloader {
     @Override
     public void handleApplicationNotification(PreloaderNotification preloaderNotification) {
         if (preloaderNotification instanceof ProgressNotification) {
+            if (!primaryStage.isShowing()) {
+                primaryStage.show();
+            }
             double progress = ((ProgressNotification) preloaderNotification).getProgress();
             progressBar.setProgress(progress);
 
@@ -103,4 +106,5 @@ public class SplashScreenLoader extends Preloader {
             primaryStage.hide();
         }
     }
+
 }
