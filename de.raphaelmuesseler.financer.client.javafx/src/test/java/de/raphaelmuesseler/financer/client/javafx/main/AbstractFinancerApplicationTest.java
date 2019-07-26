@@ -140,9 +140,8 @@ class AbstractFinancerApplicationTest extends ApplicationTest {
     }
 
     void logout() throws Exception {
-        FxToolkit.hideStage();
-        LocalStorageImpl.getInstance().deleteAllData();
-//        ApplicationTest.launch(LoginApplication.class);
+        clickOn("Account");
+        clickOn("Logout");
     }
 
     void addCategory(CategoryTree category) {
