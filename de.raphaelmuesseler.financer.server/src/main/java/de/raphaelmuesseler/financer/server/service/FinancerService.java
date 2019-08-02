@@ -190,13 +190,13 @@ public class FinancerService {
     }
 
     /**
-     * Updates a password of a user.
+     * Updates users personal information
      *
      * @param parameters [User user]
      * @return void
      */
-    public ConnectionResult<Serializable> changePassword(Logger logger, Session session, Map<String, Serializable> parameters) {
-        logger.log(Level.INFO, "Changing Users Password ...");
+    public ConnectionResult<Serializable> updateUser(Logger logger, Session session, Map<String, Serializable> parameters) {
+        logger.log(Level.INFO, "Updating users personal information ...");
         User user = (User) parameters.get("user");
 
         Transaction transaction = session.beginTransaction();

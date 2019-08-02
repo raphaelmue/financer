@@ -270,7 +270,7 @@ public class ServiceTest {
     }
 
     @Test
-    public void testChangePassword() {
+    public void testChangePersonalInformation() {
         final String salt = new RandomString(32).nextString();
         final String password = Hash.create("newPassword", salt);
         user.setPassword(password);
@@ -278,7 +278,7 @@ public class ServiceTest {
 
         HashMap<String, Serializable> parameters = new HashMap<>();
         parameters.put("user", new User(user));
-        service.changePassword(logger, session, parameters);
+        service.updateUser(logger, session, parameters);
 
         parameters.clear();
         parameters.put("email", user.getEmail());

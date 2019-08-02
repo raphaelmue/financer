@@ -64,6 +64,8 @@ public class ProfileController implements Initializable {
     public JFXButton editCategoryBtn;
     @FXML
     public JFXButton deleteCategoryBtn;
+    @FXML
+    public JFXButton editPersonalInformationBtn;
 
     private User user;
     private Logger logger = Logger.getLogger("FinancerApplication");
@@ -75,10 +77,7 @@ public class ProfileController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         this.user = (User) this.localStorage.readObject("user");
         if (user != null) {
-            this.fullNameLabel.setText(user.getFullName());
-            this.emailLabel.setText(user.getEmail());
-            this.birthDateLabel.setText(new JavaFXFormatter(localStorage).formatDate(this.user.getBirthDate()));
-            this.genderLabel.setText(I18N.get(this.user.getGender().getName()));
+            fillPersonalInformationLabels();
         }
 
         this.changePasswordLink.setOnAction(event -> {
@@ -87,7 +86,7 @@ public class ProfileController implements Initializable {
                 Map<String, Serializable> parameters = new HashMap<>();
                 parameters.put("user", user);
 
-                FinancerExecutor.getExecutor().execute(new ServerRequestHandler(user, "changePassword", parameters,
+                FinancerExecutor.getExecutor().execute(new ServerRequestHandler(user, "updateUser", parameters,
                         new JavaFXAsyncConnectionCall() {
                             @Override
                             public void onSuccess(ConnectionResult result) {
@@ -121,6 +120,38 @@ public class ProfileController implements Initializable {
         this.deleteCategoryBtn.setDisable(true);
 
         this.handleRefreshCategories();
+
+        this.editPersonalInformationBtn.setOnAction(event -> {
+            new ChangePersonalInformationDialog(this.user).showAndGetResult();
+            if (this.user != null) {
+                HashMap<String, Serializable> parameters = new HashMap<>();
+                parameters.put("user", this.user);
+                FinancerExecutor.getExecutor().execute(new ServerRequestHandler(user, "updateUser", parameters, new JavaFXAsyncConnectionCall() {
+                    @Override
+                    public void onSuccess(ConnectionResult result) {
+                        FinancerController.getInstance().showToast(Application.MessageType.SUCCESS, I18N.get("succChangedPersonalInformation"));
+                    }
+
+                    @Override
+                    public void onFailure(Exception exception) {
+                        JavaFXAsyncConnectionCall.super.onFailure(exception);
+                    }
+
+                    @Override
+                    public void onAfter() {
+                        localStorage.writeObject("user", user);
+                        Platform.runLater(() -> fillPersonalInformationLabels());
+                    }
+                }));
+            }
+        });
+    }
+
+    private void fillPersonalInformationLabels() {
+        this.fullNameLabel.setText(user.getFullName());
+        this.emailLabel.setText(user.getEmail());
+        this.birthDateLabel.setText(new JavaFXFormatter(localStorage).formatDate(this.user.getBirthDate()));
+        this.genderLabel.setText(I18N.get(this.user.getGender().getName()));
     }
 
     public void handleRefreshCategories() {
