@@ -9,7 +9,6 @@ import de.raphaelmuesseler.financer.client.javafx.components.DoubleField;
 import de.raphaelmuesseler.financer.client.javafx.components.IntegerField;
 import de.raphaelmuesseler.financer.client.javafx.format.JavaFXFormatter;
 import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
-import de.raphaelmuesseler.financer.client.javafx.login.LoginApplication;
 import de.raphaelmuesseler.financer.server.db.DatabaseName;
 import de.raphaelmuesseler.financer.server.db.HibernateUtil;
 import de.raphaelmuesseler.financer.server.main.Server;
@@ -141,9 +140,8 @@ class AbstractFinancerApplicationTest extends ApplicationTest {
     }
 
     void logout() throws Exception {
-        FxToolkit.hideStage();
-        LocalStorageImpl.getInstance().deleteAllData();
-        ApplicationTest.launch(LoginApplication.class);
+        clickOn("Account");
+        clickOn("Logout");
     }
 
     void addCategory(CategoryTree category) {
