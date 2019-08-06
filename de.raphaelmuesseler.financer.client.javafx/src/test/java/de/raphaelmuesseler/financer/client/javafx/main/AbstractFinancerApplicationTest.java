@@ -92,7 +92,7 @@ class AbstractFinancerApplicationTest extends ApplicationTest {
         InputStream inputStream = AbstractFinancerApplicationTest.class.getResourceAsStream("/testing.properties");
         Properties properties = new Properties();
         properties.load(inputStream);
-        HibernateUtil.setIsHostLocal(Boolean.valueOf(properties.getProperty("project.testing.localhost")));
+        HibernateUtil.setIsHostLocal(Boolean.parseBoolean(properties.getProperty("project.testing.localhost")));
         HibernateUtil.setDatabaseName(DatabaseName.TEST);
     }
 
@@ -176,11 +176,9 @@ class AbstractFinancerApplicationTest extends ApplicationTest {
         press(KeyCode.RIGHT).release(KeyCode.RIGHT);
 
         clickOn((JFXButton) find("#newTransactionBtn"));
-        TextField amountTextField = find("#amountTextField");
+        DoubleField amountTextField = find("#amountTextField");
         clickOn(amountTextField);
-        press(KeyCode.BACK_SPACE).release(KeyCode.BACK_SPACE);
-        press(KeyCode.BACK_SPACE).release(KeyCode.BACK_SPACE);
-        press(KeyCode.BACK_SPACE).release(KeyCode.BACK_SPACE);
+        eraseText(3);
         write(Double.toString(transaction.getAmount()));
         clickOn((JFXComboBox) find("#categoryComboBox"));
         press(KeyCode.DOWN).release(KeyCode.DOWN);
@@ -191,7 +189,7 @@ class AbstractFinancerApplicationTest extends ApplicationTest {
         write(transaction.getPurpose());
         clickOn((JFXTextField) find("#shopTextField"));
         write(transaction.getShop());
-        JFXDatePicker valueDatePicker = find("#valueDatePicker");
+        DatePicker valueDatePicker = find("#valueDatePicker");
         valueDatePicker.setValue(transaction.getValueDate());
 
         confirmDialog();
