@@ -99,6 +99,7 @@ class AbstractFinancerApplicationTest extends ApplicationTest {
     void setUpEach() throws Exception {
         LocalStorageImpl.getInstance().deleteAllData();
         HibernateUtil.cleanDatabase();
+        ApplicationTest.launch(FinancerApplication.class);
     }
 
     final <T extends Node> T find(final String query) {

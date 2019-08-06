@@ -20,7 +20,6 @@ public class OverviewTest extends AbstractFinancerApplicationTest {
     @BeforeEach
     public void setUpEach() throws Exception {
         super.setUpEach();
-        ApplicationTest.launch(FinancerApplication.class);
     }
 
     @Test

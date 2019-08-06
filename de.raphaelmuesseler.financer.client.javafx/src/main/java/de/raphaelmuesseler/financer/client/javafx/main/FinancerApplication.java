@@ -59,7 +59,7 @@ public class FinancerApplication extends Application {
     public void start(Stage primaryStage) throws IOException {
         User user = (User) LocalStorageImpl.getInstance().readObject("user");
         if (user == null) {
-            initLoginStage(primaryStage);
+            initLoginStage();
         } else {
             I18N.setLocalStorage(LocalStorageImpl.getInstance());
 
@@ -67,7 +67,7 @@ public class FinancerApplication extends Application {
                 if (Boolean.TRUE.equals(newValue)) {
                     Platform.runLater(() -> {
                         try {
-                            initMainStage(primaryStage);
+                            initMainStage();
                         } catch (IOException e) {
                             logger.log(Level.SEVERE, e.getMessage(), e);
                         }
@@ -79,12 +79,13 @@ public class FinancerApplication extends Application {
         }
     }
 
-    private void initLoginStage(Stage primaryStage) throws IOException {
+    private void initLoginStage() throws IOException {
         // setting up language
         ResourceBundle resourceBundle = ResourceBundle.getBundle("Financer", Locale.ENGLISH);
 
         // loading FXML file
         Parent root = FXMLLoader.load(getClass().getResource("/de/raphaelmuesseler/financer/client/javafx/main/views/login.fxml"), resourceBundle);
+        Stage primaryStage = new Stage();
         Scene scene = new Scene(root, 800, 500);
 
         scene.getStylesheets().add(getClass().getResource("../main/style/colors.style.css").toExternalForm());
@@ -103,12 +104,13 @@ public class FinancerApplication extends Application {
         primaryStage.show();
     }
 
-    private void initMainStage(Stage primaryStage) throws IOException {
+    private void initMainStage() throws IOException {
         ResourceBundle resourceBundle = ResourceBundle.getBundle("Financer",
                 ((User) LocalStorageImpl.getInstance().readObject("user")).getSettings().getLanguage());
 
         Parent root = FXMLLoader.load(getClass().getResource("views/financer.fxml"), resourceBundle);
 
+        Stage primaryStage = new Stage();
         Scene scene = new Scene(root, 1350, 700);
 
         scene.getStylesheets().add(getClass().getResource("style/colors.style.css").toExternalForm());

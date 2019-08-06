@@ -14,6 +14,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -26,12 +27,12 @@ public class SplashScreenLoader extends Preloader {
 
     private Parent getContent() {
         BorderPane borderPane = new BorderPane();
-        borderPane.setStyle("-fx-background-color: -fx-color-white; -fx-padding: 15px; -fx-background-radius: 20px");
+        borderPane.setStyle("-fx-background-color: -fx-color-white; -fx-padding: 30px; -fx-background-radius: 20px");
 
         Label heading = new Label("F I N A N C E R");
         heading.setAlignment(Pos.CENTER);
         heading.setTextAlignment(TextAlignment.CENTER);
-        heading.setStyle("-fx-text-fill: -fx-color-primary; -fx-font-size: 18px; -fx-padding: 15px 50px; -fx-font-weight: 700; -fx-font-family: 'Roboto Medium'");
+        heading.setStyle("-fx-text-fill: -fx-color-primary; -fx-font-size: 22px; -fx-padding: 15px 50px; -fx-font-weight: 700; -fx-font-family: 'Roboto Medium'");
 
         Image image = new Image(getClass().getResourceAsStream("/images/icons/financer-icon-clipart.png"));
         ImageView imageView = new ImageView(image);
@@ -62,6 +63,7 @@ public class SplashScreenLoader extends Preloader {
         Scene scene = new Scene(getContent(), 500, 300);
         scene.getStylesheets().add(getClass().getResource("style/colors.style.css").toExternalForm());
         scene.getStylesheets().add(getClass().getResource("style/main.style.css").toExternalForm());
+        scene.setFill(Color.TRANSPARENT);
 
         primaryStage.initStyle(StageStyle.TRANSPARENT);
         primaryStage.setScene(scene);
@@ -83,6 +85,8 @@ public class SplashScreenLoader extends Preloader {
             if (pn.getProgress() > 0) {
                 noLoadingProgress = false;
             }
+        } else {
+            this.primaryStage.hide();
         }
     }
 

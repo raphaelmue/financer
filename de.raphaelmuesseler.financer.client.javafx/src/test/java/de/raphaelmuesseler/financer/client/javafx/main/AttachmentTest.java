@@ -40,7 +40,6 @@ public class AttachmentTest extends AbstractFinancerApplicationTest {
     @BeforeEach
     public void setupEach() throws Exception {
         super.setUpEach();
-        ApplicationTest.launch(FinancerApplication.class);
 
         File attachment = new File(path);
         if (!attachment.getParentFile().mkdirs() && !attachment.createNewFile()) {
