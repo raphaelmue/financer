@@ -18,7 +18,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.testfx.framework.junit5.ApplicationTest;
 
 import java.time.LocalDate;
 
@@ -89,6 +88,7 @@ public class FixedTransactionTest extends AbstractFinancerApplicationTest {
         clickOn(find((Label label) -> label.getText().contains(I18N.get("active"))));
         clickOn((JFXButton) find("#deleteFixedTransactionBtn"));
         confirmDialog();
+        sleep(SHORT_SLEEP);
         clickOn((JFXListView) find("#categoriesListView"));
         press(KeyCode.DOWN).release(KeyCode.DOWN);
         press(KeyCode.DOWN).release(KeyCode.DOWN);

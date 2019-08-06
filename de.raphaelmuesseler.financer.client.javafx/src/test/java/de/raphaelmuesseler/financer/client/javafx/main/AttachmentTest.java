@@ -6,12 +6,13 @@ import de.raphaelmuesseler.financer.util.RandomString;
 import javafx.scene.control.Button;
 import javafx.scene.input.KeyCode;
 import org.junit.jupiter.api.*;
-import org.testfx.framework.junit5.ApplicationTest;
 
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.util.concurrent.TimeoutException;
 
 @SuppressWarnings("WeakerAccess")

@@ -22,7 +22,6 @@ import de.raphaelmuesseler.financer.shared.model.user.User;
 import de.raphaelmuesseler.financer.util.collections.TreeUtil;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
-import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
@@ -148,7 +147,7 @@ class AbstractFinancerApplicationTest extends ApplicationTest {
     }
 
     void addCategory(CategoryTree category) {
-        clickOn((Button) find("#profileTabBtn"));
+        clickOn((JFXButton) find("#profileTabBtn"));
         sleep(MEDIUM_SLEEP);
 
         press(KeyCode.RIGHT).release(KeyCode.RIGHT);
@@ -169,7 +168,7 @@ class AbstractFinancerApplicationTest extends ApplicationTest {
     }
 
     void addTransaction(VariableTransaction transaction) {
-        clickOn((Button) find("#transactionsTabBtn"));
+        clickOn((JFXButton) find("#transactionsTabBtn"));
         sleep(MEDIUM_SLEEP);
         press(KeyCode.RIGHT).release(KeyCode.RIGHT);
         press(KeyCode.RIGHT).release(KeyCode.RIGHT);
@@ -199,7 +198,7 @@ class AbstractFinancerApplicationTest extends ApplicationTest {
     }
 
     void addFixedTransaction(FixedTransaction fixedTransaction) {
-        clickOn((Button) find("#transactionsTabBtn"));
+        clickOn((JFXButton) find("#transactionsTabBtn"));
         sleep(MEDIUM_SLEEP);
         press(KeyCode.RIGHT).release(KeyCode.RIGHT);
         press(KeyCode.RIGHT).release(KeyCode.RIGHT);
