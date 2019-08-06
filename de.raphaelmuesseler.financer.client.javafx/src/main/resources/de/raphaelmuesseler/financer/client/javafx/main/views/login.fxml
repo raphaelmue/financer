@@ -11,7 +11,8 @@
 <?import com.jfoenix.controls.JFXTextField?>
 <?import com.jfoenix.controls.JFXButton?>
 <StackPane alignment="center" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1"
-           fx:controller="de.raphaelmuesseler.financer.client.javafx.login.LoginController">
+           fx:controller="de.raphaelmuesseler.financer.client.javafx.login.LoginController"
+           fx:id="rootLayout">
     <VBox style="-fx-background-color: -fx-color-white">
         <MenuBar>
             <Menu text="%file">

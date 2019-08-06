@@ -29,11 +29,15 @@ public abstract class FinancerDialog<T> extends JFXDialog {
     private Action<T> cancelAction;
 
     public FinancerDialog(T value) {
+        this(value, (StackPane) ((FinancerController) FinancerController.getInstance()).getRootLayout().getCenter());
+    }
+
+    public FinancerDialog(T value, StackPane container) {
         super();
         this.value = value;
 
         // set container
-        this.setDialogContainer((StackPane) ((FinancerController) FinancerController.getInstance()).getRootLayout().getCenter());
+        this.setDialogContainer(container);
 
         // set transition type
         this.setTransitionType(DialogTransition.CENTER);

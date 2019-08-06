@@ -22,6 +22,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
@@ -38,6 +39,8 @@ import java.util.logging.Logger;
 public class LoginController implements Initializable, Application {
 
     @FXML
+    public StackPane rootLayout;
+    @FXML
     public JFXTextField loginEmailTextField;
     @FXML
     public JFXPasswordField loginPasswordField;
@@ -50,11 +53,18 @@ public class LoginController implements Initializable, Application {
     @FXML
     public Menu languageMenu;
 
+    private static LoginController instance = null;
+
     private Logger logger = Logger.getLogger("LoginApplication");
     private LocalStorageImpl localStorage = (LocalStorageImpl) LocalStorageImpl.getInstance();
 
+    public static Application getInstance() {
+        return instance;
+    }
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        instance = this;
         LocalSettings settings = (LocalSettings) this.localStorage.readObject("localSettings");
         if (settings == null) {
             settings = new LocalSettingsImpl();
@@ -116,7 +126,6 @@ public class LoginController implements Initializable, Application {
 
     public void handleOpenRegisterDialog() {
         RegisterDialog dialog = new RegisterDialog();
-
         dialog.setOnConfirm(user -> {
             Map<String, Serializable> parameters = new HashMap<>();
             parameters.put("user", user);
@@ -180,5 +189,9 @@ public class LoginController implements Initializable, Application {
     @Override
     public void showToast(MessageType messageType, String message) {
         throw new UnsupportedOperationException("Showing a toast is not implemented yet!");
+    }
+
+    public StackPane getRootLayout() {
+        return rootLayout;
     }
 }

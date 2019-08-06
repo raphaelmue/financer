@@ -242,7 +242,7 @@ public class FixedTransactionDialog extends FinancerDialog<FixedTransaction> {
     protected void onConfirm() {
         if (this.getValue() == null) {
             this.setValue(new FixedTransaction(0,
-                    Double.valueOf(this.amountField.getText()),
+                    Double.parseDouble(this.amountField.getText()),
                     this.categoryTree,
                     this.startDateField.getValue(),
                     this.endDateField.getValue(),
@@ -260,7 +260,7 @@ public class FixedTransactionDialog extends FinancerDialog<FixedTransaction> {
             this.getValue().setPurpose(this.purposeField.getText());
             this.getValue().setIsVariable(this.isVariableCheckbox.isSelected());
             this.getValue().setDay(this.dayField.getValue());
-            this.getValue().setAmount(Double.valueOf(this.amountField.getText()));
+            this.getValue().setAmount(Double.parseDouble(this.amountField.getText()));
         }
 
         super.onConfirm();

@@ -251,7 +251,7 @@ class AbstractFinancerApplicationTest extends ApplicationTest {
     }
 
     final void confirmDialog() {
-        clickOn("OK");
+        clickOn("Ok");
     }
 
     @AfterEach
