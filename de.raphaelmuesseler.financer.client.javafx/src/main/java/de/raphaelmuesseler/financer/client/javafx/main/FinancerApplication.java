@@ -85,7 +85,7 @@ public class FinancerApplication extends Application {
 
         // loading FXML file
         Parent root = FXMLLoader.load(getClass().getResource("/de/raphaelmuesseler/financer/client/javafx/main/views/login.fxml"), resourceBundle);
-        Scene scene = new Scene(root, 500, 575);
+        Scene scene = new Scene(root, 800, 500);
 
         scene.getStylesheets().add(getClass().getResource("../main/style/colors.style.css").toExternalForm());
         scene.getStylesheets().add(getClass().getResource("../main/style/form.style.css").toExternalForm());
