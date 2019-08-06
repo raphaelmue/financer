@@ -70,9 +70,14 @@ public abstract class FinancerDialog<T> extends JFXDialog {
         this.dialogLayout.setActions(okBtn, cancelBtn);
 
         this.setContent(this.dialogLayout);
+        this.getContent().setPrefWidth(this.getDialogWidth());
 
         // show dialog
         this.show();
+    }
+
+    protected double getDialogWidth() {
+        return 400;
     }
 
     private void showErrorMessage() {

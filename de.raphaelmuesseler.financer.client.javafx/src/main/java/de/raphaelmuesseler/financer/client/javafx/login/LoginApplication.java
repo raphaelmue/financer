@@ -28,7 +28,7 @@ public class LoginApplication extends Application {
             Parent root = FXMLLoader.load(getClass().getResource("/de/raphaelmuesseler/financer/client/javafx/main/views/login.fxml"), resourceBundle);
             Scene scene = new Scene(root, 500, 575);
 
-            this.scene.getStylesheets().add(getClass().getResource("../main/style/colors.style.css").toExternalForm());
+            scene.getStylesheets().add(getClass().getResource("../main/style/colors.style.css").toExternalForm());
 
             primaryStage.getIcons().add(new Image(LoginApplication.class.getResourceAsStream("/images/icons/financer-icon.png")));
 

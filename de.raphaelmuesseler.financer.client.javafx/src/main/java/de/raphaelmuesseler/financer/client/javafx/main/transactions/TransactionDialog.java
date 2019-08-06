@@ -67,7 +67,7 @@ class TransactionDialog extends FinancerDialog<VariableTransaction> {
     @Override
     protected Region getDialogContent() {
         HBox hBox = new HBox();
-        hBox.setSpacing(15);
+        hBox.setSpacing(30);
 
         GridPane gridPane = new GridPane();
         gridPane.setHgap(80);
@@ -162,6 +162,11 @@ class TransactionDialog extends FinancerDialog<VariableTransaction> {
         }
 
         return hBox;
+    }
+
+    @Override
+    protected double getDialogWidth() {
+        return this.getValue() == null ? 400 : 750;
     }
 
     @Override

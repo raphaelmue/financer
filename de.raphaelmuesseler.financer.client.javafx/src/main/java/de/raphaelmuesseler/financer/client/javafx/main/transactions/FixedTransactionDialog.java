@@ -53,7 +53,7 @@ public class FixedTransactionDialog extends FinancerDialog<FixedTransaction> {
     @Override
     protected Region getDialogContent() {
         HBox hBox = new HBox();
-        hBox.setSpacing(15);
+        hBox.setSpacing(30);
 
         GridPane gridPane = new GridPane();
         gridPane.setHgap(120);
@@ -86,12 +86,9 @@ public class FixedTransactionDialog extends FinancerDialog<FixedTransaction> {
             if (this.amountField != null) {
                 this.amountField.setDisable(newValue);
             }
-//            if (this.getDialogPane() != null) {
-//                Platform.runLater(() -> {
-//                    toggleTransactionAmountContainer();
-//                    getDialogPane().getScene().getWindow().sizeToScene();
-//                });
-//            }
+            if (this.getContent() != null) {
+                toggleTransactionAmountContainer();
+            }
         });
         gridPane.add(this.isVariableCheckbox, 1, 4);
 
@@ -195,6 +192,11 @@ public class FixedTransactionDialog extends FinancerDialog<FixedTransaction> {
     }
 
     @Override
+    protected double getDialogWidth() {
+        return 750;
+    }
+
+    @Override
     protected void prepareDialogContent() {
         this.categoryLabel.setText(new JavaFXFormatter(LocalStorageImpl.getInstance()).formatCategoryName(this.categoryTree.getValue()));
         if (this.getValue() != null) {
@@ -205,7 +207,7 @@ public class FixedTransactionDialog extends FinancerDialog<FixedTransaction> {
             this.purposeField.setText(this.getValue().getPurpose());
             if (this.getValue().getIsVariable()) {
                 this.isVariableCheckbox.setSelected(this.getValue().getIsVariable());
-                this.toggleTransactionAmountContainer(false);
+                this.toggleTransactionAmountContainer(true);
 
                 if (this.getValue().getTransactionAmounts() != null && !this.getValue().getTransactionAmounts().isEmpty()) {
                     this.transactionAmountListView.getItems().addAll(this.getValue().getTransactionAmounts());
