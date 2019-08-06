@@ -6,7 +6,10 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 import java.io.IOException;
 import java.util.Locale;
@@ -26,12 +29,18 @@ public class LoginApplication extends Application {
 
             // loading FXML file
             Parent root = FXMLLoader.load(getClass().getResource("/de/raphaelmuesseler/financer/client/javafx/main/views/login.fxml"), resourceBundle);
-            Scene scene = new Scene(root, 500, 575);
+            Scene scene = new Scene(root, 800, 500);
 
             scene.getStylesheets().add(getClass().getResource("../main/style/colors.style.css").toExternalForm());
+            scene.getStylesheets().add(getClass().getResource("../main/style/form.style.css").toExternalForm());
+            scene.getStylesheets().add(getClass().getResource("../main/style/login.style.css").toExternalForm());
+            scene.setFill(Color.TRANSPARENT);
 
             primaryStage.getIcons().add(new Image(LoginApplication.class.getResourceAsStream("/images/icons/financer-icon.png")));
+            Font.loadFont(getClass().getResource("/fonts/Roboto-Regular.ttf").toExternalForm(), 12);
+            Font.loadFont(getClass().getResource("/fonts/Roboto-Medium.ttf").toExternalForm(), 12);
 
+            primaryStage.initStyle(StageStyle.TRANSPARENT);
             primaryStage.setTitle("Financer - Login");
             primaryStage.setScene(scene);
             primaryStage.show();

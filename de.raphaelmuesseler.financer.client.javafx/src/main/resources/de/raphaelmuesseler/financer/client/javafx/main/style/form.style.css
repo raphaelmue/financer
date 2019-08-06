@@ -1,0 +1,13 @@
+.jfx-text-field, .jfx-password-field, .jfx-text-area {
+    -jfx-focus-color: -fx-color-primary;
+    -jfx-unfocus-color: -fx-color-dark-gray;
+    -fx-font-size: 14px;
+    -fx-font-family: "Roboto Light";
+}
+
+.separator .line {
+    -fx-border-style: solid;
+    -fx-border-width: 2;
+    -fx-border-color: -fx-color-primary;
+    -fx-orientation: horizontal;
+}

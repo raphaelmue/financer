@@ -1,14 +1,14 @@
 * {
-    -fx-color-primary: #92cab1;
-    -fx-color-primary-dark: #7baa95;
-    -fx-color-primary-light: #a9e1c8;
-    -fx-color-primary-light-transparent: rgba(146, 202, 177, 0.21);
+    -fx-color-primary: #44a1a0;
+    -fx-color-primary-dark: #0d5c63;
+    -fx-color-primary-light: #48c3c2;
+    -fx-color-primary-light-transparent: rgba(68, 161, 160, 0.21);
 
     -fx-color-secondary: #ff715b;
 
     -fx-color-light-gray: #c8d5e1;
     -fx-color-dark-gray: #909ca8;
 
-    -fx-color-white: #ffffff;
+    -fx-color-white: #fffffa;
     -fx-color-background: #e5e5e5;
 }

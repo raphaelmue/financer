@@ -1,0 +1,46 @@
+#rootLayout {
+    -fx-background-color: -fx-color-white;
+    -fx-background-radius: 20px;
+    -fx-border-radius: 20px;
+}
+
+#progressIndicatorBox {
+    -fx-background-color: rgba(255, 255, 255, 0.6);
+    -fx-background-radius: 20px;
+}
+
+#signInLabel {
+    -fx-font-size: 25px;
+    -fx-font-family: "Roboto Medium";
+    -fx-font-weight: 700;
+    -fx-text-fill: -fx-color-primary;
+    -fx-padding: 20px 0 0 0;
+}
+
+#welcomeLabel {
+    -fx-font-size: 25px;
+    -fx-font-family: "Roboto Medium";
+    -fx-font-weight: 700;
+    -fx-text-fill: -fx-color-white;
+}
+
+#openRegisterDialogBtn {
+    -fx-text-fill: -fx-color-white;
+    -fx-font-size: 12px;
+    -fx-font-weight: 700;
+    -fx-padding: 8px 30px;
+    -fx-border-width: 2px;
+    -fx-border-radius: 20px;
+    -fx-background-radius: 20px;
+    -fx-border-color: -fx-color-white;
+    -fx-background-color: -fx-color-primary;
+}
+
+#loginBtn {
+    -fx-text-fill: -fx-color-white;
+    -fx-font-size: 12px;
+    -fx-font-weight: 700;
+    -fx-padding: 12px 35px;
+    -fx-background-radius: 20px;
+    -fx-background-color: -fx-color-primary;
+}

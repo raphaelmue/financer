@@ -111,7 +111,7 @@ class AbstractFinancerApplicationTest extends ApplicationTest {
     }
 
     void register(User user, String password) {
-        clickOn((Hyperlink) find("#openRegisterDialogLink"));
+        clickOn((JFXButton) find("#openRegisterDialogBtn"));
 
         clickOn((JFXTextField) find("#registerNameTextField"));
         write(user.getName());

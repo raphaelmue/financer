@@ -1,12 +1,12 @@
 package de.raphaelmuesseler.financer.client.javafx.login;
 
+import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXPasswordField;
 import com.jfoenix.controls.JFXTextField;
 import de.raphaelmuesseler.financer.client.connection.ServerRequestHandler;
 import de.raphaelmuesseler.financer.client.format.I18N;
 import de.raphaelmuesseler.financer.client.javafx.connection.JavaFXAsyncConnectionCall;
 import de.raphaelmuesseler.financer.client.javafx.connection.RetrievalServiceImpl;
-import de.raphaelmuesseler.financer.client.javafx.dialogs.FinancerAlert;
 import de.raphaelmuesseler.financer.client.javafx.dialogs.FinancerExceptionDialog;
 import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
 import de.raphaelmuesseler.financer.client.javafx.main.FinancerApplication;
@@ -19,9 +19,8 @@ import de.raphaelmuesseler.financer.util.concurrency.FinancerExecutor;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.*;
+import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -30,7 +29,6 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.net.URL;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
@@ -47,16 +45,19 @@ public class LoginController implements Initializable, Application {
     @FXML
     public Label loginErrorLabel;
     @FXML
-    public GridPane gridPane;
-    @FXML
     public VBox progressIndicatorBox;
     @FXML
-    public Menu languageMenu;
+    public JFXButton loginBtn;
+    @FXML
+    public JFXButton openRegisterDialogBtn;
 
     private static LoginController instance = null;
 
     private Logger logger = Logger.getLogger("LoginApplication");
     private LocalStorageImpl localStorage = (LocalStorageImpl) LocalStorageImpl.getInstance();
+
+    private double xOffset = 0;
+    private double yOffset = 0;
 
     public static Application getInstance() {
         return instance;
@@ -75,17 +76,29 @@ public class LoginController implements Initializable, Application {
         ServerRequestHandler.setApplication(this);
         ServerRequestHandler.setLocalStorage(this.localStorage);
 
-        Platform.runLater(() -> this.gridPane.getScene().setOnKeyPressed(e -> {
+        Platform.runLater(() -> this.rootLayout.getScene().setOnKeyPressed(e -> {
             if (e.getCode() == KeyCode.ENTER) {
                 handleSignInButtonAction();
             }
         }));
 
-        Platform.runLater(() -> this.gridPane.getScene().setOnKeyPressed(e -> {
+        Platform.runLater(() -> this.rootLayout.getScene().setOnKeyPressed(e -> {
             if (e.getCode() == KeyCode.ENTER) {
                 handleSignInButtonAction();
             }
         }));
+
+        this.rootLayout.setOnMousePressed(event -> {
+            xOffset = event.getSceneX();
+            yOffset = event.getSceneY();
+        });
+        this.rootLayout.setOnMouseDragged(event -> {
+            this.rootLayout.getScene().getWindow().setX(event.getScreenX() - xOffset);
+            this.rootLayout.getScene().getWindow().setY(event.getScreenY() - yOffset);
+        });
+
+        this.loginBtn.setText(this.loginBtn.getText().toUpperCase());
+        this.openRegisterDialogBtn.setText(this.openRegisterDialogBtn.getText().toUpperCase());
     }
 
     public void handleSignInButtonAction() {
@@ -112,17 +125,6 @@ public class LoginController implements Initializable, Application {
         }));
     }
 
-    public void onSelectEnglishLanguage() {
-        this.changeLanguage(Locale.ENGLISH);
-    }
-
-    public void onSelectGermanLanguage() {
-        this.changeLanguage(Locale.GERMAN);
-    }
-
-    private void changeLanguage(Locale locale) {
-        new FinancerAlert(Alert.AlertType.INFORMATION, I18N.get("language"), I18N.get("warnChangesAfterRestart")).showAndWait();
-    }
 
     public void handleOpenRegisterDialog() {
         RegisterDialog dialog = new RegisterDialog();
@@ -155,7 +157,7 @@ public class LoginController implements Initializable, Application {
         // fetching data
         RetrievalServiceImpl.getInstance().fetchAllData(user, aVoid -> Platform.runLater(() -> {
             // open main application
-            Stage stage = (Stage) this.gridPane.getScene().getWindow();
+            Stage stage = (Stage) this.rootLayout.getScene().getWindow();
             stage.close();
 
             try {
@@ -168,13 +170,13 @@ public class LoginController implements Initializable, Application {
 
     @Override
     public void showLoadingBox() {
-        this.gridPane.setDisable(true);
+        this.rootLayout.setDisable(true);
         this.progressIndicatorBox.setVisible(true);
     }
 
     @Override
     public void hideLoadingBox() {
-        this.gridPane.setDisable(false);
+        this.rootLayout.setDisable(false);
         this.progressIndicatorBox.setVisible(false);
     }
 
