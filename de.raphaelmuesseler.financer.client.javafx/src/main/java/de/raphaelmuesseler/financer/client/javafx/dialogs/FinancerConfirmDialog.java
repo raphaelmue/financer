@@ -33,10 +33,12 @@ public class FinancerConfirmDialog extends FinancerDialog<Boolean> {
     @Override
     protected void onConfirm() {
         this.setValue(true);
+        super.onConfirm();
     }
 
     @Override
     protected void onCancel() {
         this.setValue(false);
+        super.onCancel();
     }
 }
