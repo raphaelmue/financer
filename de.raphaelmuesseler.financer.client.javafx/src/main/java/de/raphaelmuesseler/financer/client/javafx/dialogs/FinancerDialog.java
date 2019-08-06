@@ -6,7 +6,6 @@ import com.jfoenix.controls.JFXDialogLayout;
 import de.raphaelmuesseler.financer.client.format.I18N;
 import de.raphaelmuesseler.financer.client.javafx.main.FinancerController;
 import de.raphaelmuesseler.financer.util.collections.Action;
-import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;

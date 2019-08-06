@@ -6,10 +6,9 @@ import com.jfoenix.controls.JFXTextField;
 import de.raphaelmuesseler.financer.client.connection.ServerRequestHandler;
 import de.raphaelmuesseler.financer.client.format.I18N;
 import de.raphaelmuesseler.financer.client.javafx.connection.JavaFXAsyncConnectionCall;
-import de.raphaelmuesseler.financer.client.javafx.connection.RetrievalServiceImpl;
 import de.raphaelmuesseler.financer.client.javafx.dialogs.FinancerExceptionDialog;
 import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
-import de.raphaelmuesseler.financer.client.javafx.main.FinancerApplication;
+import de.raphaelmuesseler.financer.client.javafx.util.ApplicationHelper;
 import de.raphaelmuesseler.financer.client.local.Application;
 import de.raphaelmuesseler.financer.client.local.LocalSettings;
 import de.raphaelmuesseler.financer.client.local.LocalSettingsImpl;
@@ -25,7 +24,6 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-import java.io.IOException;
 import java.io.Serializable;
 import java.net.URL;
 import java.util.HashMap;
@@ -53,7 +51,7 @@ public class LoginController implements Initializable, Application {
 
     private static LoginController instance = null;
 
-    private Logger logger = Logger.getLogger("LoginApplication");
+    private Logger logger = Logger.getLogger("FinancerApplication");
     private LocalStorageImpl localStorage = (LocalStorageImpl) LocalStorageImpl.getInstance();
 
     private double xOffset = 0;
@@ -154,18 +152,7 @@ public class LoginController implements Initializable, Application {
         // storing user data
         this.localStorage.writeObject("user", user);
 
-        // fetching data
-        RetrievalServiceImpl.getInstance().fetchAllData(user, aVoid -> Platform.runLater(() -> {
-            // open main application
-            Stage stage = (Stage) this.rootLayout.getScene().getWindow();
-            stage.close();
-
-            try {
-                new FinancerApplication().start(new Stage());
-            } catch (IOException e) {
-                logger.log(Level.SEVERE, e.getMessage(), e);
-            }
-        }));
+        ApplicationHelper.restartApplication((Stage) this.rootLayout.getScene().getWindow());
     }
 
     @Override

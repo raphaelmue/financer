@@ -7,9 +7,9 @@ import com.jfoenix.transitions.hamburger.HamburgerSlideCloseTransition;
 import de.raphaelmuesseler.financer.client.connection.ServerRequestHandler;
 import de.raphaelmuesseler.financer.client.format.I18N;
 import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
-import de.raphaelmuesseler.financer.client.javafx.login.LoginApplication;
 import de.raphaelmuesseler.financer.client.local.Application;
 import de.raphaelmuesseler.financer.shared.model.user.User;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -147,14 +147,18 @@ public class FinancerController implements Initializable, Application {
 
     @Override
     public void setOffline() {
-        this.header.setStyle("-fx-background-color: #909ca8");
-        this.offlineLabel.setVisible(true);
+        Platform.runLater(() -> {
+            this.header.setStyle("-fx-background-color: #909ca8");
+            this.offlineLabel.setVisible(true);
+        });
     }
 
     @Override
     public void setOnline() {
-        this.header.setStyle("-fx-background-color: #92cab1");
-        this.offlineLabel.setVisible(false);
+        Platform.runLater(() -> {
+            this.header.setStyle("-fx-background-color: #92cab1");
+            this.offlineLabel.setVisible(false);
+        });
     }
 
     @Override
@@ -241,7 +245,7 @@ public class FinancerController implements Initializable, Application {
         LocalStorageImpl.getInstance().deleteAllData();
 
         try {
-            new LoginApplication().start(new Stage());
+            new FinancerApplication().start(new Stage());
         } catch (IOException e) {
             logger.log(Level.SEVERE, e.getMessage(), e);
         }

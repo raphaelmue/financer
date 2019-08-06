@@ -1,7 +1,6 @@
 package de.raphaelmuesseler.financer.client.javafx.main;
 
 import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
-import de.raphaelmuesseler.financer.client.javafx.login.LoginApplication;
 import de.raphaelmuesseler.financer.shared.model.user.User;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,7 +15,7 @@ public class LoginApplicationTest extends AbstractFinancerApplicationTest {
     @BeforeEach
     public void setUpEach() throws Exception {
         super.setUpEach();
-        ApplicationTest.launch(LoginApplication.class);
+        ApplicationTest.launch(FinancerApplication.class);
     }
 
     @Test

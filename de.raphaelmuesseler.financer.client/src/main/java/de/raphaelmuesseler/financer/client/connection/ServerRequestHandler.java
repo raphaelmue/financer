@@ -53,21 +53,28 @@ public class ServerRequestHandler implements Runnable {
     public void run() {
         this.asyncCall.onBefore();
         try {
-            application.showLoadingBox();
+            if (application != null) {
+                application.showLoadingBox();
+            }
             ConnectionResult result = this.serverRequest.make();
             if (result.getException() == null) {
                 this.asyncCall.onSuccess(result);
-                application.setOnline();
+                if (application != null) {
+                    application.setOnline();
+                }
                 makeRequests(Executors.newCachedThreadPool());
             } else {
                 this.asyncCall.onFailure(result.getException());
             }
         } catch (Exception e) {
             this.asyncCall.onFailure(e);
-            application.setOffline();
+            if (application != null) {
+                application.setOffline();
+            }
             if (e instanceof ConnectException && runLater) {
                 List<Object> calls;
                 if (localStorage.readObject("requests") != null) {
+
                     calls = localStorage.readList("requests");
                 } else {
                     calls = new ArrayList<>();
@@ -77,7 +84,9 @@ public class ServerRequestHandler implements Runnable {
             }
         } finally {
             this.asyncCall.onAfter();
-            application.hideLoadingBox();
+            if (application != null) {
+                application.hideLoadingBox();
+            }
         }
     }
 
@@ -87,7 +96,8 @@ public class ServerRequestHandler implements Runnable {
             if (calls != null && !calls.isEmpty() && ServerRequest.testConnection()) {
                 for (Object object : calls) {
                     ConnectionCall call = (ConnectionCall) object;
-                    executor.execute(new ServerRequestHandler(new ServerRequest(call), result -> {}, true));
+                    executor.execute(new ServerRequestHandler(new ServerRequest(call), result -> {
+                    }, true));
                 }
                 localStorage.writeObject("requests", null);
             }
