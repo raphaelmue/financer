@@ -56,7 +56,7 @@ public class CategoryTest extends AbstractFinancerApplicationTest {
         addCategory(category);
         clickOn(category.getValue().getName());
         clickOn((Button) find("#deleteCategoryBtn"));
-        press(KeyCode.ENTER).release(KeyCode.ENTER);
+        confirmDialog();
         sleep(MEDIUM_SLEEP);
         Tree<Category> categoryTree = TreeUtil.getByValue(((BaseCategory) LocalStorageImpl.getInstance().readObject("categories")),
                category, (o1, o2) -> CASE_INSENSITIVE_ORDER.compare(o1.getName(), o2.getName()));
