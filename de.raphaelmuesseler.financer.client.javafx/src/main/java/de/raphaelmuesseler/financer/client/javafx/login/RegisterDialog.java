@@ -1,11 +1,13 @@
 package de.raphaelmuesseler.financer.client.javafx.login;
 
 import com.jfoenix.controls.JFXComboBox;
-import com.jfoenix.controls.JFXDatePicker;
 import com.jfoenix.controls.JFXPasswordField;
 import com.jfoenix.controls.JFXTextField;
 import de.raphaelmuesseler.financer.client.format.I18N;
+import de.raphaelmuesseler.financer.client.javafx.components.DatePicker;
 import de.raphaelmuesseler.financer.client.javafx.dialogs.FinancerDialog;
+import de.raphaelmuesseler.financer.client.javafx.format.JavaFXFormatter;
+import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
 import de.raphaelmuesseler.financer.shared.model.user.User;
 import de.raphaelmuesseler.financer.util.Hash;
 import de.raphaelmuesseler.financer.util.RandomString;
@@ -14,14 +16,13 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Region;
 import javafx.util.StringConverter;
 
-
 public class RegisterDialog extends FinancerDialog<User> {
     private JFXTextField nameField;
     private JFXTextField surnameField;
     private JFXTextField emailField;
     private JFXPasswordField passwordField;
     private JFXPasswordField passwordRepeatField;
-    private JFXDatePicker birthDatePicker;
+    private DatePicker birthDatePicker;
     private JFXComboBox<User.Gender> genderComboBox;
 
     RegisterDialog() {
@@ -51,7 +52,7 @@ public class RegisterDialog extends FinancerDialog<User> {
         gridPane.add(this.emailField, 1, 2);
 
         gridPane.add(new Label(I18N.get("birthdate")), 0, 3);
-        this.birthDatePicker = new JFXDatePicker();
+        this.birthDatePicker = new DatePicker(new JavaFXFormatter(LocalStorageImpl.getInstance()));
         this.birthDatePicker.setId("registerBirthDatePicker");
         gridPane.add(this.birthDatePicker, 1, 3);
 

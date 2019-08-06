@@ -34,6 +34,7 @@ public class LoginApplicationTest extends AbstractFinancerApplicationTest {
         Assertions.assertEquals(this.user.getEmail(), user.getEmail());
         Assertions.assertEquals(this.user.getName(), user.getName());
         Assertions.assertEquals(this.user.getSurname(), user.getSurname());
+        Assertions.assertEquals(this.user.getBirthDate(), user.getBirthDate());
         Assertions.assertTrue(user.getId() > 0);
     }
 

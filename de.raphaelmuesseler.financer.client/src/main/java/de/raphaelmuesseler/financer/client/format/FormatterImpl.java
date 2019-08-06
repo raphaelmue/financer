@@ -3,12 +3,12 @@ package de.raphaelmuesseler.financer.client.format;
 import de.raphaelmuesseler.financer.client.local.LocalStorage;
 import de.raphaelmuesseler.financer.shared.exceptions.FinancerException;
 import de.raphaelmuesseler.financer.shared.model.categories.Category;
-import de.raphaelmuesseler.financer.shared.model.categories.CategoryTree;
 import de.raphaelmuesseler.financer.shared.model.user.User;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
+import java.util.Locale;
 
 public abstract class FormatterImpl implements Formatter {
     private final User user;
@@ -52,7 +52,15 @@ public abstract class FormatterImpl implements Formatter {
 
     @Override
     public String formatDate(LocalDate localDate) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(user.getSettings().getLanguage());
+        Locale locale = user == null ? Locale.ENGLISH : user.getSettings().getLanguage();
+        DateTimeFormatter formatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(locale);
         return localDate.format(formatter);
+    }
+
+    @Override
+    public LocalDate convertStringToLocalDate(String dateString) {
+        Locale locale = user == null ? Locale.ENGLISH : user.getSettings().getLanguage();
+        DateTimeFormatter formatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(locale);
+        return LocalDate.parse(dateString, formatter);
     }
 }

@@ -1,9 +1,12 @@
 package de.raphaelmuesseler.financer.client.javafx.main.transactions;
 
 import com.jfoenix.controls.JFXButton;
-import com.jfoenix.controls.JFXDatePicker;
+import com.jfoenix.controls.JFXComboBox;
+import com.jfoenix.controls.JFXListView;
+import com.jfoenix.controls.JFXTextField;
 import de.raphaelmuesseler.financer.client.connection.ServerRequestHandler;
 import de.raphaelmuesseler.financer.client.format.I18N;
+import de.raphaelmuesseler.financer.client.javafx.components.DatePicker;
 import de.raphaelmuesseler.financer.client.javafx.components.DoubleField;
 import de.raphaelmuesseler.financer.client.javafx.connection.JavaFXAsyncConnectionCall;
 import de.raphaelmuesseler.financer.client.javafx.dialogs.FinancerConfirmDialog;
@@ -23,8 +26,7 @@ import de.raphaelmuesseler.financer.util.collections.TreeUtil;
 import de.raphaelmuesseler.financer.util.concurrency.FinancerExecutor;
 import javafx.application.Platform;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
-import javafx.scene.control.*;
+import javafx.scene.control.ListCell;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
@@ -46,12 +48,12 @@ import java.util.logging.Logger;
 class TransactionDialog extends FinancerDialog<VariableTransaction> {
 
     private DoubleField amountField;
-    private ComboBox<CategoryTree> categoryComboBox;
-    private TextField productField;
-    private TextField purposeField;
-    private TextField shopField;
-    private JFXDatePicker valueDateField;
-    private ListView<Attachment> attachmentListView;
+    private JFXComboBox<CategoryTree> categoryComboBox;
+    private JFXTextField productField;
+    private JFXTextField purposeField;
+    private JFXTextField shopField;
+    private DatePicker valueDateField;
+    private JFXListView<Attachment> attachmentListView;
     private BaseCategory categories;
 
     private final Logger logger = Logger.getLogger("FinancerApplication");
@@ -79,29 +81,30 @@ class TransactionDialog extends FinancerDialog<VariableTransaction> {
         gridPane.add(this.amountField, 1, 0);
 
         gridPane.add(new Label(I18N.get("category")), 0, 1);
-        this.categoryComboBox = new ComboBox<>();
+        this.categoryComboBox = new JFXComboBox<>();
         this.categoryComboBox.setId("categoryComboBox");
         this.categoryComboBox.setPlaceholder(new Label(I18N.get("selectCategory")));
 
         gridPane.add(this.categoryComboBox, 1, 1);
 
         gridPane.add(new Label(I18N.get("product")), 0, 2);
-        this.productField = new TextField();
+        this.productField = new JFXTextField();
         this.productField.setId("productTextField");
         gridPane.add(this.productField, 1, 2);
 
         gridPane.add(new Label(I18N.get("purpose")), 0, 3);
-        this.purposeField = new TextField();
+        this.purposeField = new JFXTextField();
         this.purposeField.setId("purposeTextField");
         gridPane.add(purposeField, 1, 3);
 
         gridPane.add(new Label(I18N.get("shop")), 0, 4);
-        this.shopField = new TextField();
+        this.shopField = new JFXTextField();
         this.shopField.setId("shopTextField");
         gridPane.add(this.shopField, 1, 4);
 
         gridPane.add(new Label(I18N.get("valueDate")), 0, 5);
-        this.valueDateField = new JFXDatePicker();
+        this.valueDateField = new DatePicker(new JavaFXFormatter(LocalStorageImpl.getInstance()));
+        this.valueDateField.setValue(LocalDate.now());
         this.valueDateField.setId("valueDatePicker");
         gridPane.add(this.valueDateField, 1, 5);
 
@@ -141,7 +144,7 @@ class TransactionDialog extends FinancerDialog<VariableTransaction> {
             toolBox.getChildren().add(openFileBtn);
             toolBox.getChildren().add(deleteAttachmentBtn);
 
-            this.attachmentListView = new ListView<>();
+            this.attachmentListView = new JFXListView<>();
             this.attachmentListView.setCellFactory(param -> new ListCell<>() {
                 @Override
                 protected void updateItem(Attachment item, boolean empty) {
