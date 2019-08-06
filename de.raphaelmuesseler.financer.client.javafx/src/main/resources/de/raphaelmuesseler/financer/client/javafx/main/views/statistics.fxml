@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.*?>
 <VBox fx:controller="de.raphaelmuesseler.financer.client.javafx.main.statistics.StatisticsController"
       xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" styleClass="content">
-    <ScrollPane fitToWidth="true" hbarPolicy="NEVER">
+    <ScrollPane fx:id="statisticsScrollPane" fitToWidth="true" hbarPolicy="NEVER">
         <JFXMasonryPane>
             <VBox styleClass="content-box" prefWidth="1000" prefHeight="550">
                 <Label text="%progress" styleClass="content-heading"/>

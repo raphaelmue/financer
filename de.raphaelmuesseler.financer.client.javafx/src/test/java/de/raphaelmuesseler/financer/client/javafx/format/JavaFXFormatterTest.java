@@ -15,8 +15,8 @@ import java.util.Currency;
 import java.util.Locale;
 
 @SuppressWarnings("WeakerAccess")
-@Tag("uit")
-public class FormatTest {
+@Tag("unit")
+public class JavaFXFormatterTest {
     private static User user;
     private static Formatter formatter;
 
@@ -60,11 +60,16 @@ public class FormatTest {
         String categoryFormat = formatter.formatCategoryName(category);
         Assertions.assertEquals(category.getPrefix() + " " + category.getName(), categoryFormat);
 
+        category.setName("root");
+        categoryFormat = formatter.formatCategoryName(category);
+        Assertions.assertEquals(category.getPrefix() + " " + "Balance", categoryFormat);
+
         final Category categoryClass = new Category("fixedExpenses");
         categoryClass.setPrefix("testPrefix2");
 
         categoryFormat = formatter.formatCategoryName(categoryClass);
         Assertions.assertEquals(categoryClass.getPrefix() + " Fixed Expenses", categoryFormat);
+
     }
 
     @Test

@@ -7,10 +7,7 @@ import de.raphaelmuesseler.financer.shared.model.categories.BaseCategory;
 import de.raphaelmuesseler.financer.shared.model.categories.Category;
 import de.raphaelmuesseler.financer.shared.model.categories.CategoryTreeImpl;
 import de.raphaelmuesseler.financer.shared.model.db.*;
-import de.raphaelmuesseler.financer.shared.model.transactions.ContentAttachment;
-import de.raphaelmuesseler.financer.shared.model.transactions.FixedTransaction;
-import de.raphaelmuesseler.financer.shared.model.transactions.TransactionAmount;
-import de.raphaelmuesseler.financer.shared.model.transactions.VariableTransaction;
+import de.raphaelmuesseler.financer.shared.model.transactions.*;
 import de.raphaelmuesseler.financer.shared.model.user.Settings;
 import de.raphaelmuesseler.financer.shared.model.user.User;
 import de.raphaelmuesseler.financer.util.Hash;
@@ -22,7 +19,6 @@ import org.junit.jupiter.api.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
-import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.logging.Logger;
@@ -471,7 +467,7 @@ public class ServiceTest {
     }
 
     @Test
-    public void testUploadAttachment() throws SQLException {
+    public void testUploadAttachment() {
         RandomString randomString = new RandomString(1024);
         ContentAttachment content = new ContentAttachment();
         content.setTransaction(variableTransaction);
@@ -481,14 +477,14 @@ public class ServiceTest {
         Map<String, Serializable> parameters = new HashMap<>();
         parameters.put("attachment", content);
         parameters.put("transaction", new VariableTransaction(variableTransaction));
-        ConnectionResult<ContentAttachment> result = service.uploadTransactionAttachment(logger, session, parameters);
+        ConnectionResult<Attachment> result = service.uploadTransactionAttachment(logger, session, parameters);
         Assertions.assertNotNull(result.getResult());
         Assertions.assertNull(result.getException());
         Assertions.assertTrue(result.getResult().getId() > 0);
     }
 
     @Test
-    public void testGetAttachment() throws SQLException {
+    public void testGetAttachment() {
         testUploadAttachment();
 
         Map<String, Serializable> parameters = new HashMap<>();
@@ -500,7 +496,7 @@ public class ServiceTest {
     }
 
     @Test
-    public void testDeleteAttachment() throws SQLException {
+    public void testDeleteAttachment() {
         testUploadAttachment();
 
         Map<String, Serializable> parameters = new HashMap<>();

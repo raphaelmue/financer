@@ -119,7 +119,7 @@ public class LocalStorageImpl implements LocalStorage {
 
     @Override
     public synchronized boolean deleteObject(String key) {
-        if (!Objects.requireNonNull(LocalStorageFile.getFileByKey(key)).getParentFile().mkdirs()) {
+        if (LocalStorageFile.getFileByKey(key) == null) {
             return false;
         }
         Map<String, Serializable> map = this.readFile(Objects.requireNonNull(LocalStorageFile.getFileByKey(key)));

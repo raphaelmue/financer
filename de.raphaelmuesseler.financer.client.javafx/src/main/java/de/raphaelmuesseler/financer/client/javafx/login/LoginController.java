@@ -97,10 +97,7 @@ public class LoginController implements Initializable, Application {
             @Override
             public void onFailure(Exception exception) {
                 logger.log(Level.SEVERE, exception.getMessage(), exception);
-                Platform.runLater(() -> {
-                    FinancerExceptionDialog dialog = new FinancerExceptionDialog("Login", exception);
-                    dialog.showAndWait();
-                });
+                Platform.runLater(() -> new FinancerExceptionDialog("Login", exception).showAndWait());
             }
         }));
     }
@@ -144,14 +141,7 @@ public class LoginController implements Initializable, Application {
         this.loginErrorLabel.setVisible(false);
 
         // storing user data
-        if (!this.localStorage.writeObject("user", user)) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Financer");
-            alert.setHeaderText("Login");
-            alert.setContentText("Something went wrong storing your personal information. Please try again later.");
-            alert.showAndWait();
-            return;
-        }
+        this.localStorage.writeObject("user", user);
 
         // fetching data
         RetrievalServiceImpl.getInstance().fetchAllData(user, aVoid -> Platform.runLater(() -> {

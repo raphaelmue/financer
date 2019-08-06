@@ -3,6 +3,7 @@ package de.raphaelmuesseler.financer.shared.model.transactions;
 import de.raphaelmuesseler.financer.shared.model.db.AttachmentEntity;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 
 public class Attachment extends AttachmentEntity implements Serializable {
     private static final long serialVersionUID = 5087900373125640764L;
@@ -16,6 +17,13 @@ public class Attachment extends AttachmentEntity implements Serializable {
         this.setTransaction(attachmentEntity.getTransaction());
         this.setName(attachmentEntity.getName());
         this.setUploadDate(attachmentEntity.getUploadDate());
+    }
+
+    public Attachment(int id, VariableTransaction variableTransaction, String name, LocalDate uploadDate) {
+        this.setId(id);
+        this.setTransaction(variableTransaction);
+        this.setName(name);
+        this.setUploadDate(uploadDate);
     }
 
     @Override
