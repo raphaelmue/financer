@@ -9,6 +9,7 @@ import de.raphaelmuesseler.financer.client.format.I18N;
 import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
 import de.raphaelmuesseler.financer.client.local.Application;
 import de.raphaelmuesseler.financer.shared.model.user.User;
+import javafx.animation.*;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -18,10 +19,12 @@ import javafx.scene.control.Label;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItem;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import org.controlsfx.glyphfont.FontAwesome;
 import org.controlsfx.glyphfont.GlyphFont;
 import org.controlsfx.glyphfont.GlyphFontRegistry;
@@ -73,6 +76,7 @@ public class FinancerController implements Initializable, Application {
     private ResourceBundle resourceBundle;
     private LocalStorageImpl localStorage = (LocalStorageImpl) LocalStorageImpl.getInstance();
     private JFXSnackbar snackbar;
+    private boolean isNavigationBarHidden = false;
 
     @FXML
     public void initialize(URL location, ResourceBundle resources) {
@@ -252,7 +256,22 @@ public class FinancerController implements Initializable, Application {
     }
 
     public void onToggleNavigationBar() {
-        navigationBox.setManaged(!navigationBox.isManaged());
-        navigationBox.setVisible(!navigationBox.isVisible());
+        TranslateTransition t1 = new TranslateTransition(new Duration(350), this.navigationBox);
+        TranslateTransition t2 = new TranslateTransition(new Duration(350), this.contentPane);
+        ScaleTransition t3 = new ScaleTransition(Duration.millis(350), this.contentPane);
+        if (!this.isNavigationBarHidden) {
+            t1.setToX(-180);
+            t2.setToX(-90);
+            t3.setToX((this.contentPane.getWidth() + 180) / this.contentPane.getWidth());
+        } else {
+            t1.setToX(0);
+            t2.setToX(0);
+            t3.setToX(1);
+        }
+        t1.play();
+        t2.play();
+        t3.play();
+
+        this.isNavigationBarHidden = !this.isNavigationBarHidden;
     }
 }

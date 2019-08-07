@@ -12,7 +12,7 @@
 }
 
 #hamburgerBtn {
-    -fx-padding: 10;
+    -fx-padding: 10px 15px;
     -fx-cursor: hand;
     -fx-fill: -fx-color-white;
 }
