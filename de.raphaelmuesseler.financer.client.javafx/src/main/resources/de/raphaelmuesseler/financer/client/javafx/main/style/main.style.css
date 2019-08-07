@@ -1,3 +1,7 @@
+#rootLayout {
+    -fx-background-color: -fx-color-background;
+}
+
 .content {
     -fx-background-color: -fx-color-background;
     -fx-padding: 0;

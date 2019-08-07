@@ -142,7 +142,7 @@ class AbstractFinancerApplicationTest extends ApplicationTest {
     }
 
     void logout() throws Exception {
-        clickOn("Account");
+        clickOn(user.getFullName());
         clickOn("Logout");
     }
 

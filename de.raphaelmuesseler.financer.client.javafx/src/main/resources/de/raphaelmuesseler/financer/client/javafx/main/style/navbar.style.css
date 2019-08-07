@@ -1,11 +1,6 @@
 #navigationBox {
     -fx-background-color: -fx-color-white;
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.5), 10, 0, 0, 0);
-}
-
-#imageContainer {
-    -fx-background-color: -fx-color-primary;
-    -fx-padding: 0;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 15, 0, 0, 0);
 }
 
 #userNameLabel {
@@ -14,6 +9,12 @@
     -fx-font-size: 13px;
     -fx-font-weight: 700;
     -fx-padding: -30 0 10 15;
+}
+
+#hamburgerBtn {
+    -fx-padding: 10;
+    -fx-cursor: hand;
+    -fx-fill: -fx-color-white;
 }
 
 .nav-btn {

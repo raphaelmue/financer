@@ -9,7 +9,6 @@ import de.raphaelmuesseler.financer.client.format.I18N;
 import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
 import de.raphaelmuesseler.financer.client.local.Application;
 import de.raphaelmuesseler.financer.shared.model.user.User;
-import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -52,8 +51,6 @@ public class FinancerController implements Initializable, Application {
     @FXML
     public JFXButton settingTabBtn;
     @FXML
-    public Label userNameLabel;
-    @FXML
     public MenuButton accountMenuBtn;
     @FXML
     public MenuItem logoutBtn;
@@ -63,7 +60,10 @@ public class FinancerController implements Initializable, Application {
     public Label contentLabel;
     @FXML
     public Label offlineLabel;
+    @FXML
     public VBox navigationBox;
+    @FXML
+    public BorderPane contentPane;
 
     private static Application instance;
 
@@ -99,7 +99,7 @@ public class FinancerController implements Initializable, Application {
             logger.log(Level.SEVERE, e.getMessage(), e);
         }
 
-        this.userNameLabel.setText(user.getFullName());
+        this.accountMenuBtn.setText(user.getFullName());
 
         GlyphFont fontAwesome = GlyphFontRegistry.font("FontAwesome");
         this.overviewTabBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.COLUMNS));
@@ -147,18 +147,18 @@ public class FinancerController implements Initializable, Application {
 
     @Override
     public void setOffline() {
-        Platform.runLater(() -> {
-            this.header.setStyle("-fx-background-color: #909ca8");
-            this.offlineLabel.setVisible(true);
-        });
+//        Platform.runLater(() -> {
+//            this.header.setStyle("-fx-background-color: #909ca8");
+//            this.offlineLabel.setVisible(true);
+//        });
     }
 
     @Override
     public void setOnline() {
-        Platform.runLater(() -> {
-            this.header.setStyle("-fx-background-color: #92cab1");
-            this.offlineLabel.setVisible(false);
-        });
+//        Platform.runLater(() -> {
+//            this.header.setStyle("-fx-background-color: #44a1a0");
+//            this.offlineLabel.setVisible(false);
+//        });
     }
 
     @Override
@@ -227,7 +227,7 @@ public class FinancerController implements Initializable, Application {
             StackPane stackPane = new StackPane();
             stackPane.getChildren().add(FXMLLoader.load(url, this.resourceBundle));
             stackPane.getChildren().add(loadingBox);
-            this.rootLayout.setCenter(stackPane);
+            this.contentPane.setCenter(stackPane);
             BorderPane.setMargin(stackPane, new Insets(20));
         } catch (IOException e) {
             logger.log(Level.SEVERE, e.getMessage(), e);
