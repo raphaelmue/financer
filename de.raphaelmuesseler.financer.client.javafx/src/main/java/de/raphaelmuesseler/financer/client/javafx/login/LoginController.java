@@ -23,6 +23,9 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import org.controlsfx.glyphfont.FontAwesome;
+import org.controlsfx.glyphfont.GlyphFont;
+import org.controlsfx.glyphfont.GlyphFontRegistry;
 
 import java.io.Serializable;
 import java.net.URL;
@@ -48,6 +51,8 @@ public class LoginController implements Initializable, Application {
     public JFXButton loginBtn;
     @FXML
     public JFXButton openRegisterDialogBtn;
+    @FXML
+    public JFXButton closeBtn;
 
     private static LoginController instance = null;
 
@@ -97,6 +102,9 @@ public class LoginController implements Initializable, Application {
 
         this.loginBtn.setText(this.loginBtn.getText().toUpperCase());
         this.openRegisterDialogBtn.setText(this.openRegisterDialogBtn.getText().toUpperCase());
+        GlyphFont fontAwesome = GlyphFontRegistry.font("FontAwesome");
+        this.closeBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.TIMES));
+        this.closeBtn.setOnAction(event -> Platform.exit());
     }
 
     public void handleSignInButtonAction() {
