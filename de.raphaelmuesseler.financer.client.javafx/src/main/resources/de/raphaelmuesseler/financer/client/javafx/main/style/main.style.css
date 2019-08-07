@@ -8,11 +8,15 @@
     -fx-text-overrun: scroll;
 }
 
-.content-box {
-    -fx-padding: 5 20;
+.box {
+
+}
+
+.box-content {
+    -fx-padding: 15 20;
     -fx-background-color: -fx-color-white;
-    -fx-border-radius: 4px;
-    -fx-background-radius: 4px;
+    -fx-border-radius: 6px;
+    -fx-background-radius: 6px;
 }
 
 .jfx-masonry-pane {
@@ -29,17 +33,16 @@
 }
 
 .tab-box {
-    -fx-background-color: -fx-color-white;
+    -fx-background-color: -fx-color-background;
     -fx-border-radius: 4px;
     -fx-background-radius: 4px;
 }
 
 .content-heading {
-    -fx-font-family: "Roboto Medium";
     -fx-font-size: 15;
-    -fx-text-fill: -fx-color-primary;
+    -fx-text-fill: -fx-color-black;
     -fx-font-weight: 700;
-    -fx-padding: 10 10 20 0;
+    -fx-padding: 10 10 10 0;
 }
 
 .scroll-pane {
@@ -48,7 +51,7 @@
 }
 
 .tab-container .headers-region {
-    -fx-background-color: -fx-color-white;
+    -fx-background-color: -fx-color-background;
 }
 
 .tab-container .depth-container {
@@ -56,16 +59,21 @@
 }
 
 .tab-container .tab-header-background {
-    -fx-background-color: -fx-color-white;
+    -fx-background-color: -fx-color-background;
 }
 
 .tab-container .tab-selected-line {
     -fx-background-color: -fx-color-primary;
-    -fx-pref-height: 3
+    -fx-pref-height: 3;
+    -fx-pref-width: 20px;
 }
 
 .tab-container .tab-header-area .jfx-rippler {
     -jfx-rippler-fill: -fx-color-primary;
+}
+
+.tab-container .tab {
+    -fx-background-radius: 5px;
 }
 
 .tab-container .tab .tab-label {
@@ -77,7 +85,7 @@
 
 .tab-container .tab:selected .tab-label {
     -fx-text-fill: -fx-color-primary;
-    -fx-background-color: -fx-color-white;
+    -fx-background-color: -fx-color-background;
 }
 
 .tab-content {

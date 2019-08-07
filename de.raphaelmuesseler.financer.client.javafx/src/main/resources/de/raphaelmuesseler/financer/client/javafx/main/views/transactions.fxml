@@ -11,44 +11,51 @@
             <Tab fx:id="transactionOverviewTab" text="%overview" closable="false" styleClass="tab">
                 <VBox styleClass="tab-content">
                     <Label text="%overview" styleClass="content-heading"/>
-                    <TableView fx:id="transactionsOverviewTableView"/>
+                    <VBox styleClass="box-content">
+                        <TableView fx:id="transactionsOverviewTableView"/>
+                    </VBox>
                 </VBox>
             </Tab>
             <Tab text="%transactions" closable="false" styleClass="tab">
                 <VBox styleClass="tab-content">
                     <Label text="%transactions" styleClass="content-heading"/>
-                    <HBox styleClass="tool-btn-bar">
-                        <JFXTextField fx:id="filterTransactionsTextField" promptText="%search"/>
-                        <JFXButton fx:id="refreshTransactionsBtn" text="%refresh"
-                                   onAction="#handleRefreshTransactions"/>
-                        <JFXButton fx:id="newTransactionBtn" text="%new" onAction="#handleNewTransaction"/>
-                        <JFXButton fx:id="editTransactionBtn" text="%edit" onAction="#handleEditTransaction"/>
-                        <JFXButton fx:id="deleteTransactionBtn" text="%delete" onAction="#handleDeleteTransaction"/>
-                    </HBox>
-                    <TableView fx:id="transactionsTableView"/>
+                    <VBox styleClass="box-content">
+                        <HBox styleClass="tool-btn-bar">
+                            <JFXTextField fx:id="filterTransactionsTextField" promptText="%search"/>
+                            <JFXButton fx:id="refreshTransactionsBtn" text="%refresh"
+                                       onAction="#handleRefreshTransactions"/>
+                            <JFXButton fx:id="newTransactionBtn" text="%new" onAction="#handleNewTransaction"/>
+                            <JFXButton fx:id="editTransactionBtn" text="%edit" onAction="#handleEditTransaction"/>
+                            <JFXButton fx:id="deleteTransactionBtn" text="%delete" onAction="#handleDeleteTransaction"/>
+                        </HBox>
+                        <TableView fx:id="transactionsTableView"/>
+                    </VBox>
                 </VBox>
             </Tab>
             <Tab text="%fixedTransactions" closable="false">
                 <VBox styleClass="tab-content">
                     <Label text="%fixedTransactions" styleClass="content-heading"/>
-                    <HBox styleClass="tool-btn-bar">
-                        <JFXButton fx:id="refreshFixedTransactionsBtn" text="%refresh"
-                                   onAction="#handleRefreshFixedTransactions"/>
-                        <JFXButton fx:id="newFixedTransactionBtn" text="%new"
-                                   onAction="#handleNewFixedTransaction"/>
-                        <JFXButton fx:id="editFixedTransactionBtn" text="%edit"
-                                   onAction="#handleEditFixedTransaction"/>
-                        <JFXButton fx:id="deleteFixedTransactionBtn" text="%delete"
-                                   onAction="#handleDeleteFixedTransaction"/>
-                    </HBox>
-                    <SplitPane>
-                        <VBox>
-                            <JFXListView fx:id="categoriesListView"/>
-                        </VBox>
-                        <VBox>
-                            <JFXListView fx:id="fixedTransactionsListView"/>
-                        </VBox>
-                    </SplitPane>
+                    <VBox styleClass="box-content">
+
+                        <HBox styleClass="tool-btn-bar">
+                            <JFXButton fx:id="refreshFixedTransactionsBtn" text="%refresh"
+                                       onAction="#handleRefreshFixedTransactions"/>
+                            <JFXButton fx:id="newFixedTransactionBtn" text="%new"
+                                       onAction="#handleNewFixedTransaction"/>
+                            <JFXButton fx:id="editFixedTransactionBtn" text="%edit"
+                                       onAction="#handleEditFixedTransaction"/>
+                            <JFXButton fx:id="deleteFixedTransactionBtn" text="%delete"
+                                       onAction="#handleDeleteFixedTransaction"/>
+                        </HBox>
+                        <SplitPane>
+                            <VBox>
+                                <JFXListView fx:id="categoriesListView"/>
+                            </VBox>
+                            <VBox>
+                                <JFXListView fx:id="fixedTransactionsListView"/>
+                            </VBox>
+                        </SplitPane>
+                    </VBox>
                 </VBox>
 
             </Tab>

@@ -20,7 +20,7 @@
                                 <Image url="/images/icons/financer-icon-square.png"/>
                             </ImageView>
                         </VBox>
-                        <VBox spacing="5" HBox.hgrow="ALWAYS">
+                        <VBox spacing="5" HBox.hgrow="ALWAYS" styleClass="box-content">
                             <BorderPane HBox.hgrow="ALWAYS">
                                 <left>
                                     <VBox styleClass="description-box">
@@ -57,16 +57,21 @@
                 </VBox>
             </Tab>
             <Tab fx:id="categoriesTab" text="%categories" closable="false">
-                <VBox styleClass="tab-content">
+                <VBox styleClass="box">
                     <Label text="%categories" styleClass="content-heading"/>
-                    <HBox styleClass="tool-btn-bar">
-                        <JFXButton fx:id="refreshCategoriesBtn" text="%refresh"
-                                   onAction="#handleRefreshCategories"/>
-                        <JFXButton fx:id="newCategoryBtn" text="%new" onAction="#handleNewCategory"/>
-                        <JFXButton fx:id="editCategoryBtn" text="%edit" onAction="#handleEditCategory"/>
-                        <JFXButton fx:id="deleteCategoryBtn" text="%delete" onAction="#handleDeleteCategory"/>
-                    </HBox>
-                    <TreeView fx:id="categoriesTreeView"/>
+                    <VBox styleClass="box-content">
+
+                        <VBox styleClass="box-content">
+                            <HBox styleClass="tool-btn-bar">
+                                <JFXButton fx:id="refreshCategoriesBtn" text="%refresh"
+                                           onAction="#handleRefreshCategories"/>
+                                <JFXButton fx:id="newCategoryBtn" text="%new" onAction="#handleNewCategory"/>
+                                <JFXButton fx:id="editCategoryBtn" text="%edit" onAction="#handleEditCategory"/>
+                                <JFXButton fx:id="deleteCategoryBtn" text="%delete" onAction="#handleDeleteCategory"/>
+                            </HBox>
+                            <TreeView fx:id="categoriesTreeView"/>
+                        </VBox>
+                    </VBox>
                 </VBox>
             </Tab>
         </JFXTabPane>
