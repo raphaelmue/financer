@@ -22,8 +22,13 @@
             </VBox>
         </VBox>
         <VBox prefWidth="400">
+            <BorderPane>
+                <right>
+                    <JFXButton fx:id="closeBtn"/>
+                </right>
+            </BorderPane>
             <StackPane>
-                <VBox style="-fx-padding: 50px" spacing="25" prefWidth="150">
+                <VBox style="-fx-padding: 40px" spacing="25" prefWidth="150">
                     <Label fx:id="signInLabel" text="%signIn"/>
                     <Separator prefWidth="50"/>
                     <Label fx:id="loginErrorLabel" text="%incorrectCredentials" textAlignment="CENTER"
@@ -40,11 +45,6 @@
                     <JFXSpinner/>
                     <Label text="%loading" textAlignment="CENTER"/>
                 </VBox>
-                <BorderPane>
-                    <right>
-                        <JFXButton fx:id="closeBtn" />
-                    </right>
-                </BorderPane>
             </StackPane>
         </VBox>
     </HBox>
