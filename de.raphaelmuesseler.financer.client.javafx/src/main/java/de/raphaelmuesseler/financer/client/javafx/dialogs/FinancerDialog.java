@@ -7,6 +7,7 @@ import de.raphaelmuesseler.financer.client.format.I18N;
 import de.raphaelmuesseler.financer.client.javafx.main.FinancerController;
 import de.raphaelmuesseler.financer.util.collections.Action;
 import javafx.scene.control.Label;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -28,7 +29,7 @@ public abstract class FinancerDialog<T> extends JFXDialog {
     private Action<T> cancelAction;
 
     public FinancerDialog(T value) {
-        this(value, (StackPane) ((FinancerController) FinancerController.getInstance()).getRootLayout().getCenter());
+        this(value, (StackPane) ((BorderPane) ((FinancerController) FinancerController.getInstance()).getRootLayout().getCenter()).getCenter());
     }
 
     public FinancerDialog(T value, StackPane container) {
