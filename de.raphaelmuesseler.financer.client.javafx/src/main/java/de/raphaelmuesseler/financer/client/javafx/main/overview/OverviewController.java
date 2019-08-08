@@ -7,7 +7,6 @@ import de.raphaelmuesseler.financer.client.javafx.format.JavaFXFormatter;
 import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
 import de.raphaelmuesseler.financer.client.javafx.main.FinancerController;
 import de.raphaelmuesseler.financer.client.javafx.main.transactions.TransactionAmountDialog;
-import de.raphaelmuesseler.financer.shared.connection.ConnectionResult;
 import de.raphaelmuesseler.financer.shared.model.categories.BaseCategory;
 import de.raphaelmuesseler.financer.shared.model.categories.CategoryTree;
 import de.raphaelmuesseler.financer.shared.model.transactions.FixedTransaction;
@@ -167,19 +166,11 @@ public class OverviewController implements Initializable {
         dialog.setOnConfirm(result -> {
             Map<String, Serializable> parameters = new HashMap<>();
             parameters.put("transactionAmount", result);
-            FinancerExecutor.getExecutor().execute(new ServerRequestHandler(user, "addTransactionAmount", parameters, new JavaFXAsyncConnectionCall() {
-                @Override
-                public void onSuccess(ConnectionResult result) {
-                    transaction.getTransactionAmounts().add((TransactionAmount) result.getResult());
-                    localStorage.writeObject("categories", categories);
-                    Platform.runLater(() -> upcomingFixedTransactionGridPane.getChildren().clear());
-                    loadUpcomingFixedTransactions();
-                }
-
-                @Override
-                public void onFailure(Exception exception) {
-                    JavaFXAsyncConnectionCall.super.onFailure(exception);
-                }
+            FinancerExecutor.getExecutor().execute(new ServerRequestHandler(user, "addTransactionAmount", parameters, (JavaFXAsyncConnectionCall) result1 -> {
+                transaction.getTransactionAmounts().add((TransactionAmount) result1.getResult());
+                localStorage.writeObject("categories", categories);
+                Platform.runLater(() -> upcomingFixedTransactionGridPane.getChildren().clear());
+                loadUpcomingFixedTransactions();
             }));
         });
     }

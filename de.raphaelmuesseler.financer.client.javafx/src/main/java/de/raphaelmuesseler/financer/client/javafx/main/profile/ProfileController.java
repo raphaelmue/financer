@@ -96,11 +96,6 @@ public class ProfileController implements Initializable {
                             }
 
                             @Override
-                            public void onFailure(Exception exception) {
-                                JavaFXAsyncConnectionCall.super.onFailure(exception);
-                            }
-
-                            @Override
                             public void onAfter() {
                                 localStorage.writeObject("user", user);
                             }
@@ -180,30 +175,21 @@ public class ProfileController implements Initializable {
                 categoryTree.getValue().setUser(user.toEntity());
                 parameters.put("category", categoryTree.getValue());
 
-                FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "addCategory", parameters, new JavaFXAsyncConnectionCall() {
-                    @Override
-                    public void onSuccess(ConnectionResult result) {
-                        categoryTree.getValue().setId(((Category) result.getResult()).getId());
-                        categoryTree.getValue().setPrefix(categoryTree.getParent().getValue().getPrefix() + (categoryTree.getParent().getChildren().size() + 1) + ".");
-                        if (categoriesTreeView.getSelectionModel().getSelectedItem().getValue().isRoot()) {
-                            categories.getCategoryTreeByCategoryClass(categoriesTreeView.getSelectionModel().getSelectedItem().getValue().getValue().getCategoryClass()).getChildren().add(categoryTree);
-                        } else {
-                            TreeUtil.insertByValue(categories, categoryTree, (o1, o2) -> Integer.compare(o1.getParentId(), o2.getId()));
-                        }
-                        localStorage.writeObject("categories", categories);
-
-                        Platform.runLater(() -> {
-                            categoriesTreeView.getSelectionModel().getSelectedItem().setExpanded(true);
-                            categoriesTreeView.getSelectionModel().getSelectedItem().getChildren().add(new TreeItem<>(categoryTree));
-                            categoriesTreeView.refresh();
-                        });
+                FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "addCategory", parameters, (JavaFXAsyncConnectionCall) result -> {
+                    categoryTree.getValue().setId(((Category) result.getResult()).getId());
+                    categoryTree.getValue().setPrefix(categoryTree.getParent().getValue().getPrefix() + (categoryTree.getParent().getChildren().size() + 1) + ".");
+                    if (categoriesTreeView.getSelectionModel().getSelectedItem().getValue().isRoot()) {
+                        categories.getCategoryTreeByCategoryClass(categoriesTreeView.getSelectionModel().getSelectedItem().getValue().getValue().getCategoryClass()).getChildren().add(categoryTree);
+                    } else {
+                        TreeUtil.insertByValue(categories, categoryTree, (o1, o2) -> Integer.compare(o1.getParentId(), o2.getId()));
                     }
+                    localStorage.writeObject("categories", categories);
 
-                    @Override
-                    public void onFailure(Exception exception) {
-                        JavaFXAsyncConnectionCall.super.onFailure(exception);
-                        logger.log(Level.SEVERE, exception.getMessage(), exception);
-                    }
+                    Platform.runLater(() -> {
+                        categoriesTreeView.getSelectionModel().getSelectedItem().setExpanded(true);
+                        categoriesTreeView.getSelectionModel().getSelectedItem().getChildren().add(new TreeItem<>(categoryTree));
+                        categoriesTreeView.refresh();
+                    });
                 }, true));
             });
         }
@@ -225,18 +211,9 @@ public class ProfileController implements Initializable {
         Map<String, Serializable> parameters = new HashMap<>();
         parameters.put("category", category.getValue());
 
-        FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "updateCategory", parameters, new JavaFXAsyncConnectionCall() {
-            @Override
-            public void onSuccess(ConnectionResult result) {
-                categoriesTreeView.getSelectionModel().getSelectedItem().getValue().getValue().setName(category.getValue().getName());
-                localStorage.writeObject("categories", categories);
-            }
-
-            @Override
-            public void onFailure(Exception exception) {
-                JavaFXAsyncConnectionCall.super.onFailure(exception);
-                logger.log(Level.SEVERE, exception.getMessage(), exception);
-            }
+        FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "updateCategory", parameters, (JavaFXAsyncConnectionCall) result -> {
+            categoriesTreeView.getSelectionModel().getSelectedItem().getValue().getValue().setName(category.getValue().getName());
+            localStorage.writeObject("categories", categories);
         }, true));
     }
 
@@ -252,21 +229,12 @@ public class ProfileController implements Initializable {
                 parameters.put("categoryId", this.categoriesTreeView.getSelectionModel()
                         .getSelectedItem().getValue().getValue().getId());
 
-                FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "deleteCategory", parameters, new JavaFXAsyncConnectionCall() {
-                    @Override
-                    public void onSuccess(ConnectionResult result) {
-                        TreeUtil.deleteByValue(categories,
-                                categoriesTreeView.getSelectionModel().getSelectedItem().getValue(), Comparator.comparingInt(Category::getId));
-                        localStorage.writeObject("categories", categories);
+                FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "deleteCategory", parameters, (JavaFXAsyncConnectionCall) result1 -> {
+                    TreeUtil.deleteByValue(categories,
+                            categoriesTreeView.getSelectionModel().getSelectedItem().getValue(), Comparator.comparingInt(Category::getId));
+                    localStorage.writeObject("categories", categories);
 
-                        Platform.runLater(() -> categoriesTreeView.getSelectionModel().getSelectedItem().getParent().getChildren().remove(categoriesTreeView.getSelectionModel().getSelectedItem()));
-                    }
-
-                    @Override
-                    public void onFailure(Exception exception) {
-                        JavaFXAsyncConnectionCall.super.onFailure(exception);
-                        logger.log(Level.SEVERE, exception.getMessage(), exception);
-                    }
+                    Platform.runLater(() -> categoriesTreeView.getSelectionModel().getSelectedItem().getParent().getChildren().remove(categoriesTreeView.getSelectionModel().getSelectedItem()));
                 }, true));
             });
         }

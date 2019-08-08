@@ -12,7 +12,7 @@ import de.raphaelmuesseler.financer.client.javafx.util.ApplicationHelper;
 import de.raphaelmuesseler.financer.client.local.Application;
 import de.raphaelmuesseler.financer.client.local.LocalSettings;
 import de.raphaelmuesseler.financer.client.local.LocalSettingsImpl;
-import de.raphaelmuesseler.financer.shared.connection.ConnectionResult;
+import de.raphaelmuesseler.financer.shared.exceptions.NotAuthorizedException;
 import de.raphaelmuesseler.financer.shared.model.user.User;
 import de.raphaelmuesseler.financer.util.concurrency.FinancerExecutor;
 import javafx.application.Platform;
@@ -112,21 +112,12 @@ public class LoginController implements Initializable, Application {
         parameters.put("email", this.loginEmailTextField.getText());
         parameters.put("password", this.loginPasswordField.getText());
         logger.log(Level.INFO, "User's credentials will be checked ...");
-        FinancerExecutor.getExecutor().execute(new ServerRequestHandler("checkCredentials", parameters, new JavaFXAsyncConnectionCall() {
-            @Override
-            public void onSuccess(ConnectionResult result) {
-                if (result.getResult() != null) {
-                    Platform.runLater(() -> loginUser((User) result.getResult()));
-                } else {
-                    logger.log(Level.INFO, "User's credentials are incorrect.");
-                    loginErrorLabel.setVisible(true);
-                }
-            }
-
-            @Override
-            public void onFailure(Exception exception) {
-                logger.log(Level.SEVERE, exception.getMessage(), exception);
-                Platform.runLater(() -> new FinancerExceptionDialog("Login", exception).showAndWait());
+        FinancerExecutor.getExecutor().execute(new ServerRequestHandler("checkCredentials", parameters, (JavaFXAsyncConnectionCall) result -> {
+            if (result.getResult() != null) {
+                Platform.runLater(() -> loginUser((User) result.getResult()));
+            } else {
+                logger.log(Level.INFO, "User's credentials are incorrect.");
+                loginErrorLabel.setVisible(true);
             }
         }));
     }
@@ -138,18 +129,8 @@ public class LoginController implements Initializable, Application {
             Map<String, Serializable> parameters = new HashMap<>();
             parameters.put("user", user);
 
-            FinancerExecutor.getExecutor().execute(new ServerRequestHandler("registerUser", parameters, new JavaFXAsyncConnectionCall() {
-                @Override
-                public void onSuccess(ConnectionResult result) {
-                    Platform.runLater(() -> loginUser((User) result.getResult()));
-                }
-
-                @Override
-                public void onFailure(Exception exception) {
-                    logger.log(Level.SEVERE, exception.getMessage(), exception);
-                    JavaFXAsyncConnectionCall.super.onFailure(exception, () -> handleOpenRegisterDialog());
-                }
-            }));
+            FinancerExecutor.getExecutor().execute(new ServerRequestHandler("registerUser", parameters,
+                    (JavaFXAsyncConnectionCall) result -> Platform.runLater(() -> loginUser((User) result.getResult()))));
         });
     }
 
@@ -186,6 +167,11 @@ public class LoginController implements Initializable, Application {
     @Override
     public void showToast(MessageType messageType, String message) {
         throw new UnsupportedOperationException("Showing a toast is not implemented yet!");
+    }
+
+    @Override
+    public void showErrorDialog(Exception exception) {
+        Platform.runLater(() -> new FinancerExceptionDialog(this.rootLayout, I18N.get("login"), exception));
     }
 
     public StackPane getRootLayout() {

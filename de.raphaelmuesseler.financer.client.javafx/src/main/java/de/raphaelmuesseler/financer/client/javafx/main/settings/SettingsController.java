@@ -127,11 +127,6 @@ public class SettingsController implements Initializable {
             }
 
             @Override
-            public void onFailure(Exception exception) {
-                JavaFXAsyncConnectionCall.super.onFailure(exception);
-            }
-
-            @Override
             public void onAfter() {
                 localStorage.writeObject("user", user);
             }
@@ -143,17 +138,7 @@ public class SettingsController implements Initializable {
         dialog.setOnConfirm(result -> {
             HashMap<String, Serializable> parameters = new HashMap<>();
             parameters.put("tokenId", this.devicesListView.getSelectionModel().getSelectedItem().getId());
-            FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "deleteToken", parameters, new JavaFXAsyncConnectionCall() {
-                @Override
-                public void onSuccess(ConnectionResult result) {
-                    Platform.runLater(() -> devicesListView.getItems().remove(devicesListView.getSelectionModel().getSelectedItem()));
-                }
-
-                @Override
-                public void onFailure(Exception exception) {
-                    JavaFXAsyncConnectionCall.super.onFailure(exception);
-                }
-            }));
+            FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "deleteToken", parameters, (JavaFXAsyncConnectionCall) result1 -> Platform.runLater(() -> devicesListView.getItems().remove(devicesListView.getSelectionModel().getSelectedItem()))));
         });
     }
 

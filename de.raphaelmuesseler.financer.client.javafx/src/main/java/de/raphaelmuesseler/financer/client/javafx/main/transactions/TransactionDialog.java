@@ -257,20 +257,12 @@ class TransactionDialog extends FinancerDialog<VariableTransaction> {
                     parameters.put("attachment", new ContentAttachment(0, this.getValue(),
                             attachmentFile.getName(), LocalDate.now(), attachmentContent));
                     Executors.newCachedThreadPool().execute(new ServerRequestHandler((User) LocalStorageImpl.getInstance().readObject("user"),
-                            "uploadTransactionAttachment", parameters, new JavaFXAsyncConnectionCall() {
-                        @Override
-                        public void onSuccess(ConnectionResult result) {
-                            attachmentListView.getItems().add((Attachment) result.getResult());
-                            if (getValue().getAttachments() == null) {
-                                getValue().setAttachments(new HashSet<>());
-                            }
-                            getValue().getAttachments().add((Attachment) result.getResult());
+                            "uploadTransactionAttachment", parameters, (JavaFXAsyncConnectionCall) result -> {
+                        attachmentListView.getItems().add((Attachment) result.getResult());
+                        if (getValue().getAttachments() == null) {
+                            getValue().setAttachments(new HashSet<>());
                         }
-
-                        @Override
-                        public void onFailure(Exception exception) {
-                            JavaFXAsyncConnectionCall.super.onFailure(exception);
-                        }
+                        getValue().getAttachments().add((Attachment) result.getResult());
                     }));
                 }
             } catch (IOException e) {
@@ -288,7 +280,7 @@ class TransactionDialog extends FinancerDialog<VariableTransaction> {
             try {
                 Desktop.getDesktop().open(file);
             } catch (IOException e) {
-                new FinancerExceptionDialog("Financer", e).showAndWait();
+                new FinancerExceptionDialog("Financer", e);
             }
         } else {
             if (!file.getParentFile().exists()) {
@@ -300,23 +292,15 @@ class TransactionDialog extends FinancerDialog<VariableTransaction> {
 
             FinancerExecutor.getExecutor().execute(new ServerRequestHandler(
                     (User) LocalStorageImpl.getInstance().readObject("user"),
-                    "getAttachment", parameters, new JavaFXAsyncConnectionCall() {
-                @Override
-                public void onSuccess(ConnectionResult result) {
-                    try (FileOutputStream fileOutputStream = new FileOutputStream(file)) {
-                        fileOutputStream.write(((ContentAttachment) result.getResult()).getContent());
-                        Desktop.getDesktop().open(file);
-                    } catch (IOException e) {
-                        new FinancerExceptionDialog("Financer", e).showAndWait();
-                        logger.log(Level.SEVERE, e.getMessage(), e);
-                    }
-                }
-
-                @Override
-                public void onFailure(Exception exception) {
-                    JavaFXAsyncConnectionCall.super.onFailure(exception);
-                }
-            }));
+                    "getAttachment", parameters,
+                    (JavaFXAsyncConnectionCall) result -> {
+                        try (FileOutputStream fileOutputStream = new FileOutputStream(file)) {
+                            fileOutputStream.write(((ContentAttachment) result.getResult()).getContent());
+                            Desktop.getDesktop().open(file);
+                        } catch (IOException e) {
+                            logger.log(Level.SEVERE, e.getMessage(), e);
+                        }
+                    }));
         }
     }
 
@@ -330,25 +314,17 @@ class TransactionDialog extends FinancerDialog<VariableTransaction> {
 
             FinancerExecutor.getExecutor().execute(new ServerRequestHandler(
                     (User) LocalStorageImpl.getInstance().readObject("user"), "deleteAttachment",
-                    parameters, new JavaFXAsyncConnectionCall() {
-                @Override
-                public void onSuccess(ConnectionResult result) {
-                    getValue().getAttachments().remove(attachment);
-                    File file = new File(LocalStorageImpl.LocalStorageFile.TRANSACTIONS.getFile().getParent() +
-                            "/transactions/" + attachmentListView.getSelectionModel().getSelectedItem().getTransaction().getId() +
-                            "/attachments/" + attachmentListView.getSelectionModel().getSelectedItem().getName());
-                    try {
-                        Files.delete(file.toPath());
-                        Platform.runLater(() -> attachmentListView.getItems().remove(attachmentListView.getSelectionModel().getSelectedItem()));
-                    } catch (IOException e) {
-                        logger.log(Level.SEVERE, e.getMessage(), e);
-                        Platform.runLater(() -> new FinancerExceptionDialog("Financer", new IOException("File could not be deleted")).showAndWait());
-                    }
-                }
-
-                @Override
-                public void onFailure(Exception exception) {
-                    JavaFXAsyncConnectionCall.super.onFailure(exception);
+                    parameters, (JavaFXAsyncConnectionCall) result1 -> {
+                getValue().getAttachments().remove(attachment);
+                File file = new File(LocalStorageImpl.LocalStorageFile.TRANSACTIONS.getFile().getParent() +
+                        "/transactions/" + attachmentListView.getSelectionModel().getSelectedItem().getTransaction().getId() +
+                        "/attachments/" + attachmentListView.getSelectionModel().getSelectedItem().getName());
+                try {
+                    Files.delete(file.toPath());
+                    Platform.runLater(() -> attachmentListView.getItems().remove(attachmentListView.getSelectionModel().getSelectedItem()));
+                } catch (IOException e) {
+                    logger.log(Level.SEVERE, e.getMessage(), e);
+                    Platform.runLater(() -> new FinancerExceptionDialog("Financer", new IOException("File could not be deleted")));
                 }
             }));
         });

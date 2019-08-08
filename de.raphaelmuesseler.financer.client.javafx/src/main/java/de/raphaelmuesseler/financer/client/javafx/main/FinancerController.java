@@ -6,11 +6,13 @@ import com.jfoenix.controls.JFXSnackbar;
 import com.jfoenix.transitions.hamburger.HamburgerSlideCloseTransition;
 import de.raphaelmuesseler.financer.client.connection.ServerRequestHandler;
 import de.raphaelmuesseler.financer.client.format.I18N;
+import de.raphaelmuesseler.financer.client.javafx.dialogs.FinancerExceptionDialog;
 import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
 import de.raphaelmuesseler.financer.client.local.Application;
 import de.raphaelmuesseler.financer.shared.model.user.User;
 import javafx.animation.ScaleTransition;
 import javafx.animation.TranslateTransition;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -170,6 +172,11 @@ public class FinancerController implements Initializable, Application {
         Label messageLabel = new Label(message);
         messageLabel.getStyleClass().add(messageType.getName() + "-toast-label");
         this.snackbar.enqueue(new JFXSnackbar.SnackbarEvent(messageLabel));
+    }
+
+    @Override
+    public void showErrorDialog(Exception exception) {
+        Platform.runLater(() -> new FinancerExceptionDialog("Financer", exception));
     }
 
     public BorderPane getRootLayout() {

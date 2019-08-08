@@ -14,15 +14,13 @@ public interface JavaFXAsyncConnectionCall extends AsyncConnectionCall {
     }
 
     default void onFailure(Exception exception, Runnable runnable) {
-        Platform.runLater(() -> {
-            FinancerExceptionDialog dialog = new FinancerExceptionDialog("Financer", exception);
-            dialog.showAndWait();
-            runnable.run();
-
-            if (exception instanceof NotAuthorizedException) {
-                FinancerController.handleLogout();
-            }
-        });
-
+//        Platform.runLater(() -> {
+//            new FinancerExceptionDialog("Financer", exception);
+//            runnable.run();
+//
+//            if (exception instanceof NotAuthorizedException) {
+//                FinancerController.handleLogout();
+//            }
+//        });
     }
 }

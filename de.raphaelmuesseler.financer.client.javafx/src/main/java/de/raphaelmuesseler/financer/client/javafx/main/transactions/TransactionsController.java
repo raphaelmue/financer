@@ -405,12 +405,6 @@ public class TransactionsController implements Initializable {
                 }
 
                 @Override
-                public void onFailure(Exception exception) {
-                    logger.log(Level.SEVERE, exception.getMessage(), exception);
-                    JavaFXAsyncConnectionCall.super.onFailure(exception);
-                }
-
-                @Override
                 public void onAfter() {
                     Platform.runLater(() -> {
                         loadTransactionTableData();
@@ -441,12 +435,6 @@ public class TransactionsController implements Initializable {
                 }
 
                 @Override
-                public void onFailure(Exception exception) {
-                    logger.log(Level.SEVERE, exception.getMessage(), exception);
-                    JavaFXAsyncConnectionCall.super.onFailure(exception);
-                }
-
-                @Override
                 public void onAfter() {
                     Platform.runLater(() -> loadTransactionOverviewTableData());
                 }
@@ -474,12 +462,6 @@ public class TransactionsController implements Initializable {
                     Platform.runLater(() -> transactionsTableView.refresh());
 
                     FinancerController.getInstance().showToast(Application.MessageType.SUCCESS, I18N.get("succUpdatedTransaction"));
-                }
-
-                @Override
-                public void onFailure(Exception exception) {
-                    logger.log(Level.SEVERE, exception.getMessage(), exception);
-                    JavaFXAsyncConnectionCall.super.onFailure(exception);
                 }
 
                 @Override
@@ -518,12 +500,6 @@ public class TransactionsController implements Initializable {
                 }
 
                 @Override
-                public void onFailure(Exception exception) {
-                    logger.log(Level.SEVERE, exception.getMessage(), exception);
-                    JavaFXAsyncConnectionCall.super.onFailure(exception);
-                }
-
-                @Override
                 public void onAfter() {
                     Platform.runLater(() -> loadTransactionOverviewTableData());
                 }
@@ -549,12 +525,6 @@ public class TransactionsController implements Initializable {
                         });
 
                         FinancerController.getInstance().showToast(Application.MessageType.SUCCESS, I18N.get("succDeletedTransaction"));
-                    }
-
-                    @Override
-                    public void onFailure(Exception exception) {
-                        logger.log(Level.SEVERE, exception.getMessage(), exception);
-                        JavaFXAsyncConnectionCall.super.onFailure(exception);
                     }
 
                     @Override
@@ -587,12 +557,6 @@ public class TransactionsController implements Initializable {
                     categoriesListView.refresh();
 
                     FinancerController.getInstance().showToast(Application.MessageType.SUCCESS, I18N.get("succDeletedFixedTransaction"));
-                }
-
-                @Override
-                public void onFailure(Exception exception) {
-                    logger.log(Level.SEVERE, exception.getMessage(), exception);
-                    JavaFXAsyncConnectionCall.super.onFailure(exception);
                 }
 
                 @Override

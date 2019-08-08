@@ -7,8 +7,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <StackPane alignment="center" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1"
-           fx:controller="de.raphaelmuesseler.financer.client.javafx.login.LoginController"
-           fx:id="rootLayout">
+           fx:controller="de.raphaelmuesseler.financer.client.javafx.login.LoginController" fx:id="rootLayout">
     <HBox prefWidth="800">
         <VBox style="-fx-background-color: -fx-color-primary; -fx-background-radius: 20px 0 0 20px; -fx-padding: 50px"
               prefWidth="400" alignment="CENTER">

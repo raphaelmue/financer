@@ -13,17 +13,14 @@ import de.raphaelmuesseler.financer.util.collections.TreeUtil;
 import de.raphaelmuesseler.financer.util.concurrency.FinancerExecutor;
 
 import java.io.Serializable;
-import java.net.ConnectException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class RetrievalServiceImpl implements RetrievalService {
 
     private static RetrievalService instance = null;
     private final LocalStorage localStorage = LocalStorageImpl.getInstance();
-    private final Logger logger = Logger.getLogger("FinancerApplication");
 
 
     public static RetrievalService getInstance() {
@@ -82,10 +79,6 @@ public class RetrievalServiceImpl implements RetrievalService {
             @Override
             public void onFailure(Exception exception) {
                 asyncCall.onFailure(exception);
-                if (!(exception instanceof ConnectException)) {
-                    JavaFXAsyncConnectionCall.super.onFailure(exception);
-                    logger.log(Level.SEVERE, exception.getMessage(), exception);
-                }
             }
 
             @Override

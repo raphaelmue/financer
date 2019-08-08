@@ -14,9 +14,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ServerRequestHandler implements Runnable {
 
+    private final Logger logger = Logger.getLogger("FinancerApplication");
     private ServerRequest serverRequest;
     private AsyncConnectionCall asyncCall;
     private boolean runLater;
@@ -65,16 +68,20 @@ public class ServerRequestHandler implements Runnable {
                 makeRequests(Executors.newCachedThreadPool());
             } else {
                 this.asyncCall.onFailure(result.getException());
+                logger.log(Level.SEVERE, result.getException().getMessage(), result.getException());
+                if (application != null) {
+                    application.showErrorDialog(result.getException());
+                }
             }
         } catch (Exception e) {
             this.asyncCall.onFailure(e);
             if (application != null) {
                 application.setOffline();
+                application.showErrorDialog(e);
             }
             if (e instanceof ConnectException && runLater) {
                 List<Object> calls;
                 if (localStorage.readObject("requests") != null) {
-
                     calls = localStorage.readList("requests");
                 } else {
                     calls = new ArrayList<>();
