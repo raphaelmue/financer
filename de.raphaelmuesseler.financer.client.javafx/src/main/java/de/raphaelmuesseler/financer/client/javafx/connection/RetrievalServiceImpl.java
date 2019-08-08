@@ -1,5 +1,6 @@
 package de.raphaelmuesseler.financer.client.javafx.connection;
 
+import de.raphaelmuesseler.financer.client.connection.AsyncConnectionCall;
 import de.raphaelmuesseler.financer.client.connection.RetrievalService;
 import de.raphaelmuesseler.financer.client.connection.ServerRequestHandler;
 import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
@@ -68,8 +69,8 @@ public class RetrievalServiceImpl implements RetrievalService {
                 this.getAsyncCall(asyncConnectionCall)));
     }
 
-    private JavaFXAsyncConnectionCall getAsyncCall(final AsyncCall<BaseCategory> asyncCall) {
-        return new JavaFXAsyncConnectionCall() {
+    private AsyncConnectionCall getAsyncCall(final AsyncCall<BaseCategory> asyncCall) {
+        return new AsyncConnectionCall() {
             @Override
             public void onSuccess(ConnectionResult result) {
                 saveBaseCategory((BaseCategory) result.getResult());

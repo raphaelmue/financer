@@ -5,14 +5,12 @@ import com.jfoenix.controls.JFXPasswordField;
 import com.jfoenix.controls.JFXTextField;
 import de.raphaelmuesseler.financer.client.connection.ServerRequestHandler;
 import de.raphaelmuesseler.financer.client.format.I18N;
-import de.raphaelmuesseler.financer.client.javafx.connection.JavaFXAsyncConnectionCall;
 import de.raphaelmuesseler.financer.client.javafx.dialogs.FinancerExceptionDialog;
 import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
 import de.raphaelmuesseler.financer.client.javafx.util.ApplicationHelper;
 import de.raphaelmuesseler.financer.client.local.Application;
 import de.raphaelmuesseler.financer.client.local.LocalSettings;
 import de.raphaelmuesseler.financer.client.local.LocalSettingsImpl;
-import de.raphaelmuesseler.financer.shared.exceptions.NotAuthorizedException;
 import de.raphaelmuesseler.financer.shared.model.user.User;
 import de.raphaelmuesseler.financer.util.concurrency.FinancerExecutor;
 import javafx.application.Platform;
@@ -112,7 +110,7 @@ public class LoginController implements Initializable, Application {
         parameters.put("email", this.loginEmailTextField.getText());
         parameters.put("password", this.loginPasswordField.getText());
         logger.log(Level.INFO, "User's credentials will be checked ...");
-        FinancerExecutor.getExecutor().execute(new ServerRequestHandler("checkCredentials", parameters, (JavaFXAsyncConnectionCall) result -> {
+        FinancerExecutor.getExecutor().execute(new ServerRequestHandler("checkCredentials", parameters, result -> {
             if (result.getResult() != null) {
                 Platform.runLater(() -> loginUser((User) result.getResult()));
             } else {
@@ -130,7 +128,7 @@ public class LoginController implements Initializable, Application {
             parameters.put("user", user);
 
             FinancerExecutor.getExecutor().execute(new ServerRequestHandler("registerUser", parameters,
-                    (JavaFXAsyncConnectionCall) result -> Platform.runLater(() -> loginUser((User) result.getResult()))));
+                    result -> Platform.runLater(() -> loginUser((User) result.getResult()))));
         });
     }
 

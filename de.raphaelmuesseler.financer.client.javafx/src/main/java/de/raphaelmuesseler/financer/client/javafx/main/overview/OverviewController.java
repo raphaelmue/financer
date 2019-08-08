@@ -2,7 +2,6 @@ package de.raphaelmuesseler.financer.client.javafx.main.overview;
 
 import de.raphaelmuesseler.financer.client.connection.ServerRequestHandler;
 import de.raphaelmuesseler.financer.client.format.I18N;
-import de.raphaelmuesseler.financer.client.javafx.connection.JavaFXAsyncConnectionCall;
 import de.raphaelmuesseler.financer.client.javafx.format.JavaFXFormatter;
 import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
 import de.raphaelmuesseler.financer.client.javafx.main.FinancerController;
@@ -166,7 +165,7 @@ public class OverviewController implements Initializable {
         dialog.setOnConfirm(result -> {
             Map<String, Serializable> parameters = new HashMap<>();
             parameters.put("transactionAmount", result);
-            FinancerExecutor.getExecutor().execute(new ServerRequestHandler(user, "addTransactionAmount", parameters, (JavaFXAsyncConnectionCall) result1 -> {
+            FinancerExecutor.getExecutor().execute(new ServerRequestHandler(user, "addTransactionAmount", parameters, result1 -> {
                 transaction.getTransactionAmounts().add((TransactionAmount) result1.getResult());
                 localStorage.writeObject("categories", categories);
                 Platform.runLater(() -> upcomingFixedTransactionGridPane.getChildren().clear());

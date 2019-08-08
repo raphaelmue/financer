@@ -4,9 +4,9 @@ import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXListView;
 import com.jfoenix.controls.JFXToggleButton;
+import de.raphaelmuesseler.financer.client.connection.AsyncConnectionCall;
 import de.raphaelmuesseler.financer.client.connection.ServerRequestHandler;
 import de.raphaelmuesseler.financer.client.format.I18N;
-import de.raphaelmuesseler.financer.client.javafx.connection.JavaFXAsyncConnectionCall;
 import de.raphaelmuesseler.financer.client.javafx.dialogs.FinancerConfirmDialog;
 import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
 import de.raphaelmuesseler.financer.client.javafx.util.ApplicationHelper;
@@ -119,7 +119,7 @@ public class SettingsController implements Initializable {
     private void updateSettings() {
         Map<String, Serializable> parameters = new HashMap<>();
         parameters.put("user", user);
-        FinancerExecutor.getExecutor().execute(new ServerRequestHandler(user, "updateUsersSettings", parameters, new JavaFXAsyncConnectionCall() {
+        FinancerExecutor.getExecutor().execute(new ServerRequestHandler(user, "updateUsersSettings", parameters, new AsyncConnectionCall() {
             @Override
             public void onSuccess(ConnectionResult result) {
                 localStorage.writeObject("user", (Serializable) result.getResult());
@@ -138,7 +138,7 @@ public class SettingsController implements Initializable {
         dialog.setOnConfirm(result -> {
             HashMap<String, Serializable> parameters = new HashMap<>();
             parameters.put("tokenId", this.devicesListView.getSelectionModel().getSelectedItem().getId());
-            FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "deleteToken", parameters, (JavaFXAsyncConnectionCall) result1 -> Platform.runLater(() -> devicesListView.getItems().remove(devicesListView.getSelectionModel().getSelectedItem()))));
+            FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "deleteToken", parameters, result1 -> Platform.runLater(() -> devicesListView.getItems().remove(devicesListView.getSelectionModel().getSelectedItem()))));
         });
     }
 

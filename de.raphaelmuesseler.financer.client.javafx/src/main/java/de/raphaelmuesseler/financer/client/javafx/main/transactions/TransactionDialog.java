@@ -8,13 +8,11 @@ import de.raphaelmuesseler.financer.client.connection.ServerRequestHandler;
 import de.raphaelmuesseler.financer.client.format.I18N;
 import de.raphaelmuesseler.financer.client.javafx.components.DatePicker;
 import de.raphaelmuesseler.financer.client.javafx.components.DoubleField;
-import de.raphaelmuesseler.financer.client.javafx.connection.JavaFXAsyncConnectionCall;
 import de.raphaelmuesseler.financer.client.javafx.dialogs.FinancerConfirmDialog;
 import de.raphaelmuesseler.financer.client.javafx.dialogs.FinancerDialog;
 import de.raphaelmuesseler.financer.client.javafx.dialogs.FinancerExceptionDialog;
 import de.raphaelmuesseler.financer.client.javafx.format.JavaFXFormatter;
 import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
-import de.raphaelmuesseler.financer.shared.connection.ConnectionResult;
 import de.raphaelmuesseler.financer.shared.model.categories.BaseCategory;
 import de.raphaelmuesseler.financer.shared.model.categories.Category;
 import de.raphaelmuesseler.financer.shared.model.categories.CategoryTree;
@@ -257,7 +255,7 @@ class TransactionDialog extends FinancerDialog<VariableTransaction> {
                     parameters.put("attachment", new ContentAttachment(0, this.getValue(),
                             attachmentFile.getName(), LocalDate.now(), attachmentContent));
                     Executors.newCachedThreadPool().execute(new ServerRequestHandler((User) LocalStorageImpl.getInstance().readObject("user"),
-                            "uploadTransactionAttachment", parameters, (JavaFXAsyncConnectionCall) result -> {
+                            "uploadTransactionAttachment", parameters, result -> {
                         attachmentListView.getItems().add((Attachment) result.getResult());
                         if (getValue().getAttachments() == null) {
                             getValue().setAttachments(new HashSet<>());
@@ -293,7 +291,7 @@ class TransactionDialog extends FinancerDialog<VariableTransaction> {
             FinancerExecutor.getExecutor().execute(new ServerRequestHandler(
                     (User) LocalStorageImpl.getInstance().readObject("user"),
                     "getAttachment", parameters,
-                    (JavaFXAsyncConnectionCall) result -> {
+                    result -> {
                         try (FileOutputStream fileOutputStream = new FileOutputStream(file)) {
                             fileOutputStream.write(((ContentAttachment) result.getResult()).getContent());
                             Desktop.getDesktop().open(file);
@@ -314,7 +312,7 @@ class TransactionDialog extends FinancerDialog<VariableTransaction> {
 
             FinancerExecutor.getExecutor().execute(new ServerRequestHandler(
                     (User) LocalStorageImpl.getInstance().readObject("user"), "deleteAttachment",
-                    parameters, (JavaFXAsyncConnectionCall) result1 -> {
+                    parameters, result1 -> {
                 getValue().getAttachments().remove(attachment);
                 File file = new File(LocalStorageImpl.LocalStorageFile.TRANSACTIONS.getFile().getParent() +
                         "/transactions/" + attachmentListView.getSelectionModel().getSelectedItem().getTransaction().getId() +

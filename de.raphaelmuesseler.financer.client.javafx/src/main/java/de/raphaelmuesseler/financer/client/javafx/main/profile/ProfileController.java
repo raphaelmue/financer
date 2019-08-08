@@ -1,9 +1,9 @@
 package de.raphaelmuesseler.financer.client.javafx.main.profile;
 
 import com.jfoenix.controls.JFXButton;
+import de.raphaelmuesseler.financer.client.connection.AsyncConnectionCall;
 import de.raphaelmuesseler.financer.client.connection.ServerRequestHandler;
 import de.raphaelmuesseler.financer.client.format.I18N;
-import de.raphaelmuesseler.financer.client.javafx.connection.JavaFXAsyncConnectionCall;
 import de.raphaelmuesseler.financer.client.javafx.connection.RetrievalServiceImpl;
 import de.raphaelmuesseler.financer.client.javafx.dialogs.FinancerConfirmDialog;
 import de.raphaelmuesseler.financer.client.javafx.dialogs.FinancerTextInputDialog;
@@ -37,7 +37,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class ProfileController implements Initializable {
@@ -89,7 +88,7 @@ public class ProfileController implements Initializable {
                 parameters.put("user", user);
 
                 FinancerExecutor.getExecutor().execute(new ServerRequestHandler(user, "changePassword", parameters,
-                        new JavaFXAsyncConnectionCall() {
+                        new AsyncConnectionCall() {
                             @Override
                             public void onSuccess(ConnectionResult result) {
                                 FinancerController.getInstance().showToast(Application.MessageType.SUCCESS, I18N.get("succChangedPassword"));
@@ -175,7 +174,7 @@ public class ProfileController implements Initializable {
                 categoryTree.getValue().setUser(user.toEntity());
                 parameters.put("category", categoryTree.getValue());
 
-                FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "addCategory", parameters, (JavaFXAsyncConnectionCall) result -> {
+                        FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "addCategory", parameters, result -> {
                     categoryTree.getValue().setId(((Category) result.getResult()).getId());
                     categoryTree.getValue().setPrefix(categoryTree.getParent().getValue().getPrefix() + (categoryTree.getParent().getChildren().size() + 1) + ".");
                     if (categoriesTreeView.getSelectionModel().getSelectedItem().getValue().isRoot()) {
@@ -211,7 +210,7 @@ public class ProfileController implements Initializable {
         Map<String, Serializable> parameters = new HashMap<>();
         parameters.put("category", category.getValue());
 
-        FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "updateCategory", parameters, (JavaFXAsyncConnectionCall) result -> {
+        FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "updateCategory", parameters, result -> {
             categoriesTreeView.getSelectionModel().getSelectedItem().getValue().getValue().setName(category.getValue().getName());
             localStorage.writeObject("categories", categories);
         }, true));
@@ -229,7 +228,7 @@ public class ProfileController implements Initializable {
                 parameters.put("categoryId", this.categoriesTreeView.getSelectionModel()
                         .getSelectedItem().getValue().getValue().getId());
 
-                FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "deleteCategory", parameters, (JavaFXAsyncConnectionCall) result1 -> {
+                FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "deleteCategory", parameters, result1 -> {
                     TreeUtil.deleteByValue(categories,
                             categoriesTreeView.getSelectionModel().getSelectedItem().getValue(), Comparator.comparingInt(Category::getId));
                     localStorage.writeObject("categories", categories);

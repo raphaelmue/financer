@@ -3,9 +3,9 @@ package de.raphaelmuesseler.financer.client.javafx.main.transactions;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXListView;
 import com.jfoenix.controls.JFXTextField;
+import de.raphaelmuesseler.financer.client.connection.AsyncConnectionCall;
 import de.raphaelmuesseler.financer.client.connection.ServerRequestHandler;
 import de.raphaelmuesseler.financer.client.format.I18N;
-import de.raphaelmuesseler.financer.client.javafx.connection.JavaFXAsyncConnectionCall;
 import de.raphaelmuesseler.financer.client.javafx.connection.RetrievalServiceImpl;
 import de.raphaelmuesseler.financer.client.javafx.dialogs.FinancerConfirmDialog;
 import de.raphaelmuesseler.financer.client.javafx.format.JavaFXFormatter;
@@ -395,7 +395,7 @@ public class TransactionsController implements Initializable {
             Map<String, Serializable> parameters = new HashMap<>();
             parameters.put("variableTransaction", transaction);
 
-            FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "addTransaction", parameters, new JavaFXAsyncConnectionCall() {
+            FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "addTransaction", parameters, new AsyncConnectionCall() {
                 @Override
                 public void onSuccess(ConnectionResult result) {
                     transaction.setId(((VariableTransaction) result.getResult()).getId());
@@ -427,7 +427,7 @@ public class TransactionsController implements Initializable {
             Map<String, Serializable> parameters = new HashMap<>();
             parameters.put("fixedTransaction", fixedTransaction);
 
-            FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "addFixedTransactions", parameters, new JavaFXAsyncConnectionCall() {
+            FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "addFixedTransactions", parameters, new AsyncConnectionCall() {
                 @Override
                 public void onSuccess(ConnectionResult result) {
                     handleRefreshFixedTransactions();
@@ -455,7 +455,7 @@ public class TransactionsController implements Initializable {
             parameters.put("variableTransaction", transaction);
 
             FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "updateTransaction",
-                    parameters, new JavaFXAsyncConnectionCall() {
+                    parameters, new AsyncConnectionCall() {
                 @Override
                 public void onSuccess(ConnectionResult result) {
                     localStorage.writeObject("categories", categories);
@@ -486,7 +486,7 @@ public class TransactionsController implements Initializable {
             parameters.put("user", this.user);
             parameters.put("fixedTransaction", fixedTransaction);
 
-            FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "updateFixedTransaction", parameters, new JavaFXAsyncConnectionCall() {
+            FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "updateFixedTransaction", parameters, new AsyncConnectionCall() {
                 @Override
                 public void onSuccess(ConnectionResult result) {
                     localStorage.writeObject("categories", categories);
@@ -515,7 +515,7 @@ public class TransactionsController implements Initializable {
                 Map<String, Serializable> parameters = new HashMap<>();
                 parameters.put("variableTransactionId", transaction.getId());
 
-                FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "deleteTransaction", parameters, new JavaFXAsyncConnectionCall() {
+                FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "deleteTransaction", parameters, new AsyncConnectionCall() {
                     @Override
                     public void onSuccess(ConnectionResult result) {
                         Platform.runLater(() -> {
@@ -543,7 +543,7 @@ public class TransactionsController implements Initializable {
             parameters.put("fixedTransactionId", this.fixedTransactionsListView.getSelectionModel().getSelectedItem().getId());
 
             FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "deleteFixedTransaction",
-                    parameters, new JavaFXAsyncConnectionCall() {
+                    parameters, new AsyncConnectionCall() {
                 @Override
                 public void onSuccess(ConnectionResult result) {
                     Platform.runLater(() -> {
