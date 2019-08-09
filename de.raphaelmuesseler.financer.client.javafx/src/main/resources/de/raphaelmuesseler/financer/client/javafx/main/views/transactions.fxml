@@ -6,19 +6,20 @@
 <VBox fx:controller="de.raphaelmuesseler.financer.client.javafx.main.transactions.TransactionsController"
       xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" styleClass="content">
 
-    <GridPane hgap="20" vgap="20" maxHeight="Infinity" maxWidth="Infinity">
-        <VBox styleClass="tab-box" GridPane.columnIndex="0" GridPane.rowIndex="0"
-              GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS">
-            <JFXTabPane styleClass="tab-container">
-                <Tab fx:id="transactionOverviewTab" text="%overview" closable="false" styleClass="tab">
-                    <VBox styleClass="tab-content">
-                        <Label text="%overview" styleClass="content-heading"/>
-                            <TableView fx:id="transactionsOverviewTableView"/>
+    <VBox styleClass="tab-box">
+        <JFXTabPane styleClass="tab-container">
+            <Tab fx:id="transactionOverviewTab" text="%overview" closable="false" styleClass="tab">
+                <VBox styleClass="tab-content">
+                    <Label text="%overview" styleClass="content-heading"/>
+                    <VBox styleClass="box-content">
+                        <TableView fx:id="transactionsOverviewTableView"/>
                     </VBox>
-                </Tab>
-                <Tab text="%transactions" closable="false" styleClass="tab">
-                    <VBox styleClass="tab-content">
-                        <Label text="%transactions" styleClass="content-heading"/>
+                </VBox>
+            </Tab>
+            <Tab text="%transactions" closable="false" styleClass="tab">
+                <VBox styleClass="tab-content">
+                    <Label text="%transactions" styleClass="content-heading"/>
+                    <VBox styleClass="box-content">
                         <HBox styleClass="tool-btn-bar">
                             <JFXTextField fx:id="filterTransactionsTextField" promptText="%search"/>
                             <JFXButton fx:id="refreshTransactionsBtn" text="%refresh"
@@ -29,10 +30,13 @@
                         </HBox>
                         <TableView fx:id="transactionsTableView"/>
                     </VBox>
-                </Tab>
-                <Tab text="%fixedTransactions" closable="false">
-                    <VBox styleClass="tab-content">
-                        <Label text="%fixedTransactions" styleClass="content-heading"/>
+                </VBox>
+            </Tab>
+            <Tab text="%fixedTransactions" closable="false">
+                <VBox styleClass="tab-content">
+                    <Label text="%fixedTransactions" styleClass="content-heading"/>
+                    <VBox styleClass="box-content">
+
                         <HBox styleClass="tool-btn-bar">
                             <JFXButton fx:id="refreshFixedTransactionsBtn" text="%refresh"
                                        onAction="#handleRefreshFixedTransactions"/>
@@ -52,10 +56,10 @@
                             </VBox>
                         </SplitPane>
                     </VBox>
+                </VBox>
 
-                </Tab>
-            </JFXTabPane>
-        </VBox>
-    </GridPane>
+            </Tab>
+        </JFXTabPane>
+    </VBox>
 
 </VBox>

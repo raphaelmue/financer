@@ -1,17 +1,17 @@
 package de.raphaelmuesseler.financer.shared.exceptions;
 
 public abstract class FinancerException extends Exception {
-    private String displayMessage;
+    private String key;
 
     FinancerException(String message) {
         super(message);
     }
 
-    public final String getDisplayMessage() {
-        return displayMessage;
+    public final String getKey() {
+        return key;
     }
 
-    public final void setDisplayMessage(String displayMessage) {
-        this.displayMessage = displayMessage;
+    public final void setKey(String key) {
+        this.key = key;
     }
 }

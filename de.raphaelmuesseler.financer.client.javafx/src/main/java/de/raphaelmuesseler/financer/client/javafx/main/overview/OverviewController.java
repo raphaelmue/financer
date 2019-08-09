@@ -2,12 +2,10 @@ package de.raphaelmuesseler.financer.client.javafx.main.overview;
 
 import de.raphaelmuesseler.financer.client.connection.ServerRequestHandler;
 import de.raphaelmuesseler.financer.client.format.I18N;
-import de.raphaelmuesseler.financer.client.javafx.connection.JavaFXAsyncConnectionCall;
 import de.raphaelmuesseler.financer.client.javafx.format.JavaFXFormatter;
 import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
 import de.raphaelmuesseler.financer.client.javafx.main.FinancerController;
 import de.raphaelmuesseler.financer.client.javafx.main.transactions.TransactionAmountDialog;
-import de.raphaelmuesseler.financer.shared.connection.ConnectionResult;
 import de.raphaelmuesseler.financer.shared.model.categories.BaseCategory;
 import de.raphaelmuesseler.financer.shared.model.categories.CategoryTree;
 import de.raphaelmuesseler.financer.shared.model.transactions.FixedTransaction;
@@ -161,26 +159,18 @@ public class OverviewController implements Initializable {
     private void addTransactionAmount(FixedTransaction transaction) {
         TransactionAmount transactionAmount = new TransactionAmount(0, 0.0, LocalDate.now());
         transactionAmount.setFixedTransaction(transaction);
-        transactionAmount = new TransactionAmountDialog(transactionAmount, new ArrayList<>(transaction.getTransactionAmounts()))
-                .showAndGetResult();
+        TransactionAmountDialog dialog = new TransactionAmountDialog(transactionAmount, new ArrayList<>(transaction.getTransactionAmounts()));
 
-        if (transactionAmount != null) {
+
+        dialog.setOnConfirm(result -> {
             Map<String, Serializable> parameters = new HashMap<>();
-            parameters.put("transactionAmount", transactionAmount);
-            FinancerExecutor.getExecutor().execute(new ServerRequestHandler(user, "addTransactionAmount", parameters, new JavaFXAsyncConnectionCall() {
-                @Override
-                public void onSuccess(ConnectionResult result) {
-                    transaction.getTransactionAmounts().add((TransactionAmount) result.getResult());
-                    localStorage.writeObject("categories", categories);
-                    Platform.runLater(() -> upcomingFixedTransactionGridPane.getChildren().clear());
-                    loadUpcomingFixedTransactions();
-                }
-
-                @Override
-                public void onFailure(Exception exception) {
-                    JavaFXAsyncConnectionCall.super.onFailure(exception);
-                }
+            parameters.put("transactionAmount", result);
+            FinancerExecutor.getExecutor().execute(new ServerRequestHandler(user, "addTransactionAmount", parameters, result1 -> {
+                transaction.getTransactionAmounts().add((TransactionAmount) result1.getResult());
+                localStorage.writeObject("categories", categories);
+                Platform.runLater(() -> upcomingFixedTransactionGridPane.getChildren().clear());
+                loadUpcomingFixedTransactions();
             }));
-        }
+        });
     }
 }

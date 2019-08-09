@@ -17,7 +17,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.testfx.framework.junit5.ApplicationTest;
 
 import java.time.LocalDate;
 
@@ -28,7 +27,6 @@ public class StatisticsTest extends AbstractFinancerApplicationTest {
     @BeforeEach
     public void setUpEach() throws Exception {
         super.setUpEach();
-        ApplicationTest.launch(FinancerApplication.class);
     }
 
     @Test
@@ -84,7 +82,7 @@ public class StatisticsTest extends AbstractFinancerApplicationTest {
         toDatePicker.setValue(fixedTransaction.getStartDate().minusMonths(4));
 
         sleep(MEDIUM_SLEEP);
-        Assertions.assertTrue(find("#fixedExpensesNoDataLabel").isVisible());
+        Assertions.assertFalse(find("#fixedExpensesNoDataLabel").isVisible());
     }
 
     @Test
@@ -110,7 +108,7 @@ public class StatisticsTest extends AbstractFinancerApplicationTest {
         toDatePicker.setValue(transaction.getValueDate().minusMonths(4));
 
         sleep(MEDIUM_SLEEP);
-        Assertions.assertTrue(find("#variableExpensesNoDataLabel").isVisible());
+        Assertions.assertFalse(find("#variableExpensesNoDataLabel").isVisible());
 
     }
 

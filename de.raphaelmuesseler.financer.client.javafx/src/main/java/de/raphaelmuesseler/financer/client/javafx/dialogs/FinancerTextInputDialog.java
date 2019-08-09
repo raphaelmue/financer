@@ -1,8 +1,7 @@
 package de.raphaelmuesseler.financer.client.javafx.dialogs;
 
 import com.jfoenix.controls.JFXTextField;
-import javafx.scene.Node;
-import javafx.scene.control.ButtonType;
+import javafx.scene.layout.Region;
 
 public final class FinancerTextInputDialog extends FinancerDialog<String> {
 
@@ -20,14 +19,12 @@ public final class FinancerTextInputDialog extends FinancerDialog<String> {
     public FinancerTextInputDialog(String headerText, String placeholder) {
         super(null);
         this.placeholder = placeholder;
-        this.setHeaderText(headerText);
-        this.getDialogPane().getButtonTypes().add(ButtonType.OK);
-
+        this.setDialogTitle(headerText);
         this.prepareDialogContent();
     }
 
     @Override
-    protected Node setDialogContent() {
+    protected Region getDialogContent() {
         this.textField = new JFXTextField();
         this.textField.setId("inputDialogTextField");
         return this.textField;
@@ -44,8 +41,8 @@ public final class FinancerTextInputDialog extends FinancerDialog<String> {
     }
 
     @Override
-    protected String onConfirm() {
+    protected void onConfirm() {
         this.setValue(this.textField.getText());
-        return super.onConfirm();
+        super.onConfirm();
     }
 }

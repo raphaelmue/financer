@@ -14,8 +14,10 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 import java.io.IOException;
 import java.util.Locale;
@@ -57,7 +59,7 @@ public class FinancerApplication extends Application {
     public void start(Stage primaryStage) throws IOException {
         User user = (User) LocalStorageImpl.getInstance().readObject("user");
         if (user == null) {
-            initLoginStage(primaryStage);
+            initLoginStage();
         } else {
             I18N.setLocalStorage(LocalStorageImpl.getInstance());
 
@@ -65,7 +67,7 @@ public class FinancerApplication extends Application {
                 if (Boolean.TRUE.equals(newValue)) {
                     Platform.runLater(() -> {
                         try {
-                            initMainStage(primaryStage);
+                            initMainStage();
                         } catch (IOException e) {
                             logger.log(Level.SEVERE, e.getMessage(), e);
                         }
@@ -77,33 +79,44 @@ public class FinancerApplication extends Application {
         }
     }
 
-    private void initLoginStage(Stage primaryStage) throws IOException {
+    private void initLoginStage() throws IOException {
         // setting up language
         ResourceBundle resourceBundle = ResourceBundle.getBundle("Financer", Locale.ENGLISH);
 
         // loading FXML file
         Parent root = FXMLLoader.load(getClass().getResource("/de/raphaelmuesseler/financer/client/javafx/main/views/login.fxml"), resourceBundle);
-        Scene scene = new Scene(root, 500, 575);
+        Stage primaryStage = new Stage();
+        Scene scene = new Scene(root, 800, 500);
+
+        scene.getStylesheets().add(getClass().getResource("../main/style/colors.style.css").toExternalForm());
+        scene.getStylesheets().add(getClass().getResource("../main/style/form.style.css").toExternalForm());
+        scene.getStylesheets().add(getClass().getResource("../main/style/login.style.css").toExternalForm());
+        scene.setFill(Color.TRANSPARENT);
 
         primaryStage.getIcons().add(new Image(FinancerApplication.class.getResourceAsStream("/images/icons/financer-icon.png")));
+        Font.loadFont(getClass().getResource("/fonts/Roboto-Regular.ttf").toExternalForm(), 12);
+        Font.loadFont(getClass().getResource("/fonts/Roboto-Medium.ttf").toExternalForm(), 12);
+
+        primaryStage.initStyle(StageStyle.TRANSPARENT);
 
         primaryStage.setTitle("Financer - Login");
         primaryStage.setScene(scene);
         primaryStage.show();
     }
 
-    private void initMainStage(Stage primaryStage) throws IOException {
+    private void initMainStage() throws IOException {
         ResourceBundle resourceBundle = ResourceBundle.getBundle("Financer",
                 ((User) LocalStorageImpl.getInstance().readObject("user")).getSettings().getLanguage());
 
         Parent root = FXMLLoader.load(getClass().getResource("views/financer.fxml"), resourceBundle);
 
+        Stage primaryStage = new Stage();
         Scene scene = new Scene(root, 1350, 700);
 
+        scene.getStylesheets().add(getClass().getResource("style/colors.style.css").toExternalForm());
         scene.getStylesheets().add(getClass().getResource("style/navbar.style.css").toExternalForm());
         scene.getStylesheets().add(getClass().getResource("style/footer.style.css").toExternalForm());
         scene.getStylesheets().add(getClass().getResource("style/header.style.css").toExternalForm());
-        scene.getStylesheets().add(getClass().getResource("style/colors.style.css").toExternalForm());
         scene.getStylesheets().add(getClass().getResource("style/main.style.css").toExternalForm());
         scene.getStylesheets().add(getClass().getResource("style/transactions.style.css").toExternalForm());
         scene.getStylesheets().add(getClass().getResource("style/statistics.style.css").toExternalForm());

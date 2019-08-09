@@ -14,6 +14,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -22,25 +23,25 @@ public class SplashScreenLoader extends Preloader {
     private JFXProgressBar progressBar;
     private Label infoMessage;
     private boolean noLoadingProgress = true;
-    private Stage primaryStage;
+    private Stage primaryStage = null;
 
     private Parent getContent() {
         BorderPane borderPane = new BorderPane();
-        borderPane.setStyle("-fx-background-color: #575757");
+        borderPane.setStyle("-fx-background-color: -fx-color-white; -fx-padding: 30px; -fx-background-radius: 20px");
 
         Label heading = new Label("F I N A N C E R");
         heading.setAlignment(Pos.CENTER);
         heading.setTextAlignment(TextAlignment.CENTER);
-        heading.setStyle("-fx-text-fill: #fafafa; -fx-font-size: 18px; -fx-padding: 15px 50px");
+        heading.setStyle("-fx-text-fill: -fx-color-primary; -fx-font-size: 22px; -fx-padding: 15px 50px; -fx-font-weight: 700; -fx-font-family: 'Roboto Medium'");
 
-        Image image = new Image(getClass().getResourceAsStream("/images/icons/financer-icon-square-inverse.png"));
+        Image image = new Image(getClass().getResourceAsStream("/images/icons/financer-icon-clipart.png"));
         ImageView imageView = new ImageView(image);
         imageView.setFitHeight(120);
         imageView.setPickOnBounds(true);
         imageView.setPreserveRatio(true);
 
         infoMessage = new Label();
-        infoMessage.setStyle("-fx-text-fill: #fafafa; -fx-font-size: 14px; -fx-padding: 15px 20px");
+        infoMessage.setStyle("-fx-text-fill: -fx-color-dark-gray; -fx-font-size: 14px; -fx-padding: 15px 20px");
 
         progressBar = new JFXProgressBar();
         progressBar.setProgress(-1.0);
@@ -59,15 +60,22 @@ public class SplashScreenLoader extends Preloader {
         I18N.setLocalStorage(LocalStorageImpl.getInstance());
         ServerRequestHandler.setLocalStorage(LocalStorageImpl.getInstance());
 
-        primaryStage.initStyle(StageStyle.UNDECORATED);
         Scene scene = new Scene(getContent(), 500, 300);
+        scene.getStylesheets().add(getClass().getResource("style/colors.style.css").toExternalForm());
         scene.getStylesheets().add(getClass().getResource("style/main.style.css").toExternalForm());
+        scene.setFill(Color.TRANSPARENT);
 
+        primaryStage.initStyle(StageStyle.TRANSPARENT);
         primaryStage.setScene(scene);
         primaryStage.getIcons().add(new Image(FinancerApplication.class.getResourceAsStream("/images/icons/financer-icon.png")));
-        primaryStage.show();
 
         this.primaryStage = primaryStage;
+
+        if (LocalStorageImpl.getInstance().readObject("user") == null) {
+            this.primaryStage.hide();
+        } else {
+            this.primaryStage.show();
+        }
     }
 
     @Override
@@ -77,6 +85,8 @@ public class SplashScreenLoader extends Preloader {
             if (pn.getProgress() > 0) {
                 noLoadingProgress = false;
             }
+        } else {
+            this.primaryStage.hide();
         }
     }
 

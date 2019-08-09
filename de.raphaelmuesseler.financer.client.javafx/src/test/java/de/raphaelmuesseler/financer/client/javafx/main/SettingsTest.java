@@ -1,5 +1,6 @@
 package de.raphaelmuesseler.financer.client.javafx.main;
 
+import com.jfoenix.controls.JFXToggleButton;
 import de.raphaelmuesseler.financer.client.format.I18N;
 import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
 import de.raphaelmuesseler.financer.shared.model.categories.BaseCategory;
@@ -10,14 +11,12 @@ import de.raphaelmuesseler.financer.shared.model.transactions.VariableTransactio
 import de.raphaelmuesseler.financer.shared.model.user.User;
 import de.raphaelmuesseler.financer.util.collections.TreeUtil;
 import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.input.KeyCode;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.testfx.framework.junit5.ApplicationTest;
 
 import java.util.Comparator;
 import java.util.Currency;
@@ -30,7 +29,6 @@ public class SettingsTest extends AbstractFinancerApplicationTest {
     @BeforeEach
     public void setUpEach() throws Exception {
         super.setUpEach();
-        ApplicationTest.launch(FinancerApplication.class);
     }
 
     @Test
@@ -85,7 +83,7 @@ public class SettingsTest extends AbstractFinancerApplicationTest {
         addTransaction(transaction);
         clickOn((Button) find("#settingTabBtn"));
 
-        clickOn((CheckBox) find("#showSignCheckbox"));
+        clickOn((JFXToggleButton) find("#showSignCheckbox"));
         sleep(SHORT_SLEEP);
         User userToAssert = (User) LocalStorageImpl.getInstance().readObject("user");
         Assertions.assertTrue(userToAssert.getSettings().isShowCurrencySign());
@@ -110,7 +108,7 @@ public class SettingsTest extends AbstractFinancerApplicationTest {
         clickOn("Transaction Settings");
         sleep(SHORT_SLEEP);
 
-        CheckBox changeAmountSignAutomaticallyCheckBox = find("#changeAmountSignAutomaticallyCheckBox");
+        JFXToggleButton changeAmountSignAutomaticallyCheckBox = find("#changeAmountSignAutomaticallyCheckBox");
         Assertions.assertFalse(changeAmountSignAutomaticallyCheckBox.isSelected());
 
         clickOn(changeAmountSignAutomaticallyCheckBox);

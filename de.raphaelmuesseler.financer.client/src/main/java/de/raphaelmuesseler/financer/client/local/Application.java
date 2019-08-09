@@ -27,4 +27,6 @@ public interface Application {
     void setOnline();
 
     void showToast(MessageType messageType, String message);
+
+    void showErrorDialog(Exception exception);
 }
