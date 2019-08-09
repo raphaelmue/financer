@@ -27,9 +27,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldTreeCell;
 import javafx.util.StringConverter;
-import org.controlsfx.glyphfont.FontAwesome;
-import org.controlsfx.glyphfont.GlyphFont;
-import org.controlsfx.glyphfont.GlyphFontRegistry;
 
 import java.io.Serializable;
 import java.net.URL;
@@ -76,10 +73,7 @@ public class ProfileController implements Initializable {
             FinancerController.getInstance().showLoadingBox();
             this.user = (User) this.localStorage.readObject("user");
             if (user != null) {
-                this.fullNameLabel.setText(user.getFullName());
-                this.emailLabel.setText(user.getEmail());
-                this.birthDateLabel.setText(new JavaFXFormatter(localStorage).formatDate(this.user.getBirthDate()));
-                Platform.runLater(() -> this.genderLabel.setText(I18N.get(this.user.getGender().getName())));
+                Platform.runLater(this::initializePersonalInformation);
             }
 
             this.changePasswordLink.setOnAction(event -> {
@@ -104,22 +98,9 @@ public class ProfileController implements Initializable {
                 });
             });
 
-            this.changePasswordLink.setOnAction(event -> handleChangePassword());
-
-            GlyphFont fontAwesome = GlyphFontRegistry.font("FontAwesome");
-            this.refreshCategoriesBtn.setGraphicTextGap(8);
-            this.newCategoryBtn.setGraphicTextGap(8);
             this.newCategoryBtn.setDisable(true);
-            this.editCategoryBtn.setGraphicTextGap(8);
             this.editCategoryBtn.setDisable(true);
-            this.deleteCategoryBtn.setGraphicTextGap(8);
             this.deleteCategoryBtn.setDisable(true);
-            Platform.runLater(() -> {
-                this.refreshCategoriesBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.REFRESH));
-                this.newCategoryBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.PLUS));
-                this.editCategoryBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.EDIT));
-                this.deleteCategoryBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.TRASH));
-            });
 
             this.handleRefreshCategories();
             FinancerController.getInstance().hideLoadingBox();
@@ -167,30 +148,11 @@ public class ProfileController implements Initializable {
         });
     }
 
-    private void handleChangePassword() {
-        if (new ChangePasswordDialog(user).showAndGetResult() != null) {
-
-            Map<String, Serializable> parameters = new HashMap<>();
-            parameters.put("user", user);
-
-            FinancerExecutor.getExecutor().execute(new ServerRequestHandler(user, "changePassword", parameters,
-                    new JavaFXAsyncConnectionCall() {
-                        @Override
-                        public void onSuccess(ConnectionResult result) {
-                            FinancerController.getInstance().showToast(Application.MessageType.SUCCESS, I18N.get("succChangedPassword"));
-                        }
-
-                        @Override
-                        public void onFailure(Exception exception) {
-                            JavaFXAsyncConnectionCall.super.onFailure(exception);
-                        }
-
-                        @Override
-                        public void onAfter() {
-                            localStorage.writeObject("user", user);
-                        }
-                    }));
-        }
+    private void initializePersonalInformation() {
+        this.fullNameLabel.setText(user.getFullName());
+        this.emailLabel.setText(user.getEmail());
+        this.birthDateLabel.setText(new JavaFXFormatter(localStorage).formatDate(this.user.getBirthDate()));
+        this.genderLabel.setText(I18N.get(this.user.getGender().getName()));
     }
 
     public void handleNewCategory() {

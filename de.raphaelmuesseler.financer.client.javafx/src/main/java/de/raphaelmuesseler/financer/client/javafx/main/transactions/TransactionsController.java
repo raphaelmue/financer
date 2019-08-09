@@ -38,9 +38,6 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.TextAlignment;
-import org.controlsfx.glyphfont.FontAwesome;
-import org.controlsfx.glyphfont.GlyphFont;
-import org.controlsfx.glyphfont.GlyphFontRegistry;
 
 import java.io.Serializable;
 import java.net.URL;
@@ -92,28 +89,11 @@ public class TransactionsController implements Initializable {
             FinancerController.getInstance().showLoadingBox();
             this.user = (User) this.localStorage.readObject("user");
 
-            GlyphFont fontAwesome = GlyphFontRegistry.font("FontAwesome");
-            this.refreshTransactionsBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.REFRESH));
-            this.refreshTransactionsBtn.setGraphicTextGap(8);
-            this.newTransactionBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.PLUS));
-            this.newTransactionBtn.setGraphicTextGap(8);
-            this.editTransactionBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.EDIT));
-            this.editTransactionBtn.setGraphicTextGap(8);
             this.editTransactionBtn.setDisable(true);
-            this.deleteTransactionBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.TRASH));
-            this.deleteTransactionBtn.setGraphicTextGap(8);
             this.deleteTransactionBtn.setDisable(true);
 
-            this.refreshFixedTransactionsBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.REFRESH));
-            this.refreshFixedTransactionsBtn.setGraphicTextGap(8);
-            this.newFixedTransactionBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.PLUS));
-            this.newFixedTransactionBtn.setGraphicTextGap(8);
             this.newFixedTransactionBtn.setDisable(true);
-            this.editFixedTransactionBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.EDIT));
-            this.editFixedTransactionBtn.setGraphicTextGap(8);
             this.editFixedTransactionBtn.setDisable(true);
-            this.deleteFixedTransactionBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.TRASH));
-            this.deleteFixedTransactionBtn.setGraphicTextGap(8);
             this.deleteFixedTransactionBtn.setDisable(true);
 
             this.categories = (BaseCategory) this.localStorage.readObject("categories");
