@@ -1,40 +1,42 @@
 #navigationBox {
-    -fx-background-color: #ffffff;
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.5), 10, 0, 0, 0);
+    -fx-background-color: -fx-color-white;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.2), 15, 0, 0, 0);
 }
 
-#imageContainer {
-    -fx-background-color: #7baa95;
-    -fx-padding: 15 8;
+#userNameLabel {
+    -fx-font-family: "Roboto Medium";
+    -fx-text-fill: -fx-color-white;
+    -fx-font-size: 13px;
+    -fx-font-weight: 700;
+    -fx-padding: -30 0 10 15;
 }
 
-#imageContainer .label {
-    -fx-text-fill: #ffffff;
-    -fx-alignment: BOTTOM_LEFT;
-    -fx-font-size: 12;
-    -fx-padding: 15 0 0 10;
+#hamburgerBtn {
+    -fx-padding: 10px 15px;
+    -fx-cursor: hand;
+    -fx-fill: -fx-color-white;
 }
 
 .nav-btn {
-    -fx-font-family: "Roboto Medium";
+    -fx-font-family: "Roboto Bold";
     -fx-background-color: transparent;
-    -fx-font-size: 12;
+    -fx-font-size: 13px;
     -fx-cursor: hand;
-    -fx-padding: 10 20;
-    -fx-border-radius: 0;
+    -fx-padding: 10px 18px;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
     -fx-pref-width: 100%;
     -fx-alignment: CENTER-LEFT;
-    -fx-text-fill: #909ca8;
+    -fx-text-fill: -fx-color-dark-gray;
     -fx-font-weight: 700;
 }
 
 .nav-btn.selected {
-    -fx-background-color: #fbfbfb;
-    -fx-text-fill: #92cab1;
-    -fx-border-color: #92cab1;
-    -fx-border-width: 0 3 0 0;
+    -fx-background-color: -fx-color-primary-light-transparent;
+    -fx-text-fill: -fx-color-primary-dark;
+    -fx-graphic: -fx-color-primary-dark;
 }
 
 .nav-btn:hover {
-    -fx-background-color: #fbfbfb;
+    -fx-background-color: -fx-color-white;
 }

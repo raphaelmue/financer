@@ -1,9 +1,9 @@
 package de.raphaelmuesseler.financer.client.javafx.main.profile;
 
 import com.jfoenix.controls.JFXButton;
+import de.raphaelmuesseler.financer.client.connection.AsyncConnectionCall;
 import de.raphaelmuesseler.financer.client.connection.ServerRequestHandler;
 import de.raphaelmuesseler.financer.client.format.I18N;
-import de.raphaelmuesseler.financer.client.javafx.connection.JavaFXAsyncConnectionCall;
 import de.raphaelmuesseler.financer.client.javafx.connection.RetrievalServiceImpl;
 import de.raphaelmuesseler.financer.client.javafx.dialogs.FinancerConfirmDialog;
 import de.raphaelmuesseler.financer.client.javafx.dialogs.FinancerTextInputDialog;
@@ -37,7 +37,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class ProfileController implements Initializable {
@@ -82,6 +81,28 @@ public class ProfileController implements Initializable {
                 this.birthDateLabel.setText(new JavaFXFormatter(localStorage).formatDate(this.user.getBirthDate()));
                 Platform.runLater(() -> this.genderLabel.setText(I18N.get(this.user.getGender().getName())));
             }
+
+            this.changePasswordLink.setOnAction(event -> {
+                ChangePasswordDialog dialog = new ChangePasswordDialog(user);
+                dialog.setOnConfirm(user -> {
+
+                    Map<String, Serializable> parameters = new HashMap<>();
+                    parameters.put("user", user);
+
+                    FinancerExecutor.getExecutor().execute(new ServerRequestHandler(user, "changePassword", parameters,
+                            new AsyncConnectionCall() {
+                                @Override
+                                public void onSuccess(ConnectionResult result) {
+                                    FinancerController.getInstance().showToast(Application.MessageType.SUCCESS, I18N.get("succChangedPassword"));
+                                }
+
+                                @Override
+                                public void onAfter() {
+                                    localStorage.writeObject("user", user);
+                                }
+                            }));
+                });
+            });
 
             this.changePasswordLink.setOnAction(event -> handleChangePassword());
 
@@ -178,9 +199,8 @@ public class ProfileController implements Initializable {
 
     private void handleNewCategory(TreeItem<CategoryTree> currentItem) {
         if (currentItem != null) {
-            String categoryName = new FinancerTextInputDialog(I18N.get("enterCategoryName"), I18N.get("newCategory"))
-                    .showAndGetResult();
-            if (categoryName != null) {
+            FinancerTextInputDialog dialog = new FinancerTextInputDialog(I18N.get("enterCategoryName"), I18N.get("newCategory"));
+            dialog.setOnConfirm(categoryName -> {
                 CategoryTree categoryTree = new CategoryTreeImpl(
                         categoriesTreeView.getSelectionModel().getSelectedItem().getValue(),
                         new Category(0, categoryName, currentItem.getValue().getValue().getId(), currentItem.getValue().getValue().getCategoryClass()));
@@ -189,45 +209,35 @@ public class ProfileController implements Initializable {
                 categoryTree.getValue().setUser(user.toEntity());
                 parameters.put("category", categoryTree.getValue());
 
-                FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "addCategory", parameters, new JavaFXAsyncConnectionCall() {
-                    @Override
-                    public void onSuccess(ConnectionResult result) {
-                        categoryTree.getValue().setId(((Category) result.getResult()).getId());
-                        categoryTree.getValue().setPrefix(categoryTree.getParent().getValue().getPrefix() + (categoryTree.getParent().getChildren().size() + 1) + ".");
-                        if (categoriesTreeView.getSelectionModel().getSelectedItem().getValue().isRoot()) {
-                            categories.getCategoryTreeByCategoryClass(categoriesTreeView.getSelectionModel().getSelectedItem().getValue().getValue().getCategoryClass()).getChildren().add(categoryTree);
-                        } else {
-                            TreeUtil.insertByValue(categories, categoryTree, (o1, o2) -> Integer.compare(o1.getParentId(), o2.getId()));
-                        }
-                        localStorage.writeObject("categories", categories);
-
-                        Platform.runLater(() -> {
-                            categoriesTreeView.getSelectionModel().getSelectedItem().setExpanded(true);
-                            categoriesTreeView.getSelectionModel().getSelectedItem().getChildren().add(new TreeItem<>(categoryTree));
-                            categoriesTreeView.refresh();
-                        });
+                FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "addCategory", parameters, result -> {
+                    categoryTree.getValue().setId(((Category) result.getResult()).getId());
+                    categoryTree.getValue().setPrefix(categoryTree.getParent().getValue().getPrefix() + (categoryTree.getParent().getChildren().size() + 1) + ".");
+                    if (categoriesTreeView.getSelectionModel().getSelectedItem().getValue().isRoot()) {
+                        categories.getCategoryTreeByCategoryClass(categoriesTreeView.getSelectionModel().getSelectedItem().getValue().getValue().getCategoryClass()).getChildren().add(categoryTree);
+                    } else {
+                        TreeUtil.insertByValue(categories, categoryTree, (o1, o2) -> Integer.compare(o1.getParentId(), o2.getId()));
                     }
+                    localStorage.writeObject("categories", categories);
 
-                    @Override
-                    public void onFailure(Exception exception) {
-                        JavaFXAsyncConnectionCall.super.onFailure(exception);
-                        logger.log(Level.SEVERE, exception.getMessage(), exception);
-                    }
+                    Platform.runLater(() -> {
+                        categoriesTreeView.getSelectionModel().getSelectedItem().setExpanded(true);
+                        categoriesTreeView.getSelectionModel().getSelectedItem().getChildren().add(new TreeItem<>(categoryTree));
+                        categoriesTreeView.refresh();
+                    });
                 }, true));
-            }
+            });
         }
     }
 
     public void handleEditCategory() {
         if (this.categoriesTreeView.getSelectionModel().getSelectedItem() != null) {
             CategoryTree category = this.categoriesTreeView.getSelectionModel().getSelectedItem().getValue();
-            String categoryName = new FinancerTextInputDialog(I18N.get("enterCategoryName"), category.getValue().getName())
-                    .showAndGetResult();
-            if (categoryName != null) {
+            FinancerTextInputDialog dialog = new FinancerTextInputDialog(I18N.get("enterCategoryName"), category.getValue().getName());
+            dialog.setOnConfirm(categoryName -> {
                 category.getValue().setName(categoryName);
                 this.categoriesTreeView.refresh();
                 this.handleUpdateCategory(category);
-            }
+            });
         }
     }
 
@@ -235,18 +245,9 @@ public class ProfileController implements Initializable {
         Map<String, Serializable> parameters = new HashMap<>();
         parameters.put("category", category.getValue());
 
-        FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "updateCategory", parameters, new JavaFXAsyncConnectionCall() {
-            @Override
-            public void onSuccess(ConnectionResult result) {
-                categoriesTreeView.getSelectionModel().getSelectedItem().getValue().getValue().setName(category.getValue().getName());
-                localStorage.writeObject("categories", categories);
-            }
-
-            @Override
-            public void onFailure(Exception exception) {
-                JavaFXAsyncConnectionCall.super.onFailure(exception);
-                logger.log(Level.SEVERE, exception.getMessage(), exception);
-            }
+        FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "updateCategory", parameters, result -> {
+            categoriesTreeView.getSelectionModel().getSelectedItem().getValue().getValue().setName(category.getValue().getName());
+            localStorage.writeObject("categories", categories);
         }, true));
     }
 
@@ -255,27 +256,21 @@ public class ProfileController implements Initializable {
     }
 
     private void handleDeleteCategory(CategoryTree categoryTree) {
-        if (categoryTree != null && !categoryTree.isRoot() && new FinancerConfirmDialog(I18N.get("confirmDeleteCategory")).showAndGetResult()) {
-            Map<String, Serializable> parameters = new HashMap<>();
-            parameters.put("categoryId", this.categoriesTreeView.getSelectionModel()
-                    .getSelectedItem().getValue().getValue().getId());
+        if (categoryTree != null && !categoryTree.isRoot()) {
+            FinancerConfirmDialog dialog = new FinancerConfirmDialog(I18N.get("confirmDeleteCategory"));
+            dialog.setOnConfirm(result -> {
+                Map<String, Serializable> parameters = new HashMap<>();
+                parameters.put("categoryId", this.categoriesTreeView.getSelectionModel()
+                        .getSelectedItem().getValue().getValue().getId());
 
-            FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "deleteCategory", parameters, new JavaFXAsyncConnectionCall() {
-                @Override
-                public void onSuccess(ConnectionResult result) {
+                FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "deleteCategory", parameters, result1 -> {
                     TreeUtil.deleteByValue(categories,
                             categoriesTreeView.getSelectionModel().getSelectedItem().getValue(), Comparator.comparingInt(Category::getId));
                     localStorage.writeObject("categories", categories);
 
                     Platform.runLater(() -> categoriesTreeView.getSelectionModel().getSelectedItem().getParent().getChildren().remove(categoriesTreeView.getSelectionModel().getSelectedItem()));
-                }
-
-                @Override
-                public void onFailure(Exception exception) {
-                    JavaFXAsyncConnectionCall.super.onFailure(exception);
-                    logger.log(Level.SEVERE, exception.getMessage(), exception);
-                }
-            }, true));
+                }, true));
+            });
         }
     }
 

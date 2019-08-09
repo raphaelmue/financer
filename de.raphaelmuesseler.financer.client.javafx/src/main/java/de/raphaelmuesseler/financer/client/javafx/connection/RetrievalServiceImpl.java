@@ -1,5 +1,6 @@
 package de.raphaelmuesseler.financer.client.javafx.connection;
 
+import de.raphaelmuesseler.financer.client.connection.AsyncConnectionCall;
 import de.raphaelmuesseler.financer.client.connection.RetrievalService;
 import de.raphaelmuesseler.financer.client.connection.ServerRequestHandler;
 import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
@@ -13,17 +14,14 @@ import de.raphaelmuesseler.financer.util.collections.TreeUtil;
 import de.raphaelmuesseler.financer.util.concurrency.FinancerExecutor;
 
 import java.io.Serializable;
-import java.net.ConnectException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class RetrievalServiceImpl implements RetrievalService {
 
     private static RetrievalService instance = null;
     private final LocalStorage localStorage = LocalStorageImpl.getInstance();
-    private final Logger logger = Logger.getLogger("FinancerApplication");
 
 
     public static RetrievalService getInstance() {
@@ -71,8 +69,8 @@ public class RetrievalServiceImpl implements RetrievalService {
                 this.getAsyncCall(asyncConnectionCall)));
     }
 
-    private JavaFXAsyncConnectionCall getAsyncCall(final AsyncCall<BaseCategory> asyncCall) {
-        return new JavaFXAsyncConnectionCall() {
+    private AsyncConnectionCall getAsyncCall(final AsyncCall<BaseCategory> asyncCall) {
+        return new AsyncConnectionCall() {
             @Override
             public void onSuccess(ConnectionResult result) {
                 saveBaseCategory((BaseCategory) result.getResult());
@@ -82,10 +80,6 @@ public class RetrievalServiceImpl implements RetrievalService {
             @Override
             public void onFailure(Exception exception) {
                 asyncCall.onFailure(exception);
-                if (!(exception instanceof ConnectException)) {
-                    JavaFXAsyncConnectionCall.super.onFailure(exception);
-                    logger.log(Level.SEVERE, exception.getMessage(), exception);
-                }
             }
 
             @Override

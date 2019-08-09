@@ -12,7 +12,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.testfx.framework.junit5.ApplicationTest;
 
 import static java.lang.String.CASE_INSENSITIVE_ORDER;
 
@@ -23,7 +22,6 @@ public class CategoryTest extends AbstractFinancerApplicationTest {
     @BeforeEach
     public void setUpEach() throws Exception {
         super.setUpEach();
-        ApplicationTest.launch(FinancerApplication.class);
     }
 
     @Test
@@ -58,7 +56,7 @@ public class CategoryTest extends AbstractFinancerApplicationTest {
         addCategory(category);
         clickOn(category.getValue().getName());
         clickOn((Button) find("#deleteCategoryBtn"));
-        press(KeyCode.ENTER).release(KeyCode.ENTER);
+        confirmDialog();
         sleep(MEDIUM_SLEEP);
         Tree<Category> categoryTree = TreeUtil.getByValue(((BaseCategory) LocalStorageImpl.getInstance().readObject("categories")),
                category, (o1, o2) -> CASE_INSENSITIVE_ORDER.compare(o1.getName(), o2.getName()));

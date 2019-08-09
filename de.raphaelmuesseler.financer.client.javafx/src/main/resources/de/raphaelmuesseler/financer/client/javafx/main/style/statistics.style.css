@@ -1,15 +1,52 @@
-.default-color0.chart-pie { -fx-pie-color: #ffc200; }
-.default-color1.chart-pie { -fx-pie-color: #92cab1; }
-.default-color2.chart-pie { -fx-pie-color: #fc3b37; }
-.default-color3.chart-pie { -fx-pie-color: #00b557; }
-.default-color4.chart-pie { -fx-pie-color: #00FFFF; }
+.default-color0.chart-pie, .default-color0.chart-line-symbol {
+    -fx-pie-color: #FFA726;
+}
+
+.default-color1.chart-pie, .default-color1.chart-line-symbol {
+    -fx-pie-color: #E91E63;
+}
+
+.default-color2.chart-pie, .default-color2.chart-line-symbol {
+    -fx-pie-color: #29B6F6;
+}
+
+.default-color3.chart-pie, .default-color3.chart-line-symbol {
+    -fx-pie-color: #00b557;
+}
+
+.default-color4.chart-pie, .default-color4.chart-line-symbol {
+    -fx-pie-color: #AB47BC;
+}
+
+.default-color5.chart-pie, .default-color5.chart-line-symbol {
+    -fx-pie-color: #78909C;
+}
+
+.default-color6.chart-pie, .default-color6.chart-line-symbol {
+    -fx-pie-color: #795548;
+}
 
 .chart-legend {
     -fx-background-color: transparent;
+    -fx-effect: null;
 }
 
-.chart-legend-item-symbol{
-    -fx-effect: none;
+.chart-legend-item-symbol {
+    -fx-effect: null;
+    -fx-drop-shadow: null;
     -fx-background-radius: 5px;
     -fx-padding: 5px 12px;
+}
+
+.chart-pie {
+    -fx-background-color: -fx-pie-color;
+}
+
+.chart-plot-background {
+    -fx-background-color: transparent;
+}
+
+.chart-series-line {
+    -fx-stroke-width: 2px;
+    -fx-effect: null;
 }

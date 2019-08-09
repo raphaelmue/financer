@@ -2,13 +2,18 @@ package de.raphaelmuesseler.financer.client.format;
 
 import de.raphaelmuesseler.financer.client.local.LocalStorage;
 import de.raphaelmuesseler.financer.shared.exceptions.FinancerException;
+import de.raphaelmuesseler.financer.shared.exceptions.NotAuthorizedException;
 import de.raphaelmuesseler.financer.shared.model.categories.Category;
-import de.raphaelmuesseler.financer.shared.model.categories.CategoryTree;
 import de.raphaelmuesseler.financer.shared.model.user.User;
 
+import java.net.ConnectException;
+import java.net.UnknownHostException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
+import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public abstract class FormatterImpl implements Formatter {
     private final User user;
@@ -23,8 +28,24 @@ public abstract class FormatterImpl implements Formatter {
     }
 
     @Override
-    public String formatExceptionMessage(FinancerException exception) {
-        return I18N.get(exception.getDisplayMessage());
+    public String formatExceptionMessage(Exception exception) {
+        String key = "errSomethingWentWrong";
+
+        try {
+            throw exception;
+        } catch (NotAuthorizedException e) {
+            key = "errNotAuthorized";
+        } catch (UnknownHostException e) {
+            key = "errDatabaseUnavailable";
+        } catch (ConnectException connectException) {
+            key = "errServerUnavailable";
+        } catch (FinancerException financerException) {
+            key = financerException.getKey();
+        } catch (Exception e) {
+            Logger.getLogger("FinancerApplication").log(Level.SEVERE, e.getMessage(), e);
+        }
+
+        return I18N.get(key);
     }
 
     @Override
@@ -52,7 +73,15 @@ public abstract class FormatterImpl implements Formatter {
 
     @Override
     public String formatDate(LocalDate localDate) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(user.getSettings().getLanguage());
+        Locale locale = user == null ? Locale.ENGLISH : user.getSettings().getLanguage();
+        DateTimeFormatter formatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(locale);
         return localDate.format(formatter);
+    }
+
+    @Override
+    public LocalDate convertStringToLocalDate(String dateString) {
+        Locale locale = user == null ? Locale.ENGLISH : user.getSettings().getLanguage();
+        DateTimeFormatter formatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(locale);
+        return LocalDate.parse(dateString, formatter);
     }
 }

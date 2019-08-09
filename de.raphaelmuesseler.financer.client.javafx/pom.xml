@@ -44,7 +44,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <mainClass>de.raphaelmuesseler.financer.client.javafx.main.FinancerApplication</mainClass>
+                    <mainClass>de.raphaelmuesseler.financer.client.javafx.main.ApplicationLauncher</mainClass>
                 </configuration>
             </plugin>
         </plugins>

@@ -6,10 +6,9 @@ import de.raphaelmuesseler.financer.client.javafx.dialogs.FinancerDialog;
 import de.raphaelmuesseler.financer.shared.model.user.User;
 import de.raphaelmuesseler.financer.util.Hash;
 import de.raphaelmuesseler.financer.util.RandomString;
-import javafx.scene.Node;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Region;
 
 class ChangePasswordDialog extends FinancerDialog<User> {
     private JFXPasswordField oldPasswordField;
@@ -19,10 +18,7 @@ class ChangePasswordDialog extends FinancerDialog<User> {
     ChangePasswordDialog(User user) {
         super(user);
 
-        this.setHeaderText(I18N.get("password"));
-
-        this.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
-        this.getDialogPane().getButtonTypes().add(ButtonType.OK);
+        this.setDialogTitle(I18N.get("password"));
     }
 
     @Override
@@ -46,7 +42,7 @@ class ChangePasswordDialog extends FinancerDialog<User> {
     }
 
     @Override
-    protected Node setDialogContent() {
+    protected Region getDialogContent() {
         GridPane gridPane = new GridPane();
         gridPane.setVgap(8);
         gridPane.setHgap(50);
@@ -70,13 +66,13 @@ class ChangePasswordDialog extends FinancerDialog<User> {
     }
 
     @Override
-    protected User onConfirm() {
+    protected void onConfirm() {
         String salt = new RandomString(32).nextString();
         String hashedPassword = Hash.create(this.newPasswordField.getText(), salt);
 
         this.getValue().setPassword(hashedPassword);
         this.getValue().setSalt(salt);
 
-        return super.onConfirm();
+        super.onConfirm();
     }
 }
