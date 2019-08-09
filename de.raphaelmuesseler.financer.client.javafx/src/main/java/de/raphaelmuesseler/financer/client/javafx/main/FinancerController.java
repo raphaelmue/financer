@@ -11,7 +11,6 @@ import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
 import de.raphaelmuesseler.financer.client.local.Application;
 import de.raphaelmuesseler.financer.shared.model.user.User;
 import javafx.animation.ParallelTransition;
-import javafx.animation.ScaleTransition;
 import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -292,7 +291,6 @@ public class FinancerController implements Initializable, Application {
         Duration duration = new Duration(350);
         TranslateTransition t1 = new TranslateTransition(duration, this.navigationBox);
         TranslateTransition t2 = new TranslateTransition(duration, this.contentPane);
-        ScaleTransition t3 = new ScaleTransition(Duration.millis(350), this.contentPane);
 
         List<TranslateTransition> tabIconBtnTransitions = new ArrayList<>();
         tabIconBtnTransitions.add(new TranslateTransition(duration, this.overviewTabIconBtn));
@@ -310,7 +308,6 @@ public class FinancerController implements Initializable, Application {
         if (!this.isNavigationBarHidden) {
             t1.setToX(-180);
             t2.setToX(-90);
-            t3.setToX((this.contentPane.getWidth() + 180) / this.contentPane.getWidth());
             tabBtnTransitions.forEach(translateTransition -> translateTransition.setToX(-180));
             tabIconBtnTransitions.forEach(translateTransition -> {
                 translateTransition.setFromX(-180);
@@ -324,7 +321,6 @@ public class FinancerController implements Initializable, Application {
         } else {
             t1.setToX(0);
             t2.setToX(0);
-            t3.setToX(1);
             tabBtnTransitions.forEach(translateTransition -> translateTransition.setToX(0));
             tabIconBtnTransitions.forEach(translateTransition -> translateTransition.setToX(0));
             this.overviewTabIconBtn.toBack();
@@ -333,7 +329,7 @@ public class FinancerController implements Initializable, Application {
             this.profileTabIconBtn.toBack();
             this.settingTabIconBtn.toBack();
         }
-        ParallelTransition transition = new ParallelTransition(t1, t2, t3);
+        ParallelTransition transition = new ParallelTransition(t1, t2);
         transition.getChildren().addAll(tabBtnTransitions);
         transition.getChildren().addAll(tabIconBtnTransitions);
         transition.play();
