@@ -102,7 +102,8 @@ public class ProfileController implements Initializable {
             this.editCategoryBtn.setDisable(true);
             this.deleteCategoryBtn.setDisable(true);
 
-            this.handleRefreshCategories();
+            categories = (BaseCategory) localStorage.readObject("categories");
+            this.loadCategoryData();
             FinancerController.getInstance().hideLoadingBox();
         }));
         FinancerController.getInitializationThread().start();
@@ -122,29 +123,31 @@ public class ProfileController implements Initializable {
 
             @Override
             public void onAfter() {
-                Platform.runLater(() -> {
-                    createTreeView();
-                    categoriesTreeView.getSelectionModel().selectedItemProperty().addListener((observableValue, oldValue, newValue) -> {
-                        if (newValue != null) {
-                            newCategoryBtn.setDisable(false);
-
-                            editCategoryBtn.setDisable(newValue.getValue().isRoot());
-                            deleteCategoryBtn.setDisable(newValue.getValue().isRoot());
-                        }
-                    });
-                    categoriesTreeView.setEditable(false);
-                    categoriesTreeView.setShowRoot(false);
-                    categoriesTreeView.setRoot(treeStructure);
-                    expandTreeView(treeStructure);
-                    categoriesTreeView.setCellFactory(param -> getCellFactory());
-                    categoriesTreeView.setOnEditCommit(event -> {
-                        event.getNewValue().getValue().setId(event.getOldValue().getValue().getId());
-                        event.getNewValue().getValue().setParentId(event.getOldValue().getValue().getParentId());
-                        event.getNewValue().getValue().setCategoryClass(event.getOldValue().getValue().getCategoryClass());
-                        handleUpdateCategory(event.getNewValue());
-                    });
-                });
+                Platform.runLater(() -> loadCategoryData());
             }
+        });
+    }
+
+    private void loadCategoryData() {
+        createTreeView();
+        categoriesTreeView.getSelectionModel().selectedItemProperty().addListener((observableValue, oldValue, newValue) -> {
+            if (newValue != null) {
+                newCategoryBtn.setDisable(false);
+
+                editCategoryBtn.setDisable(newValue.getValue().isRoot());
+                deleteCategoryBtn.setDisable(newValue.getValue().isRoot());
+            }
+        });
+        categoriesTreeView.setEditable(false);
+        categoriesTreeView.setShowRoot(false);
+        categoriesTreeView.setRoot(treeStructure);
+        expandTreeView(treeStructure);
+        categoriesTreeView.setCellFactory(param -> getCellFactory());
+        categoriesTreeView.setOnEditCommit(event -> {
+            event.getNewValue().getValue().setId(event.getOldValue().getValue().getId());
+            event.getNewValue().getValue().setParentId(event.getOldValue().getValue().getParentId());
+            event.getNewValue().getValue().setCategoryClass(event.getOldValue().getValue().getCategoryClass());
+            handleUpdateCategory(event.getNewValue());
         });
     }
 

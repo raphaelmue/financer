@@ -99,8 +99,11 @@ public class TransactionsController implements Initializable {
             this.categories = (BaseCategory) this.localStorage.readObject("categories");
 
             this.initializeTransactionsTable();
+            this.loadTransactionTableData();
             this.initializeFixedTransactionTable();
+            this.loadFixedTransactionTableData();
             this.initializeTransactionsOverviewTable();
+            this.loadTransactionOverviewTableData();
             FinancerController.getInstance().hideLoadingBox();
 
         }));
@@ -226,8 +229,6 @@ public class TransactionsController implements Initializable {
             transactionsTableView.getColumns().get(1).setSortType(TableColumn.SortType.DESCENDING);
             transactionsTableView.getSortOrder().add(valueDateColumn);
         });
-
-        this.handleRefreshTransactions();
     }
 
     private void initializeFixedTransactionTable() {
@@ -245,7 +246,6 @@ public class TransactionsController implements Initializable {
             deleteFixedTransactionBtn.setDisable(false);
         });
 
-        this.handleRefreshFixedTransactions();
         this.fixedTransactionsListView.setOnMouseClicked(mouseEvent -> {
             if (mouseEvent.getClickCount() == 2) {
                 handleEditFixedTransaction();
