@@ -7,6 +7,32 @@
       xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" styleClass="content">
     <JFXMasonryPane HSpacing="15" VSpacing="15">
         <VBox styleClass="box">
+            <VBox styleClass="box-content" prefWidth="350" prefHeight="50">
+                <GridPane maxWidth="Infinity" maxHeight="Infinity">
+                    <Label fx:id="balanceChangeLabel" GridPane.columnIndex="0" GridPane.rowIndex="0"
+                           GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS"/>
+                    <VBox styleClass="description-box" GridPane.columnIndex="1" GridPane.rowIndex="0"
+                          GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS">
+                        <Label styleClass="description-label" text="%balance"/>
+                        <Label fx:id="balanceLabel" styleClass="description-content-label"/>
+                    </VBox>
+                </GridPane>
+            </VBox>
+        </VBox>
+        <VBox styleClass="box">
+            <VBox styleClass="box-content" prefWidth="350" prefHeight="50">
+                <GridPane maxWidth="Infinity" maxHeight="Infinity">
+                    <Label fx:id="variableExpensesChangeLabel" GridPane.columnIndex="0" GridPane.rowIndex="0"
+                           GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS"/>
+                    <VBox styleClass="description-box" GridPane.columnIndex="1" GridPane.rowIndex="0"
+                          GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS">
+                        <Label styleClass="description-label" text="%variableExpenses"/>
+                        <Label fx:id="variableExpensesLabel" styleClass="description-content-label"/>
+                    </VBox>
+                </GridPane>
+            </VBox>
+        </VBox>
+        <VBox styleClass="box">
             <Label text="%lastTransactions" styleClass="content-heading"/>
             <VBox styleClass="box-content" prefWidth="250" prefHeight="200"
                   GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS">

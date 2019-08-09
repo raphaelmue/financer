@@ -35,11 +35,21 @@ public class OverviewController implements Initializable {
     public GridPane balanceGridPane;
     @FXML
     public GridPane upcomingFixedTransactionGridPane;
+    @FXML
+    public Label balanceChangeLabel;
+    @FXML
+    public Label balanceLabel;
+    @FXML
+    public Label variableExpensesLabel;
+    @FXML
+    public Label variableExpensesChangeLabel;
 
     private LocalStorageImpl localStorage = (LocalStorageImpl) LocalStorageImpl.getInstance();
     private JavaFXFormatter formatter = new JavaFXFormatter(localStorage);
     private BaseCategory categories;
     private User user;
+
+    private double balanceAmount;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -48,12 +58,27 @@ public class OverviewController implements Initializable {
             categories = (BaseCategory) this.localStorage.readObject("categories");
             user = (User) localStorage.readObject("user");
 
+            loadDetailedBalance();
+            loadWidgets();
             loadLatestTransactions();
-            loadBalance();
             loadUpcomingFixedTransactions();
 
             FinancerController.getInstance().hideLoadingBox();
         }).start();
+    }
+
+    private void loadWidgets() {
+        this.balanceLabel.setText(formatter.formatCurrency(this.balanceAmount));
+        final double balanceDifference = this.balanceAmount - categories.getAmount(LocalDate.now().minusMonths(1));
+        formatter.formatAmountLabel(this.balanceChangeLabel, balanceDifference);
+        Platform.runLater(() -> this.balanceChangeLabel.setText((balanceDifference < 0 ? "" : "+") + this.balanceChangeLabel.getText()));
+
+        final double variableExpensesAmount = this.categories.getCategoryTreeByCategoryClass(BaseCategory.CategoryClass.VARIABLE_EXPENSES).getAmount(LocalDate.now());
+        this.variableExpensesLabel.setText(formatter.formatCurrency(variableExpensesAmount));
+        final double variableExpensesDifference = variableExpensesAmount - this.categories.getCategoryTreeByCategoryClass(
+                BaseCategory.CategoryClass.VARIABLE_EXPENSES).getAmount(LocalDate.now().minusMonths(1));
+        formatter.formatAmountLabel(this.variableExpensesChangeLabel, variableExpensesDifference);
+        Platform.runLater(() -> this.variableExpensesChangeLabel.setText((variableExpensesDifference < 0 ? "" : "+") + this.variableExpensesChangeLabel.getText()));
     }
 
     private void loadLatestTransactions() {
@@ -71,7 +96,7 @@ public class OverviewController implements Initializable {
             int counter = 0;
             for (VariableTransaction transaction : transactions) {
                 // LAST TRANSACTIONS
-                if (counter >= 5) {
+                if (counter >= 7) {
                     break;
                 }
                 final int _counter = counter;
@@ -90,8 +115,8 @@ public class OverviewController implements Initializable {
         }
     }
 
-    private void loadBalance() {
-        double balanceAmount = 0;
+    private void loadDetailedBalance() {
+        balanceAmount = 0;
         int counter = 0;
         for (CategoryTree root : categories.getChildren()) {
             final int _counter = counter;
