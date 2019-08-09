@@ -1,6 +1,6 @@
 #navigationBox {
     -fx-background-color: -fx-color-white;
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 15, 0, 0, 0);
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.2), 15, 0, 0, 0);
 }
 
 #userNameLabel {
@@ -22,7 +22,7 @@
     -fx-background-color: transparent;
     -fx-font-size: 13px;
     -fx-cursor: hand;
-    -fx-padding: 10px 20px;
+    -fx-padding: 10px 18px;
     -fx-border-radius: 4px;
     -fx-background-radius: 4px;
     -fx-pref-width: 100%;

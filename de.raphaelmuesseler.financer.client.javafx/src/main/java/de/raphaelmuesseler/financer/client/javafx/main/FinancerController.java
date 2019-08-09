@@ -10,6 +10,7 @@ import de.raphaelmuesseler.financer.client.javafx.dialogs.FinancerExceptionDialo
 import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
 import de.raphaelmuesseler.financer.client.local.Application;
 import de.raphaelmuesseler.financer.shared.model.user.User;
+import javafx.animation.ParallelTransition;
 import javafx.animation.ScaleTransition;
 import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
@@ -33,6 +34,8 @@ import org.controlsfx.glyphfont.GlyphFontRegistry;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
@@ -48,13 +51,23 @@ public class FinancerController implements Initializable, Application {
     @FXML
     public Button overviewTabBtn;
     @FXML
+    public JFXButton overviewTabIconBtn;
+    @FXML
     public JFXButton transactionsTabBtn;
+    @FXML
+    public JFXButton transactionsTabIconBtn;
     @FXML
     public JFXButton statisticsTabBtn;
     @FXML
+    public JFXButton statisticsTabIconBtn;
+    @FXML
     public JFXButton profileTabBtn;
     @FXML
+    public JFXButton profileTabIconBtn;
+    @FXML
     public JFXButton settingTabBtn;
+    @FXML
+    public JFXButton settingTabIconBtn;
     @FXML
     public MenuButton accountMenuBtn;
     @FXML
@@ -108,22 +121,13 @@ public class FinancerController implements Initializable, Application {
         this.accountMenuBtn.setText(user.getFullName());
 
         GlyphFont fontAwesome = GlyphFontRegistry.font("FontAwesome");
-        this.overviewTabBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.COLUMNS));
-        this.overviewTabBtn.setGraphicTextGap(10);
-        this.transactionsTabBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.MONEY));
-        this.transactionsTabBtn.setGraphicTextGap(8);
-        this.statisticsTabBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.LINE_CHART));
-        this.statisticsTabBtn.setGraphicTextGap(8);
-        this.profileTabBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.USER));
-        this.profileTabBtn.setGraphicTextGap(15);
-        this.settingTabBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.COGS));
-        this.settingTabBtn.setGraphicTextGap(8);
         this.accountMenuBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.USER));
         this.accountMenuBtn.setGraphicTextGap(10);
         this.logoutBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.SIGN_OUT));
 
         HamburgerSlideCloseTransition burgerTask = new HamburgerSlideCloseTransition(this.hamburgerBtn);
         burgerTask.setRate(1);
+        Platform.runLater(() -> burgerTask.play());
         this.hamburgerBtn.setAnimation(burgerTask);
         this.hamburgerBtn.addEventHandler(MouseEvent.MOUSE_PRESSED, e -> {
             burgerTask.setRate(burgerTask.getRate() * -1);
@@ -187,6 +191,7 @@ public class FinancerController implements Initializable, Application {
         this.loadFXML(getClass().getResource("/de/raphaelmuesseler/financer/client/javafx/main/views/overview.fxml"));
         this.removeSelectedStyleClass();
         this.overviewTabBtn.getStyleClass().add("selected");
+        this.overviewTabIconBtn.getStyleClass().add("selected");
         this.contentLabel.setText(I18N.get("overview"));
     }
 
@@ -195,6 +200,7 @@ public class FinancerController implements Initializable, Application {
         this.loadFXML(getClass().getResource("/de/raphaelmuesseler/financer/client/javafx/main/views/transactions.fxml"));
         this.removeSelectedStyleClass();
         this.transactionsTabBtn.getStyleClass().add("selected");
+        this.transactionsTabIconBtn.getStyleClass().add("selected");
         this.contentLabel.setText(I18N.get("transactions"));
     }
 
@@ -202,6 +208,7 @@ public class FinancerController implements Initializable, Application {
         this.loadFXML(getClass().getResource("/de/raphaelmuesseler/financer/client/javafx/main/views/statistics.fxml"));
         this.removeSelectedStyleClass();
         this.statisticsTabBtn.getStyleClass().add("selected");
+        this.statisticsTabIconBtn.getStyleClass().add("selected");
         this.contentLabel.setText(I18N.get("statistics"));
     }
 
@@ -209,6 +216,7 @@ public class FinancerController implements Initializable, Application {
         this.loadFXML(getClass().getResource("/de/raphaelmuesseler/financer/client/javafx/main/views/profile.fxml"));
         this.removeSelectedStyleClass();
         this.profileTabBtn.getStyleClass().add("selected");
+        this.profileTabIconBtn.getStyleClass().add("selected");
         this.contentLabel.setText(I18N.get("profile"));
     }
 
@@ -216,6 +224,7 @@ public class FinancerController implements Initializable, Application {
         this.loadFXML(getClass().getResource("/de/raphaelmuesseler/financer/client/javafx/main/views/settings.fxml"));
         this.removeSelectedStyleClass();
         this.settingTabBtn.getStyleClass().add("selected");
+        this.settingTabIconBtn.getStyleClass().add("selected");
         this.contentLabel.setText(I18N.get("settings"));
     }
 
@@ -231,6 +240,17 @@ public class FinancerController implements Initializable, Application {
         this.profileTabBtn.getStyleClass().add(navBtnClass);
         this.settingTabBtn.getStyleClass().clear();
         this.settingTabBtn.getStyleClass().add(navBtnClass);
+
+        this.overviewTabIconBtn.getStyleClass().clear();
+        this.overviewTabIconBtn.getStyleClass().add(navBtnClass);
+        this.transactionsTabIconBtn.getStyleClass().clear();
+        this.transactionsTabIconBtn.getStyleClass().add(navBtnClass);
+        this.statisticsTabIconBtn.getStyleClass().clear();
+        this.statisticsTabIconBtn.getStyleClass().add(navBtnClass);
+        this.profileTabIconBtn.getStyleClass().clear();
+        this.profileTabIconBtn.getStyleClass().add(navBtnClass);
+        this.settingTabIconBtn.getStyleClass().clear();
+        this.settingTabIconBtn.getStyleClass().add(navBtnClass);
     }
 
     private void loadFXML(URL url) {
@@ -263,21 +283,60 @@ public class FinancerController implements Initializable, Application {
     }
 
     public void onToggleNavigationBar() {
-        TranslateTransition t1 = new TranslateTransition(new Duration(350), this.navigationBox);
-        TranslateTransition t2 = new TranslateTransition(new Duration(350), this.contentPane);
+        this.overviewTabIconBtn.setVisible(!this.isNavigationBarHidden);
+        this.transactionsTabIconBtn.setVisible(!this.isNavigationBarHidden);
+        this.statisticsTabIconBtn.setVisible(!this.isNavigationBarHidden);
+        this.profileTabIconBtn.setVisible(!this.isNavigationBarHidden);
+        this.settingTabIconBtn.setVisible(!this.isNavigationBarHidden);
+
+        Duration duration = new Duration(350);
+        TranslateTransition t1 = new TranslateTransition(duration, this.navigationBox);
+        TranslateTransition t2 = new TranslateTransition(duration, this.contentPane);
         ScaleTransition t3 = new ScaleTransition(Duration.millis(350), this.contentPane);
+
+        List<TranslateTransition> tabIconBtnTransitions = new ArrayList<>();
+        tabIconBtnTransitions.add(new TranslateTransition(duration, this.overviewTabIconBtn));
+        tabIconBtnTransitions.add(new TranslateTransition(duration, this.transactionsTabIconBtn));
+        tabIconBtnTransitions.add(new TranslateTransition(duration, this.statisticsTabIconBtn));
+        tabIconBtnTransitions.add(new TranslateTransition(duration, this.profileTabIconBtn));
+        tabIconBtnTransitions.add(new TranslateTransition(duration, this.settingTabIconBtn));
+        List<TranslateTransition> tabBtnTransitions = new ArrayList<>();
+        tabBtnTransitions.add(new TranslateTransition(duration, this.overviewTabBtn));
+        tabBtnTransitions.add(new TranslateTransition(duration, this.transactionsTabBtn));
+        tabBtnTransitions.add(new TranslateTransition(duration, this.statisticsTabBtn));
+        tabBtnTransitions.add(new TranslateTransition(duration, this.profileTabBtn));
+        tabBtnTransitions.add(new TranslateTransition(duration, this.settingTabBtn));
+
         if (!this.isNavigationBarHidden) {
             t1.setToX(-180);
             t2.setToX(-90);
             t3.setToX((this.contentPane.getWidth() + 180) / this.contentPane.getWidth());
+            tabBtnTransitions.forEach(translateTransition -> translateTransition.setToX(-180));
+            tabIconBtnTransitions.forEach(translateTransition -> {
+                translateTransition.setFromX(-180);
+                translateTransition.setToX(180);
+            });
+            this.overviewTabIconBtn.toFront();
+            this.transactionsTabIconBtn.toFront();
+            this.statisticsTabIconBtn.toFront();
+            this.profileTabIconBtn.toFront();
+            this.settingTabIconBtn.toFront();
         } else {
             t1.setToX(0);
             t2.setToX(0);
             t3.setToX(1);
+            tabBtnTransitions.forEach(translateTransition -> translateTransition.setToX(0));
+            tabIconBtnTransitions.forEach(translateTransition -> translateTransition.setToX(0));
+            this.overviewTabIconBtn.toBack();
+            this.transactionsTabIconBtn.toBack();
+            this.statisticsTabIconBtn.toBack();
+            this.profileTabIconBtn.toBack();
+            this.settingTabIconBtn.toBack();
         }
-        t1.play();
-        t2.play();
-        t3.play();
+        ParallelTransition transition = new ParallelTransition(t1, t2, t3);
+        transition.getChildren().addAll(tabBtnTransitions);
+        transition.getChildren().addAll(tabIconBtnTransitions);
+        transition.play();
 
         this.isNavigationBarHidden = !this.isNavigationBarHidden;
     }
