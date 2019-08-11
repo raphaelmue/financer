@@ -90,7 +90,8 @@ class AbstractFinancerApplicationTest extends ApplicationTest {
         InputStream inputStream = AbstractFinancerApplicationTest.class.getResourceAsStream("/testing.properties");
         Properties properties = new Properties();
         properties.load(inputStream);
-        HibernateUtil.setIsHostLocal(Boolean.parseBoolean(properties.getProperty("project.testing.localhost")));
+        HibernateUtil.setIsHostLocal(true);
+//        HibernateUtil.setIsHostLocal(Boolean.parseBoolean(properties.getProperty("project.testing.localhost")));
         HibernateUtil.setDatabaseName(DatabaseName.TEST);
     }
 

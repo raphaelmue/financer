@@ -50,7 +50,3 @@
     -fx-stroke-width: 2px;
     -fx-effect: null;
 }
-
-#balanceChangeLabel, #variableExpensesChangeLabel {
-    -fx-font-size: 32px;
-}

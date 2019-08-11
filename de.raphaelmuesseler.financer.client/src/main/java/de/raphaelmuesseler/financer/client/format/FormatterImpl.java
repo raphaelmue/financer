@@ -16,7 +16,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public abstract class FormatterImpl implements Formatter {
-    private final User user;
+    protected final User user;
 
 
     public FormatterImpl(LocalStorage localStorage) {

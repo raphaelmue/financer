@@ -13,7 +13,9 @@ import de.raphaelmuesseler.financer.shared.model.transactions.Transaction;
 import de.raphaelmuesseler.financer.shared.model.transactions.TransactionAmount;
 import de.raphaelmuesseler.financer.shared.model.transactions.VariableTransaction;
 import de.raphaelmuesseler.financer.shared.model.user.User;
+import de.raphaelmuesseler.financer.util.collections.TreeUtil;
 import de.raphaelmuesseler.financer.util.concurrency.FinancerExecutor;
+import de.raphaelmuesseler.financer.util.date.DateUtil;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -27,6 +29,7 @@ import java.io.Serializable;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class OverviewController implements Initializable {
     @FXML
@@ -43,6 +46,10 @@ public class OverviewController implements Initializable {
     public Label variableExpensesLabel;
     @FXML
     public Label variableExpensesChangeLabel;
+    @FXML
+    public Label numberOfTransactionsChangeLabel;
+    @FXML
+    public Label numberOfTransactionsLabel;
 
     private LocalStorageImpl localStorage = (LocalStorageImpl) LocalStorageImpl.getInstance();
     private JavaFXFormatter formatter = new JavaFXFormatter(localStorage);
@@ -59,26 +66,68 @@ public class OverviewController implements Initializable {
             user = (User) localStorage.readObject("user");
 
             loadDetailedBalance();
-            loadWidgets();
             loadLatestTransactions();
             loadUpcomingFixedTransactions();
+
+            loadBalanceWidget();
+            loadVariableExpensesWidget();
+            loadNumberOfTransactionsWidget();
 
             FinancerController.getInstance().hideLoadingBox();
         }).start();
     }
 
-    private void loadWidgets() {
-        this.balanceLabel.setText(formatter.formatCurrency(this.balanceAmount));
-        final double balanceDifference = this.balanceAmount - categories.getAmount(LocalDate.now().minusMonths(1));
-        formatter.formatAmountLabel(this.balanceChangeLabel, balanceDifference);
-        Platform.runLater(() -> this.balanceChangeLabel.setText((balanceDifference < 0 ? "" : "+") + this.balanceChangeLabel.getText()));
+    private void loadBalanceWidget() {
+        final double balanceRatio = this.balanceAmount / categories.getAmount(LocalDate.now().minusMonths(1)) * 100 - 100;
+        Platform.runLater(() -> {
+            this.balanceLabel.setText(formatter.formatCurrency(this.balanceAmount));
+            formatter.formatChangeLabel(this.balanceChangeLabel, balanceRatio);
+            if (!Double.isNaN(balanceRatio) && Double.isFinite(balanceRatio))
+                this.balanceChangeLabel.setText((balanceRatio < 0 ? "" : "+") + this.balanceChangeLabel.getText());
+        });
+    }
 
+    private void loadVariableExpensesWidget() {
         final double variableExpensesAmount = this.categories.getCategoryTreeByCategoryClass(BaseCategory.CategoryClass.VARIABLE_EXPENSES).getAmount(LocalDate.now());
-        this.variableExpensesLabel.setText(formatter.formatCurrency(variableExpensesAmount));
-        final double variableExpensesDifference = variableExpensesAmount - this.categories.getCategoryTreeByCategoryClass(
-                BaseCategory.CategoryClass.VARIABLE_EXPENSES).getAmount(LocalDate.now().minusMonths(1));
-        formatter.formatAmountLabel(this.variableExpensesChangeLabel, variableExpensesDifference);
-        Platform.runLater(() -> this.variableExpensesChangeLabel.setText((variableExpensesDifference < 0 ? "" : "+") + this.variableExpensesChangeLabel.getText()));
+        final double variableExpensesRatio = variableExpensesAmount / this.categories.getCategoryTreeByCategoryClass(
+                BaseCategory.CategoryClass.VARIABLE_EXPENSES).getAmount(LocalDate.now().minusMonths(1)) * 100 - 100;
+        Platform.runLater(() -> {
+            this.variableExpensesLabel.setText(formatter.formatCurrency(variableExpensesAmount));
+            formatter.formatChangeLabel(this.variableExpensesChangeLabel, variableExpensesRatio);
+            if (!Double.isNaN(variableExpensesRatio) && Double.isFinite(variableExpensesRatio))
+                this.variableExpensesChangeLabel.setText((variableExpensesRatio < 0 ? "" : "+") + this.variableExpensesChangeLabel.getText());
+        });
+    }
+
+    private void loadNumberOfTransactionsWidget() {
+        AtomicInteger numberOfTransactions = new AtomicInteger();
+        TreeUtil.traverse(categories.getCategoryTreeByCategoryClass(BaseCategory.CategoryClass.VARIABLE_EXPENSES),
+                object -> numberOfTransactions.addAndGet((int) ((CategoryTree) object).getTransactions().stream()
+                        .filter(transaction -> DateUtil.checkIfMonthsAreEqual(((VariableTransaction) transaction).getValueDate(), LocalDate.now()))
+                        .count()));
+        TreeUtil.traverse(categories.getCategoryTreeByCategoryClass(BaseCategory.CategoryClass.VARIABLE_REVENUE),
+                object -> numberOfTransactions.addAndGet((int) ((CategoryTree) object).getTransactions().stream()
+                        .filter(transaction -> DateUtil.checkIfMonthsAreEqual(((VariableTransaction) transaction).getValueDate(), LocalDate.now()))
+                        .count()));
+
+        AtomicInteger numberOfTransactionsLastMonth = new AtomicInteger();
+        TreeUtil.traverse(categories.getCategoryTreeByCategoryClass(BaseCategory.CategoryClass.VARIABLE_EXPENSES),
+                object -> numberOfTransactionsLastMonth.addAndGet((int) ((CategoryTree) object).getTransactions().stream()
+                        .filter(transaction -> DateUtil.checkIfMonthsAreEqual(((VariableTransaction) transaction).getValueDate(), LocalDate.now().minusMonths(1)))
+                        .count()));
+        TreeUtil.traverse(categories.getCategoryTreeByCategoryClass(BaseCategory.CategoryClass.VARIABLE_REVENUE),
+                object -> numberOfTransactionsLastMonth.addAndGet((int) ((CategoryTree) object).getTransactions().stream()
+                        .filter(transaction -> DateUtil.checkIfMonthsAreEqual(((VariableTransaction) transaction).getValueDate(), LocalDate.now().minusMonths(1)))
+                        .count()));
+
+        double numberOfTransactionsRatio = (double) numberOfTransactions.get() / (double) numberOfTransactionsLastMonth.get() * 100 - 100;
+        Platform.runLater(() -> {
+            this.numberOfTransactionsLabel.setText(Integer.toString(numberOfTransactions.get()));
+            formatter.formatChangeLabel(this.numberOfTransactionsChangeLabel, numberOfTransactionsRatio);
+            if (!Double.isNaN(numberOfTransactionsRatio) && Double.isFinite(numberOfTransactionsRatio))
+                this.numberOfTransactionsChangeLabel.setText((numberOfTransactionsRatio < 0 ? "" : "+")
+                        + this.numberOfTransactionsChangeLabel.getText());
+        });
     }
 
     private void loadLatestTransactions() {
