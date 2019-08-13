@@ -46,7 +46,7 @@
                 </VBox>
             </VBox>
             <VBox styleClass="box">
-                <Label text="%variableExpensesDistribution" styleClass="content-heading"/>
+                <Label text="%fixedExpensesDistribution" styleClass="content-heading"/>
                 <VBox styleClass="box-content" prefWidth="500" prefHeight="250">
                     <HBox spacing="10" prefWidth="Infinity" alignment="CENTER">
                         <Label text="%from"/>

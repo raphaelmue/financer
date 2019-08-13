@@ -19,11 +19,14 @@ import de.raphaelmuesseler.financer.util.collections.TreeUtil;
 import de.raphaelmuesseler.financer.util.concurrency.FinancerExecutor;
 import de.raphaelmuesseler.financer.util.date.DateUtil;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.HPos;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.PieChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
@@ -61,6 +64,10 @@ public class OverviewController implements Initializable {
     public VBox balanceProgressLineChartContainer;
     @FXML
     public JFXComboBox<String> balanceChartMonthComboBox;
+    @FXML
+    public JFXComboBox<String> variableExpensesDistributionMonthComboBox;
+    @FXML
+    public PieChart variableExpensesDistributionPieChart;
 
     private SmoothedChart<String, Number> balanceChart = new SmoothedChart<>(new CategoryAxis(), new NumberAxis());
 
@@ -87,6 +94,7 @@ public class OverviewController implements Initializable {
             loadNumberOfTransactionsWidget();
 
             initializeBalanceChart();
+            initializeDistributionChart();
 
             FinancerController.getInstance().hideLoadingBox();
         }).start();
@@ -295,5 +303,34 @@ public class OverviewController implements Initializable {
         balanceChart.getData().clear();
         balanceChart.getData().add(data);
 
+    }
+
+    private void initializeDistributionChart() {
+        this.variableExpensesDistributionMonthComboBox.getItems().add(I18N.get("thisMonth"));
+        this.variableExpensesDistributionMonthComboBox.getItems().add(I18N.get("lastMonths", 3));
+        this.variableExpensesDistributionMonthComboBox.getItems().add(I18N.get("lastMonths", 6));
+        this.variableExpensesDistributionMonthComboBox.getItems().add(I18N.get("lastMonths", 12));
+        this.variableExpensesDistributionMonthComboBox.valueProperty().addListener(
+                (options, oldValue, newValue) -> loadDistributionChartData());
+        Platform.runLater(() -> this.variableExpensesDistributionMonthComboBox.getSelectionModel().select(0));
+    }
+
+    private void loadDistributionChartData() {
+        ObservableList<PieChart.Data> variableExpensesData = FXCollections.observableArrayList();
+        for (CategoryTree categoryTree : this.categories.getCategoryTreeByCategoryClass(
+                BaseCategory.CategoryClass.VARIABLE_EXPENSES).getChildren()) {
+            double amount;
+            if (this.variableExpensesDistributionMonthComboBox.getSelectionModel().getSelectedIndex() == 0) {
+                amount = categoryTree.getAmount(LocalDate.now());
+            } else {
+                int numberOfMonths = (int) (1.5 * Math.pow(this.variableExpensesDistributionMonthComboBox.getSelectionModel().getSelectedIndex(), 2)
+                        + 1.5 * this.balanceChartMonthComboBox.getSelectionModel().getSelectedIndex() + 3);
+                amount = categoryTree.getAmount(LocalDate.now().minusMonths(numberOfMonths), LocalDate.now());
+            }
+            if (amount != 0) {
+                variableExpensesData.add(new PieChart.Data(categoryTree.getValue().getName(), Math.abs(amount)));
+            }
+        }
+        this.variableExpensesDistributionPieChart.setData(variableExpensesData);
     }
 }

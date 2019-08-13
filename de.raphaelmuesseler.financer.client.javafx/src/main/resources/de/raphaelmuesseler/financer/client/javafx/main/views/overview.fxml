@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import com.jfoenix.controls.JFXComboBox?>
 <?import com.jfoenix.controls.JFXMasonryPane?>
+<?import javafx.scene.chart.PieChart?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import com.jfoenix.controls.JFXComboBox?>
 <VBox fx:controller="de.raphaelmuesseler.financer.client.javafx.main.overview.OverviewController"
       xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" styleClass="content">
     <ScrollPane fx:id="overviewScrollPane" fitToWidth="true" hbarPolicy="NEVER">
@@ -52,24 +53,9 @@
             <JFXMasonryPane HSpacing="15" VSpacing="5">
                 <VBox styleClass="box">
                     <Label text="%lastTransactions" styleClass="content-heading"/>
-                    <VBox styleClass="box-content" prefWidth="300" prefHeight="200"
+                    <VBox styleClass="box-content" prefWidth="300" prefHeight="300"
                           GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS">
                         <GridPane fx:id="lastTransactionsGridPane" maxWidth="Infinity" maxHeight="Infinity"/>
-                    </VBox>
-                </VBox>
-                <VBox styleClass="box">
-                    <Label text="%balance" styleClass="content-heading"/>
-                    <VBox styleClass="box-content" prefWidth="300" prefHeight="200"
-                          GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS">
-                        <GridPane fx:id="balanceGridPane" maxWidth="Infinity" maxHeight="Infinity" vgap="8"/>
-                    </VBox>
-                </VBox>
-                <VBox styleClass="box">
-                    <Label text="%upcomingFixedTransactions" styleClass="content-heading"/>
-                    <VBox styleClass="box-content" prefWidth="300" prefHeight="200"
-                          GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS">
-                        <GridPane fx:id="upcomingFixedTransactionGridPane" maxWidth="Infinity" maxHeight="Infinity"
-                                  vgap="8"/>
                     </VBox>
                 </VBox>
                 <VBox styleClass="box">
@@ -83,6 +69,34 @@
                     </BorderPane>
                     <VBox fx:id="balanceProgressLineChartContainer" styleClass="box-content" prefWidth="600"
                           prefHeight="300"/>
+                </VBox>
+                <VBox styleClass="box">
+                    <BorderPane>
+                        <left>
+                            <Label text="%distribution" styleClass="content-heading"/>
+                        </left>
+                        <right>
+                            <JFXComboBox fx:id="variableExpensesDistributionMonthComboBox"/>
+                        </right>
+                    </BorderPane>
+                    <VBox styleClass="box-content" prefWidth="300" prefHeight="300">
+                        <PieChart fx:id="variableExpensesDistributionPieChart" labelsVisible="false"/>
+                    </VBox>
+                </VBox>
+                <VBox styleClass="box">
+                    <Label text="%balance" styleClass="content-heading"/>
+                    <VBox styleClass="box-content" prefWidth="300" prefHeight="300"
+                          GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS">
+                        <GridPane fx:id="balanceGridPane" maxWidth="Infinity" maxHeight="Infinity" vgap="8"/>
+                    </VBox>
+                </VBox>
+                <VBox styleClass="box">
+                    <Label text="%upcomingFixedTransactions" styleClass="content-heading"/>
+                    <VBox styleClass="box-content" prefWidth="300" prefHeight="300"
+                          GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS">
+                        <GridPane fx:id="upcomingFixedTransactionGridPane" maxWidth="Infinity" maxHeight="Infinity"
+                                  vgap="8"/>
+                    </VBox>
                 </VBox>
             </JFXMasonryPane>
         </VBox>
