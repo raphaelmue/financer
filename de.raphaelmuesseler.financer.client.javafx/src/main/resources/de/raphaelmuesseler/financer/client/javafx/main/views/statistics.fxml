@@ -29,14 +29,14 @@
                             </VBox>
                         </right>
                     </BorderPane>
-                    <LineChart fx:id="progressLineChart" prefHeight="500">
+                    <AreaChart fx:id="progressLineChart" prefHeight="500">
                         <xAxis>
                             <CategoryAxis side="BOTTOM" label="%valueDate"/>
                         </xAxis>
                         <yAxis>
                             <NumberAxis side="LEFT" label="%amount"/>
                         </yAxis>
-                    </LineChart>
+                    </AreaChart>
                 </VBox>
             </VBox>
             <VBox styleClass="box" prefWidth="500" prefHeight="250">

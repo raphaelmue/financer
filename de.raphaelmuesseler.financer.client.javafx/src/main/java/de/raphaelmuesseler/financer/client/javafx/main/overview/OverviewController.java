@@ -1,7 +1,9 @@
 package de.raphaelmuesseler.financer.client.javafx.main.overview;
 
+import com.jfoenix.controls.JFXComboBox;
 import de.raphaelmuesseler.financer.client.connection.ServerRequestHandler;
 import de.raphaelmuesseler.financer.client.format.I18N;
+import de.raphaelmuesseler.financer.client.javafx.components.charts.SmoothedChart;
 import de.raphaelmuesseler.financer.client.javafx.format.JavaFXFormatter;
 import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
 import de.raphaelmuesseler.financer.client.javafx.main.FinancerController;
@@ -20,10 +22,15 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.HPos;
+import javafx.scene.chart.CategoryAxis;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
 
 import java.io.Serializable;
 import java.net.URL;
@@ -50,6 +57,12 @@ public class OverviewController implements Initializable {
     public Label numberOfTransactionsChangeLabel;
     @FXML
     public Label numberOfTransactionsLabel;
+    @FXML
+    public VBox balanceProgressLineChartContainer;
+    @FXML
+    public JFXComboBox<String> balanceChartMonthComboBox;
+
+    private SmoothedChart<String, Number> balanceChart = new SmoothedChart<>(new CategoryAxis(), new NumberAxis());
 
     private LocalStorageImpl localStorage = (LocalStorageImpl) LocalStorageImpl.getInstance();
     private JavaFXFormatter formatter = new JavaFXFormatter(localStorage);
@@ -72,6 +85,8 @@ public class OverviewController implements Initializable {
             loadBalanceWidget();
             loadVariableExpensesWidget();
             loadNumberOfTransactionsWidget();
+
+            initializeBalanceChart();
 
             FinancerController.getInstance().hideLoadingBox();
         }).start();
@@ -246,5 +261,39 @@ public class OverviewController implements Initializable {
                 loadUpcomingFixedTransactions();
             }));
         });
+    }
+
+    private void initializeBalanceChart() {
+        balanceChart.setChartType(SmoothedChart.ChartType.AREA);
+        this.balanceChartMonthComboBox.getItems().add(I18N.get("lastMonths", 3));
+        this.balanceChartMonthComboBox.getItems().add(I18N.get("lastMonths", 6));
+        this.balanceChartMonthComboBox.getItems().add(I18N.get("lastMonths", 12));
+        this.balanceChartMonthComboBox.valueProperty().addListener(
+                (options, oldValue, newValue) -> loadBalanceChartData());
+        Platform.runLater(() -> {
+            this.balanceProgressLineChartContainer.getChildren().add(balanceChart);
+            this.balanceChartMonthComboBox.getSelectionModel().select(0);
+        });
+    }
+
+    private void loadBalanceChartData() {
+        XYChart.Series<String, Number> data = new XYChart.Series<>();
+        data.setName(I18N.get("balance"));
+        int numberOfMonths = (int) (1.5 * Math.pow(this.balanceChartMonthComboBox.getSelectionModel().getSelectedIndex(), 2)
+                + 1.5 * this.balanceChartMonthComboBox.getSelectionModel().getSelectedIndex() + 3);
+        for (int i = numberOfMonths; i > 0; i--) {
+            LocalDate date = LocalDate.now().minusMonths(i);
+            data.getData().add(new XYChart.Data<>(formatter.formatMonth(date), categories.getAmount(date)));
+        }
+        Platform.runLater(() -> {
+            for (XYChart.Data<String, Number> d : data.getData()) {
+                Tooltip.install(d.getNode(),
+                        new Tooltip(I18N.get("valueDate") + ": \t" + d.getXValue() + "\n" +
+                                I18N.get("amount") + ": \t" + formatter.formatCurrency((Double) d.getYValue())));
+            }
+        });
+        balanceChart.getData().clear();
+        balanceChart.getData().add(data);
+
     }
 }

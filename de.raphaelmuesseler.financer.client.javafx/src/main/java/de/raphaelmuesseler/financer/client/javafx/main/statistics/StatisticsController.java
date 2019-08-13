@@ -20,7 +20,7 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
-import javafx.scene.chart.LineChart;
+import javafx.scene.chart.AreaChart;
 import javafx.scene.chart.PieChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.ComboBox;
@@ -61,7 +61,7 @@ public class StatisticsController implements Initializable {
     @FXML
     public JFXDatePicker progressToDatePicker;
     @FXML
-    public LineChart<String, Number> progressLineChart;
+    public AreaChart<String, Number> progressLineChart;
     @FXML
     public VBox categoriesContainer;
     @FXML
@@ -184,7 +184,7 @@ public class StatisticsController implements Initializable {
 
         for (int i = DateUtil.getMonthDifference(startDate, endDate); i >= 0; i--) {
             series.getData().add(new XYChart.Data<>(formatter.formatDate(endDate.minusMonths(i)),
-                    Math.abs(categoryTree.getAmount(endDate.minusMonths(i)))));
+                    categoryTree.getAmount(endDate.minusMonths(i))));
         }
 
         this.progressLineChart.getData().add(series);
