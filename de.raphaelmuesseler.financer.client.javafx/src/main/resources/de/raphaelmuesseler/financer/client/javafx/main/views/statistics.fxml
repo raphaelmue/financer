@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import com.jfoenix.controls.*?>
-<?import javafx.scene.chart.*?>
+<?import javafx.scene.chart.PieChart?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <VBox fx:controller="de.raphaelmuesseler.financer.client.javafx.main.statistics.StatisticsController"
       xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" styleClass="content">
     <ScrollPane fx:id="statisticsScrollPane" fitToWidth="true" hbarPolicy="NEVER">
-        <JFXMasonryPane HSpacing="15" VSpacing="15">
-            <VBox styleClass="box" prefWidth="1000" prefHeight="550">
+        <JFXMasonryPane HSpacing="15" VSpacing="6">
+            <VBox styleClass="box" prefWidth="1000" prefHeight="600">
                 <Label text="%progress" styleClass="content-heading"/>
-                <VBox styleClass="box-content">
+                <VBox fx:id="progressChartContainer" styleClass="box-content">
                     <BorderPane>
                         <left>
                             <HBox spacing="10" alignment="CENTER">
@@ -23,26 +23,17 @@
                         <right>
                             <VBox fx:id="categoriesContainer" spacing="10">
                                 <HBox spacing="10">
-                                    <ComboBox fx:id="progressChartDefaultCategoryComboBox"/>
+                                    <JFXComboBox fx:id="progressChartDefaultCategoryComboBox"/>
                                     <JFXButton fx:id="addCategoryBtn" text="%addCategory" disable="true"/>
                                 </HBox>
                             </VBox>
                         </right>
                     </BorderPane>
-                    <AreaChart fx:id="progressLineChart" prefHeight="500">
-                        <xAxis>
-                            <CategoryAxis side="BOTTOM" label="%valueDate"/>
-                        </xAxis>
-                        <yAxis>
-                            <NumberAxis side="LEFT" label="%amount"/>
-                        </yAxis>
-                    </AreaChart>
                 </VBox>
             </VBox>
-            <VBox styleClass="box" prefWidth="500" prefHeight="250">
+            <VBox styleClass="box" prefWidth="500" prefHeight="275">
                 <Label text="%variableExpensesDistribution" styleClass="content-heading"/>
-                <VBox styleClass="box-content">
-
+                <VBox styleClass="box-content" prefWidth="500" prefHeight="250">
                     <HBox spacing="10" prefWidth="Infinity" alignment="CENTER">
                         <Label text="%from"/>
                         <JFXDatePicker fx:id="variableExpensesFromDatePicker"/>
@@ -54,10 +45,9 @@
                            managed="false"/>
                 </VBox>
             </VBox>
-            <VBox styleClass="box" prefWidth="500" prefHeight="250">
+            <VBox styleClass="box">
                 <Label text="%variableExpensesDistribution" styleClass="content-heading"/>
-                <VBox styleClass="box-content">
-
+                <VBox styleClass="box-content" prefWidth="500" prefHeight="250">
                     <HBox spacing="10" prefWidth="Infinity" alignment="CENTER">
                         <Label text="%from"/>
                         <JFXDatePicker fx:id="fixedExpensesFromDatePicker"/>

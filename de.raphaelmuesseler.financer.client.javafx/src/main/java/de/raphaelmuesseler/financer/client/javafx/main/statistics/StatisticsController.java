@@ -1,10 +1,12 @@
 package de.raphaelmuesseler.financer.client.javafx.main.statistics;
 
 import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXDatePicker;
 import de.raphaelmuesseler.financer.client.format.Formatter;
 import de.raphaelmuesseler.financer.client.format.I18N;
 import de.raphaelmuesseler.financer.client.javafx.components.DatePicker;
+import de.raphaelmuesseler.financer.client.javafx.components.charts.SmoothedChart;
 import de.raphaelmuesseler.financer.client.javafx.format.JavaFXFormatter;
 import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
 import de.raphaelmuesseler.financer.client.javafx.main.FinancerController;
@@ -20,11 +22,13 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
-import javafx.scene.chart.AreaChart;
+import javafx.scene.chart.CategoryAxis;
+import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.PieChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.util.StringConverter;
@@ -61,13 +65,15 @@ public class StatisticsController implements Initializable {
     @FXML
     public JFXDatePicker progressToDatePicker;
     @FXML
-    public AreaChart<String, Number> progressLineChart;
+    public VBox progressChartContainer;
     @FXML
     public VBox categoriesContainer;
     @FXML
     public JFXButton addCategoryBtn;
     @FXML
-    public ComboBox<CategoryTree> progressChartDefaultCategoryComboBox;
+    public JFXComboBox<CategoryTree> progressChartDefaultCategoryComboBox;
+
+    private SmoothedChart<String, Number> progressLineChart = new SmoothedChart<>(new CategoryAxis(), new NumberAxis());
 
     private LocalStorage localStorage = LocalStorageImpl.getInstance();
     private BaseCategory categories;
@@ -76,6 +82,8 @@ public class StatisticsController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         this.categories = (BaseCategory) localStorage.readObject("categories");
+
+        this.initializeProgressChart();
 
         this.variableExpensesFromDatePicker = new DatePicker(formatter);
         this.variableExpensesFromDatePicker.setValue(LocalDate.now().minusMonths(1));
@@ -126,19 +134,28 @@ public class StatisticsController implements Initializable {
         });
     }
 
+    private void initializeProgressChart() {
+        this.progressLineChart.setChartType(SmoothedChart.ChartType.AREA);
+        this.progressLineChart.setId("progressLineChart");
+        this.progressLineChart.setPrefWidth(500);
+        Platform.runLater(() -> this.progressChartContainer.getChildren().add(this.progressLineChart));
+    }
+
     private HBox initializeCategoryComboBoxContainer() {
         final HBox container = new HBox();
         container.setSpacing(10);
 
-        final ComboBox<CategoryTree> categoryTreeComboBox = new ComboBox<>();
+        final JFXComboBox<CategoryTree> categoryTreeComboBox = new JFXComboBox<>();
         this.initializeCategoryComboBox(categoryTreeComboBox);
 
         GlyphFont fontAwesome = GlyphFontRegistry.font("FontAwesome");
         final JFXButton deleteCategoryBtn = new JFXButton(I18N.get("delete"));
         deleteCategoryBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.TRASH));
         deleteCategoryBtn.setOnAction(event -> {
-            progressLineChart.getData().removeIf(stringNumberSeries ->
-                    stringNumberSeries.getName().equals(formatter.formatCategoryName(categoryTreeComboBox.getValue())));
+            if (categoryTreeComboBox.getValue() != null) {
+                progressLineChart.getData().removeIf(stringNumberSeries ->
+                        stringNumberSeries.getName().equals(formatter.formatCategoryName(categoryTreeComboBox.getValue())));
+            }
             addCategoryBtn.setDisable(false);
             categoriesContainer.getChildren().remove(container);
         });
@@ -183,8 +200,13 @@ public class StatisticsController implements Initializable {
         series.setName(formatter.formatCategoryName(categoryTree));
 
         for (int i = DateUtil.getMonthDifference(startDate, endDate); i >= 0; i--) {
-            series.getData().add(new XYChart.Data<>(formatter.formatDate(endDate.minusMonths(i)),
-                    categoryTree.getAmount(endDate.minusMonths(i))));
+            XYChart.Data<String, Number> dataSet = new XYChart.Data<>(formatter.formatMonth(endDate.minusMonths(i)),
+                    categoryTree.getAmount(endDate.minusMonths(i)));
+            Tooltip.install(dataSet.getNode(),
+                    new Tooltip(I18N.get("category") + ": \t" + formatter.formatCategoryName(categoryTree) + "\n" +
+                            I18N.get("valueDate") + ": \t" + dataSet.getXValue() + "\n" +
+                            I18N.get("amount") + ": \t" + formatter.formatCurrency((Double) dataSet.getYValue())));
+            series.getData().add(dataSet);
         }
 
         this.progressLineChart.getData().add(series);

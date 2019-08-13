@@ -1,11 +1,12 @@
 package de.raphaelmuesseler.financer.client.javafx.main;
 
 import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXDatePicker;
 import de.raphaelmuesseler.financer.shared.model.categories.BaseCategory;
 import de.raphaelmuesseler.financer.shared.model.categories.CategoryTree;
 import javafx.geometry.VerticalDirection;
-import javafx.scene.chart.LineChart;
+import javafx.scene.chart.AreaChart;
 import javafx.scene.chart.PieChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
@@ -39,8 +40,8 @@ public class StatisticsTest extends AbstractFinancerApplicationTest {
         clickOn((Button) find("#statisticsTabBtn"));
         sleep(SHORT_SLEEP);
 
-        LineChart lineChart = find("#progressLineChart");
-        Assertions.assertEquals(1, lineChart.getData().size());
+        AreaChart chart = find("#progressLineChart");
+        Assertions.assertEquals(1, chart.getData().size());
 
         clickOn((ComboBox) find("#progressChartDefaultCategoryComboBox"));
         press(KeyCode.DOWN).release(KeyCode.DOWN);
@@ -49,14 +50,14 @@ public class StatisticsTest extends AbstractFinancerApplicationTest {
         clickOn((JFXButton) find("#addCategoryBtn"));
         VBox categoriesContainer = find("#categoriesContainer");
         HBox dropDownHBox = (HBox) categoriesContainer.getChildren().get(1);
-        ComboBox<CategoryTree> categoryComboBox = (ComboBox<CategoryTree>) dropDownHBox.getChildren().get(0);
+        JFXComboBox<CategoryTree> categoryComboBox = (JFXComboBox<CategoryTree>) dropDownHBox.getChildren().get(0);
         clickOn(categoryComboBox);
         press(KeyCode.DOWN).release(KeyCode.DOWN);
         press(KeyCode.ENTER).release(KeyCode.ENTER);
 
         sleep(SHORT_SLEEP);
-        lineChart = find("#progressLineChart");
-        Assertions.assertEquals(2, lineChart.getData().size());
+        chart = find("#progressLineChart");
+        Assertions.assertEquals(2, chart.getData().size());
     }
 
     @Test
