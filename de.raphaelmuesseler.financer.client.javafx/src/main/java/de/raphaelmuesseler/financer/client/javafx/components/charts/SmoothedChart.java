@@ -15,8 +15,6 @@
  */
 package de.raphaelmuesseler.financer.client.javafx.components.charts;
 
-import com.sun.javafx.charts.Legend;
-import com.sun.javafx.charts.Legend.LegendItem;
 import javafx.animation.FadeTransition;
 import javafx.animation.PauseTransition;
 import javafx.animation.SequentialTransition;
@@ -25,27 +23,27 @@ import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.geometry.*;
+import javafx.geometry.Bounds;
+import javafx.geometry.Insets;
+import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.chart.AreaChart;
 import javafx.scene.chart.Axis;
 import javafx.scene.chart.NumberAxis;
-import javafx.scene.chart.XYChart;
-import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.*;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.CornerRadii;
+import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import javafx.scene.shape.*;
 import javafx.util.Duration;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 
 /**
@@ -240,448 +238,23 @@ public class SmoothedChart<X, Y> extends AreaChart<X, Y> {
         }
     }
 
-    public ObjectProperty<ChartType> chartTypeProperty() {
-        if (null == chartType) {
-            chartType = new ObjectPropertyBase<ChartType>(_chartType) {
-                @Override
-                protected void invalidated() {
-                    layoutPlotChildren();
-                }
-
-                @Override
-                public Object getBean() {
-                    return SmoothedChart.this;
-                }
-
-                @Override
-                public String getName() {
-                    return "chartType";
-                }
-            };
-            _chartType = null;
-        }
-        return chartType;
-    }
-
     private int getSubDivisions() {
         return null == subDivisions ? _subDivisions : subDivisions.get();
-    }
-
-    public void setSubDivisions(final int SUB_DIVISIONS) {
-        if (null == subDivisions) {
-            _subDivisions = Helper.clamp(1, MAX_SUBDIVISIONS, SUB_DIVISIONS);
-            layoutPlotChildren();
-        } else {
-            subDivisions.set(SUB_DIVISIONS);
-        }
-    }
-
-    public IntegerProperty subDivisionsProperty() {
-        if (null == subDivisions) {
-            subDivisions = new IntegerPropertyBase(_subDivisions) {
-                @Override
-                protected void invalidated() {
-                    set(Helper.clamp(1, MAX_SUBDIVISIONS, get()));
-                    layoutPlotChildren();
-                }
-
-                @Override
-                public Object getBean() {
-                    return SmoothedChart.this;
-                }
-
-                @Override
-                public String getName() {
-                    return "subDivisions";
-                }
-            };
-        }
-        return subDivisions;
     }
 
     private boolean isSnapToTicks() {
         return null == snapToTicks ? _snapToTicks : snapToTicks.get();
     }
 
-    public void setSnapToTicks(final boolean SNAP) {
-        if (null == snapToTicks) {
-            _snapToTicks = SNAP;
-        } else {
-            snapToTicks.set(SNAP);
-        }
-    }
-
-    public BooleanProperty snapToTicksProperty() {
-        if (null == snapToTicks) {
-            snapToTicks = new BooleanPropertyBase(_snapToTicks) {
-                @Override
-                public void invalidated() {
-                }
-
-                @Override
-                public Object getBean() {
-                    return SmoothedChart.this;
-                }
-
-                @Override
-                public String getName() {
-                    return "snapToTicks";
-                }
-            };
-        }
-        return snapToTicks;
-    }
-
-    public boolean getSymbolsVisible() {
-        return null == symbolsVisible ? _symbolsVisible : symbolsVisible.get();
-    }
-
-    public void setSymbolsVisible(final boolean VISIBLE) {
-        if (null == symbolsVisible) {
-            _symbolsVisible = VISIBLE;
-            getData().forEach(series -> setSymbolsVisible(series, _symbolsVisible));
-        } else {
-            symbolsVisible.set(VISIBLE);
-        }
-    }
-
-    public BooleanProperty symbolsVisibleProperty() {
-        if (null == symbolsVisible) {
-            symbolsVisible = new BooleanPropertyBase(_symbolsVisible) {
-                @Override
-                protected void invalidated() {
-                    getData().forEach(series -> setSymbolsVisible(series, _symbolsVisible));
-                }
-
-                @Override
-                public Object getBean() {
-                    return SmoothedChart.this;
-                }
-
-                @Override
-                public String getName() {
-                    return "symbolsVisible";
-                }
-            };
-        }
-        return symbolsVisible;
-    }
-
-    public Color getSelectorFillColor() {
-        return null == selectorFillColor ? _selectorFillColor : selectorFillColor.get();
-    }
-
-    public void setSelectorFillColor(final Color COLOR) {
-        if (null == selectorFillColor) {
-            _selectorFillColor = COLOR;
-            selector.setFill(_selectorFillColor);
-            layoutPlotChildren();
-        } else {
-            selectorFillColor.set(COLOR);
-        }
-    }
-
-    public ObjectProperty<Color> selectorFillColorProperty() {
-        if (null == selectorFillColor) {
-            selectorFillColor = new ObjectPropertyBase<Color>(_selectorFillColor) {
-                @Override
-                protected void invalidated() {
-                    selector.setFill(get());
-                    layoutPlotChildren();
-                }
-
-                @Override
-                public Object getBean() {
-                    return SmoothedChart.this;
-                }
-
-                @Override
-                public String getName() {
-                    return "selectorFillColor";
-                }
-            };
-            _selectorFillColor = null;
-        }
-        return selectorFillColor;
-    }
-
-    public Color getSelectorStrokeColor() {
-        return null == selectorStrokeColor ? _selectorStrokeColor : selectorStrokeColor.get();
-    }
-
-    public void setSelectorStrokeColor(final Color COLOR) {
-        if (null == selectorStrokeColor) {
-            _selectorStrokeColor = COLOR;
-            selector.setStroke(_selectorStrokeColor);
-            layoutPlotChildren();
-        } else {
-            selectorStrokeColor.set(COLOR);
-        }
-    }
-
-    public ObjectProperty<Color> selectorStrokeColorProperty() {
-        if (null == selectorStrokeColor) {
-            selectorStrokeColor = new ObjectPropertyBase<Color>(_selectorStrokeColor) {
-                @Override
-                protected void invalidated() {
-                    selector.setStroke(get());
-                    layoutPlotChildren();
-                }
-
-                @Override
-                public Object getBean() {
-                    return SmoothedChart.this;
-                }
-
-                @Override
-                public String getName() {
-                    return "selectorStrokeColor";
-                }
-            };
-            _selectorStrokeColor = null;
-        }
-        return selectorStrokeColor;
-    }
-
-    public double getSelectorSize() {
+    private double getSelectorSize() {
         return null == selectorSize ? _selectorSize : selectorSize.get();
-    }
-
-    public void setSelectorSize(final double SIZE) {
-        if (null == selectorSize) {
-            _selectorSize = Helper.clamp(1, 20, SIZE);
-        } else {
-            selectorSize.set(SIZE);
-        }
-    }
-
-    public DoubleProperty selectorSizeProperty() {
-        if (null == selectorSize) {
-            selectorSize = new DoublePropertyBase(_selectorSize) {
-                @Override
-                protected void invalidated() {
-                    set(Helper.clamp(1, 20, get()));
-                }
-
-                @Override
-                public Object getBean() {
-                    return SmoothedChart.this;
-                }
-
-                @Override
-                public String getName() {
-                    return "selectorSize";
-                }
-            };
-        }
-        return selectorSize;
-    }
-
-    public int getDecimals() {
-        return null == decimals ? _decimals : decimals.get();
-    }
-
-    public void setDecimals(final int DECIMALS) {
-        if (null == decimals) {
-            _decimals = Helper.clamp(0, MAX_DECIMALS, DECIMALS);
-            formatString = "%." + _decimals + "f";
-        } else {
-            decimals.set(DECIMALS);
-        }
-    }
-
-    public IntegerProperty decimalsProperty() {
-        if (null == decimals) {
-            decimals = new IntegerPropertyBase(_decimals) {
-                @Override
-                protected void invalidated() {
-                    set(Helper.clamp(0, MAX_DECIMALS, get()));
-                    formatString = new StringBuilder("%.").append(_decimals).append("f").toString();
-                }
-
-                @Override
-                public Object getBean() {
-                    return SmoothedChart.this;
-                }
-
-                @Override
-                public String getName() {
-                    return "decimals";
-                }
-            };
-        }
-        return decimals;
     }
 
     private boolean isInteractive() {
         return null == interactive ? _interactive : interactive.get();
     }
 
-    public void setInteractive(final boolean INTERACTIVE) {
-        if (null == interactive) {
-            _interactive = INTERACTIVE;
-        } else {
-            interactive.set(INTERACTIVE);
-        }
-    }
-
-    public BooleanProperty interactiveProperty() {
-        if (null == interactive) {
-            interactive = new BooleanPropertyBase(_interactive) {
-                @Override
-                public Object getBean() {
-                    return SmoothedChart.this;
-                }
-
-                @Override
-                public String getName() {
-                    return "interactive";
-                }
-            };
-        }
-        return interactive;
-    }
-
-    public double getTooltipTimeout() {
-        return null == tooltipTimeout ? _tooltipTimeout : tooltipTimeout.get();
-    }
-
-    public void setTooltipTimeout(final double TIMEOUT) {
-        if (null == tooltipTimeout) {
-            _tooltipTimeout = Helper.clamp(0, 10000, TIMEOUT);
-            timeBeforeFadeOut.setDuration(Duration.millis(_tooltipTimeout));
-        } else {
-            tooltipTimeout.set(TIMEOUT);
-        }
-    }
-
-    public DoubleProperty tooltipTimeoutProperty() {
-        if (null == tooltipTimeout) {
-            tooltipTimeout = new DoublePropertyBase(_tooltipTimeout) {
-                @Override
-                protected void invalidated() {
-                    set(Helper.clamp(0, 10000, get()));
-                    timeBeforeFadeOut.setDuration(Duration.millis(get()));
-                }
-
-                @Override
-                public Object getBean() {
-                    return SmoothedChart.this;
-                }
-
-                @Override
-                public String getName() {
-                    return "tootipTimeout";
-                }
-            };
-        }
-        return tooltipTimeout;
-    }
-
-    private void setSymbolsVisible(final XYChart.Series<X, Y> series, final boolean VISIBLE) {
-        if (!getData().contains(series)) {
-            return;
-        }
-        for (XYChart.Data<X, Y> data : series.getData()) {
-            StackPane stackPane = (StackPane) data.getNode();
-            if (null == stackPane) {
-                continue;
-            }
-            stackPane.setVisible(VISIBLE);
-        }
-    }
-
-    public void setSeriesColor(final XYChart.Series<X, Y> series, final Paint color) {
-        Background symbolBackground = new Background(new BackgroundFill(color, new CornerRadii(5), Insets.EMPTY), new BackgroundFill(Color.WHITE, new CornerRadii(5), new Insets(2)));
-        setSeriesColor(series, color, color, symbolBackground, color);
-    }
-
-    public void setSeriesColor(final XYChart.Series<X, Y> series, final Paint stroke, final Paint fill) {
-        Background symbolBackground = new Background(new BackgroundFill(stroke, new CornerRadii(1024), Insets.EMPTY), new BackgroundFill(Color.WHITE, new CornerRadii(1024), new Insets(2)));
-        setSeriesColor(series, stroke, fill, symbolBackground, stroke);
-    }
-
-    public void setSeriesColor(final XYChart.Series<X, Y> series, final Paint stroke, final Paint fill, final Paint legendSymbolFill) {
-        Background symbolBackground = new Background(new BackgroundFill(stroke, new CornerRadii(1024), Insets.EMPTY), new BackgroundFill(Color.WHITE, new CornerRadii(1024), new Insets(2)));
-        setSeriesColor(series, stroke, fill, symbolBackground, legendSymbolFill);
-    }
-
-    public void setSeriesColor(final XYChart.Series<X, Y> series, final Paint stroke, final Paint fill, final Background symbolBackground) {
-        setSeriesColor(series, stroke, fill, symbolBackground, stroke);
-    }
-
-    public void setSeriesColor(final XYChart.Series<X, Y> series, final Paint stroke, final Paint fill, final BackgroundFill symbolStroke, final BackgroundFill SYMBOL_Fill) {
-        setSeriesColor(series, stroke, fill, new Background(symbolStroke, SYMBOL_Fill), stroke);
-    }
-
-    void setSeriesColor(final XYChart.Series<X, Y> series, final Paint stroke, final Paint fill, final Background symbolBackground, final Paint LEGEND_SYMBOL_FILL) {
-        if (getData().isEmpty()) {
-            return;
-        }
-        if (!getData().contains(series)) {
-            return;
-        }
-        if (null != fill) {
-            ((Path) ((Group) series.getNode()).getChildren().get(0)).setFill(fill);
-        }
-        if (null != stroke) {
-            ((Path) ((Group) series.getNode()).getChildren().get(1)).setStroke(stroke);
-        }
-        if (null != symbolBackground) {
-            setSymbolFill(series, symbolBackground);
-        }
-        if (null != LEGEND_SYMBOL_FILL) {
-            setLegendSymbolFill(series, LEGEND_SYMBOL_FILL);
-        }
-    }
-
-    public Dimension2D getSymbolSize(final Series<X, Y> series) {
-        if (!getData().contains(series)) {
-            return new Dimension2D(0, 0);
-        }
-        if (series.getData().isEmpty()) {
-            return new Dimension2D(0, 0);
-        }
-        for (XYChart.Data<X, Y> data : series.getData()) {
-            StackPane stackPane = (StackPane) data.getNode();
-            if (null != stackPane) {
-                return new Dimension2D(stackPane.getLayoutBounds().getWidth(), stackPane.getLayoutBounds().getHeight());
-            }
-        }
-        return new Dimension2D(0, 0);
-    }
-
-    public void setSymbolSize(final Series<X, Y> series, final double size) {
-        if (!getData().contains(series)) {
-            return;
-        }
-        if (series.getData().isEmpty()) {
-            return;
-        }
-        double symbolSize = Helper.clamp(0, 30, size);
-        for (XYChart.Data<X, Y> data : series.getData()) {
-            StackPane stackPane = (StackPane) data.getNode();
-            if (null == stackPane) {
-                continue;
-            }
-            stackPane.setPrefSize(symbolSize, symbolSize);
-        }
-    }
-
-    private void setSymbolFill(final Series<X, Y> series, final Background symbolBackground) {
-        if (!getData().contains(series)) {
-            return;
-        }
-        for (XYChart.Data<X, Y> data : series.getData()) {
-            StackPane stackPane = (StackPane) data.getNode();
-            if (null == stackPane) {
-                continue;
-            }
-            stackPane.setBackground(symbolBackground);
-        }
-    }
-
-    Region getChartPlotBackground() {
+    private Region getChartPlotBackground() {
         if (null == chartPlotBackground) {
             for (Node node : lookupAll(".chart-plot-background")) {
                 if (node instanceof Region) {
@@ -693,7 +266,7 @@ public class SmoothedChart<X, Y> extends AreaChart<X, Y> {
         return chartPlotBackground;
     }
 
-    Path getHorizontalGridLines() {
+    private Path getHorizontalGridLines() {
         if (null == horizontalGridLines) {
             for (Node node : lookupAll(".chart-horizontal-grid-lines")) {
                 if (node instanceof Path) {
@@ -705,7 +278,7 @@ public class SmoothedChart<X, Y> extends AreaChart<X, Y> {
         return horizontalGridLines;
     }
 
-    Path getVerticalGridLines() {
+    private Path getVerticalGridLines() {
         if (null == verticalGridLines) {
             for (Node node : lookupAll(".chart-vertical-grid-lines")) {
                 if (node instanceof Path) {
@@ -716,211 +289,6 @@ public class SmoothedChart<X, Y> extends AreaChart<X, Y> {
         }
         return verticalGridLines;
     }
-
-    public Line getHorizontalZeroLine() {
-        if (null == horizontalZeroLine) {
-            for (Node node : lookupAll(".chart-horizontal-zero-line")) {
-                if (node instanceof Line) {
-                    horizontalZeroLine = (Line) node;
-                    break;
-                }
-            }
-        }
-        return horizontalZeroLine;
-    }
-
-    public Line getVerticalZeroLine() {
-        if (null == verticalZeroLine) {
-            for (Node node : lookupAll(".chart-vertical-zero-line")) {
-                if (node instanceof Line) {
-                    verticalZeroLine = (Line) node;
-                    break;
-                }
-            }
-        }
-        return verticalZeroLine;
-    }
-
-    public void setChartPlotBackground(final Paint fill) {
-        setChartPlotBackground(new Background(new BackgroundFill(fill, CornerRadii.EMPTY, Insets.EMPTY)));
-    }
-
-    void setChartPlotBackground(final Background background) {
-        getChartPlotBackground().setBackground(background);
-    }
-
-    public Group getChartPlotContent() {
-        for (Node node : lookupAll(".plot-content")) {
-            if (node instanceof Group) {
-                return ((Group) node);
-            }
-        }
-        return null;
-    }
-
-    public void setLegendBackground(final Paint FILL) {
-        setLegendBackground(new Background(new BackgroundFill(FILL, CornerRadii.EMPTY, Insets.EMPTY)));
-    }
-
-    void setLegendBackground(final Background BACKGROUND) {
-        Legend legend = (Legend) getLegend();
-        if (null == legend) {
-            return;
-        }
-        legend.setBackground(BACKGROUND);
-    }
-
-    public void setLegendTextFill(final Paint FILL) {
-        getData().forEach(series -> setLegendTextFill(series, FILL));
-    }
-
-    void setLegendTextFill(final Series<X, Y> SERIES, final Paint FILL) {
-        if (getData().isEmpty()) {
-            return;
-        }
-        if (!getData().contains(SERIES)) {
-            return;
-        }
-
-        int seriesIndex = getData().indexOf(SERIES);
-        if (seriesIndex == -1) {
-            return;
-        }
-
-        Legend legend = (Legend) getLegend();
-        if (null == legend) {
-            return;
-        }
-
-        LegendItem item = legend.getItems().get(seriesIndex);
-        if (null == item) {
-            return;
-        }
-
-        String itemText = item.getText();
-        for (Node node : legend.lookupAll(".chart-legend-item")) {
-            if (node instanceof Label) {
-                Label label = (Label) node;
-                if (label.getText().equals(itemText)) {
-                    label.setTextFill(FILL);
-                }
-            }
-        }
-    }
-
-    void setLegendSymbolFill(final Series<X, Y> series, final Paint legendSymbolFill) {
-        if (getData().isEmpty()) {
-            return;
-        }
-        if (!getData().contains(series)) {
-            return;
-        }
-
-        int seriesIndex = getData().indexOf(series);
-        if (seriesIndex == -1) {
-            return;
-        }
-
-        Legend legend = (Legend) getLegend();
-        if (null == legend) {
-            return;
-        }
-
-        LegendItem item = legend.getItems().get(seriesIndex);
-        if (null == item) {
-            return;
-        }
-
-        Region symbol = (Region) item.getSymbol();
-        if (null == symbol) {
-            return;
-        }
-
-        symbol.setBackground(new Background(new BackgroundFill(legendSymbolFill, new CornerRadii(6), Insets.EMPTY)));
-    }
-
-    void setXAxisTickMarkFill(final Paint fill) {
-        for (Node node : getXAxis().lookupAll(".axis-tick-mark")) {
-            if (node instanceof Path) {
-                ((Path) node).setStroke(fill);
-                break;
-            }
-        }
-    }
-
-    void setYAxisTickMarkFill(final Paint fill) {
-        for (Node node : getYAxis().lookupAll(".axis-tick-mark")) {
-            if (node instanceof Path) {
-                ((Path) node).setStroke(fill);
-                break;
-            }
-        }
-        for (Node node : getYAxis().lookupAll(".axis-minor-tick-mark")) {
-            if (node instanceof Path) {
-                ((Path) node).setStroke(fill);
-                break;
-            }
-        }
-    }
-
-    public void setAxisTickMarkFill(final Paint fill) {
-        setXAxisTickMarkFill(fill);
-        setYAxisTickMarkFill(fill);
-    }
-
-    void setXAxisTickLabelFill(final Paint fill) {
-        getXAxis().setTickLabelFill(fill);
-    }
-
-    void setYAxisTickLabelFill(final Paint fill) {
-        getYAxis().setTickLabelFill(fill);
-    }
-
-    public void setTickLabelFill(final Paint fill) {
-        setXAxisTickLabelFill(fill);
-        setYAxisTickLabelFill(fill);
-    }
-
-    public void setXAxisBorderColor(final Paint fill) {
-        if (Side.BOTTOM == getXAxis().getSide()) {
-            getXAxis().setBorder(new Border(
-                    new BorderStroke(fill, Color.TRANSPARENT, Color.TRANSPARENT, Color.TRANSPARENT, BorderStrokeStyle.SOLID, BorderStrokeStyle.SOLID, BorderStrokeStyle.SOLID,
-                            BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderStroke.DEFAULT_WIDTHS, Insets.EMPTY)));
-        } else {
-            getXAxis().setBorder(new Border(
-                    new BorderStroke(Color.TRANSPARENT, Color.TRANSPARENT, fill, Color.TRANSPARENT, BorderStrokeStyle.SOLID, BorderStrokeStyle.SOLID, BorderStrokeStyle.SOLID,
-                            BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderStroke.DEFAULT_WIDTHS, Insets.EMPTY)));
-        }
-    }
-
-    public void setYAxisBorderColor(final Paint fill) {
-        if (Side.LEFT == getYAxis().getSide()) {
-            getYAxis().setBorder(new Border(
-                    new BorderStroke(Color.TRANSPARENT, fill, Color.TRANSPARENT, Color.TRANSPARENT, BorderStrokeStyle.SOLID, BorderStrokeStyle.SOLID, BorderStrokeStyle.SOLID,
-                            BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderStroke.DEFAULT_WIDTHS, Insets.EMPTY)));
-        } else {
-            getYAxis().setBorder(new Border(
-                    new BorderStroke(Color.TRANSPARENT, Color.TRANSPARENT, Color.TRANSPARENT, fill, BorderStrokeStyle.SOLID, BorderStrokeStyle.SOLID, BorderStrokeStyle.SOLID,
-                            BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderStroke.DEFAULT_WIDTHS, Insets.EMPTY)));
-        }
-    }
-
-    public Path getFillPath(final Series<X, Y> series) {
-        return Objects.requireNonNull(getPaths(series))[0];
-    }
-
-    public Path getStrokePath(final Series<X, Y> series) {
-        return Objects.requireNonNull(getPaths(series))[1];
-    }
-
-    public List<StackPane> getSymbols(final Series<X, Y> series) {
-        return series.getData().stream().map(node -> (StackPane) node.getNode()).collect(Collectors.toList());
-    }
-
-    public void dispose() {
-        getData().removeListener(seriesListener);
-    }
-
 
     // ******************** Internal Methods **********************************
     @Override
