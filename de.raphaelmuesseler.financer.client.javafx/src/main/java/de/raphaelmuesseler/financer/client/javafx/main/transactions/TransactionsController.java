@@ -38,9 +38,6 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.TextAlignment;
-import org.controlsfx.glyphfont.FontAwesome;
-import org.controlsfx.glyphfont.GlyphFont;
-import org.controlsfx.glyphfont.GlyphFontRegistry;
 
 import java.io.Serializable;
 import java.net.URL;
@@ -88,40 +85,29 @@ public class TransactionsController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        Platform.runLater(() -> {
+        FinancerController.setInitializationThread(new Thread(() -> {
+            FinancerController.getInstance().showLoadingBox();
             this.user = (User) this.localStorage.readObject("user");
 
-            GlyphFont fontAwesome = GlyphFontRegistry.font("FontAwesome");
-            this.refreshTransactionsBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.REFRESH));
-            this.refreshTransactionsBtn.setGraphicTextGap(8);
-            this.newTransactionBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.PLUS));
-            this.newTransactionBtn.setGraphicTextGap(8);
-            this.editTransactionBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.EDIT));
-            this.editTransactionBtn.setGraphicTextGap(8);
             this.editTransactionBtn.setDisable(true);
-            this.deleteTransactionBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.TRASH));
-            this.deleteTransactionBtn.setGraphicTextGap(8);
             this.deleteTransactionBtn.setDisable(true);
 
-            this.refreshFixedTransactionsBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.REFRESH));
-            this.refreshFixedTransactionsBtn.setGraphicTextGap(8);
-            this.newFixedTransactionBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.PLUS));
-            this.newFixedTransactionBtn.setGraphicTextGap(8);
             this.newFixedTransactionBtn.setDisable(true);
-            this.editFixedTransactionBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.EDIT));
-            this.editFixedTransactionBtn.setGraphicTextGap(8);
             this.editFixedTransactionBtn.setDisable(true);
-            this.deleteFixedTransactionBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.TRASH));
-            this.deleteFixedTransactionBtn.setGraphicTextGap(8);
             this.deleteFixedTransactionBtn.setDisable(true);
 
             this.categories = (BaseCategory) this.localStorage.readObject("categories");
 
             this.initializeTransactionsTable();
+            this.loadTransactionTableData();
             this.initializeFixedTransactionTable();
+            this.loadFixedTransactionTableData();
             this.initializeTransactionsOverviewTable();
+            this.loadTransactionOverviewTableData();
+            FinancerController.getInstance().hideLoadingBox();
 
-        });
+        }));
+        FinancerController.getInitializationThread().start();
     }
 
     private void initializeTransactionsOverviewTable() {
@@ -168,12 +154,13 @@ public class TransactionsController implements Initializable {
             });
             monthColumns.add(column);
         }
-        this.transactionsOverviewTableView.getColumns().add(categoryColumn);
-        this.transactionsOverviewTableView.getColumns().addAll(monthColumns);
+        Platform.runLater(() -> {
+            this.transactionsOverviewTableView.getColumns().add(categoryColumn);
+            this.transactionsOverviewTableView.getColumns().addAll(monthColumns);
+        });
     }
 
     private void initializeTransactionsTable() {
-
         TableColumn<VariableTransaction, Category> categoryColumn = new TableColumn<>(I18N.get("category"));
         TableColumn<VariableTransaction, LocalDate> valueDateColumn = new TableColumn<>(I18N.get("valueDate"));
         TableColumn<VariableTransaction, Double> amountColumn = new TableColumn<>(I18N.get("amount"));
@@ -214,12 +201,14 @@ public class TransactionsController implements Initializable {
         this.adjustColumnWidth(purposeColumn, this.transactionsTableView, 6);
         this.adjustColumnWidth(shopColumn, this.transactionsTableView, 6);
 
-        this.transactionsTableView.getColumns().add(categoryColumn);
-        this.transactionsTableView.getColumns().add(valueDateColumn);
-        this.transactionsTableView.getColumns().add(amountColumn);
-        this.transactionsTableView.getColumns().add(productColumn);
-        this.transactionsTableView.getColumns().add(purposeColumn);
-        this.transactionsTableView.getColumns().add(shopColumn);
+        Platform.runLater(() -> {
+            this.transactionsTableView.getColumns().add(categoryColumn);
+            this.transactionsTableView.getColumns().add(valueDateColumn);
+            this.transactionsTableView.getColumns().add(amountColumn);
+            this.transactionsTableView.getColumns().add(productColumn);
+            this.transactionsTableView.getColumns().add(purposeColumn);
+            this.transactionsTableView.getColumns().add(shopColumn);
+        });
 
         this.transactionsTableView.setRowFactory(param -> {
             TableRow<VariableTransaction> row = new TableRow<>();
@@ -236,10 +225,10 @@ public class TransactionsController implements Initializable {
             deleteTransactionBtn.setDisable(false);
         });
 
-        transactionsTableView.getColumns().get(1).setSortType(TableColumn.SortType.DESCENDING);
-        transactionsTableView.getSortOrder().add(valueDateColumn);
-
-        this.handleRefreshTransactions();
+        Platform.runLater(() -> {
+            transactionsTableView.getColumns().get(1).setSortType(TableColumn.SortType.DESCENDING);
+            transactionsTableView.getSortOrder().add(valueDateColumn);
+        });
     }
 
     private void initializeFixedTransactionTable() {
@@ -257,7 +246,6 @@ public class TransactionsController implements Initializable {
             deleteFixedTransactionBtn.setDisable(false);
         });
 
-        this.handleRefreshFixedTransactions();
         this.fixedTransactionsListView.setOnMouseClicked(mouseEvent -> {
             if (mouseEvent.getClickCount() == 2) {
                 handleEditFixedTransaction();

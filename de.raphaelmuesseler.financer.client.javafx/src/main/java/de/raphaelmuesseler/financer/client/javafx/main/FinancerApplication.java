@@ -114,6 +114,7 @@ public class FinancerApplication extends Application {
         Scene scene = new Scene(root, 1350, 700);
 
         scene.getStylesheets().add(getClass().getResource("style/colors.style.css").toExternalForm());
+        scene.getStylesheets().add(getClass().getResource("style/form.style.css").toExternalForm());
         scene.getStylesheets().add(getClass().getResource("style/navbar.style.css").toExternalForm());
         scene.getStylesheets().add(getClass().getResource("style/footer.style.css").toExternalForm());
         scene.getStylesheets().add(getClass().getResource("style/header.style.css").toExternalForm());
