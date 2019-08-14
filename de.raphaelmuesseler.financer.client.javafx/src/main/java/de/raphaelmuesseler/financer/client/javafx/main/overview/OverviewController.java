@@ -80,7 +80,7 @@ public class OverviewController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        new Thread(() -> {
+        FinancerController.setInitializationThread(new Thread(() -> {
             FinancerController.getInstance().showLoadingBox();
             categories = (BaseCategory) this.localStorage.readObject("categories");
             user = (User) localStorage.readObject("user");
@@ -97,7 +97,8 @@ public class OverviewController implements Initializable {
             initializeDistributionChart();
 
             FinancerController.getInstance().hideLoadingBox();
-        }).start();
+        }));
+        FinancerController.getInitializationThread().start();
     }
 
     private void loadBalanceWidget() {

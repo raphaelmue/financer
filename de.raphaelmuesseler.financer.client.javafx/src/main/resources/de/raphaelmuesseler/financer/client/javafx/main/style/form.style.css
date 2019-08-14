@@ -5,9 +5,6 @@
     -fx-font-family: "Roboto Light";
 }
 
-.separator .line {
-    -fx-border-style: solid;
-    -fx-border-width: 2;
-    -fx-border-color: -fx-color-primary;
-    -fx-orientation: horizontal;
+.jfx-button {
+    -fx-graphic-text-gap: 8;
 }

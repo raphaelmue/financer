@@ -5,6 +5,7 @@
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
+<?import org.controlsfx.glyphfont.Glyph?>
 <VBox fx:controller="de.raphaelmuesseler.financer.client.javafx.main.profile.ProfileController"
       xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" styleClass="content">
 
@@ -64,10 +65,26 @@
                         <VBox styleClass="box-content">
                             <HBox styleClass="tool-btn-bar">
                                 <JFXButton fx:id="refreshCategoriesBtn" text="%refresh"
-                                           onAction="#handleRefreshCategories"/>
-                                <JFXButton fx:id="newCategoryBtn" text="%new" onAction="#handleNewCategory"/>
-                                <JFXButton fx:id="editCategoryBtn" text="%edit" onAction="#handleEditCategory"/>
-                                <JFXButton fx:id="deleteCategoryBtn" text="%delete" onAction="#handleDeleteCategory"/>
+                                           onAction="#handleRefreshCategories">
+                                    <graphic>
+                                        <Glyph fontFamily="FontAwesome" icon="REFRESH"/>
+                                    </graphic>
+                                </JFXButton>
+                                <JFXButton fx:id="newCategoryBtn" text="%new" onAction="#handleNewCategory">
+                                    <graphic>
+                                        <Glyph fontFamily="FontAwesome" icon="PLUS"/>
+                                    </graphic>
+                                </JFXButton>
+                                <JFXButton fx:id="editCategoryBtn" text="%edit" onAction="#handleEditCategory">
+                                    <graphic>
+                                        <Glyph fontFamily="FontAwesome" icon="EDIT"/>
+                                    </graphic>
+                                </JFXButton>
+                                <JFXButton fx:id="deleteCategoryBtn" text="%delete" onAction="#handleDeleteCategory">
+                                    <graphic>
+                                        <Glyph fontFamily="FontAwesome" icon="TRASH"/>
+                                    </graphic>
+                                </JFXButton>
                             </HBox>
                             <TreeView fx:id="categoriesTreeView"/>
                         </VBox>
