@@ -22,8 +22,6 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
-import javafx.scene.chart.CategoryAxis;
-import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.PieChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.ComboBox;
@@ -65,15 +63,13 @@ public class StatisticsController implements Initializable {
     @FXML
     public DatePicker progressToDatePicker;
     @FXML
-    public VBox progressChartContainer;
-    @FXML
     public VBox categoriesContainer;
     @FXML
     public JFXButton addCategoryBtn;
     @FXML
     public JFXComboBox<CategoryTree> progressChartDefaultCategoryComboBox;
-
-    private SmoothedChart<String, Number> progressLineChart = new SmoothedChart<>(new CategoryAxis(), new NumberAxis());
+    @FXML
+    public SmoothedChart<String, Number> progressLineChart;
 
     private LocalStorage localStorage = LocalStorageImpl.getInstance();
     private BaseCategory categories;
@@ -132,10 +128,7 @@ public class StatisticsController implements Initializable {
             categoriesContainer.getChildren().add(initializeCategoryComboBoxContainer());
         });
 
-        Platform.runLater(() -> {
-            this.progressChartContainer.getChildren().add(this.progressLineChart);
-            this.progressChartDefaultCategoryComboBox.getSelectionModel().select(0);
-        });
+        Platform.runLater(() -> this.progressChartDefaultCategoryComboBox.getSelectionModel().select(0));
     }
 
     private HBox initializeCategoryComboBoxContainer() {

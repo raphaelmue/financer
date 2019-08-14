@@ -25,8 +25,6 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.HPos;
-import javafx.scene.chart.CategoryAxis;
-import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.PieChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Hyperlink;
@@ -62,15 +60,13 @@ public class OverviewController implements Initializable {
     @FXML
     public Label numberOfTransactionsLabel;
     @FXML
-    public VBox balanceProgressLineChartContainer;
-    @FXML
     public JFXComboBox<String> balanceChartMonthComboBox;
     @FXML
     public JFXComboBox<String> variableExpensesDistributionMonthComboBox;
     @FXML
     public DonutChart variableExpensesDistributionPieChart;
-
-    private SmoothedChart<String, Number> balanceChart = new SmoothedChart<>(new CategoryAxis(), new NumberAxis());
+    @FXML
+    public SmoothedChart<String, Number> balanceChart;
 
     private LocalStorageImpl localStorage = (LocalStorageImpl) LocalStorageImpl.getInstance();
     private JavaFXFormatter formatter = new JavaFXFormatter(localStorage);
@@ -275,23 +271,22 @@ public class OverviewController implements Initializable {
 
     private void initializeBalanceChart() {
         balanceChart.setChartType(SmoothedChart.ChartType.AREA);
+        balanceChart.setAnimated(false);
         this.balanceChartMonthComboBox.getItems().add(I18N.get("lastMonths", 3));
         this.balanceChartMonthComboBox.getItems().add(I18N.get("lastMonths", 6));
         this.balanceChartMonthComboBox.getItems().add(I18N.get("lastMonths", 12));
         this.balanceChartMonthComboBox.valueProperty().addListener(
                 (options, oldValue, newValue) -> loadBalanceChartData());
-        Platform.runLater(() -> {
-            this.balanceProgressLineChartContainer.getChildren().add(balanceChart);
-            this.balanceChartMonthComboBox.getSelectionModel().select(0);
-        });
+        Platform.runLater(() -> this.balanceChartMonthComboBox.getSelectionModel().select(0));
     }
 
     private void loadBalanceChartData() {
+        balanceChart.getData().clear();
         XYChart.Series<String, Number> data = new XYChart.Series<>();
         data.setName(I18N.get("balance"));
         int numberOfMonths = (int) (1.5 * Math.pow(this.balanceChartMonthComboBox.getSelectionModel().getSelectedIndex(), 2)
                 + 1.5 * this.balanceChartMonthComboBox.getSelectionModel().getSelectedIndex() + 3);
-        for (int i = numberOfMonths; i > 0; i--) {
+        for (int i = numberOfMonths - 1; i >= 0; i--) {
             LocalDate date = LocalDate.now().minusMonths(i);
             XYChart.Data<String, Number> dataSet = new XYChart.Data<>(formatter.formatMonth(date), categories.getAmount(date));
             Platform.runLater(() -> Tooltip.install(dataSet.getNode(),
@@ -300,9 +295,7 @@ public class OverviewController implements Initializable {
             data.getData().add(dataSet);
         }
 
-        balanceChart.getData().clear();
         balanceChart.getData().add(data);
-
     }
 
     private void initializeDistributionChart() {

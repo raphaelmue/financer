@@ -18,6 +18,7 @@ package de.raphaelmuesseler.financer.client.javafx.components.charts;
 import javafx.animation.FadeTransition;
 import javafx.animation.PauseTransition;
 import javafx.animation.SequentialTransition;
+import javafx.beans.NamedArg;
 import javafx.beans.property.*;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -97,7 +98,7 @@ public class SmoothedChart<X, Y> extends AreaChart<X, Y> {
 
 
     // ******************** Constructors **************************************
-    public SmoothedChart(final Axis<X> xAxis, final Axis<Y> yAxis) {
+    public SmoothedChart(final @NamedArg("xAxis") Axis<X> xAxis, final @NamedArg("yAxis") Axis<Y> yAxis) {
         super(xAxis, yAxis);
         init();
         registerListeners();

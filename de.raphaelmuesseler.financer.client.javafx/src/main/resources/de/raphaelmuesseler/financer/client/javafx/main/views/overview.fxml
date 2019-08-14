@@ -5,6 +5,9 @@
 <?import de.raphaelmuesseler.financer.client.javafx.components.charts.DonutChart?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import de.raphaelmuesseler.financer.client.javafx.components.charts.SmoothedChart?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.NumberAxis?>
 <VBox fx:controller="de.raphaelmuesseler.financer.client.javafx.main.overview.OverviewController"
       xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" styleClass="content">
     <ScrollPane fx:id="overviewScrollPane" fitToWidth="true" hbarPolicy="NEVER">
@@ -67,8 +70,17 @@
                             <JFXComboBox fx:id="balanceChartMonthComboBox"/>
                         </right>
                     </BorderPane>
-                    <VBox fx:id="balanceProgressLineChartContainer" styleClass="box-content" prefWidth="600"
-                          prefHeight="300"/>
+                    <VBox styleClass="box-content" prefWidth="600"
+                          prefHeight="300">
+                        <SmoothedChart fx:id="balanceChart">
+                            <xAxis>
+                                <CategoryAxis side="BOTTOM" label="%valueDate"/>
+                            </xAxis>
+                            <yAxis>
+                                <NumberAxis side="LEFT" label="%amount"/>
+                            </yAxis>
+                        </SmoothedChart>
+                    </VBox>
                 </VBox>
                 <VBox styleClass="box">
                     <BorderPane>

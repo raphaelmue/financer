@@ -8,13 +8,16 @@
 <?import de.raphaelmuesseler.financer.client.javafx.components.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import de.raphaelmuesseler.financer.client.javafx.components.charts.SmoothedChart?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.NumberAxis?>
 <VBox fx:controller="de.raphaelmuesseler.financer.client.javafx.main.statistics.StatisticsController"
       xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" styleClass="content">
     <ScrollPane fx:id="statisticsScrollPane" fitToWidth="true" hbarPolicy="NEVER">
         <JFXMasonryPane HSpacing="15" VSpacing="6">
             <VBox styleClass="box" prefWidth="1000" prefHeight="600">
                 <Label text="%progress" styleClass="content-heading"/>
-                <VBox fx:id="progressChartContainer" styleClass="box-content">
+                <VBox styleClass="box-content">
                     <BorderPane>
                         <left>
                             <HBox spacing="10" alignment="CENTER">
@@ -33,6 +36,14 @@
                             </VBox>
                         </right>
                     </BorderPane>
+                    <SmoothedChart fx:id="progressLineChart" animated="false">
+                        <xAxis>
+                            <CategoryAxis side="BOTTOM" label="%valueDate"/>
+                        </xAxis>
+                        <yAxis>
+                            <NumberAxis side="LEFT" label="%amount"/>
+                        </yAxis>
+                    </SmoothedChart>
                 </VBox>
             </VBox>
             <VBox styleClass="box" prefWidth="500" prefHeight="275">
