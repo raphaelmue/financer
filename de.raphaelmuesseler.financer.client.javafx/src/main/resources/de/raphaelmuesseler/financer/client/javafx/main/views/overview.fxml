@@ -2,7 +2,7 @@
 
 <?import com.jfoenix.controls.JFXComboBox?>
 <?import com.jfoenix.controls.JFXMasonryPane?>
-<?import javafx.scene.chart.PieChart?>
+<?import de.raphaelmuesseler.financer.client.javafx.components.charts.DonutChart?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <VBox fx:controller="de.raphaelmuesseler.financer.client.javafx.main.overview.OverviewController"
@@ -80,7 +80,7 @@
                         </right>
                     </BorderPane>
                     <VBox styleClass="box-content" prefWidth="300" prefHeight="300">
-                        <PieChart fx:id="variableExpensesDistributionPieChart" labelsVisible="false"/>
+                        <DonutChart fx:id="variableExpensesDistributionPieChart" labelsVisible="false" donutWidth="80"/>
                     </VBox>
                 </VBox>
                 <VBox styleClass="box">

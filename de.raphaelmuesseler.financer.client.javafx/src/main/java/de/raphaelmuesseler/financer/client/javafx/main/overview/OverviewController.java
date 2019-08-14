@@ -3,6 +3,7 @@ package de.raphaelmuesseler.financer.client.javafx.main.overview;
 import com.jfoenix.controls.JFXComboBox;
 import de.raphaelmuesseler.financer.client.connection.ServerRequestHandler;
 import de.raphaelmuesseler.financer.client.format.I18N;
+import de.raphaelmuesseler.financer.client.javafx.components.charts.DonutChart;
 import de.raphaelmuesseler.financer.client.javafx.components.charts.SmoothedChart;
 import de.raphaelmuesseler.financer.client.javafx.format.JavaFXFormatter;
 import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
@@ -67,7 +68,7 @@ public class OverviewController implements Initializable {
     @FXML
     public JFXComboBox<String> variableExpensesDistributionMonthComboBox;
     @FXML
-    public PieChart variableExpensesDistributionPieChart;
+    public DonutChart variableExpensesDistributionPieChart;
 
     private SmoothedChart<String, Number> balanceChart = new SmoothedChart<>(new CategoryAxis(), new NumberAxis());
 
@@ -292,15 +293,13 @@ public class OverviewController implements Initializable {
                 + 1.5 * this.balanceChartMonthComboBox.getSelectionModel().getSelectedIndex() + 3);
         for (int i = numberOfMonths; i > 0; i--) {
             LocalDate date = LocalDate.now().minusMonths(i);
-            data.getData().add(new XYChart.Data<>(formatter.formatMonth(date), categories.getAmount(date)));
+            XYChart.Data<String, Number> dataSet = new XYChart.Data<>(formatter.formatMonth(date), categories.getAmount(date));
+            Platform.runLater(() -> Tooltip.install(dataSet.getNode(),
+                    new Tooltip(dataSet.getXValue() + "\n" +
+                            I18N.get("amount") + ": \t" + formatter.formatCurrency((Double) dataSet.getYValue()))));
+            data.getData().add(dataSet);
         }
-        Platform.runLater(() -> {
-            for (XYChart.Data<String, Number> d : data.getData()) {
-                Tooltip.install(d.getNode(),
-                        new Tooltip(I18N.get("valueDate") + ": \t" + d.getXValue() + "\n" +
-                                I18N.get("amount") + ": \t" + formatter.formatCurrency((Double) d.getYValue())));
-            }
-        });
+
         balanceChart.getData().clear();
         balanceChart.getData().add(data);
 
@@ -329,7 +328,11 @@ public class OverviewController implements Initializable {
                 amount = categoryTree.getAmount(LocalDate.now().minusMonths(numberOfMonths), LocalDate.now());
             }
             if (amount != 0) {
-                variableExpensesData.add(new PieChart.Data(categoryTree.getValue().getName(), Math.abs(amount)));
+                PieChart.Data data = new PieChart.Data(categoryTree.getValue().getName(), Math.abs(amount));
+                Platform.runLater(() -> Tooltip.install(data.getNode(),
+                        new Tooltip(formatter.formatCategoryName(categoryTree) + "\n" +
+                                I18N.get("amount") + ": \t" + formatter.formatCurrency(data.getPieValue()))));
+                variableExpensesData.add(data);
             }
         }
         this.variableExpensesDistributionPieChart.setData(variableExpensesData);

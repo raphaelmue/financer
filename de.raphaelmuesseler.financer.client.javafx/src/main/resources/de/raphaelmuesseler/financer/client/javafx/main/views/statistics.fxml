@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import com.jfoenix.controls.*?>
-<?import javafx.scene.chart.PieChart?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXComboBox?>
+<?import com.jfoenix.controls.JFXMasonryPane?>
+<?import de.raphaelmuesseler.financer.client.javafx.components.charts.DonutChart?>
+<?import de.raphaelmuesseler.financer.client.javafx.components.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <VBox fx:controller="de.raphaelmuesseler.financer.client.javafx.main.statistics.StatisticsController"
@@ -15,9 +19,9 @@
                         <left>
                             <HBox spacing="10" alignment="CENTER">
                                 <Label text="%from"/>
-                                <JFXDatePicker fx:id="progressFromDatePicker"/>
+                                <DatePicker fx:id="progressFromDatePicker"/>
                                 <Label text="%to"/>
-                                <JFXDatePicker fx:id="progressToDatePicker"/>
+                                <DatePicker fx:id="progressToDatePicker"/>
                             </HBox>
                         </left>
                         <right>
@@ -36,11 +40,12 @@
                 <VBox styleClass="box-content" prefWidth="500" prefHeight="250">
                     <HBox spacing="10" prefWidth="Infinity" alignment="CENTER">
                         <Label text="%from"/>
-                        <JFXDatePicker fx:id="variableExpensesFromDatePicker"/>
+                        <DatePicker fx:id="variableExpensesFromDatePicker"/>
                         <Label text="%to"/>
-                        <JFXDatePicker fx:id="variableExpensesToDatePicker"/>
+                        <DatePicker fx:id="variableExpensesToDatePicker"/>
                     </HBox>
-                    <PieChart fx:id="variableExpensesDistributionChart" labelsVisible="false" legendSide="LEFT"/>
+                    <DonutChart fx:id="variableExpensesDistributionChart" labelsVisible="false" legendSide="LEFT"
+                                donutWidth="80"/>
                     <Label fx:id="variableExpensesNoDataLabel" styleClass="warning-label" text="%noData"
                            managed="false"/>
                 </VBox>
@@ -50,11 +55,12 @@
                 <VBox styleClass="box-content" prefWidth="500" prefHeight="250">
                     <HBox spacing="10" prefWidth="Infinity" alignment="CENTER">
                         <Label text="%from"/>
-                        <JFXDatePicker fx:id="fixedExpensesFromDatePicker"/>
+                        <DatePicker fx:id="fixedExpensesFromDatePicker"/>
                         <Label text="%to"/>
-                        <JFXDatePicker fx:id="fixedExpensesToDatePicker"/>
+                        <DatePicker fx:id="fixedExpensesToDatePicker"/>
                     </HBox>
-                    <PieChart fx:id="fixedExpensesDistributionChart" labelsVisible="false" legendSide="LEFT"/>
+                    <DonutChart fx:id="fixedExpensesDistributionChart" labelsVisible="false" legendSide="LEFT"
+                                donutWidth="80"/>
                     <Label fx:id="fixedExpensesNoDataLabel" styleClass="warning-label" text="%noData" managed="false"/>
                 </VBox>
             </VBox>

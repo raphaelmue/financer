@@ -130,6 +130,10 @@
     -fx-stroke: transparent;
 }
 
+.chart-horizontal-grid-lines {
+    -fx-stroke-dash-array: 3px;
+}
+
 .chart-area-symbol {
     -fx-background-radius: 100%;
     -fx-padding: 4px;
