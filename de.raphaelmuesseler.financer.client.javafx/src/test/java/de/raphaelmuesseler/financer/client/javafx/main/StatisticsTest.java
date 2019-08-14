@@ -75,6 +75,7 @@ public class StatisticsTest extends AbstractFinancerApplicationTest {
 
         PieChart pieChart = find("#fixedExpensesDistributionChart");
         Assertions.assertEquals(1, pieChart.getData().size());
+        Assertions.assertFalse(find("#fixedExpensesNoDataLabel").isVisible());
 
         JFXDatePicker fromDatePicker = find("#fixedExpensesFromDatePicker");
         fromDatePicker.setValue(fixedTransaction.getStartDate().minusMonths(5));
@@ -83,7 +84,7 @@ public class StatisticsTest extends AbstractFinancerApplicationTest {
         toDatePicker.setValue(fixedTransaction.getStartDate().minusMonths(4));
 
         sleep(MEDIUM_SLEEP);
-        Assertions.assertFalse(find("#fixedExpensesNoDataLabel").isVisible());
+        Assertions.assertTrue(find("#fixedExpensesNoDataLabel").isVisible());
     }
 
     @Test
@@ -101,6 +102,7 @@ public class StatisticsTest extends AbstractFinancerApplicationTest {
 
         PieChart pieChart = find("#variableExpensesDistributionChart");
         Assertions.assertEquals(1, pieChart.getData().size());
+        Assertions.assertFalse(find("#variableExpensesNoDataLabel").isVisible());
 
         JFXDatePicker fromDatePicker = find("#variableExpensesFromDatePicker");
         fromDatePicker.setValue(transaction.getValueDate().minusMonths(5));
@@ -109,8 +111,7 @@ public class StatisticsTest extends AbstractFinancerApplicationTest {
         toDatePicker.setValue(transaction.getValueDate().minusMonths(4));
 
         sleep(MEDIUM_SLEEP);
-        Assertions.assertFalse(find("#variableExpensesNoDataLabel").isVisible());
-
+        Assertions.assertTrue(find("#variableExpensesNoDataLabel").isVisible());
     }
 
 }
