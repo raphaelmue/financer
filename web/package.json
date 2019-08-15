@@ -1,0 +1,45 @@
+{
+    "name": "financer",
+    "version": "1.0.0",
+    "private": true,
+    "description": "Financer is an Application that helps to manage all private expenses and revenues.",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/raphaelmue/financer.git"
+    },
+    "licenses": [
+        {
+            "type": "BSD-3-Clause",
+            "url": "https://github.com/raphaelmue/financer/blob/master/LICENSE"
+        }
+    ],
+    "author": {
+        "name": "Raphael Müßeler",
+        "email": "raphael@muesseler.de"
+    },
+    "scripts": {
+        "css-build": "node-sass public/css/main.scss public/css/main.css",
+        "css-deploy": "npm run css-build && npm run css-postcss",
+        "css-postcss": "postcss --use autoprefixer --output public/css/main.css public/css/main.css",
+        "css-watch": "npm run css-build -- --watch",
+        "deploy": "npm run css-deploy && npm run js-build",
+        "js-build": "babel _javascript --out-dir lib",
+        "js-watch": "npm run js-build -- --watch",
+        "start": "node start.js"
+    },
+    "dependencies": {
+        "aos": "^2.3.4",
+        "bootstrap": "^4.3.1",
+        "cookie-parser": "~1.4.4",
+        "debug": "~2.6.9",
+        "ejs": "~2.6.1",
+        "express": "~4.16.1",
+        "http-errors": "~1.6.3",
+        "i18n": "^0.8.3",
+        "jquery": "^3.4.1",
+        "morgan": "~1.9.1",
+        "node-sass": "^4.12.0",
+        "popper.js": "^1.15.0",
+        "yarn": "^1.17.3"
+    }
+}

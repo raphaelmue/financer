@@ -1,0 +1,29 @@
+@charset "utf-8";
+
+// setting font
+@import url('https://fonts.googleapis.com/css?family=Lexend+Mega|Roboto:300,400,700&display=swap');
+
+$font-family-sans-serif: "Roboto", sans-serif;
+
+// setting colors
+$primary: #44a1a0;
+
+// Bootstrap and its default variables
+@import "../../node_modules/bootstrap/scss/bootstrap";
+
+.jumbotron {
+    border-radius: 0;
+}
+
+.icon-box {
+    text-align: center;
+}
+
+.icon-box i {
+    font-size: 26px;
+    margin-bottom: 15px;
+    background-color: rgba($primary, 0.2);
+    padding: 30px;
+    border-radius: 100%;
+    color: $primary;
+}
