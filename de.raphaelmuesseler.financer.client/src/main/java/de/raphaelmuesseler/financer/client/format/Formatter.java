@@ -16,5 +16,7 @@ public interface Formatter {
 
     String formatDate(LocalDate localDate);
 
+    String formatMonth(LocalDate localDate);
+
     LocalDate convertStringToLocalDate(String dateString);
 }

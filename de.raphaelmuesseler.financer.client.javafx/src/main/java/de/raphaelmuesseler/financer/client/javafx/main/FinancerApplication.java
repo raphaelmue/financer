@@ -111,7 +111,7 @@ public class FinancerApplication extends Application {
         Parent root = FXMLLoader.load(getClass().getResource("views/financer.fxml"), resourceBundle);
 
         Stage primaryStage = new Stage();
-        Scene scene = new Scene(root, 1350, 700);
+        Scene scene = new Scene(root, 1300, 700);
 
         scene.getStylesheets().add(getClass().getResource("style/colors.style.css").toExternalForm());
         scene.getStylesheets().add(getClass().getResource("style/form.style.css").toExternalForm());

@@ -7,3 +7,9 @@
     -fx-font-weight: 700;
     -fx-padding: 15 0;
 }
+
+#balanceChangeLabel, #variableExpensesChangeLabel, #numberOfTransactionsChangeLabel {
+    -fx-padding: 4px 0;
+    -fx-font-size: 24px;
+    -fx-font-weight: 500;
+}

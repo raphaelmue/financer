@@ -260,7 +260,7 @@ public class FinancerController implements Initializable, Application {
             stackPane.getChildren().add(FXMLLoader.load(url, this.resourceBundle));
             stackPane.getChildren().add(loadingBox);
             this.contentPane.setCenter(stackPane);
-            BorderPane.setMargin(stackPane, new Insets(20));
+            BorderPane.setMargin(stackPane, new Insets(20, 0, 0, 20));
         } catch (IOException e) {
             logger.log(Level.SEVERE, e.getMessage(), e);
         }
