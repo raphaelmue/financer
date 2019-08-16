@@ -8,3 +8,11 @@
 .jfx-button {
     -fx-graphic-text-gap: 8;
 }
+
+.pos-amount {
+    -fx-text-fill: -fx-color-success;
+}
+
+.neg-amount {
+    -fx-text-fill: -fx-color-error;
+}

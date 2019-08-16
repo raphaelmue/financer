@@ -321,8 +321,8 @@ public class TransactionsController implements Initializable {
             });
         }
 
-        this.categoriesListView.getItems().sort((o1, o2) -> String.CASE_INSENSITIVE_ORDER.compare(formatter.formatCategoryName(o1),
-                formatter.formatCategoryName(o2)));
+        Platform.runLater(() -> this.categoriesListView.getItems().sort((o1, o2) -> String.CASE_INSENSITIVE_ORDER.compare(formatter.formatCategoryName(o1),
+                formatter.formatCategoryName(o2))));
 
     }
 
