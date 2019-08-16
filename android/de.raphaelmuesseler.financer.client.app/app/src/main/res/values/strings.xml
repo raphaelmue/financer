@@ -45,4 +45,8 @@
     <string name="not_specified">Not specified</string>
     <string name="email_already_in_use">Email is already in use.</string>
     <string name="password_too_short">Password is too short (min 4 characters).</string>
+    <string name="err_not_authorized">Your client is not authorized to fetch data from the server. Please try to log in again or contact the support.</string>
+    <string name="err_server_unavailable">Server is currently not available. Please try again later.</string>
+    <string name="err_database_unavailable">The database is not available at the moment. Please try again later</string>
+    <string name="err_something_went_wrong">Oops! Something went wrong. Please try again later.</string>
 </resources>

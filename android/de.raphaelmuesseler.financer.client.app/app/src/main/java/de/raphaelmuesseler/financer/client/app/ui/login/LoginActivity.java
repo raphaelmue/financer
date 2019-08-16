@@ -2,6 +2,7 @@ package de.raphaelmuesseler.financer.client.app.ui.login;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
@@ -18,9 +19,9 @@ import java.util.Map;
 import de.raphaelmuesseler.financer.client.app.R;
 import de.raphaelmuesseler.financer.client.app.connection.AndroidAsyncConnectionCall;
 import de.raphaelmuesseler.financer.client.app.connection.RetrievalServiceImpl;
+import de.raphaelmuesseler.financer.client.app.format.AndroidFormatter;
 import de.raphaelmuesseler.financer.client.app.local.LocalStorageImpl;
 import de.raphaelmuesseler.financer.client.app.ui.main.FinancerActivity;
-import de.raphaelmuesseler.financer.client.connection.ServerRequest;
 import de.raphaelmuesseler.financer.client.connection.ServerRequestHandler;
 import de.raphaelmuesseler.financer.client.local.Application;
 import de.raphaelmuesseler.financer.client.local.LocalSettingsImpl;
@@ -39,7 +40,6 @@ public class LoginActivity extends AppCompatActivity implements Application {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ServerRequest.setHost(false);
         ServerRequestHandler.setApplication(this);
         LocalStorageImpl.getInstance().deleteAllData();
         LocalStorageImpl.getInstance().writeObject("localSettings", new LocalSettingsImpl());
@@ -165,6 +165,16 @@ public class LoginActivity extends AppCompatActivity implements Application {
     @Override
     public void showToast(MessageType messageType, String s) {
         Toast.makeText(this, s, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void showErrorDialog(Exception e) {
+        runOnUiThread(() -> new AlertDialog.Builder(this)
+                .setTitle("Financer")
+                .setMessage(new AndroidFormatter(LocalStorageImpl.getInstance(), this).formatExceptionMessage(e))
+                .setPositiveButton(android.R.string.ok, null)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show());
     }
 }
 

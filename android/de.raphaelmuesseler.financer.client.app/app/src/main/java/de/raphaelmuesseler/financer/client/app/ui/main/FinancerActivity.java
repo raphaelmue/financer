@@ -11,6 +11,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -20,6 +21,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import de.raphaelmuesseler.financer.client.app.R;
+import de.raphaelmuesseler.financer.client.app.format.AndroidFormatter;
 import de.raphaelmuesseler.financer.client.app.local.LocalStorageImpl;
 import de.raphaelmuesseler.financer.client.app.ui.login.LoginActivity;
 import de.raphaelmuesseler.financer.client.app.ui.main.transactions.TransactionFragment;
@@ -47,7 +49,7 @@ public class FinancerActivity extends AppCompatActivity
         INSTANCE = this;
 
         LocalStorageImpl.setContext(this);
-        ServerRequest.setHost(false);
+        ServerRequest.setHost("172.18.165.243");
         ServerRequestHandler.setApplication(this);
         ServerRequestHandler.setLocalStorage(LocalStorageImpl.getInstance());
 
@@ -208,5 +210,15 @@ public class FinancerActivity extends AppCompatActivity
     @Override
     public void showToast(MessageType messageType, String s) {
 
+    }
+
+    @Override
+    public void showErrorDialog(Exception e) {
+        runOnUiThread(() -> new AlertDialog.Builder(this)
+                .setTitle("Financer")
+                .setMessage(new AndroidFormatter(LocalStorageImpl.getInstance(), this).formatExceptionMessage(e))
+                .setPositiveButton(android.R.string.ok, null)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show());
     }
 }

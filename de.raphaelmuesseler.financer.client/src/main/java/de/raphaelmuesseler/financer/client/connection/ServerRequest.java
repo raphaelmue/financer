@@ -38,6 +38,10 @@ public class ServerRequest {
         ServerRequest.host = local ? ServerRequest.HOST_LOCAL : ServerRequest.HOST_REMOTE;
     }
 
+    public static void setHost(String host) {
+        ServerRequest.host = host;
+    }
+
     public static void setPort(int port) {
         ServerRequest.post = port;
     }
