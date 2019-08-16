@@ -33,7 +33,7 @@
         <main data-spy="scroll" data-target="#navbar" data-offset="0">
             <section id="home">
                 <div class="jumbotron">
-                    <div class="container" style="padding-bottom: 25%">
+                    <div class="container" style="padding-top: 50px; padding-bottom: 25%">
                         <div class="col-8 offset-2" data-aos="fade-up">
                             <h1 class="display-4"><%= __("manageYourFinance") %></h1>
                             <p class="lead"><%= __("shortDescription") %></p>
@@ -42,12 +42,7 @@
                 </div>
                 <div class="container" style="margin-top: -25%;" data-aos="fade-zoom-out">
                     <div class="col-10 offset-1">
-                        <div id="hero-carousel" class="carousel slide" data-ride="carousel">
-                            <ol class="carousel-indicators">
-                                <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
-                                <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
-                                <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
-                            </ol>
+                        <div id="hero-carousel" class="carousel slide shadow" data-ride="carousel">
                             <div class="carousel-inner">
                                 <div class="carousel-item active">
                                     <img class="d-block w-100" src="images/dashboard_full_1.jpg" alt="First slide">
@@ -59,14 +54,14 @@
                                     <img class="d-block w-100" src="images/dashboard_full_3.jpg" alt="Third slide">
                                 </div>
                             </div>
-                            <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button"
+                            <a class="carousel-control-prev" role="button"
                                data-slide="prev">
-                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                <span class="fa fa-chevron-left" aria-hidden="true"></span>
                                 <span class="sr-only">Previous</span>
                             </a>
-                            <a class="carousel-control-next" href="#carouselExampleIndicators" role="button"
+                            <a class="carousel-control-next" role="button"
                                data-slide="next">
-                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                <span class="fa fa-chevron-right" aria-hidden="true"></span>
                                 <span class="sr-only">Next</span>
                             </a>
                         </div>
@@ -82,12 +77,12 @@
                         <p class="font-weight-light text-black-50"><%= __("openSourceDescription") %> <a
                                     href="https://github.com/raphaelmue/financer">GitHub</a></p>
                     </div>
-                    <div class="col-12 col-md-4 icon-box px-4" data-aos="fade-up" data-aos-delay="50">
+                    <div class="col-12 col-md-4 icon-box px-4" data-aos="fade-up" data-aos-delay="100">
                         <i class="fa fa-layer-group"></i>
                         <h5 class="my-2"><%= __("productivity") %></h5>
                         <p class="font-weight-light text-black-50"><%= __("productivityDescription") %></p>
                     </div>
-                    <div class="col-12 col-md-4 icon-box px-4" data-aos="fade-up" data-aos-delay="100">
+                    <div class="col-12 col-md-4 icon-box px-4" data-aos="fade-up" data-aos-delay="200">
                         <i class="fa fa-chart-line"></i>
                         <h5 class="my-2"><%= __("statistics") %></h5>
                         <p class="font-weight-light text-black-50"><%= __("statisticsDescription") %></p>
@@ -160,7 +155,9 @@
     </body>
     <script>
         $(document).ready(function () {
-            AOS.init();
+            AOS.init({
+                duration: 800
+            });
             $('#hero-carousel').carousel();
 
             let offset = 120;
@@ -170,6 +167,14 @@
                 event.preventDefault();
                 $($(this).attr('href'))[0].scrollIntoView();
                 scrollBy(0, -offset);
+            });
+
+            $('.carousel-control-prev').click(function () {
+                $('#hero-carousel').carousel('prev');
+            });
+
+            $('.carousel-control-next').click(function () {
+                $('#hero-carousel').carousel('next');
             });
         });
 

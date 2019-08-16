@@ -34,6 +34,25 @@ $secondary: #ff715b;
     background-color: rgba($primary, 0.2);
 }
 
+.carousel-control-prev, .carousel-control-next {
+    color: $dark !important;
+    font-size: 25px;
+    cursor: pointer;
+}
+
+.carousel-control-prev {
+    left: -90px
+}
+
+.carousel-control-next {
+    right: -90px
+}
+
+.carousel-control-prev:hover span.fa, .carousel-control-next:hover span.fa {
+    color: $primary
+}
+
+
 .sub-heading {
     @extend .text-uppercase, .text-center, .my-5, .text-monospace;
     letter-spacing: 1.5px;
