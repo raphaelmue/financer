@@ -107,7 +107,7 @@ public class LoginActivity extends AppCompatActivity implements Application {
                 @Override
                 public void onSuccess(ConnectionResult connectionResult) {
                     if (connectionResult.getResult() != null) {
-                        LocalStorageImpl.getInstance().writeObject("user", (Serializable) connectionResult.getResult());
+                        LocalStorageImpl.getInstance().writeObject("user", connectionResult.getResult());
                         RetrievalServiceImpl.getInstance().fetchAllData((User) connectionResult.getResult(), aVoid -> openFinancerActivity());
                     } else {
                         runOnUiThread(() -> {
