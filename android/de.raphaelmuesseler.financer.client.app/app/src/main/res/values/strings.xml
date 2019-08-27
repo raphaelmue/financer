@@ -53,4 +53,6 @@
     <string name="load_categories" >Load Categories ...</string>
     <string name="load_transactions">Load Transactions ...</string>
     <string name="load_fixed_transactions">Load Fixed Transactions ...</string>
+    <string name="success_added_transaction">Added transaction successfully!</string>
+    <string name="success_updated_transaction">Updated transaction successfully!</string>
 </resources>

@@ -17,10 +17,9 @@ import java.util.Objects;
 import de.raphaelmuesseler.financer.client.app.R;
 import de.raphaelmuesseler.financer.client.app.connection.AndroidAsyncConnectionCall;
 import de.raphaelmuesseler.financer.client.app.local.LocalStorageImpl;
-import de.raphaelmuesseler.financer.client.app.ui.main.transactions.AddTransactionActivity;
+import de.raphaelmuesseler.financer.client.app.ui.main.transactions.TransactionActivity;
 import de.raphaelmuesseler.financer.client.connection.ServerRequestHandler;
 import de.raphaelmuesseler.financer.client.local.Application;
-import de.raphaelmuesseler.financer.shared.connection.ConnectionResult;
 import de.raphaelmuesseler.financer.shared.model.categories.BaseCategory;
 import de.raphaelmuesseler.financer.shared.model.categories.CategoryTree;
 import de.raphaelmuesseler.financer.shared.model.transactions.VariableTransaction;
@@ -46,11 +45,11 @@ public class OverviewFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View rootView =  inflater.inflate(R.layout.fragment_overview, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_overview, container, false);
 
         FloatingActionButton addTransactionBtn = rootView.findViewById(R.id.fab_overview_add_transaction);
         addTransactionBtn.setOnClickListener(view -> {
-            Intent intent = new Intent(getContext(), AddTransactionActivity.class);
+            Intent intent = new Intent(getContext(), TransactionActivity.class);
             startActivityForResult(intent, ADD_TRANSACTION_REQUEST);
         });
 
@@ -68,25 +67,16 @@ public class OverviewFragment extends Fragment {
                 parameters.put("variableTransaction", transaction);
 
                 FinancerExecutor.getExecutor().execute(new ServerRequestHandler((User) LocalStorageImpl.getInstance().readObject("user"),
-                        "addTransaction", parameters, new AndroidAsyncConnectionCall() {
-                    @Override
-                    public void onSuccess(ConnectionResult connectionResult) {
-                        Objects.requireNonNull(getActivity()).runOnUiThread(() -> {
-                            transaction.setId(((VariableTransaction) connectionResult.getResult()).getId());
-                            BaseCategory baseCategory = (BaseCategory) LocalStorageImpl.getInstance().readObject("categories");
-                            CategoryTree categoryTree = (CategoryTree) TreeUtil.getByValue(baseCategory, transaction.getCategoryTree(), (o1, o2) -> Integer.compare(o1.getId(), o2.getId()));
-                            categoryTree.getTransactions().add(transaction);
-                            transaction.setCategoryTree(categoryTree);
+                        "addTransaction", parameters, (AndroidAsyncConnectionCall) connectionResult -> Objects.requireNonNull(getActivity()).runOnUiThread(() -> {
+                    transaction.setId(((VariableTransaction) connectionResult.getResult()).getId());
+                    BaseCategory baseCategory = (BaseCategory) LocalStorageImpl.getInstance().readObject("categories");
+                    CategoryTree categoryTree = (CategoryTree) TreeUtil.getByValue(baseCategory, transaction.getCategoryTree(), (o1, o2) -> Integer.compare(o1.getId(), o2.getId()));
+                    categoryTree.getTransactions().add(transaction);
+                    transaction.setCategoryTree(categoryTree);
 
-                            LocalStorageImpl.getInstance().writeObject("categories", baseCategory);
-                        });
-                    }
-
-                    @Override
-                    public void onFailure(Exception exception) {
-                        FinancerActivity.getFinancerApplication().showToast(Application.MessageType.ERROR, getString(R.string.something_went_wrong));
-                    }
-                }));
+                    LocalStorageImpl.getInstance().writeObject("categories", baseCategory);
+                    FinancerActivity.getFinancerApplication().showToast(Application.MessageType.SUCCESS, getString(R.string.success_added_transaction));
+                })));
             }
         }
     }

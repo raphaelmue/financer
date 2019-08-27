@@ -120,5 +120,10 @@ public class CategoryTreeImpl implements CategoryTree {
     public String toString() {
         return this.getValue().toString();
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof CategoryTreeImpl && ((CategoryTreeImpl) obj).getValue().getId() == this.getValue().getId();
+    }
 }
 

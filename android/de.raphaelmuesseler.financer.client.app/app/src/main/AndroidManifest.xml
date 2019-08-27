@@ -33,7 +33,7 @@
             android:label="@string/register"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".ui.main.transactions.AddTransactionActivity"
+            android:name=".ui.main.transactions.TransactionActivity"
             android:label="@string/add_transaction"
             android:theme="@style/AppTheme.NoActionBar" />
     </application>

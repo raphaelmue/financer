@@ -32,7 +32,7 @@
     <string name="fixed_expenses">Feste Ausgaben</string>
     <string name="variable_expenses">Variable Ausgaben</string>
     <string name="fixed_revenue">Feste Einnahmen</string>
-    <string name="variable_revenue">Der Server ist derzeit nicht verfügbar. Bitte versuchen Sie es später noch einmal.</string>
+    <string name="variable_revenue">Variable Einnahmen</string>
     <string name="something_went_wrong">Etwas ist schief gelaufen ...</string>
     <string name="register">Registrieren</string>
     <string name="name">Vorname</string>
@@ -53,4 +53,6 @@
     <string name="load_categories">Kategorien laden ...</string>
     <string name="load_transactions">Transaktionen laden ...</string>
     <string name="load_fixed_transactions">Feste Transaktionen laden ...</string>
+    <string name="success_added_transaction">Transaktion erfolgreich hinzugefügt!</string>
+    <string name="success_updated_transaction">Transaktion erfolgreich geändert!</string>
 </resources>

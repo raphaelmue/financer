@@ -19,6 +19,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import de.raphaelmuesseler.financer.client.app.R;
 import de.raphaelmuesseler.financer.client.app.format.AndroidFormatter;
@@ -212,7 +213,7 @@ public class FinancerActivity extends AppCompatActivity
 
     @Override
     public void showToast(MessageType messageType, String s) {
-
+        Toast.makeText(this, s, Toast.LENGTH_LONG).show();
     }
 
     @Override
@@ -221,7 +222,7 @@ public class FinancerActivity extends AppCompatActivity
                 .setTitle("Financer")
                 .setMessage(new AndroidFormatter(LocalStorageImpl.getInstance(), this).formatExceptionMessage(e))
                 .setPositiveButton(android.R.string.ok, null)
-                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setIcon(R.drawable.ic_error)
                 .show());
     }
 }

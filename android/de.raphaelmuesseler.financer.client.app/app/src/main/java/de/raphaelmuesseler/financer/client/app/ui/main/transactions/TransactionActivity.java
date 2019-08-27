@@ -34,7 +34,7 @@ import de.raphaelmuesseler.financer.shared.model.transactions.VariableTransactio
 import de.raphaelmuesseler.financer.shared.model.user.User;
 import de.raphaelmuesseler.financer.util.collections.TreeUtil;
 
-public class AddTransactionActivity extends AppCompatActivity {
+public class TransactionActivity extends AppCompatActivity {
 
     private final Formatter formatter = new AndroidFormatter(LocalStorageImpl.getInstance(), this);
 
@@ -46,6 +46,8 @@ public class AddTransactionActivity extends AppCompatActivity {
     private EditText purposeEditText;
     private EditText shopEditText;
     private Spinner categorySpinner;
+
+    private VariableTransaction transaction;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,12 +82,26 @@ public class AddTransactionActivity extends AppCompatActivity {
         this.valueDateEditText.setText(formatter.formatDate(LocalDate.now()));
 
         this.valueDateEditText.setOnClickListener(v -> new DatePickerDialog(
-                AddTransactionActivity.this,
+                TransactionActivity.this,
                 (view, year, monthOfYear, dayOfMonth) ->
                         valueDateEditText.setText(formatter.formatDate(LocalDate.of(year, monthOfYear + 1, dayOfMonth))),
                 LocalDate.now().getYear(),
                 LocalDate.now().getMonthValue() - 1,
                 LocalDate.now().getDayOfMonth()).show());
+
+        Bundle bundle = getIntent().getExtras();
+        if (bundle != null && !bundle.isEmpty()) {
+            this.transaction = (VariableTransaction) bundle.get("transaction");
+            if (transaction != null) {
+                User user = (User) LocalStorageImpl.getInstance().readObject("user");
+                this.amountEditText.setText(String.format(user.getSettings().getLanguage(), "%.2f", transaction.getAmount()));
+                this.productEditText.setText(transaction.getProduct());
+                this.purposeEditText.setText(transaction.getPurpose());
+                this.shopEditText.setText(transaction.getShop());
+                this.valueDateEditText.setText(formatter.formatDate(transaction.getValueDate()));
+                this.categorySpinner.setSelection(adapter.getPosition(transaction.getCategoryTree()));
+            }
+        }
     }
 
     @Override
@@ -96,9 +112,7 @@ public class AddTransactionActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-
-        if (id == R.id.menu_check) {
+        int id = item.getItemId();if (id == R.id.menu_check) {
             submitAddTransaction();
             return true;
         }
@@ -121,7 +135,8 @@ public class AddTransactionActivity extends AppCompatActivity {
         }
 
         if (!cancel) {
-            final VariableTransaction transaction = new VariableTransaction(0,
+            int id = this.transaction != null ? this.transaction.getId() : 0;
+            final VariableTransaction transaction = new VariableTransaction(id,
                     Double.valueOf(amountEditText.getText().toString().replace(",", ".")),
                     LocalDate.parse(valueDateEditText.getText().toString(), DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)
                             .withLocale(((User) LocalStorageImpl.getInstance().readObject("user")).getSettings().getLanguage())),

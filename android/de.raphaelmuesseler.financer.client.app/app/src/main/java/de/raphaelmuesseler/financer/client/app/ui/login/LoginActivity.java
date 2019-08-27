@@ -171,7 +171,7 @@ public class LoginActivity extends AppCompatActivity implements Application {
                 .setTitle("Financer")
                 .setMessage(new AndroidFormatter(LocalStorageImpl.getInstance(), this).formatExceptionMessage(e))
                 .setPositiveButton(android.R.string.ok, null)
-                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setIcon(R.drawable.ic_error)
                 .show());
     }
 }
