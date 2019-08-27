@@ -49,4 +49,8 @@
     <string name="err_server_unavailable">Server is currently not available. Please try again later.</string>
     <string name="err_database_unavailable">The database is not available at the moment. Please try again later</string>
     <string name="err_something_went_wrong">Oops! Something went wrong. Please try again later.</string>
+    <string name="financer_display" translatable="false">F I N A N C E R</string>
+    <string name="load_categories" >Load Categories ...</string>
+    <string name="load_transactions">Load Transactions ...</string>
+    <string name="load_fixed_transactions">Load Fixed Transactions ...</string>
 </resources>

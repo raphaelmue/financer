@@ -100,18 +100,9 @@ public class TransactionsTabFragment extends Fragment {
             startActivityForResult(intent, ADD_TRANSACTION_REQUEST);
         });
 
-        this.refreshTransactions();
+        new Thread(this::refreshTransactionsList).start();
 
         return rootView;
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-
-        if (!this.runningRefreshTask) {
-            this.refreshTransactionsList();
-        }
     }
 
     @Override
@@ -175,43 +166,33 @@ public class TransactionsTabFragment extends Fragment {
                 transactions.add((VariableTransaction) transaction);
             }
         });
-        transactions.sort((o1, o2) -> o2.getValueDate().compareTo(o1.getValueDate()));
-        if (transactionListView != null) {
-            ((TransactionListViewAdapter) transactionListView.getAdapter()).notifyDataSetChanged();
-        }
+        Objects.requireNonNull(getActivity()).runOnUiThread(() -> {
+            transactions.sort((o1, o2) -> o2.getValueDate().compareTo(o1.getValueDate()));
+            if (transactionListView != null) {
+                ((TransactionListViewAdapter) transactionListView.getAdapter()).notifyDataSetChanged();
+            }
+        });
     }
 
     private void refreshTransactions() {
-        this.runningRefreshTask = true;
-        RetrievalServiceImpl.getInstance().fetchTransactions((User) LocalStorageImpl.getInstance().readObject("user"), new AsyncCall<BaseCategory>() {
-            @Override
-            public void onSuccess(BaseCategory result) {
-                Objects.requireNonNull(getActivity()).runOnUiThread(() -> {
-                    LocalStorageImpl.getInstance().writeObject("categories", result);
-                    refreshTransactionsList();
-                });
-            }
-
-            @Override
-            public void onFailure(Exception exception) {
-                exception.printStackTrace();
-                transactions.clear();
-                List<VariableTransaction> storedTransactions = LocalStorageImpl.getInstance().readList("transactions");
-                if (storedTransactions != null) {
-                    transactions.addAll(storedTransactions);
+        if (!this.runningRefreshTask) {
+            this.runningRefreshTask = true;
+            RetrievalServiceImpl.getInstance().fetchTransactions((User) LocalStorageImpl.getInstance().readObject("user"), new AsyncCall<BaseCategory>() {
+                @Override
+                public void onSuccess(BaseCategory result) {
+                    Objects.requireNonNull(getActivity()).runOnUiThread(()
+                            -> LocalStorageImpl.getInstance().writeObject("categories", result));
                 }
-            }
 
-            @Override
-            public void onAfter() {
-                runningRefreshTask = false;
-                Objects.requireNonNull(getActivity()).runOnUiThread(() -> {
-                    transactions.sort((o1, o2) -> o2.getValueDate().compareTo(o1.getValueDate()));
-                    ((TransactionListViewAdapter) transactionListView.getAdapter()).notifyDataSetChanged();
-                    swipeRefreshLayoutTransactions.setRefreshing(false);
-                });
-            }
-        });
+                @Override
+                public void onAfter() {
+                    runningRefreshTask = false;
+                    refreshTransactionsList();
+                    Objects.requireNonNull(getActivity()).runOnUiThread(()
+                            -> swipeRefreshLayoutTransactions.setRefreshing(false));
+                }
+            });
+        }
     }
 
     private class TransactionListViewAdapter extends ArrayAdapter<VariableTransaction> {

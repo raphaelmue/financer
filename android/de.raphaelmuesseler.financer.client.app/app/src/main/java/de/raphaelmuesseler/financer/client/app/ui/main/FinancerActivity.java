@@ -57,6 +57,9 @@ public class FinancerActivity extends AppCompatActivity
         if (user == null) {
             this.openLoginActivity();
         } else {
+            Intent i = new Intent(this, SplashScreenActivity.class);
+            startActivity(i);
+
             setContentView(R.layout.activity_financer);
             Toolbar toolbar = findViewById(R.id.toolbar);
             setSupportActionBar(toolbar);

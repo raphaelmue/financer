@@ -50,4 +50,7 @@
     <string name="err_server_unavailable">Der Server ist derzeit nicht verfügbar. Bitte versuchen Sie es später noch einmal.</string>
     <string name="err_database_unavailable">Die Datenbank ist zur Zeit nicht verfügbar. Bitte versuchen Sie es später noch einmal.</string>
     <string name="err_something_went_wrong">Hoppla! Etwas ist schief gelaufen. Bitte versuchen Sie es später noch einmal.</string>
+    <string name="load_categories">Kategorien laden ...</string>
+    <string name="load_transactions">Transaktionen laden ...</string>
+    <string name="load_fixed_transactions">Feste Transaktionen laden ...</string>
 </resources>

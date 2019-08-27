@@ -18,7 +18,6 @@ import java.util.Map;
 
 import de.raphaelmuesseler.financer.client.app.R;
 import de.raphaelmuesseler.financer.client.app.connection.AndroidAsyncConnectionCall;
-import de.raphaelmuesseler.financer.client.app.connection.RetrievalServiceImpl;
 import de.raphaelmuesseler.financer.client.app.format.AndroidFormatter;
 import de.raphaelmuesseler.financer.client.app.local.LocalStorageImpl;
 import de.raphaelmuesseler.financer.client.app.ui.main.FinancerActivity;
@@ -26,7 +25,6 @@ import de.raphaelmuesseler.financer.client.connection.ServerRequestHandler;
 import de.raphaelmuesseler.financer.client.local.Application;
 import de.raphaelmuesseler.financer.client.local.LocalSettingsImpl;
 import de.raphaelmuesseler.financer.shared.connection.ConnectionResult;
-import de.raphaelmuesseler.financer.shared.model.user.User;
 import de.raphaelmuesseler.financer.util.concurrency.FinancerExecutor;
 
 public class LoginActivity extends AppCompatActivity implements Application {
@@ -108,7 +106,7 @@ public class LoginActivity extends AppCompatActivity implements Application {
                 public void onSuccess(ConnectionResult connectionResult) {
                     if (connectionResult.getResult() != null) {
                         LocalStorageImpl.getInstance().writeObject("user", connectionResult.getResult());
-                        RetrievalServiceImpl.getInstance().fetchAllData((User) connectionResult.getResult(), aVoid -> openFinancerActivity());
+                        openFinancerActivity();
                     } else {
                         runOnUiThread(() -> {
                             passwordEditText.setError(getString(R.string.error_invalid_credentials));
