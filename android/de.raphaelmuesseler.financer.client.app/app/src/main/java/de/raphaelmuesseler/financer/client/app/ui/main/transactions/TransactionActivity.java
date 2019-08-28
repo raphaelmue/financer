@@ -17,9 +17,6 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.time.format.FormatStyle;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -72,11 +69,11 @@ public class TransactionActivity extends AppCompatActivity {
         ArrayAdapter<CategoryTree> adapter = new CategorySpinnerAdapter(this, categoryTreeList);
         categorySpinner.setAdapter(adapter);
 
-        this.amountEditText = findViewById(R.id.et_add_transaction_amount);
-        this.productEditText = findViewById(R.id.et_add_transaction_product);
-        this.purposeEditText = findViewById(R.id.et_add_transaction_purpose);
+        this.amountEditText = findViewById(R.id.et_transaction_amount);
+        this.productEditText = findViewById(R.id.et_transaction_product);
+        this.purposeEditText = findViewById(R.id.et_transaction_purpose);
         this.shopEditText = findViewById(R.id.et_add_transaction_shop);
-        this.valueDateEditText = findViewById(R.id.tv_add_transaction_value_date);
+        this.valueDateEditText = findViewById(R.id.tv_transaction_value_date);
 
         Bundle bundle = getIntent().getExtras();
         if (bundle != null && !bundle.isEmpty()) {
@@ -121,17 +118,12 @@ public class TransactionActivity extends AppCompatActivity {
             amountEditText.setError(getString(R.string.error_field_required));
             cancel = true;
         }
-        if (valueDateEditText.getText().toString().isEmpty()) {
-            valueDateEditText.setError(getString(R.string.error_field_required));
-            cancel = true;
-        }
 
         if (!cancel) {
             int id = this.transaction != null ? this.transaction.getId() : 0;
             final VariableTransaction transaction = new VariableTransaction(id,
                     Double.valueOf(amountEditText.getText().toString().replace(",", ".")),
-                    LocalDate.parse(valueDateEditText.getText().toString(), DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)
-                            .withLocale(((User) LocalStorageImpl.getInstance().readObject("user")).getSettings().getLanguage())),
+                    valueDateEditText.getValue(),
                     (CategoryTree) categorySpinner.getSelectedItem(),
                     productEditText.getText().toString(),
                     purposeEditText.getText().toString(),

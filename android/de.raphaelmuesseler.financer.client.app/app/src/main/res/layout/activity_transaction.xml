@@ -7,6 +7,174 @@
     android:fitsSystemWindows="true"
     tools:context=".ui.main.transactions.TransactionActivity">
 
+    <FrameLayout
+        android:id="@+id/fragment_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="15dp">
+
+                <ImageView
+                    android:id="@+id/iv_transaction_amount_icon"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    app:layout_constraintBottom_toTopOf="@+id/tv_transaction_value_date"
+                    app:layout_constraintEnd_toStartOf="@+id/til_transaction_amount"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/til_transaction_amount"
+                    app:srcCompat="@drawable/ic_money" />
+
+                <ImageView
+                    android:id="@+id/iv_transaction_value_date_icon"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    app:layout_constraintBottom_toBottomOf="@+id/tv_transaction_value_date"
+                    app:layout_constraintEnd_toStartOf="@+id/tv_transaction_value_date"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/tv_transaction_value_date"
+                    app:layout_constraintVertical_bias="0.0"
+                    app:srcCompat="@drawable/ic_date" />
+
+                <ImageView
+                    android:id="@+id/iv_transaction_shop_icon"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:layout_weight="1"
+                    app:layout_constraintBottom_toBottomOf="@+id/til_transaction_shop"
+                    app:layout_constraintEnd_toStartOf="@+id/til_transaction_shop"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/til_transaction_shop"
+                    app:srcCompat="@drawable/ic_shop" />
+
+                <Spinner
+                    android:id="@+id/sp_add_transaction_category"
+                    android:layout_width="330dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/form_margin"
+                    android:layout_marginBottom="@dimen/form_margin"
+                    android:spinnerMode="dialog"
+                    android:prompt="@string/category"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_transaction_value_date" />
+
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/til_transaction_product"
+                    android:layout_width="330dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/form_margin"
+                    android:layout_marginBottom="@dimen/form_margin"
+                    android:ems="10"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/sp_add_transaction_category">
+
+                    <EditText
+                        android:id="@+id/et_transaction_product"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:autofillHints=""
+                        android:focusableInTouchMode="true"
+                        android:hint="@string/product"
+                        android:inputType="textCapWords"
+                        android:singleLine="true"
+                        app:layout_constraintStart_toStartOf="parent" />
+
+                </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/til_transaction_amount"
+                    android:layout_width="330dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/form_margin"
+                    android:ems="10"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <EditText
+                        android:id="@+id/et_transaction_amount"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:autofillHints=""
+                        android:digits="0123456789.,-"
+                        android:focusableInTouchMode="true"
+                        android:hint="@string/amount"
+                        android:inputType="numberDecimal"
+                        android:singleLine="true"
+                        android:textSize="30sp"
+                        app:layout_constraintStart_toStartOf="parent" />
+
+                </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/til_transaction_purpose"
+                    android:layout_width="330dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/form_margin"
+                    android:ems="10"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/til_transaction_product">
+
+                    <EditText
+                        android:id="@+id/et_transaction_purpose"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:autofillHints=""
+                        android:focusableInTouchMode="true"
+                        android:hint="@string/purpose"
+                        android:inputType="textCapWords"
+                        android:singleLine="true"
+                        app:layout_constraintStart_toStartOf="parent" />
+
+                </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/til_transaction_shop"
+                    android:layout_width="330dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/form_margin"
+                    android:ems="10"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/til_transaction_purpose">
+
+                    <EditText
+                        android:id="@+id/et_add_transaction_shop"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:autofillHints=""
+                        android:focusableInTouchMode="true"
+                        android:hint="@string/shop"
+                        android:inputType="textCapWords"
+                        android:singleLine="true"
+                        app:layout_constraintStart_toStartOf="parent" />
+
+                </android.support.design.widget.TextInputLayout>
+
+                <de.raphaelmuesseler.financer.client.app.ui.components.DatePicker
+                    android:id="@+id/tv_transaction_value_date"
+                    android:layout_width="330dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:clickable="true"
+                    android:hint="@string/value_date"
+                    android:paddingTop="8dp"
+                    android:paddingBottom="8dp"
+                    android:singleLine="true"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/til_transaction_amount" />
+
+            </android.support.constraint.ConstraintLayout>
+        </ScrollView>
+
+    </FrameLayout>
+
     <android.support.design.widget.AppBarLayout
         android:id="@+id/toolbarContainer"
         android:layout_width="match_parent"
@@ -33,120 +201,4 @@
         </android.support.v7.widget.Toolbar>
 
     </android.support.design.widget.AppBarLayout>
-
-    <FrameLayout
-        android:id="@+id/fragment_content"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior" >
-        <ScrollView
-
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:padding="15dp">
-
-            <LinearLayout
-
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <android.support.design.widget.TextInputLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:ems="10">
-
-                    <EditText
-                        android:id="@+id/et_add_transaction_amount"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:autofillHints=""
-                        android:digits="0123456789.,-"
-                        android:focusableInTouchMode="true"
-                        android:hint="@string/amount"
-                        android:inputType="numberDecimal"
-                        android:singleLine="true"
-                        app:layout_constraintStart_toStartOf="parent" />
-
-                </android.support.design.widget.TextInputLayout>
-
-                <de.raphaelmuesseler.financer.client.app.ui.components.DatePicker
-                    android:id="@+id/tv_add_transaction_value_date"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:clickable="true"
-                    android:hint="@string/value_date"
-                    android:paddingTop="8dp"
-                    android:paddingBottom="8dp"
-                    android:singleLine="true"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    app:layout_constraintStart_toStartOf="parent" />
-
-                <Spinner
-                    android:id="@+id/sp_add_transaction_category"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginTop="16dp"
-                    android:spinnerMode="dialog" />
-
-                <android.support.design.widget.TextInputLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:ems="10">
-
-                    <EditText
-                        android:id="@+id/et_add_transaction_product"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:autofillHints=""
-                        android:focusableInTouchMode="true"
-                        android:hint="@string/product"
-                        android:inputType="textCapWords"
-                        android:singleLine="true"
-                        app:layout_constraintStart_toStartOf="parent" />
-
-                </android.support.design.widget.TextInputLayout>
-
-                <android.support.design.widget.TextInputLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:ems="10">
-
-                    <EditText
-                        android:id="@+id/et_add_transaction_purpose"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:autofillHints=""
-                        android:focusableInTouchMode="true"
-                        android:hint="@string/purpose"
-                        android:inputType="textCapWords"
-                        android:singleLine="true"
-                        app:layout_constraintStart_toStartOf="parent" />
-
-                </android.support.design.widget.TextInputLayout>
-
-                <android.support.design.widget.TextInputLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:ems="10">
-
-                    <EditText
-                        android:id="@+id/et_add_transaction_shop"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:autofillHints=""
-                        android:focusableInTouchMode="true"
-                        android:hint="@string/shop"
-                        android:inputType="textCapWords"
-                        android:singleLine="true"
-                        app:layout_constraintStart_toStartOf="parent" />
-
-                </android.support.design.widget.TextInputLayout>
-            </LinearLayout>
-        </ScrollView>
-    </FrameLayout>
 </android.support.design.widget.CoordinatorLayout>
