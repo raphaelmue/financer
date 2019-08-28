@@ -149,8 +149,6 @@ public class RegisterActivity extends AppCompatActivity implements Application {
                     runOnUiThread(() -> {
                         if (exception instanceof EmailAlreadyInUseException || exception.getCause() != null && exception.getCause() instanceof EmailAlreadyInUseException) {
                             emailEditText.setError(getString(R.string.email_already_in_use));
-                        } else {
-                            showToast(MessageType.ERROR, getString(R.string.something_went_wrong));
                         }
                     });
                 }
@@ -206,7 +204,7 @@ public class RegisterActivity extends AppCompatActivity implements Application {
     private class GenderSpinnerAdapter extends ArrayAdapter<User.Gender> {
 
         GenderSpinnerAdapter(Context context) {
-            super(context,  R.layout.support_simple_spinner_dropdown_item, User.Gender.values());
+            super(context, R.layout.support_simple_spinner_dropdown_item, User.Gender.values());
             this.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         }
 

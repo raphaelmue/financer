@@ -105,7 +105,7 @@ public class TransactionsTabFragment extends Fragment {
             startActivityForResult(intent, ADD_TRANSACTION_REQUEST);
         });
 
-        new Thread(this::refreshTransactionsList).start();
+        new Thread(() -> Objects.requireNonNull(getActivity()).runOnUiThread(this::refreshTransactionsList)).start();
 
         return rootView;
     }
@@ -188,12 +188,10 @@ public class TransactionsTabFragment extends Fragment {
                 transactions.add((VariableTransaction) transaction);
             }
         });
-        Objects.requireNonNull(getActivity()).runOnUiThread(() -> {
-            transactions.sort((o1, o2) -> o2.getValueDate().compareTo(o1.getValueDate()));
-            if (transactionListView != null) {
-                ((TransactionListViewAdapter) transactionListView.getAdapter()).notifyDataSetChanged();
-            }
-        });
+        transactions.sort((o1, o2) -> o2.getValueDate().compareTo(o1.getValueDate()));
+        if (transactionListView != null) {
+            ((TransactionListViewAdapter) transactionListView.getAdapter()).notifyDataSetChanged();
+        }
     }
 
     private void refreshTransactions() {
@@ -209,9 +207,10 @@ public class TransactionsTabFragment extends Fragment {
                 @Override
                 public void onAfter() {
                     runningRefreshTask = false;
-                    refreshTransactionsList();
-                    Objects.requireNonNull(getActivity()).runOnUiThread(()
-                            -> swipeRefreshLayoutTransactions.setRefreshing(false));
+                    Objects.requireNonNull(getActivity()).runOnUiThread(() -> {
+                        refreshTransactionsList();
+                        swipeRefreshLayoutTransactions.setRefreshing(false);
+                    });
                 }
             });
         }

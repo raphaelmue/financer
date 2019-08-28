@@ -33,7 +33,7 @@
     <string name="variable_expenses">Variable Ausgaben</string>
     <string name="fixed_revenue">Feste Einnahmen</string>
     <string name="variable_revenue">Variable Einnahmen</string>
-    <string name="something_went_wrong">Etwas ist schief gelaufen ...</string>
+    <string name="something_went_wrong">Etwas ist schief gelaufen …</string>
     <string name="register">Registrieren</string>
     <string name="name">Vorname</string>
     <string name="surname">Nachname</string>
@@ -46,13 +46,14 @@
     <string name="not_specified">Keine Angabe</string>
     <string name="email_already_in_use">Diese Email Adresse wurde bereits registriert.</string>
     <string name="password_too_short">Das Passwort ist zu kurz (mind. 4 Zeichen).</string>
-    <string name="err_not_authorized">Diese Anwendung ist nicht berechtigt, auf Daten vom Server zuzugreifen. Bitte versuche dich erneut anzumelden oder kontaktiere den Support</string>
-    <string name="err_server_unavailable">Der Server ist derzeit nicht verfügbar. Bitte versuchen Sie es später noch einmal.</string>
-    <string name="err_database_unavailable">Die Datenbank ist zur Zeit nicht verfügbar. Bitte versuchen Sie es später noch einmal.</string>
-    <string name="err_something_went_wrong">Hoppla! Etwas ist schief gelaufen. Bitte versuchen Sie es später noch einmal.</string>
-    <string name="load_categories">Kategorien laden ...</string>
-    <string name="load_transactions">Transaktionen laden ...</string>
-    <string name="load_fixed_transactions">Feste Transaktionen laden ...</string>
+    <string name="error_not_authorized">Diese Anwendung ist nicht berechtigt, auf Daten vom Server zuzugreifen. Bitte versuche dich erneut anzumelden oder kontaktiere den Support</string>
+    <string name="error_server_unavailable">Der Server ist derzeit nicht verfügbar. Bitte versuchen Sie es später noch einmal.</string>
+    <string name="error_database_unavailable">Die Datenbank ist zur Zeit nicht verfügbar. Bitte versuchen Sie es später noch einmal.</string>
+    <string name="error_something_went_wrong">Hoppla! Etwas ist schief gelaufen. Bitte versuchen Sie es später noch einmal.</string>
+    <string name="load_categories">Kategorien laden …</string>
+    <string name="load_transactions">Transaktionen laden …</string>
+    <string name="load_fixed_transactions">Feste Transaktionen laden …</string>
     <string name="success_added_transaction">Transaktion erfolgreich hinzugefügt!</string>
     <string name="success_updated_transaction">Transaktion erfolgreich geändert!</string>
+    <string name="transaction">Transaktion</string>
 </resources>

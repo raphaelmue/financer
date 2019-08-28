@@ -1,6 +1,5 @@
 package de.raphaelmuesseler.financer.client.app.ui.main.transactions;
 
-import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -27,6 +26,7 @@ import java.util.List;
 import de.raphaelmuesseler.financer.client.app.R;
 import de.raphaelmuesseler.financer.client.app.format.AndroidFormatter;
 import de.raphaelmuesseler.financer.client.app.local.LocalStorageImpl;
+import de.raphaelmuesseler.financer.client.app.ui.components.DatePicker;
 import de.raphaelmuesseler.financer.client.format.Formatter;
 import de.raphaelmuesseler.financer.shared.model.categories.BaseCategory;
 import de.raphaelmuesseler.financer.shared.model.categories.CategoryTree;
@@ -38,9 +38,7 @@ public class TransactionActivity extends AppCompatActivity {
 
     private final Formatter formatter = new AndroidFormatter(LocalStorageImpl.getInstance(), this);
 
-    private BaseCategory baseCategory;
-
-    private TextView valueDateEditText;
+    private DatePicker valueDateEditText;
     private EditText amountEditText;
     private EditText productEditText;
     private EditText purposeEditText;
@@ -52,15 +50,15 @@ public class TransactionActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_transaction);
+        setContentView(R.layout.activity_transaction);
 
-        Toolbar toolbar = findViewById(R.id.add_transaction_toolbar);
+        Toolbar toolbar = findViewById(R.id.transaction_toolbar);
         setSupportActionBar(toolbar);
 
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back);
         toolbar.setNavigationOnClickListener(v -> runOnUiThread(this::finish));
 
-        baseCategory = (BaseCategory) LocalStorageImpl.getInstance().readObject("categories");
+        BaseCategory baseCategory = (BaseCategory) LocalStorageImpl.getInstance().readObject("categories");
 
         List<CategoryTree> categoryTreeList = new ArrayList<>();
         TreeUtil.traverse(baseCategory.getCategoryTreeByCategoryClass(BaseCategory.CategoryClass.VARIABLE_EXPENSES),
@@ -79,26 +77,19 @@ public class TransactionActivity extends AppCompatActivity {
         this.purposeEditText = findViewById(R.id.et_add_transaction_purpose);
         this.shopEditText = findViewById(R.id.et_add_transaction_shop);
         this.valueDateEditText = findViewById(R.id.tv_add_transaction_value_date);
-        this.valueDateEditText.setText(formatter.formatDate(LocalDate.now()));
-
-        this.valueDateEditText.setOnClickListener(v -> new DatePickerDialog(
-                TransactionActivity.this,
-                (view, year, monthOfYear, dayOfMonth) ->
-                        valueDateEditText.setText(formatter.formatDate(LocalDate.of(year, monthOfYear + 1, dayOfMonth))),
-                LocalDate.now().getYear(),
-                LocalDate.now().getMonthValue() - 1,
-                LocalDate.now().getDayOfMonth()).show());
 
         Bundle bundle = getIntent().getExtras();
         if (bundle != null && !bundle.isEmpty()) {
             this.transaction = (VariableTransaction) bundle.get("transaction");
             if (transaction != null) {
+                this.setTitle(R.string.transaction);
+
                 User user = (User) LocalStorageImpl.getInstance().readObject("user");
                 this.amountEditText.setText(String.format(user.getSettings().getLanguage(), "%.2f", transaction.getAmount()));
                 this.productEditText.setText(transaction.getProduct());
                 this.purposeEditText.setText(transaction.getPurpose());
                 this.shopEditText.setText(transaction.getShop());
-                this.valueDateEditText.setText(formatter.formatDate(transaction.getValueDate()));
+                this.valueDateEditText.setValue(transaction.getValueDate());
                 this.categorySpinner.setSelection(adapter.getPosition(transaction.getCategoryTree()));
             }
         }
@@ -112,7 +103,8 @@ public class TransactionActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();if (id == R.id.menu_check) {
+        int id = item.getItemId();
+        if (id == R.id.menu_check) {
             submitAddTransaction();
             return true;
         }

@@ -14,7 +14,7 @@
         android:theme="@style/AppTheme.AppBarOverlay">
 
         <android.support.v7.widget.Toolbar
-            android:id="@+id/add_transaction_toolbar"
+            android:id="@+id/transaction_toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
@@ -70,7 +70,7 @@
 
                 </android.support.design.widget.TextInputLayout>
 
-                <TextView
+                <de.raphaelmuesseler.financer.client.app.ui.components.DatePicker
                     android:id="@+id/tv_add_transaction_value_date"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
