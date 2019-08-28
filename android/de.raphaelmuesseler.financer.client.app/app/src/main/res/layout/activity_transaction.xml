@@ -55,7 +55,7 @@
                     app:srcCompat="@drawable/ic_shop" />
 
                 <Spinner
-                    android:id="@+id/sp_add_transaction_category"
+                    android:id="@+id/tv_transaction_category"
                     android:layout_width="330dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/form_margin"
@@ -73,7 +73,7 @@
                     android:layout_marginBottom="@dimen/form_margin"
                     android:ems="10"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/sp_add_transaction_category">
+                    app:layout_constraintTop_toBottomOf="@+id/tv_transaction_category">
 
                     <EditText
                         android:id="@+id/et_transaction_product"
@@ -113,7 +113,7 @@
                 </android.support.design.widget.TextInputLayout>
 
                 <android.support.design.widget.TextInputLayout
-                    android:id="@+id/til_transaction_purpose"
+                    android:id="@+id/tv_transaction_purpose"
                     android:layout_width="330dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/form_margin"
@@ -141,7 +141,7 @@
                     android:layout_marginTop="@dimen/form_margin"
                     android:ems="10"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/til_transaction_purpose">
+                    app:layout_constraintTop_toBottomOf="@+id/tv_transaction_purpose">
 
                     <EditText
                         android:id="@+id/et_add_transaction_shop"

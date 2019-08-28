@@ -47,7 +47,6 @@ import static android.app.Activity.RESULT_OK;
 public class TransactionsTabFragment extends Fragment {
 
     private static final int ADD_TRANSACTION_REQUEST = 1;  // The request code
-    private static final int EDIT_TRANSACTION_REQUEST = 2;
 
     private final Formatter formatter = new AndroidFormatter(LocalStorageImpl.getInstance(), getContext());
     private List<VariableTransaction> transactions = new ArrayList<>();
@@ -94,9 +93,10 @@ public class TransactionsTabFragment extends Fragment {
         this.transactionListView = rootView.findViewById(R.id.lv_transactions);
         this.transactionListView.setAdapter(new TransactionListViewAdapter(getContext(), transactions));
         this.transactionListView.setOnItemClickListener((parent, view, position, id) -> {
-            Intent intent = new Intent(getActivity(), TransactionActivity.class);
-            intent.putExtra("transaction", (VariableTransaction) this.transactionListView.getItemAtPosition(position));
-            startActivityForResult(intent, EDIT_TRANSACTION_REQUEST);
+            TransactionDetailFragment bottomDetailDialog = TransactionDetailFragment.newInstance(
+                    (VariableTransaction) this.transactionListView.getItemAtPosition(position));
+            bottomDetailDialog.show(getFragmentManager(), "test");
+            bottomDetailDialog.setOnCancelListener(aVoid -> Objects.requireNonNull(getActivity()).runOnUiThread(this::refreshTransactions));
         });
 
         FloatingActionButton addTransactionBtn = rootView.findViewById(R.id.fab_transaction_tab_add_transaction);
@@ -125,53 +125,28 @@ public class TransactionsTabFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         User user = (User) LocalStorageImpl.getInstance().readObject("user");
-        switch (requestCode) {
-            case ADD_TRANSACTION_REQUEST:
-                if (resultCode == RESULT_OK) {
-                    VariableTransaction transaction = (VariableTransaction) data.getSerializableExtra("variableTransaction");
+        if (requestCode == ADD_TRANSACTION_REQUEST) {
+            if (resultCode == RESULT_OK) {
+                VariableTransaction transaction = (VariableTransaction) data.getSerializableExtra("variableTransaction");
 
-                    Map<String, Serializable> parameters = new HashMap<>();
-                    parameters.put("variableTransaction", transaction);
+                Map<String, Serializable> parameters = new HashMap<>();
+                parameters.put("variableTransaction", transaction);
 
-                    FinancerExecutor.getExecutor().execute(new ServerRequestHandler(user,
-                            "addTransaction", parameters,
-                            (AndroidAsyncConnectionCall) connectionResult -> Objects.requireNonNull(getActivity()).runOnUiThread(() -> {
-                                transaction.setId(((VariableTransaction) connectionResult.getResult()).getId());
-                                BaseCategory baseCategory = (BaseCategory) LocalStorageImpl.getInstance().readObject("categories");
-                                CategoryTree categoryTree = (CategoryTree) TreeUtil.getByValue(baseCategory, transaction.getCategoryTree(), (o1, o2) -> Integer.compare(o1.getId(), o2.getId()));
-                                categoryTree.getTransactions().add(transaction);
-                                transaction.setCategoryTree(categoryTree);
+                FinancerExecutor.getExecutor().execute(new ServerRequestHandler(user,
+                        "addTransaction", parameters,
+                        (AndroidAsyncConnectionCall) connectionResult -> Objects.requireNonNull(getActivity()).runOnUiThread(() -> {
+                            transaction.setId(((VariableTransaction) connectionResult.getResult()).getId());
+                            BaseCategory baseCategory = (BaseCategory) LocalStorageImpl.getInstance().readObject("categories");
+                            CategoryTree categoryTree = (CategoryTree) TreeUtil.getByValue(baseCategory, transaction.getCategoryTree(), (o1, o2) -> Integer.compare(o1.getId(), o2.getId()));
+                            categoryTree.getTransactions().add(transaction);
+                            transaction.setCategoryTree(categoryTree);
 
-                                LocalStorageImpl.getInstance().writeObject("categories", baseCategory);
+                            LocalStorageImpl.getInstance().writeObject("categories", baseCategory);
 
-                                refreshTransactionsList();
-                                FinancerActivity.getFinancerApplication().showToast(Application.MessageType.SUCCESS, getString(R.string.success_added_transaction));
-                            })));
-                }
-                break;
-            case EDIT_TRANSACTION_REQUEST:
-                if (resultCode == RESULT_OK) {
-                    VariableTransaction transaction = (VariableTransaction) data.getSerializableExtra("variableTransaction");
-                    transaction.getCategoryTree().getValue().setUser(user);
-
-                    Map<String, Serializable> parameters = new HashMap<>();
-                    parameters.put("variableTransaction", transaction);
-
-                    FinancerExecutor.getExecutor().execute(new ServerRequestHandler(user, "updateTransaction", parameters,
-                            (AndroidAsyncConnectionCall) connectionResult -> Objects.requireNonNull(getActivity()).runOnUiThread(() -> {
-                                BaseCategory baseCategory = (BaseCategory) LocalStorageImpl.getInstance().readObject("categories");
-                                CategoryTree categoryTree = (CategoryTree) TreeUtil.getByValue(baseCategory, transaction.getCategoryTree(), (o1, o2) -> Integer.compare(o1.getId(), o2.getId()));
-                                categoryTree.getTransactions().remove(transaction);
-                                categoryTree.getTransactions().add(transaction);
-                                transaction.setCategoryTree(categoryTree);
-                                LocalStorageImpl.getInstance().writeObject("categories", baseCategory);
-
-                                refreshTransactionsList();
-                                FinancerActivity.getFinancerApplication().showToast(Application.MessageType.SUCCESS,
-                                        getString(R.string.success_updated_transaction));
-                            })));
-                }
-                break;
+                            refreshTransactionsList();
+                            FinancerActivity.getFinancerApplication().showToast(Application.MessageType.SUCCESS, getString(R.string.success_added_transaction));
+                        })));
+            }
         }
     }
 
@@ -252,4 +227,6 @@ public class TransactionsTabFragment extends Fragment {
             return listItem;
         }
     }
+
+
 }

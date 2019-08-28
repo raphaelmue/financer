@@ -65,7 +65,7 @@ public class TransactionActivity extends AppCompatActivity {
 
         categoryTreeList.sort((o1, o2) -> formatter.formatCategoryName(o1).compareTo(formatter.formatCategoryName(o2)));
 
-        categorySpinner = findViewById(R.id.sp_add_transaction_category);
+        categorySpinner = findViewById(R.id.tv_transaction_category);
         ArrayAdapter<CategoryTree> adapter = new CategorySpinnerAdapter(this, categoryTreeList);
         categorySpinner.setAdapter(adapter);
 
@@ -94,7 +94,7 @@ public class TransactionActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.add_transaction_menu, menu);
+        getMenuInflater().inflate(R.menu.transaction_menu, menu);
         return true;
     }
 
