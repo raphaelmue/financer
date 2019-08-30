@@ -57,4 +57,7 @@
     <string name="success_updated_transaction">Updated transaction successfully!</string>
     <string name="transaction">Transaction</string>
     <string name="edit">edit</string>
+    <string name="balance">Balance</string>
+    <string name="expenses">Expenses</string>
+    <string name="last_transactions">Last Transactions</string>
 </resources>

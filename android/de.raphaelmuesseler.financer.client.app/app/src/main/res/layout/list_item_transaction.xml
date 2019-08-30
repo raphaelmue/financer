@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="15dp">
@@ -44,8 +43,8 @@
         android:layout_height="wrap_content"
         android:text="@string/value_date"
         android:textAppearance="?android:attr/textAppearanceListItemSecondary"
-        app:layout_constraintTop_toBottomOf="@+id/tv_list_item_transaction_amount"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_list_item_transaction_amount" />
 
 </android.support.constraint.ConstraintLayout>

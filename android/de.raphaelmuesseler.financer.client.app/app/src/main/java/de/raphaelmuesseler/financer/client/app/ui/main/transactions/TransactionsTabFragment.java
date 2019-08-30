@@ -1,21 +1,17 @@
 package de.raphaelmuesseler.financer.client.app.ui.main.transactions;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -27,11 +23,9 @@ import java.util.Objects;
 import de.raphaelmuesseler.financer.client.app.R;
 import de.raphaelmuesseler.financer.client.app.connection.AndroidAsyncConnectionCall;
 import de.raphaelmuesseler.financer.client.app.connection.RetrievalServiceImpl;
-import de.raphaelmuesseler.financer.client.app.format.AndroidFormatter;
 import de.raphaelmuesseler.financer.client.app.local.LocalStorageImpl;
 import de.raphaelmuesseler.financer.client.app.ui.main.FinancerActivity;
 import de.raphaelmuesseler.financer.client.connection.ServerRequestHandler;
-import de.raphaelmuesseler.financer.client.format.Formatter;
 import de.raphaelmuesseler.financer.client.local.Application;
 import de.raphaelmuesseler.financer.shared.connection.AsyncCall;
 import de.raphaelmuesseler.financer.shared.model.categories.BaseCategory;
@@ -48,7 +42,6 @@ public class TransactionsTabFragment extends Fragment {
 
     private static final int ADD_TRANSACTION_REQUEST = 1;  // The request code
 
-    private final Formatter formatter = new AndroidFormatter(LocalStorageImpl.getInstance(), getContext());
     private List<VariableTransaction> transactions = new ArrayList<>();
 
     private ListView transactionListView;
@@ -96,7 +89,7 @@ public class TransactionsTabFragment extends Fragment {
             TransactionDetailFragment bottomDetailDialog = TransactionDetailFragment.newInstance(
                     (VariableTransaction) this.transactionListView.getItemAtPosition(position));
             bottomDetailDialog.show(getFragmentManager(), "test");
-            bottomDetailDialog.setOnCancelListener(aVoid -> Objects.requireNonNull(getActivity()).runOnUiThread(this::refreshTransactions));
+            bottomDetailDialog.setOnCancelListener(aVoid -> Objects.requireNonNull(getActivity()).runOnUiThread(this::refreshTransactionsList));
         });
 
         FloatingActionButton addTransactionBtn = rootView.findViewById(R.id.fab_transaction_tab_add_transaction);
@@ -190,43 +183,5 @@ public class TransactionsTabFragment extends Fragment {
             });
         }
     }
-
-    private class TransactionListViewAdapter extends ArrayAdapter<VariableTransaction> {
-
-        TransactionListViewAdapter(Context context, List<VariableTransaction> transactions) {
-            super(context, R.layout.list_item_transaction, transactions);
-        }
-
-        @NonNull
-        @Override
-        public View getView(int position, View convertView, @NonNull ViewGroup parent) {
-            VariableTransaction transaction = getItem(position);
-
-            View listItem = convertView;
-            if (listItem == null) {
-                listItem = LayoutInflater.from(this.getContext()).inflate(R.layout.list_item_transaction, parent, false);
-            }
-
-            if (transaction != null) {
-                TextView categoryTextView = listItem.findViewById(R.id.tv_list_item_transaction_category);
-                categoryTextView.setText(transaction.getCategoryTree().getValue().getName());
-
-                TextView productTextView = listItem.findViewById(R.id.tv_list_item_transaction_product);
-                productTextView.setText(!transaction.getProduct().isEmpty() ? transaction.getProduct() : transaction.getPurpose());
-
-                TextView valueDateTextView = listItem.findViewById(R.id.tv_list_item_transaction_value_date);
-                valueDateTextView.setText(formatter.formatDate(transaction.getValueDate()));
-
-                TextView amountTextView = listItem.findViewById(R.id.tv_list_item_transaction_amount);
-                amountTextView.setTextColor(transaction.getAmount() < 0 ?
-                        ContextCompat.getColor(this.getContext(), R.color.error) :
-                        ContextCompat.getColor(this.getContext(), R.color.success));
-                amountTextView.setText(formatter.formatCurrency(transaction.getAmount()));
-            }
-
-            return listItem;
-        }
-    }
-
 
 }
