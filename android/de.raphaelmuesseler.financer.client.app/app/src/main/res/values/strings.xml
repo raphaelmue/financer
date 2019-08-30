@@ -60,4 +60,7 @@
     <string name="balance">Balance</string>
     <string name="expenses">Expenses</string>
     <string name="last_transactions">Last Transactions</string>
+    <string name="attachments">Attachments</string>
+    <string name="basic_information">Basic information</string>
+    <string name="no_attachments">You haven\'t uploaded any attachments yet.</string>
 </resources>

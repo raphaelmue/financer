@@ -60,4 +60,7 @@
     <string name="balance">Saldo</string>
     <string name="expenses">Ausgaben</string>
     <string name="last_transactions">Letzte Transaktionen</string>
+    <string name="attachments">Anhänge</string>
+    <string name="basic_information">Grundlegende Informationen</string>
+    <string name="no_attachments">Du hast noch keine Anhänge hochgeladen.</string>
 </resources>

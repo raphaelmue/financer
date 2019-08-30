@@ -1,21 +1,28 @@
 package de.raphaelmuesseler.financer.client.app.ui.main.transactions;
 
-import android.app.ActionBar;
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.BottomSheetBehavior;
+import android.support.design.widget.BottomSheetDialog;
 import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -29,6 +36,7 @@ import de.raphaelmuesseler.financer.client.format.Formatter;
 import de.raphaelmuesseler.financer.client.local.Application;
 import de.raphaelmuesseler.financer.shared.model.categories.BaseCategory;
 import de.raphaelmuesseler.financer.shared.model.categories.CategoryTree;
+import de.raphaelmuesseler.financer.shared.model.transactions.Attachment;
 import de.raphaelmuesseler.financer.shared.model.transactions.VariableTransaction;
 import de.raphaelmuesseler.financer.shared.model.user.User;
 import de.raphaelmuesseler.financer.util.collections.Action;
@@ -47,6 +55,9 @@ public class TransactionDetailFragment extends BottomSheetDialogFragment {
     TextView categoryTextView;
     TextView purposeTextView;
     TextView shopTextView;
+    ListView attachmentListView;
+
+    private final List<Attachment> attachments = new ArrayList<>();
 
     private final Formatter formatter = new AndroidFormatter(LocalStorageImpl.getInstance(), getContext());
 
@@ -81,6 +92,19 @@ public class TransactionDetailFragment extends BottomSheetDialogFragment {
         purposeTextView = view.findViewById(R.id.tv_transaction_purpose);
         shopTextView = view.findViewById(R.id.tv_transaction_shop);
         ImageButton editTransactionBtn = view.findViewById(R.id.btn_edit_transaction);
+        attachmentListView = view.findViewById(R.id.lv_transaction_attachments);
+        attachmentListView.setEmptyView(view.findViewById(R.id.tv_no_attachments));
+        attachmentListView.setAdapter(new AttachmentListViewAdapter(getContext(), this.attachments));
+
+        AppBarLayout appBarLayout = view.findViewById(R.id.abl_transaction_detail);
+        appBarLayout.addOnOffsetChangedListener((appBarLayout1, i) -> System.out.println(view.getX()));
+
+        view.findViewById(R.id.nsv_transaction_details).setOnScrollChangeListener(new View.OnScrollChangeListener() {
+            @Override
+            public void onScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+                System.out.println(scrollY + ", " + oldScrollY);
+            }
+        });
 
         if (getArguments() != null && !getArguments().isEmpty() && getArguments().getSerializable("transaction") != null) {
             final VariableTransaction transaction = (VariableTransaction) getArguments().getSerializable("transaction");
@@ -97,6 +121,20 @@ public class TransactionDetailFragment extends BottomSheetDialogFragment {
         return view;
     }
 
+    @Override
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+        BottomSheetDialog dialog = (BottomSheetDialog) super.onCreateDialog(savedInstanceState);
+
+        dialog.setOnShowListener(dialog1 -> {
+            BottomSheetDialog d = (BottomSheetDialog) dialog1;
+
+            FrameLayout bottomSheet = d.findViewById(android.support.design.R.id.design_bottom_sheet);
+            BottomSheetBehavior.from(bottomSheet).setState(BottomSheetBehavior.STATE_EXPANDED);
+        });
+
+        return dialog;
+    }
+
     private void fillLabels(VariableTransaction transaction) {
         toolbar.setTitle(transaction.getProduct());
         amountTextView.setText(formatter.formatCurrency(transaction.getAmount()));
@@ -105,6 +143,13 @@ public class TransactionDetailFragment extends BottomSheetDialogFragment {
         categoryTextView.setText(formatter.formatCategoryName(transaction.getCategoryTree()));
         purposeTextView.setText(transaction.getPurpose());
         shopTextView.setText(transaction.getShop());
+
+        this.attachments.clear();
+        this.attachments.addAll(transaction.getAttachments());
+        Objects.requireNonNull(getActivity()).runOnUiThread(() -> {
+            ((AttachmentListViewAdapter) attachmentListView.getAdapter()).notifyDataSetChanged();
+            ((AttachmentListViewAdapter) attachmentListView.getAdapter()).setListViewHeightBasedOnChildren(attachmentListView);
+        });
     }
 
     @Override
