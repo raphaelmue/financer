@@ -30,11 +30,6 @@ public class FinancerApplication extends Application {
     private Logger logger = Logger.getLogger("FinancerApplication");
     private BooleanProperty ready = new SimpleBooleanProperty(false);
 
-    public static void main(String[] args) {
-        ServerRequest.setHost((args.length > 0 && args[0] != null && args[0].equals("local")));
-        launch(args);
-    }
-
     @Override
     public void init() {
         User user = (User) LocalStorageImpl.getInstance().readObject("user");
