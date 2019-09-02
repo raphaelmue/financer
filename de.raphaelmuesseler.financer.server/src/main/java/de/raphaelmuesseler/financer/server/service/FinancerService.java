@@ -493,7 +493,7 @@ public class FinancerService {
         }
         transaction.commit();
 
-         return new ConnectionResult<>(attachment);
+        return new ConnectionResult<>(attachment);
     }
 
     /**

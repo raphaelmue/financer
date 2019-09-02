@@ -5,6 +5,8 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.NonNull;
@@ -22,6 +24,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -59,6 +62,7 @@ public class TransactionDetailFragment extends BottomSheetDialogFragment {
 
     private static final int REQUEST_EDIT_TRANSACTION = 2;
     private Toolbar toolbar;
+    ImageView headerImageView;
     TextView amountTextView;
     TextView productTextView;
     TextView valueDateTextView;
@@ -103,12 +107,14 @@ public class TransactionDetailFragment extends BottomSheetDialogFragment {
             uploadAttachmentDialog.setOnSubmit(this::uploadAttachment);
         });
         toolbar = view.findViewById(R.id.toolbar_transaction_details);
+        headerImageView = view.findViewById(R.id.iv_transaction_detail_image);
         amountTextView = view.findViewById(R.id.tv_transaction_amount);
         productTextView = view.findViewById(R.id.tv_transaction_product);
         valueDateTextView = view.findViewById(R.id.tv_transaction_value_date);
         categoryTextView = view.findViewById(R.id.tv_transaction_category);
         purposeTextView = view.findViewById(R.id.tv_transaction_purpose);
         shopTextView = view.findViewById(R.id.tv_transaction_shop);
+
         ImageButton editTransactionBtn = view.findViewById(R.id.btn_edit_transaction);
         attachmentListView = view.findViewById(R.id.lv_transaction_attachments);
         attachmentListView.setEmptyView(view.findViewById(R.id.tv_no_attachments));
@@ -156,10 +162,21 @@ public class TransactionDetailFragment extends BottomSheetDialogFragment {
 
         this.attachments.clear();
         this.attachments.addAll(transaction.getAttachments());
+        this.attachments.sort((o1, o2) -> o2.getUploadDate().compareTo(o1.getUploadDate()));
         Objects.requireNonNull(getActivity()).runOnUiThread(() -> {
             ((AttachmentListViewAdapter) attachmentListView.getAdapter()).notifyDataSetChanged();
             ((AttachmentListViewAdapter) attachmentListView.getAdapter()).setListViewHeightBasedOnChildren(attachmentListView);
         });
+
+        for (Attachment attachment : this.attachments) {
+            if (attachment.getName().matches(".*([.](jpg|png|jpeg))")) {
+                loadAttachment(attachment, file -> getActivity().runOnUiThread(() -> {
+                    Bitmap bitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
+                    headerImageView.setImageBitmap(bitmap);
+                }));
+                break;
+            }
+        }
     }
 
     @Override
@@ -206,27 +223,31 @@ public class TransactionDetailFragment extends BottomSheetDialogFragment {
             ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
                     REQUEST_WRITE_STORAGE_PERMISSION);
         } else {
-            File directory = new File(Environment.getExternalStorageDirectory() + "/Financer/transactions/"
-                    + attachment.getTransaction().getId());
-            directory.mkdirs();
-            File file = new File(directory, attachment.getName());
-            if (file.exists()) {
-                openAttachmentFile(file);
-            } else {
-                Map<String, Serializable> parameters = new HashMap<>();
-                parameters.put("attachmentId", attachment.getId());
-                FinancerExecutor.getExecutor().execute(new ServerRequestHandler(user, "getAttachment", parameters,
-                        connectionResult -> {
-                            ContentAttachment contentAttachment = (ContentAttachment) connectionResult.getResult();
-                            try (FileOutputStream outputStream = new FileOutputStream(file)) {
-                                outputStream.write(contentAttachment.getContent());
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
+            loadAttachment(attachment, file -> getActivity().runOnUiThread(() -> openAttachmentFile(file)));
+        }
+    }
 
-                            getActivity().runOnUiThread(() -> openAttachmentFile(file));
-                        }));
-            }
+    private void loadAttachment(Attachment attachment, Action<File> action) {
+        File directory = new File(Environment.getExternalStorageDirectory() + "/Financer/transactions/"
+                + attachment.getTransaction().getId());
+        directory.mkdirs();
+        File file = new File(directory, attachment.getName());
+        if (file.exists()) {
+            action.action(file);
+        } else {
+            Map<String, Serializable> parameters = new HashMap<>();
+            parameters.put("attachmentId", attachment.getId());
+            FinancerExecutor.getExecutor().execute(new ServerRequestHandler(user, "getAttachment", parameters,
+                    connectionResult -> {
+                        ContentAttachment contentAttachment = (ContentAttachment) connectionResult.getResult();
+                        try (FileOutputStream outputStream = new FileOutputStream(file)) {
+                            outputStream.write(contentAttachment.getContent());
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+
+                        action.action(file);
+                    }));
         }
     }
 
