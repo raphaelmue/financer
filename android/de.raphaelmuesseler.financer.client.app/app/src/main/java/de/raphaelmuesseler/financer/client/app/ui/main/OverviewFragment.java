@@ -42,7 +42,7 @@ import static android.app.Activity.RESULT_OK;
 
 public class OverviewFragment extends Fragment {
 
-    private static final int REQUEST_ADD_TRANSACTION = 1;  // The request code
+    private static final int REQUEST_ADD_TRANSACTION = 2;  // The request code
 
     private TextView expensesTextView;
     private SwipeRefreshLayout swipeRefreshLayoutOverview;
@@ -50,7 +50,7 @@ public class OverviewFragment extends Fragment {
     private TextView numberOfTransactionsTextView;
     private ListView lastTransactionsListView;
 
-    private BaseCategory categories = (BaseCategory) LocalStorageImpl.getInstance().readObject("categories");
+    private BaseCategory categories;
 
     private double balance;
     private double expenses;
@@ -128,6 +128,7 @@ public class OverviewFragment extends Fragment {
     }
 
     private void init() {
+        categories = (BaseCategory) LocalStorageImpl.getInstance().readObject("categories");
         balance = categories.getAmount(LocalDate.now());
         expenses = categories.getCategoryTreeByCategoryClass(BaseCategory.CategoryClass.VARIABLE_EXPENSES).getAmount(LocalDate.now());
 
