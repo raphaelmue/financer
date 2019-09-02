@@ -63,4 +63,6 @@
     <string name="attachments">Anhänge</string>
     <string name="basic_information">Grundlegende Informationen</string>
     <string name="no_attachments">Du hast noch keine Anhänge hochgeladen.</string>
+    <string name="success_storage_permission_granted">Die Berechtigung zum Zugriff auf Ihren Speicher wurde erfolgreich erteilt!</string>
+    <string name="error_storage_permission_not_granted">Sie erwägen vielleicht, dieser App Zugriff auf Ihren Speicher zu gewähren, da sonst einige Funktionen nicht verfügbar sind.</string>
 </resources>

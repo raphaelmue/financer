@@ -1,6 +1,7 @@
 package de.raphaelmuesseler.financer.client.app.ui.main;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -21,6 +22,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.Arrays;
+
 import de.raphaelmuesseler.financer.client.app.R;
 import de.raphaelmuesseler.financer.client.app.format.AndroidFormatter;
 import de.raphaelmuesseler.financer.client.app.local.LocalStorageImpl;
@@ -33,6 +36,8 @@ import de.raphaelmuesseler.financer.shared.model.user.User;
 
 public class FinancerActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnFragmentInteractionListener, Application {
+
+    public static final int REQUEST_WRITE_STORAGE = 112;
 
     public static Application INSTANCE;
 
@@ -50,7 +55,7 @@ public class FinancerActivity extends AppCompatActivity
         INSTANCE = this;
 
         LocalStorageImpl.setContext(this);
-        ServerRequest.setHost("10.181.212.242");
+        ServerRequest.setHost(false);
         ServerRequestHandler.setApplication(this);
         ServerRequestHandler.setLocalStorage(LocalStorageImpl.getInstance());
 
@@ -224,5 +229,20 @@ public class FinancerActivity extends AppCompatActivity
                 .setPositiveButton(android.R.string.ok, null)
                 .setIcon(R.drawable.ic_error)
                 .show());
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        int[] oldPermissions = Arrays.copyOf(grantResults, grantResults.length);
+
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        switch (requestCode) {
+            case REQUEST_WRITE_STORAGE: {
+                if (grantResults.length <= 0 || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+                    this.showToast(MessageType.ERROR, getString(R.string.error_storage_permission_not_granted));
+                }
+            }
+        }
     }
 }

@@ -63,4 +63,6 @@
     <string name="attachments">Attachments</string>
     <string name="basic_information">Basic information</string>
     <string name="no_attachments">You haven\'t uploaded any attachments yet.</string>
+    <string name="success_storage_permission_granted">The permission to access your storage was successfully granted!</string>
+    <string name="error_storage_permission_not_granted">You might consider giving this app access to your storage, or otherwise some featues will not be available.</string>
 </resources>

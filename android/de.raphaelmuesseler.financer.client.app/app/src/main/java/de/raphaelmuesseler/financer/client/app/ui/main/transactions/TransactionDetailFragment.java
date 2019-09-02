@@ -1,15 +1,20 @@
 package de.raphaelmuesseler.financer.client.app.ui.main.transactions;
 
+import android.Manifest;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.BottomSheetDialog;
 import android.support.design.widget.BottomSheetDialogFragment;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,7 +24,10 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.Serializable;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -37,6 +45,7 @@ import de.raphaelmuesseler.financer.client.local.Application;
 import de.raphaelmuesseler.financer.shared.model.categories.BaseCategory;
 import de.raphaelmuesseler.financer.shared.model.categories.CategoryTree;
 import de.raphaelmuesseler.financer.shared.model.transactions.Attachment;
+import de.raphaelmuesseler.financer.shared.model.transactions.ContentAttachment;
 import de.raphaelmuesseler.financer.shared.model.transactions.VariableTransaction;
 import de.raphaelmuesseler.financer.shared.model.user.User;
 import de.raphaelmuesseler.financer.util.collections.Action;
@@ -44,6 +53,7 @@ import de.raphaelmuesseler.financer.util.collections.TreeUtil;
 import de.raphaelmuesseler.financer.util.concurrency.FinancerExecutor;
 
 import static android.app.Activity.RESULT_OK;
+import static de.raphaelmuesseler.financer.client.app.ui.main.FinancerActivity.REQUEST_WRITE_STORAGE;
 
 public class TransactionDetailFragment extends BottomSheetDialogFragment {
 
@@ -60,6 +70,8 @@ public class TransactionDetailFragment extends BottomSheetDialogFragment {
     private final List<Attachment> attachments = new ArrayList<>();
 
     private final Formatter formatter = new AndroidFormatter(LocalStorageImpl.getInstance(), getContext());
+    private final User user = (User) LocalStorageImpl.getInstance().readObject("user");
+
 
     private Action<Void> cancelAction;
 
@@ -95,16 +107,8 @@ public class TransactionDetailFragment extends BottomSheetDialogFragment {
         attachmentListView = view.findViewById(R.id.lv_transaction_attachments);
         attachmentListView.setEmptyView(view.findViewById(R.id.tv_no_attachments));
         attachmentListView.setAdapter(new AttachmentListViewAdapter(getContext(), this.attachments));
-
-        AppBarLayout appBarLayout = view.findViewById(R.id.abl_transaction_detail);
-        appBarLayout.addOnOffsetChangedListener((appBarLayout1, i) -> System.out.println(view.getX()));
-
-        view.findViewById(R.id.nsv_transaction_details).setOnScrollChangeListener(new View.OnScrollChangeListener() {
-            @Override
-            public void onScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
-                System.out.println(scrollY + ", " + oldScrollY);
-            }
-        });
+        attachmentListView.setOnItemClickListener((parent, view1, position, id) ->
+                this.openAttachment((Attachment) attachmentListView.getItemAtPosition(position)));
 
         if (getArguments() != null && !getArguments().isEmpty() && getArguments().getSerializable("transaction") != null) {
             final VariableTransaction transaction = (VariableTransaction) getArguments().getSerializable("transaction");
@@ -154,7 +158,6 @@ public class TransactionDetailFragment extends BottomSheetDialogFragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        User user = (User) LocalStorageImpl.getInstance().readObject("user");
         if (requestCode == EDIT_TRANSACTION_REQUEST) {
             if (resultCode == RESULT_OK) {
                 VariableTransaction transaction = (VariableTransaction) data.getSerializableExtra("variableTransaction");
@@ -189,5 +192,45 @@ public class TransactionDetailFragment extends BottomSheetDialogFragment {
 
     public void setOnCancelListener(Action<Void> action) {
         this.cancelAction = action;
+    }
+
+    private void openAttachment(Attachment attachment) {
+        boolean hasPermission = (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED);
+        if (!hasPermission) {
+            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    REQUEST_WRITE_STORAGE);
+        } else {
+            File directory = new File(Environment.getExternalStorageDirectory() + "/Financer/transactions/"
+                    + attachment.getTransaction().getId());
+            directory.mkdirs();
+            File file = new File(directory, attachment.getName());
+            if (file.exists()) {
+                openAttachmentFile(file);
+            } else {
+                Map<String, Serializable> parameters = new HashMap<>();
+                parameters.put("attachmentId", attachment.getId());
+                FinancerExecutor.getExecutor().execute(new ServerRequestHandler(user, "getAttachment", parameters, connectionResult -> {
+                    ContentAttachment contentAttachment = (ContentAttachment) connectionResult.getResult();
+                    try (FileOutputStream outputStream = new FileOutputStream(file)) {
+                        outputStream.write(contentAttachment.getContent());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                    getActivity().runOnUiThread(() -> openAttachmentFile(file));
+                }));
+            }
+        }
+    }
+
+    private void openAttachmentFile(File file) {
+        Intent intent = new Intent();
+        intent.setAction(android.content.Intent.ACTION_VIEW);
+        intent.setDataAndType(FileProvider.getUriForFile(getContext(),
+                getActivity().getApplicationContext()
+                        .getPackageName() + ".provider", file),
+                URLConnection.guessContentTypeFromName(file.getName()));
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        startActivity(intent);
     }
 }
