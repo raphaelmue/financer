@@ -17,10 +17,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import de.raphaelmuesseler.financer.client.app.R;
-import de.raphaelmuesseler.financer.client.app.connection.AndroidAsyncConnectionCall;
 import de.raphaelmuesseler.financer.client.app.format.AndroidFormatter;
 import de.raphaelmuesseler.financer.client.app.local.LocalStorageImpl;
 import de.raphaelmuesseler.financer.client.app.ui.main.FinancerActivity;
+import de.raphaelmuesseler.financer.client.connection.AsyncConnectionCall;
 import de.raphaelmuesseler.financer.client.connection.ServerRequestHandler;
 import de.raphaelmuesseler.financer.client.local.Application;
 import de.raphaelmuesseler.financer.client.local.LocalSettingsImpl;
@@ -101,7 +101,7 @@ public class LoginActivity extends AppCompatActivity implements Application {
             parameters.put("email", email);
             parameters.put("password", password);
 
-            FinancerExecutor.getExecutor().execute(new ServerRequestHandler("checkCredentials", parameters, new AndroidAsyncConnectionCall() {
+            FinancerExecutor.getExecutor().execute(new ServerRequestHandler("checkCredentials", parameters, new AsyncConnectionCall() {
                 @Override
                 public void onSuccess(ConnectionResult connectionResult) {
                     if (connectionResult.getResult() != null) {
@@ -113,11 +113,6 @@ public class LoginActivity extends AppCompatActivity implements Application {
                             passwordEditText.requestFocus();
                         });
                     }
-                }
-
-                @Override
-                public void onFailure(Exception exception) {
-                    exception.printStackTrace();
                 }
 
                 @Override

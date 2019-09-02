@@ -21,7 +21,6 @@ import java.util.Map;
 import java.util.Objects;
 
 import de.raphaelmuesseler.financer.client.app.R;
-import de.raphaelmuesseler.financer.client.app.connection.AndroidAsyncConnectionCall;
 import de.raphaelmuesseler.financer.client.app.connection.RetrievalServiceImpl;
 import de.raphaelmuesseler.financer.client.app.local.LocalStorageImpl;
 import de.raphaelmuesseler.financer.client.app.ui.main.FinancerActivity;
@@ -126,8 +125,8 @@ public class TransactionsTabFragment extends Fragment {
                 parameters.put("variableTransaction", transaction);
 
                 FinancerExecutor.getExecutor().execute(new ServerRequestHandler(user,
-                        "addTransaction", parameters,
-                        (AndroidAsyncConnectionCall) connectionResult -> Objects.requireNonNull(getActivity()).runOnUiThread(() -> {
+                        "addTransaction", parameters, connectionResult ->
+                        Objects.requireNonNull(getActivity()).runOnUiThread(() -> {
                             transaction.setId(((VariableTransaction) connectionResult.getResult()).getId());
                             BaseCategory baseCategory = (BaseCategory) LocalStorageImpl.getInstance().readObject("categories");
                             CategoryTree categoryTree = (CategoryTree) TreeUtil.getByValue(baseCategory, transaction.getCategoryTree(), (o1, o2) -> Integer.compare(o1.getId(), o2.getId()));
@@ -183,5 +182,4 @@ public class TransactionsTabFragment extends Fragment {
             });
         }
     }
-
 }

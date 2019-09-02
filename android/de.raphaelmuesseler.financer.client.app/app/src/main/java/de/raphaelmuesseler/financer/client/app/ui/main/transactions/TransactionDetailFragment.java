@@ -12,6 +12,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.BottomSheetDialog;
 import android.support.design.widget.BottomSheetDialogFragment;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
@@ -35,7 +36,6 @@ import java.util.Map;
 import java.util.Objects;
 
 import de.raphaelmuesseler.financer.client.app.R;
-import de.raphaelmuesseler.financer.client.app.connection.AndroidAsyncConnectionCall;
 import de.raphaelmuesseler.financer.client.app.format.AndroidFormatter;
 import de.raphaelmuesseler.financer.client.app.local.LocalStorageImpl;
 import de.raphaelmuesseler.financer.client.app.ui.main.FinancerActivity;
@@ -53,11 +53,11 @@ import de.raphaelmuesseler.financer.util.collections.TreeUtil;
 import de.raphaelmuesseler.financer.util.concurrency.FinancerExecutor;
 
 import static android.app.Activity.RESULT_OK;
-import static de.raphaelmuesseler.financer.client.app.ui.main.FinancerActivity.REQUEST_WRITE_STORAGE;
+import static de.raphaelmuesseler.financer.client.app.ui.main.FinancerActivity.REQUEST_WRITE_STORAGE_PERMISSION;
 
 public class TransactionDetailFragment extends BottomSheetDialogFragment {
 
-    private static final int EDIT_TRANSACTION_REQUEST = 2;
+    private static final int REQUEST_EDIT_TRANSACTION = 2;
     private Toolbar toolbar;
     TextView amountTextView;
     TextView productTextView;
@@ -96,6 +96,12 @@ public class TransactionDetailFragment extends BottomSheetDialogFragment {
         View view = inflater.inflate(R.layout.fragment_transaction_detail, container,
                 false);
 
+        FloatingActionButton uploadAttachmentBtn = view.findViewById(R.id.btn_upload_attachment);
+        uploadAttachmentBtn.setOnClickListener(v -> {
+            UploadAttachmentDialog uploadAttachmentDialog = UploadAttachmentDialog.newInstance();
+            uploadAttachmentDialog.show(getFragmentManager(), uploadAttachmentDialog.getTag());
+            uploadAttachmentDialog.setOnSubmit(this::uploadAttachment);
+        });
         toolbar = view.findViewById(R.id.toolbar_transaction_details);
         amountTextView = view.findViewById(R.id.tv_transaction_amount);
         productTextView = view.findViewById(R.id.tv_transaction_product);
@@ -118,7 +124,7 @@ public class TransactionDetailFragment extends BottomSheetDialogFragment {
                 Intent intent = new Intent(getContext(), TransactionActivity.class);
                 VariableTransaction _transaction = (VariableTransaction) getArguments().getSerializable("transaction");
                 intent.putExtra("transaction", _transaction);
-                startActivityForResult(intent, EDIT_TRANSACTION_REQUEST);
+                startActivityForResult(intent, REQUEST_EDIT_TRANSACTION);
             });
         }
 
@@ -158,7 +164,7 @@ public class TransactionDetailFragment extends BottomSheetDialogFragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == EDIT_TRANSACTION_REQUEST) {
+        if (requestCode == REQUEST_EDIT_TRANSACTION) {
             if (resultCode == RESULT_OK) {
                 VariableTransaction transaction = (VariableTransaction) data.getSerializableExtra("variableTransaction");
                 transaction.getCategoryTree().getValue().setUser(user);
@@ -167,7 +173,7 @@ public class TransactionDetailFragment extends BottomSheetDialogFragment {
                 parameters.put("variableTransaction", transaction);
 
                 FinancerExecutor.getExecutor().execute(new ServerRequestHandler(user, "updateTransaction", parameters,
-                        (AndroidAsyncConnectionCall) connectionResult -> Objects.requireNonNull(getActivity()).runOnUiThread(() -> {
+                        connectionResult -> Objects.requireNonNull(getActivity()).runOnUiThread(() -> {
                             BaseCategory baseCategory = (BaseCategory) LocalStorageImpl.getInstance().readObject("categories");
                             CategoryTree categoryTree = (CategoryTree) TreeUtil.getByValue(baseCategory, transaction.getCategoryTree(), (o1, o2) -> Integer.compare(o1.getId(), o2.getId()));
                             categoryTree.getTransactions().remove(transaction);
@@ -198,7 +204,7 @@ public class TransactionDetailFragment extends BottomSheetDialogFragment {
         boolean hasPermission = (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED);
         if (!hasPermission) {
             ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                    REQUEST_WRITE_STORAGE);
+                    REQUEST_WRITE_STORAGE_PERMISSION);
         } else {
             File directory = new File(Environment.getExternalStorageDirectory() + "/Financer/transactions/"
                     + attachment.getTransaction().getId());
@@ -209,16 +215,17 @@ public class TransactionDetailFragment extends BottomSheetDialogFragment {
             } else {
                 Map<String, Serializable> parameters = new HashMap<>();
                 parameters.put("attachmentId", attachment.getId());
-                FinancerExecutor.getExecutor().execute(new ServerRequestHandler(user, "getAttachment", parameters, connectionResult -> {
-                    ContentAttachment contentAttachment = (ContentAttachment) connectionResult.getResult();
-                    try (FileOutputStream outputStream = new FileOutputStream(file)) {
-                        outputStream.write(contentAttachment.getContent());
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+                FinancerExecutor.getExecutor().execute(new ServerRequestHandler(user, "getAttachment", parameters,
+                        connectionResult -> {
+                            ContentAttachment contentAttachment = (ContentAttachment) connectionResult.getResult();
+                            try (FileOutputStream outputStream = new FileOutputStream(file)) {
+                                outputStream.write(contentAttachment.getContent());
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
 
-                    getActivity().runOnUiThread(() -> openAttachmentFile(file));
-                }));
+                            getActivity().runOnUiThread(() -> openAttachmentFile(file));
+                        }));
             }
         }
     }
@@ -232,5 +239,35 @@ public class TransactionDetailFragment extends BottomSheetDialogFragment {
                 URLConnection.guessContentTypeFromName(file.getName()));
         intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         startActivity(intent);
+    }
+
+    private void uploadAttachment(@NonNull ContentAttachment contentAttachment) {
+        final VariableTransaction transaction = (VariableTransaction) getArguments().getSerializable("transaction");
+
+        if (transaction != null) {
+            contentAttachment.setTransaction(transaction);
+
+            Map<String, Serializable> parameters = new HashMap<>();
+            parameters.put("transaction", transaction);
+            parameters.put("attachment", contentAttachment);
+
+            FinancerExecutor.getExecutor().execute(new ServerRequestHandler(user, "uploadTransactionAttachment", parameters,
+                    connectionResult -> Objects.requireNonNull(getActivity()).runOnUiThread(() -> {
+                        Attachment result = (Attachment) connectionResult.getResult();
+                        BaseCategory baseCategory = (BaseCategory) LocalStorageImpl.getInstance().readObject("categories");
+                        CategoryTree categoryTree = (CategoryTree) TreeUtil.getByValue(baseCategory, transaction.getCategoryTree(),
+                                (o1, o2) -> Integer.compare(o1.getId(), o2.getId()));
+                        categoryTree.getTransactions().remove(transaction);
+                        transaction.getAttachments().add(result);
+                        categoryTree.getTransactions().add(transaction);
+                        LocalStorageImpl.getInstance().writeObject("categories", baseCategory);
+
+                        FinancerActivity.getFinancerApplication().showToast(Application.MessageType.SUCCESS,
+                                getString(R.string.success_uploaded_attachment));
+                        fillLabels(transaction);
+                        getArguments().remove("transaction");
+                        getArguments().putSerializable("transaction", transaction);
+                    })));
+        }
     }
 }

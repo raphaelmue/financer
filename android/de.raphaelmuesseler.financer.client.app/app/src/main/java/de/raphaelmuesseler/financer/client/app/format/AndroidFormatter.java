@@ -31,11 +31,11 @@ public class AndroidFormatter extends FormatterImpl {
         try {
             throw exception;
         } catch (NotAuthorizedException var4) {
-            message = this.context.getString(R.string.error_not_authorized);;
+            message = this.context.getString(R.string.error_not_authorized);
         } catch (UnknownHostException var5) {
-            message = this.context.getString(R.string.error_database_unavailable);;
+            message = this.context.getString(R.string.error_database_unavailable);
         } catch (ConnectException var6) {
-            message = this.context.getString(R.string.error_server_unavailable);;
+            message = this.context.getString(R.string.error_server_unavailable);
         } catch (FinancerException ignored) {
         } catch (Exception var8) {
             Logger.getLogger("FinancerApplication").log(Level.SEVERE, var8.getMessage(), var8);

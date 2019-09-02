@@ -28,11 +28,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import de.raphaelmuesseler.financer.client.app.R;
-import de.raphaelmuesseler.financer.client.app.connection.AndroidAsyncConnectionCall;
 import de.raphaelmuesseler.financer.client.app.connection.RetrievalServiceImpl;
 import de.raphaelmuesseler.financer.client.app.format.AndroidFormatter;
 import de.raphaelmuesseler.financer.client.app.local.LocalStorageImpl;
 import de.raphaelmuesseler.financer.client.app.ui.main.FinancerActivity;
+import de.raphaelmuesseler.financer.client.connection.AsyncConnectionCall;
 import de.raphaelmuesseler.financer.client.connection.ServerRequestHandler;
 import de.raphaelmuesseler.financer.client.format.Formatter;
 import de.raphaelmuesseler.financer.client.local.Application;
@@ -136,7 +136,7 @@ public class RegisterActivity extends AppCompatActivity implements Application {
             Map<String, Serializable> parameters = new HashMap<>();
             parameters.put("user", user);
 
-            FinancerExecutor.getExecutor().execute(new ServerRequestHandler("registerUser", parameters, new AndroidAsyncConnectionCall() {
+            FinancerExecutor.getExecutor().execute(new ServerRequestHandler("registerUser", parameters, new AsyncConnectionCall() {
                 @Override
                 public void onSuccess(ConnectionResult connectionResult) {
                     LocalStorageImpl.getInstance().writeObject("user", connectionResult.getResult());

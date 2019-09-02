@@ -64,5 +64,10 @@
     <string name="basic_information">Grundlegende Informationen</string>
     <string name="no_attachments">Du hast noch keine Anhänge hochgeladen.</string>
     <string name="success_storage_permission_granted">Die Berechtigung zum Zugriff auf Ihren Speicher wurde erfolgreich erteilt!</string>
-    <string name="error_storage_permission_not_granted">Sie erwägen vielleicht, dieser App Zugriff auf Ihren Speicher zu gewähren, da sonst einige Funktionen nicht verfügbar sind.</string>
+    <string name="error_storage_permission_not_granted">Du solltest in Betracht ziehen, dieser App Zugriff auf Ihre Speicher zu gewähren, da sonst einige Funktionen nicht verfügbar sind.</string>
+    <string name="take_photo">Photo</string>
+    <string name="choose_file">Datei auswählen</string>
+    <string name="upload_attachment">Anhang hochladen</string>
+    <string name="error_image_capture_permission_not_granted">Du solltest in Betracht ziehen, dieser App Zugriff auf Ihre Kamera zu gewähren, da sonst einige Funktionen nicht verfügbar sind.</string>
+    <string name="success_uploaded_attachment">Anhang wurde erfolgreich hochgeladen!</string>
 </resources>

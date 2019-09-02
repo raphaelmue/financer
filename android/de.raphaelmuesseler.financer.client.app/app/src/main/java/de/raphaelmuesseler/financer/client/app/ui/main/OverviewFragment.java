@@ -23,7 +23,6 @@ import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import de.raphaelmuesseler.financer.client.app.R;
-import de.raphaelmuesseler.financer.client.app.connection.AndroidAsyncConnectionCall;
 import de.raphaelmuesseler.financer.client.app.local.LocalStorageImpl;
 import de.raphaelmuesseler.financer.client.app.ui.main.transactions.TransactionActivity;
 import de.raphaelmuesseler.financer.client.app.ui.main.transactions.TransactionDetailFragment;
@@ -43,11 +42,11 @@ import static android.app.Activity.RESULT_OK;
 
 public class OverviewFragment extends Fragment {
 
-    private static final int ADD_TRANSACTION_REQUEST = 1;  // The request code
+    private static final int REQUEST_ADD_TRANSACTION = 1;  // The request code
 
+    private TextView expensesTextView;
     private SwipeRefreshLayout swipeRefreshLayoutOverview;
     private TextView balanceTextView;
-    private TextView expensesTextView;
     private TextView numberOfTransactionsTextView;
     private ListView lastTransactionsListView;
 
@@ -75,7 +74,7 @@ public class OverviewFragment extends Fragment {
         FloatingActionButton addTransactionBtn = rootView.findViewById(R.id.fab_overview_add_transaction);
         addTransactionBtn.setOnClickListener(view -> {
             Intent intent = new Intent(getContext(), TransactionActivity.class);
-            startActivityForResult(intent, ADD_TRANSACTION_REQUEST);
+            startActivityForResult(intent, REQUEST_ADD_TRANSACTION);
         });
 
         this.swipeRefreshLayoutOverview = rootView.findViewById(R.id.swipe_layout_overview);
@@ -89,7 +88,7 @@ public class OverviewFragment extends Fragment {
         this.lastTransactionsListView.setOnItemClickListener((parent, view, position, id) -> {
             TransactionDetailFragment bottomDetailDialog = TransactionDetailFragment.newInstance(
                     (VariableTransaction) this.lastTransactionsListView.getItemAtPosition(position));
-            bottomDetailDialog.show(getFragmentManager(), "test");
+            bottomDetailDialog.show(getFragmentManager(), bottomDetailDialog.getTag());
             bottomDetailDialog.setOnCancelListener(aVoid -> Objects.requireNonNull(getActivity()).runOnUiThread(this::initLastTransactionsListView));
         });
 
@@ -105,7 +104,7 @@ public class OverviewFragment extends Fragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == ADD_TRANSACTION_REQUEST) {
+        if (requestCode == REQUEST_ADD_TRANSACTION) {
             if (resultCode == RESULT_OK) {
 
                 VariableTransaction transaction = (VariableTransaction) data.getSerializableExtra("variableTransaction");
@@ -114,7 +113,7 @@ public class OverviewFragment extends Fragment {
                 parameters.put("variableTransaction", transaction);
 
                 FinancerExecutor.getExecutor().execute(new ServerRequestHandler((User) LocalStorageImpl.getInstance().readObject("user"),
-                        "addTransaction", parameters, (AndroidAsyncConnectionCall) connectionResult -> Objects.requireNonNull(getActivity()).runOnUiThread(() -> {
+                        "addTransaction", parameters, connectionResult -> Objects.requireNonNull(getActivity()).runOnUiThread(() -> {
                     transaction.setId(((VariableTransaction) connectionResult.getResult()).getId());
                     BaseCategory baseCategory = (BaseCategory) LocalStorageImpl.getInstance().readObject("categories");
                     CategoryTree categoryTree = (CategoryTree) TreeUtil.getByValue(baseCategory, transaction.getCategoryTree(), (o1, o2) -> Integer.compare(o1.getId(), o2.getId()));

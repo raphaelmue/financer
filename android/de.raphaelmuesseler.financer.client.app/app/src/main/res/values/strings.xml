@@ -65,4 +65,9 @@
     <string name="no_attachments">You haven\'t uploaded any attachments yet.</string>
     <string name="success_storage_permission_granted">The permission to access your storage was successfully granted!</string>
     <string name="error_storage_permission_not_granted">You might consider giving this app access to your storage, or otherwise some featues will not be available.</string>
+    <string name="take_photo">Take a photo</string>
+    <string name="choose_file">Choose file</string>
+    <string name="upload_attachment">Upload attachment</string>
+    <string name="error_image_capture_permission_not_granted">You might consider giving this app access to your camera, or otherwise some featues will not be available.</string>
+    <string name="success_uploaded_attachment">Uploaded attachment successfully!</string>
 </resources>
