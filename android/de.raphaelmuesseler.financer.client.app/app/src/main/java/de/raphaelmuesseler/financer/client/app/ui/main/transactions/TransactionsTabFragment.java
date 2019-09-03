@@ -8,10 +8,14 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+
+import com.miguelcatalan.materialsearchview.MaterialSearchView;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -103,8 +107,44 @@ public class TransactionsTabFragment extends Fragment {
     }
 
     @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        getActivity().getMenuInflater().inflate(R.menu.search_menu, menu);
+        MenuItem item = menu.findItem(R.id.action_search);
+        MaterialSearchView searchView = getActivity().findViewById(R.id.search_view);
+        searchView.setMenuItem(item);
+        searchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                ((TransactionListViewAdapter) transactionListView.getAdapter()).getFilter().filter(query);
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                if (newText.isEmpty()) {
+                    getActivity().runOnUiThread(() -> refreshTransactionsList());
+                    return false;
+                } else {
+                    ((TransactionListViewAdapter) transactionListView.getAdapter()).getFilter().filter(newText);
+                    return true;
+                }
+            }
+        });
+
+        searchView.setOnSearchViewListener(new MaterialSearchView.SearchViewListener() {
+            @Override
+            public void onSearchViewShown() {
+            }
+
+            @Override
+            public void onSearchViewClosed() {
+                getActivity().runOnUiThread(() -> refreshTransactionsList());
+            }
+        });
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle item selection
         switch (item.getItemId()) {
             case R.id.menu_refresh:
                 refreshTransactions();

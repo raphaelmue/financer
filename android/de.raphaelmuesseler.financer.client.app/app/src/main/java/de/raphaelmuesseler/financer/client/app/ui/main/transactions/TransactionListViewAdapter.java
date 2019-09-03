@@ -7,9 +7,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Filter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import de.raphaelmuesseler.financer.client.app.R;
@@ -21,9 +23,11 @@ import de.raphaelmuesseler.financer.shared.model.transactions.VariableTransactio
 public class TransactionListViewAdapter extends ArrayAdapter<VariableTransaction> {
 
     private final Formatter formatter = new AndroidFormatter(LocalStorageImpl.getInstance(), getContext());
+    private final List<VariableTransaction> transactions;
 
     public TransactionListViewAdapter(Context context, List<VariableTransaction> transactions) {
         super(context, R.layout.list_item_transaction, transactions);
+        this.transactions = transactions;
     }
 
     @NonNull
@@ -68,5 +72,47 @@ public class TransactionListViewAdapter extends ArrayAdapter<VariableTransaction
         params.height = totalHeight + (listView.getDividerHeight() * (this.getCount() - 1));
         listView.setLayoutParams(params);
         listView.requestLayout();
+    }
+
+    @NonNull
+    @Override
+    public Filter getFilter() {
+        return new Filter() {
+            @Override
+            protected FilterResults performFiltering(CharSequence constraint) {
+                FilterResults results = new FilterResults();
+                // We implement here the filter logic
+                if (constraint == null || constraint.length() == 0) {
+                    // No filter implemented we return all the list
+                    results.values = transactions;
+                    results.count = transactions.size();
+                } else {
+                    List<VariableTransaction> filteredTransaction = new ArrayList<>();
+
+                    for (VariableTransaction transaction : transactions) {
+                        if (transaction.getProduct().toUpperCase().contains(constraint.toString().toUpperCase()) ||
+                                transaction.getPurpose().toUpperCase().contains(constraint.toString().toUpperCase()) ||
+                                transaction.getShop().toUpperCase().contains(constraint.toString().toUpperCase()) ||
+                                formatter.formatCategoryName(transaction.getCategoryTree()).toUpperCase().contains(constraint.toString().toUpperCase()))
+                            filteredTransaction.add(transaction);
+                    }
+
+                    results.values = filteredTransaction;
+                    results.count = filteredTransaction.size();
+                }
+                return results;
+            }
+
+            @Override
+            protected void publishResults(CharSequence constraint, FilterResults results) {
+                if (results.count == 0)
+                    notifyDataSetInvalidated();
+                else {
+                    transactions.clear();
+                    transactions.addAll((List<VariableTransaction>) results.values);
+                    notifyDataSetChanged();
+                }
+            }
+        };
     }
 }
