@@ -53,7 +53,7 @@ public class FinancerActivity extends AppCompatActivity
         INSTANCE = this;
 
         LocalStorageImpl.setContext(this);
-        ServerRequest.setHost(false);
+        ServerRequest.setHost("10.181.212.242");
         ServerRequestHandler.setApplication(this);
         ServerRequestHandler.setLocalStorage(LocalStorageImpl.getInstance());
 

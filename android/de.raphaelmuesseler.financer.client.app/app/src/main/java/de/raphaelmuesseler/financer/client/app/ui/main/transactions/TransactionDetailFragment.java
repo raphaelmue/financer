@@ -15,6 +15,7 @@ import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.BottomSheetDialog;
 import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
@@ -37,6 +38,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import de.raphaelmuesseler.financer.client.app.R;
 import de.raphaelmuesseler.financer.client.app.format.AndroidFormatter;
@@ -116,6 +118,7 @@ public class TransactionDetailFragment extends BottomSheetDialogFragment {
         shopTextView = view.findViewById(R.id.tv_transaction_shop);
 
         ImageButton editTransactionBtn = view.findViewById(R.id.btn_edit_transaction);
+        ImageButton deleteTransactionBtn = view.findViewById(R.id.btn_delete_transaction);
         attachmentListView = view.findViewById(R.id.lv_transaction_attachments);
         attachmentListView.setEmptyView(view.findViewById(R.id.tv_no_attachments));
         attachmentListView.setAdapter(new AttachmentListViewAdapter(getContext(), this.attachments));
@@ -131,6 +134,24 @@ public class TransactionDetailFragment extends BottomSheetDialogFragment {
                 VariableTransaction _transaction = (VariableTransaction) getArguments().getSerializable("transaction");
                 intent.putExtra("transaction", _transaction);
                 startActivityForResult(intent, REQUEST_EDIT_TRANSACTION);
+            });
+
+            deleteTransactionBtn.setOnClickListener(v -> {
+                AtomicBoolean canceled = new AtomicBoolean(false);
+                Snackbar snackbar = Snackbar.make(view, R.string.deleted_transaction, Snackbar.LENGTH_LONG);
+                snackbar.setAction(R.string.undo, v1 -> canceled.set(true));
+                snackbar.addCallback(new Snackbar.Callback() {
+                    @Override
+                    public void onDismissed(Snackbar transientBottomBar, int event) {
+                        super.onDismissed(transientBottomBar, event);
+
+                        if (!canceled.get()) {
+                            deleteTransaction(transaction);
+                        }
+                    }
+                });
+                snackbar.show();
+                getActivity().runOnUiThread(this::dismiss);
             });
         }
 
@@ -161,20 +182,22 @@ public class TransactionDetailFragment extends BottomSheetDialogFragment {
         shopTextView.setText(transaction.getShop());
 
         this.attachments.clear();
-        this.attachments.addAll(transaction.getAttachments());
-        this.attachments.sort((o1, o2) -> o2.getUploadDate().compareTo(o1.getUploadDate()));
-        Objects.requireNonNull(getActivity()).runOnUiThread(() -> {
-            ((AttachmentListViewAdapter) attachmentListView.getAdapter()).notifyDataSetChanged();
-            ((AttachmentListViewAdapter) attachmentListView.getAdapter()).setListViewHeightBasedOnChildren(attachmentListView);
-        });
+        if (transaction.getAttachments() != null && !transaction.getAttachments().isEmpty()) {
+            this.attachments.addAll(transaction.getAttachments());
+            this.attachments.sort((o1, o2) -> o2.getUploadDate().compareTo(o1.getUploadDate()));
+            Objects.requireNonNull(getActivity()).runOnUiThread(() -> {
+                ((AttachmentListViewAdapter) attachmentListView.getAdapter()).notifyDataSetChanged();
+                ((AttachmentListViewAdapter) attachmentListView.getAdapter()).setListViewHeightBasedOnChildren(attachmentListView);
+            });
 
-        for (Attachment attachment : this.attachments) {
-            if (attachment.getName().matches(".*([.](jpg|png|jpeg))")) {
-                loadAttachment(attachment, file -> getActivity().runOnUiThread(() -> {
-                    Bitmap bitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
-                    headerImageView.setImageBitmap(bitmap);
-                }));
-                break;
+            for (Attachment attachment : this.attachments) {
+                if (attachment.getName().matches(".*([.](jpg|png|jpeg))")) {
+                    loadAttachment(attachment, file -> getActivity().runOnUiThread(() -> {
+                        Bitmap bitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
+                        headerImageView.setImageBitmap(bitmap);
+                    }));
+                    break;
+                }
             }
         }
     }
@@ -215,6 +238,24 @@ public class TransactionDetailFragment extends BottomSheetDialogFragment {
 
     public void setOnCancelListener(Action<Void> action) {
         this.cancelAction = action;
+    }
+
+    private void deleteTransaction(VariableTransaction transaction) {
+        Map<String, Serializable> parameters = new HashMap<>();
+        parameters.put("variableTransactionId", transaction.getId());
+
+        FinancerExecutor.getExecutor().execute(new ServerRequestHandler(user, "deleteTransaction", parameters, connectionResult ->
+                Objects.requireNonNull(getActivity()).runOnUiThread(() -> {
+                    BaseCategory baseCategory = (BaseCategory) LocalStorageImpl.getInstance().readObject("categories");
+                    CategoryTree categoryTree = (CategoryTree) TreeUtil.getByValue(baseCategory, transaction.getCategoryTree(),
+                            (o1, o2) -> Integer.compare(o1.getId(), o2.getId()));
+                    categoryTree.getTransactions().remove(transaction);
+                    LocalStorageImpl.getInstance().writeObject("categories", baseCategory);
+
+                    dismiss();
+                    FinancerActivity.getFinancerApplication().showToast(Application.MessageType.SUCCESS,
+                            getString(R.string.success_deleted_transaction));
+                })));
     }
 
     private void openAttachment(Attachment attachment) {

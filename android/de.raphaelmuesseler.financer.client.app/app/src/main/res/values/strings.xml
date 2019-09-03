@@ -70,4 +70,7 @@
     <string name="upload_attachment">Upload attachment</string>
     <string name="error_image_capture_permission_not_granted">You might consider giving this app access to your camera, or otherwise some featues will not be available.</string>
     <string name="success_uploaded_attachment">Uploaded attachment successfully!</string>
+    <string name="success_deleted_transaction">Deleted transaction successfully!</string>
+    <string name="undo">Undo</string>
+    <string name="deleted_transaction">Deleted transaction</string>
 </resources>

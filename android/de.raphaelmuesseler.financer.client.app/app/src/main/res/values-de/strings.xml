@@ -70,4 +70,7 @@
     <string name="upload_attachment">Anhang hochladen</string>
     <string name="error_image_capture_permission_not_granted">Du solltest in Betracht ziehen, dieser App Zugriff auf Ihre Kamera zu gewähren, da sonst einige Funktionen nicht verfügbar sind.</string>
     <string name="success_uploaded_attachment">Anhang wurde erfolgreich hochgeladen!</string>
+    <string name="success_deleted_transaction">Transaktion erfolgreich gelöscht!</string>
+    <string name="undo">Rückgängig</string>
+    <string name="deleted_transaction">Transaktion gelöscht</string>
 </resources>
