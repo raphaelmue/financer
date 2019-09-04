@@ -24,10 +24,62 @@ public class TransactionListViewAdapter extends ArrayAdapter<VariableTransaction
 
     private final Formatter formatter = new AndroidFormatter(LocalStorageImpl.getInstance(), getContext());
     private final List<VariableTransaction> transactions;
+    private final List<VariableTransaction> filteredData;
+    private final Filter filter = new Filter() {
+        private String oldQuery = "";
+
+        @Override
+        protected FilterResults performFiltering(CharSequence constraint) {
+            FilterResults results = new FilterResults();
+            // We implement here the filter logic
+            if (constraint == null || constraint.length() == 0) {
+                // No filter implemented we return all the list
+                results.values = transactions;
+                results.count = ((List) results.values).size();
+
+                oldQuery = "";
+            } else {
+                final List<VariableTransaction> filteredTransaction = new ArrayList<>();
+
+                for (VariableTransaction transaction : (oldQuery.length() == constraint.length() - 1 ? filteredData : transactions)) {
+                    if (transaction.getProduct().toUpperCase().contains(constraint.toString().toUpperCase()) ||
+                            transaction.getPurpose().toUpperCase().contains(constraint.toString().toUpperCase()) ||
+                            transaction.getShop().toUpperCase().contains(constraint.toString().toUpperCase()) ||
+                            formatter.formatCategoryName(transaction.getCategoryTree()).toUpperCase().contains(constraint.toString().toUpperCase()))
+                        filteredTransaction.add(transaction);
+                }
+
+                results.values = filteredTransaction;
+                results.count = filteredTransaction.size();
+
+                oldQuery = constraint.toString();
+            }
+
+
+            return results;
+        }
+
+        @Override
+        protected void publishResults(CharSequence constraint, FilterResults results) {
+            if (results.count == 0) {
+                notifyDataSetInvalidated();
+                filteredData.clear();
+            } else {
+                filteredData.clear();
+                filteredData.addAll((List<VariableTransaction>) results.values);
+                notifyDataSetChanged();
+            }
+        }
+    };
+
+    public TransactionListViewAdapter(Context context) {
+        this(context, new ArrayList<>());
+    }
 
     public TransactionListViewAdapter(Context context, List<VariableTransaction> transactions) {
         super(context, R.layout.list_item_transaction, transactions);
-        this.transactions = transactions;
+        this.transactions = new ArrayList<>(transactions);
+        this.filteredData = transactions;
     }
 
     @NonNull
@@ -74,45 +126,16 @@ public class TransactionListViewAdapter extends ArrayAdapter<VariableTransaction
         listView.requestLayout();
     }
 
+    public void setData(List<VariableTransaction> transactions) {
+        this.transactions.clear();
+        this.transactions.addAll(transactions);
+        this.filteredData.clear();
+        this.filteredData.addAll(transactions);
+    }
+
     @NonNull
     @Override
     public Filter getFilter() {
-        return new Filter() {
-            @Override
-            protected FilterResults performFiltering(CharSequence constraint) {
-                FilterResults results = new FilterResults();
-                // We implement here the filter logic
-                if (constraint == null || constraint.length() == 0) {
-                    // No filter implemented we return all the list
-                    results.values = transactions;
-                    results.count = transactions.size();
-                } else {
-                    List<VariableTransaction> filteredTransaction = new ArrayList<>();
-
-                    for (VariableTransaction transaction : transactions) {
-                        if (transaction.getProduct().toUpperCase().contains(constraint.toString().toUpperCase()) ||
-                                transaction.getPurpose().toUpperCase().contains(constraint.toString().toUpperCase()) ||
-                                transaction.getShop().toUpperCase().contains(constraint.toString().toUpperCase()) ||
-                                formatter.formatCategoryName(transaction.getCategoryTree()).toUpperCase().contains(constraint.toString().toUpperCase()))
-                            filteredTransaction.add(transaction);
-                    }
-
-                    results.values = filteredTransaction;
-                    results.count = filteredTransaction.size();
-                }
-                return results;
-            }
-
-            @Override
-            protected void publishResults(CharSequence constraint, FilterResults results) {
-                if (results.count == 0)
-                    notifyDataSetInvalidated();
-                else {
-                    transactions.clear();
-                    transactions.addAll((List<VariableTransaction>) results.values);
-                    notifyDataSetChanged();
-                }
-            }
-        };
+        return filter;
     }
 }

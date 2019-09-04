@@ -74,4 +74,5 @@
     <string name="undo">Rückgängig</string>
     <string name="deleted_transaction">Transaktion gelöscht</string>
     <string name="search">Suchen</string>
+    <string name="no_transactions">Es wurden keine Transaktionen gefunden.</string>
 </resources>

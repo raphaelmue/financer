@@ -45,8 +45,6 @@ public class TransactionsTabFragment extends Fragment {
 
     private static final int ADD_TRANSACTION_REQUEST = 1;  // The request code
 
-    private List<VariableTransaction> transactions = new ArrayList<>();
-
     private ListView transactionListView;
     private SwipeRefreshLayout swipeRefreshLayoutTransactions;
 
@@ -78,16 +76,12 @@ public class TransactionsTabFragment extends Fragment {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_transactions_tab, container, false);
 
-        List<VariableTransaction> storedTransactions = LocalStorageImpl.getInstance().readList("transactions");
-        if (storedTransactions != null) {
-            transactions.addAll(storedTransactions);
-        }
-
         this.swipeRefreshLayoutTransactions = rootView.findViewById(R.id.swipe_layout_transactions);
         this.swipeRefreshLayoutTransactions.setOnRefreshListener(this::refreshTransactions);
 
         this.transactionListView = rootView.findViewById(R.id.lv_transactions);
-        this.transactionListView.setAdapter(new TransactionListViewAdapter(getContext(), transactions));
+        this.transactionListView.setAdapter(new TransactionListViewAdapter(getContext()));
+        this.transactionListView.setEmptyView(rootView.findViewById(R.id.tv_no_transactions));
         this.transactionListView.setOnItemClickListener((parent, view, position, id) -> {
             TransactionDetailFragment bottomDetailDialog = TransactionDetailFragment.newInstance(
                     (VariableTransaction) this.transactionListView.getItemAtPosition(position));
@@ -121,13 +115,8 @@ public class TransactionsTabFragment extends Fragment {
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                if (newText.isEmpty()) {
-                    getActivity().runOnUiThread(() -> refreshTransactionsList());
-                    return false;
-                } else {
-                    ((TransactionListViewAdapter) transactionListView.getAdapter()).getFilter().filter(newText);
-                    return true;
-                }
+                ((TransactionListViewAdapter) transactionListView.getAdapter()).getFilter().filter(newText);
+                return true;
             }
         });
 
@@ -183,7 +172,7 @@ public class TransactionsTabFragment extends Fragment {
     }
 
     private void refreshTransactionsList() {
-        transactions.clear();
+        final List<VariableTransaction> transactions = new ArrayList<>();
         BaseCategory baseCategory = ((BaseCategory) LocalStorageImpl.getInstance().readObject("categories"));
         TreeUtil.traverse(baseCategory.getCategoryTreeByCategoryClass(BaseCategory.CategoryClass.VARIABLE_EXPENSES), categoryTree -> {
             for (Transaction transaction : ((CategoryTree) categoryTree).getTransactions()) {
@@ -197,6 +186,7 @@ public class TransactionsTabFragment extends Fragment {
         });
         transactions.sort((o1, o2) -> o2.getValueDate().compareTo(o1.getValueDate()));
         if (transactionListView != null) {
+            ((TransactionListViewAdapter) transactionListView.getAdapter()).setData(transactions);
             ((TransactionListViewAdapter) transactionListView.getAdapter()).notifyDataSetChanged();
         }
     }

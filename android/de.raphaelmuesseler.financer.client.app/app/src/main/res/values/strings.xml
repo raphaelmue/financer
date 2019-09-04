@@ -74,4 +74,5 @@
     <string name="undo">Undo</string>
     <string name="deleted_transaction">Deleted transaction</string>
     <string name="search">Search</string>
+    <string name="no_transactions">No transactions were found.</string>
 </resources>

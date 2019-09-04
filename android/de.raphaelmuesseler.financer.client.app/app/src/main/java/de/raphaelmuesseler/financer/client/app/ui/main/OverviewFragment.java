@@ -55,7 +55,6 @@ public class OverviewFragment extends Fragment {
     private double balance;
     private double expenses;
     private AtomicInteger numberOfTransactions;
-    private List<VariableTransaction> lastTransactions = new ArrayList<>();
 
     public OverviewFragment() {
         // Required empty public constructor
@@ -84,7 +83,7 @@ public class OverviewFragment extends Fragment {
         this.expensesTextView = rootView.findViewById(R.id.tv_expenses);
         this.numberOfTransactionsTextView = rootView.findViewById(R.id.tv_number_transactions);
         this.lastTransactionsListView = rootView.findViewById(R.id.lv_last_transactions);
-        this.lastTransactionsListView.setAdapter(new TransactionListViewAdapter(getContext(), lastTransactions));
+        this.lastTransactionsListView.setAdapter(new TransactionListViewAdapter(getContext()));
         this.lastTransactionsListView.setOnItemClickListener((parent, view, position, id) -> {
             TransactionDetailFragment bottomDetailDialog = TransactionDetailFragment.newInstance(
                     (VariableTransaction) this.lastTransactionsListView.getItemAtPosition(position));
@@ -164,7 +163,7 @@ public class OverviewFragment extends Fragment {
     }
 
     private void initLastTransactionsListView() {
-        lastTransactions.clear();
+        List<VariableTransaction> lastTransactions = new ArrayList<>();
         BaseCategory baseCategory = ((BaseCategory) LocalStorageImpl.getInstance().readObject("categories"));
         TreeUtil.traverse(baseCategory.getCategoryTreeByCategoryClass(BaseCategory.CategoryClass.VARIABLE_EXPENSES), categoryTree -> {
             for (Transaction transaction : ((CategoryTree) categoryTree).getTransactions()) {
@@ -177,8 +176,11 @@ public class OverviewFragment extends Fragment {
             }
         });
         lastTransactions.sort((o1, o2) -> o2.getValueDate().compareTo(o1.getValueDate()));
-        lastTransactions.subList(4, lastTransactions.size()).clear();
+        if (lastTransactions.size() > 4) {
+            lastTransactions.subList(4, lastTransactions.size()).clear();
+        }
         Objects.requireNonNull(getActivity()).runOnUiThread(() -> {
+            ((TransactionListViewAdapter) this.lastTransactionsListView.getAdapter()).setData(lastTransactions);
             ((TransactionListViewAdapter) this.lastTransactionsListView.getAdapter()).notifyDataSetChanged();
             ((TransactionListViewAdapter) this.lastTransactionsListView.getAdapter())
                     .setListViewHeightBasedOnChildren(this.lastTransactionsListView);
