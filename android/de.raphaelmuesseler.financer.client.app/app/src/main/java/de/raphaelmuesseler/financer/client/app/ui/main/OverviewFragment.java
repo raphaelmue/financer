@@ -121,6 +121,7 @@ public class OverviewFragment extends Fragment {
 
                     LocalStorageImpl.getInstance().writeObject("categories", baseCategory);
                     FinancerActivity.getFinancerApplication().showToast(Application.MessageType.SUCCESS, getString(R.string.success_added_transaction));
+                    init();
                 })));
             }
         }

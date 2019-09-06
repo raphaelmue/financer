@@ -3,10 +3,12 @@ package de.raphaelmuesseler.financer.client.app.ui.main.transactions;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.provider.OpenableColumns;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetDialogFragment;
@@ -17,15 +19,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
-import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.RandomAccessFile;
-import java.nio.file.Files;
 import java.time.LocalDate;
 
 import de.raphaelmuesseler.financer.client.app.R;
@@ -114,7 +110,7 @@ public class UploadAttachmentDialog extends BottomSheetDialogFragment {
 
                             attachment = new ContentAttachment();
                             attachment.setContent(content);
-                            attachment.setName(new File(data.getData().getPath()).getName());
+                            attachment.setName(getFileName(data.getData()));
                             attachment.setUploadDate(LocalDate.now());
                         }
                     }
@@ -130,6 +126,25 @@ public class UploadAttachmentDialog extends BottomSheetDialogFragment {
 
     public void setOnSubmit(Action<ContentAttachment> action) {
         this.action = action;
+    }
+
+    public String getFileName(Uri uri) {
+        String result = null;
+        if (uri.getScheme().equals("content")) {
+            try (Cursor cursor = getActivity().getContentResolver().query(uri, null, null, null, null)) {
+                if (cursor != null && cursor.moveToFirst()) {
+                    result = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
+                }
+            }
+        }
+        if (result == null) {
+            result = uri.getPath();
+            int cut = result.lastIndexOf('/');
+            if (cut != -1) {
+                result = result.substring(cut + 1);
+            }
+        }
+        return result;
     }
 
     private byte[] getBytes(@NonNull Uri uri) {

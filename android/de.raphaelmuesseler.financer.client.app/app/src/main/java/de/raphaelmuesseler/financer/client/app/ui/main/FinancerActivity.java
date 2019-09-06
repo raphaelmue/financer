@@ -22,8 +22,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.miguelcatalan.materialsearchview.MaterialSearchView;
-
 import de.raphaelmuesseler.financer.client.app.R;
 import de.raphaelmuesseler.financer.client.app.format.AndroidFormatter;
 import de.raphaelmuesseler.financer.client.app.local.LocalStorageImpl;
@@ -43,7 +41,6 @@ public class FinancerActivity extends AppCompatActivity
 
     private ProgressBar progressBar;
 
-
     public static Application getFinancerApplication() {
         return INSTANCE;
     }
@@ -55,7 +52,7 @@ public class FinancerActivity extends AppCompatActivity
         INSTANCE = this;
 
         LocalStorageImpl.setContext(this);
-        ServerRequest.setHost("10.181.212.242");
+        ServerRequest.setHost(false);
         ServerRequestHandler.setApplication(this);
         ServerRequestHandler.setLocalStorage(LocalStorageImpl.getInstance());
 

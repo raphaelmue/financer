@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputEditText;
 import android.text.InputType;
 import android.util.AttributeSet;
+import android.widget.TextView;
 
 import java.time.LocalDate;
 
@@ -13,7 +14,7 @@ import de.raphaelmuesseler.financer.client.app.format.AndroidFormatter;
 import de.raphaelmuesseler.financer.client.app.local.LocalStorageImpl;
 import de.raphaelmuesseler.financer.client.format.Formatter;
 
-public class DatePicker extends TextInputEditText {
+public class DatePicker extends TextView {
 
     private LocalDate value;
     private final Formatter formatter = new AndroidFormatter(LocalStorageImpl.getInstance(), this.getContext());
@@ -38,8 +39,11 @@ public class DatePicker extends TextInputEditText {
         this.setValue(LocalDate.now());
         this.setOnClickListener(v -> new DatePickerDialog(
                 this.getContext(),
-                (view, year, monthOfYear, dayOfMonth)
-                        -> this.setText(formatter.formatDate(LocalDate.of(year, monthOfYear + 1, dayOfMonth))),
+                (view, year, monthOfYear, dayOfMonth) -> {
+                    LocalDate date = LocalDate.of(year, monthOfYear + 1, dayOfMonth);
+                    this.setValue(date);
+                    this.setText(formatter.formatDate(date));
+                },
                 this.getValue().getYear(),
                 this.getValue().getMonthValue() - 1,
                 this.getValue().getDayOfMonth()).show());
