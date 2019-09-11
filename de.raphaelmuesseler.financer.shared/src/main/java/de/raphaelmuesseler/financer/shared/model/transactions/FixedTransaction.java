@@ -58,6 +58,10 @@ public class FixedTransaction extends FixedTransactionEntity implements Transact
         this.transactionAmounts = transactionAmounts;
     }
 
+    public double getAmountValue() {
+        return super.getAmount();
+    }
+
     @Override
     public double getAmount() {
         return this.getAmount(LocalDate.now());
@@ -73,7 +77,8 @@ public class FixedTransaction extends FixedTransactionEntity implements Transact
                     amount += amountProvider.getAmount(localDate);
                 }
             }
-            if (!this.getIsVariable()) {
+            if (!this.getIsVariable() && (this.getEndDate() == null && this.getStartDate().compareTo(localDate) <= 0 ||
+                    DateUtil.isDateBetween(localDate, this.getStartDate(), this.getEndDate()))) {
                 amount = super.getAmount();
             }
         }
@@ -146,7 +151,7 @@ public class FixedTransaction extends FixedTransactionEntity implements Transact
     public FixedTransactionEntity toEntity() {
         FixedTransactionEntity fixedTransactionEntity = new FixedTransactionEntity();
         fixedTransactionEntity.setId(this.getId());
-        fixedTransactionEntity.setAmount(this.getAmount());
+        fixedTransactionEntity.setAmount(this.getAmountValue());
         fixedTransactionEntity.setCategory(this.getCategoryTree().getValue());
         fixedTransactionEntity.setStartDate(this.getStartDate());
         fixedTransactionEntity.setEndDate(this.getEndDate());

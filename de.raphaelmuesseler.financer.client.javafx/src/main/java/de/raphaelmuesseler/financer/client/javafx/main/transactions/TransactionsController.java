@@ -43,7 +43,6 @@ import java.io.Serializable;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.*;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static de.raphaelmuesseler.financer.util.date.Month.getMonthByNumber;
@@ -351,11 +350,6 @@ public class TransactionsController implements Initializable {
         RetrievalServiceImpl.getInstance().fetchFixedTransactions(this.user, new AsyncCall<>() {
             @Override
             public void onSuccess(BaseCategory result) {
-            }
-
-            @Override
-            public void onFailure(Exception exception) {
-                logger.log(Level.SEVERE, exception.getMessage(), exception);
             }
 
             @Override

@@ -44,4 +44,17 @@ public class DateUtilTest {
 
         Assertions.assertTrue(DateUtil.checkIfMonthsAreEqual(localDate1, localDate2));
     }
+
+    @Test
+    public void testIsDateBetween() {
+        LocalDate date = LocalDate.of(2017, 12, 9);
+        LocalDate startDate = LocalDate.of(2017, 9, 7);
+        LocalDate endDate = LocalDate.of(2018, 5, 30);
+
+        Assertions.assertTrue(DateUtil.isDateBetween(date, startDate, endDate));
+
+        date = date.plusMonths(10);
+
+        Assertions.assertFalse(DateUtil.isDateBetween(date, startDate, endDate));
+    }
 }

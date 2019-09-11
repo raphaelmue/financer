@@ -8,7 +8,7 @@ import java.time.LocalDate;
 public interface AmountProvider {
 
     /**
-     * Returns amount
+     * Returns the amount of the current month
      *
      * @return amount of month
      */

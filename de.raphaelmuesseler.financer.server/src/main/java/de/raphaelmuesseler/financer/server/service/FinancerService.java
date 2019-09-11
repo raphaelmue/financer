@@ -536,7 +536,9 @@ public class FinancerService {
                         .list();
                 for (FixedTransactionEntity fixedTransactionEntity : databaseFixedTransactions) {
                     fixedTransactionEntity.getTransactionAmounts().size();
-                    categoryTree.getTransactions().add(new FixedTransaction(fixedTransactionEntity, categoryTree));
+                    FixedTransaction fixedTransaction = new FixedTransaction(fixedTransactionEntity, categoryTree);
+                    categoryTree.getTransactions().remove(fixedTransaction);
+                    categoryTree.getTransactions().add(fixedTransaction);
                 }
             }
         });
@@ -562,7 +564,7 @@ public class FinancerService {
                 .setParameter("categoryId", fixedTransaction.getCategoryTree().getValue().getId())
                 .uniqueResult();
         if (oldFixedTransaction != null) {
-            oldFixedTransaction.setEndDate(LocalDate.now());
+            oldFixedTransaction.setEndDate(fixedTransaction.getStartDate().minusDays(1));
             session.update(oldFixedTransaction);
         }
         transaction.commit();
