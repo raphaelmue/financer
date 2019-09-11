@@ -557,7 +557,7 @@ public class ServiceTest {
         Assertions.assertTrue(result.getResult().getId() > 0);
 
         Transaction transaction = session.beginTransaction();
-        Assertions.assertEquals(LocalDate.now(), session.get(FixedTransactionEntity.class, fixedTransaction.getId()).getEndDate());
+        Assertions.assertEquals(LocalDate.now().minusDays(1), session.get(FixedTransactionEntity.class, fixedTransaction.getId()).getEndDate());
         transaction.commit();
     }
 
