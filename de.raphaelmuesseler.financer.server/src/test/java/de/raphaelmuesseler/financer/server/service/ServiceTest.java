@@ -43,7 +43,8 @@ public class ServiceTest {
         InputStream inputStream = ServiceTest.class.getResourceAsStream("/testing.properties");
         Properties properties = new Properties();
         properties.load(inputStream);
-        HibernateUtil.setIsHostLocal(Boolean.valueOf(properties.getProperty("project.testing.localhost")));
+        HibernateUtil.setIsHostLocal(true);
+//        HibernateUtil.setIsHostLocal(Boolean.parseBoolean(properties.getProperty("project.testing.localhost")));
         HibernateUtil.setDatabaseName(DatabaseName.TEST);
     }
 
@@ -564,14 +565,31 @@ public class ServiceTest {
     @Test
     public void testUpdateFixedTransaction() {
         final double amount = 100.0;
-        fixedTransaction.setAmount(amount);
+        FixedTransaction _fixedTransaction = new FixedTransaction(fixedTransaction);
+        _fixedTransaction.setAmount(amount);
+        TransactionAmount transactionAmount = new TransactionAmount(0, 500, LocalDate.now());
+        transactionAmount.setFixedTransaction(fixedTransaction);
+        _fixedTransaction.getTransactionAmounts().add(transactionAmount);
 
         Map<String, Serializable> parameters = new HashMap<>();
-        parameters.put("fixedTransaction", new FixedTransaction(fixedTransaction));
-        service.updateFixedTransaction(logger, session, parameters);
+        parameters.put("fixedTransaction", _fixedTransaction);
+        _fixedTransaction = (FixedTransaction) service.updateFixedTransaction(logger, session, parameters).getResult();
 
         Transaction transaction = session.beginTransaction();
         Assertions.assertEquals(amount, session.get(FixedTransactionEntity.class, fixedTransaction.getId()).getAmount());
+        Assertions.assertEquals(1, session.get(FixedTransactionEntity.class, fixedTransaction.getId()).getTransactionAmounts().size());
+        transaction.commit();
+        session.close();
+
+        session = HibernateUtil.getSessionFactory().openSession();
+        _fixedTransaction.getTransactionAmounts().clear();
+
+        parameters = new HashMap<>();
+        parameters.put("fixedTransaction", _fixedTransaction);
+        service.updateFixedTransaction(logger, session, parameters);
+
+        transaction = session.beginTransaction();
+        Assertions.assertEquals(0, session.get(FixedTransactionEntity.class, fixedTransaction.getId()).getTransactionAmounts().size());
         transaction.commit();
     }
 

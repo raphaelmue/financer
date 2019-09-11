@@ -477,6 +477,8 @@ public class TransactionsController implements Initializable {
             FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "updateFixedTransaction", parameters, new AsyncConnectionCall() {
                 @Override
                 public void onSuccess(ConnectionResult result) {
+                    fixedTransaction.getTransactionAmounts().clear();
+                    fixedTransaction.getTransactionAmounts().addAll(((FixedTransaction) result.getResult()).getTransactionAmounts());
                     localStorage.writeObject("categories", categories);
 
                     Platform.runLater(() -> {

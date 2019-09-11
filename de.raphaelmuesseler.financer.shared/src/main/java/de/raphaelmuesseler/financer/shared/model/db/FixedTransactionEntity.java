@@ -39,7 +39,7 @@ public class FixedTransactionEntity implements DataEntity {
     @Column(name = "day")
     private int day;
 
-    @OneToMany(mappedBy = "fixedTransaction")
+    @OneToMany(mappedBy = "fixedTransaction", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<FixedTransactionAmountEntity> transactionAmounts;
 
     @Override

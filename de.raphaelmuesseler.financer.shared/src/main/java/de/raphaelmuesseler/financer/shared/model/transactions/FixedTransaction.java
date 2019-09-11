@@ -154,14 +154,14 @@ public class FixedTransaction extends FixedTransactionEntity implements Transact
         fixedTransactionEntity.setPurpose(this.getPurpose());
         fixedTransactionEntity.setIsVariable(this.getIsVariable());
         fixedTransactionEntity.setDay(this.getDay());
-        Set<FixedTransactionAmountEntity> transactionAmountDAOS = new HashSet<>();
+        Set<FixedTransactionAmountEntity> transactionAmountEntities = new HashSet<>();
         if (this.getTransactionAmounts() != null) {
             for (TransactionAmount transactionAmount : this.getTransactionAmounts()) {
                 transactionAmount.setFixedTransaction(fixedTransactionEntity);
-                transactionAmountDAOS.add(transactionAmount.toEntity());
+                transactionAmountEntities.add(transactionAmount.toEntity());
             }
         }
-        fixedTransactionEntity.setTransactionAmounts(transactionAmountDAOS);
+        fixedTransactionEntity.setTransactionAmounts(transactionAmountEntities);
         return fixedTransactionEntity;
     }
 
