@@ -43,8 +43,7 @@ public class ServiceTest {
         InputStream inputStream = ServiceTest.class.getResourceAsStream("/testing.properties");
         Properties properties = new Properties();
         properties.load(inputStream);
-        HibernateUtil.setIsHostLocal(true);
-//        HibernateUtil.setIsHostLocal(Boolean.parseBoolean(properties.getProperty("project.testing.localhost")));
+        HibernateUtil.setIsHostLocal(Boolean.parseBoolean(properties.getProperty("project.testing.localhost")));
         HibernateUtil.setDatabaseName(DatabaseName.TEST);
     }
 
