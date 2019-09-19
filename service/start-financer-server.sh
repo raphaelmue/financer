@@ -10,6 +10,6 @@ then
 fi
 
 cd ./de.raphaelmuesseler.financer.server/target/
-java -jar de.raphaelmuesseler.financer.server-1.0-SNAPSHOT-jar-with-dependencies.jar --database=prod &
+java -jar financer-server.jar --database=prod &
 
 echo 'Restarted financer server successfully!'

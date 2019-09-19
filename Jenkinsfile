@@ -3,13 +3,10 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                sh 'mvn clean install -DskipTests'
-            }
-        }
-        stage('Preparing tests') {
-            steps {
                 sh 'cp /var/lib/jenkins/workspace/hibernate.cfg.xml ./de.raphaelmuesseler.financer.server/src/main/resources/de/raphaelmuesseler/financer/server/db/config/'
-                sh 'mvn clean install -DskipTests'
+                sh 'mvn clean'
+                sh 'mkdir -p de.raphaelmuesseler.financer.client.javafx/target/staging/'
+                sh 'mvn install -DskipTests'
             }
         }
         stage('JUnit Tests') {
@@ -68,6 +65,7 @@ pipeline {
     post {
         always {
             junit '**/target/surefire-reports/TEST-*.xml'
+            archiveArtifacts artifacts: '**/financer-installer.jar, **/financer.jar, **/financer-portable.exe, **/financer-server.jar', fingerprint: true
             step([$class: 'JacocoPublisher'])
         }
     }

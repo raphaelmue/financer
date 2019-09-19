@@ -1,6 +1,5 @@
 package de.raphaelmuesseler.financer.client.javafx.main;
 
-import de.raphaelmuesseler.financer.client.connection.ServerRequest;
 import de.raphaelmuesseler.financer.client.format.I18N;
 import de.raphaelmuesseler.financer.client.javafx.connection.RetrievalServiceImpl;
 import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
@@ -83,9 +82,9 @@ public class FinancerApplication extends Application {
         Stage primaryStage = new Stage();
         Scene scene = new Scene(root, 800, 500);
 
-        scene.getStylesheets().add(getClass().getResource("../main/style/colors.style.css").toExternalForm());
-        scene.getStylesheets().add(getClass().getResource("../main/style/form.style.css").toExternalForm());
-        scene.getStylesheets().add(getClass().getResource("../main/style/login.style.css").toExternalForm());
+        scene.getStylesheets().add(getClass().getResource("/de/raphaelmuesseler/financer/client/javafx/main/style/colors.style.css").toExternalForm());
+        scene.getStylesheets().add(getClass().getResource("/de/raphaelmuesseler/financer/client/javafx/main/style/form.style.css").toExternalForm());
+        scene.getStylesheets().add(getClass().getResource("/de/raphaelmuesseler/financer/client/javafx/main/style/login.style.css").toExternalForm());
         scene.setFill(Color.TRANSPARENT);
 
         primaryStage.getIcons().add(new Image(FinancerApplication.class.getResourceAsStream("/images/icons/financer-icon.png")));
@@ -108,16 +107,16 @@ public class FinancerApplication extends Application {
         Stage primaryStage = new Stage();
         Scene scene = new Scene(root, 1300, 700);
 
-        scene.getStylesheets().add(getClass().getResource("style/colors.style.css").toExternalForm());
-        scene.getStylesheets().add(getClass().getResource("style/form.style.css").toExternalForm());
-        scene.getStylesheets().add(getClass().getResource("style/navbar.style.css").toExternalForm());
-        scene.getStylesheets().add(getClass().getResource("style/footer.style.css").toExternalForm());
-        scene.getStylesheets().add(getClass().getResource("style/header.style.css").toExternalForm());
-        scene.getStylesheets().add(getClass().getResource("style/main.style.css").toExternalForm());
-        scene.getStylesheets().add(getClass().getResource("style/transactions.style.css").toExternalForm());
-        scene.getStylesheets().add(getClass().getResource("style/statistics.style.css").toExternalForm());
-        scene.getStylesheets().add(getClass().getResource("style/overview.style.css").toExternalForm());
-        scene.getStylesheets().add(getClass().getResource("style/profile.style.css").toExternalForm());
+        scene.getStylesheets().add(getClass().getResource("/de/raphaelmuesseler/financer/client/javafx/main/style/colors.style.css").toExternalForm());
+        scene.getStylesheets().add(getClass().getResource("/de/raphaelmuesseler/financer/client/javafx/main/style/form.style.css").toExternalForm());
+        scene.getStylesheets().add(getClass().getResource("/de/raphaelmuesseler/financer/client/javafx/main/style/navbar.style.css").toExternalForm());
+        scene.getStylesheets().add(getClass().getResource("/de/raphaelmuesseler/financer/client/javafx/main/style/footer.style.css").toExternalForm());
+        scene.getStylesheets().add(getClass().getResource("/de/raphaelmuesseler/financer/client/javafx/main/style/header.style.css").toExternalForm());
+        scene.getStylesheets().add(getClass().getResource("/de/raphaelmuesseler/financer/client/javafx/main/style/main.style.css").toExternalForm());
+        scene.getStylesheets().add(getClass().getResource("/de/raphaelmuesseler/financer/client/javafx/main/style/transactions.style.css").toExternalForm());
+        scene.getStylesheets().add(getClass().getResource("/de/raphaelmuesseler/financer/client/javafx/main/style/statistics.style.css").toExternalForm());
+        scene.getStylesheets().add(getClass().getResource("/de/raphaelmuesseler/financer/client/javafx/main/style/overview.style.css").toExternalForm());
+        scene.getStylesheets().add(getClass().getResource("/de/raphaelmuesseler/financer/client/javafx/main/style/profile.style.css").toExternalForm());
         primaryStage.getIcons().add(new Image(FinancerApplication.class.getResourceAsStream("/images/icons/financer-icon.png")));
 
         Font.loadFont(getClass().getResource("/fonts/Roboto-Regular.ttf").toExternalForm(), 12);

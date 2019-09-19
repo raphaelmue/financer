@@ -12,13 +12,26 @@
     <artifactId>de.raphaelmuesseler.financer.client.javafx</artifactId>
     <packaging>jar</packaging>
 
+    <properties>
+        <app.main.class>de.raphaelmuesseler.financer.client.javafx.main.ApplicationLauncher</app.main.class>
+        <staging.dir>${project.build.directory}/staging</staging.dir>
+        <info.appName>My Killer Application</info.appName>
+        <info.appsubpath>my-killer-app/standard</info.appsubpath>
+        <izpack.dir.app>${basedir}/src/main/izpack</izpack.dir.app>
+        <staging.dir.app>${staging.dir}/appfiles</staging.dir.app>
+    </properties>
+
     <build>
         <resources>
             <resource>
+                <filtering>true</filtering>
                 <directory>src/main/resources</directory>
                 <includes>
-                    <include>**/*.*</include>
+                    <include>**</include>
                 </includes>
+                <excludes>
+                    <exclude>**/*.java</exclude>
+                </excludes>
             </resource>
         </resources>
 
@@ -44,8 +57,89 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <mainClass>de.raphaelmuesseler.financer.client.javafx.main.ApplicationLauncher</mainClass>
+                    <mainClass>${app.main.class}</mainClass>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.2.1</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <transformers>
+                                <transformer
+                                        implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <mainClass>${app.main.class}</mainClass>
+                                </transformer>
+                            </transformers>
+                            <finalName>financer</finalName>
+                            <createDependencyReducedPom>false</createDependencyReducedPom>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>com.akathist.maven.plugins.launch4j</groupId>
+                <artifactId>launch4j-maven-plugin</artifactId>
+                <version>1.7.25</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>launch4j</goal>
+                        </goals>
+                        <configuration>
+                            <headerType>gui</headerType>
+                            <outfile>${project.build.directory}/financer-portable.exe</outfile>
+                            <jar>${project.build.directory}/financer.jar</jar>
+                            <dontWrapJar>false</dontWrapJar>
+                            <classPath>
+                                <mainClass>${app.main.class}</mainClass>
+                            </classPath>
+                            <jre>
+                                <minVersion>1.8.0</minVersion>
+                            </jre>
+                            <icon>${project.basedir}/src/main/resources/images/icons/financer-icon.ico</icon>
+                            <versionInfo>
+                                <fileVersion>1.0.0.0</fileVersion>
+                                <txtFileVersion>1.0.0.0</txtFileVersion>
+                                <copyright>Copyright (c) 2019 Raphael Müßeler</copyright>
+                                <fileDescription>Financer is an Application that helps to manage all private expenses
+                                    and revenues.
+                                </fileDescription>
+                                <productVersion>1.0.0.0</productVersion>
+                                <txtProductVersion>${project.version}</txtProductVersion>
+                                <productName>Financer</productName>
+                                <internalName>financer</internalName>
+                                <originalFilename>Financer.exe</originalFilename>
+                            </versionInfo>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.izpack</groupId>
+                <artifactId>izpack-maven-plugin</artifactId>
+                <version>5.1.3</version>
+                <configuration>
+                    <baseDir>${staging.dir}</baseDir>
+                    <finalName>financer</finalName>
+                    <classifier>installer</classifier>
+                    <mkdirs>true</mkdirs>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>izpack</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
