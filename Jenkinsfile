@@ -7,7 +7,7 @@ pipeline {
         sh 'mvn clean install -DskipTests'
         sh 'chmod 775 android/de.raphaelmuesseler.financer.client.app/gradlew'
         sh 'android/de.raphaelmuesseler.financer.client.app/gradlew clean assemble -p android/de.raphaelmuesseler.financer.client.app/'
-        sh 'mv android/de.raphaelmuesseler.financer.client.app/app/build/output/apk/debug/app-debug.apk android/de.raphaelmuesseler.financer.client.app/app/build/output/apk/debug/financer-app.apk'
+        sh 'mv android/de.raphaelmuesseler.financer.client.app/app/build/outputs/apk/release/app-release-unsigned.apk android/de.raphaelmuesseler.financer.client.app/app/build/outputs/apk/release/financer-app.apk'
       }
     }
     stage('JUnit Tests') {
