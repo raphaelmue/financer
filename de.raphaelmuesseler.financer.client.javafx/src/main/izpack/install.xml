@@ -7,7 +7,7 @@
         <appname>Financer</appname>
         <appversion>1.0</appversion>
         <appsubpath>Financer</appsubpath>
-        <javaversion>1.8</javaversion>
+        <javaversion>1.10</javaversion>
         <url>https://www.financer-project.org</url>
         <authors>
             <author name="Raphael Müßeler" email="raphael@muesseler.de"/>
@@ -20,7 +20,7 @@
         <langpack iso3="deu"/>
     </locale>
 
-    <jar src="../financer.jar"/>
+    <jar src="../financer-portable.jar"/>
 
     <guiprefs width="800" height="600" resizable="no">
     </guiprefs>
@@ -35,7 +35,7 @@
         <panel classname="TargetPanel"/>
         <panel classname="ShortcutPanel"/>
         <panel classname="InstallPanel"/>
-        <panel classname="SimpleFinishPanel"/>
+        <panel classname="FinishPanel"/>
     </panels>
 
     <consoleprefs>
@@ -67,8 +67,8 @@
     <packs>
         <pack name="Base" required="yes">
             <description>The core files needed for the application</description>
+            <singlefile src="../financer-portable.jar" target="$INSTALL_PATH/financer.jar" override="true"/>
             <file src="../../../LICENSE" targetdir="$INSTALL_PATH"/>
-            <file src="../financer.jar" targetdir="$INSTALL_PATH"/>
             <file src="../../src/main/resources/images/icons/financer-icon.ico" targetdir="$INSTALL_PATH"/>
         </pack>
     </packs>

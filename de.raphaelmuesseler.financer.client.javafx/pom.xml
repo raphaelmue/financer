@@ -77,7 +77,7 @@
                                     <mainClass>${app.main.class}</mainClass>
                                 </transformer>
                             </transformers>
-                            <finalName>financer</finalName>
+                            <finalName>financer-portable</finalName>
                             <createDependencyReducedPom>false</createDependencyReducedPom>
                         </configuration>
                     </execution>
@@ -96,7 +96,7 @@
                         <configuration>
                             <headerType>gui</headerType>
                             <outfile>${project.build.directory}/financer-portable.exe</outfile>
-                            <jar>${project.build.directory}/financer.jar</jar>
+                            <jar>${project.build.directory}/financer-portable.jar</jar>
                             <dontWrapJar>false</dontWrapJar>
                             <classPath>
                                 <mainClass>${app.main.class}</mainClass>
@@ -119,6 +119,24 @@
                                 <originalFilename>Financer.exe</originalFilename>
                             </versionInfo>
                         </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.8</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <configuration>
+                            <tasks>
+                                <mkdir dir="target/staging"/>
+                            </tasks>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
                     </execution>
                 </executions>
             </plugin>
@@ -202,6 +220,4 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
-
 </project>

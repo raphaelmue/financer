@@ -4,9 +4,9 @@ pipeline {
         stage('Build') {
             steps {
                 sh 'cp /var/lib/jenkins/workspace/hibernate.cfg.xml ./de.raphaelmuesseler.financer.server/src/main/resources/de/raphaelmuesseler/financer/server/db/config/'
-                sh 'mvn clean'
-                sh 'mkdir -p de.raphaelmuesseler.financer.client.javafx/target/staging/'
-                sh 'mvn install -DskipTests'
+                sh 'mvn clean install -DskipTests'
+                sh 'gradlew clean assembleDebug -p android/de.raphaelmuesseler.financer.client.app/'
+                sh 'mv android/de.raphaelmuesseler.financer.client.app/app/build/output/apk/debug/app-debug.apk android/de.raphaelmuesseler.financer.client.app/app/build/output/apk/debug/financer-app.apk'
             }
         }
         stage('JUnit Tests') {
@@ -65,7 +65,7 @@ pipeline {
     post {
         always {
             junit '**/target/surefire-reports/TEST-*.xml'
-            archiveArtifacts artifacts: '**/financer-installer.jar, **/financer.jar, **/financer-portable.exe, **/financer-server.jar', fingerprint: true
+            archiveArtifacts artifacts: '**/financer-installer.jar, **/financer-portable.jar, **/financer-portable.exe, **/financer-app.apk', fingerprint: true
             step([$class: 'JacocoPublisher'])
         }
     }
