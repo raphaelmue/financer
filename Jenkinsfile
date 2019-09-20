@@ -5,8 +5,9 @@ pipeline {
             steps {
                 sh 'cp /var/lib/jenkins/workspace/hibernate.cfg.xml ./de.raphaelmuesseler.financer.server/src/main/resources/de/raphaelmuesseler/financer/server/db/config/'
                 sh 'mvn clean install -DskipTests'
-                sh 'gradlew clean assembleDebug -p android/de.raphaelmuesseler.financer.client.app/'
-                sh 'mv android/de.raphaelmuesseler.financer.client.app/app/build/output/apk/debug/app-debug.apk android/de.raphaelmuesseler.financer.client.app/app/build/output/apk/debug/financer-app.apk'
+                sh 'cd android/de.raphaelmuesseler.financer.client.app'
+                sh 'gradlew clean assembleDebug'
+                sh 'mv app/build/output/apk/debug/app-debug.apk app/build/output/apk/debug/financer-app.apk'
             }
         }
         stage('JUnit Tests') {
