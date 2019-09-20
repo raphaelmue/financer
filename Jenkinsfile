@@ -48,9 +48,7 @@ pipeline {
                             }
                         }
                     }
-
                 }
-
             }
         }
         stage('Deploy') {
@@ -65,7 +63,7 @@ pipeline {
     post {
         always {
             junit '**/target/surefire-reports/TEST-*.xml'
-            archiveArtifacts(artifacts: '**/financer-installer.jar, **/financer-portable.jar, **/financer-portable.exe, fingerprint: true)
+            archiveArtifacts(artifacts: '**/financer-installer.jar, **/financer-portable.jar', fingerprint: true)
             step([$class: 'JacocoPublisher'])
         }
     }
