@@ -2,10 +2,7 @@ package de.raphaelmuesseler.financer.server.main;
 
 import de.raphaelmuesseler.financer.server.db.DatabaseName;
 import de.raphaelmuesseler.financer.server.db.HibernateUtil;
-import de.raphaelmuesseler.financer.server.service.FinancerRestService;
 import de.raphaelmuesseler.financer.util.concurrency.FinancerExecutor;
-import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
-import org.glassfish.jersey.server.ResourceConfig;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -13,19 +10,15 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
-import java.net.URI;
-import java.util.concurrent.ExecutorService;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class Server {
 
     private static final int PORT = 3500;
-    private static final int REST_PORT = 3501;
 
     private static final Logger logger = Logger.getLogger("Server");
     private ServerSocket serverSocket;
-    private ExecutorService executor = FinancerExecutor.getExecutor();
 
     public static void main(String[] args) {
         int port = -1;
@@ -52,7 +45,6 @@ public class Server {
             HibernateUtil.setDatabaseName(databaseName);
 
             Server server = new Server(port);
-            server.startHttpServer();
             server.run();
         } catch (NumberFormatException e) {
             logger.log(Level.SEVERE, "Please enter a real port!");
@@ -93,15 +85,6 @@ public class Server {
                 logger.log(Level.SEVERE, e.getMessage(), e);
             }
         }
-    }
-
-    private void startHttpServer() {
-        // create a resource config that scans for JAX-RS resources and providers
-        // in packages
-        final ResourceConfig rc = new ResourceConfig().register(new FinancerRestService(executor));
-
-        // create and start a new instance of grizzly http server
-        GrizzlyHttpServerFactory.createHttpServer(URI.create("http://localhost:" + REST_PORT + "/"), rc);
     }
 
     /**
