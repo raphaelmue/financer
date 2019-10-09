@@ -9,6 +9,13 @@
     -fx-background-radius: 20px;
 }
 
+.separator .line {
+    -fx-border-style: solid;
+    -fx-border-width: 2;
+    -fx-border-color: -fx-color-primary;
+    -fx-orientation: horizontal;
+}
+
 #signInLabel {
     -fx-font-size: 25px;
     -fx-font-family: "Roboto Medium";
