@@ -43,7 +43,7 @@ public class ServiceTest {
         InputStream inputStream = ServiceTest.class.getResourceAsStream("/testing.properties");
         Properties properties = new Properties();
         properties.load(inputStream);
-        HibernateUtil.setIsHostLocal(Boolean.valueOf(properties.getProperty("project.testing.localhost")));
+        HibernateUtil.setIsHostLocal(Boolean.parseBoolean(properties.getProperty("project.testing.localhost")));
         HibernateUtil.setDatabaseName(DatabaseName.TEST);
     }
 
@@ -57,7 +57,7 @@ public class ServiceTest {
         Transaction transaction = session.beginTransaction();
 
         user = new UserEntity();
-        user.setEmail("max@mustermann.com");
+        user.setEmail("info@financer-project.org");
         user.setPassword("6406b2e97a97f64910aca76370ee35a92087806da1aa878e8a9ae0f4dc3949af");
         user.setSalt("I2HoOYJmqKfGboyJAdCEQwulUkxmhVH5");
         user.setName("Max");

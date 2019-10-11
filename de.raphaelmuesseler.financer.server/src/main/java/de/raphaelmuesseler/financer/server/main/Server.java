@@ -3,6 +3,8 @@ package de.raphaelmuesseler.financer.server.main;
 import de.raphaelmuesseler.financer.server.db.DatabaseName;
 import de.raphaelmuesseler.financer.server.db.HibernateUtil;
 import de.raphaelmuesseler.financer.server.service.FinancerRestService;
+import de.raphaelmuesseler.financer.server.service.FinancerService;
+import de.raphaelmuesseler.financer.server.service.VerificationService;
 import de.raphaelmuesseler.financer.util.concurrency.FinancerExecutor;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
@@ -29,6 +31,10 @@ public class Server {
 
     public static void main(String[] args) {
         int port = -1;
+        int smtpPort = -1;
+        String smtpEmail = null;
+        String smtpPassword = null;
+        String smtpHost = null;
         try {
             DatabaseName databaseName = DatabaseName.DEV;
             for (String arg : args) {
@@ -42,6 +48,14 @@ public class Server {
                     HibernateUtil.setIsHostLocal(arg.substring(10).equals("local"));
                 } else if (arg.contains("--database=") && (DatabaseName.getByShortCut(arg.substring(11)) != null)) {
                     databaseName = DatabaseName.getByShortCut(arg.substring(11));
+                } else if (arg.contains("--smtp-email=")) {
+                    smtpEmail = arg.substring(13);
+                } else if (arg.contains("--smtp-password=")) {
+                    smtpPassword = arg.substring(16);
+                } else if (arg.contains("--smtp-host=")) {
+                    smtpHost = arg.substring(12);
+                } else if (arg.contains("smtp-port=")) {
+                    smtpPort = Integer.parseInt(arg.substring(12));
                 }
             }
 
@@ -49,6 +63,7 @@ public class Server {
                 port = PORT;
             }
 
+            FinancerService.setVerificationService(new VerificationService(smtpHost, smtpPort, smtpEmail, smtpPassword));
             HibernateUtil.setDatabaseName(databaseName);
 
             Server server = new Server(port);

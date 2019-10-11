@@ -6,21 +6,21 @@ import de.raphaelmuesseler.financer.shared.model.categories.Category;
 import de.raphaelmuesseler.financer.shared.model.categories.CategoryTree;
 import de.raphaelmuesseler.financer.shared.model.categories.CategoryTreeImpl;
 import de.raphaelmuesseler.financer.shared.model.db.*;
-import de.raphaelmuesseler.financer.shared.model.transactions.Attachment;
-import de.raphaelmuesseler.financer.shared.model.transactions.ContentAttachment;
-import de.raphaelmuesseler.financer.shared.model.transactions.FixedTransaction;
-import de.raphaelmuesseler.financer.shared.model.transactions.TransactionAmount;
-import de.raphaelmuesseler.financer.shared.model.transactions.VariableTransaction;
+import de.raphaelmuesseler.financer.shared.model.transactions.*;
 import de.raphaelmuesseler.financer.shared.model.user.Token;
 import de.raphaelmuesseler.financer.shared.model.user.User;
 import de.raphaelmuesseler.financer.util.Hash;
 import de.raphaelmuesseler.financer.util.RandomString;
 import de.raphaelmuesseler.financer.util.collections.TreeUtil;
+import org.apache.commons.mail.DefaultAuthenticator;
+import org.apache.commons.mail.Email;
+import org.apache.commons.mail.EmailException;
+import org.apache.commons.mail.HtmlEmail;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
 import javax.persistence.NoResultException;
-import java.io.Serializable;
+import java.io.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -34,6 +34,7 @@ public class FinancerService {
 
     private static FinancerService instance = null;
     private RandomString tokenGenerator = new RandomString(64);
+    private static VerificationService verificationService;
 
     private FinancerService() {
     }
@@ -43,6 +44,10 @@ public class FinancerService {
             instance = new FinancerService();
         }
         return instance;
+    }
+
+    public static void setVerificationService(VerificationService verificationService) {
+        FinancerService.verificationService = verificationService;
     }
 
     /**
@@ -185,6 +190,7 @@ public class FinancerService {
         // creating new token and inserting it to database
         user = this.generateToken(session, user, (String) parameters.get("ipAddress"), (String) parameters.get("system"),
                 parameters.containsKey("isMobile") && (boolean) parameters.get("isMobile"));
+
 
         return new ConnectionResult<>(user);
     }
