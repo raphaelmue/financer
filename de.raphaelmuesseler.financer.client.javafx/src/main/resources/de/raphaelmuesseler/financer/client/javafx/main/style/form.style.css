@@ -1,0 +1,18 @@
+.jfx-text-field, .jfx-password-field, .jfx-text-area {
+    -jfx-focus-color: -fx-color-primary;
+    -jfx-unfocus-color: -fx-color-dark-gray;
+    -fx-font-size: 14px;
+    -fx-font-family: "Roboto Light";
+}
+
+.jfx-button {
+    -fx-graphic-text-gap: 8;
+}
+
+.pos-amount {
+    -fx-text-fill: -fx-color-success;
+}
+
+.neg-amount {
+    -fx-text-fill: -fx-color-error;
+}

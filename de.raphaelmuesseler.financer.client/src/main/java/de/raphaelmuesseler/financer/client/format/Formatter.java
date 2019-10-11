@@ -1,13 +1,12 @@
 package de.raphaelmuesseler.financer.client.format;
 
-import de.raphaelmuesseler.financer.shared.exceptions.FinancerException;
 import de.raphaelmuesseler.financer.shared.model.categories.Category;
 import de.raphaelmuesseler.financer.shared.model.categories.CategoryTree;
 
 import java.time.LocalDate;
 
 public interface Formatter {
-    String formatExceptionMessage(FinancerException exception);
+    String formatExceptionMessage(Exception exception);
 
     String formatCurrency(Double amount);
 
@@ -16,4 +15,8 @@ public interface Formatter {
     String formatCategoryName(CategoryTree categoryTree);
 
     String formatDate(LocalDate localDate);
+
+    String formatMonth(LocalDate localDate);
+
+    LocalDate convertStringToLocalDate(String dateString);
 }

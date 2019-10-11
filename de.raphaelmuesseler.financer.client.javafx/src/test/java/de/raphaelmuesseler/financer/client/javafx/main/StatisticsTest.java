@@ -1,11 +1,12 @@
 package de.raphaelmuesseler.financer.client.javafx.main;
 
 import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXDatePicker;
 import de.raphaelmuesseler.financer.shared.model.categories.BaseCategory;
 import de.raphaelmuesseler.financer.shared.model.categories.CategoryTree;
 import javafx.geometry.VerticalDirection;
-import javafx.scene.chart.LineChart;
+import javafx.scene.chart.AreaChart;
 import javafx.scene.chart.PieChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
@@ -17,7 +18,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.testfx.framework.junit5.ApplicationTest;
 
 import java.time.LocalDate;
 
@@ -28,7 +28,6 @@ public class StatisticsTest extends AbstractFinancerApplicationTest {
     @BeforeEach
     public void setUpEach() throws Exception {
         super.setUpEach();
-        ApplicationTest.launch(FinancerApplication.class);
     }
 
     @Test
@@ -41,8 +40,8 @@ public class StatisticsTest extends AbstractFinancerApplicationTest {
         clickOn((Button) find("#statisticsTabBtn"));
         sleep(SHORT_SLEEP);
 
-        LineChart lineChart = find("#progressLineChart");
-        Assertions.assertEquals(1, lineChart.getData().size());
+        AreaChart chart = find("#progressLineChart");
+        Assertions.assertEquals(1, chart.getData().size());
 
         clickOn((ComboBox) find("#progressChartDefaultCategoryComboBox"));
         press(KeyCode.DOWN).release(KeyCode.DOWN);
@@ -51,14 +50,14 @@ public class StatisticsTest extends AbstractFinancerApplicationTest {
         clickOn((JFXButton) find("#addCategoryBtn"));
         VBox categoriesContainer = find("#categoriesContainer");
         HBox dropDownHBox = (HBox) categoriesContainer.getChildren().get(1);
-        ComboBox<CategoryTree> categoryComboBox = (ComboBox<CategoryTree>) dropDownHBox.getChildren().get(0);
+        JFXComboBox<CategoryTree> categoryComboBox = (JFXComboBox<CategoryTree>) dropDownHBox.getChildren().get(0);
         clickOn(categoryComboBox);
         press(KeyCode.DOWN).release(KeyCode.DOWN);
         press(KeyCode.ENTER).release(KeyCode.ENTER);
 
         sleep(SHORT_SLEEP);
-        lineChart = find("#progressLineChart");
-        Assertions.assertEquals(2, lineChart.getData().size());
+        chart = find("#progressLineChart");
+        Assertions.assertEquals(2, chart.getData().size());
     }
 
     @Test
@@ -76,6 +75,7 @@ public class StatisticsTest extends AbstractFinancerApplicationTest {
 
         PieChart pieChart = find("#fixedExpensesDistributionChart");
         Assertions.assertEquals(1, pieChart.getData().size());
+        Assertions.assertFalse(find("#fixedExpensesNoDataLabel").isVisible());
 
         JFXDatePicker fromDatePicker = find("#fixedExpensesFromDatePicker");
         fromDatePicker.setValue(fixedTransaction.getStartDate().minusMonths(5));
@@ -102,6 +102,7 @@ public class StatisticsTest extends AbstractFinancerApplicationTest {
 
         PieChart pieChart = find("#variableExpensesDistributionChart");
         Assertions.assertEquals(1, pieChart.getData().size());
+        Assertions.assertFalse(find("#variableExpensesNoDataLabel").isVisible());
 
         JFXDatePicker fromDatePicker = find("#variableExpensesFromDatePicker");
         fromDatePicker.setValue(transaction.getValueDate().minusMonths(5));
@@ -111,7 +112,6 @@ public class StatisticsTest extends AbstractFinancerApplicationTest {
 
         sleep(MEDIUM_SLEEP);
         Assertions.assertTrue(find("#variableExpensesNoDataLabel").isVisible());
-
     }
 
 }

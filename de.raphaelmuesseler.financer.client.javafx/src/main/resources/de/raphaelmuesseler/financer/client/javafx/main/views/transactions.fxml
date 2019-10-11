@@ -3,45 +3,82 @@
 <?import com.jfoenix.controls.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import org.controlsfx.glyphfont.Glyph?>
 <VBox fx:controller="de.raphaelmuesseler.financer.client.javafx.main.transactions.TransactionsController"
       xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" styleClass="content">
 
-    <GridPane hgap="20" vgap="20" maxHeight="Infinity" maxWidth="Infinity">
-        <VBox styleClass="tab-box" GridPane.columnIndex="0" GridPane.rowIndex="0"
-              GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS">
-            <JFXTabPane styleClass="tab-container">
-                <Tab fx:id="transactionOverviewTab" text="%overview" closable="false" styleClass="tab">
-                    <VBox styleClass="tab-content">
-                        <Label text="%overview" styleClass="content-heading"/>
-                            <TableView fx:id="transactionsOverviewTableView"/>
+    <VBox styleClass="tab-box">
+        <JFXTabPane styleClass="tab-container">
+            <Tab fx:id="transactionOverviewTab" text="%overview" closable="false" styleClass="tab">
+                <VBox styleClass="tab-content">
+                    <Label text="%overview" styleClass="content-heading"/>
+                    <VBox styleClass="box-content">
+                        <TableView fx:id="transactionsOverviewTableView"/>
                     </VBox>
-                </Tab>
-                <Tab text="%transactions" closable="false" styleClass="tab">
-                    <VBox styleClass="tab-content">
-                        <Label text="%transactions" styleClass="content-heading"/>
+                </VBox>
+            </Tab>
+            <Tab text="%transactions" closable="false" styleClass="tab">
+                <VBox styleClass="tab-content">
+                    <Label text="%transactions" styleClass="content-heading"/>
+                    <VBox styleClass="box-content">
                         <HBox styleClass="tool-btn-bar">
                             <JFXTextField fx:id="filterTransactionsTextField" promptText="%search"/>
                             <JFXButton fx:id="refreshTransactionsBtn" text="%refresh"
-                                       onAction="#handleRefreshTransactions"/>
-                            <JFXButton fx:id="newTransactionBtn" text="%new" onAction="#handleNewTransaction"/>
-                            <JFXButton fx:id="editTransactionBtn" text="%edit" onAction="#handleEditTransaction"/>
-                            <JFXButton fx:id="deleteTransactionBtn" text="%delete" onAction="#handleDeleteTransaction"/>
+                                       onAction="#handleRefreshTransactions">
+                                <graphic>
+                                    <Glyph fontFamily="FontAwesome" icon="REFRESH"/>
+                                </graphic>
+                            </JFXButton>
+                            <JFXButton fx:id="newTransactionBtn" text="%new" onAction="#handleNewTransaction">
+                                <graphic>
+                                    <Glyph fontFamily="FontAwesome" icon="PLUS"/>
+                                </graphic>
+                            </JFXButton>
+                            <JFXButton fx:id="editTransactionBtn" text="%edit" onAction="#handleEditTransaction">
+                                <graphic>
+                                    <Glyph fontFamily="FontAwesome" icon="EDIT"/>
+                                </graphic>
+                            </JFXButton>
+                            <JFXButton fx:id="deleteTransactionBtn" text="%delete" onAction="#handleDeleteTransaction">
+                                <graphic>
+                                    <Glyph fontFamily="FontAwesome" icon="TRASH"/>
+                                </graphic>
+                            </JFXButton>
                         </HBox>
                         <TableView fx:id="transactionsTableView"/>
                     </VBox>
-                </Tab>
-                <Tab text="%fixedTransactions" closable="false">
-                    <VBox styleClass="tab-content">
-                        <Label text="%fixedTransactions" styleClass="content-heading"/>
+                </VBox>
+            </Tab>
+            <Tab text="%fixedTransactions" closable="false">
+                <VBox styleClass="tab-content">
+                    <Label text="%fixedTransactions" styleClass="content-heading"/>
+                    <VBox styleClass="box-content">
+
                         <HBox styleClass="tool-btn-bar">
                             <JFXButton fx:id="refreshFixedTransactionsBtn" text="%refresh"
-                                       onAction="#handleRefreshFixedTransactions"/>
+                                       onAction="#handleRefreshFixedTransactions">
+                                <graphic>
+                                    <Glyph fontFamily="FontAwesome" icon="REFRESH"/>
+                                </graphic>
+                            </JFXButton>
                             <JFXButton fx:id="newFixedTransactionBtn" text="%new"
-                                       onAction="#handleNewFixedTransaction"/>
+                                       onAction="#handleNewFixedTransaction">
+                                <graphic>
+                                    <Glyph fontFamily="FontAwesome" icon="PLUS"/>
+                                </graphic>
+                            </JFXButton>
                             <JFXButton fx:id="editFixedTransactionBtn" text="%edit"
-                                       onAction="#handleEditFixedTransaction"/>
+                                       onAction="#handleEditFixedTransaction">
+                                <graphic>
+                                    <Glyph fontFamily="FontAwesome" icon="EDIT"/>
+                                </graphic>
+                            </JFXButton>
                             <JFXButton fx:id="deleteFixedTransactionBtn" text="%delete"
-                                       onAction="#handleDeleteFixedTransaction"/>
+                                       onAction="#handleDeleteFixedTransaction">
+                                <graphic>
+                                    <Glyph fontFamily="FontAwesome" icon="TRASH"/>
+                                </graphic>
+                            </JFXButton>
                         </HBox>
                         <SplitPane>
                             <VBox>
@@ -52,10 +89,10 @@
                             </VBox>
                         </SplitPane>
                     </VBox>
+                </VBox>
 
-                </Tab>
-            </JFXTabPane>
-        </VBox>
-    </GridPane>
+            </Tab>
+        </JFXTabPane>
+    </VBox>
 
 </VBox>

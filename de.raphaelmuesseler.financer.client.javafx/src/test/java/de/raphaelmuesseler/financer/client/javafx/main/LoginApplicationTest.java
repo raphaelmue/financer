@@ -1,13 +1,11 @@
 package de.raphaelmuesseler.financer.client.javafx.main;
 
 import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
-import de.raphaelmuesseler.financer.client.javafx.login.LoginApplication;
 import de.raphaelmuesseler.financer.shared.model.user.User;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.testfx.framework.junit5.ApplicationTest;
 
 @SuppressWarnings("WeakerAccess")
 @Tag("integration")
@@ -16,7 +14,6 @@ public class LoginApplicationTest extends AbstractFinancerApplicationTest {
     @BeforeEach
     public void setUpEach() throws Exception {
         super.setUpEach();
-        ApplicationTest.launch(LoginApplication.class);
     }
 
     @Test
@@ -34,6 +31,7 @@ public class LoginApplicationTest extends AbstractFinancerApplicationTest {
         Assertions.assertEquals(this.user.getEmail(), user.getEmail());
         Assertions.assertEquals(this.user.getName(), user.getName());
         Assertions.assertEquals(this.user.getSurname(), user.getSurname());
+        Assertions.assertEquals(this.user.getBirthDate(), user.getBirthDate());
         Assertions.assertTrue(user.getId() > 0);
     }
 

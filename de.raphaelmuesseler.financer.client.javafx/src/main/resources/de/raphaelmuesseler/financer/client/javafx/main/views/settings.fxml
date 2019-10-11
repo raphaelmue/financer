@@ -6,64 +6,67 @@
 <?import com.jfoenix.controls.JFXTabPane?>
 <?import com.jfoenix.controls.JFXListView?>
 <?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXToggleButton?>
+<?import com.jfoenix.controls.JFXComboBox?>
 <VBox fx:controller="de.raphaelmuesseler.financer.client.javafx.main.settings.SettingsController"
       xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" styleClass="content">
 
-    <GridPane hgap="20" vgap="20" maxHeight="Infinity" maxWidth="Infinity">
-        <VBox styleClass="tab-box" GridPane.columnIndex="0" GridPane.rowIndex="0"
-              GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS">
-            <JFXTabPane styleClass="tab-container">
-                <Tab fx:id="generalSettingsTab" text="%generalSettings" closable="false" styleClass="tab">
-                    <VBox styleClass="tab-content">
-                        <Label text="%settings" styleClass="content-heading"/>
-
+    <VBox styleClass="tab-box">
+        <JFXTabPane styleClass="tab-container">
+            <Tab fx:id="generalSettingsTab" text="%generalSettings" closable="false" styleClass="tab">
+                <VBox styleClass="tab-content">
+                    <Label text="%settings" styleClass="content-heading"/>
+                    <VBox styleClass="box-content">
                         <GridPane maxWidth="Infinity" maxHeight="Infinity" vgap="8">
                             <Label text="%language" GridPane.columnIndex="0" GridPane.rowIndex="0"
                                    GridPane.hgrow="ALWAYS"
                                    VBox.vgrow="ALWAYS"/>
-                            <ComboBox fx:id="languageMenuComboBox" promptText="%language" GridPane.columnIndex="1"
-                                      GridPane.rowIndex="0" GridPane.hgrow="ALWAYS" VBox.vgrow="ALWAYS"/>
+                            <JFXComboBox fx:id="languageMenuComboBox" promptText="%language" GridPane.columnIndex="1"
+                                         GridPane.rowIndex="0" GridPane.hgrow="ALWAYS" VBox.vgrow="ALWAYS"/>
 
                             <Label text="%currency" GridPane.columnIndex="0" GridPane.rowIndex="1"
                                    GridPane.hgrow="ALWAYS"
                                    VBox.vgrow="ALWAYS"/>
-                            <ComboBox fx:id="currencyComboBox" promptText="%currency" GridPane.columnIndex="1"
-                                      GridPane.rowIndex="1"
-                                      GridPane.hgrow="ALWAYS" VBox.vgrow="ALWAYS"/>
-                            <CheckBox fx:id="showSignCheckbox" text="%showCurrencySign" GridPane.columnIndex="2"
-                                      GridPane.rowIndex="1" GridPane.hgrow="ALWAYS" VBox.vgrow="ALWAYS"/>
+                            <JFXComboBox fx:id="currencyComboBox" promptText="%currency" GridPane.columnIndex="1"
+                                         GridPane.rowIndex="1"
+                                         GridPane.hgrow="ALWAYS" VBox.vgrow="ALWAYS"/>
+                            <JFXToggleButton fx:id="showSignCheckbox" text="%showCurrencySign" GridPane.columnIndex="2"
+                                             GridPane.rowIndex="1" GridPane.hgrow="ALWAYS" VBox.vgrow="ALWAYS"/>
                         </GridPane>
                     </VBox>
-                </Tab>
-                <Tab fx:id="transactionSettingsTab" text="%transactionsSettings" closable="false" styleClass="tab">
-                    <VBox styleClass="tab-content">
-                        <Label text="%settings" styleClass="content-heading"/>
-
+                </VBox>
+            </Tab>
+            <Tab fx:id="transactionSettingsTab" text="%transactionsSettings" closable="false" styleClass="tab">
+                <VBox styleClass="tab-content">
+                    <Label text="%settings" styleClass="content-heading"/>
+                    <VBox styleClass="box-content">
                         <GridPane maxWidth="Infinity" maxHeight="Infinity" vgap="8">
                             <Label text="%changeAmountSignAutomatically" GridPane.columnIndex="0" GridPane.rowIndex="0"
                                    GridPane.hgrow="ALWAYS"
                                    VBox.vgrow="ALWAYS"/>
-                            <CheckBox fx:id="changeAmountSignAutomaticallyCheckBox" GridPane.columnIndex="1"
-                                      GridPane.rowIndex="0" GridPane.hgrow="ALWAYS" VBox.vgrow="ALWAYS"/>
+                            <JFXToggleButton fx:id="changeAmountSignAutomaticallyCheckBox" GridPane.columnIndex="1"
+                                             GridPane.rowIndex="0" GridPane.hgrow="ALWAYS" VBox.vgrow="ALWAYS"/>
                             <Label text="%maxNumberOfMonthsDisplayed" GridPane.columnIndex="0" GridPane.rowIndex="1"
                                    GridPane.hgrow="ALWAYS"
                                    VBox.vgrow="ALWAYS"/>
-                            <ComboBox fx:id="maxNumberOfMonthsDisplayedComboBox" GridPane.columnIndex="1"
-                                      GridPane.rowIndex="1" GridPane.hgrow="ALWAYS" VBox.vgrow="ALWAYS"/>
+                            <JFXComboBox fx:id="maxNumberOfMonthsDisplayedComboBox" GridPane.columnIndex="1"
+                                         GridPane.rowIndex="1" GridPane.hgrow="ALWAYS" VBox.vgrow="ALWAYS"/>
                         </GridPane>
                     </VBox>
-                </Tab>
-                <Tab fx:id="devicesTab" text="%devices" closable="false" styleClass="tab">
-                    <VBox styleClass="tab-content">
+                </VBox>
+            </Tab>
+            <Tab fx:id="devicesTab" text="%devices" closable="false" styleClass="tab">
+                <VBox styleClass="tab-content">
+                    <VBox styleClass="box-content">
                         <HBox styleClass="tool-btn-bar">
                             <JFXButton fx:id="logoutFromDeviceBtn" text="%logoutFromDevice" disable="true"
                                        onAction="#handleLogoutFromDevice"/>
                         </HBox>
                         <JFXListView fx:id="devicesListView"/>
                     </VBox>
-                </Tab>
-            </JFXTabPane>
-        </VBox>
-    </GridPane>
+                </VBox>
+            </Tab>
+        </JFXTabPane>
+    </VBox>
 
 </VBox>

@@ -6,10 +6,9 @@ import com.jfoenix.controls.JFXTextField;
 import de.raphaelmuesseler.financer.client.format.I18N;
 import de.raphaelmuesseler.financer.client.javafx.dialogs.FinancerDialog;
 import de.raphaelmuesseler.financer.shared.model.user.User;
-import javafx.scene.Node;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Region;
 import javafx.util.StringConverter;
 
 public class ChangePersonalInformationDialog extends FinancerDialog<User> {
@@ -22,11 +21,7 @@ public class ChangePersonalInformationDialog extends FinancerDialog<User> {
     public ChangePersonalInformationDialog(User value) {
         super(value);
 
-        this.setHeaderText(I18N.get("personalInformation"));
-
-        this.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
-        this.getDialogPane().getButtonTypes().add(ButtonType.OK);
-
+        this.setDialogTitle(I18N.get("personalInformation"));
         this.prepareDialogContent();
     }
 
@@ -39,7 +34,7 @@ public class ChangePersonalInformationDialog extends FinancerDialog<User> {
     }
 
     @Override
-    protected Node setDialogContent() {
+    protected Region getDialogContent() {
         GridPane gridPane = new GridPane();
         gridPane.setHgap(80);
         gridPane.setVgap(8);
@@ -92,11 +87,12 @@ public class ChangePersonalInformationDialog extends FinancerDialog<User> {
     }
 
     @Override
-    protected User onConfirm() {
+    protected void onConfirm() {
         this.getValue().setName(this.nameField.getText());
         this.getValue().setSurname(this.surnameField.getText());
         this.getValue().setBirthDate(this.birthDatePicker.getValue());
         this.getValue().setGender(this.genderComboBox.getValue());
-        return super.getValue();
+
+        super.onConfirm();
     }
 }

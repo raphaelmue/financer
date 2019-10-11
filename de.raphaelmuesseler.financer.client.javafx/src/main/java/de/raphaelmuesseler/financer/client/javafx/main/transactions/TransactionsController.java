@@ -3,9 +3,9 @@ package de.raphaelmuesseler.financer.client.javafx.main.transactions;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXListView;
 import com.jfoenix.controls.JFXTextField;
+import de.raphaelmuesseler.financer.client.connection.AsyncConnectionCall;
 import de.raphaelmuesseler.financer.client.connection.ServerRequestHandler;
 import de.raphaelmuesseler.financer.client.format.I18N;
-import de.raphaelmuesseler.financer.client.javafx.connection.JavaFXAsyncConnectionCall;
 import de.raphaelmuesseler.financer.client.javafx.connection.RetrievalServiceImpl;
 import de.raphaelmuesseler.financer.client.javafx.dialogs.FinancerConfirmDialog;
 import de.raphaelmuesseler.financer.client.javafx.format.JavaFXFormatter;
@@ -38,9 +38,6 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.TextAlignment;
-import org.controlsfx.glyphfont.FontAwesome;
-import org.controlsfx.glyphfont.GlyphFont;
-import org.controlsfx.glyphfont.GlyphFontRegistry;
 
 import java.io.Serializable;
 import java.net.URL;
@@ -88,40 +85,29 @@ public class TransactionsController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        Platform.runLater(() -> {
+        FinancerController.setInitializationThread(new Thread(() -> {
+            FinancerController.getInstance().showLoadingBox();
             this.user = (User) this.localStorage.readObject("user");
 
-            GlyphFont fontAwesome = GlyphFontRegistry.font("FontAwesome");
-            this.refreshTransactionsBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.REFRESH));
-            this.refreshTransactionsBtn.setGraphicTextGap(8);
-            this.newTransactionBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.PLUS));
-            this.newTransactionBtn.setGraphicTextGap(8);
-            this.editTransactionBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.EDIT));
-            this.editTransactionBtn.setGraphicTextGap(8);
             this.editTransactionBtn.setDisable(true);
-            this.deleteTransactionBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.TRASH));
-            this.deleteTransactionBtn.setGraphicTextGap(8);
             this.deleteTransactionBtn.setDisable(true);
 
-            this.refreshFixedTransactionsBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.REFRESH));
-            this.refreshFixedTransactionsBtn.setGraphicTextGap(8);
-            this.newFixedTransactionBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.PLUS));
-            this.newFixedTransactionBtn.setGraphicTextGap(8);
             this.newFixedTransactionBtn.setDisable(true);
-            this.editFixedTransactionBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.EDIT));
-            this.editFixedTransactionBtn.setGraphicTextGap(8);
             this.editFixedTransactionBtn.setDisable(true);
-            this.deleteFixedTransactionBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.TRASH));
-            this.deleteFixedTransactionBtn.setGraphicTextGap(8);
             this.deleteFixedTransactionBtn.setDisable(true);
 
             this.categories = (BaseCategory) this.localStorage.readObject("categories");
 
             this.initializeTransactionsTable();
+            this.loadTransactionTableData();
             this.initializeFixedTransactionTable();
+            this.loadFixedTransactionTableData();
             this.initializeTransactionsOverviewTable();
+            this.loadTransactionOverviewTableData();
+            FinancerController.getInstance().hideLoadingBox();
 
-        });
+        }));
+        FinancerController.getInitializationThread().start();
     }
 
     private void initializeTransactionsOverviewTable() {
@@ -168,12 +154,13 @@ public class TransactionsController implements Initializable {
             });
             monthColumns.add(column);
         }
-        this.transactionsOverviewTableView.getColumns().add(categoryColumn);
-        this.transactionsOverviewTableView.getColumns().addAll(monthColumns);
+        Platform.runLater(() -> {
+            this.transactionsOverviewTableView.getColumns().add(categoryColumn);
+            this.transactionsOverviewTableView.getColumns().addAll(monthColumns);
+        });
     }
 
     private void initializeTransactionsTable() {
-
         TableColumn<VariableTransaction, Category> categoryColumn = new TableColumn<>(I18N.get("category"));
         TableColumn<VariableTransaction, LocalDate> valueDateColumn = new TableColumn<>(I18N.get("valueDate"));
         TableColumn<VariableTransaction, Double> amountColumn = new TableColumn<>(I18N.get("amount"));
@@ -214,12 +201,14 @@ public class TransactionsController implements Initializable {
         this.adjustColumnWidth(purposeColumn, this.transactionsTableView, 6);
         this.adjustColumnWidth(shopColumn, this.transactionsTableView, 6);
 
-        this.transactionsTableView.getColumns().add(categoryColumn);
-        this.transactionsTableView.getColumns().add(valueDateColumn);
-        this.transactionsTableView.getColumns().add(amountColumn);
-        this.transactionsTableView.getColumns().add(productColumn);
-        this.transactionsTableView.getColumns().add(purposeColumn);
-        this.transactionsTableView.getColumns().add(shopColumn);
+        Platform.runLater(() -> {
+            this.transactionsTableView.getColumns().add(categoryColumn);
+            this.transactionsTableView.getColumns().add(valueDateColumn);
+            this.transactionsTableView.getColumns().add(amountColumn);
+            this.transactionsTableView.getColumns().add(productColumn);
+            this.transactionsTableView.getColumns().add(purposeColumn);
+            this.transactionsTableView.getColumns().add(shopColumn);
+        });
 
         this.transactionsTableView.setRowFactory(param -> {
             TableRow<VariableTransaction> row = new TableRow<>();
@@ -236,10 +225,10 @@ public class TransactionsController implements Initializable {
             deleteTransactionBtn.setDisable(false);
         });
 
-        transactionsTableView.getColumns().get(1).setSortType(TableColumn.SortType.DESCENDING);
-        transactionsTableView.getSortOrder().add(valueDateColumn);
-
-        this.handleRefreshTransactions();
+        Platform.runLater(() -> {
+            transactionsTableView.getColumns().get(1).setSortType(TableColumn.SortType.DESCENDING);
+            transactionsTableView.getSortOrder().add(valueDateColumn);
+        });
     }
 
     private void initializeFixedTransactionTable() {
@@ -257,7 +246,6 @@ public class TransactionsController implements Initializable {
             deleteFixedTransactionBtn.setDisable(false);
         });
 
-        this.handleRefreshFixedTransactions();
         this.fixedTransactionsListView.setOnMouseClicked(mouseEvent -> {
             if (mouseEvent.getClickCount() == 2) {
                 handleEditFixedTransaction();
@@ -333,8 +321,8 @@ public class TransactionsController implements Initializable {
             });
         }
 
-        this.categoriesListView.getItems().sort((o1, o2) -> String.CASE_INSENSITIVE_ORDER.compare(formatter.formatCategoryName(o1),
-                formatter.formatCategoryName(o2)));
+        Platform.runLater(() -> this.categoriesListView.getItems().sort((o1, o2) -> String.CASE_INSENSITIVE_ORDER.compare(formatter.formatCategoryName(o1),
+                formatter.formatCategoryName(o2))));
 
     }
 
@@ -385,8 +373,8 @@ public class TransactionsController implements Initializable {
     }
 
     public void handleNewTransaction() {
-        VariableTransaction transaction = new TransactionDialog(null, this.categories).showAndGetResult();
-        if (transaction != null) {
+        TransactionDialog dialog = new TransactionDialog(null, this.categories);
+        dialog.setOnConfirm(transaction -> {
 
             if (user.getSettings().isChangeAmountSignAutomatically()) {
                 transaction.adjustAmountSign();
@@ -395,19 +383,13 @@ public class TransactionsController implements Initializable {
             Map<String, Serializable> parameters = new HashMap<>();
             parameters.put("variableTransaction", transaction);
 
-            FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "addTransaction", parameters, new JavaFXAsyncConnectionCall() {
+            FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "addTransaction", parameters, new AsyncConnectionCall() {
                 @Override
                 public void onSuccess(ConnectionResult result) {
                     transaction.setId(((VariableTransaction) result.getResult()).getId());
                     localStorage.writeObject("categories", categories);
 
                     FinancerController.getInstance().showToast(Application.MessageType.SUCCESS, I18N.get("succAddedTransaction"));
-                }
-
-                @Override
-                public void onFailure(Exception exception) {
-                    logger.log(Level.SEVERE, exception.getMessage(), exception);
-                    JavaFXAsyncConnectionCall.super.onFailure(exception);
                 }
 
                 @Override
@@ -418,14 +400,13 @@ public class TransactionsController implements Initializable {
                     });
                 }
             }, true));
-        }
+        });
     }
 
     public void handleNewFixedTransaction() {
-        FixedTransaction fixedTransaction = new FixedTransactionDialog(null,
-                (this.categoriesListView.getSelectionModel().getSelectedItem()))
-                .showAndGetResult();
-        if (fixedTransaction != null) {
+        FixedTransactionDialog dialog = new FixedTransactionDialog(null,
+                (this.categoriesListView.getSelectionModel().getSelectedItem()));
+        dialog.setOnConfirm(fixedTransaction -> {
 
             if (user.getSettings().isChangeAmountSignAutomatically()) {
                 fixedTransaction.adjustAmountSign();
@@ -434,7 +415,7 @@ public class TransactionsController implements Initializable {
             Map<String, Serializable> parameters = new HashMap<>();
             parameters.put("fixedTransaction", fixedTransaction);
 
-            FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "addFixedTransactions", parameters, new JavaFXAsyncConnectionCall() {
+            FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "addFixedTransactions", parameters, new AsyncConnectionCall() {
                 @Override
                 public void onSuccess(ConnectionResult result) {
                     handleRefreshFixedTransactions();
@@ -442,23 +423,17 @@ public class TransactionsController implements Initializable {
                 }
 
                 @Override
-                public void onFailure(Exception exception) {
-                    logger.log(Level.SEVERE, exception.getMessage(), exception);
-                    JavaFXAsyncConnectionCall.super.onFailure(exception);
-                }
-
-                @Override
                 public void onAfter() {
                     Platform.runLater(() -> loadTransactionOverviewTableData());
                 }
             }, true));
-        }
+        });
     }
 
     public void handleEditTransaction() {
-        VariableTransaction transaction = new TransactionDialog(this.transactionsTableView.getSelectionModel().getSelectedItem(),
-                this.categories).showAndGetResult();
-        if (transaction != null) {
+        TransactionDialog dialog = new TransactionDialog(this.transactionsTableView.getSelectionModel().getSelectedItem(),
+                this.categories);
+        dialog.setOnConfirm(transaction -> {
 
             if (user.getSettings().isChangeAmountSignAutomatically()) {
                 transaction.adjustAmountSign();
@@ -468,7 +443,7 @@ public class TransactionsController implements Initializable {
             parameters.put("variableTransaction", transaction);
 
             FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "updateTransaction",
-                    parameters, new JavaFXAsyncConnectionCall() {
+                    parameters, new AsyncConnectionCall() {
                 @Override
                 public void onSuccess(ConnectionResult result) {
                     localStorage.writeObject("categories", categories);
@@ -478,25 +453,18 @@ public class TransactionsController implements Initializable {
                 }
 
                 @Override
-                public void onFailure(Exception exception) {
-                    logger.log(Level.SEVERE, exception.getMessage(), exception);
-                    JavaFXAsyncConnectionCall.super.onFailure(exception);
-                }
-
-                @Override
                 public void onAfter() {
                     Platform.runLater(() -> loadTransactionOverviewTableData());
                 }
             }, true));
-        }
+        });
     }
 
     public void handleEditFixedTransaction() {
-        FixedTransaction fixedTransaction = new FixedTransactionDialog(
+        FixedTransactionDialog dialog = new FixedTransactionDialog(
                 this.fixedTransactionsListView.getSelectionModel().getSelectedItem(),
-                this.categoriesListView.getSelectionModel().getSelectedItem())
-                .showAndGetResult();
-        if (fixedTransaction != null) {
+                this.categoriesListView.getSelectionModel().getSelectedItem());
+        dialog.setOnConfirm(fixedTransaction -> {
 
             if (user.getSettings().isChangeAmountSignAutomatically()) {
                 fixedTransaction.adjustAmountSign();
@@ -506,7 +474,7 @@ public class TransactionsController implements Initializable {
             parameters.put("user", this.user);
             parameters.put("fixedTransaction", fixedTransaction);
 
-            FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "updateFixedTransaction", parameters, new JavaFXAsyncConnectionCall() {
+            FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "updateFixedTransaction", parameters, new AsyncConnectionCall() {
                 @Override
                 public void onSuccess(ConnectionResult result) {
                     localStorage.writeObject("categories", categories);
@@ -520,27 +488,22 @@ public class TransactionsController implements Initializable {
                 }
 
                 @Override
-                public void onFailure(Exception exception) {
-                    logger.log(Level.SEVERE, exception.getMessage(), exception);
-                    JavaFXAsyncConnectionCall.super.onFailure(exception);
-                }
-
-                @Override
                 public void onAfter() {
                     Platform.runLater(() -> loadTransactionOverviewTableData());
                 }
             }, true));
-        }
+        });
     }
 
     public void handleDeleteTransaction() {
-        if (new FinancerConfirmDialog(I18N.get("confirmDeleteTransaction")).showAndGetResult()) {
+        FinancerConfirmDialog dialog = new FinancerConfirmDialog(I18N.get("confirmDeleteTransaction"));
+        dialog.setOnConfirm(result -> {
             VariableTransaction transaction = this.transactionsTableView.getSelectionModel().getSelectedItem();
             if (transaction != null) {
                 Map<String, Serializable> parameters = new HashMap<>();
                 parameters.put("variableTransactionId", transaction.getId());
 
-                FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "deleteTransaction", parameters, new JavaFXAsyncConnectionCall() {
+                FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "deleteTransaction", parameters, new AsyncConnectionCall() {
                     @Override
                     public void onSuccess(ConnectionResult result) {
                         Platform.runLater(() -> {
@@ -553,28 +516,22 @@ public class TransactionsController implements Initializable {
                     }
 
                     @Override
-                    public void onFailure(Exception exception) {
-                        logger.log(Level.SEVERE, exception.getMessage(), exception);
-                        JavaFXAsyncConnectionCall.super.onFailure(exception);
-                    }
-
-                    @Override
                     public void onAfter() {
                         Platform.runLater(() -> loadTransactionOverviewTableData());
                     }
                 }, true));
             }
-        }
+        });
     }
 
     public void handleDeleteFixedTransaction() {
-        boolean result = new FinancerConfirmDialog(I18N.get("confirmDeleteFixedTransaction")).showAndGetResult();
-        if (result) {
+        FinancerConfirmDialog dialog = new FinancerConfirmDialog(I18N.get("confirmDeleteFixedTransaction"));
+        dialog.setOnConfirm(result -> {
             Map<String, Serializable> parameters = new HashMap<>();
             parameters.put("fixedTransactionId", this.fixedTransactionsListView.getSelectionModel().getSelectedItem().getId());
 
             FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "deleteFixedTransaction",
-                    parameters, new JavaFXAsyncConnectionCall() {
+                    parameters, new AsyncConnectionCall() {
                 @Override
                 public void onSuccess(ConnectionResult result) {
                     Platform.runLater(() -> {
@@ -591,17 +548,11 @@ public class TransactionsController implements Initializable {
                 }
 
                 @Override
-                public void onFailure(Exception exception) {
-                    logger.log(Level.SEVERE, exception.getMessage(), exception);
-                    JavaFXAsyncConnectionCall.super.onFailure(exception);
-                }
-
-                @Override
                 public void onAfter() {
                     Platform.runLater(() -> loadTransactionOverviewTableData());
                 }
             }, true));
-        }
+        });
     }
 
     private void showFixedTransactions(CategoryTree category) {

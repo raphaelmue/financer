@@ -13,7 +13,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.testfx.framework.junit5.ApplicationTest;
 
 @SuppressWarnings("WeakerAccess")
 @Tag("integration")
@@ -22,7 +21,6 @@ public class ProfileTest extends AbstractFinancerApplicationTest {
     @BeforeEach
     public void setUpEach() throws Exception {
         super.setUpEach();
-        ApplicationTest.launch(FinancerApplication.class);
     }
 
     @Test

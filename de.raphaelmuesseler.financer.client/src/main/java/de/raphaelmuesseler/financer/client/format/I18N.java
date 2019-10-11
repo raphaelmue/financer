@@ -1,12 +1,18 @@
 package de.raphaelmuesseler.financer.client.format;
 
 import de.raphaelmuesseler.financer.client.local.LocalStorage;
+import de.raphaelmuesseler.financer.shared.exceptions.FinancerException;
+import de.raphaelmuesseler.financer.shared.exceptions.NotAuthorizedException;
 import de.raphaelmuesseler.financer.shared.model.user.User;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 
+import java.net.ConnectException;
+import java.net.UnknownHostException;
 import java.text.MessageFormat;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * I18N utility class..
@@ -93,10 +99,6 @@ public final class I18N {
         } else {
             return Locale.ENGLISH;
         }
-    }
-
-    public static ObjectProperty<Locale> localeProperty() {
-        return locale;
     }
 
     /**
