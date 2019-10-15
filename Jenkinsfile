@@ -2,28 +2,26 @@ pipeline {
     agent any
     stages {
         stage('Build') {
-            steps {
-                parallel {
-                    stage('Java') {
-                        steps {
-                            dir('java') {
-                                sh 'cp /var/lib/jenkins/workspace/hibernate.cfg.xml ./de.raphaelmuesseler.financer.server/src/main/resources/de/raphaelmuesseler/financer/server/db/config/'
-                                sh 'mvn clean install -DskipTests'
-                            }
+            parallel {
+                stage('Java') {
+                    steps {
+                        dir('java') {
+                            sh 'cp /var/lib/jenkins/workspace/hibernate.cfg.xml ./de.raphaelmuesseler.financer.server/src/main/resources/de/raphaelmuesseler/financer/server/db/config/'
+                            sh 'mvn clean install -DskipTests'
                         }
                     }
-                    stage('Android') {
-                        steps {
-                            dir('android') {
-                                // sh 'gradle build'
-                            }
+                }
+                stage('Android') {
+                    steps {
+                        dir('android') {
+                            // sh 'gradle build'
                         }
                     }
-                    stage('NodeJS') {
-                        steps {
-                            dir('web') {
-                                sh 'yarn install'
-                            }
+                }
+                stage('NodeJS') {
+                    steps {
+                        dir('web') {
+                            sh 'yarn install'
                         }
                     }
                 }
