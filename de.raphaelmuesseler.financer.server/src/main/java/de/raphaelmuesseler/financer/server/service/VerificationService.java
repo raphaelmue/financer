@@ -34,7 +34,7 @@ public class VerificationService {
         this.password = password;
     }
 
-    public String sendVerificationEmail(User user) throws EmailException {
+    String sendVerificationEmail(User user) throws EmailException {
         StringBuilder content = new StringBuilder();
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(FinancerService.class.getResourceAsStream("verification-email.html")))) {
             for (String line; (line = reader.readLine()) != null;) {

@@ -12,15 +12,12 @@ import de.raphaelmuesseler.financer.shared.model.user.User;
 import de.raphaelmuesseler.financer.util.Hash;
 import de.raphaelmuesseler.financer.util.RandomString;
 import de.raphaelmuesseler.financer.util.collections.TreeUtil;
-import org.apache.commons.mail.DefaultAuthenticator;
-import org.apache.commons.mail.Email;
 import org.apache.commons.mail.EmailException;
-import org.apache.commons.mail.HtmlEmail;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
 import javax.persistence.NoResultException;
-import java.io.*;
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -191,8 +188,18 @@ public class FinancerService {
         user = this.generateToken(session, user, (String) parameters.get("ipAddress"), (String) parameters.get("system"),
                 parameters.containsKey("isMobile") && (boolean) parameters.get("isMobile"));
 
+        this.addVerificationToken(logger, user);
 
         return new ConnectionResult<>(user);
+    }
+
+    private void addVerificationToken(Logger logger, User user) {
+        try {
+            String verificationToken = verificationService.sendVerificationEmail(user);
+
+        } catch (EmailException e) {
+            logger.log(Level.SEVERE, e.getMessage(), e);
+        }
     }
 
     /**
