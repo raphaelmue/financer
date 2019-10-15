@@ -3,24 +3,45 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                sh 'mvn clean install -DskipTests'
-            }
-        }
-        stage('Preparing tests') {
-            steps {
-                sh 'cp /var/lib/jenkins/workspace/hibernate.cfg.xml ./de.raphaelmuesseler.financer.server/src/main/resources/de/raphaelmuesseler/financer/server/db/config/'
-                sh 'mvn clean install -DskipTests'
+                parallel {
+                    stage('Java') {
+                        steps {
+                            dir('java') {
+                                sh 'cp /var/lib/jenkins/workspace/hibernate.cfg.xml ./de.raphaelmuesseler.financer.server/src/main/resources/de/raphaelmuesseler/financer/server/db/config/'
+                                sh 'mvn clean install -DskipTests'
+                            }
+                        }
+                    }
+                    stage('Android') {
+                        steps {
+                            dir('android') {
+                                // sh 'gradle build'
+                            }
+                        }
+                    }
+                    stage('NodeJS') {
+                        steps {
+                            dir('web') {
+                                sh 'yarn install'
+                            }
+                        }
+                    }
+                }
             }
         }
         stage('JUnit Tests') {
             steps {
-                sh 'mvn test -P unitTests'
+                dir('java') {
+                    sh 'mvn test -P unitTests'
+                }
             }
         }
         stage('JavaFX Tests') {
             steps {
-                sh 'mvn test -P integrationTests,headlessTesting'
-                sh 'rm ./de.raphaelmuesseler.financer.server/src/main/resources/de/raphaelmuesseler/financer/server/db/config/hibernate.cfg.xml'
+                dir('java') {
+                    sh 'mvn test -P integrationTests,headlessTesting'
+                    sh 'rm ./de.raphaelmuesseler.financer.server/src/main/resources/de/raphaelmuesseler/financer/server/db/config/hibernate.cfg.xml'
+                }
             }
         }
         stage('SonarQube Analysis') {

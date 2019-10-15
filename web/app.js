@@ -3,6 +3,7 @@ const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
+const sassMiddleware = require('node-sass-middleware');
 const i18n = require('./src/i18nHelper');
 
 const indexRouter = require('./routes/index');
@@ -18,6 +19,12 @@ app.use(express.json());
 app.use(express.urlencoded({extended: false}));
 app.use(cookieParser());
 app.use(i18n.init);
+
+app.use(sassMiddleware({
+    src: path.join(__dirname, 'public'),
+    dest: path.join(__dirname, 'public'),
+    indentedSyntax: false, // true = .sass and false = .scss
+}));
 
 // define resource directories
 app.use(express.static(path.join(__dirname, '/public')));
