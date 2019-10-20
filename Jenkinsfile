@@ -1,7 +1,6 @@
 pipeline {
     agent {
-        docker {
-            image 'maven:3.6.2-jdk-11'
+        dockerfile {
             filename 'Dockerfile'
         }
     }
