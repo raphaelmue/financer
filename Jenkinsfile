@@ -1,5 +1,10 @@
 pipeline {
-    agent any
+    agent {
+        docker {
+            image 'maven:3.6.2-jdk-11'
+            filename 'Dockerfile'
+        }
+    }
     stages {
         stage('Build') {
             steps {
@@ -14,7 +19,6 @@ pipeline {
         stage('JavaFX Tests') {
             steps {
                 sh 'mvn test -P integrationTests,headlessTesting'
-                sh 'rm ./de.raphaelmuesseler.financer.server/src/main/resources/de/raphaelmuesseler/financer/server/db/config/hibernate.cfg.xml'
             }
         }
         stage('SonarQube Analysis') {

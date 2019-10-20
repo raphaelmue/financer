@@ -9,6 +9,9 @@ services:
       - 3500:3500
     depends_on:
       - financer-db
+    environment:
+      PORT: 3000
+      ENVIRONEMT: prod
 
   financer-db:
     image: mysql:latest
