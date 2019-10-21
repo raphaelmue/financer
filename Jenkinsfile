@@ -1,10 +1,5 @@
 pipeline {
-    agent {
-        docker {
-            image 'maven:3.6.2-jdk-11'
-        }
-    }
-
+    agent none
     environment {
         registry = 'raphaelmue/financer'
         registryCredentials = 'dockerhub'
