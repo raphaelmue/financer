@@ -1,9 +1,10 @@
 pipeline {
-    agent none
     environment {
         registry = 'raphaelmue/financer'
         registryCredentials = 'dockerhub'
     }
+
+    agent any
 
     stages {
         stage('Build') {
