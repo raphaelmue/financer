@@ -5,7 +5,7 @@ pipeline {
         }
     }
 
-    environemt {
+    environment {
         registry = 'raphaelmue/financer'
         registryCredentials = 'dockerhub'
     }
