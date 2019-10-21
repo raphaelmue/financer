@@ -14,7 +14,6 @@
 
     <properties>
         <app.main.class>de.raphaelmuesseler.financer.client.javafx.main.ApplicationLauncher</app.main.class>
-        <jpackager.path>${env.JAVA_HOME}/../jdk-14/bin/jpackage.exe</jpackager.path>
     </properties>
 
     <build>
@@ -61,6 +60,7 @@
                             <options>
                                 <option>--add-exports=javafx.graphics/com.sun.javafx.css=org.controlsfx.controls</option>
                                 <option>--add-exports=javafx.graphics/com.sun.javafx.scene=com.jfoenix</option>
+                                <option>--add-exports=javafx.graphics/com.sun.javafx.scene.control.behavior=com.jfoenix</option>
                             </options>
                         </configuration>
                     </execution>
@@ -95,20 +95,25 @@
                                 <argument>msi</argument>
                                 <argument>--module</argument>
                                 <argument>${project.artifactId}/${app.main.class}</argument>
-                                <argument>--output</argument>
+                                <argument>-d</argument>
                                 <argument>${project.build.directory}/build/deploy</argument>
                                 <argument>--runtime-image</argument>
                                 <argument>${project.build.directory}/build/image</argument>
                                 <argument>--name</argument>
                                 <argument>Financer</argument>
                                 <argument>--icon</argument>
-                                <argument>${project.basedir}/src/main/resources/images/icons/financer-icon.ico</argument>
+                                <argument>${project.basedir}/src/main/resources/images/icons/financer-icon.ico
+                                </argument>
                                 <argument>--vendor</argument>
                                 <argument>Financer Project Team</argument>
                                 <argument>--license-file</argument>
                                 <argument>../LICENSE</argument>
                                 <argument>--java-options</argument>
-                                <argument>--add-exports=javafx.graphics/com.sun.javafx.css=org.controlsfx.controls --add-exports=javafx.graphics/com.sun.javafx.scene=com.jfoenix</argument>
+                                <argument>
+                                    --add-exports=javafx.graphics/com.sun.javafx.css=org.controlsfx.controls
+                                    --add-exports=javafx.graphics/com.sun.javafx.scene=com.jfoenix
+                                    --add-exports=javafx.graphics/com.sun.javafx.scene.control.behavior=com.jfoenix
+                                </argument>
                                 <argument>--win-dir-chooser</argument>
                                 <argument>--win-menu</argument>
                                 <argument>--win-shortcut</argument>
