@@ -1,13 +1,25 @@
 pipeline {
     agent {
-        dockerfile {
-            filename 'Dockerfile'
+        docker {
+            image 'maven:3.6.2-jdk-11'
         }
     }
+
+    environemt {
+        registry = 'raphaelmue/financer'
+        registryCredentials = 'dockerhub'
+    }
+
     stages {
         stage('Build') {
             steps {
+                sh 'bash prepare-build.sh'
                 sh 'mvn clean install -DskipTests'
+            }
+        }
+        stage('Build Docker Image') {
+            script {
+                docker.build registry + ":$BUILD_NUMBER"
             }
         }
         stage('JUnit Tests') {

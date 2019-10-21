@@ -14,11 +14,6 @@
 
     <properties>
         <app.main.class>de.raphaelmuesseler.financer.client.javafx.main.ApplicationLauncher</app.main.class>
-        <staging.dir>${project.build.directory}/staging</staging.dir>
-        <info.appName>My Killer Application</info.appName>
-        <info.appsubpath>my-killer-app/standard</info.appsubpath>
-        <izpack.dir.app>${basedir}/src/main/izpack</izpack.dir.app>
-        <staging.dir.app>${staging.dir}/appfiles</staging.dir.app>
         <jpackager.path>${env.JAVA_HOME}/../jdk-14/bin/jpackage.exe</jpackager.path>
     </properties>
 
@@ -62,9 +57,10 @@
                             <launcher>financer</launcher>
                             <stripDebug>true</stripDebug>
                             <mainClass>${app.main.class}</mainClass>
+                            <jlinkImageName>build/image</jlinkImageName>
                             <options>
-                                <option>--add-export</option>
-                                <option>javafx.graphics/com.sun.javafx.css=ALL-UNNAMED</option>
+                                <option>--add-exports=javafx.graphics/com.sun.javafx.css=org.controlsfx.controls</option>
+                                <option>--add-exports=javafx.graphics/com.sun.javafx.scene=com.jfoenix</option>
                             </options>
                         </configuration>
                     </execution>
@@ -92,23 +88,30 @@
                         <phase>package</phase>
                         <configuration>
                             <executable>${jpackager.path}</executable>
-                            <workingDirectory>${project.build.directory}</workingDirectory>
+                            <workingDirectory>${project.basedir}</workingDirectory>
                             <longModulepath>false</longModulepath>
                             <arguments>
-                                <!--                                <argument>&#45;&#45;package-type</argument>-->
-                                <!--                                <argument>exe</argument>-->
+                                <argument>--package-type</argument>
+                                <argument>msi</argument>
                                 <argument>--module</argument>
                                 <argument>${project.artifactId}/${app.main.class}</argument>
+                                <argument>--output</argument>
+                                <argument>${project.build.directory}/build/deploy</argument>
+                                <argument>--runtime-image</argument>
+                                <argument>${project.build.directory}/build/image</argument>
                                 <argument>--name</argument>
                                 <argument>Financer</argument>
-                                <argument>--input</argument>
-                                <argument>image</argument>
-                                <argument>--output</argument>
-                                <argument>deployment</argument>
-                                <argument>--runtime-image</argument>
-                                <argument>image</argument>
                                 <argument>--icon</argument>
-                                <argument>../src/main/resources/images/icons/financer-icon.ico</argument>
+                                <argument>${project.basedir}/src/main/resources/images/icons/financer-icon.ico</argument>
+                                <argument>--vendor</argument>
+                                <argument>Financer Project Team</argument>
+                                <argument>--license-file</argument>
+                                <argument>../LICENSE</argument>
+                                <argument>--java-options</argument>
+                                <argument>--add-exports=javafx.graphics/com.sun.javafx.css=org.controlsfx.controls --add-exports=javafx.graphics/com.sun.javafx.scene=com.jfoenix</argument>
+                                <argument>--win-dir-chooser</argument>
+                                <argument>--win-menu</argument>
+                                <argument>--win-shortcut</argument>
                             </arguments>
                         </configuration>
                     </execution>

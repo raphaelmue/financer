@@ -17,11 +17,6 @@
         <project.testing.localhost>false</project.testing.localhost>
         <project.testing.tags>unit, integration</project.testing.tags>
         <project.testing.argLine/>
-
-        <project.testing.jacoco.reportPath>${project.basedir}/../target/jacoco-ut.exec
-        </project.testing.jacoco.reportPath>
-        <project.testing.jacoco.itReportPath>${project.basedir}/../target/jacoco-it.exec
-        </project.testing.jacoco.itReportPath>
     </properties>
 
     <profiles>

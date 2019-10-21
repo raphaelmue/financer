@@ -6,7 +6,7 @@ MAINTAINER Raphael Müßeler <raphael@muesseler.de>
 WORKDIR /usr/src/app/
 
 # Copy source files
-COPY service/prepare-build.sh .
+COPY prepare-build.sh .
 COPY de.raphaelmuesseler.financer.client ./de.raphaelmuesseler.financer.client
 COPY de.raphaelmuesseler.financer.client.javafx ./de.raphaelmuesseler.financer.client.javafx
 COPY de.raphaelmuesseler.financer.server ./de.raphaelmuesseler.financer.server
