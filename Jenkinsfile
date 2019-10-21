@@ -12,16 +12,23 @@ pipeline {
 
     stages {
         stage('Build') {
-            steps {
-                sh 'bash prepare-build.sh'
-                sh 'mvn clean install -DskipTests'
+            parallel {
+                stage('Default') {
+                    steps {
+                        sh 'bash prepare-build.sh'
+                        sh 'mvn clean install -DskipTests'
+                    }
+                }
+                stage('Build Docker Image') {
+                    steps {
+                        script {
+                            docker.build registry + ":$BUILD_NUMBER"
+                        }
+                    }
+                }
             }
         }
-        stage('Build Docker Image') {
-            script {
-                docker.build registry + ":$BUILD_NUMBER"
-            }
-        }
+
         stage('JUnit Tests') {
             steps {
                 sh 'mvn test -P unitTests'
