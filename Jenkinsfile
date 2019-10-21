@@ -6,6 +6,11 @@ pipeline {
 
     agent any
 
+    tools {
+        maven 'Maven 3.6.2'
+        jdk 'JDK 11.0.1'
+    }
+
     stages {
         stage('Build') {
             parallel {
