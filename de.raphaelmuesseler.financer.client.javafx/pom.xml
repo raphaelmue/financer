@@ -58,72 +58,168 @@
                             <mainClass>${app.main.class}</mainClass>
                             <jlinkImageName>build/image</jlinkImageName>
                             <options>
-                                <option>--add-exports=javafx.graphics/com.sun.javafx.css=org.controlsfx.controls</option>
+                                <option>--add-exports=javafx.graphics/com.sun.javafx.css=org.controlsfx.controls
+                                </option>
                                 <option>--add-exports=javafx.graphics/com.sun.javafx.scene=com.jfoenix</option>
-                                <option>--add-exports=javafx.graphics/com.sun.javafx.scene.control.behavior=com.jfoenix</option>
-                            </options>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <version>1.6.0</version>
-                <configuration>
-                    <mainClass>${app.main.class}</mainClass>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>java</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>create-package</id>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
-                        <phase>package</phase>
-                        <configuration>
-                            <executable>${jpackager.path}</executable>
-                            <workingDirectory>${project.basedir}</workingDirectory>
-                            <longModulepath>false</longModulepath>
-                            <arguments>
-                                <argument>--package-type</argument>
-                                <argument>msi</argument>
-                                <argument>--module</argument>
-                                <argument>${project.artifactId}/${app.main.class}</argument>
-                                <argument>-d</argument>
-                                <argument>${project.build.directory}/build/deploy</argument>
-                                <argument>--runtime-image</argument>
-                                <argument>${project.build.directory}/build/image</argument>
-                                <argument>--name</argument>
-                                <argument>Financer</argument>
-                                <argument>--icon</argument>
-                                <argument>${project.basedir}/src/main/resources/images/icons/financer-icon.ico
-                                </argument>
-                                <argument>--vendor</argument>
-                                <argument>Financer Project Team</argument>
-                                <argument>--license-file</argument>
-                                <argument>../LICENSE</argument>
-                                <argument>--java-options</argument>
-                                <argument>
-                                    --add-exports=javafx.graphics/com.sun.javafx.css=org.controlsfx.controls
-                                    --add-exports=javafx.graphics/com.sun.javafx.scene=com.jfoenix
+                                <option>
                                     --add-exports=javafx.graphics/com.sun.javafx.scene.control.behavior=com.jfoenix
-                                </argument>
-                                <argument>--win-dir-chooser</argument>
-                                <argument>--win-menu</argument>
-                                <argument>--win-shortcut</argument>
-                            </arguments>
+                                </option>
+                            </options>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>deploy-linux</id>
+            <activation>
+                <os>
+                    <family>linux</family>
+                </os>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <version>1.6.0</version>
+                        <configuration>
+                            <mainClass>${app.main.class}</mainClass>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>java</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>create-package</id>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <phase>package</phase>
+                                <configuration>
+                                    <executable>${jpackager.path}</executable>
+                                    <workingDirectory>${project.basedir}</workingDirectory>
+                                    <longModulepath>false</longModulepath>
+                                    <arguments>
+                                        <argument>--package-type</argument>
+                                        <argument>rpm</argument>
+
+                                        <argument>--module</argument>
+                                        <argument>${project.artifactId}/${app.main.class}</argument>
+
+                                        <argument>-d</argument>
+                                        <argument>${project.build.directory}/build/deploy</argument>
+
+                                        <argument>--runtime-image</argument>
+                                        <argument>${project.build.directory}/build/image</argument>
+
+                                        <argument>--name</argument>
+                                        <argument>Financer</argument>
+
+                                        <argument>--icon</argument>
+                                        <argument>${project.basedir}/src/main/resources/images/icons/financer-icon.ico</argument>
+
+                                        <argument>--vendor</argument>
+                                        <argument>Financer Project Team</argument>
+
+                                        <argument>--license-file</argument>
+                                        <argument>../LICENSE</argument>
+
+                                        <argument>--java-options</argument>
+                                        <argument>
+                                            --add-exports=javafx.graphics/com.sun.javafx.css=org.controlsfx.controls
+                                            --add-exports=javafx.graphics/com.sun.javafx.scene=com.jfoenix
+                                            --add-exports=javafx.graphics/com.sun.javafx.scene.control.behavior=com.jfoenix
+                                        </argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>deploy-windows</id>
+            <activation>
+                <os>
+                    <family>windows</family>
+                </os>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <version>1.6.0</version>
+                        <configuration>
+                            <mainClass>${app.main.class}</mainClass>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>java</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>create-package</id>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <phase>package</phase>
+                                <configuration>
+                                    <executable>${jpackager.path}</executable>
+                                    <workingDirectory>${project.basedir}</workingDirectory>
+                                    <longModulepath>false</longModulepath>
+                                    <arguments>
+                                        <argument>--package-type</argument>
+                                        <argument>msi</argument>
+
+                                        <argument>--module</argument>
+                                        <argument>${project.artifactId}/${app.main.class}</argument>
+
+                                        <argument>-d</argument>
+                                        <argument>${project.build.directory}/build/deploy</argument>
+
+                                        <argument>--runtime-image</argument>
+                                        <argument>${project.build.directory}/build/image</argument>
+
+                                        <argument>--name</argument>
+                                        <argument>Financer</argument>
+
+                                        <argument>--icon</argument>
+                                        <argument>${project.basedir}/src/main/resources/images/icons/financer-icon.ico</argument>
+
+                                        <argument>--vendor</argument>
+                                        <argument>Financer Project Team</argument>
+
+                                        <argument>--license-file</argument>
+                                        <argument>../LICENSE</argument>
+
+                                        <argument>--java-options</argument>
+                                        <argument>
+                                            --add-exports=javafx.graphics/com.sun.javafx.css=org.controlsfx.controls
+                                            --add-exports=javafx.graphics/com.sun.javafx.scene=com.jfoenix
+                                            --add-exports=javafx.graphics/com.sun.javafx.scene.control.behavior=com.jfoenix
+                                        </argument>
+
+                                        <argument>--win-dir-chooser</argument>
+                                        <argument>--win-menu</argument>
+                                        <argument>--win-shortcut</argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
     <dependencies>
         <dependency>
