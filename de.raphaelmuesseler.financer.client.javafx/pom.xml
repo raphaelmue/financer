@@ -107,7 +107,7 @@
                                     <longModulepath>false</longModulepath>
                                     <arguments>
                                         <argument>--package-type</argument>
-                                        <argument>rpm</argument>
+                                        <argument>deb</argument>
 
                                         <argument>--module</argument>
                                         <argument>${project.artifactId}/${app.main.class}</argument>
