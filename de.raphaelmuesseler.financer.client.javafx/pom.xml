@@ -102,7 +102,7 @@
                                 </goals>
                                 <phase>package</phase>
                                 <configuration>
-                                    <executable>${jpackager.path}</executable>
+                                    <executable></executable>
                                     <workingDirectory>${project.basedir}</workingDirectory>
                                     <longModulepath>false</longModulepath>
                                     <arguments>
@@ -136,6 +136,19 @@
                                             --add-exports=javafx.graphics/com.sun.javafx.scene=com.jfoenix
                                             --add-exports=javafx.graphics/com.sun.javafx.scene.control.behavior=com.jfoenix
                                         </argument>
+
+                                        <argument>--verbose</argument>
+
+                                        <argument>--linux-package-name</argument>
+                                        <argument>financer</argument>
+
+                                        <argument>--linux-package-deps</argument>
+                                        <argument>fakeroot</argument>
+
+                                        <argument>--linux-deb-maintainer</argument>
+                                        <argument>info@financer-project.org</argument>
+
+                                        <argument>--linux-shortcut</argument>
                                     </arguments>
                                 </configuration>
                             </execution>
@@ -207,6 +220,8 @@
                                             --add-exports=javafx.graphics/com.sun.javafx.scene=com.jfoenix
                                             --add-exports=javafx.graphics/com.sun.javafx.scene.control.behavior=com.jfoenix
                                         </argument>
+
+                                        <argument>--verbose</argument>
 
                                         <argument>--win-dir-chooser</argument>
                                         <argument>--win-menu</argument>

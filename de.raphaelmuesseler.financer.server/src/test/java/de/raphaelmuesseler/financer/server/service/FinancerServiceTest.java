@@ -25,7 +25,7 @@ import java.util.logging.Logger;
 
 @SuppressWarnings("WeakerAccess")
 @Tag("unit")
-public class ServiceTest {
+public class FinancerServiceTest {
     private final FinancerService service = FinancerService.getInstance();
     private final Logger logger = Logger.getLogger("Test");
 
@@ -40,10 +40,10 @@ public class ServiceTest {
 
     @BeforeAll
     public static void beforeAll() throws IOException {
-        InputStream inputStream = ServiceTest.class.getResourceAsStream("/testing.properties");
+        InputStream inputStream = FinancerServiceTest.class.getResourceAsStream("/testing.properties");
         Properties properties = new Properties();
         properties.load(inputStream);
-        HibernateUtil.setIsHostLocal(Boolean.valueOf(properties.getProperty("project.testing.localhost")));
+        HibernateUtil.setIsHostLocal(Boolean.parseBoolean(properties.getProperty("project.testing.localhost")));
         HibernateUtil.setDatabaseName(DatabaseName.TEST);
     }
 
@@ -160,7 +160,7 @@ public class ServiceTest {
 
         transaction.commit();
         session.close();
-        ServiceTest.session = HibernateUtil.getSessionFactory().openSession();
+        FinancerServiceTest.session = HibernateUtil.getSessionFactory().openSession();
     }
 
     @AfterEach

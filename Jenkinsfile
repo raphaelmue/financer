@@ -32,12 +32,12 @@ pipeline {
 
         stage('JUnit Tests') {
             steps {
-                sh 'mvn test -P unitTests'
+                sh 'mvn test -P unit-tests'
             }
         }
         stage('JavaFX Tests') {
             steps {
-                sh 'mvn test -P integrationTests,headlessTesting'
+                sh 'mvn test -P integration-tests,headless-testing'
             }
         }
         stage('SonarQube Analysis') {

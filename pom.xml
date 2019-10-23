@@ -21,25 +21,25 @@
 
     <profiles>
         <profile>
-            <id>unitTests</id>
+            <id>unit-tests</id>
             <properties>
                 <project.testing.tags>unit</project.testing.tags>
             </properties>
         </profile>
         <profile>
-            <id>integrationTests</id>
+            <id>integration-tests</id>
             <properties>
                 <project.testing.tags>integration</project.testing.tags>
             </properties>
         </profile>
         <profile>
-            <id>localTesting</id>
+            <id>local-testing</id>
             <properties>
                 <project.testing.localhost>true</project.testing.localhost>
             </properties>
         </profile>
         <profile>
-            <id>headlessTesting</id>
+            <id>headless-testing</id>
             <properties>
                 <argLine>-Dtestfx.robot=glass -Dglass.platform=Monocle -Dmonocle.platform=Headless</argLine>
             </properties>
@@ -85,7 +85,7 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.3</version>
+                <version>0.8.4</version>
                 <configuration>
                     <destFile>${project.basedir}/../target/jacoco.exec</destFile>
                     <append>true</append>
@@ -108,11 +108,12 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.22.0</version>
+                <version>3.0.0-M3</version>
                 <configuration>
                     <redirectTestOutputToFile>true</redirectTestOutputToFile>
                     <excludedGroups>skip</excludedGroups>
                     <groups>${project.testing.tags}</groups>
+                    <forkCount>0</forkCount>
                 </configuration>
             </plugin>
             <plugin>
@@ -150,6 +151,7 @@
             </plugin>
         </plugins>
     </build>
+
     <modules>
         <module>de.raphaelmuesseler.financer.client</module>
         <module>de.raphaelmuesseler.financer.client.javafx</module>
@@ -162,13 +164,13 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
-            <version>5.3.1</version>
+            <version>5.5.2</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
-            <version>5.3.1</version>
+            <version>5.5.2</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
