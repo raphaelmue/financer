@@ -17,7 +17,8 @@ pipeline {
                 stage('Default') {
                     steps {
                         sh 'bash prepare-build.sh'
-                        sh 'mvn clean install -DskipTests -Djpackager.path="$JENKINS_HOME/jdk-14/bin/jpackage"'
+                        sh 'export JPACKAGE=$JENKINS_HOME/jdk-14/bin/jpackage'
+                        sh 'mvn clean install -DskipTests'
                     }
                 }
                 stage('Build Docker Image') {

@@ -102,7 +102,7 @@
                                 </goals>
                                 <phase>package</phase>
                                 <configuration>
-                                    <executable></executable>
+                                    <executable>${env.JPACKAGE}</executable>
                                     <workingDirectory>${project.basedir}</workingDirectory>
                                     <longModulepath>false</longModulepath>
                                     <arguments>
@@ -140,7 +140,7 @@
                                         <argument>--verbose</argument>
 
                                         <argument>--linux-package-name</argument>
-                                        <argument>financer</argument>
+                                        <argument>Financer</argument>
 
                                         <argument>--linux-package-deps</argument>
                                         <argument>fakeroot</argument>
@@ -186,7 +186,7 @@
                                 </goals>
                                 <phase>package</phase>
                                 <configuration>
-                                    <executable>${jpackager.path}</executable>
+                                    <executable>${env.JPACKAGE}</executable>
                                     <workingDirectory>${project.basedir}</workingDirectory>
                                     <longModulepath>false</longModulepath>
                                     <arguments>
