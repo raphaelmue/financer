@@ -30,18 +30,18 @@ public class VariableTransactionTest {
     }
 
     @Test
-    void getAmount() {
+    public void getAmount() {
         Assertions.assertEquals(50.0, variableTransaction.getAmount());
     }
 
     @Test
-    void testGetAmountOfMonth() {
+    public void testGetAmountOfMonth() {
         Assertions.assertEquals(50.0, variableTransaction.getAmount(LocalDate.now()));
         Assertions.assertEquals(0.0, variableTransaction.getAmount(LocalDate.now().minusMonths(1)));
     }
 
     @Test
-    void testGetAmountWithTimeRange() {
+    public void testGetAmountWithTimeRange() {
         Assertions.assertEquals(50.0, variableTransaction.getAmount(LocalDate.now().minusMonths(1), LocalDate.now().plusMonths(1)));
         Assertions.assertEquals(00.0, variableTransaction.getAmount(LocalDate.now().minusMonths(4), LocalDate.now().minusMonths(1)));
     }

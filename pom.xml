@@ -107,7 +107,6 @@
                     <redirectTestOutputToFile>true</redirectTestOutputToFile>
                     <excludedGroups>skip</excludedGroups>
                     <groups>${project.testing.tags}</groups>
-                    <forkCount>0</forkCount>
                 </configuration>
             </plugin>
             <plugin>

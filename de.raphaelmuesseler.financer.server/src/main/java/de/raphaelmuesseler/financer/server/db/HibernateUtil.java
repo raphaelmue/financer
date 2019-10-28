@@ -10,31 +10,6 @@ import org.hibernate.query.Query;
 import org.hibernate.service.ServiceRegistry;
 
 public class HibernateUtil {
-    private enum Table {
-        FIXED_TRANSACTIONS("fixed_transactions"),
-        FIXED_TRANSACTIONS_AMOUNTS("fixed_transactions_amounts"),
-        TRANSACTIONS("transactions"),
-        TRANSACTIONS_ATTACHMENTS("transactions_attachments"),
-        USERS("users"),
-        USERS_CATEGORIES("users_categories"),
-        USERS_TOKENS("users_tokens"),
-        USERS_SETTINGS("users_settings");
-
-        private String tableName;
-
-        Table(String tableName) {
-            this.tableName = tableName;
-        }
-
-        public String getTableName() {
-            return tableName;
-        }
-
-        @Override
-        public String toString() {
-            return this.getTableName();
-        }
-    }
 
     private static SessionFactory sessionFactory;
     private static DatabaseName databaseName = DatabaseName.DEV;
@@ -47,7 +22,7 @@ public class HibernateUtil {
         try {
             // Create the SessionFactory from hibernate.cfg.xml
             Configuration configuration = new Configuration();
-            configuration.configure("/de/raphaelmuesseler/financer/server/db/config/hibernate" + (databaseName == DatabaseName.TEST ? ".test" : "") + ".cfg.xml")
+            configuration.configure("/de/raphaelmuesseler/financer/server/db/config/hibernate.cfg.xml")
                     .addAnnotatedClass(AttachmentEntity.class)
                     .addAnnotatedClass(CategoryEntity.class)
                     .addAnnotatedClass(ContentAttachmentEntity.class)
