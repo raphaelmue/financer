@@ -59,7 +59,7 @@
                 </os>
             </activation>
             <properties>
-                <build.deploy.os.package>deb</build.deploy.os.package>
+                <build.deploy.package.type>deb</build.deploy.package.type>
                 <build.deploy.os.arguments>
                     --linux-package-name financer
                     --linux-package-deps fakeroot
