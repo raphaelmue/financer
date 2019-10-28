@@ -20,6 +20,11 @@ pipeline {
                         sh 'bash prepare-build.sh'
                         sh 'mvn clean install -DskipTests -P deploy'
                     }
+                    post {
+                        always {
+                            archiveArtifacts artifacts: '*.msi, *.rpm, *.dmg, *.apk', fingerprint: true
+                        }
+                    }
                 }
                 stage('Build Docker Image') {
                     steps {
@@ -86,7 +91,6 @@ pipeline {
     post {
         always {
             junit '**/target/surefire-reports/TEST-*.xml'
-            archiveArtifacts(artifacts: '*.msi, *.deb, *.dmg, *.apk', fingerprint: true)
             step([$class: 'JacocoPublisher'])
         }
     }
