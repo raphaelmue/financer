@@ -1,6 +1,6 @@
 pipeline {
     environment {
-        JPACKAGE = '$JENKINS_HOME/jdk-14/bin/jpackage'
+        JPACKAGE = '/var/jenkins_home/jdk-14/bin/jpackage'
         registry = 'raphaelmue/financer'
         registryCredentials = 'dockerhub'
     }
