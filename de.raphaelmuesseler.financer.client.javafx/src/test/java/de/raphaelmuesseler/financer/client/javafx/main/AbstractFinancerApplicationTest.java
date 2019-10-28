@@ -34,11 +34,9 @@ import org.testfx.api.FxToolkit;
 import org.testfx.framework.junit5.ApplicationTest;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.HashSet;
-import java.util.Properties;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Predicate;
 
@@ -86,11 +84,6 @@ class AbstractFinancerApplicationTest extends ApplicationTest {
         new Thread(server::run).start();
 
         LocalStorageImpl.getInstance().deleteAllData();
-
-        InputStream inputStream = AbstractFinancerApplicationTest.class.getResourceAsStream("/testing.properties");
-        Properties properties = new Properties();
-        properties.load(inputStream);
-        HibernateUtil.setIsHostLocal(Boolean.parseBoolean(properties.getProperty("project.testing.localhost")));
         HibernateUtil.setDatabaseName(DatabaseName.TEST);
     }
 

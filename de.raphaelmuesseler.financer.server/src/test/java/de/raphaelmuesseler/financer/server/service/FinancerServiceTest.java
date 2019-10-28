@@ -16,8 +16,6 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.junit.jupiter.api.*;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.*;
@@ -35,15 +33,12 @@ public class FinancerServiceTest {
     private static CategoryEntity fixedCategory, variableCategory;
     private static VariableTransactionEntity variableTransaction;
     private static FixedTransactionEntity fixedTransaction;
+    private static ContentAttachment contentAttachment;
 
     private static Session session;
 
     @BeforeAll
-    public static void beforeAll() throws IOException {
-        InputStream inputStream = FinancerServiceTest.class.getResourceAsStream("/testing.properties");
-        Properties properties = new Properties();
-        properties.load(inputStream);
-        HibernateUtil.setIsHostLocal(Boolean.parseBoolean(properties.getProperty("project.testing.localhost")));
+    public static void beforeAll() {
         HibernateUtil.setDatabaseName(DatabaseName.TEST);
     }
 
@@ -469,13 +464,13 @@ public class FinancerServiceTest {
     @Test
     public void testUploadAttachment() {
         RandomString randomString = new RandomString(1024);
-        ContentAttachment content = new ContentAttachment();
-        content.setTransaction(variableTransaction);
-        content.setName("Test Attachment");
-        content.setContent(randomString.nextString().getBytes());
+        contentAttachment = new ContentAttachment();
+        contentAttachment.setTransaction(variableTransaction);
+        contentAttachment.setName("Test Attachment");
+        contentAttachment.setContent(randomString.nextString().getBytes());
 
         Map<String, Serializable> parameters = new HashMap<>();
-        parameters.put("attachment", content);
+        parameters.put("attachment", contentAttachment);
         parameters.put("transaction", new VariableTransaction(variableTransaction));
         ConnectionResult<Attachment> result = service.uploadTransactionAttachment(logger, session, parameters);
         Assertions.assertNotNull(result.getResult());
@@ -500,7 +495,7 @@ public class FinancerServiceTest {
         testUploadAttachment();
 
         Map<String, Serializable> parameters = new HashMap<>();
-        parameters.put("attachmentId", 1);
+        parameters.put("attachmentId", contentAttachment.getId());
         service.deleteAttachment(logger, session, parameters);
         session.close();
         session = HibernateUtil.getSessionFactory().openSession();

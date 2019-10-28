@@ -33,12 +33,6 @@
             </properties>
         </profile>
         <profile>
-            <id>local-testing</id>
-            <properties>
-                <project.testing.localhost>true</project.testing.localhost>
-            </properties>
-        </profile>
-        <profile>
             <id>headless-testing</id>
             <properties>
                 <argLine>-Dtestfx.robot=glass -Dglass.platform=Monocle -Dmonocle.platform=Headless</argLine>
@@ -129,22 +123,6 @@
                         <configuration>
                             <argLine>${project.testing.argLine}</argLine>
                             <groups>integration</groups>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>properties-maven-plugin</artifactId>
-                <version>1.0.0</version>
-                <executions>
-                    <execution>
-                        <phase>generate-resources</phase>
-                        <goals>
-                            <goal>write-project-properties</goal>
-                        </goals>
-                        <configuration>
-                            <outputFile>${project.basedir}/target/classes/testing.properties</outputFile>
                         </configuration>
                     </execution>
                 </executions>

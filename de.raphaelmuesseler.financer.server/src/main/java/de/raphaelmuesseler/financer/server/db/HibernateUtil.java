@@ -36,24 +36,18 @@ public class HibernateUtil {
         }
     }
 
-    //XML based configuration
     private static SessionFactory sessionFactory;
-    private static boolean isHostLocal = false;
     private static DatabaseName databaseName = DatabaseName.DEV;
 
     public static void setDatabaseName(DatabaseName databaseName) {
         HibernateUtil.databaseName = databaseName;
     }
 
-    public static void setIsHostLocal(boolean isHostLocal) {
-        HibernateUtil.isHostLocal = isHostLocal;
-    }
-
     private static SessionFactory buildSessionFactory() {
         try {
             // Create the SessionFactory from hibernate.cfg.xml
             Configuration configuration = new Configuration();
-            configuration.configure("/de/raphaelmuesseler/financer/server/db/config/hibernate" + (isHostLocal ? ".local" : "") + ".cfg.xml")
+            configuration.configure("/de/raphaelmuesseler/financer/server/db/config/hibernate" + (databaseName == DatabaseName.TEST ? ".test" : "") + ".cfg.xml")
                     .addAnnotatedClass(AttachmentEntity.class)
                     .addAnnotatedClass(CategoryEntity.class)
                     .addAnnotatedClass(ContentAttachmentEntity.class)
@@ -85,15 +79,12 @@ public class HibernateUtil {
         if (databaseName == DatabaseName.TEST) {
             Session session = getSessionFactory().openSession();
             Transaction transaction = session.beginTransaction();
-            for (Table table : Table.values()) {
-                String hql = String.format("truncate table %s", table.getTableName());
-                Query query = session.createSQLQuery(hql);
-                query.executeUpdate();
-            }
+            Query query = session.createSQLQuery("truncate schema PUBLIC and commit");
+            query.executeUpdate();
             transaction.commit();
             session.close();
         } else {
-            throw new IllegalArgumentException("It is only allowed to clean the test database");
+            throw new IllegalArgumentException("It is only allowed to clean the test database.");
         }
     }
 }

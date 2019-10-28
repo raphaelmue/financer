@@ -31,8 +31,6 @@ public class Server {
                         logger.log(Level.SEVERE, "Please enter a port number between 1000 and 5000");
                         return;
                     }
-                } else if (arg.contains("--db-host=")) {
-                    HibernateUtil.setIsHostLocal(arg.substring(10).equals("local"));
                 } else if (arg.contains("--database=") && (DatabaseName.getByShortCut(arg.substring(11)) != null)) {
                     databaseName = DatabaseName.getByShortCut(arg.substring(11));
                 }

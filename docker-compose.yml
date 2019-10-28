@@ -1,22 +1,22 @@
 version: "3"
 
 services:
-  server:
-    build: .
-    container_name: financer-server
-    restart: always
-    ports:
-      - 3500:3500
-    depends_on:
-      - financer-db
-    environment:
-      PORT: 3000
-      ENVIRONEMT: prod
+    server:
+        build: .
+        container_name: financer-server
+        restart: always
+        ports:
+            - 3500:3500
+        depends_on:
+            - financer-db
+        environment:
+            PORT: 3000
+            ENVIRONEMT: prod
 
-  financer-db:
-    image: mysql:latest
-    container_name: financer-db
-    restart: always
-    environment:
-      MYSQL_DATABASE: financer_prod
-      MYSQL_ROOT_PASSWORD: password
+    financer-db:
+        image: mysql:latest
+        container_name: financer-db
+        restart: always
+        environment:
+            MYSQL_DATABASE: financer_test
+            MYSQL_ROOT_PASSWORD: password
