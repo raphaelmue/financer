@@ -59,6 +59,7 @@
                 </os>
             </activation>
             <properties>
+                <build.deploy.os.package>deb</build.deploy.os.package>
                 <build.deploy.os.arguments>
                     --linux-package-name financer
                     --linux-package-deps fakeroot
@@ -75,7 +76,8 @@
                 </os>
             </activation>
             <properties>
-                <build.deploy.os.arguments>--win-dir-chooser --win-menu --win-shortcut</build.deploy.os.arguments>
+                <build.deploy.package.type>msi</build.deploy.package.type>
+                <build.deploy.arguments>--win-dir-chooser --win-menu --win-shortcut</build.deploy.arguments>
             </properties>
         </profile>
         <profile>
@@ -137,7 +139,7 @@
                                     <longModulepath>false</longModulepath>
                                     <arguments>
                                         <argument>--package-type</argument>
-                                        <argument>msi</argument>
+                                        <argument>${build.deploy.package.type}</argument>
 
                                         <argument>--module</argument>
                                         <argument>${project.artifactId}/${app.main.class}</argument>
