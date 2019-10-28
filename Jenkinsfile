@@ -1,5 +1,6 @@
 pipeline {
     environment {
+        JPACKAGE = '$JENKINS_HOME/jdk-14/bin/jpackage'
         registry = 'raphaelmue/financer'
         registryCredentials = 'dockerhub'
     }
@@ -17,7 +18,6 @@ pipeline {
                 stage('Default') {
                     steps {
                         sh 'bash prepare-build.sh'
-                        sh 'export JPACKAGE=$JENKINS_HOME/jdk-14/bin/jpackage'
                         sh 'mvn clean install -DskipTests'
                     }
                 }
