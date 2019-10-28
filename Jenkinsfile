@@ -22,7 +22,8 @@ pipeline {
                     }
                     post {
                         always {
-                            archiveArtifacts artifacts: '*.msi, *.rpm, *.dmg, *.apk', fingerprint: true
+                            // archiveArtifacts artifacts: '*.msi, *.deb, *.dmg, *.apk', fingerprint: true
+                            archiveArtifacts artifacts: '**/*.msi, **/*.deb, **/*.dmg, **/*.apk', fingerprint: true
                         }
                     }
                 }
