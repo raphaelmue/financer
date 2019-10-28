@@ -60,12 +60,12 @@
             </activation>
             <properties>
                 <build.deploy.package.type>deb</build.deploy.package.type>
-                <build.deploy.os.arguments>
+                <build.deploy.arguments>
                     --linux-package-name financer
                     --linux-package-deps fakeroot
                     --linux-deb-maintainer info@financer-project.org
                     --linux-shortcut
-                </build.deploy.os.arguments>
+                </build.deploy.arguments>
             </properties>
         </profile>
         <profile>
@@ -171,7 +171,7 @@
                                         </argument>
 
                                         <argument>--verbose</argument>
-                                        ${build.deploy.os.arguments}
+                                        ${build.deploy.arguments}
                                     </arguments>
                                 </configuration>
                             </execution>
