@@ -8,4 +8,6 @@ module de.raphaelmuesseler.financer.shared {
 
     requires de.raphaelmuesseler.financer.util;
     requires java.persistence;
+
+    opens de.raphaelmuesseler.financer.shared.model.db to org.hibernate.orm.core;
 }

@@ -107,6 +107,7 @@
                     <redirectTestOutputToFile>true</redirectTestOutputToFile>
                     <excludedGroups>skip</excludedGroups>
                     <groups>${project.testing.tags}</groups>
+                    <argLine>--add-reads de.raphaelmuesseler.financer.shared=org.hibernate.orm.core</argLine>
                 </configuration>
             </plugin>
             <plugin>

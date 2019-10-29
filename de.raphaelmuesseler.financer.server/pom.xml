@@ -45,13 +45,11 @@
             <groupId>de.raphaelmuesseler.financer</groupId>
             <artifactId>de.raphaelmuesseler.financer.shared</artifactId>
             <version>1.0-SNAPSHOT</version>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>de.raphaelmuesseler.financer</groupId>
             <artifactId>de.raphaelmuesseler.financer.util</artifactId>
             <version>1.0-SNAPSHOT</version>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.hsqldb</groupId>
