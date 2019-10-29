@@ -10,7 +10,7 @@ import java.util.Map;
 
 public class ServerRequest {
 
-    private static final String HOST_LOCAL = "financer-server";
+    private static final String HOST_LOCAL = "localhost";
     private static final String HOST_REMOTE = "raphael-muesseler.de";
     private static String host;
     private static int post = 3500;

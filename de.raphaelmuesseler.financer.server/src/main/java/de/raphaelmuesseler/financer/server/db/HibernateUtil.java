@@ -14,6 +14,10 @@ public class HibernateUtil {
     private static SessionFactory sessionFactory;
     private static DatabaseName databaseName = DatabaseName.DEV;
 
+    private HibernateUtil() {
+
+    }
+
     public static void setDatabaseName(DatabaseName databaseName) {
         HibernateUtil.databaseName = databaseName;
     }
@@ -22,7 +26,7 @@ public class HibernateUtil {
         try {
             // Create the SessionFactory from hibernate.cfg.xml
             Configuration configuration = new Configuration();
-            configuration.configure("/de/raphaelmuesseler/financer/server/db/config/hibernate.cfg.xml")
+            configuration.configure("/de/raphaelmuesseler/financer/server/db/config/hibernate" + (databaseName == DatabaseName.TEST ? ".test" : "" ) + ".cfg.xml")
                     .addAnnotatedClass(AttachmentEntity.class)
                     .addAnnotatedClass(CategoryEntity.class)
                     .addAnnotatedClass(ContentAttachmentEntity.class)

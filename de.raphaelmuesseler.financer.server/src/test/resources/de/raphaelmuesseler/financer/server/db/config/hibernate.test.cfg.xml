@@ -5,10 +5,10 @@
 <hibernate-configuration>
     <session-factory>
         <!-- Database connection properties - Driver, URL, user, password -->
-        <property name="hibernate.connection.driver_class">com.mysql.cj.jdbc.Driver</property>
-        <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/financer_prod?autoReconnect=true&amp;useTimezone=true&amp;useUnicode=true&amp;useLegacyDatetimeCode=false&amp;serverTimezone=Europe/Berlin</property>
+        <property name="hibernate.connection.driver_class">org.hsqldb.jdbcDriver</property>
+        <property name="hibernate.connection.url">jdbc:hsqldb:mem:financer_test</property>
         <property name="hibernate.connection.username">root</property>
-        <property name="hibernate.connection.password"/>
+        <property name="hibernate.connection.password">password</property>
 
         <!-- Update database scheme, or create if necessary -->
         <property name="hibernate.hbm2ddl.auto">update</property>
@@ -24,7 +24,7 @@
 
         <!-- Dialect is required to let Hibernate know the Database Type, MySQL, Oracle etc
             Hibernate 4 automatically figure out Dialect from Database Connection Metadata -->
-        <property name="hibernate.dialect">org.hibernate.dialect.MariaDBDialect</property>
+        <property name="hibernate.dialect">org.hibernate.dialect.HSQLDialect</property>
 
         <!-- C3P0 Connector in order to prevent connection loss -->
         <property name="connection.provider_class">org.hibernate.c3p0.internal.C3P0ConnectionProvider</property>

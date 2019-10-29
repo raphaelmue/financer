@@ -16,7 +16,19 @@
 
         <project.testing.localhost>false</project.testing.localhost>
         <project.testing.tags>unit, integration</project.testing.tags>
-        <project.testing.argLine/>
+        <project.testing.arguments>
+            --add-reads de.raphaelmuesseler.financer.shared=ALL-UNNAMED
+            --add-opens de.raphaelmuesseler.financer.shared/de.raphaelmuesseler.financer.shared.model.db=ALL-UNNAMED
+            --add-opens de.raphaelmuesseler.financer.client.javafx/de.raphaelmuesseler.financer.client.javafx.main=ALL-UNNAMED
+            --add-exports javafx.graphics/com.sun.javafx.application=ALL-UNNAMED
+            --add-exports javafx.graphics/com.sun.javafx.css=org.controlsfx.controls
+            --add-exports javafx.graphics/com.sun.javafx.scene=com.jfoenix
+            --add-exports javafx.base/com.sun.javafx.binding=com.jfoenix
+            --add-exports javafx.controls/com.sun.javafx.scene.control.behavior=com.jfoenix
+            --add-exports javafx.graphics/com.sun.javafx.stage=com.jfoenix
+            --add-exports javafx.base/com.sun.javafx.event=com.jfoenix
+        </project.testing.arguments>
+        <project.testing.headless/>
     </properties>
 
     <profiles>
@@ -35,7 +47,9 @@
         <profile>
             <id>headless-testing</id>
             <properties>
-                <argLine>-Dtestfx.robot=glass -Dglass.platform=Monocle -Dmonocle.platform=Headless</argLine>
+                <project.testing.headless>
+                    -Dtestfx.robot=glass -Dglass.platform=Monocle -Dmonocle.platform=Headless
+                </project.testing.headless>
             </properties>
         </profile>
     </profiles>
@@ -107,7 +121,10 @@
                     <redirectTestOutputToFile>true</redirectTestOutputToFile>
                     <excludedGroups>skip</excludedGroups>
                     <groups>${project.testing.tags}</groups>
-                    <argLine>--add-reads de.raphaelmuesseler.financer.shared=org.hibernate.orm.core</argLine>
+                    <argLine>
+                        ${project.testing.arguments}
+                        ${project.testing.headless}
+                    </argLine>
                 </configuration>
             </plugin>
             <plugin>
@@ -120,8 +137,12 @@
                         <goals>
                             <goal>integration-test</goal>
                         </goals>
+                        <phase>test</phase>
                         <configuration>
-                            <argLine>${project.testing.argLine}</argLine>
+                            <argLine>
+                                ${project.testing.arguments}
+                                ${project.testing.headless}
+                            </argLine>
                             <groups>integration</groups>
                         </configuration>
                     </execution>
