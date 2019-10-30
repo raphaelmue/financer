@@ -32,23 +32,23 @@ pipeline {
                             // sh 'gradlew assembleDebug'
                         }
                     }
-                    post {
-                        always {
-//                            archiveArtifacts artifacts: '**/*.apk', fingerprint: true
-                        }
-                    }
+                    // post {
+                    //    always {
+                    //        archiveArtifacts artifacts: '**/*.apk', fingerprint: true
+                    //    }
+                    //}
                 }
             }
         }
 
         stage('Test') {
             parallel {
-                stage('Unit Tests') {
+                stage('Java Unit Tests') {
                     steps {
                         sh 'mvn test -P unit-tests'
                     }
                 }
-                stage('Integration Tests (Java)') {
+                stage('Java Integration Tests') {
                     steps {
                         sh 'mvn test -P integration-tests,headless-testing'
                     }
