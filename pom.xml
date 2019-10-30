@@ -17,6 +17,7 @@
         <project.testing.localhost>false</project.testing.localhost>
         <project.testing.tags>unit, integration</project.testing.tags>
         <project.testing.arguments>
+            --add-reads de.raphaelmuesseler.financer.shared=org.hibernate.orm.core
             --add-reads de.raphaelmuesseler.financer.shared=ALL-UNNAMED
             --add-opens de.raphaelmuesseler.financer.shared/de.raphaelmuesseler.financer.shared.model.db=ALL-UNNAMED
             --add-opens de.raphaelmuesseler.financer.client.javafx/de.raphaelmuesseler.financer.client.javafx.main=ALL-UNNAMED
@@ -122,6 +123,7 @@
                     <excludedGroups>skip</excludedGroups>
                     <groups>${project.testing.tags}</groups>
                     <argLine>
+                        -ea
                         ${project.testing.arguments}
                         ${project.testing.headless}
                     </argLine>

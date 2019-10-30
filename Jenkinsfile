@@ -15,36 +15,44 @@ pipeline {
     stages {
         stage('Build') {
             parallel {
-                stage('Default') {
+                stage('Java') {
                     steps {
                         sh 'bash prepare-build.sh'
                         sh 'mvn clean install -DskipTests -P deploy'
                     }
                     post {
                         always {
-                            // archiveArtifacts artifacts: '*.msi, *.deb, *.dmg, *.apk', fingerprint: true
                             archiveArtifacts artifacts: '**/*.msi, **/*.deb, **/*.dmg, **/*.apk', fingerprint: true
                         }
                     }
                 }
-                stage('Build Docker Image') {
+                stage('Android') {
                     steps {
-                        script {
-                            docker.build registry + ":$BUILD_NUMBER"
+                        dir('android/de.raphaelmuesseler.financer.client.app') {
+                            // sh 'gradlew assembleDebug'
+                        }
+                    }
+                    post {
+                        always {
+//                            archiveArtifacts artifacts: '**/*.apk', fingerprint: true
                         }
                     }
                 }
             }
         }
 
-        stage('JUnit Tests') {
-            steps {
-                sh 'mvn test -P unit-tests'
-            }
-        }
-        stage('JavaFX Tests') {
-            steps {
-                sh 'mvn test -P integration-tests,headless-testing'
+        stage('Test') {
+            parallel {
+                stage('Unit Tests') {
+                    steps {
+                        sh 'mvn test -P unit-tests'
+                    }
+                }
+                stage('Integration Tests (Java)') {
+                    steps {
+                        sh 'mvn test -P integration-tests,headless-testing'
+                    }
+                }
             }
         }
         stage('SonarQube Analysis') {
