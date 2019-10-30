@@ -74,7 +74,7 @@
                 </os>
             </activation>
             <properties>
-                <build.Tdeploy.package.type>deb</build.Tdeploy.package.type>
+                <build.deploy.package.type>deb</build.deploy.package.type>
                 <build.deploy.arguments>
                     --linux-package-name financer
                     --linux-package-deps fakeroot
