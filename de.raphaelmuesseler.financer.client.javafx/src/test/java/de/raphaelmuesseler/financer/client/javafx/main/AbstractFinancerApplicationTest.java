@@ -47,6 +47,8 @@ class AbstractFinancerApplicationTest extends ApplicationTest {
     static final int MEDIUM_SLEEP = 1000;
     private static final int LONG_SLEEP = 5000;
 
+    private static final int PORT = 3005;
+
     final String password = "password";
     final User user = new User(0,
             "max@mustermann.com",
@@ -79,8 +81,8 @@ class AbstractFinancerApplicationTest extends ApplicationTest {
 
     @BeforeAll
     static void setUp() throws IOException {
-        server = new Server(3505);
-        ServerRequest.setPort(3505);
+        server = new Server(PORT);
+        ServerRequest.setPort(PORT);
         new Thread(server::run).start();
 
         LocalStorageImpl.getInstance().deleteAllData();

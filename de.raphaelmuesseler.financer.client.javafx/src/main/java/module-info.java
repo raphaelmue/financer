@@ -11,4 +11,11 @@ module de.raphaelmuesseler.financer.client.javafx {
 
     opens de.raphaelmuesseler.financer.client.javafx.main to javafx.fxml, javafx.graphics;
     opens de.raphaelmuesseler.financer.client.javafx.login to javafx.fxml, javafx.graphics;
+    opens de.raphaelmuesseler.financer.client.javafx.components.charts to javafx.fxml;
+    opens de.raphaelmuesseler.financer.client.javafx.main.overview to javafx.fxml;
+    opens de.raphaelmuesseler.financer.client.javafx.main.profile to javafx.fxml;
+    opens de.raphaelmuesseler.financer.client.javafx.main.settings to javafx.fxml;
+    opens de.raphaelmuesseler.financer.client.javafx.main.statistics to javafx.fxml;
+    opens de.raphaelmuesseler.financer.client.javafx.main.transactions to javafx.fxml;
+
 }

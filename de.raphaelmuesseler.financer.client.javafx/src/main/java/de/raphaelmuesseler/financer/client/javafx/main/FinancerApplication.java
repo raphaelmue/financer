@@ -51,6 +51,8 @@ public class FinancerApplication extends Application {
 
     @Override
     public void start(Stage primaryStage) throws IOException {
+        this.logger.log(Level.INFO, "Financer Application has started.");
+
         User user = (User) LocalStorageImpl.getInstance().readObject("user");
         if (user == null) {
             initLoginStage();
@@ -68,8 +70,6 @@ public class FinancerApplication extends Application {
                     });
                 }
             });
-
-            this.logger.log(Level.INFO, "Financer Application has started.");
         }
     }
 

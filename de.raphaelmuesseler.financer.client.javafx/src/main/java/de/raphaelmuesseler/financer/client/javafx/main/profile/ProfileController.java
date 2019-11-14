@@ -140,7 +140,7 @@ public class ProfileController implements Initializable {
         });
         categoriesTreeView.setEditable(false);
         categoriesTreeView.setShowRoot(false);
-        categoriesTreeView.setRoot(treeStructure);
+        Platform.runLater(() -> categoriesTreeView.setRoot(treeStructure));
         expandTreeView(treeStructure);
         categoriesTreeView.setCellFactory(param -> getCellFactory());
         categoriesTreeView.setOnEditCommit(event -> {

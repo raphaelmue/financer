@@ -9,7 +9,12 @@ import org.hibernate.cfg.Configuration;
 import org.hibernate.query.Query;
 import org.hibernate.service.ServiceRegistry;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 public class HibernateUtil {
+
+    private static final Logger logger = Logger.getLogger("Financer Server");
 
     private static SessionFactory sessionFactory;
     private static DatabaseName databaseName = DatabaseName.DEV;
@@ -20,6 +25,7 @@ public class HibernateUtil {
 
     public static void setDatabaseName(DatabaseName databaseName) {
         HibernateUtil.databaseName = databaseName;
+        logger.log(Level.INFO, "Database was set to \"{0}\".", databaseName.getName());
     }
 
     private static SessionFactory buildSessionFactory() {
@@ -55,6 +61,7 @@ public class HibernateUtil {
     }
 
     public static void cleanDatabase() {
+        logger.log(Level.INFO, "Cleaning test database.");
         if (databaseName == DatabaseName.TEST) {
             Session session = getSessionFactory().openSession();
             Transaction transaction = session.beginTransaction();
