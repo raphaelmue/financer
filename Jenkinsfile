@@ -41,20 +41,17 @@ pipeline {
             }
         }
 
-        stage('Test') {
-            parallel {
-                stage('Java Unit Tests') {
-                    steps {
-                        sh 'mvn clean install -P unit-tests'
-                    }
-                }
-                stage('Java Integration Tests') {
-                    steps {
-                        sh 'mvn clean install -P integration-tests'
-                    }
-                }
+        stage('Java Unit Tests') {
+            steps {
+                sh 'mvn clean install -P unit-tests'
             }
         }
+        stage('Java Integration Tests') {
+            steps {
+                sh 'mvn clean install -P integration-tests'
+            }
+        }
+
         stage('SonarQube Analysis') {
             environment {
                 scannerHome = 'SonarQubeScanner'
