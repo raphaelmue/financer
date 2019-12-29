@@ -45,12 +45,12 @@ pipeline {
             parallel {
                 stage('Java Unit Tests') {
                     steps {
-                        sh 'mvn test -P unit-tests'
+                        sh 'mvn clean install -P unit-tests'
                     }
                 }
                 stage('Java Integration Tests') {
                     steps {
-                        sh 'mvn test -P integration-tests,headless-testing'
+                        sh 'mvn clean install -P integration-tests'
                     }
                 }
             }

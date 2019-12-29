@@ -2,9 +2,9 @@
 
 # Download SNAPSHOT version of jmod plugin
 mkdir -p ~/.m2/repository/org/apache/maven/plugins/maven-jmod-plugin/3.0.0-alpha-2-SNAPSHOT/
-cd ~/.m2/repository/org/apache/maven/plugins/maven-jmod-plugin/3.0.0-alpha-2-SNAPSHOT/ || exit
-wget https://builds.apache.org/job/maven-box/job/maven-jmod-plugin/job/master/lastSuccessfulBuild/artifact/org/apache/maven/plugins/maven-jmod-plugin/3.0.0-alpha-2-SNAPSHOT/maven-jmod-plugin-3.0.0-alpha-2-SNAPSHOT.pom
-wget -O maven-jmod-plugin-3.0.0-alpha-2-SNAPSHOT.jar https://repository.apache.org/content/repositories/snapshots/org/apache/maven/plugins/maven-jmod-plugin/3.0.0-alpha-2-SNAPSHOT/maven-jmod-plugin-3.0.0-alpha-2-20191003.201307-83.jar
+cp .build/3.0.0-alpha-2-SNAPSHOT.zip ~/.m2/repository/org/apache/maven/plugins/maven-jmod-plugin/
+cd ~/.m2/repository/org/apache/maven/plugins/maven-jmod-plugin/ || exit
+unzip -o 3.0.0-alpha-2-SNAPSHOT.zip
 
 # Migrate javax.persistence to JPMS
 mkdir -p ~/.m2/repository/javax/persistence/javax.persistence-api/2.2/
