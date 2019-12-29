@@ -18,4 +18,6 @@ module de.raphaelmuesseler.financer.client.javafx {
     opens de.raphaelmuesseler.financer.client.javafx.main.statistics to javafx.fxml;
     opens de.raphaelmuesseler.financer.client.javafx.main.transactions to javafx.fxml;
 
+    exports de.raphaelmuesseler.financer.client.javafx.components to javafx.fxml;
+
 }
