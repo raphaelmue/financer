@@ -20,8 +20,10 @@
             --add-reads de.raphaelmuesseler.financer.shared=org.hibernate.orm.core
             --add-reads de.raphaelmuesseler.financer.shared=ALL-UNNAMED
             --add-opens de.raphaelmuesseler.financer.shared/de.raphaelmuesseler.financer.shared.model.db=ALL-UNNAMED
-            --add-opens de.raphaelmuesseler.financer.client.javafx/de.raphaelmuesseler.financer.client.javafx.main=ALL-UNNAMED
+            --add-opens
+            de.raphaelmuesseler.financer.client.javafx/de.raphaelmuesseler.financer.client.javafx.main=ALL-UNNAMED
             --add-exports javafx.graphics/com.sun.javafx.application=ALL-UNNAMED
+            --add-exports javafx.graphics/com.sun.glass.ui=ALL-UNNAMED
             --add-exports javafx.graphics/com.sun.javafx.css=org.controlsfx.controls
             --add-exports javafx.graphics/com.sun.javafx.scene=com.jfoenix
             --add-exports javafx.graphics/com.sun.javafx.stage=com.jfoenix
@@ -86,7 +88,10 @@
             <id>headless-testing</id>
             <properties>
                 <project.testing.headless>
-                    -Dtestfx.robot=glass -Dglass.platform=Monocle -Dmonocle.platform=Headless -Dprism.order=sw
+                    -Dtestfx.robot=glass
+                    -Dglass.platform=Monocle
+                    -Dmonocle.platform=Headless
+                    -Dprism.order=sw
                 </project.testing.headless>
             </properties>
         </profile>
@@ -125,9 +130,9 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.0.0-M3</version>
+                <version>3.0.0-M4</version>
                 <configuration>
-                    <!--                    <redirectTestOutputToFile>true</redirectTestOutputToFile>-->
+                    <redirectTestOutputToFile>true</redirectTestOutputToFile>
                     <excludedGroups>skip</excludedGroups>
                     <groups>${project.testing.tags}</groups>
                     <argLine>${project.testing.headless} ${project.testing.arguments}</argLine>

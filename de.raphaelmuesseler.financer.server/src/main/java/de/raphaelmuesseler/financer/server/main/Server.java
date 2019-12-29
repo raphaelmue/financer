@@ -19,6 +19,7 @@ public class Server {
 
     private static final Logger logger = Logger.getLogger("Server");
     private ServerSocket serverSocket;
+    private boolean isRunning = false;
 
     public static void main(String[] args) {
         int port = -1;
@@ -66,6 +67,7 @@ public class Server {
      * Runs the server until the server application is stopped.
      */
     public void run() {
+        this.isRunning = true;
         while (true) {
             logger.log(Level.INFO, "Waiting for client ...");
             try {
@@ -83,6 +85,10 @@ public class Server {
                 logger.log(Level.SEVERE, e.getMessage(), e);
             }
         }
+    }
+
+    public boolean isRunning() {
+        return isRunning;
     }
 
     /**

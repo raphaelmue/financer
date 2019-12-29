@@ -229,7 +229,7 @@
         <dependency>
             <groupId>org.controlsfx</groupId>
             <artifactId>controlsfx</artifactId>
-            <version>11.0.0</version>
+            <version>11.0.0-RC2</version>
         </dependency>
         <dependency>
             <groupId>com.jfoenix</groupId>
@@ -252,7 +252,6 @@
             <groupId>org.testfx</groupId>
             <artifactId>openjfx-monocle</artifactId>
             <version>jdk-11+26</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.hibernate</groupId>

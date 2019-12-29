@@ -26,10 +26,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.*;
 import org.testfx.api.FxToolkit;
 import org.testfx.framework.junit5.ApplicationTest;
 
@@ -39,6 +36,8 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Predicate;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 class AbstractFinancerApplicationTest extends ApplicationTest {
     private static Server server;
@@ -47,7 +46,7 @@ class AbstractFinancerApplicationTest extends ApplicationTest {
     static final int MEDIUM_SLEEP = 1000;
     private static final int LONG_SLEEP = 5000;
 
-    private static final int PORT = 3005;
+    private static final int PORT = 3006;
 
     final String password = "password";
     final User user = new User(0,
@@ -79,11 +78,23 @@ class AbstractFinancerApplicationTest extends ApplicationTest {
 
     JavaFXFormatter formatter;
 
+    static {
+        System.setProperty("testfx.robot", "glass");
+        System.setProperty("glass.platform", "Monocle");
+        System.setProperty("monocle.platform", "Headless");
+    }
+
     @BeforeAll
-    static void setUp() throws IOException {
-        server = new Server(PORT);
-        ServerRequest.setPort(PORT);
-        new Thread(server::run).start();
+    static void setUp() {
+        new Thread(() -> {
+            try {
+                server = new Server(PORT);
+            } catch (IOException e) {
+                Assertions.fail("Test server could not be started!");
+            }
+            ServerRequest.setPort(PORT);
+            server.run();
+        }).start();
 
         LocalStorageImpl.getInstance().deleteAllData();
         HibernateUtil.setDatabaseName(DatabaseName.TEST);
