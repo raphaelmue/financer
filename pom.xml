@@ -134,7 +134,7 @@
                     <redirectTestOutputToFile>true</redirectTestOutputToFile>
                     <excludedGroups>skip</excludedGroups>
                     <groups>${project.testing.tags}</groups>
-                    <argLine>${project.testing.headless} ${project.testing.arguments}</argLine>
+                    <argLine>@{argLine} ${project.testing.headless} ${project.testing.arguments}</argLine>
                 </configuration>
             </plugin>
         </plugins>

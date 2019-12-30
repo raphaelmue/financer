@@ -43,12 +43,12 @@ pipeline {
 
         stage('Java Unit Tests') {
             steps {
-                sh 'mvn clean install -P unit-tests'
+                sh 'mvn test -P unit-tests'
             }
         }
         stage('Java Integration Tests') {
             steps {
-                sh 'mvn clean install -P integration-tests'
+                sh 'mvn test -P integration-tests'
             }
         }
 
