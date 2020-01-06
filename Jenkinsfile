@@ -54,7 +54,7 @@ pipeline {
 
         stage('SonarQube Analysis') {
             environment {
-                scannerHome = 'SonarQubeScanner'
+                scannerHome = '$JENKINS_HOME/SonarQubeScanner'
             }
             steps {
                 sh 'cp target/jacoco.exec de.raphaelmuesseler.financer.client/target/'
