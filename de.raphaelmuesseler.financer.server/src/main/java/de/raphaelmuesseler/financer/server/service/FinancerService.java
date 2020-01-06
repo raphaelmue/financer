@@ -111,7 +111,7 @@ public class FinancerService {
                 databaseToken.setUser(user);
                 databaseToken.setToken(this.tokenGenerator.nextString());
                 databaseToken.setIpAddress(ipAddress);
-                databaseToken.setSystem(system);
+                databaseToken.setOperatingSystem(system);
                 databaseToken.setExpireDate(LocalDate.now().plusMonths(1));
                 databaseToken.setIsMobile(isMobile);
                 databaseToken.setId((int) session.save(databaseToken));

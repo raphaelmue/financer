@@ -67,7 +67,7 @@ public class FinancerServiceTest {
         token = new TokenEntity();
         token.setToken("UrsVQcFmbje2lijl51mKMdAYCQciWoEmp07oLBrPoJwnEeREOBGVVsTAJeN3KiEY");
         token.setIpAddress("127.0.0.1");
-        token.setSystem("Windows 10");
+        token.setOperatingSystem("Windows 10");
         token.setExpireDate(LocalDate.now().plusMonths(1));
         token.setIsMobile(false);
         token.setUser(user);
@@ -187,7 +187,7 @@ public class FinancerServiceTest {
         final String tokenString = token.getToken();
 
         // test updating token
-        _user = service.generateToken(session, _user, token.getIpAddress(), token.getSystem(), token.getIsMobile());
+        _user = service.generateToken(session, _user, token.getIpAddress(), token.getOperatingSystem(), token.getIsMobile());
         Assertions.assertEquals(1, _user.getTokens().size());
         Assertions.assertNotNull(_user.getActiveToken());
         for (TokenEntity _token : _user.getTokens()) {
@@ -195,7 +195,7 @@ public class FinancerServiceTest {
         }
 
         // test inserting new token
-        _user = service.generateToken(session, _user, "123.456.789.0", token.getSystem(), token.getIsMobile());
+        _user = service.generateToken(session, _user, "123.456.789.0", token.getOperatingSystem(), token.getIsMobile());
         Assertions.assertEquals(2, _user.getTokens().size());
     }
 
@@ -219,7 +219,7 @@ public class FinancerServiceTest {
         parameters.put("email", user.getEmail());
         parameters.put("password", "password");
         parameters.put("ipAddress", token.getIpAddress());
-        parameters.put("system", token.getSystem());
+        parameters.put("system", token.getOperatingSystem());
         parameters.put("isMobile", token.getIsMobile());
         ConnectionResult<User> result = service.checkCredentials(logger, session, parameters);
         Assertions.assertNotNull(result.getResult());
@@ -247,7 +247,7 @@ public class FinancerServiceTest {
                 User.Gender.NOT_SPECIFIED);
         parameters.put("user", _user);
         parameters.put("ipAddress", token.getIpAddress());
-        parameters.put("system", token.getSystem());
+        parameters.put("system", token.getOperatingSystem());
         parameters.put("isMobile", token.getIsMobile());
         ConnectionResult<User> result = service.registerUser(logger, session, parameters);
         Assertions.assertNotNull(result.getResult());
@@ -279,7 +279,7 @@ public class FinancerServiceTest {
         parameters.put("email", user.getEmail());
         parameters.put("password", "newPassword");
         parameters.put("ipAddress", token.getIpAddress());
-        parameters.put("system", token.getSystem());
+        parameters.put("system", token.getOperatingSystem());
         parameters.put("isMobile", token.getIsMobile());
         ConnectionResult<User> result = service.checkCredentials(logger, session, parameters);
         Assertions.assertNotNull(result.getResult());

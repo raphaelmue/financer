@@ -6,7 +6,6 @@ MAINTAINER Raphael Müßeler <raphael@muesseler.de>
 WORKDIR /usr/src/app/
 
 # Copy source files
-COPY prepare-build.sh .
 COPY de.raphaelmuesseler.financer.client ./de.raphaelmuesseler.financer.client
 COPY de.raphaelmuesseler.financer.client.javafx ./de.raphaelmuesseler.financer.client.javafx
 COPY de.raphaelmuesseler.financer.server ./de.raphaelmuesseler.financer.server
@@ -15,7 +14,6 @@ COPY de.raphaelmuesseler.financer.util ./de.raphaelmuesseler.financer.util
 COPY pom.xml .
 
 # Compile source files
-RUN bash prepare-build.sh
 RUN mvn clean install -DskipTests -pl de.raphaelmuesseler.financer.server,de.raphaelmuesseler.financer.shared,de.raphaelmuesseler.financer.util
 
 EXPOSE 3500
