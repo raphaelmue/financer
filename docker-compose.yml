@@ -14,7 +14,7 @@ services:
             ENVIRONEMT: prod
 
     financer-db:
-        image: mysql:latest
+        image: mariadb:latest
         container_name: financer-db
         restart: always
         ports:
