@@ -52,9 +52,11 @@ pipeline {
                     }
                 }
                 stage('Android') {
-                    dir('android/de.raphaelmuesseler.financer.client.app') {
-                        sh 'chmod +x gradlew'
-                        sh './gradlew test'
+                    steps {
+                        dir('android/de.raphaelmuesseler.financer.client.app') {
+                            sh 'chmod +x gradlew'
+                            sh './gradlew test'
+                        }
                     }
                 }
             }
