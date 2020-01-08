@@ -29,21 +29,34 @@ pipeline {
                 stage('Android') {
                     steps {
                         dir('android/de.raphaelmuesseler.financer.client.app') {
-                            // sh 'gradlew assembleDebug'
+                            sh 'chmod +x gradlew'
+                            sh './gradlew clean'
+                            sh './gradlew assembleDebug'
+                            sh 'mv app/build/outputs/apk/debug/app-debug.apk app/build/outputs/apk/debug/financer-debug.apk'
                         }
                     }
-                    // post {
-                    //    always {
-                    //        archiveArtifacts artifacts: '**/*.apk', fingerprint: true
-                    //    }
-                    //}
+                    post {
+                        always {
+                            archiveArtifacts artifacts: '**/*.apk', fingerprint: true
+                        }
+                    }
                 }
             }
         }
 
-        stage('Java Unit Tests') {
-            steps {
-                sh 'mvn test -P unit-tests'
+        stage('Unit Tests') {
+            parallel {
+                stage('Java') {
+                    steps {
+                        sh 'mvn test -P unit-tests'
+                    }
+                }
+                stage('Android') {
+                    dir('android/de.raphaelmuesseler.financer.client.app') {
+                        sh 'chmod +x gradlew'
+                        sh './gradlew test'
+                    }
+                }
             }
         }
         stage('Java Integration Tests') {
@@ -71,7 +84,7 @@ pipeline {
                             "-Dsonar.pullrequest.key=${env.CHANGE_ID} " +
                             "-Dsonar.pullrequest.branch=${env.BRANCH_NAME} " +
                             "-Dsonar.pullrequest.provider=github " +
-                            "-Dsonar.pullrequest.github.repository=raphaelmue/financer"
+                            "-Dsonar.pullrequest.github.repository=raphaelmue/financer"git
                         } else {
                             if (env.BRANCH_NAME != 'master') {
                                 sh "${scannerHome}/bin/sonar-scanner " +
