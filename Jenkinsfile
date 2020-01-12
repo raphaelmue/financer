@@ -28,8 +28,10 @@ pipeline {
                 }
                 stage('Android') {
                     steps {
-                        dir('android/de.raphaelmuesseler.financer.client.app') {
+                        dir('.') {
                             sh 'mvn clean install -DskipTests'
+                        }
+                        dir('android/de.raphaelmuesseler.financer.client.app') {
                             sh 'chmod +x gradlew'
                             sh './gradlew clean'
                             sh './gradlew assembleDebug'
