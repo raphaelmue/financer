@@ -84,6 +84,8 @@ public class FinancerController implements Initializable, Application {
 
     private static Application instance;
 
+    private static Thread initializationThread = null;
+
     private static final Logger logger = Logger.getLogger("FinancerApplication");
 
 
@@ -258,7 +260,7 @@ public class FinancerController implements Initializable, Application {
             stackPane.getChildren().add(FXMLLoader.load(url, this.resourceBundle));
             stackPane.getChildren().add(loadingBox);
             this.contentPane.setCenter(stackPane);
-            BorderPane.setMargin(stackPane, new Insets(20));
+            BorderPane.setMargin(stackPane, new Insets(20, 0, 0, 20));
         } catch (IOException e) {
             logger.log(Level.SEVERE, e.getMessage(), e);
         }
@@ -335,5 +337,13 @@ public class FinancerController implements Initializable, Application {
         transition.play();
 
         this.isNavigationBarHidden = !this.isNavigationBarHidden;
+    }
+
+    public static Thread getInitializationThread() {
+        return initializationThread;
+    }
+
+    public static void setInitializationThread(Thread initializationThread) {
+        FinancerController.initializationThread = initializationThread;
     }
 }

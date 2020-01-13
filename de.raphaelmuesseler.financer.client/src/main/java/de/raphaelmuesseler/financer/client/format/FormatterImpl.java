@@ -8,6 +8,7 @@ import de.raphaelmuesseler.financer.shared.model.user.User;
 
 import java.net.ConnectException;
 import java.net.UnknownHostException;
+import java.text.DateFormatSymbols;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
@@ -16,7 +17,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public abstract class FormatterImpl implements Formatter {
-    private final User user;
+    protected final User user;
 
 
     public FormatterImpl(LocalStorage localStorage) {
@@ -76,6 +77,12 @@ public abstract class FormatterImpl implements Formatter {
         Locale locale = user == null ? Locale.ENGLISH : user.getSettings().getLanguage();
         DateTimeFormatter formatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(locale);
         return localDate.format(formatter);
+    }
+
+    @Override
+    public String formatMonth(LocalDate localDate) {
+        Locale locale = user == null ? Locale.ENGLISH : user.getSettings().getLanguage();
+        return new DateFormatSymbols(locale).getMonths()[localDate.getMonthValue() - 1] + " " + localDate.getYear();
     }
 
     @Override

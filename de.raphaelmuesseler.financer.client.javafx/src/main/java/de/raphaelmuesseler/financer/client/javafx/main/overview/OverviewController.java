@@ -1,7 +1,10 @@
 package de.raphaelmuesseler.financer.client.javafx.main.overview;
 
+import com.jfoenix.controls.JFXComboBox;
 import de.raphaelmuesseler.financer.client.connection.ServerRequestHandler;
 import de.raphaelmuesseler.financer.client.format.I18N;
+import de.raphaelmuesseler.financer.client.javafx.components.charts.DonutChart;
+import de.raphaelmuesseler.financer.client.javafx.components.charts.SmoothedChart;
 import de.raphaelmuesseler.financer.client.javafx.format.JavaFXFormatter;
 import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
 import de.raphaelmuesseler.financer.client.javafx.main.FinancerController;
@@ -13,20 +16,29 @@ import de.raphaelmuesseler.financer.shared.model.transactions.Transaction;
 import de.raphaelmuesseler.financer.shared.model.transactions.TransactionAmount;
 import de.raphaelmuesseler.financer.shared.model.transactions.VariableTransaction;
 import de.raphaelmuesseler.financer.shared.model.user.User;
+import de.raphaelmuesseler.financer.util.collections.TreeUtil;
 import de.raphaelmuesseler.financer.util.concurrency.FinancerExecutor;
+import de.raphaelmuesseler.financer.util.date.DateUtil;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.HPos;
+import javafx.scene.chart.PieChart;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
 
 import java.io.Serializable;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class OverviewController implements Initializable {
     @FXML
@@ -35,25 +47,108 @@ public class OverviewController implements Initializable {
     public GridPane balanceGridPane;
     @FXML
     public GridPane upcomingFixedTransactionGridPane;
+    @FXML
+    public Label balanceChangeLabel;
+    @FXML
+    public Label balanceLabel;
+    @FXML
+    public Label variableExpensesLabel;
+    @FXML
+    public Label variableExpensesChangeLabel;
+    @FXML
+    public Label numberOfTransactionsChangeLabel;
+    @FXML
+    public Label numberOfTransactionsLabel;
+    @FXML
+    public JFXComboBox<String> balanceChartMonthComboBox;
+    @FXML
+    public JFXComboBox<String> variableExpensesDistributionMonthComboBox;
+    @FXML
+    public DonutChart variableExpensesDistributionPieChart;
+    @FXML
+    public SmoothedChart<String, Number> balanceChart;
 
     private LocalStorageImpl localStorage = (LocalStorageImpl) LocalStorageImpl.getInstance();
     private JavaFXFormatter formatter = new JavaFXFormatter(localStorage);
     private BaseCategory categories;
     private User user;
 
+    private double balanceAmount;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        new Thread(() -> {
+        FinancerController.setInitializationThread(new Thread(() -> {
             FinancerController.getInstance().showLoadingBox();
             categories = (BaseCategory) this.localStorage.readObject("categories");
             user = (User) localStorage.readObject("user");
 
+            loadDetailedBalance();
             loadLatestTransactions();
-            loadBalance();
             loadUpcomingFixedTransactions();
 
+            loadBalanceWidget();
+            loadVariableExpensesWidget();
+            loadNumberOfTransactionsWidget();
+
+            initializeBalanceChart();
+            initializeDistributionChart();
+
             FinancerController.getInstance().hideLoadingBox();
-        }).start();
+        }));
+        FinancerController.getInitializationThread().start();
+    }
+
+    private void loadBalanceWidget() {
+        final double balanceRatio = this.balanceAmount / categories.getAmount(LocalDate.now().minusMonths(1)) * 100 - 100;
+        Platform.runLater(() -> {
+            this.balanceLabel.setText(formatter.formatCurrency(this.balanceAmount));
+            formatter.formatChangeLabel(this.balanceChangeLabel, balanceRatio);
+            if (!Double.isNaN(balanceRatio) && Double.isFinite(balanceRatio))
+                this.balanceChangeLabel.setText((balanceRatio < 0 ? "" : "+") + this.balanceChangeLabel.getText());
+        });
+    }
+
+    private void loadVariableExpensesWidget() {
+        final double variableExpensesAmount = this.categories.getCategoryTreeByCategoryClass(BaseCategory.CategoryClass.VARIABLE_EXPENSES).getAmount(LocalDate.now());
+        final double variableExpensesRatio = variableExpensesAmount / this.categories.getCategoryTreeByCategoryClass(
+                BaseCategory.CategoryClass.VARIABLE_EXPENSES).getAmount(LocalDate.now().minusMonths(1)) * 100 - 100;
+        Platform.runLater(() -> {
+            this.variableExpensesLabel.setText(formatter.formatCurrency(variableExpensesAmount));
+            formatter.formatChangeLabel(this.variableExpensesChangeLabel, variableExpensesRatio);
+            if (!Double.isNaN(variableExpensesRatio) && Double.isFinite(variableExpensesRatio))
+                this.variableExpensesChangeLabel.setText((variableExpensesRatio < 0 ? "" : "+") + this.variableExpensesChangeLabel.getText());
+        });
+    }
+
+    private void loadNumberOfTransactionsWidget() {
+        AtomicInteger numberOfTransactions = new AtomicInteger();
+        TreeUtil.traverse(categories.getCategoryTreeByCategoryClass(BaseCategory.CategoryClass.VARIABLE_EXPENSES),
+                object -> numberOfTransactions.addAndGet((int) ((CategoryTree) object).getTransactions().stream()
+                        .filter(transaction -> DateUtil.checkIfMonthsAreEqual(((VariableTransaction) transaction).getValueDate(), LocalDate.now()))
+                        .count()));
+        TreeUtil.traverse(categories.getCategoryTreeByCategoryClass(BaseCategory.CategoryClass.VARIABLE_REVENUE),
+                object -> numberOfTransactions.addAndGet((int) ((CategoryTree) object).getTransactions().stream()
+                        .filter(transaction -> DateUtil.checkIfMonthsAreEqual(((VariableTransaction) transaction).getValueDate(), LocalDate.now()))
+                        .count()));
+
+        AtomicInteger numberOfTransactionsLastMonth = new AtomicInteger();
+        TreeUtil.traverse(categories.getCategoryTreeByCategoryClass(BaseCategory.CategoryClass.VARIABLE_EXPENSES),
+                object -> numberOfTransactionsLastMonth.addAndGet((int) ((CategoryTree) object).getTransactions().stream()
+                        .filter(transaction -> DateUtil.checkIfMonthsAreEqual(((VariableTransaction) transaction).getValueDate(), LocalDate.now().minusMonths(1)))
+                        .count()));
+        TreeUtil.traverse(categories.getCategoryTreeByCategoryClass(BaseCategory.CategoryClass.VARIABLE_REVENUE),
+                object -> numberOfTransactionsLastMonth.addAndGet((int) ((CategoryTree) object).getTransactions().stream()
+                        .filter(transaction -> DateUtil.checkIfMonthsAreEqual(((VariableTransaction) transaction).getValueDate(), LocalDate.now().minusMonths(1)))
+                        .count()));
+
+        double numberOfTransactionsRatio = (double) numberOfTransactions.get() / (double) numberOfTransactionsLastMonth.get() * 100 - 100;
+        Platform.runLater(() -> {
+            this.numberOfTransactionsLabel.setText(Integer.toString(numberOfTransactions.get()));
+            formatter.formatChangeLabel(this.numberOfTransactionsChangeLabel, numberOfTransactionsRatio);
+            if (!Double.isNaN(numberOfTransactionsRatio) && Double.isFinite(numberOfTransactionsRatio))
+                this.numberOfTransactionsChangeLabel.setText((numberOfTransactionsRatio < 0 ? "" : "+")
+                        + this.numberOfTransactionsChangeLabel.getText());
+        });
     }
 
     private void loadLatestTransactions() {
@@ -71,7 +166,7 @@ public class OverviewController implements Initializable {
             int counter = 0;
             for (VariableTransaction transaction : transactions) {
                 // LAST TRANSACTIONS
-                if (counter >= 5) {
+                if (counter >= 7) {
                     break;
                 }
                 final int _counter = counter;
@@ -90,8 +185,8 @@ public class OverviewController implements Initializable {
         }
     }
 
-    private void loadBalance() {
-        double balanceAmount = 0;
+    private void loadDetailedBalance() {
+        balanceAmount = 0;
         int counter = 0;
         for (CategoryTree root : categories.getChildren()) {
             final int _counter = counter;
@@ -172,5 +267,67 @@ public class OverviewController implements Initializable {
                 loadUpcomingFixedTransactions();
             }));
         });
+    }
+
+    private void initializeBalanceChart() {
+        balanceChart.setChartType(SmoothedChart.ChartType.AREA);
+        balanceChart.setAnimated(false);
+        this.balanceChartMonthComboBox.getItems().add(I18N.get("lastMonths", 3));
+        this.balanceChartMonthComboBox.getItems().add(I18N.get("lastMonths", 6));
+        this.balanceChartMonthComboBox.getItems().add(I18N.get("lastMonths", 12));
+        this.balanceChartMonthComboBox.valueProperty().addListener(
+                (options, oldValue, newValue) -> loadBalanceChartData());
+        Platform.runLater(() -> this.balanceChartMonthComboBox.getSelectionModel().select(0));
+    }
+
+    private void loadBalanceChartData() {
+        balanceChart.getData().clear();
+        XYChart.Series<String, Number> data = new XYChart.Series<>();
+        data.setName(I18N.get("balance"));
+        int numberOfMonths = (int) (1.5 * Math.pow(this.balanceChartMonthComboBox.getSelectionModel().getSelectedIndex(), 2)
+                + 1.5 * this.balanceChartMonthComboBox.getSelectionModel().getSelectedIndex() + 3);
+        for (int i = numberOfMonths - 1; i >= 0; i--) {
+            LocalDate date = LocalDate.now().minusMonths(i);
+            XYChart.Data<String, Number> dataSet = new XYChart.Data<>(formatter.formatMonth(date), categories.getAmount(date));
+            Platform.runLater(() -> Tooltip.install(dataSet.getNode(),
+                    new Tooltip(dataSet.getXValue() + "\n" +
+                            I18N.get("amount") + ": \t" + formatter.formatCurrency((Double) dataSet.getYValue()))));
+            data.getData().add(dataSet);
+        }
+
+        balanceChart.getData().add(data);
+    }
+
+    private void initializeDistributionChart() {
+        this.variableExpensesDistributionMonthComboBox.getItems().add(I18N.get("thisMonth"));
+        this.variableExpensesDistributionMonthComboBox.getItems().add(I18N.get("lastMonths", 3));
+        this.variableExpensesDistributionMonthComboBox.getItems().add(I18N.get("lastMonths", 6));
+        this.variableExpensesDistributionMonthComboBox.getItems().add(I18N.get("lastMonths", 12));
+        this.variableExpensesDistributionMonthComboBox.valueProperty().addListener(
+                (options, oldValue, newValue) -> loadDistributionChartData());
+        Platform.runLater(() -> this.variableExpensesDistributionMonthComboBox.getSelectionModel().select(0));
+    }
+
+    private void loadDistributionChartData() {
+        ObservableList<PieChart.Data> variableExpensesData = FXCollections.observableArrayList();
+        for (CategoryTree categoryTree : this.categories.getCategoryTreeByCategoryClass(
+                BaseCategory.CategoryClass.VARIABLE_EXPENSES).getChildren()) {
+            double amount;
+            if (this.variableExpensesDistributionMonthComboBox.getSelectionModel().getSelectedIndex() == 0) {
+                amount = categoryTree.getAmount(LocalDate.now());
+            } else {
+                int numberOfMonths = (int) (1.5 * Math.pow(this.variableExpensesDistributionMonthComboBox.getSelectionModel().getSelectedIndex(), 2)
+                        + 1.5 * this.balanceChartMonthComboBox.getSelectionModel().getSelectedIndex() + 3);
+                amount = categoryTree.getAmount(LocalDate.now().minusMonths(numberOfMonths), LocalDate.now());
+            }
+            if (amount != 0) {
+                PieChart.Data data = new PieChart.Data(categoryTree.getValue().getName(), Math.abs(amount));
+                Platform.runLater(() -> Tooltip.install(data.getNode(),
+                        new Tooltip(formatter.formatCategoryName(categoryTree) + "\n" +
+                                I18N.get("amount") + ": \t" + formatter.formatCurrency(data.getPieValue()))));
+                variableExpensesData.add(data);
+            }
+        }
+        this.variableExpensesDistributionPieChart.setData(variableExpensesData);
     }
 }

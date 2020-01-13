@@ -6,9 +6,12 @@
     <session-factory>
         <!-- Database connection properties - Driver, URL, user, password -->
         <property name="hibernate.connection.driver_class">com.mysql.cj.jdbc.Driver</property>
-        <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/financer_dev?autoReconnect=true&amp;useTimezone=true&amp;useUnicode=true&amp;useLegacyDatetimeCode=false&amp;serverTimezone=Europe/Berlin</property>
+        <property name="hibernate.connection.url">jdbc:db_engine_placeholder://db_host_placeholder:3306/db_name_placeholder?autoReconnect=true&amp;useTimezone=true&amp;useUnicode=true&amp;useLegacyDatetimeCode=false&amp;serverTimezone=Europe/Berlin</property>
         <property name="hibernate.connection.username">root</property>
-        <property name="hibernate.connection.password"/>
+        <property name="hibernate.connection.password">password</property>
+
+        <!-- Update database scheme, or create if necessary -->
+        <property name="hibernate.hbm2ddl.auto">update</property>
 
         <!-- Connection Pool Size -->
         <property name="hibernate.connection.pool_size">4</property>
@@ -17,11 +20,17 @@
         <property name="hibernate.current_session_context_class">managed</property>
 
         <!-- Outputs the SQL queries, should be disabled in Production -->
-        <property name="hibernate.show_sql">false</property>
+        <property name="hibernate.show_sql">true</property>
 
-        <!-- Dialect is required to let Hibernate know the Database Type, MySQL, Oracle etc
-            Hibernate 4 automatically figure out Dialect from Database Connection Metadata -->
-        <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
+        <!-- C3P0 Connector in order to prevent connection loss -->
+        <property name="connection.provider_class">org.hibernate.c3p0.internal.C3P0ConnectionProvider</property>
+        <property name="hibernate.c3p0.acquire_increment">1</property>
+        <property name="hibernate.c3p0.idle_test_period">300</property>
+        <property name="hibernate.c3p0.timeout">120</property>
+        <property name="hibernate.c3p0.max_size">25</property>
+        <property name="hibernate.c3p0.min_size">1</property>
+        <property name="hibernate.c3p0.max_statement">0</property>
+        <property name="hibernate.c3p0.preferredTestQuery">select 1;</property>
 
         <!-- mapping file, we can use Bean annotations too -->
         <mapping class="de.raphaelmuesseler.financer.shared.model.db.CategoryEntity"/>

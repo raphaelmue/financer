@@ -1,29 +1,99 @@
-.default-color0.chart-pie, .default-color0.chart-line-symbol {
-    -fx-pie-color: #FFA726;
+.default-color0.chart-pie, .default-color0.series0.chart-series-area-line {
+    -fx-pie-color: -fx-color-primary;
+    -fx-stroke: -fx-color-primary;
+}
+
+.default-color0.chart-area-symbol {
+    -fx-background-color: -fx-color-primary;
+}
+
+.default-color0.series0.chart-series-area-fill {
+    -fx-fill: -fx-color-primary;
+    -fx-opacity: 0.3;
 }
 
 .default-color1.chart-pie, .default-color1.chart-line-symbol {
-    -fx-pie-color: #E91E63;
+    -fx-pie-color: -fx-color-secondary;
+    -fx-fill: -fx-color-secondary;
+}
+
+.default-color1.chart-area-symbol {
+    -fx-background-color: -fx-color-secondary;
+}
+
+.default-color1.series1.chart-series-area-fill {
+    -fx-fill: -fx-color-secondary;
+    -fx-opacity: 0.3;
 }
 
 .default-color2.chart-pie, .default-color2.chart-line-symbol {
-    -fx-pie-color: #29B6F6;
+    -fx-pie-color: -fx-color-success;
+    -fx-fill: -fx-color-success;
+}
+
+.default-color2.chart-area-symbol {
+    -fx-background-color: -fx-color-success;
+}
+
+.default-color2.series2.chart-series-area-fill {
+    -fx-fill: -fx-color-success;
+    -fx-opacity: 0.3;
 }
 
 .default-color3.chart-pie, .default-color3.chart-line-symbol {
-    -fx-pie-color: #00b557;
+    -fx-pie-color: -fx-color-warning;
+    -fx-fill: -fx-color-warning;
+}
+
+.default-color3.chart-area-symbol {
+    -fx-background-color: -fx-color-warning;
+}
+
+.default-color3.series3.chart-series-area-fill {
+    -fx-fill: -fx-color-warning;
+    -fx-opacity: 0.3;
 }
 
 .default-color4.chart-pie, .default-color4.chart-line-symbol {
-    -fx-pie-color: #AB47BC;
+    -fx-pie-color: -fx-color-error;
+    -fx-fill: -fx-color-error;
+}
+
+.default-color4.chart-area-symbol {
+    -fx-background-color: -fx-color-error;
+}
+
+.default-color4.series4.chart-series-area-fill {
+    -fx-fill: -fx-color-error;
+    -fx-opacity: 0.3;
 }
 
 .default-color5.chart-pie, .default-color5.chart-line-symbol {
-    -fx-pie-color: #78909C;
+    -fx-pie-color: -fx-color-dark-gray;
+    -fx-fill: -fx-color-dark-gray;
+}
+
+.default-color5.chart-area-symbol {
+    -fx-background-color: -fx-color-dark-gray;
+}
+
+.default-color5.series5.chart-series-area-fill {
+    -fx-fill: -fx-color-dark-gray;
+    -fx-opacity: 0.3;
 }
 
 .default-color6.chart-pie, .default-color6.chart-line-symbol {
     -fx-pie-color: #795548;
+    -fx-fill: #795548;
+}
+
+.default-color6.chart-area-symbol {
+    -fx-background-color: #795548;
+}
+
+.default-color6.series6.chart-series-area-fill {
+    -fx-fill: #795548;
+    -fx-opacity: 0.3;
 }
 
 .chart-legend {
@@ -49,4 +119,29 @@
 .chart-series-line {
     -fx-stroke-width: 2px;
     -fx-effect: null;
+}
+
+.axis {
+    -fx-font-family: "Roboto Light";
+    -fx-minor-tick-length: 0;
+}
+
+.chart-vertical-grid-lines {
+    -fx-stroke: transparent;
+}
+
+.chart-horizontal-grid-lines {
+    -fx-stroke-dash-array: 3px;
+}
+
+.chart-area-symbol {
+    -fx-background-radius: 100%;
+    -fx-padding: 4px;
+    -fx-border-width: 0;
+    -fx-border-color: -fx-color-light-gray;
+    -fx-border-radius: 100%;
+}
+
+.chart-area-symbol:hover {
+    -fx-border-width: 6px;
 }

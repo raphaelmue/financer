@@ -138,6 +138,7 @@ public class LocalStorageImpl implements LocalStorage {
                 return false;
             }
         }
+        logger.log(Level.INFO, "Deleted all local data successfully.");
         return true;
     }
 }

@@ -166,5 +166,10 @@ public class LoginActivity extends AppCompatActivity implements Application {
     public void showToast(MessageType messageType, String s) {
         Toast.makeText(this, s, Toast.LENGTH_SHORT).show();
     }
+
+    public void showErrorDialog(Exception exception) {
+        // TODO
+    }
+
 }
 

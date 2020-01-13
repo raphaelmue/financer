@@ -6,7 +6,6 @@ import de.raphaelmuesseler.financer.util.collections.Action;
 import de.raphaelmuesseler.financer.util.collections.Tree;
 import de.raphaelmuesseler.financer.util.collections.TreeUtil;
 
-import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.*;
 

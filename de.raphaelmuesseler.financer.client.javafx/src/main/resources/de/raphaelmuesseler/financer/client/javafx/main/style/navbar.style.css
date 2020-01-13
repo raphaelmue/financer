@@ -34,7 +34,6 @@
 .nav-btn.selected {
     -fx-background-color: -fx-color-primary-light-transparent;
     -fx-text-fill: -fx-color-primary-dark;
-    -fx-graphic: -fx-color-primary-dark;
 }
 
 .nav-btn:hover {

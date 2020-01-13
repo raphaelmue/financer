@@ -27,9 +27,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldTreeCell;
 import javafx.util.StringConverter;
-import org.controlsfx.glyphfont.FontAwesome;
-import org.controlsfx.glyphfont.GlyphFont;
-import org.controlsfx.glyphfont.GlyphFontRegistry;
 
 import java.io.Serializable;
 import java.net.URL;
@@ -72,50 +69,44 @@ public class ProfileController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        this.user = (User) this.localStorage.readObject("user");
-        if (user != null) {
-            this.fullNameLabel.setText(user.getFullName());
-            this.emailLabel.setText(user.getEmail());
-            this.birthDateLabel.setText(new JavaFXFormatter(localStorage).formatDate(this.user.getBirthDate()));
-            this.genderLabel.setText(I18N.get(this.user.getGender().getName()));
-        }
+        FinancerController.setInitializationThread(new Thread(() -> {
+            FinancerController.getInstance().showLoadingBox();
+            this.user = (User) this.localStorage.readObject("user");
+            if (user != null) {
+                Platform.runLater(this::initializePersonalInformation);
+            }
 
-        this.changePasswordLink.setOnAction(event -> {
-            ChangePasswordDialog dialog = new ChangePasswordDialog(user);
-            dialog.setOnConfirm(user -> {
+            this.changePasswordLink.setOnAction(event -> {
+                ChangePasswordDialog dialog = new ChangePasswordDialog(user);
+                dialog.setOnConfirm(user -> {
 
-                Map<String, Serializable> parameters = new HashMap<>();
-                parameters.put("user", user);
+                    Map<String, Serializable> parameters = new HashMap<>();
+                    parameters.put("user", user);
 
-                FinancerExecutor.getExecutor().execute(new ServerRequestHandler(user, "changePassword", parameters,
-                        new AsyncConnectionCall() {
-                            @Override
-                            public void onSuccess(ConnectionResult result) {
-                                FinancerController.getInstance().showToast(Application.MessageType.SUCCESS, I18N.get("succChangedPassword"));
-                            }
+                    FinancerExecutor.getExecutor().execute(new ServerRequestHandler(user, "changePassword", parameters,
+                            new AsyncConnectionCall() {
+                                @Override
+                                public void onSuccess(ConnectionResult result) {
+                                    FinancerController.getInstance().showToast(Application.MessageType.SUCCESS, I18N.get("succChangedPassword"));
+                                }
 
-                            @Override
-                            public void onAfter() {
-                                localStorage.writeObject("user", user);
-                            }
-                        }));
+                                @Override
+                                public void onAfter() {
+                                    localStorage.writeObject("user", user);
+                                }
+                            }));
+                });
             });
-        });
 
-        GlyphFont fontAwesome = GlyphFontRegistry.font("FontAwesome");
-        this.refreshCategoriesBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.REFRESH));
-        this.refreshCategoriesBtn.setGraphicTextGap(8);
-        this.newCategoryBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.PLUS));
-        this.newCategoryBtn.setGraphicTextGap(8);
-        this.newCategoryBtn.setDisable(true);
-        this.editCategoryBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.EDIT));
-        this.editCategoryBtn.setGraphicTextGap(8);
-        this.editCategoryBtn.setDisable(true);
-        this.deleteCategoryBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.TRASH));
-        this.deleteCategoryBtn.setGraphicTextGap(8);
-        this.deleteCategoryBtn.setDisable(true);
+            this.newCategoryBtn.setDisable(true);
+            this.editCategoryBtn.setDisable(true);
+            this.deleteCategoryBtn.setDisable(true);
 
-        this.handleRefreshCategories();
+            categories = (BaseCategory) localStorage.readObject("categories");
+            this.loadCategoryData();
+            FinancerController.getInstance().hideLoadingBox();
+        }));
+        FinancerController.getInitializationThread().start();
     }
 
     public void handleRefreshCategories() {
@@ -132,30 +123,39 @@ public class ProfileController implements Initializable {
 
             @Override
             public void onAfter() {
-                Platform.runLater(() -> {
-                    createTreeView();
-                    categoriesTreeView.getSelectionModel().selectedItemProperty().addListener((observableValue, oldValue, newValue) -> {
-                        if (newValue != null) {
-                            newCategoryBtn.setDisable(false);
-
-                            editCategoryBtn.setDisable(newValue.getValue().isRoot());
-                            deleteCategoryBtn.setDisable(newValue.getValue().isRoot());
-                        }
-                    });
-                    categoriesTreeView.setEditable(false);
-                    categoriesTreeView.setShowRoot(false);
-                    categoriesTreeView.setRoot(treeStructure);
-                    expandTreeView(treeStructure);
-                    categoriesTreeView.setCellFactory(param -> getCellFactory());
-                    categoriesTreeView.setOnEditCommit(event -> {
-                        event.getNewValue().getValue().setId(event.getOldValue().getValue().getId());
-                        event.getNewValue().getValue().setParentId(event.getOldValue().getValue().getParentId());
-                        event.getNewValue().getValue().setCategoryClass(event.getOldValue().getValue().getCategoryClass());
-                        handleUpdateCategory(event.getNewValue());
-                    });
-                });
+                Platform.runLater(() -> loadCategoryData());
             }
         });
+    }
+
+    private void loadCategoryData() {
+        createTreeView();
+        categoriesTreeView.getSelectionModel().selectedItemProperty().addListener((observableValue, oldValue, newValue) -> {
+            if (newValue != null) {
+                newCategoryBtn.setDisable(false);
+
+                editCategoryBtn.setDisable(newValue.getValue().isRoot());
+                deleteCategoryBtn.setDisable(newValue.getValue().isRoot());
+            }
+        });
+        categoriesTreeView.setEditable(false);
+        categoriesTreeView.setShowRoot(false);
+        Platform.runLater(() -> categoriesTreeView.setRoot(treeStructure));
+        expandTreeView(treeStructure);
+        categoriesTreeView.setCellFactory(param -> getCellFactory());
+        categoriesTreeView.setOnEditCommit(event -> {
+            event.getNewValue().getValue().setId(event.getOldValue().getValue().getId());
+            event.getNewValue().getValue().setParentId(event.getOldValue().getValue().getParentId());
+            event.getNewValue().getValue().setCategoryClass(event.getOldValue().getValue().getCategoryClass());
+            handleUpdateCategory(event.getNewValue());
+        });
+    }
+
+    private void initializePersonalInformation() {
+        this.fullNameLabel.setText(user.getFullName());
+        this.emailLabel.setText(user.getEmail());
+        this.birthDateLabel.setText(new JavaFXFormatter(localStorage).formatDate(this.user.getBirthDate()));
+        this.genderLabel.setText(I18N.get(this.user.getGender().getName()));
     }
 
     public void handleNewCategory() {
@@ -174,7 +174,7 @@ public class ProfileController implements Initializable {
                 categoryTree.getValue().setUser(user.toEntity());
                 parameters.put("category", categoryTree.getValue());
 
-                        FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "addCategory", parameters, result -> {
+                FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "addCategory", parameters, result -> {
                     categoryTree.getValue().setId(((Category) result.getResult()).getId());
                     categoryTree.getValue().setPrefix(categoryTree.getParent().getValue().getPrefix() + (categoryTree.getParent().getChildren().size() + 1) + ".");
                     if (categoriesTreeView.getSelectionModel().getSelectedItem().getValue().isRoot()) {

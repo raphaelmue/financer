@@ -209,4 +209,8 @@ public class FinancerActivity extends AppCompatActivity
     public void showToast(MessageType messageType, String s) {
 
     }
+
+    public void showErrorDialog(Exception exception) {
+        // TODO
+    }
 }
