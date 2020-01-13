@@ -1,0 +1,18 @@
+{
+    "welcome": "Willkommen",
+    "home": "Start",
+    "getStarted": "Get Started",
+    "about": "Über uns",
+    "download": "Download",
+    "manageYourFinance": "Verwalte deine Finanzen noch besser!",
+    "shortDescription": "Financer ermöglicht es Ihnen, Ihre persönlichen Einnahmen und Ausgaben zu verwalten. Es hilft Ihnen, Ihre Ausgaben zu analysieren, um Ihren persönlichen Haushalt zu verbessern. Also fang' jetzt damit an!",
+    "openSource": "Open Source",
+    "openSourceDescription": "Financer ist eine Open-Source-Anwendung. Dadurch wird ist es noch sicherer und - was noch wichtiger ist - kostenlos. Sie können unser Git Repository hier finden:",
+    "productivity": " Produktivität",
+    "productivityDescription": "Financer ist nicht nur einfach zu bedienen, sondern erhöht auch Ihre Produktivität. Zum Beispiel, wenn Sie Ihre Steuererklärung erstellen müssen, können Sie leicht auf alle Ihre Transaktionen und Ausgaben zugreifen.",
+    "statistics": " Statistiken",
+    "statisticsDescription": "Du kannst alle deine persönlichen Ausgaben leicht analysieren. So erhalten Sie einen Überblick über Ihren aktuellen Finanzstatus und Ihr Ausgabenprofil.",
+    "project": "Projekt",
+    "contactInformation": "Kontakt Informationen",
+    "quickLinks": "Quick Links"
+}

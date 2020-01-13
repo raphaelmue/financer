@@ -46,6 +46,13 @@ pipeline {
                         }
                     }
                 }
+                stage('NodeJS') {
+                    steps {
+                        dir('web') {
+                            sh 'yarn install'
+                        }
+                    }
+                }
             }
         }
 
