@@ -159,7 +159,7 @@ public class SettingsController implements Initializable {
                 BorderPane borderPane = new BorderPane();
 
                 VBox left = new VBox();
-                Label systemLabel = new Label(item.getSystem());
+                Label systemLabel = new Label(item.getOperatingSystem());
                 GlyphFont fontAwesome = GlyphFontRegistry.font("FontAwesome");
                 systemLabel.setGraphic(fontAwesome.create(item.getIsMobile() ? FontAwesome.Glyph.MOBILE : FontAwesome.Glyph.DESKTOP));
                 systemLabel.getStyleClass().add("list-cell-title");

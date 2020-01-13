@@ -1,0 +1,25 @@
+version: "3"
+
+services:
+    server:
+        build: .
+        container_name: financer-server
+        restart: always
+        ports:
+            - 3500:3500
+        links:
+            - financer-db
+        environment:
+            PORT: 3000
+            ENVIRONEMT: prod
+
+    financer-db:
+        image: mariadb:latest
+        container_name: financer-db
+        restart: always
+        ports:
+            - 3306:3306
+        environment:
+            MYSQL_DATABASE: financer_prod
+            MYSQL_ROOT_PASSWORD: password
+            MYSQL_PASSWORD: password

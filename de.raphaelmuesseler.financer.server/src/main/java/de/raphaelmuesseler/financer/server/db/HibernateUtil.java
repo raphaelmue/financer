@@ -9,51 +9,34 @@ import org.hibernate.cfg.Configuration;
 import org.hibernate.query.Query;
 import org.hibernate.service.ServiceRegistry;
 
+import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 public class HibernateUtil {
-    private enum Table {
-        FIXED_TRANSACTIONS("fixed_transactions"),
-        FIXED_TRANSACTIONS_AMOUNTS("fixed_transactions_amounts"),
-        TRANSACTIONS("transactions"),
-        TRANSACTIONS_ATTACHMENTS("transactions_attachments"),
-        USERS("users"),
-        USERS_CATEGORIES("users_categories"),
-        USERS_TOKENS("users_tokens"),
-        USERS_SETTINGS("users_settings");
 
-        private String tableName;
+    private static final String DB_NAME_PLACEHOLDER = "db_name_placeholder";
+    private static final String DB_HOST_PLACEHOLDER = "db_host_placeholder";
+    private static final String DB_ENGINE_PLACEHOLDER = "db_engine_placeholder";
 
-        Table(String tableName) {
-            this.tableName = tableName;
-        }
+    private static final Logger logger = Logger.getLogger("Financer Server");
 
-        public String getTableName() {
-            return tableName;
-        }
-
-        @Override
-        public String toString() {
-            return this.getTableName();
-        }
-    }
-
-    //XML based configuration
     private static SessionFactory sessionFactory;
-    private static boolean isHostLocal = false;
-    private static DatabaseName databaseName = DatabaseName.DEV;
+    private static Properties databaseProperties;
 
-    public static void setDatabaseName(DatabaseName databaseName) {
-        HibernateUtil.databaseName = databaseName;
+    private HibernateUtil() {
+
     }
 
-    public static void setIsHostLocal(boolean isHostLocal) {
-        HibernateUtil.isHostLocal = isHostLocal;
+    public static void setDatabaseProperties(Properties databaseProperties) {
+        HibernateUtil.databaseProperties = databaseProperties;
     }
 
     private static SessionFactory buildSessionFactory() {
         try {
             // Create the SessionFactory from hibernate.cfg.xml
             Configuration configuration = new Configuration();
-            configuration.configure("/de/raphaelmuesseler/financer/server/db/config/hibernate" + (isHostLocal ? ".local" : "") + ".cfg.xml")
+            configuration.configure(HibernateUtil.class.getResource("config/hibernate.cfg.xml"))
                     .addAnnotatedClass(AttachmentEntity.class)
                     .addAnnotatedClass(CategoryEntity.class)
                     .addAnnotatedClass(ContentAttachmentEntity.class)
@@ -63,8 +46,14 @@ public class HibernateUtil {
                     .addAnnotatedClass(TokenEntity.class)
                     .addAnnotatedClass(UserEntity.class)
                     .addAnnotatedClass(VariableTransactionEntity.class);
+
             String url = configuration.getProperty("hibernate.connection.url");
-            configuration.setProperty("hibernate.connection.url", url.replace(DatabaseName.DEV.getName(), databaseName.getName()));
+            configuration.setProperty("hibernate.connection.url", url
+                    .replace(DB_ENGINE_PLACEHOLDER, databaseProperties.getProperty("financer.database.engine"))
+                    .replace(DB_HOST_PLACEHOLDER, databaseProperties.getProperty("financer.database.host"))
+                    .replace(DB_NAME_PLACEHOLDER, databaseProperties.getProperty("financer.database.name")));
+            configuration.setProperty("hibernate.connection.username", databaseProperties.getProperty("financer.database.user"));
+            configuration.setProperty("hibernate.connection.password", databaseProperties.getProperty("financer.database.password"));
 
             ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder().applySettings(configuration.getProperties()).build();
 
@@ -82,18 +71,16 @@ public class HibernateUtil {
     }
 
     public static void cleanDatabase() {
-        if (databaseName == DatabaseName.TEST) {
+        logger.log(Level.INFO, "Cleaning test database.");
+        if (databaseProperties.getProperty("financer.database.name").equals(DatabaseName.TEST.getName())) {
             Session session = getSessionFactory().openSession();
             Transaction transaction = session.beginTransaction();
-            for (Table table : Table.values()) {
-                String hql = String.format("truncate table %s", table.getTableName());
-                Query query = session.createSQLQuery(hql);
-                query.executeUpdate();
-            }
+            Query query = session.createSQLQuery("truncate schema PUBLIC and commit");
+            query.executeUpdate();
             transaction.commit();
             session.close();
         } else {
-            throw new IllegalArgumentException("It is only allowed to clean the test database");
+            throw new IllegalArgumentException("It is only allowed to clean the test database.");
         }
     }
 }

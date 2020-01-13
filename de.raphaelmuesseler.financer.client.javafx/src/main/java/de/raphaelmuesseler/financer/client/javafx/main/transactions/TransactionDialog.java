@@ -34,7 +34,7 @@ import org.controlsfx.glyphfont.FontAwesome;
 import org.controlsfx.glyphfont.GlyphFont;
 import org.controlsfx.glyphfont.GlyphFontRegistry;
 
-import java.awt.*;
+import java.awt.Desktop;
 import java.io.*;
 import java.nio.file.Files;
 import java.time.LocalDate;

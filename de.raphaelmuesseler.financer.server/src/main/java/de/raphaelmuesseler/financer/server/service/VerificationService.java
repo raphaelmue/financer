@@ -7,10 +7,10 @@ import org.apache.commons.mail.Email;
 import org.apache.commons.mail.EmailException;
 import org.apache.commons.mail.HtmlEmail;
 
-import javax.validation.constraints.NotNull;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -23,15 +23,11 @@ public class VerificationService {
 
     private final RandomString tokenGenerator = new RandomString(128);
 
-
-    public VerificationService(@NotNull String host, @NotNull int port, @NotNull String email, @NotNull String password) {
-        this.host = host;
-        if (port <= 0) {
-            throw new IllegalArgumentException("Invalid port: \"" + port + "\"");
-        }
-        this.port = port;
-        this.email = email;
-        this.password = password;
+    public VerificationService(Properties properties) {
+        this.host = properties.getProperty("financer.server.smtp.host");
+        this.port = Integer.parseInt(properties.getProperty("financer.server.smtp.port"));
+        this.email = properties.getProperty("financer.server.smtp.email");
+        this.password = properties.getProperty("financer.server.smtp.password");
     }
 
     String sendVerificationEmail(User user) throws EmailException {

@@ -31,6 +31,7 @@ public class JavaFXFormatterTest {
         user.getSettings().setCurrency(Currency.getInstance("USD"));
 
         formatter = new JavaFXFormatter(user);
+        LocalStorageImpl.getInstance().writeObject("user", user);
     }
 
     @Test

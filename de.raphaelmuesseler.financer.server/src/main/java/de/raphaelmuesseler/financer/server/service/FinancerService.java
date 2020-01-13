@@ -117,7 +117,7 @@ public class FinancerService {
                 databaseToken.setUser(user);
                 databaseToken.setToken(this.tokenGenerator.nextString());
                 databaseToken.setIpAddress(ipAddress);
-                databaseToken.setSystem(system);
+                databaseToken.setOperatingSystem(system);
                 databaseToken.setExpireDate(LocalDate.now().plusMonths(1));
                 databaseToken.setIsMobile(isMobile);
                 databaseToken.setId((int) session.save(databaseToken));
@@ -340,18 +340,16 @@ public class FinancerService {
         int categoryId = (int) parameters.get("categoryId");
 
         Transaction transaction = session.beginTransaction();
+        session.createQuery("delete from FixedTransactionEntity where category.id = :categoryId")
+                .setParameter("categoryId", categoryId).executeUpdate();
+        session.createQuery("delete from VariableTransactionEntity where category.id = :categoryId")
+                .setParameter("categoryId", categoryId).executeUpdate();
         session.createQuery("delete from CategoryEntity where id = :categoryId")
                 .setParameter("categoryId", categoryId).executeUpdate();
+
         transaction.commit();
 
         this.deleteCategoryChildren(session, categoryId);
-
-        transaction = session.beginTransaction();
-        session.createQuery("delete from FixedTransactionEntity where category.id = :categoryId")
-                .setParameter("categoryId", categoryId);
-        session.createQuery("delete from VariableTransactionEntity where category.id = :categoryId")
-                .setParameter("categoryId", categoryId);
-        transaction.commit();
 
         return new ConnectionResult<>(null);
     }

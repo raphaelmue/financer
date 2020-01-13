@@ -1,6 +1,5 @@
 package de.raphaelmuesseler.financer.server.service;
 
-import de.raphaelmuesseler.financer.server.db.DatabaseName;
 import de.raphaelmuesseler.financer.server.db.HibernateUtil;
 import de.raphaelmuesseler.financer.shared.connection.ConnectionResult;
 import de.raphaelmuesseler.financer.shared.model.categories.BaseCategory;
@@ -17,7 +16,6 @@ import org.hibernate.Transaction;
 import org.junit.jupiter.api.*;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.*;
@@ -25,7 +23,7 @@ import java.util.logging.Logger;
 
 @SuppressWarnings("WeakerAccess")
 @Tag("unit")
-public class ServiceTest {
+public class FinancerServiceTest {
     private final FinancerService service = FinancerService.getInstance();
     private final Logger logger = Logger.getLogger("Test");
 
@@ -35,16 +33,15 @@ public class ServiceTest {
     private static CategoryEntity fixedCategory, variableCategory;
     private static VariableTransactionEntity variableTransaction;
     private static FixedTransactionEntity fixedTransaction;
+    private static ContentAttachment contentAttachment;
 
     private static Session session;
 
     @BeforeAll
     public static void beforeAll() throws IOException {
-        InputStream inputStream = ServiceTest.class.getResourceAsStream("/testing.properties");
-        Properties properties = new Properties();
-        properties.load(inputStream);
-        HibernateUtil.setIsHostLocal(Boolean.parseBoolean(properties.getProperty("project.testing.localhost")));
-        HibernateUtil.setDatabaseName(DatabaseName.TEST);
+        Properties testProperties = new Properties();
+        testProperties.load(FinancerServiceTest.class.getResourceAsStream("test.properties"));
+        HibernateUtil.setDatabaseProperties(testProperties);
     }
 
     @BeforeEach
@@ -72,7 +69,7 @@ public class ServiceTest {
         token = new TokenEntity();
         token.setToken("UrsVQcFmbje2lijl51mKMdAYCQciWoEmp07oLBrPoJwnEeREOBGVVsTAJeN3KiEY");
         token.setIpAddress("127.0.0.1");
-        token.setSystem("Windows 10");
+        token.setOperatingSystem("Windows 10");
         token.setExpireDate(LocalDate.now().plusMonths(1));
         token.setIsMobile(false);
         token.setUser(user);
@@ -160,7 +157,7 @@ public class ServiceTest {
 
         transaction.commit();
         session.close();
-        ServiceTest.session = HibernateUtil.getSessionFactory().openSession();
+        FinancerServiceTest.session = HibernateUtil.getSessionFactory().openSession();
     }
 
     @AfterEach
@@ -192,7 +189,7 @@ public class ServiceTest {
         final String tokenString = token.getToken();
 
         // test updating token
-        _user = service.generateToken(session, _user, token.getIpAddress(), token.getSystem(), token.getIsMobile());
+        _user = service.generateToken(session, _user, token.getIpAddress(), token.getOperatingSystem(), token.getIsMobile());
         Assertions.assertEquals(1, _user.getTokens().size());
         Assertions.assertNotNull(_user.getActiveToken());
         for (TokenEntity _token : _user.getTokens()) {
@@ -200,7 +197,7 @@ public class ServiceTest {
         }
 
         // test inserting new token
-        _user = service.generateToken(session, _user, "123.456.789.0", token.getSystem(), token.getIsMobile());
+        _user = service.generateToken(session, _user, "123.456.789.0", token.getOperatingSystem(), token.getIsMobile());
         Assertions.assertEquals(2, _user.getTokens().size());
     }
 
@@ -224,7 +221,7 @@ public class ServiceTest {
         parameters.put("email", user.getEmail());
         parameters.put("password", "password");
         parameters.put("ipAddress", token.getIpAddress());
-        parameters.put("system", token.getSystem());
+        parameters.put("system", token.getOperatingSystem());
         parameters.put("isMobile", token.getIsMobile());
         ConnectionResult<User> result = service.checkCredentials(logger, session, parameters);
         Assertions.assertNotNull(result.getResult());
@@ -252,7 +249,7 @@ public class ServiceTest {
                 User.Gender.NOT_SPECIFIED);
         parameters.put("user", _user);
         parameters.put("ipAddress", token.getIpAddress());
-        parameters.put("system", token.getSystem());
+        parameters.put("system", token.getOperatingSystem());
         parameters.put("isMobile", token.getIsMobile());
         ConnectionResult<User> result = service.registerUser(logger, session, parameters);
         Assertions.assertNotNull(result.getResult());
@@ -284,7 +281,7 @@ public class ServiceTest {
         parameters.put("email", user.getEmail());
         parameters.put("password", "newPassword");
         parameters.put("ipAddress", token.getIpAddress());
-        parameters.put("system", token.getSystem());
+        parameters.put("system", token.getOperatingSystem());
         parameters.put("isMobile", token.getIsMobile());
         ConnectionResult<User> result = service.checkCredentials(logger, session, parameters);
         Assertions.assertNotNull(result.getResult());
@@ -469,13 +466,13 @@ public class ServiceTest {
     @Test
     public void testUploadAttachment() {
         RandomString randomString = new RandomString(1024);
-        ContentAttachment content = new ContentAttachment();
-        content.setTransaction(variableTransaction);
-        content.setName("Test Attachment");
-        content.setContent(randomString.nextString().getBytes());
+        contentAttachment = new ContentAttachment();
+        contentAttachment.setTransaction(variableTransaction);
+        contentAttachment.setName("Test Attachment");
+        contentAttachment.setContent(randomString.nextString().getBytes());
 
         Map<String, Serializable> parameters = new HashMap<>();
-        parameters.put("attachment", content);
+        parameters.put("attachment", contentAttachment);
         parameters.put("transaction", new VariableTransaction(variableTransaction));
         ConnectionResult<Attachment> result = service.uploadTransactionAttachment(logger, session, parameters);
         Assertions.assertNotNull(result.getResult());
@@ -500,7 +497,7 @@ public class ServiceTest {
         testUploadAttachment();
 
         Map<String, Serializable> parameters = new HashMap<>();
-        parameters.put("attachmentId", 1);
+        parameters.put("attachmentId", contentAttachment.getId());
         service.deleteAttachment(logger, session, parameters);
         session.close();
         session = HibernateUtil.getSessionFactory().openSession();
