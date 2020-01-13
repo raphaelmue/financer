@@ -57,6 +57,10 @@ bash prepare-build.sh
 mvn clean install -DskipTests
 ```
 
+For Android development, you first have to build the maven dependencies with Java 1.8 as follows:
+
+```mvn clean install -DskipTests -P android-dependency -pl !de.raphaelmuesseler.financer.client.javafx,!de.raphaelmuesseler.financer.server```
+
 ### 3.4 Execution
 
 Please make sure, when you execute the Financer Server run configuration that the port 3500 is not blocked by your system firewall or your network firewall.  

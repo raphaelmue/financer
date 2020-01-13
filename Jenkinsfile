@@ -29,12 +29,13 @@ pipeline {
                 stage('Android') {
                     steps {
                         dir('.') {
-                            sh 'mvn clean install -DskipTests -pl de.raphaelmuesseler.financer.client,' +
-                                    'de.raphaelmuesseler.financer.shared,' +
-                                    'de.raphaelmuesseler.financer.util'
+                            sh 'mvn clean install -DskipTests -P android-dependency -pl ' +
+                                    '!de.raphaelmuesseler.financer.client.javafx,' +
+                                    '!de.raphaelmuesseler.financer.server,'
                         }
                         dir('android/de.raphaelmuesseler.financer.client.app') {
                             sh 'chmod +x gradlew'
+                            sh 'echo "sdk.dir=$JENKINS_HOME/android-sdk" >> local.properties'
                             sh './gradlew clean assembleDebug'
                             sh 'mv app/build/outputs/apk/debug/app-debug.apk app/build/outputs/apk/debug/financer-debug.apk'
                         }
@@ -65,7 +66,7 @@ pipeline {
                 }
             }
         }
-        stage('Java Integration Tests') {
+        stage('Integration Tests') {
             steps {
                 sh 'mvn test -P integration-tests'
             }
