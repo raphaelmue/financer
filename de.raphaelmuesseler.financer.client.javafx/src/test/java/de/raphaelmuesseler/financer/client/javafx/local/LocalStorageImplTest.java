@@ -1,6 +1,5 @@
 package de.raphaelmuesseler.financer.client.javafx.local;
 
-import de.raphaelmuesseler.financer.client.local.LocalStorage;
 import de.raphaelmuesseler.financer.util.RandomString;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,7 +12,7 @@ import java.util.ArrayList;
 @Tag("unit")
 public class LocalStorageImplTest {
 
-    private final LocalStorage localStorage = LocalStorageImpl.getInstance();
+    private final LocalStorageImpl localStorage = (LocalStorageImpl) LocalStorageImpl.getInstance();
 
     @BeforeEach
     public void setup() {

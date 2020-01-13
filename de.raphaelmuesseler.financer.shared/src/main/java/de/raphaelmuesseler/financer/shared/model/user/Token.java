@@ -12,7 +12,7 @@ public class Token extends TokenEntity implements Serializable {
         this(databaseToken.getId(),
                 databaseToken.getToken(),
                 databaseToken.getIpAddress(),
-                databaseToken.getSystem(),
+                databaseToken.getOperatingSystem(),
                 databaseToken.getExpireDate(),
                 databaseToken.getIsMobile());
         if (databaseToken.getUser() != null) {
@@ -24,7 +24,7 @@ public class Token extends TokenEntity implements Serializable {
         this.setId(id);
         this.setToken(token);
         this.setIpAddress(ipAddress);
-        this.setSystem(system);
+        this.setOperatingSystem(system);
         this.setExpireDate(expireDate);
         this.setIsMobile(isMobile);
     }

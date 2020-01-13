@@ -16,7 +16,6 @@ import de.raphaelmuesseler.financer.util.concurrency.FinancerExecutor;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Logger;
 
 public class RetrievalServiceImpl implements RetrievalService {
 

@@ -6,4 +6,4 @@ target/
 .gradle/
 build/
 local.properties
-hibernate.cfg.xml
+conf/*

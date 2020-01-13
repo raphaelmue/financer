@@ -13,7 +13,7 @@ public class TokenEntity implements DataEntity, Cloneable {
     @Column(name = "id")
     private int id;
 
-    @ManyToOne()
+    @ManyToOne(targetEntity = UserEntity.class)
     private UserEntity user;
 
     @Column(name = "token")
@@ -25,8 +25,8 @@ public class TokenEntity implements DataEntity, Cloneable {
     @Column(name = "ip_address")
     private String ipAddress;
 
-    @Column(name = "system")
-    private String system;
+    @Column(name = "operating_system")
+    private String operatingSystem;
 
     @Column(name = "is_mobile")
     private boolean isMobile;
@@ -72,12 +72,12 @@ public class TokenEntity implements DataEntity, Cloneable {
         this.ipAddress = ipAddress;
     }
 
-    public String getSystem() {
-        return system;
+    public String getOperatingSystem() {
+        return operatingSystem;
     }
 
-    public void setSystem(String system) {
-        this.system = system;
+    public void setOperatingSystem(String operatingSystem) {
+        this.operatingSystem = operatingSystem;
     }
 
     public boolean getIsMobile() {

@@ -1,31 +1,80 @@
 pipeline {
+    environment {
+        JPACKAGE = '/var/jenkins_home/jdk-14/bin/jpackage'
+        registry = 'raphaelmue/financer'
+        registryCredentials = 'dockerhub'
+    }
+
     agent any
+
+    tools {
+        maven 'Maven 3.6.2'
+        jdk 'JDK 11.0.1'
+    }
+
     stages {
         stage('Build') {
-            steps {
-                sh 'mvn clean install -DskipTests'
+            parallel {
+                stage('Java') {
+                    steps {
+                        sh 'bash prepare-build.sh'
+                        sh 'mvn clean install -DskipTests -P deploy'
+                    }
+                    post {
+                        always {
+                            archiveArtifacts artifacts: '**/*.msi, **/*.deb, **/*.dmg, **/*.apk', fingerprint: true
+                        }
+                    }
+                }
+                stage('Android') {
+                    steps {
+                        dir('.') {
+                            sh 'mvn clean install -DskipTests -P android-dependency -pl ' +
+                                    '!de.raphaelmuesseler.financer.client.javafx,' +
+                                    '!de.raphaelmuesseler.financer.server,'
+                        }
+                        dir('android/de.raphaelmuesseler.financer.client.app') {
+                            sh 'chmod +x gradlew'
+                            sh 'echo "sdk.dir=$JENKINS_HOME/android-sdk" >> local.properties'
+                            sh './gradlew clean assembleDebug'
+                            sh 'mv app/build/outputs/apk/debug/app-debug.apk app/build/outputs/apk/debug/financer-debug.apk'
+                        }
+                    }
+                    post {
+                        always {
+                            archiveArtifacts artifacts: '**/*.apk', fingerprint: true
+                        }
+                    }
+                }
             }
         }
-        stage('Preparing tests') {
-            steps {
-                sh 'cp /var/lib/jenkins/workspace/hibernate.cfg.xml ./de.raphaelmuesseler.financer.server/src/main/resources/de/raphaelmuesseler/financer/server/db/config/'
-                sh 'mvn clean install -DskipTests'
+
+        stage('Unit Tests') {
+            parallel {
+                stage('Java') {
+                    steps {
+                        sh 'mvn test -P unit-tests'
+                    }
+                }
+                stage('Android') {
+                    steps {
+                        dir('android/de.raphaelmuesseler.financer.client.app') {
+                            sh 'chmod +x gradlew'
+                            sh './gradlew test'
+                        }
+                    }
+                }
             }
         }
-        stage('JUnit Tests') {
+        stage('Integration Tests') {
             steps {
-                sh 'mvn test -P unitTests'
+                sh 'mvn test -P integration-tests'
             }
         }
-        stage('JavaFX Tests') {
-            steps {
-                sh 'mvn test -P integrationTests,headlessTesting'
-                sh 'rm ./de.raphaelmuesseler.financer.server/src/main/resources/de/raphaelmuesseler/financer/server/db/config/hibernate.cfg.xml'
-            }
-        }
+
         stage('SonarQube Analysis') {
             environment {
-                scannerHome = tool 'SonarQubeScanner'
+                scannerHome = '$JENKINS_HOME/SonarQubeScanner'
             }
             steps {
                 sh 'cp target/jacoco.exec de.raphaelmuesseler.financer.client/target/'
@@ -38,16 +87,16 @@ pipeline {
                     script {
                         if (env.CHANGE_ID) {
                             sh "${scannerHome}/bin/sonar-scanner " +
-                                    "-Dsonar.pullrequest.base=master " +
-                                    "-Dsonar.pullrequest.key=${env.CHANGE_ID} " +
-                                    "-Dsonar.pullrequest.branch=${env.BRANCH_NAME} " +
-                                    "-Dsonar.pullrequest.provider=github " +
-                                    "-Dsonar.pullrequest.github.repository=raphaelmue/financer"
+                            "-Dsonar.pullrequest.base=master " +
+                            "-Dsonar.pullrequest.key=${env.CHANGE_ID} " +
+                            "-Dsonar.pullrequest.branch=${env.BRANCH_NAME} " +
+                            "-Dsonar.pullrequest.provider=github " +
+                            "-Dsonar.pullrequest.github.repository=raphaelmue/financer"
                         } else {
                             if (env.BRANCH_NAME != 'master') {
                                 sh "${scannerHome}/bin/sonar-scanner " +
-                                        "-Dsonar.branch.name=${env.BRANCH_NAME} " +
-                                        "-Dsonar.branch.target=master"
+                                "-Dsonar.branch.name=${env.BRANCH_NAME} " +
+                                "-Dsonar.branch.target=master"
                             } else {
                                 sh "${scannerHome}/bin/sonar-scanner"
                             }
