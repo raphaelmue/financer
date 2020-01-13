@@ -20,7 +20,7 @@ public class LocalSettingsImpl implements LocalSettings {
 
     @Override
     public int getMaxNumberOfMonthsDisplayed() {
-        return Integer.valueOf(this.getValueByProperty(Property.MAX_NUMBER_OF_MONTHS_DISPLAYED));
+        return Integer.parseInt(this.getValueByProperty(Property.MAX_NUMBER_OF_MONTHS_DISPLAYED));
     }
 
     @Override
