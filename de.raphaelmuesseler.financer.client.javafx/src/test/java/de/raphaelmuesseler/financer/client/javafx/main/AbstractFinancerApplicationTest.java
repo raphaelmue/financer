@@ -8,7 +8,6 @@ import de.raphaelmuesseler.financer.client.javafx.components.DoubleField;
 import de.raphaelmuesseler.financer.client.javafx.components.IntegerField;
 import de.raphaelmuesseler.financer.client.javafx.format.JavaFXFormatter;
 import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
-import de.raphaelmuesseler.financer.server.db.DatabaseName;
 import de.raphaelmuesseler.financer.server.db.HibernateUtil;
 import de.raphaelmuesseler.financer.server.main.Server;
 import de.raphaelmuesseler.financer.shared.model.categories.BaseCategory;
@@ -26,15 +25,11 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.*;
 import org.testfx.api.FxToolkit;
 import org.testfx.framework.junit5.ApplicationTest;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -79,19 +74,31 @@ class AbstractFinancerApplicationTest extends ApplicationTest {
 
     JavaFXFormatter formatter;
 
+    static {
+        System.setProperty("testfx.robot", "glass");
+        System.setProperty("glass.platform", "Monocle");
+        System.setProperty("monocle.platform", "Headless");
+    }
+
     @BeforeAll
     static void setUp() throws IOException {
-        server = new Server(3505);
-        ServerRequest.setPort(3505);
-        new Thread(server::run).start();
+        Properties testProperties = new Properties();
+        testProperties.load(AbstractFinancerApplicationTest.class.getResourceAsStream("test.properties"));
+        Server.setServerProperties(testProperties);
+
+        new Thread(() -> {
+            try {
+                server = new Server();
+            } catch (IOException e) {
+                Assertions.fail("Test server could not be started!");
+            }
+            ServerRequest.setPort(Integer.parseInt(testProperties.getProperty("financer.server.port")));
+            server.run();
+        }).start();
 
         LocalStorageImpl.getInstance().deleteAllData();
 
-        InputStream inputStream = AbstractFinancerApplicationTest.class.getResourceAsStream("/testing.properties");
-        Properties properties = new Properties();
-        properties.load(inputStream);
-        HibernateUtil.setIsHostLocal(Boolean.parseBoolean(properties.getProperty("project.testing.localhost")));
-        HibernateUtil.setDatabaseName(DatabaseName.TEST);
+        HibernateUtil.setDatabaseProperties(testProperties);
     }
 
     @BeforeEach

@@ -8,11 +8,12 @@ public class TreeUtil {
         super();
     }
 
+    @SuppressWarnings("unchecked")
     public static <T> boolean insertByValue(Tree<T> root, Tree<T> treeItem, Comparator<T> comparator) {
         for (Tree<T> item : root.getChildren()) {
             if (comparator.compare(treeItem.getValue(), item.getValue()) == 0) {
                 treeItem.setParent(root);
-                ((List<Tree<T>>)item.getChildren()).add(treeItem);
+                ((List<Tree<T>>) item.getChildren()).add(treeItem);
                 return true;
             } else {
                 if (TreeUtil.insertByValue(item, treeItem, comparator)) {

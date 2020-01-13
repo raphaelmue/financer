@@ -1,18 +1,10 @@
 package de.raphaelmuesseler.financer.client.format;
 
 import de.raphaelmuesseler.financer.client.local.LocalStorage;
-import de.raphaelmuesseler.financer.shared.exceptions.FinancerException;
-import de.raphaelmuesseler.financer.shared.exceptions.NotAuthorizedException;
 import de.raphaelmuesseler.financer.shared.model.user.User;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
 
-import java.net.ConnectException;
-import java.net.UnknownHostException;
 import java.text.MessageFormat;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * I18N utility class..
@@ -24,12 +16,6 @@ public final class I18N {
      * the current selected Locale.
      */
     private static LocalStorage localStorage;
-    private static final ObjectProperty<Locale> locale;
-
-    static {
-        locale = new SimpleObjectProperty<>(getDefaultLocale());
-        locale.addListener((observable, oldValue, newValue) -> Locale.setDefault(newValue));
-    }
 
     public static void setLocalStorage(LocalStorage localStorage) {
         I18N.localStorage = localStorage;

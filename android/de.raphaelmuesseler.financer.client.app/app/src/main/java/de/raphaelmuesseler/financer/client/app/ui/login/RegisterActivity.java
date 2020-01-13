@@ -192,6 +192,10 @@ public class RegisterActivity extends AppCompatActivity implements Application {
         Toast.makeText(this, s, Toast.LENGTH_SHORT).show();
     }
 
+    public void showErrorDialog(Exception exception) {
+        // TODO
+    }
+
     private class GenderSpinnerAdapter extends ArrayAdapter<User.Gender> {
 
         GenderSpinnerAdapter(Context context) {

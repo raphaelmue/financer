@@ -12,13 +12,21 @@
     <artifactId>de.raphaelmuesseler.financer.client.javafx</artifactId>
     <packaging>jar</packaging>
 
+    <properties>
+        <app.main.class>de.raphaelmuesseler.financer.client.javafx.main.ApplicationLauncher</app.main.class>
+    </properties>
+
     <build>
         <resources>
             <resource>
+                <filtering>true</filtering>
                 <directory>src/main/resources</directory>
                 <includes>
-                    <include>**/*.*</include>
+                    <include>**</include>
                 </includes>
+                <excludes>
+                    <exclude>**/*.java</exclude>
+                </excludes>
             </resource>
         </resources>
 
@@ -26,11 +34,18 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.0</version>
+                <version>3.8.1</version>
                 <configuration>
-                    <target>11</target>
-                    <release>11</release>
+                    <compilerArgs>
+                        <arg>--add-exports</arg>
+                        <arg>javafx.graphics/com.sun.javafx.css=ALL-UNNAMED</arg>
+                    </compilerArgs>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.openjfx</groupId>
+                <artifactId>javafx-maven-plugin</artifactId>
+                <version>0.0.3</version>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
@@ -50,17 +65,143 @@
         </plugins>
     </build>
 
+    <profiles>
+        <profile>
+            <id>deploy-linux</id>
+            <activation>
+                <os>
+                    <family>linux</family>
+                </os>
+            </activation>
+            <properties>
+                <build.deploy.package.type>deb</build.deploy.package.type>
+                <build.deploy.arguments>
+                    --linux-package-name financer
+                    --linux-package-deps fakeroot
+                    --linux-deb-maintainer info@financer-project.org
+                    --linux-shortcut
+                </build.deploy.arguments>
+            </properties>
+        </profile>
+        <profile>
+            <id>deploy-windows</id>
+            <activation>
+                <os>
+                    <family>windows</family>
+                </os>
+            </activation>
+            <properties>
+                <build.deploy.package.type>msi</build.deploy.package.type>
+                <build.deploy.arguments>--win-dir-chooser --win-menu --win-shortcut</build.deploy.arguments>
+            </properties>
+        </profile>
+        <profile>
+            <id>deploy</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.openjfx</groupId>
+                        <artifactId>javafx-maven-plugin</artifactId>
+                        <version>0.0.3</version>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>jlink</goal>
+                                </goals>
+                                <phase>package</phase>
+                                <configuration>
+                                    <launcher>financer</launcher>
+                                    <stripDebug>true</stripDebug>
+                                    <mainClass>${app.main.class}</mainClass>
+                                    <jlinkImageName>build/image</jlinkImageName>
+                                    <options>
+                                        <option>
+                                            --add-exports=javafx.graphics/com.sun.javafx.css=org.controlsfx.controls
+                                        </option>
+                                        <option>
+                                            --add-exports=javafx.graphics/com.sun.javafx.scene=com.jfoenix
+                                        </option>
+                                        <option>
+                                            --add-exports=javafx.graphics/com.sun.javafx.scene.control.behavior=com.jfoenix
+                                        </option>
+                                    </options>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <version>1.6.0</version>
+                        <configuration>
+                            <mainClass>${app.main.class}</mainClass>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>java</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>create-package</id>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <phase>package</phase>
+                                <configuration>
+                                    <executable>${env.JPACKAGE}</executable>
+                                    <workingDirectory>${project.basedir}</workingDirectory>
+                                    <longModulepath>false</longModulepath>
+                                    <arguments>
+                                        <argument>--package-type</argument>
+                                        <argument>${build.deploy.package.type}</argument>
+
+                                        <argument>--module</argument>
+                                        <argument>${project.artifactId}/${app.main.class}</argument>
+
+                                        <argument>-d</argument>
+                                        <argument>${project.build.directory}/build/deploy</argument>
+
+                                        <argument>--runtime-image</argument>
+                                        <argument>${project.build.directory}/build/image</argument>
+
+                                        <argument>--name</argument>
+                                        <argument>Financer</argument>
+
+                                        <argument>--icon</argument>
+                                        <argument>${project.basedir}/src/main/resources/images/icons/financer-icon.ico
+                                        </argument>
+
+                                        <argument>--vendor</argument>
+                                        <argument>Financer Project Team</argument>
+
+                                        <argument>--license-file</argument>
+                                        <argument>../LICENSE</argument>
+
+                                        <argument>--java-options</argument>
+                                        <argument>
+                                            --add-exports=javafx.graphics/com.sun.javafx.css=org.controlsfx.controls
+                                            --add-exports=javafx.graphics/com.sun.javafx.scene=com.jfoenix
+                                            --add-exports=javafx.graphics/com.sun.javafx.scene.control.behavior=com.jfoenix
+                                        </argument>
+
+                                        <argument>--verbose</argument>
+                                        ${build.deploy.arguments}
+                                    </arguments>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
     <dependencies>
-        <!-- JavaFX Dependencies -->
-        <dependency>
-            <groupId>org.openjfx</groupId>
-            <artifactId>javafx-controls</artifactId>
-            <version>11</version>
-        </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-fxml</artifactId>
-            <version>11</version>
+            <version>11.0.2</version>
         </dependency>
 
         <dependency>
@@ -80,34 +221,43 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>org.hsqldb</groupId>
+            <artifactId>hsqldb</artifactId>
+            <version>2.5.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>org.controlsfx</groupId>
             <artifactId>controlsfx</artifactId>
-            <version>9.0.0</version>
+            <version>11.0.0-RC2</version>
         </dependency>
         <dependency>
             <groupId>com.jfoenix</groupId>
             <artifactId>jfoenix</artifactId>
-            <version>9.0.8</version>
+            <version>9.0.9</version>
         </dependency>
         <dependency>
             <groupId>org.testfx</groupId>
             <artifactId>testfx-core</artifactId>
-            <version>4.0.15-alpha</version>
+            <version>4.0.16-alpha</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.testfx</groupId>
             <artifactId>testfx-junit5</artifactId>
-            <version>4.0.15-alpha</version>
+            <version>4.0.16-alpha</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.testfx</groupId>
             <artifactId>openjfx-monocle</artifactId>
             <version>jdk-11+26</version>
-            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-core</artifactId>
+            <version>5.4.4.Final</version>
+            <scope>runtime</scope>
         </dependency>
     </dependencies>
-
-
 </project>
