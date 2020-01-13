@@ -91,7 +91,7 @@ pipeline {
                             "-Dsonar.pullrequest.key=${env.CHANGE_ID} " +
                             "-Dsonar.pullrequest.branch=${env.BRANCH_NAME} " +
                             "-Dsonar.pullrequest.provider=github " +
-                            "-Dsonar.pullrequest.github.repository=raphaelmue/financer"git
+                            "-Dsonar.pullrequest.github.repository=raphaelmue/financer"
                         } else {
                             if (env.BRANCH_NAME != 'master') {
                                 sh "${scannerHome}/bin/sonar-scanner " +
