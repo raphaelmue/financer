@@ -26,7 +26,9 @@ You can download the latest release for the desktop application [here](https://g
 
 ### 2.2 Server Installation
 
-As Financer is also available as on premise version, you can easily execute the `docker-compose.yml` file in order to run the server on your own machine. If you can want to provide your own database, you can change this by using the Financer image available on [DockerHub](https://hub.docker.com/repository/docker/raphaelmue/financer). 
+As Financer is also available as on premise version, you can easily execute the `docker-compose.yml` file in order to run the server on your own machine. If you can want to provide your own database, you can change this by using the Financer image available on [DockerHub](https://hub.docker.com/repository/docker/raphaelmue/financer).
+
+Financer is also customizable by changing the default properties. When running the Docker container, you can specify your own `conf/financer.properties` in the root directory and providing this file as volume. 
 
 ## 3 On Boarding
 

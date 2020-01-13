@@ -1,6 +1,5 @@
 package de.raphaelmuesseler.financer.server.service;
 
-import de.raphaelmuesseler.financer.server.db.DatabaseName;
 import de.raphaelmuesseler.financer.server.db.HibernateUtil;
 import de.raphaelmuesseler.financer.shared.connection.ConnectionResult;
 import de.raphaelmuesseler.financer.shared.model.categories.BaseCategory;
@@ -16,6 +15,7 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.junit.jupiter.api.*;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.*;
@@ -38,8 +38,10 @@ public class FinancerServiceTest {
     private static Session session;
 
     @BeforeAll
-    public static void beforeAll() {
-        HibernateUtil.setDatabaseName(DatabaseName.TEST);
+    public static void beforeAll() throws IOException {
+        Properties testProperties = new Properties();
+        testProperties.load(FinancerServiceTest.class.getResourceAsStream("test.properties"));
+        HibernateUtil.setDatabaseProperties(testProperties);
     }
 
     @BeforeEach

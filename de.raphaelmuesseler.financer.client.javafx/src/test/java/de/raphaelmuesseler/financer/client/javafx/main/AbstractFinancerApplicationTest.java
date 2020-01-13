@@ -8,7 +8,6 @@ import de.raphaelmuesseler.financer.client.javafx.components.DoubleField;
 import de.raphaelmuesseler.financer.client.javafx.components.IntegerField;
 import de.raphaelmuesseler.financer.client.javafx.format.JavaFXFormatter;
 import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
-import de.raphaelmuesseler.financer.server.db.DatabaseName;
 import de.raphaelmuesseler.financer.server.db.HibernateUtil;
 import de.raphaelmuesseler.financer.server.main.Server;
 import de.raphaelmuesseler.financer.shared.model.categories.BaseCategory;
@@ -34,10 +33,9 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.HashSet;
+import java.util.Properties;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Predicate;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 class AbstractFinancerApplicationTest extends ApplicationTest {
     private static Server server;
@@ -45,8 +43,6 @@ class AbstractFinancerApplicationTest extends ApplicationTest {
     static final int SHORT_SLEEP = 500;
     static final int MEDIUM_SLEEP = 1000;
     private static final int LONG_SLEEP = 5000;
-
-    private static final int PORT = 3006;
 
     final String password = "password";
     final User user = new User(0,
@@ -85,19 +81,24 @@ class AbstractFinancerApplicationTest extends ApplicationTest {
     }
 
     @BeforeAll
-    static void setUp() {
+    static void setUp() throws IOException {
+        Properties testProperties = new Properties();
+        testProperties.load(AbstractFinancerApplicationTest.class.getResourceAsStream("test.properties"));
+        Server.setServerProperties(testProperties);
+
         new Thread(() -> {
             try {
-                server = new Server(PORT);
+                server = new Server();
             } catch (IOException e) {
                 Assertions.fail("Test server could not be started!");
             }
-            ServerRequest.setPort(PORT);
+            ServerRequest.setPort(Integer.parseInt(testProperties.getProperty("financer.server.port")));
             server.run();
         }).start();
 
         LocalStorageImpl.getInstance().deleteAllData();
-        HibernateUtil.setDatabaseName(DatabaseName.TEST);
+
+        HibernateUtil.setDatabaseProperties(testProperties);
     }
 
     @BeforeEach
