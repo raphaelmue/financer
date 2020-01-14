@@ -14,5 +14,10 @@
 	"statisticsDescription": "You can easily analyze all your personal expenses. This helps to give you an overview about your current financial status and your spending profile.",
 	"project": "Project",
 	"contactInformation": "Contact information",
-	"quickLinks": "Quick Links"
+	"quickLinks": "Quick Links",
+	"cloud": "Financer Cloud",
+	"cloudDescription": "Financer Cloud offers a server hosted by Financer that is accessible from anywhere. So you can access your finances from anywhere - via the Android app or the desktop application. ",
+	"selfHosted": "Self Hosted",
+	"selfHostedDescription": "You prefer to configure your own Financer Server and design it according to your needs? You can do that by hosting Financer yourself. Here you will find instructions for installing the server. If you have any questions please contact the support.",
+	"seeLatestDownloads": "See latest downloads"
 }

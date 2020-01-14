@@ -27,9 +27,9 @@
                         <div class="collapse navbar-collapse" id="navbar-toggler">
                             <ul class="nav nav-pills navbar-nav mx-5">
                                 <li class="nav-item active "><a class="nav-link" href="#home"><%= __("home") %></a></li>
+                                <li class="nav-item"><a class="nav-link" href="#about"><%= __("about") %></a></li>
                                 <li class="nav-item"><a class="nav-link" href="#getStarted"><%= __("getStarted") %></a>
                                 </li>
-                                <li class="nav-item"><a class="nav-link" href="#about"><%= __("about") %></a></li>
                                 <li class="nav-item my-2 my-lg-0"><a class="nav-link"
                                                                      href="#download"><%= __("download") %></a>
                                 </li>
@@ -82,7 +82,7 @@
                 </div>
             </section>
             <section class="container" style="margin-top: 15%">
-                <h6 class="sub-heading" id="getStarted"><%= __("getStarted") %></h6>
+                <h6 class="sub-heading" id="about"><%= __("about") %></h6>
                 <div class="row">
                     <div class="col-12 col-md-4 icon-box px-4" data-aos="fade-up">
                         <i class="fa fa-terminal"></i>
@@ -103,43 +103,41 @@
                 </div>
             </section>
             <section class="container" style="margin-top: 15%">
-                <h6 class="sub-heading" id="about"><%= __("about") %></h6>
-                <div class="row">
-                    <div class="col-12 col-md-4 icon-box px-4" data-aos="fade-up">
-                        <i class="fa fa-terminal"></i>
-                        <h5 class="my-2"><%= __("openSource") %></h5>
-                        <p class="font-weight-light text-black-50"><%= __("openSourceDescription") %> <a
-                                    href="https://github.com/raphaelmue/financer">GitHub</a></p>
+                <h6 class="sub-heading" id="getStarted"><%= __("getStarted") %></h6>
+                <div class="row py-3" data-aos="fade-up">
+                    <div class="col-4 col-md-2 col-sm-12 offset-lg-2 icon-box px-4 py-2">
+                        <i class="fa fa-cloud"></i>
                     </div>
-                    <div class="col-12 col-md-4 icon-box px-4" data-aos="fade-up" data-aos-delay="50">
-                        <i class="fa fa-layer-group"></i>
-                        <h5 class="my-2"><%= __("productivity") %></h5>
-                        <p class="font-weight-light text-black-50"><%= __("productivityDescription") %></p>
+                    <div class="col-10 col-lg-6 col-md-8 col-sm-12">
+                        <h5 class="my-2 text-sm-center text-md-left"><%= __("cloud") %></h5>
+                        <p class="font-weight-light text-black-50 text-sm-center text-md-left"><%= __("cloudDescription") %></p>
                     </div>
-                    <div class="col-12 col-md-4 icon-box px-4" data-aos="fade-up" data-aos-delay="100">
-                        <i class="fa fa-chart-line"></i>
-                        <h5 class="my-2"><%= __("statistics") %></h5>
-                        <p class="font-weight-light text-black-50"><%= __("statisticsDescription") %></p>
+                </div>
+                <div class="row py-3" data-aos="fade-up" data-aos-delay="100">
+                    <div class="col-4 col-md-2 col-sm-12 offset-lg-2 icon-box px-4 py-2">
+                        <i class="fa fa-server"></i>
+                    </div>
+                    <div class="col-10 col-lg-6 col-md-8 col-sm-12">
+                        <h5 class="my-2 text-sm-center text-md-left "><%= __("selfHosted") %></h5>
+                        <p class="font-weight-light text-black-50 text-sm-center text-md-left"><%= __("selfHostedDescription") %>
+                            <a href="https://github.com/raphaelmue/financer/blob/master/README.md#22-server-installation">GitHub</a>
+                        </p>
                     </div>
                 </div>
             </section>
             <section class="container" style="margin-top: 15%">
                 <h6 class="sub-heading" id="download"><%= __("download") %></h6>
-
-                </div>
+                <div class="row">
+                        <a class="big-button" href="https://github.com/raphaelmue/financer/releases/latest" target="_blank" style="margin: 0 auto; max-width: 400px">
+                            <h2><%= __("seeLatestDownloads") %></h2>
+                        </a>
+                    </div>
             </section>
         </main>
         <footer class="bg-primary text-white font-weight-light py-5 mt-5">
             <div class="container">
                 <div class="row">
-                    <div class="col-12 col-md-4 px-4">
-                        <h5 class="my-4"><%= __("project") %></h5>
-                        <p class="font-weight-lighter text-white-50"><%= __("openSourceDescription") %>
-                            <a class="font-weight-lighter text-light"
-                               href="https://github.com/raphaelmue/financer">GitHub</a>
-                        </p>
-                    </div>
-                    <div class="col-12 col-md-4 px-4">
+                    <div class="col-12 col-md-4 offset-md-2 px-4">
                         <h5 class="my-4"><%= __("contactInformation") %></h5>
                         <p class="font-weight-lighter text-white-50">
                             Raphael Müßeler
@@ -147,12 +145,16 @@
                         <p class="font-weight-lighter text-white-50">
                             <a class="font-weight-lighter text-white-50" href="mailto:raphael@muesseler.de">raphael@muesseler.de</a>
                         </p>
+                        <p class="font-weight-lighter text-white-50">
+                            <a class="font-weight-lighter text-white-50" href="https://raphael-muesseler.de/">raphael-muesseler.de</a>
+                        </p>
                     </div>
                     <div class="col-12 col-md-4 px-4">
-                        <h5 class="my-4"><%= __("quickLinks") %></h5>
-                        <p class="font-weight-lighter text-white-50">This is a simple hero unit, a simple
-                            jumbotron-style component for calling extra
-                            attention to featured content or information.</p>
+                        <h5 class="my-4"><%= __("project") %></h5>
+                        <p class="font-weight-lighter text-white-50"><%= __("openSourceDescription") %>
+                            <a class="font-weight-lighter text-light"
+                               href="https://github.com/raphaelmue/financer">GitHub</a>
+                        </p>
                     </div>
                 </div>
                 <div class="row">

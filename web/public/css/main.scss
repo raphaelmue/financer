@@ -80,3 +80,83 @@ h1, h2, h3, h4, h5, h6 {
     border-radius: 100%;
     color: $primary;
 }
+
+.profile-image {
+    background: url('https://raphael-muesseler.de/images/profile-image.jpeg') no-repeat;
+    background-size: cover;
+    display: block;
+    width: 150px;
+    height: 150px;
+    border-radius: 100%;
+
+}
+
+.text-box {
+    text-align: justify;
+}
+
+.big-button {
+    display: block;
+    margin: 10px 0;
+    float: left;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 15px 0;
+    border: 4px solid $primary;
+    box-sizing: border-box;
+    color: $primary;
+    overflow: hidden;
+    z-index: 999;
+    outline: none;
+    position: relative;
+}
+
+.big-button h2 {
+    text-align: center;
+    font-size: 25px;
+    color: $primary;
+    z-index: 999;
+    margin: 5px;
+
+    transition: 		all .3s ease-in-out .0s; /* explorer 10 */
+    -webkit-transition: all .3s ease-in-out .0s; /* chrome & safari */
+    -moz-transition: 	all .3s ease-in-out .0s; /* firefox */
+    -o-transition: 		all .3s ease-in-out .0s; /* opera */
+}
+
+.big-button:after {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    transition: 		all .3s ease-in-out .0s; /* explorer 10 */
+    -webkit-transition: all .3s ease-in-out .0s; /* chrome & safari */
+    -moz-transition: 	all .3s ease-in-out .0s; /* firefox */
+    -o-transition: 		all .3s ease-in-out .0s; /* opera */
+    width: 100%;
+    height: 0;
+    top: 50%;
+    left: 50%;
+    background: $primary;
+    opacity: 0;
+    -webkit-transform: translateX(-50%) translateY(-50%) rotate(45deg);
+    -moz-transform: translateX(-50%) translateY(-50%) rotate(45deg);
+    -ms-transform: translateX(-50%) translateY(-50%) rotate(45deg);
+    transform: translateX(-50%) translateY(-50%) rotate(45deg);
+}
+.big-button:hover {
+    text-decoration: none;
+}
+.big-button:hover h2,
+.big-button:active {
+    color: white;
+}
+
+.big-button:hover:after {
+    height: 340%;
+    opacity: 1;
+}
+
+.big-button:active:after {
+    height: 440%;
+    opacity: 1;
+}
