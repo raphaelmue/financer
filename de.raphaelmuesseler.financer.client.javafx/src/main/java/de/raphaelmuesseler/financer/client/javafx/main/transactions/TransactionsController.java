@@ -43,7 +43,6 @@ import java.io.Serializable;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.*;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static de.raphaelmuesseler.financer.util.date.Month.getMonthByNumber;
@@ -354,11 +353,6 @@ public class TransactionsController implements Initializable {
             }
 
             @Override
-            public void onFailure(Exception exception) {
-                logger.log(Level.SEVERE, exception.getMessage(), exception);
-            }
-
-            @Override
             public void onAfter() {
                 Platform.runLater(() -> {
                     categories = (BaseCategory) localStorage.readObject("categories");
@@ -477,6 +471,8 @@ public class TransactionsController implements Initializable {
             FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "updateFixedTransaction", parameters, new AsyncConnectionCall() {
                 @Override
                 public void onSuccess(ConnectionResult result) {
+                    fixedTransaction.getTransactionAmounts().clear();
+                    fixedTransaction.getTransactionAmounts().addAll(((FixedTransaction) result.getResult()).getTransactionAmounts());
                     localStorage.writeObject("categories", categories);
 
                     Platform.runLater(() -> {

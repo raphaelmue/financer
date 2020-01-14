@@ -17,4 +17,8 @@ public class DateUtil {
     public static boolean checkIfMonthsAreEqual(LocalDate date1, LocalDate date2) {
         return (date1.getYear() == date2.getYear() && date1.getMonthValue() == date2.getMonthValue());
     }
+
+    public static boolean isDateBetween(LocalDate date, LocalDate startDate, LocalDate endDate) {
+        return getMonthDifference(date, startDate) <= 0 && getMonthDifference(date, endDate) >= 0;
+    }
 }
