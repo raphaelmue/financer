@@ -13,7 +13,7 @@ public class FixedTransactionAmountEntity implements DataEntity {
     @Column(name = "id")
     private int id;
 
-    @ManyToOne()
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "fixed_transaction_id", nullable = false)
     private FixedTransactionEntity fixedTransaction;
 
