@@ -52,7 +52,8 @@ class AbstractFinancerApplicationTest extends ApplicationTest {
             "Max",
             "Mustermann",
             LocalDate.of(1989, 5, 28),
-            User.Gender.MALE);
+            User.Gender.MALE,
+            false);
     final CategoryTree category = new CategoryTreeImpl(new Category("TestCategory", BaseCategory.CategoryClass.VARIABLE_EXPENSES));
     final VariableTransaction transaction = new VariableTransaction(0,
             52.5,
