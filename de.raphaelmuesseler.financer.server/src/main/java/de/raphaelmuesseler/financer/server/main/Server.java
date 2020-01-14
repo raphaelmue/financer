@@ -52,9 +52,7 @@ public class Server {
             }
         }
 
-        if (serverProperties.getProperty("financer.server.smtp").equals(Boolean.toString(true))) {
-            FinancerService.setVerificationService(new VerificationService(serverProperties));
-        }
+        FinancerService.setVerificationService(new VerificationService(serverProperties));
         HibernateUtil.setDatabaseProperties(serverProperties);
 
         int port = Integer.parseInt(serverProperties.getProperty("financer.server.port"));

@@ -41,7 +41,7 @@
         <mapping class="de.raphaelmuesseler.financer.shared.model.db.VariableTransactionEntity"/>
         <mapping class="de.raphaelmuesseler.financer.shared.model.db.UserEntity"/>
         <mapping class="de.raphaelmuesseler.financer.shared.model.db.SettingsEntity"/>
-        <mapping class="de.raphaelmuesseler.financer.shared.model.db.FixedTransactionEntity"/>
+        <mapping class="de.raphaelmuesseler.financer.shared.model.db.VerificationTokenEntity"/>
 
     </session-factory>
 </hibernate-configuration>

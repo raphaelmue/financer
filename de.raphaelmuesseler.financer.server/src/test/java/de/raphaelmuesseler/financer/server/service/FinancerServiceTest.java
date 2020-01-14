@@ -29,6 +29,7 @@ public class FinancerServiceTest {
 
     private static UserEntity user;
     private static TokenEntity token;
+    private static VerificationTokenEntity verificationToken;
     private static SettingsEntity settings;
     private static CategoryEntity fixedCategory, variableCategory;
     private static VariableTransactionEntity variableTransaction;
@@ -42,6 +43,7 @@ public class FinancerServiceTest {
         Properties testProperties = new Properties();
         testProperties.load(FinancerServiceTest.class.getResourceAsStream("test.properties"));
         HibernateUtil.setDatabaseProperties(testProperties);
+        FinancerService.setVerificationService(new VerificationService(testProperties));
     }
 
     @BeforeEach
@@ -74,12 +76,18 @@ public class FinancerServiceTest {
         token.setIsMobile(false);
         token.setUser(user);
 
+        verificationToken = new VerificationTokenEntity();
+        verificationToken.setUser(user);
+        verificationToken.setToken("eCqPPZGRj2bzLveAudsbyjUk8K8jAigXKKYnvjrnx24Lg8pXYHncD3yej8ic6yeK2x2rGonCFR4aDX6kjcSNoZRfvAmVyZN5bpQFfDviXqnA7ZZK6fr7CiQywk93uMvm");
+        verificationToken.setExpireDate(LocalDate.now().plusMonths(1));
+
         settings = new SettingsEntity();
         settings.setProperty(Settings.Property.CURRENCY.getName());
         settings.setValue("EUR");
         settings.setUser(user);
 
         session.save(token);
+        session.save(verificationToken);
         session.save(settings);
 
         transaction.commit();
@@ -246,7 +254,8 @@ public class FinancerServiceTest {
                 "Test",
                 "User",
                 LocalDate.now(),
-                User.Gender.NOT_SPECIFIED);
+                User.Gender.NOT_SPECIFIED,
+                false);
         parameters.put("user", _user);
         parameters.put("ipAddress", token.getIpAddress());
         parameters.put("system", token.getOperatingSystem());
@@ -263,6 +272,28 @@ public class FinancerServiceTest {
         Assertions.assertEquals(_user.getEmail(), userToAssert.getEmail());
         Assertions.assertEquals(_user.getFullName(), userToAssert.getFullName());
 
+        transaction.commit();
+    }
+
+    @Test
+    public void testVerifyUser() {
+        Assertions.assertFalse(user.getVerified());
+
+        HashMap<String, Serializable> parameters = new HashMap<>();
+        parameters.put("userId", user.getId());
+        parameters.put("verificationToken", "verification token");
+
+        ConnectionResult<User> result = service.verifyUser(logger, session, parameters);
+        Assertions.assertFalse(result.getResult().getVerified());
+
+        parameters.put("verificationToken", "eCqPPZGRj2bzLveAudsbyjUk8K8jAigXKKYnvjrnx24Lg8pXYHncD3yej8ic6yeK2x2rGonCFR4aDX6kjcSNoZRfvAmVyZN5bpQFfDviXqnA7ZZK6fr7CiQywk93uMvm");
+
+        result = service.verifyUser(logger, session, parameters);
+        Assertions.assertTrue(result.getResult().getVerified());
+
+        Transaction transaction = session.beginTransaction();
+        User userToAssert = new User(session.get(UserEntity.class, result.getResult().getId()));
+        Assertions.assertTrue(userToAssert.getVerified());
         transaction.commit();
     }
 

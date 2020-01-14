@@ -44,6 +44,9 @@ public class UserEntity implements DataEntity {
     @OneToMany(mappedBy = "user")
     private Set<TokenEntity> tokens;
 
+    @Column(name = "verified", columnDefinition = "boolean default false")
+    private boolean verified;
+
     @Override
     public int getId() {
         return id;
@@ -131,5 +134,13 @@ public class UserEntity implements DataEntity {
 
     public void setTokens(Set<TokenEntity> tokens) {
         this.tokens = tokens;
+    }
+
+    public boolean getVerified() {
+        return verified;
+    }
+
+    public void setVerified(boolean verified) {
+        this.verified = verified;
     }
 }

@@ -12,6 +12,6 @@ public interface DataEntity extends Serializable {
      * @return DAO
      */
     default DataEntity toEntity() {
-        throw new IllegalArgumentException("No implementation defined");
+        throw new UnsupportedOperationException("No implementation defined");
     }
 }
