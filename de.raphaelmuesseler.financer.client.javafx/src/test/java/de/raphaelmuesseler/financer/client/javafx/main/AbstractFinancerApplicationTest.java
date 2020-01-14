@@ -10,6 +10,8 @@ import de.raphaelmuesseler.financer.client.javafx.format.JavaFXFormatter;
 import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
 import de.raphaelmuesseler.financer.server.db.HibernateUtil;
 import de.raphaelmuesseler.financer.server.main.Server;
+import de.raphaelmuesseler.financer.server.service.FinancerService;
+import de.raphaelmuesseler.financer.server.service.VerificationService;
 import de.raphaelmuesseler.financer.shared.model.categories.BaseCategory;
 import de.raphaelmuesseler.financer.shared.model.categories.Category;
 import de.raphaelmuesseler.financer.shared.model.categories.CategoryTree;
@@ -18,6 +20,7 @@ import de.raphaelmuesseler.financer.shared.model.transactions.FixedTransaction;
 import de.raphaelmuesseler.financer.shared.model.transactions.TransactionAmount;
 import de.raphaelmuesseler.financer.shared.model.transactions.VariableTransaction;
 import de.raphaelmuesseler.financer.shared.model.user.User;
+import de.raphaelmuesseler.financer.shared.model.user.VerificationToken;
 import de.raphaelmuesseler.financer.util.collections.TreeUtil;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -86,6 +89,7 @@ class AbstractFinancerApplicationTest extends ApplicationTest {
         Properties testProperties = new Properties();
         testProperties.load(AbstractFinancerApplicationTest.class.getResourceAsStream("test.properties"));
         Server.setServerProperties(testProperties);
+        FinancerService.setVerificationService(new VerificationService(testProperties));
 
         new Thread(() -> {
             try {
