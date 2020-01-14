@@ -194,11 +194,12 @@ public class FinancerService {
     }
 
     private void addVerificationToken(Logger logger, User user) {
-        try {
-            String verificationToken = verificationService.sendVerificationEmail(user);
-
-        } catch (EmailException e) {
-            logger.log(Level.SEVERE, e.getMessage(), e);
+        if (verificationService != null) {
+            try {
+                String verificationToken = verificationService.sendVerificationEmail(user);
+            } catch (EmailException e) {
+                logger.log(Level.SEVERE, e.getMessage(), e);
+            }
         }
     }
 
