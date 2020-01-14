@@ -219,7 +219,7 @@ public class FixedTransactionDialog extends FinancerDialog<FixedTransaction> {
                 }
                 this.amountField.setDisable(true);
             } else {
-                this.amountField.setText(Double.toString(this.getValue().getAmount()));
+                this.amountField.setText(Double.toString(this.getValue().getAmountValue()));
                 this.toggleTransactionAmountContainer(false);
             }
         } else {
