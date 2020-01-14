@@ -12,7 +12,10 @@ public class PortAllocatorTest {
 
     @Test
     public void testAllocatePort() throws IOException {
-        final int startPort = 50000;
+        int startPort = PortAllocator.nextFreePort();
+        while (!PortAllocator.isLocalPortRangeFree(startPort, startPort + 2)) {
+            startPort = PortAllocator.nextFreePort();
+        }
         ServerSocket socket1 = new ServerSocket(startPort);
         ServerSocket socket2 = new ServerSocket(startPort + 1);
 
@@ -27,7 +30,10 @@ public class PortAllocatorTest {
 
     @Test
     public void testAllocatePortIfNoPortIsFree() throws IOException {
-        final int startPort = 50005;
+        int startPort = PortAllocator.nextFreePort();
+        while (!PortAllocator.isLocalPortRangeFree(startPort, startPort + 2)) {
+            startPort = PortAllocator.nextFreePort();
+        }
         ServerSocket socket1 = new ServerSocket(startPort);
         ServerSocket socket2 = new ServerSocket(startPort + 1);
         ServerSocket socket3 = new ServerSocket(startPort + 2);

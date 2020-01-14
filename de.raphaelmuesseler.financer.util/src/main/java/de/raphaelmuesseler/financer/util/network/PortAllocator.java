@@ -26,7 +26,16 @@ public class PortAllocator {
         return -1;
     }
 
-    private static boolean isLocalPortFree(int port) {
+    static boolean isLocalPortRangeFree(int from, int to) {
+        for (int i = from; i <= to; i++) {
+            if (!isLocalPortFree(i)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    static boolean isLocalPortFree(int port) {
         try {
             new ServerSocket(port).close();
             return true;
