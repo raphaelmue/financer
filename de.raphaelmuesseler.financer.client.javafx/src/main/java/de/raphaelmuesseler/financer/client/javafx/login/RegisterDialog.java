@@ -16,7 +16,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Region;
 import javafx.util.StringConverter;
 
-public class  RegisterDialog extends FinancerDialog<User> {
+public class RegisterDialog extends FinancerDialog<User> {
     private JFXTextField nameField;
     private JFXTextField surnameField;
     private JFXTextField emailField;

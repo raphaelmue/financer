@@ -10,13 +10,14 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.util.Properties;
 
+@SuppressWarnings("WeakerAccess")
 @Tag("skip")
 public class VerificationServiceTest {
 
-    private VerificationService verificationService;
+    private static VerificationService verificationService;
 
     @BeforeAll
-    public void setup() throws IOException {
+    public static void setup() throws IOException {
         Properties testProperties = new Properties();
         testProperties.load(FinancerServiceTest.class.getResourceAsStream("test.properties"));
         HibernateUtil.setDatabaseProperties(testProperties);
