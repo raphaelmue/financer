@@ -1,5 +1,6 @@
 package de.raphaelmuesseler.financer.client.javafx.dialogs;
 
+import com.jfoenix.controls.JFXDialogLayout;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Region;
 
@@ -23,6 +24,7 @@ public class FinancerConfirmDialog extends FinancerDialog<Boolean> {
     @Override
     protected void prepareDialogContent() {
         this.questionLabel.setText(this.question);
+        ((JFXDialogLayout) this.getContent()).getActions().get(0).requestFocus();
     }
 
     @Override

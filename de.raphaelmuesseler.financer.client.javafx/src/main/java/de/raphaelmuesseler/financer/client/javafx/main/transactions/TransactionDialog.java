@@ -8,6 +8,7 @@ import de.raphaelmuesseler.financer.client.connection.ServerRequestHandler;
 import de.raphaelmuesseler.financer.client.format.I18N;
 import de.raphaelmuesseler.financer.client.javafx.components.DatePicker;
 import de.raphaelmuesseler.financer.client.javafx.components.DoubleField;
+import de.raphaelmuesseler.financer.client.javafx.dialogs.FileChooserDialog;
 import de.raphaelmuesseler.financer.client.javafx.dialogs.FinancerConfirmDialog;
 import de.raphaelmuesseler.financer.client.javafx.dialogs.FinancerDialog;
 import de.raphaelmuesseler.financer.client.javafx.dialogs.FinancerExceptionDialog;
@@ -29,7 +30,6 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
-import javafx.stage.FileChooser;
 import org.controlsfx.glyphfont.FontAwesome;
 import org.controlsfx.glyphfont.GlyphFont;
 import org.controlsfx.glyphfont.GlyphFontRegistry;
@@ -122,14 +122,8 @@ class TransactionDialog extends FinancerDialog<VariableTransaction> {
             deleteAttachmentBtn.setId("deleteAttachmentBtn");
 
             uploadAttachmentBtn.setOnAction(event -> {
-                FileChooser fileChooser = new FileChooser();
-                fileChooser.setTitle(I18N.get("uploadAttachment"));
-                fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
-                fileChooser.getExtensionFilters().addAll(
-                        new FileChooser.ExtensionFilter(I18N.get("documents"), "*.jpg", "*.png", "*.doc", "*.docx", "*.pdf")
-                );
-                File attachmentFile = fileChooser.showOpenDialog(uploadAttachmentBtn.getContextMenu());
-                onUploadAttachment(attachmentFile);
+                FileChooserDialog dialog = new FileChooserDialog();
+                dialog.setOnConfirm(this::onUploadAttachment);
             });
 
             openFileBtn.setOnAction(event -> onOpenAttachment());
@@ -226,7 +220,7 @@ class TransactionDialog extends FinancerDialog<VariableTransaction> {
     protected void onConfirm() {
         if (this.getValue() == null) {
             this.setValue(new VariableTransaction(0,
-                    Double.valueOf(this.amountField.getText()),
+                    Double.parseDouble(this.amountField.getText()),
                     this.valueDateField.getValue(),
                     this.categoryComboBox.getSelectionModel().getSelectedItem(),
                     this.productField.getText(),
@@ -234,7 +228,7 @@ class TransactionDialog extends FinancerDialog<VariableTransaction> {
                     this.shopField.getText()));
             this.getValue().getCategoryTree().getTransactions().add(this.getValue());
         } else {
-            this.getValue().setAmount(Double.valueOf(this.amountField.getText()));
+            this.getValue().setAmount(Double.parseDouble(this.amountField.getText()));
             this.getValue().setCategoryTree(this.categoryComboBox.getSelectionModel().getSelectedItem());
             this.getValue().setProduct(this.productField.getText());
             this.getValue().setPurpose(this.purposeField.getText());
@@ -318,7 +312,9 @@ class TransactionDialog extends FinancerDialog<VariableTransaction> {
                         "/transactions/" + attachmentListView.getSelectionModel().getSelectedItem().getTransaction().getId() +
                         "/attachments/" + attachmentListView.getSelectionModel().getSelectedItem().getName());
                 try {
-                    Files.delete(file.toPath());
+                    if (file.exists()) {
+                        Files.delete(file.toPath());
+                    }
                     Platform.runLater(() -> attachmentListView.getItems().remove(attachmentListView.getSelectionModel().getSelectedItem()));
                 } catch (IOException e) {
                     logger.log(Level.SEVERE, e.getMessage(), e);
