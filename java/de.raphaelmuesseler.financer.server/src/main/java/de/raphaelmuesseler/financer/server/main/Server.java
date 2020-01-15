@@ -43,7 +43,7 @@ public class Server {
         if (serverProperties == null) {
             serverProperties = new Properties(defaultProperties);
             try {
-                serverProperties.load(new FileInputStream("conf/financer.properties"));
+                serverProperties.load(new FileInputStream("../conf/financer.properties"));
             } catch (IOException e) {
                 logger.log(Level.INFO, "No custom properties specified!");
             }

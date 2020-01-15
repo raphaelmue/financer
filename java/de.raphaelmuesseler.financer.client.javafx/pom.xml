@@ -176,7 +176,7 @@
                                         <argument>Financer Project Team</argument>
 
                                         <argument>--license-file</argument>
-                                        <argument>../LICENSE</argument>
+                                        <argument>../../LICENSE</argument>
 
                                         <argument>--java-options</argument>
                                         <argument>
