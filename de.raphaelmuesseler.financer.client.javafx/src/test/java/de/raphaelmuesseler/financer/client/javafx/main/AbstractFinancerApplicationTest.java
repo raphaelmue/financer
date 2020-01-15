@@ -22,6 +22,7 @@ import de.raphaelmuesseler.financer.shared.model.transactions.VariableTransactio
 import de.raphaelmuesseler.financer.shared.model.user.User;
 import de.raphaelmuesseler.financer.shared.model.user.VerificationToken;
 import de.raphaelmuesseler.financer.util.collections.TreeUtil;
+import de.raphaelmuesseler.financer.util.network.PortAllocator;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -90,6 +91,8 @@ class AbstractFinancerApplicationTest extends ApplicationTest {
         testProperties.load(AbstractFinancerApplicationTest.class.getResourceAsStream("test.properties"));
         Server.setServerProperties(testProperties);
         FinancerService.setVerificationService(new VerificationService(testProperties));
+
+        testProperties.setProperty("financer.server.port", Integer.toString(PortAllocator.nextFreePort()));
 
         new Thread(() -> {
             try {

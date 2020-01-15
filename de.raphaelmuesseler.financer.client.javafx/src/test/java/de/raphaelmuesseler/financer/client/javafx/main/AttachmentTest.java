@@ -7,18 +7,13 @@ import javafx.scene.control.Button;
 import javafx.scene.input.KeyCode;
 import org.junit.jupiter.api.*;
 
-import java.awt.*;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.StringSelection;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.util.concurrent.TimeoutException;
 
 @SuppressWarnings("WeakerAccess")
-//@Tag("integration")
-@Tag("skip")
-// These tests are currently not working in headless mode
+@Tag("integration")
 public class AttachmentTest extends AbstractFinancerApplicationTest {
 
     private static String content;
@@ -31,6 +26,9 @@ public class AttachmentTest extends AbstractFinancerApplicationTest {
             path = System.getenv("APPDATA") + path;
         } else {
             path = System.getProperty("user.home") + path;
+        }
+        if (System.getProperty("os.name").toLowerCase().contains("windows")) {
+            path = path.replace("/", "\\");
         }
 
         RandomString randomString = new RandomString(1024);
@@ -60,22 +58,15 @@ public class AttachmentTest extends AbstractFinancerApplicationTest {
         sleep(SHORT_SLEEP);
         clickOn((JFXButton) find("#uploadAttachmentBtn"));
         sleep(SHORT_SLEEP);
-        applyPath(path);
+        clickOn("#pathTextField");
+        write(path);
+        press(KeyCode.TAB).release(KeyCode.TAB);
+        press(KeyCode.TAB).release(KeyCode.TAB);
+        press(KeyCode.ENTER).release(KeyCode.ENTER);
         sleep(MEDIUM_SLEEP);
         Assertions.assertNotNull(clickOn("attachment.txt"));
         confirmDialog();
         sleep(SHORT_SLEEP);
-    }
-
-    private void applyPath(String filePath) {
-        if (System.getProperty("os.name").toLowerCase().contains("windows")) {
-            filePath = filePath.replace("/", "\\");
-        }
-        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-        StringSelection stringSelection = new StringSelection(filePath);
-        clipboard.setContents(stringSelection, stringSelection);
-        press(KeyCode.CONTROL).press(KeyCode.V).release(KeyCode.V).release(KeyCode.CONTROL);
-        push(KeyCode.ENTER);
     }
 
     @Test
@@ -94,6 +85,10 @@ public class AttachmentTest extends AbstractFinancerApplicationTest {
         clickOn("attachment.txt");
         clickOn((JFXButton) find("#deleteAttachmentBtn"));
         sleep(SHORT_SLEEP);
+        press(KeyCode.TAB).release(KeyCode.TAB);
+        press(KeyCode.TAB).release(KeyCode.TAB);
+        press(KeyCode.TAB).release(KeyCode.TAB);
+        press(KeyCode.TAB).release(KeyCode.TAB);
         press(KeyCode.ENTER).release(KeyCode.ENTER);
         sleep(MEDIUM_SLEEP);
         confirmDialog();
