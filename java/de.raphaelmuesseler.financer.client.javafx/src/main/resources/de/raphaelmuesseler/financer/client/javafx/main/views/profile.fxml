@@ -38,7 +38,7 @@
                                     </HBox>
                                 </center>
                                 <right>
-                                    <JFXButton alignment="CENTER" text="%edit"/>
+                                    <JFXButton alignment="CENTER" fx:id="editPersonalInformationBtn" text="%edit"/>
                                 </right>
                             </BorderPane>
                             <Separator styleClass="separator"/>
@@ -93,5 +93,4 @@
             </Tab>
         </JFXTabPane>
     </VBox>
-
 </VBox>

@@ -1,6 +1,7 @@
 package de.raphaelmuesseler.financer.server.db;
 
 import de.raphaelmuesseler.financer.shared.model.db.*;
+import de.raphaelmuesseler.financer.shared.model.user.VerificationToken;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -45,7 +46,8 @@ public class HibernateUtil {
                     .addAnnotatedClass(SettingsEntity.class)
                     .addAnnotatedClass(TokenEntity.class)
                     .addAnnotatedClass(UserEntity.class)
-                    .addAnnotatedClass(VariableTransactionEntity.class);
+                    .addAnnotatedClass(VariableTransactionEntity.class)
+                    .addAnnotatedClass(VerificationTokenEntity.class);
 
             String url = configuration.getProperty("hibernate.connection.url");
             configuration.setProperty("hibernate.connection.url", url

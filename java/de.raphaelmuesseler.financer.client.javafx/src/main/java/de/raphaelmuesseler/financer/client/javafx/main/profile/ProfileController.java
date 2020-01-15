@@ -27,6 +27,9 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldTreeCell;
 import javafx.util.StringConverter;
+import org.controlsfx.glyphfont.FontAwesome;
+import org.controlsfx.glyphfont.GlyphFont;
+import org.controlsfx.glyphfont.GlyphFontRegistry;
 
 import java.io.Serializable;
 import java.net.URL;
@@ -60,6 +63,8 @@ public class ProfileController implements Initializable {
     public JFXButton editCategoryBtn;
     @FXML
     public JFXButton deleteCategoryBtn;
+    @FXML
+    public JFXButton editPersonalInformationBtn;
 
     private User user;
     private Logger logger = Logger.getLogger("FinancerApplication");
@@ -73,7 +78,7 @@ public class ProfileController implements Initializable {
             FinancerController.getInstance().showLoadingBox();
             this.user = (User) this.localStorage.readObject("user");
             if (user != null) {
-                Platform.runLater(this::initializePersonalInformation);
+                Platform.runLater(this::fillPersonalInformationLabels);
             }
 
             this.changePasswordLink.setOnAction(event -> {
@@ -98,6 +103,58 @@ public class ProfileController implements Initializable {
                 });
             });
 
+            Map<String, Serializable> parameters = new HashMap<>();
+            parameters.put("user", user);
+
+            FinancerExecutor.getExecutor().execute(new ServerRequestHandler(user, "updateUser", parameters,
+                    new AsyncConnectionCall() {
+                        @Override
+                        public void onSuccess(ConnectionResult result) {
+                            FinancerController.getInstance().showToast(Application.MessageType.SUCCESS, I18N.get("succChangedPassword"));
+                        }
+
+                        @Override
+                        public void onAfter() {
+                            localStorage.writeObject("user", user);
+                        }
+                    }));
+
+            GlyphFont fontAwesome = GlyphFontRegistry.font("FontAwesome");
+            this.refreshCategoriesBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.REFRESH));
+            this.refreshCategoriesBtn.setGraphicTextGap(8);
+            this.newCategoryBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.PLUS));
+            this.newCategoryBtn.setGraphicTextGap(8);
+            this.newCategoryBtn.setDisable(true);
+            this.editCategoryBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.EDIT));
+            this.editCategoryBtn.setGraphicTextGap(8);
+            this.editCategoryBtn.setDisable(true);
+            this.deleteCategoryBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.TRASH));
+            this.deleteCategoryBtn.setGraphicTextGap(8);
+            this.deleteCategoryBtn.setDisable(true);
+
+            this.handleRefreshCategories();
+
+            this.editPersonalInformationBtn.setOnAction(event -> {
+                ChangePersonalInformationDialog dialog = new ChangePersonalInformationDialog(this.user);
+                dialog.setOnConfirm(user -> {
+                    if (user != null) {
+                        parameters.clear();
+                        parameters.put("user", user);
+                        FinancerExecutor.getExecutor().execute(new ServerRequestHandler(user, "updateUser", parameters, new AsyncConnectionCall() {
+                            @Override
+                            public void onSuccess(ConnectionResult result) {
+                                FinancerController.getInstance().showToast(Application.MessageType.SUCCESS, I18N.get("succChangedPersonalInformation"));
+                            }
+
+                            @Override
+                            public void onAfter() {
+                                localStorage.writeObject("user", user);
+                                Platform.runLater(() -> fillPersonalInformationLabels());
+                            }
+                        }));
+                    }
+                });
+            });
             this.newCategoryBtn.setDisable(true);
             this.editCategoryBtn.setDisable(true);
             this.deleteCategoryBtn.setDisable(true);
@@ -107,6 +164,13 @@ public class ProfileController implements Initializable {
             FinancerController.getInstance().hideLoadingBox();
         }));
         FinancerController.getInitializationThread().start();
+    }
+
+    private void fillPersonalInformationLabels() {
+        this.fullNameLabel.setText(user.getFullName());
+        this.emailLabel.setText(user.getEmail());
+        this.birthDateLabel.setText(new JavaFXFormatter(localStorage).formatDate(this.user.getBirthDate()));
+        this.genderLabel.setText(I18N.get(this.user.getGender().getName()));
     }
 
     public void handleRefreshCategories() {

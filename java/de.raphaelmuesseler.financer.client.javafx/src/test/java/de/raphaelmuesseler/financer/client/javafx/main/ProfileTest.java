@@ -1,11 +1,14 @@
 package de.raphaelmuesseler.financer.client.javafx.main;
 
+import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXPasswordField;
+import com.jfoenix.controls.JFXTextField;
 import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
 import de.raphaelmuesseler.financer.shared.model.user.User;
 import de.raphaelmuesseler.financer.util.Hash;
 import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
+import javafx.scene.control.Label;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -23,7 +26,6 @@ public class ProfileTest extends AbstractFinancerApplicationTest {
     @Test
     public void testChangePassword() {
         final String newPassword = "newPassword";
-
         register(user, password);
 
         clickOn((Button) find("#profileTabBtn"));
@@ -41,7 +43,26 @@ public class ProfileTest extends AbstractFinancerApplicationTest {
 
         sleep(SHORT_SLEEP);
 
-        Assertions.assertEquals(Hash.create(newPassword, ((User)LocalStorageImpl.getInstance().readObject("user")).getSalt()),
-                ((User)LocalStorageImpl.getInstance().readObject("user")).getPassword());
+        Assertions.assertEquals(Hash.create(newPassword, ((User) LocalStorageImpl.getInstance().readObject("user")).getSalt()),
+                ((User) LocalStorageImpl.getInstance().readObject("user")).getPassword());
+    }
+
+    @Test
+    public void testChangePersonalInformation() {
+        final String newName = "Peter";
+        register(user, password);
+
+        clickOn((Button) find("#profileTabBtn"));
+        sleep(SHORT_SLEEP);
+        clickOn((JFXButton) find("#editPersonalInformationBtn"));
+        sleep(SHORT_SLEEP);
+        clickOn((JFXTextField) find("#nameField"));
+        eraseText(user.getName().length());
+        write(newName);
+        confirmDialog();
+        sleep(SHORT_SLEEP);
+
+        Assertions.assertEquals(newName, ((User) LocalStorageImpl.getInstance().readObject("user")).getName());
+        Assertions.assertEquals(newName + " " + user.getSurname(), ((Label) find("#fullNameLabel")).getText());
     }
 }

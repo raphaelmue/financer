@@ -1,11 +1,11 @@
 package de.raphaelmuesseler.financer.client.app.connection;
 
 import java.io.Serializable;
-import java.net.ConnectException;
 import java.util.HashMap;
 import java.util.Map;
 
 import de.raphaelmuesseler.financer.client.app.local.LocalStorageImpl;
+import de.raphaelmuesseler.financer.client.connection.AsyncConnectionCall;
 import de.raphaelmuesseler.financer.client.connection.RetrievalService;
 import de.raphaelmuesseler.financer.client.connection.ServerRequestHandler;
 import de.raphaelmuesseler.financer.client.local.LocalStorage;
@@ -41,7 +41,7 @@ public class RetrievalServiceImpl implements RetrievalService {
         Map<String, Serializable> parameters = new HashMap<>();
         parameters.put("userId", user.getId());
 
-        FinancerExecutor.getExecutor().execute(new ServerRequestHandler(user, "getUsersCategories", parameters, new AndroidAsyncConnectionCall() {
+        FinancerExecutor.getExecutor().execute(new ServerRequestHandler(user, "getUsersCategories", parameters, new AsyncConnectionCall() {
             @Override
             public void onSuccess(ConnectionResult result) {
                 BaseCategory categories = (BaseCategory) result.getResult();
@@ -49,14 +49,6 @@ public class RetrievalServiceImpl implements RetrievalService {
                 localStorage.writeObject("categories", categories);
 
                 asyncCall.onSuccess(categories);
-            }
-
-            @Override
-            public void onFailure(Exception exception) {
-                asyncCall.onFailure(exception);
-                if (!(exception instanceof ConnectException)) {
-                    AndroidAsyncConnectionCall.super.onFailure(exception);
-                }
             }
 
             @Override
@@ -72,21 +64,13 @@ public class RetrievalServiceImpl implements RetrievalService {
         parameters.put("userId", user.getId());
         parameters.put("baseCategory", localStorage.readObject("categories"));
 
-        FinancerExecutor.getExecutor().execute(new ServerRequestHandler(user, "getTransactions", parameters, new AndroidAsyncConnectionCall() {
+        FinancerExecutor.getExecutor().execute(new ServerRequestHandler(user, "getTransactions", parameters, new AsyncConnectionCall() {
             @Override
             public void onSuccess(ConnectionResult result) {
                 BaseCategory categories = (BaseCategory) result.getResult();
                 localStorage.writeObject("categories", categories);
 
                 asyncCall.onSuccess(categories);
-            }
-
-            @Override
-            public void onFailure(Exception exception) {
-                asyncCall.onFailure(exception);
-                if (!(exception instanceof ConnectException)) {
-                    AndroidAsyncConnectionCall.super.onFailure(exception);
-                }
             }
 
             @Override
@@ -102,21 +86,13 @@ public class RetrievalServiceImpl implements RetrievalService {
         parameters.put("userId", user.getId());
         parameters.put("baseCategory", localStorage.readObject("categories"));
 
-        FinancerExecutor.getExecutor().execute(new ServerRequestHandler(user, "getFixedTransactions", parameters, new AndroidAsyncConnectionCall() {
+        FinancerExecutor.getExecutor().execute(new ServerRequestHandler(user, "getFixedTransactions", parameters, new AsyncConnectionCall() {
             @Override
             public void onSuccess(ConnectionResult result) {
                 BaseCategory categories = (BaseCategory) result.getResult();
                 localStorage.writeObject("categories", categories);
 
                 asyncCall.onSuccess(categories);
-            }
-
-            @Override
-            public void onFailure(Exception exception) {
-                asyncCall.onFailure(exception);
-                if (!(exception instanceof ConnectException)) {
-                    AndroidAsyncConnectionCall.super.onFailure(exception);
-                }
             }
 
             @Override

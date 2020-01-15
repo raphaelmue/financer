@@ -8,4 +8,5 @@ module de.raphaelmuesseler.financer.server {
     requires java.xml;
     requires java.logging;
     requires java.naming;
+    requires commons.email;
 }

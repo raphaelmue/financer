@@ -123,7 +123,8 @@ public class RegisterDialog extends FinancerDialog<User> {
                 this.nameField.getText(),
                 this.surnameField.getText(),
                 this.birthDatePicker.getValue(),
-                this.genderComboBox.getSelectionModel().getSelectedItem()));
+                this.genderComboBox.getSelectionModel().getSelectedItem(),
+                false));
 
         super.onConfirm();
     }

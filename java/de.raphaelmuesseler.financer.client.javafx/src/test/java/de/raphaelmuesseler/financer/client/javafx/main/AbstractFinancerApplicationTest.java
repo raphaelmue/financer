@@ -10,6 +10,8 @@ import de.raphaelmuesseler.financer.client.javafx.format.JavaFXFormatter;
 import de.raphaelmuesseler.financer.client.javafx.local.LocalStorageImpl;
 import de.raphaelmuesseler.financer.server.db.HibernateUtil;
 import de.raphaelmuesseler.financer.server.main.Server;
+import de.raphaelmuesseler.financer.server.service.FinancerService;
+import de.raphaelmuesseler.financer.server.service.VerificationService;
 import de.raphaelmuesseler.financer.shared.model.categories.BaseCategory;
 import de.raphaelmuesseler.financer.shared.model.categories.Category;
 import de.raphaelmuesseler.financer.shared.model.categories.CategoryTree;
@@ -18,6 +20,7 @@ import de.raphaelmuesseler.financer.shared.model.transactions.FixedTransaction;
 import de.raphaelmuesseler.financer.shared.model.transactions.TransactionAmount;
 import de.raphaelmuesseler.financer.shared.model.transactions.VariableTransaction;
 import de.raphaelmuesseler.financer.shared.model.user.User;
+import de.raphaelmuesseler.financer.shared.model.user.VerificationToken;
 import de.raphaelmuesseler.financer.util.collections.TreeUtil;
 import de.raphaelmuesseler.financer.util.network.PortAllocator;
 import javafx.scene.Node;
@@ -53,7 +56,8 @@ class AbstractFinancerApplicationTest extends ApplicationTest {
             "Max",
             "Mustermann",
             LocalDate.of(1989, 5, 28),
-            User.Gender.MALE);
+            User.Gender.MALE,
+            false);
     final CategoryTree category = new CategoryTreeImpl(new Category("TestCategory", BaseCategory.CategoryClass.VARIABLE_EXPENSES));
     final VariableTransaction transaction = new VariableTransaction(0,
             52.5,
@@ -86,6 +90,7 @@ class AbstractFinancerApplicationTest extends ApplicationTest {
         Properties testProperties = new Properties();
         testProperties.load(AbstractFinancerApplicationTest.class.getResourceAsStream("test.properties"));
         Server.setServerProperties(testProperties);
+        FinancerService.setVerificationService(new VerificationService(testProperties));
 
         testProperties.setProperty("financer.server.port", Integer.toString(PortAllocator.nextFreePort()));
 

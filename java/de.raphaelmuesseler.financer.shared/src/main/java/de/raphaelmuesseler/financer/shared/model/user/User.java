@@ -50,7 +50,8 @@ public class User extends UserEntity {
                 databaseUser.getName(),
                 databaseUser.getSurname(),
                 databaseUser.getBirthDate(),
-                Gender.getGenderByName(databaseUser.getGenderName()));
+                Gender.getGenderByName(databaseUser.getGenderName()),
+                databaseUser.getVerified());
         if (databaseUser.getTokens() != null) {
             this.setTokens(databaseUser.getTokens());
         }
@@ -63,10 +64,10 @@ public class User extends UserEntity {
     }
 
     public User() {
-        this(-1, null, null, null, null, null, null, null);
+        this(-1, null, null, null, null, null, null, null, false);
     }
 
-    public User(int id, String email, String password, String salt, String name, String surname, LocalDate birthDate, Gender gender) {
+    public User(int id, String email, String password, String salt, String name, String surname, LocalDate birthDate, Gender gender, boolean verified) {
         this.setId(id);
         this.setEmail(email);
         this.setPassword(password);
@@ -79,6 +80,7 @@ public class User extends UserEntity {
         } else {
             this.setGenderName(null);
         }
+        this.setVerified(verified);
 
         this.settings = new UserSettings();
     }
@@ -94,6 +96,7 @@ public class User extends UserEntity {
         databaseUser.setSurname(this.getSurname());
         databaseUser.setBirthDate(this.getBirthDate());
         databaseUser.setGenderName(this.getGender().getName());
+        databaseUser.setVerified(this.getVerified());
         databaseUser.setTokens(this.getTokens());
         databaseUser.setDatabaseSettings(this.getDatabaseSettings());
         return databaseUser;
