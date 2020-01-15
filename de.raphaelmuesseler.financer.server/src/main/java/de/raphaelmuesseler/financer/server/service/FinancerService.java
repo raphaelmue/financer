@@ -9,9 +9,11 @@ import de.raphaelmuesseler.financer.shared.model.db.*;
 import de.raphaelmuesseler.financer.shared.model.transactions.*;
 import de.raphaelmuesseler.financer.shared.model.user.Token;
 import de.raphaelmuesseler.financer.shared.model.user.User;
+import de.raphaelmuesseler.financer.shared.model.user.VerificationToken;
 import de.raphaelmuesseler.financer.util.Hash;
 import de.raphaelmuesseler.financer.util.RandomString;
 import de.raphaelmuesseler.financer.util.collections.TreeUtil;
+import org.apache.commons.mail.EmailException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
@@ -30,6 +32,7 @@ public class FinancerService {
 
     private static FinancerService instance = null;
     private RandomString tokenGenerator = new RandomString(64);
+    private static VerificationService verificationService;
 
     private FinancerService() {
     }
@@ -39,6 +42,10 @@ public class FinancerService {
             instance = new FinancerService();
         }
         return instance;
+    }
+
+    public static void setVerificationService(VerificationService verificationService) {
+        FinancerService.verificationService = verificationService;
     }
 
     /**
@@ -182,17 +189,62 @@ public class FinancerService {
         user = this.generateToken(session, user, (String) parameters.get("ipAddress"), (String) parameters.get("system"),
                 parameters.containsKey("isMobile") && (boolean) parameters.get("isMobile"));
 
+        this.addVerificationToken(logger, session, user);
+
         return new ConnectionResult<>(user);
     }
 
     /**
-     * Updates a password of a user.
+     * Verifying a users token.
+     *
+     * @param parameters [int userId, String verificationToken]
+     * @return updated user or null if token is invalid
+     */
+    public ConnectionResult<User> verifyUser(Logger logger, Session session, Map<String, Serializable> parameters) {
+        logger.log(Level.INFO, "Verifiyng new user ...");
+        int userId = (int) parameters.get("userId");
+        String verificationToken = (String) parameters.get("verificationToken");
+
+
+
+        Transaction transaction = session.beginTransaction();
+        UserEntity user = session.get(UserEntity.class, userId);
+        VerificationTokenEntity verificationTokenEntity = session.createQuery(
+                "from VerificationTokenEntity where user.id = :userId and token = :verificationToken", VerificationTokenEntity.class)
+                .setParameter("userId", userId)
+                .setParameter("verificationToken", verificationToken).uniqueResult();
+
+        if (verificationTokenEntity != null) {
+            session.delete(verificationTokenEntity);
+            user.setVerified(true);
+            session.update(user);
+        }
+
+        transaction.commit();
+
+        return new ConnectionResult<>(new User(user));
+    }
+
+    private void addVerificationToken(Logger logger, Session session, User user) {
+        try {
+            VerificationToken verificationToken = verificationService.sendVerificationEmail(user);
+
+            Transaction transaction = session.beginTransaction();
+            verificationToken.setId((Integer) session.save(verificationToken.toEntity()));
+            transaction.commit();
+        } catch (EmailException e) {
+            logger.log(Level.SEVERE, e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Updates users personal information
      *
      * @param parameters [User user]
      * @return void
      */
-    public ConnectionResult<Serializable> changePassword(Logger logger, Session session, Map<String, Serializable> parameters) {
-        logger.log(Level.INFO, "Changing Users Password ...");
+    public ConnectionResult<Serializable> updateUser(Logger logger, Session session, Map<String, Serializable> parameters) {
+        logger.log(Level.INFO, "Updating users personal information ...");
         User user = (User) parameters.get("user");
 
         Transaction transaction = session.beginTransaction();

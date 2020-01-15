@@ -130,7 +130,8 @@ public class RegisterActivity extends AppCompatActivity implements Application {
                     this.surnameEditText.getText().toString(),
                     LocalDate.parse(birthDateTextView.getText().toString(), DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)
                             .withLocale(getResources().getConfiguration().locale)),
-                    (User.Gender) this.genderSpinner.getSelectedItem());
+                    (User.Gender) this.genderSpinner.getSelectedItem(),
+                    false);
 
             Map<String, Serializable> parameters = new HashMap<>();
             parameters.put("user", user);

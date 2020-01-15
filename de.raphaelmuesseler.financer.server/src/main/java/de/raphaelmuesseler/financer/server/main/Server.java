@@ -1,6 +1,8 @@
 package de.raphaelmuesseler.financer.server.main;
 
 import de.raphaelmuesseler.financer.server.db.HibernateUtil;
+import de.raphaelmuesseler.financer.server.service.FinancerService;
+import de.raphaelmuesseler.financer.server.service.VerificationService;
 import de.raphaelmuesseler.financer.util.concurrency.FinancerExecutor;
 
 import java.io.DataInputStream;
@@ -18,9 +20,10 @@ public class Server {
 
     private static final Logger logger = Logger.getLogger("Server");
     private ServerSocket serverSocket;
-    private boolean isRunning = false;
 
     private static Properties serverProperties;
+
+    private boolean isRunning = false;
 
     public static void setServerProperties(Properties serverProperties) {
         Server.serverProperties = serverProperties;
@@ -49,6 +52,7 @@ public class Server {
             }
         }
 
+        FinancerService.setVerificationService(new VerificationService(serverProperties));
         HibernateUtil.setDatabaseProperties(serverProperties);
 
         int port = Integer.parseInt(serverProperties.getProperty("financer.server.port"));
