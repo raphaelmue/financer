@@ -1,10 +1,10 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="Financer Server" type="Application" factoryName="Application" singleton="true">
-    <option name="MAIN_CLASS_NAME" value="de.raphaelmuesseler.financer.server.main.Server" />
-    <module name="de.raphaelmuesseler.financer.server" />
+    <option name="MAIN_CLASS_NAME" value="org.financer.server.main.Server" />
+    <module name="org.financer.server" />
     <extension name="coverage">
       <pattern>
-        <option name="PATTERN" value="de.raphaelmuesseler.financer.shared.exceptions.*" />
+        <option name="PATTERN" value="org.financer.shared.exceptions.*" />
         <option name="ENABLED" value="true" />
       </pattern>
     </extension>

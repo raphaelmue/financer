@@ -19,7 +19,7 @@
             <map />
           </option>
           <option name="resolveToWorkspace" value="false" />
-          <option name="workingDirPath" value="$PROJECT_DIR$/de.raphaelmuesseler.financer.client.javafx" />
+          <option name="workingDirPath" value="$PROJECT_DIR$/org.financer.client.javafx" />
         </MavenRunnerParameters>
       </option>
     </MavenSettings>

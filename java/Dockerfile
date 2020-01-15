@@ -6,17 +6,17 @@ MAINTAINER Raphael Müßeler <raphael@muesseler.de>
 WORKDIR /usr/src/app/
 
 # Copy source files
-COPY de.raphaelmuesseler.financer.client ./de.raphaelmuesseler.financer.client
-COPY de.raphaelmuesseler.financer.client.javafx ./de.raphaelmuesseler.financer.client.javafx
-COPY de.raphaelmuesseler.financer.server ./de.raphaelmuesseler.financer.server
-COPY de.raphaelmuesseler.financer.shared ./de.raphaelmuesseler.financer.shared
-COPY de.raphaelmuesseler.financer.util ./de.raphaelmuesseler.financer.util
+COPY org.financer.client ./org.financer.client
+COPY org.financer.client.javafx ./org.financer.client.javafx
+COPY org.financer.server ./org.financer.server
+COPY org.financer.shared ./org.financer.shared
+COPY org.financer.util ./org.financer.util
 COPY pom.xml .
 
 # Compile source files
-RUN mvn clean install -DskipTests -pl de.raphaelmuesseler.financer.server,de.raphaelmuesseler.financer.shared,de.raphaelmuesseler.financer.util
+RUN mvn clean install -DskipTests -pl org.financer.server,org.financer.shared,org.financer.util
 
 EXPOSE 3500
 
 # Run Financer server
-CMD ["java", "-jar", "de.raphaelmuesseler.financer.server/target/financer-server.jar", "--database=prod"]
+CMD ["java", "-jar", "org.financer.server/target/financer-server.jar", "--database=prod"]

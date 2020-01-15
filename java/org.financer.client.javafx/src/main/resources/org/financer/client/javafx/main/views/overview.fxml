@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXComboBox?>
+<?import com.jfoenix.controls.JFXMasonryPane?>
+<?import org.financer.client.javafx.components.charts.DonutChart?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import org.financer.client.javafx.components.charts.SmoothedChart?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.NumberAxis?>
+<VBox fx:controller="org.financer.client.javafx.main.overview.OverviewController"
+      xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" styleClass="content">
+    <ScrollPane fx:id="overviewScrollPane" fitToWidth="true" hbarPolicy="NEVER">
+        <VBox>
+            <JFXMasonryPane HSpacing="15" VSpacing="5" >
+                <VBox styleClass="box">
+                    <VBox styleClass="box-content" prefWidth="300">
+                        <GridPane maxWidth="Infinity">
+                            <Label fx:id="balanceChangeLabel" GridPane.columnIndex="0" GridPane.rowIndex="0"
+                                   GridPane.hgrow="ALWAYS"/>
+                            <VBox styleClass="description-box" GridPane.columnIndex="1" GridPane.rowIndex="0"
+                                  GridPane.hgrow="ALWAYS" >
+                                <Label styleClass="description-label" text="%balance"/>
+                                <Label fx:id="balanceLabel" styleClass="description-content-label"/>
+                            </VBox>
+                        </GridPane>
+                    </VBox>
+                </VBox>
+                <VBox styleClass="box">
+                    <VBox styleClass="box-content" prefWidth="300">
+                        <GridPane maxWidth="Infinity">
+                            <Label fx:id="variableExpensesChangeLabel" GridPane.columnIndex="0" GridPane.rowIndex="0"
+                                   GridPane.hgrow="ALWAYS" />
+                            <VBox styleClass="description-box" GridPane.columnIndex="1" GridPane.rowIndex="0"
+                                  GridPane.hgrow="ALWAYS">
+                                <Label styleClass="description-label" text="%variableExpenses"/>
+                                <Label fx:id="variableExpensesLabel" styleClass="description-content-label"/>
+                            </VBox>
+                        </GridPane>
+                    </VBox>
+                </VBox>
+                <VBox styleClass="box">
+                    <VBox styleClass="box-content" prefWidth="300">
+                        <GridPane maxWidth="Infinity">
+                            <Label fx:id="numberOfTransactionsChangeLabel" GridPane.columnIndex="0"
+                                   GridPane.rowIndex="0" GridPane.hgrow="ALWAYS"/>
+                            <VBox styleClass="description-box" GridPane.columnIndex="1" GridPane.rowIndex="0"
+                                  GridPane.hgrow="ALWAYS">
+                                <Label styleClass="description-label" text="%transactions"/>
+                                <Label fx:id="numberOfTransactionsLabel" styleClass="description-content-label"/>
+                            </VBox>
+                        </GridPane>
+                    </VBox>
+                </VBox>
+            </JFXMasonryPane>
+            <JFXMasonryPane HSpacing="15" VSpacing="5">
+                <VBox styleClass="box">
+                    <Label text="%lastTransactions" styleClass="content-heading"/>
+                    <VBox styleClass="box-content" prefWidth="300" prefHeight="300"
+                          GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS">
+                        <GridPane fx:id="lastTransactionsGridPane" maxWidth="Infinity" maxHeight="Infinity"/>
+                    </VBox>
+                </VBox>
+                <VBox styleClass="box">
+                    <BorderPane>
+                        <left>
+                            <Label text="%progress" styleClass="content-heading"/>
+                        </left>
+                        <right>
+                            <JFXComboBox fx:id="balanceChartMonthComboBox"/>
+                        </right>
+                    </BorderPane>
+                    <VBox styleClass="box-content" prefWidth="600"
+                          prefHeight="300">
+                        <SmoothedChart fx:id="balanceChart">
+                            <xAxis>
+                                <CategoryAxis side="BOTTOM" label="%valueDate"/>
+                            </xAxis>
+                            <yAxis>
+                                <NumberAxis side="LEFT" label="%amount"/>
+                            </yAxis>
+                        </SmoothedChart>
+                    </VBox>
+                </VBox>
+                <VBox styleClass="box">
+                    <BorderPane>
+                        <left>
+                            <Label text="%distribution" styleClass="content-heading"/>
+                        </left>
+                        <right>
+                            <JFXComboBox fx:id="variableExpensesDistributionMonthComboBox"/>
+                        </right>
+                    </BorderPane>
+                    <VBox styleClass="box-content" prefWidth="300" prefHeight="300">
+                        <DonutChart fx:id="variableExpensesDistributionPieChart" labelsVisible="false" donutWidth="80"/>
+                    </VBox>
+                </VBox>
+                <VBox styleClass="box">
+                    <Label text="%balance" styleClass="content-heading"/>
+                    <VBox styleClass="box-content" prefWidth="300" prefHeight="300"
+                          GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS">
+                        <GridPane fx:id="balanceGridPane" maxWidth="Infinity" maxHeight="Infinity" vgap="8"/>
+                    </VBox>
+                </VBox>
+                <VBox styleClass="box">
+                    <Label text="%upcomingFixedTransactions" styleClass="content-heading"/>
+                    <VBox styleClass="box-content" prefWidth="300" prefHeight="300"
+                          GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS">
+                        <GridPane fx:id="upcomingFixedTransactionGridPane" maxWidth="Infinity" maxHeight="Infinity"
+                                  vgap="8"/>
+                    </VBox>
+                </VBox>
+            </JFXMasonryPane>
+        </VBox>
+    </ScrollPane>
+</VBox>

@@ -33,10 +33,10 @@ pipeline {
                     steps {
                         dir('java') {
                             sh 'mvn clean install -DskipTests -P android-dependency -pl ' +
-                                    '!de.raphaelmuesseler.financer.client.javafx,' +
-                                    '!de.raphaelmuesseler.financer.server,'
+                                    '!org.financer.client.javafx,' +
+                                    '!org.financer.server,'
                         }
-                        dir('android/de.raphaelmuesseler.financer.client.app') {
+                        dir('android/org.financer.client.app') {
                             sh 'chmod +x gradlew'
                             sh 'echo "sdk.dir=$JENKINS_HOME/android-sdk" >> local.properties'
                             sh './gradlew clean assembleDebug'
@@ -71,7 +71,7 @@ pipeline {
                 }
                 stage('Android') {
                     steps {
-                        dir('android/de.raphaelmuesseler.financer.client.app') {
+                        dir('android/org.financer.client.app') {
                             sh 'chmod +x gradlew'
                             sh './gradlew test'
                         }
@@ -93,11 +93,11 @@ pipeline {
             }
             steps {
                 dir('java') {
-                    sh 'cp target/jacoco.exec de.raphaelmuesseler.financer.client/target/'
-                    sh 'cp target/jacoco.exec de.raphaelmuesseler.financer.client.javafx/target/'
-                    sh 'cp target/jacoco.exec de.raphaelmuesseler.financer.server/target/'
-                    sh 'cp target/jacoco.exec de.raphaelmuesseler.financer.shared/target/'
-                    sh 'cp target/jacoco.exec de.raphaelmuesseler.financer.util/target/'
+                    sh 'cp target/jacoco.exec org.financer.client/target/'
+                    sh 'cp target/jacoco.exec org.financer.client.javafx/target/'
+                    sh 'cp target/jacoco.exec org.financer.server/target/'
+                    sh 'cp target/jacoco.exec org.financer.shared/target/'
+                    sh 'cp target/jacoco.exec org.financer.util/target/'
                     sh 'mvn dependency:copy-dependencies'
                     withSonarQubeEnv('SonarQubeServer') {
                         script {

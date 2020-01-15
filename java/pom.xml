@@ -3,7 +3,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>de.raphaelmuesseler.financer</groupId>
+    <groupId>org.financer</groupId>
     <artifactId>financer</artifactId>
     <packaging>pom</packaging>
     <version>1.0-SNAPSHOT</version>
@@ -18,11 +18,11 @@
         <project.testing.localhost>false</project.testing.localhost>
         <project.testing.tags>unit, integration</project.testing.tags>
         <project.testing.arguments>
-            --add-reads de.raphaelmuesseler.financer.shared=org.hibernate.orm.core
-            --add-reads de.raphaelmuesseler.financer.shared=ALL-UNNAMED
-            --add-opens de.raphaelmuesseler.financer.shared/de.raphaelmuesseler.financer.shared.model.db=ALL-UNNAMED
+            --add-reads org.financer.shared=org.hibernate.orm.core
+            --add-reads org.financer.shared=ALL-UNNAMED
+            --add-opens org.financer.shared/org.financer.shared.model.db=ALL-UNNAMED
             --add-opens
-            de.raphaelmuesseler.financer.client.javafx/de.raphaelmuesseler.financer.client.javafx.main=ALL-UNNAMED
+            org.financer.client.javafx/org.financer.client.javafx.main=ALL-UNNAMED
             --add-exports javafx.graphics/com.sun.javafx.application=ALL-UNNAMED
             --add-exports javafx.graphics/com.sun.glass.ui=ALL-UNNAMED
             --add-exports javafx.graphics/com.sun.javafx.css=org.controlsfx.controls
@@ -37,11 +37,11 @@
     </properties>
 
     <modules>
-        <module>de.raphaelmuesseler.financer.client</module>
-        <module>de.raphaelmuesseler.financer.client.javafx</module>
-        <module>de.raphaelmuesseler.financer.server</module>
-        <module>de.raphaelmuesseler.financer.shared</module>
-        <module>de.raphaelmuesseler.financer.util</module>
+        <module>org.financer.client</module>
+        <module>org.financer.client.javafx</module>
+        <module>org.financer.server</module>
+        <module>org.financer.shared</module>
+        <module>org.financer.util</module>
     </modules>
 
     <profiles>

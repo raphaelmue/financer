@@ -156,7 +156,7 @@
 
                 </android.support.design.widget.TextInputLayout>
 
-                <de.raphaelmuesseler.financer.client.app.ui.components.DatePicker
+                <org.financer.client.app.ui.components.DatePicker
                     android:id="@+id/tv_transaction_value_date"
                     android:layout_width="330dp"
                     android:layout_height="wrap_content"
