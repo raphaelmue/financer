@@ -36,7 +36,7 @@ pipeline {
                                     '!org.financer.client.javafx,' +
                                     '!org.financer.server,'
                         }
-                        dir('android/org.financer.client.app') {
+                        dir('android') {
                             sh 'chmod +x gradlew'
                             sh 'echo "sdk.dir=$JENKINS_HOME/android-sdk" >> local.properties'
                             sh './gradlew clean assembleDebug'
@@ -71,7 +71,7 @@ pipeline {
                 }
                 stage('Android') {
                     steps {
-                        dir('android/org.financer.client.app') {
+                        dir('android') {
                             sh 'chmod +x gradlew'
                             sh './gradlew test'
                         }
