@@ -23,3 +23,10 @@ services:
             MYSQL_DATABASE: financer_prod
             MYSQL_ROOT_PASSWORD: password
             MYSQL_PASSWORD: password
+
+    financer-web:
+        build: web/
+        container_name: financer-web
+        restart: always
+        ports:
+            - 3000:3000 
