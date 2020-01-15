@@ -1,6 +1,7 @@
 package de.raphaelmuesseler.financer.client.app.ui.main;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -11,6 +12,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -18,8 +20,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import de.raphaelmuesseler.financer.client.app.R;
+import de.raphaelmuesseler.financer.client.app.format.AndroidFormatter;
 import de.raphaelmuesseler.financer.client.app.local.LocalStorageImpl;
 import de.raphaelmuesseler.financer.client.app.ui.login.LoginActivity;
 import de.raphaelmuesseler.financer.client.app.ui.main.transactions.TransactionFragment;
@@ -31,10 +35,11 @@ import de.raphaelmuesseler.financer.shared.model.user.User;
 public class FinancerActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnFragmentInteractionListener, Application {
 
+    public static final int REQUEST_WRITE_STORAGE_PERMISSION = 112;
+
     public static Application INSTANCE;
 
     private ProgressBar progressBar;
-
 
     public static Application getFinancerApplication() {
         return INSTANCE;
@@ -55,6 +60,9 @@ public class FinancerActivity extends AppCompatActivity
         if (user == null) {
             this.openLoginActivity();
         } else {
+            Intent i = new Intent(this, SplashScreenActivity.class);
+            startActivity(i);
+
             setContentView(R.layout.activity_financer);
             Toolbar toolbar = findViewById(R.id.toolbar);
             setSupportActionBar(toolbar);
@@ -111,9 +119,6 @@ public class FinancerActivity extends AppCompatActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
@@ -207,10 +212,29 @@ public class FinancerActivity extends AppCompatActivity
 
     @Override
     public void showToast(MessageType messageType, String s) {
-
+        Toast.makeText(this, s, Toast.LENGTH_LONG).show();
     }
 
-    public void showErrorDialog(Exception exception) {
-        // TODO
+    @Override
+    public void showErrorDialog(Exception e) {
+        runOnUiThread(() -> new AlertDialog.Builder(this)
+                .setTitle("Financer")
+                .setMessage(new AndroidFormatter(LocalStorageImpl.getInstance(), this).formatExceptionMessage(e))
+                .setPositiveButton(android.R.string.ok, null)
+                .setIcon(R.drawable.ic_error)
+                .show());
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        switch (requestCode) {
+            case REQUEST_WRITE_STORAGE_PERMISSION:
+                if (grantResults.length <= 0 || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+                    this.showToast(MessageType.ERROR, getString(R.string.error_storage_permission_not_granted));
+                }
+                break;
+        }
     }
 }

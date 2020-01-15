@@ -488,7 +488,7 @@ public class FinancerService {
      * @return
      */
     public ConnectionResult<Serializable> deleteTransaction(Logger logger, Session session, Map<String, Serializable> parameters) {
-        logger.log(Level.INFO, "Adding transaction ...");
+        logger.log(Level.INFO, "Deleting transaction ...");
 
         Transaction transaction = session.beginTransaction();
         session.createQuery("delete from VariableTransactionEntity where id = :variableTransactionId")

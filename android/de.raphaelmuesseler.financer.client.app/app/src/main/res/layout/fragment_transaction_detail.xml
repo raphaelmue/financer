@@ -1,0 +1,324 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/bottom_sheet_behavior">
+
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/abl_transaction_detail"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:fitsSystemWindows="true"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+
+        <android.support.design.widget.CollapsingToolbarLayout
+            android:id="@+id/main.collapsing"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fitsSystemWindows="true"
+            app:contentScrim="@color/colorPrimary"
+            app:expandedTitleMarginEnd="64dp"
+            app:expandedTitleMarginStart="48dp"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/side_nav_bar"
+                android:fitsSystemWindows="true"
+                android:scaleType="centerCrop"
+                app:layout_collapseMode="parallax">
+
+                <ImageView
+                    android:id="@+id/iv_transaction_detail_image"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    android:adjustViewBounds="true"/>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/header_gradient" />
+            </FrameLayout>
+
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar_transaction_details"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                app:layout_collapseMode="pin"
+                app:popupTheme="@style/ThemeOverlay.AppCompat.Dark"
+                app:title="@string/transaction">
+
+                <ImageButton
+                    android:id="@+id/btn_delete_transaction"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:padding="@dimen/form_margin"
+                    android:src="@drawable/ic_delete"
+                    android:tint="@color/white" />
+
+                <ImageButton
+                    android:id="@+id/btn_edit_transaction"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:padding="@dimen/form_margin"
+                    android:src="@drawable/ic_edit"
+                    android:tint="@color/white" />
+
+            </android.support.v7.widget.Toolbar>
+        </android.support.design.widget.CollapsingToolbarLayout>
+    </android.support.design.widget.AppBarLayout>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/btn_upload_attachment"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/activity_horizontal_margin"
+        android:background="@color/colorAccent"
+        android:src="@drawable/ic_attachment"
+        app:layout_anchor="@id/abl_transaction_detail"
+        app:layout_anchorGravity="bottom|right|end" />
+
+    <android.support.v4.widget.NestedScrollView
+        android:id="@+id/nsv_transaction_details"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        app:layout_anchor="@+id/nsv_transaction_details"
+        app:layout_anchorGravity="center"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="15dp">
+
+            <FrameLayout
+                android:id="@+id/attachments_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/form_margin"
+                android:orientation="vertical"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior"
+                app:layout_constraintBottom_toTopOf="@+id/transaction_detail_divider_4"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_transaction_attachment_description">
+
+                <ListView
+                    android:id="@+id/lv_transaction_attachments"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+                <TextView
+                    android:id="@+id/tv_no_attachments"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/form_margin"
+                    android:text="@string/no_attachments"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tv_transaction_attachment_description" />
+
+            </FrameLayout>
+
+            <ImageView
+                android:id="@+id/iv_transaction_value_date_icon"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                app:layout_constraintBottom_toBottomOf="@+id/tv_transaction_value_date"
+                app:layout_constraintEnd_toStartOf="@+id/tv_transaction_value_date"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/tv_transaction_value_date"
+                app:srcCompat="@drawable/ic_date" />
+
+            <ImageView
+                android:id="@+id/iv_transaction_product_icon"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                app:layout_constraintBottom_toBottomOf="@+id/tv_transaction_product"
+                app:layout_constraintEnd_toStartOf="@+id/tv_transaction_value_date"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/tv_transaction_product"
+                app:srcCompat="@drawable/ic_product" />
+
+            <ImageView
+                android:id="@+id/iv_transaction_shop_icon"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_weight="1"
+                app:layout_constraintBottom_toBottomOf="@+id/tv_transaction_shop"
+                app:layout_constraintEnd_toStartOf="@+id/tv_transaction_shop"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/tv_transaction_shop"
+                app:srcCompat="@drawable/ic_shop" />
+
+            <TextView
+                android:id="@+id/tv_transaction_basic_information_description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/form_margin"
+                android:text="@string/basic_information"
+                android:textAllCaps="true"
+                android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+                app:layout_constraintBottom_toTopOf="@+id/tv_transaction_product"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/transaction_detail_divider_1" />
+
+            <TextView
+                android:id="@+id/tv_transaction_category_description"
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/form_margin"
+                android:text="@string/category"
+                android:textAllCaps="true"
+                android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+                app:layout_constraintBottom_toTopOf="@+id/tv_transaction_category"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/transaction_detail_divider_2" />
+
+            <TextView
+                android:id="@+id/tv_transaction_category"
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:text="@string/category"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tv_transaction_category_description" />
+
+            <TextView
+                android:id="@+id/tv_transaction_amount"
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/form_margin"
+                android:ems="10"
+                android:text="@string/amount"
+                android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tv_transaction_product"
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
+                android:text="@string/product"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tv_transaction_basic_information_description" />
+
+            <TextView
+                android:id="@+id/tv_transaction_value_date"
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/form_margin"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
+                android:text="@string/value_date"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tv_transaction_product" />
+
+            <TextView
+                android:id="@+id/tv_transaction_purpose_description"
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/form_margin"
+                android:text="@string/purpose"
+                android:textAllCaps="true"
+                android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tv_transaction_category" />
+
+            <TextView
+                android:id="@+id/tv_transaction_purpose"
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:text="@string/purpose"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tv_transaction_purpose_description" />
+
+            <TextView
+                android:id="@+id/tv_transaction_shop_description"
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/form_margin"
+                android:text="@string/shop"
+                android:textAllCaps="true"
+                android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tv_transaction_purpose" />
+
+            <TextView
+                android:id="@+id/tv_transaction_shop"
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:text="@string/shop"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tv_transaction_shop_description" />
+
+            <TextView
+                android:id="@+id/tv_transaction_attachment_description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/form_margin"
+                android:text="@string/attachments"
+                android:textAllCaps="true"
+                android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/transaction_detail_divider_3" />
+
+            <View
+                android:id="@+id/transaction_detail_divider_1"
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:layout_marginTop="20dp"
+                android:theme="@style/Divider"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tv_transaction_amount" />
+
+
+            <View
+                android:id="@+id/transaction_detail_divider_2"
+                android:layout_width="300dp"
+                android:layout_height="0.5dp"
+                android:layout_marginTop="@dimen/form_margin"
+                android:theme="@style/Divider"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tv_transaction_value_date" />
+
+            <View
+                android:id="@+id/transaction_detail_divider_3"
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:layout_marginTop="20dp"
+                android:theme="@style/Divider"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tv_transaction_shop" />
+
+            <View
+                android:id="@+id/transaction_detail_divider_4"
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:layout_marginTop="80dp"
+                android:theme="@style/Divider"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/attachments_container" />
+
+        </android.support.constraint.ConstraintLayout>
+
+    </android.support.v4.widget.NestedScrollView>
+
+</android.support.design.widget.CoordinatorLayout>

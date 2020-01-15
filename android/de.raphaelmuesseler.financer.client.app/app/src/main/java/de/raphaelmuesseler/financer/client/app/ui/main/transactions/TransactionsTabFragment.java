@@ -1,21 +1,21 @@
 package de.raphaelmuesseler.financer.client.app.ui.main.transactions;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
+
+import com.miguelcatalan.materialsearchview.MaterialSearchView;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -25,16 +25,12 @@ import java.util.Map;
 import java.util.Objects;
 
 import de.raphaelmuesseler.financer.client.app.R;
-import de.raphaelmuesseler.financer.client.app.connection.AndroidAsyncConnectionCall;
 import de.raphaelmuesseler.financer.client.app.connection.RetrievalServiceImpl;
-import de.raphaelmuesseler.financer.client.app.format.AndroidFormatter;
 import de.raphaelmuesseler.financer.client.app.local.LocalStorageImpl;
 import de.raphaelmuesseler.financer.client.app.ui.main.FinancerActivity;
 import de.raphaelmuesseler.financer.client.connection.ServerRequestHandler;
-import de.raphaelmuesseler.financer.client.format.Formatter;
 import de.raphaelmuesseler.financer.client.local.Application;
 import de.raphaelmuesseler.financer.shared.connection.AsyncCall;
-import de.raphaelmuesseler.financer.shared.connection.ConnectionResult;
 import de.raphaelmuesseler.financer.shared.model.categories.BaseCategory;
 import de.raphaelmuesseler.financer.shared.model.categories.CategoryTree;
 import de.raphaelmuesseler.financer.shared.model.transactions.Transaction;
@@ -48,9 +44,6 @@ import static android.app.Activity.RESULT_OK;
 public class TransactionsTabFragment extends Fragment {
 
     private static final int ADD_TRANSACTION_REQUEST = 1;  // The request code
-
-    private final Formatter formatter = new AndroidFormatter(LocalStorageImpl.getInstance(), getContext());
-    private List<VariableTransaction> transactions = new ArrayList<>();
 
     private ListView transactionListView;
     private SwipeRefreshLayout swipeRefreshLayoutTransactions;
@@ -83,40 +76,64 @@ public class TransactionsTabFragment extends Fragment {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_transactions_tab, container, false);
 
-        List<VariableTransaction> storedTransactions = LocalStorageImpl.getInstance().readList("transactions");
-        if (storedTransactions != null) {
-            transactions.addAll(storedTransactions);
-        }
-
         this.swipeRefreshLayoutTransactions = rootView.findViewById(R.id.swipe_layout_transactions);
         this.swipeRefreshLayoutTransactions.setOnRefreshListener(this::refreshTransactions);
 
         this.transactionListView = rootView.findViewById(R.id.lv_transactions);
-        this.transactionListView.setAdapter(new TransactionListViewAdapter(getContext(), transactions));
+        this.transactionListView.setAdapter(new TransactionListViewAdapter(getContext()));
+        this.transactionListView.setEmptyView(rootView.findViewById(R.id.tv_no_transactions));
+        this.transactionListView.setOnItemClickListener((parent, view, position, id) -> {
+            TransactionDetailFragment bottomDetailDialog = TransactionDetailFragment.newInstance(
+                    (VariableTransaction) this.transactionListView.getItemAtPosition(position));
+            bottomDetailDialog.show(getFragmentManager(), "test");
+            bottomDetailDialog.setOnCancelListener(aVoid -> Objects.requireNonNull(getActivity()).runOnUiThread(this::refreshTransactionsList));
+        });
 
         FloatingActionButton addTransactionBtn = rootView.findViewById(R.id.fab_transaction_tab_add_transaction);
         addTransactionBtn.setOnClickListener(view -> {
-            Intent intent = new Intent(getContext(), AddTransactionActivity.class);
+            Intent intent = new Intent(getContext(), TransactionActivity.class);
             startActivityForResult(intent, ADD_TRANSACTION_REQUEST);
         });
 
-        this.refreshTransactions();
+        new Thread(() -> Objects.requireNonNull(getActivity()).runOnUiThread(this::refreshTransactionsList)).start();
 
         return rootView;
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        getActivity().getMenuInflater().inflate(R.menu.search_menu, menu);
+        MenuItem item = menu.findItem(R.id.action_search);
+        MaterialSearchView searchView = getActivity().findViewById(R.id.search_view);
+        searchView.setMenuItem(item);
+        searchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                ((TransactionListViewAdapter) transactionListView.getAdapter()).getFilter().filter(query);
+                return true;
+            }
 
-        if (!this.runningRefreshTask) {
-            this.refreshTransactionsList();
-        }
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                ((TransactionListViewAdapter) transactionListView.getAdapter()).getFilter().filter(newText);
+                return true;
+            }
+        });
+
+        searchView.setOnSearchViewListener(new MaterialSearchView.SearchViewListener() {
+            @Override
+            public void onSearchViewShown() {
+            }
+
+            @Override
+            public void onSearchViewClosed() {
+                getActivity().runOnUiThread(() -> refreshTransactionsList());
+            }
+        });
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle item selection
         switch (item.getItemId()) {
             case R.id.menu_refresh:
                 refreshTransactions();
@@ -128,18 +145,16 @@ public class TransactionsTabFragment extends Fragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        User user = (User) LocalStorageImpl.getInstance().readObject("user");
         if (requestCode == ADD_TRANSACTION_REQUEST) {
             if (resultCode == RESULT_OK) {
-
                 VariableTransaction transaction = (VariableTransaction) data.getSerializableExtra("variableTransaction");
 
                 Map<String, Serializable> parameters = new HashMap<>();
                 parameters.put("variableTransaction", transaction);
 
-                FinancerExecutor.getExecutor().execute(new ServerRequestHandler((User) LocalStorageImpl.getInstance().readObject("user"),
-                        "addTransaction", parameters, new AndroidAsyncConnectionCall() {
-                    @Override
-                    public void onSuccess(ConnectionResult connectionResult) {
+                FinancerExecutor.getExecutor().execute(new ServerRequestHandler(user,
+                        "addTransaction", parameters, connectionResult ->
                         Objects.requireNonNull(getActivity()).runOnUiThread(() -> {
                             transaction.setId(((VariableTransaction) connectionResult.getResult()).getId());
                             BaseCategory baseCategory = (BaseCategory) LocalStorageImpl.getInstance().readObject("categories");
@@ -150,20 +165,14 @@ public class TransactionsTabFragment extends Fragment {
                             LocalStorageImpl.getInstance().writeObject("categories", baseCategory);
 
                             refreshTransactionsList();
-                        });
-                    }
-
-                    @Override
-                    public void onFailure(Exception exception) {
-                        FinancerActivity.getFinancerApplication().showToast(Application.MessageType.ERROR, getString(R.string.something_went_wrong));
-                    }
-                }));
+                            FinancerActivity.getFinancerApplication().showToast(Application.MessageType.SUCCESS, getString(R.string.success_added_transaction));
+                        })));
             }
         }
     }
 
     private void refreshTransactionsList() {
-        transactions.clear();
+        final List<VariableTransaction> transactions = new ArrayList<>();
         BaseCategory baseCategory = ((BaseCategory) LocalStorageImpl.getInstance().readObject("categories"));
         TreeUtil.traverse(baseCategory.getCategoryTreeByCategoryClass(BaseCategory.CategoryClass.VARIABLE_EXPENSES), categoryTree -> {
             for (Transaction transaction : ((CategoryTree) categoryTree).getTransactions()) {
@@ -177,77 +186,30 @@ public class TransactionsTabFragment extends Fragment {
         });
         transactions.sort((o1, o2) -> o2.getValueDate().compareTo(o1.getValueDate()));
         if (transactionListView != null) {
+            ((TransactionListViewAdapter) transactionListView.getAdapter()).setData(transactions);
             ((TransactionListViewAdapter) transactionListView.getAdapter()).notifyDataSetChanged();
         }
     }
 
     private void refreshTransactions() {
-        this.runningRefreshTask = true;
-        RetrievalServiceImpl.getInstance().fetchTransactions((User) LocalStorageImpl.getInstance().readObject("user"), new AsyncCall<BaseCategory>() {
-            @Override
-            public void onSuccess(BaseCategory result) {
-                Objects.requireNonNull(getActivity()).runOnUiThread(() -> {
-                    LocalStorageImpl.getInstance().writeObject("categories", result);
-                    refreshTransactionsList();
-                });
-            }
-
-            @Override
-            public void onFailure(Exception exception) {
-                exception.printStackTrace();
-                transactions.clear();
-                List<VariableTransaction> storedTransactions = LocalStorageImpl.getInstance().readList("transactions");
-                if (storedTransactions != null) {
-                    transactions.addAll(storedTransactions);
+        if (!this.runningRefreshTask) {
+            this.runningRefreshTask = true;
+            RetrievalServiceImpl.getInstance().fetchTransactions((User) LocalStorageImpl.getInstance().readObject("user"), new AsyncCall<BaseCategory>() {
+                @Override
+                public void onSuccess(BaseCategory result) {
+                    Objects.requireNonNull(getActivity()).runOnUiThread(()
+                            -> LocalStorageImpl.getInstance().writeObject("categories", result));
                 }
-            }
 
-            @Override
-            public void onAfter() {
-                runningRefreshTask = false;
-                Objects.requireNonNull(getActivity()).runOnUiThread(() -> {
-                    transactions.sort((o1, o2) -> o2.getValueDate().compareTo(o1.getValueDate()));
-                    ((TransactionListViewAdapter) transactionListView.getAdapter()).notifyDataSetChanged();
-                    swipeRefreshLayoutTransactions.setRefreshing(false);
-                });
-            }
-        });
-    }
-
-    private class TransactionListViewAdapter extends ArrayAdapter<VariableTransaction> {
-
-        TransactionListViewAdapter(Context context, List<VariableTransaction> transactions) {
-            super(context, R.layout.list_item_transaction, transactions);
-        }
-
-        @NonNull
-        @Override
-        public View getView(int position, View convertView, @NonNull ViewGroup parent) {
-            VariableTransaction transaction = getItem(position);
-
-            View listItem = convertView;
-            if (listItem == null) {
-                listItem = LayoutInflater.from(this.getContext()).inflate(R.layout.list_item_transaction, parent, false);
-            }
-
-            if (transaction != null) {
-                TextView categoryTextView = listItem.findViewById(R.id.tv_list_item_transaction_category);
-                categoryTextView.setText(transaction.getCategoryTree().getValue().getName());
-
-                TextView productTextView = listItem.findViewById(R.id.tv_list_item_transaction_product);
-                productTextView.setText(!transaction.getProduct().isEmpty() ? transaction.getProduct() : transaction.getPurpose());
-
-                TextView valueDateTextView = listItem.findViewById(R.id.tv_list_item_transaction_value_date);
-                valueDateTextView.setText(formatter.formatDate(transaction.getValueDate()));
-
-                TextView amountTextView = listItem.findViewById(R.id.tv_list_item_transaction_amount);
-                amountTextView.setTextColor(transaction.getAmount() < 0 ?
-                        ContextCompat.getColor(this.getContext(), R.color.error) :
-                        ContextCompat.getColor(this.getContext(), R.color.success));
-                amountTextView.setText(formatter.formatCurrency(transaction.getAmount()));
-            }
-
-            return listItem;
+                @Override
+                public void onAfter() {
+                    runningRefreshTask = false;
+                    Objects.requireNonNull(getActivity()).runOnUiThread(() -> {
+                        refreshTransactionsList();
+                        swipeRefreshLayoutTransactions.setRefreshing(false);
+                    });
+                }
+            });
         }
     }
 }

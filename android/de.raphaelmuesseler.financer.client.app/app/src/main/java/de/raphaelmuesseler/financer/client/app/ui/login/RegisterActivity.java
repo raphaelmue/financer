@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -27,11 +28,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import de.raphaelmuesseler.financer.client.app.R;
-import de.raphaelmuesseler.financer.client.app.connection.AndroidAsyncConnectionCall;
 import de.raphaelmuesseler.financer.client.app.connection.RetrievalServiceImpl;
 import de.raphaelmuesseler.financer.client.app.format.AndroidFormatter;
 import de.raphaelmuesseler.financer.client.app.local.LocalStorageImpl;
 import de.raphaelmuesseler.financer.client.app.ui.main.FinancerActivity;
+import de.raphaelmuesseler.financer.client.connection.AsyncConnectionCall;
 import de.raphaelmuesseler.financer.client.connection.ServerRequestHandler;
 import de.raphaelmuesseler.financer.client.format.Formatter;
 import de.raphaelmuesseler.financer.client.local.Application;
@@ -136,7 +137,7 @@ public class RegisterActivity extends AppCompatActivity implements Application {
             Map<String, Serializable> parameters = new HashMap<>();
             parameters.put("user", user);
 
-            FinancerExecutor.getExecutor().execute(new ServerRequestHandler("registerUser", parameters, new AndroidAsyncConnectionCall() {
+            FinancerExecutor.getExecutor().execute(new ServerRequestHandler("registerUser", parameters, new AsyncConnectionCall() {
                 @Override
                 public void onSuccess(ConnectionResult connectionResult) {
                     LocalStorageImpl.getInstance().writeObject("user", connectionResult.getResult());
@@ -149,8 +150,6 @@ public class RegisterActivity extends AppCompatActivity implements Application {
                     runOnUiThread(() -> {
                         if (exception instanceof EmailAlreadyInUseException || exception.getCause() != null && exception.getCause() instanceof EmailAlreadyInUseException) {
                             emailEditText.setError(getString(R.string.email_already_in_use));
-                        } else {
-                            showToast(MessageType.ERROR, getString(R.string.something_went_wrong));
                         }
                     });
                 }
@@ -193,14 +192,20 @@ public class RegisterActivity extends AppCompatActivity implements Application {
         Toast.makeText(this, s, Toast.LENGTH_SHORT).show();
     }
 
-    public void showErrorDialog(Exception exception) {
-        // TODO
+    @Override
+    public void showErrorDialog(Exception e) {
+        runOnUiThread(() -> new AlertDialog.Builder(this)
+                .setTitle("Financer")
+                .setMessage(new AndroidFormatter(LocalStorageImpl.getInstance(), this).formatExceptionMessage(e))
+                .setPositiveButton(android.R.string.ok, null)
+                .setIcon(R.drawable.ic_error)
+                .show());
     }
 
     private class GenderSpinnerAdapter extends ArrayAdapter<User.Gender> {
 
         GenderSpinnerAdapter(Context context) {
-            super(context,  R.layout.support_simple_spinner_dropdown_item, User.Gender.values());
+            super(context, R.layout.support_simple_spinner_dropdown_item, User.Gender.values());
             this.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         }
 
