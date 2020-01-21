@@ -1,4 +1,4 @@
-name: Java CI
+name: Financer CI
 
 on: [push]
 
@@ -13,9 +13,11 @@ jobs:
       uses: actions/setup-java@v1
       with:
         java-version: 11
+    - name: Prepare Build
+      run: bash prepare-build.sh
     - name: Build with Maven
       run: mvn clean install -DskipTests -P deploy
-  
+
   build-windows:
     name: Build (Windows)
     runs-on: windows-latest
@@ -26,9 +28,11 @@ jobs:
       uses: actions/setup-java@v1
       with:
         java-version: 11
+    - name: Prepare Build
+      run: prepare-build.bat
     - name: Build with Maven
       run: mvn clean install -DskipTests -P deploy
-      
+
   build-mac:
     name: Build (macOS)
     runs-on: macos-latest
@@ -39,5 +43,7 @@ jobs:
       uses: actions/setup-java@v1
       with:
         java-version: 11
+    - name: Prepare Build
+      run: bash prepare-build.sh
     - name: Build with Maven
       run: mvn clean install -DskipTests -P deploy
