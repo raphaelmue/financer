@@ -22,7 +22,7 @@ public class RandomStringTest {
 
         final String string = randomString.nextString();
 
-        for (int i = 0; i < RandomString.LOWER.length(); i++){
+        for (int i = 0; i < RandomString.LOWER.length(); i++) {
             char c = RandomString.LOWER.charAt(i);
             Assertions.assertFalse(string.indexOf(Character.toString(c)) > 0);
         }

@@ -1,8 +1,8 @@
 package org.financer.server.service;
 
+import org.apache.commons.mail.EmailException;
 import org.financer.server.db.HibernateUtil;
 import org.financer.shared.model.user.User;
-import org.apache.commons.mail.EmailException;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;

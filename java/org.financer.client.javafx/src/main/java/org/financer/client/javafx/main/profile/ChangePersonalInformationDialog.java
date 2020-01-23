@@ -3,13 +3,13 @@ package org.financer.client.javafx.main.profile;
 import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXDatePicker;
 import com.jfoenix.controls.JFXTextField;
-import org.financer.client.format.I18N;
-import org.financer.client.javafx.dialogs.FinancerDialog;
-import org.financer.shared.model.user.User;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Region;
 import javafx.util.StringConverter;
+import org.financer.client.format.I18N;
+import org.financer.client.javafx.dialogs.FinancerDialog;
+import org.financer.shared.model.user.User;
 
 public class ChangePersonalInformationDialog extends FinancerDialog<User> {
 

@@ -2,24 +2,24 @@
 
 <?import com.jfoenix.controls.JFXComboBox?>
 <?import com.jfoenix.controls.JFXMasonryPane?>
-<?import org.financer.client.javafx.components.charts.DonutChart?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import org.financer.client.javafx.components.charts.SmoothedChart?>
 <?import javafx.scene.chart.CategoryAxis?>
 <?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import org.financer.client.javafx.components.charts.DonutChart?>
+<?import org.financer.client.javafx.components.charts.SmoothedChart?>
 <VBox fx:controller="org.financer.client.javafx.main.overview.OverviewController"
       xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" styleClass="content">
     <ScrollPane fx:id="overviewScrollPane" fitToWidth="true" hbarPolicy="NEVER">
         <VBox>
-            <JFXMasonryPane HSpacing="15" VSpacing="5" >
+            <JFXMasonryPane HSpacing="15" VSpacing="5">
                 <VBox styleClass="box">
                     <VBox styleClass="box-content" prefWidth="300">
                         <GridPane maxWidth="Infinity">
                             <Label fx:id="balanceChangeLabel" GridPane.columnIndex="0" GridPane.rowIndex="0"
                                    GridPane.hgrow="ALWAYS"/>
                             <VBox styleClass="description-box" GridPane.columnIndex="1" GridPane.rowIndex="0"
-                                  GridPane.hgrow="ALWAYS" >
+                                  GridPane.hgrow="ALWAYS">
                                 <Label styleClass="description-label" text="%balance"/>
                                 <Label fx:id="balanceLabel" styleClass="description-content-label"/>
                             </VBox>
@@ -30,7 +30,7 @@
                     <VBox styleClass="box-content" prefWidth="300">
                         <GridPane maxWidth="Infinity">
                             <Label fx:id="variableExpensesChangeLabel" GridPane.columnIndex="0" GridPane.rowIndex="0"
-                                   GridPane.hgrow="ALWAYS" />
+                                   GridPane.hgrow="ALWAYS"/>
                             <VBox styleClass="description-box" GridPane.columnIndex="1" GridPane.rowIndex="0"
                                   GridPane.hgrow="ALWAYS">
                                 <Label styleClass="description-label" text="%variableExpenses"/>

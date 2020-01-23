@@ -3,6 +3,10 @@ package org.financer.client.javafx.login;
 import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXPasswordField;
 import com.jfoenix.controls.JFXTextField;
+import javafx.scene.control.Label;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Region;
+import javafx.util.StringConverter;
 import org.financer.client.format.I18N;
 import org.financer.client.javafx.components.DatePicker;
 import org.financer.client.javafx.dialogs.FinancerDialog;
@@ -11,10 +15,6 @@ import org.financer.client.javafx.local.LocalStorageImpl;
 import org.financer.shared.model.user.User;
 import org.financer.util.Hash;
 import org.financer.util.RandomString;
-import javafx.scene.control.Label;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Region;
-import javafx.util.StringConverter;
 
 public class RegisterDialog extends FinancerDialog<User> {
     private JFXTextField nameField;

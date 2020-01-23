@@ -1,6 +1,9 @@
 package org.financer.client.javafx.main;
 
 import com.jfoenix.controls.JFXToggleButton;
+import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.input.KeyCode;
 import org.financer.client.format.I18N;
 import org.financer.client.javafx.local.LocalStorageImpl;
 import org.financer.shared.model.categories.BaseCategory;
@@ -10,9 +13,6 @@ import org.financer.shared.model.transactions.Transaction;
 import org.financer.shared.model.transactions.VariableTransaction;
 import org.financer.shared.model.user.User;
 import org.financer.util.collections.TreeUtil;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.input.KeyCode;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;

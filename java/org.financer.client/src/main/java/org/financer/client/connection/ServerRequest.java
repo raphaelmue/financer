@@ -5,6 +5,7 @@ import org.financer.shared.connection.ConnectionResult;
 import org.financer.shared.model.user.User;
 
 import java.io.*;
+import java.net.ConnectException;
 import java.net.Socket;
 import java.util.Map;
 
@@ -58,8 +59,11 @@ public class ServerRequest {
     }
 
     static boolean testConnection() throws IOException {
-        Socket socket = new Socket(host, post);
-        return socket.getInetAddress().isReachable(TIMEOUT);
+        try (Socket ignored = new Socket(host, post)) {
+            return true;
+        } catch (ConnectException e) {
+            return false;
+        }
     }
 
     ConnectionCall getConnectionCall() {

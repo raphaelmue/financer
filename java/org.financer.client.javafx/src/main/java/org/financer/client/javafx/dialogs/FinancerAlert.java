@@ -3,15 +3,15 @@ package org.financer.client.javafx.dialogs;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXDialog;
 import com.jfoenix.controls.JFXDialogLayout;
-import org.financer.client.format.I18N;
-import org.financer.client.javafx.main.FinancerController;
-import org.financer.client.local.Application;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import org.controlsfx.glyphfont.FontAwesome;
 import org.controlsfx.glyphfont.GlyphFont;
 import org.controlsfx.glyphfont.GlyphFontRegistry;
+import org.financer.client.format.I18N;
+import org.financer.client.javafx.main.FinancerController;
+import org.financer.client.local.Application;
 
 public class FinancerAlert extends JFXDialog {
 

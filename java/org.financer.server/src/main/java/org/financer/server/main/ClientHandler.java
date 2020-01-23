@@ -27,7 +27,7 @@ public class ClientHandler implements Runnable {
         this.client = client;
         this.inputStream = new ObjectInputStream(input);
         this.outputStream = new ObjectOutputStream(output);
-        this.logger = Logger.getLogger("ClientHandler ("  + this.client.getRemoteSocketAddress() + ")");
+        this.logger = Logger.getLogger("ClientHandler (" + this.client.getRemoteSocketAddress() + ")");
     }
 
     @Override
@@ -68,7 +68,7 @@ public class ClientHandler implements Runnable {
                 this.client.close();
                 this.logger.log(Level.INFO, "Connection to Client (" + client.getRemoteSocketAddress() + ") has been closed.");
             }
-        } catch (IOException | ClassNotFoundException  e) {
+        } catch (IOException | ClassNotFoundException e) {
             this.logger.log(Level.SEVERE, e.getMessage(), e);
         }
     }

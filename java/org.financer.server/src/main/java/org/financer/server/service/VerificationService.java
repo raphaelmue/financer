@@ -1,12 +1,12 @@
 package org.financer.server.service;
 
-import org.financer.shared.model.user.User;
-import org.financer.shared.model.user.VerificationToken;
-import org.financer.util.RandomString;
 import org.apache.commons.mail.DefaultAuthenticator;
 import org.apache.commons.mail.Email;
 import org.apache.commons.mail.EmailException;
 import org.apache.commons.mail.HtmlEmail;
+import org.financer.shared.model.user.User;
+import org.financer.shared.model.user.VerificationToken;
+import org.financer.util.RandomString;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -42,7 +42,7 @@ public class VerificationService {
     VerificationToken sendVerificationEmail(User user) throws EmailException {
         StringBuilder content = new StringBuilder();
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(FinancerService.class.getResourceAsStream("verification-email.html")))) {
-            for (String line; (line = reader.readLine()) != null;) {
+            for (String line; (line = reader.readLine()) != null; ) {
                 content.append(line);
             }
         } catch (IOException e) {

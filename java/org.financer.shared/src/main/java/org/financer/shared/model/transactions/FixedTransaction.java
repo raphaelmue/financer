@@ -3,9 +3,9 @@ package org.financer.shared.model.transactions;
 import org.financer.shared.model.categories.Category;
 import org.financer.shared.model.categories.CategoryTree;
 import org.financer.shared.model.categories.CategoryTreeImpl;
+import org.financer.shared.model.db.AttachmentEntity;
 import org.financer.shared.model.db.FixedTransactionAmountEntity;
 import org.financer.shared.model.db.FixedTransactionEntity;
-import org.financer.shared.model.db.AttachmentEntity;
 import org.financer.util.date.DateUtil;
 
 import java.time.LocalDate;

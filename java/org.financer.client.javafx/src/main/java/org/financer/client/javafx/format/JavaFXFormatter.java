@@ -1,5 +1,8 @@
 package org.financer.client.javafx.format;
 
+import javafx.geometry.Pos;
+import javafx.scene.control.Label;
+import javafx.scene.text.TextAlignment;
 import org.financer.client.format.FormatterImpl;
 import org.financer.client.format.I18N;
 import org.financer.client.local.LocalStorage;
@@ -7,9 +10,6 @@ import org.financer.shared.model.categories.BaseCategory;
 import org.financer.shared.model.categories.Category;
 import org.financer.shared.model.categories.CategoryTree;
 import org.financer.shared.model.user.User;
-import javafx.geometry.Pos;
-import javafx.scene.control.Label;
-import javafx.scene.text.TextAlignment;
 
 public class JavaFXFormatter extends FormatterImpl {
 
@@ -36,6 +36,7 @@ public class JavaFXFormatter extends FormatterImpl {
     public Label formatChangeLabel(Double amount) {
         return formatChangeLabel(new Label(), amount);
     }
+
     public Label formatChangeLabel(Label label, double amount) {
         if (!Double.isNaN(amount) && Double.isFinite(amount)) {
             label.setText(String.format(user.getSettings().getLanguage(), "%.1f", amount) + "%");

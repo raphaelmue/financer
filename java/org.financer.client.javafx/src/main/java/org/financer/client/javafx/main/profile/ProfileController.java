@@ -1,6 +1,15 @@
 package org.financer.client.javafx.main.profile;
 
 import com.jfoenix.controls.JFXButton;
+import javafx.application.Platform;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.TextFieldTreeCell;
+import javafx.util.StringConverter;
+import org.controlsfx.glyphfont.FontAwesome;
+import org.controlsfx.glyphfont.GlyphFont;
+import org.controlsfx.glyphfont.GlyphFontRegistry;
 import org.financer.client.connection.AsyncConnectionCall;
 import org.financer.client.connection.ServerRequestHandler;
 import org.financer.client.format.I18N;
@@ -21,15 +30,6 @@ import org.financer.shared.model.user.User;
 import org.financer.util.collections.Tree;
 import org.financer.util.collections.TreeUtil;
 import org.financer.util.concurrency.FinancerExecutor;
-import javafx.application.Platform;
-import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.scene.control.*;
-import javafx.scene.control.cell.TextFieldTreeCell;
-import javafx.util.StringConverter;
-import org.controlsfx.glyphfont.FontAwesome;
-import org.controlsfx.glyphfont.GlyphFont;
-import org.controlsfx.glyphfont.GlyphFontRegistry;
 
 import java.io.Serializable;
 import java.net.URL;

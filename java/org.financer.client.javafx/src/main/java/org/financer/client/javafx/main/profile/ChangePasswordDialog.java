@@ -1,14 +1,14 @@
 package org.financer.client.javafx.main.profile;
 
 import com.jfoenix.controls.JFXPasswordField;
+import javafx.scene.control.Label;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Region;
 import org.financer.client.format.I18N;
 import org.financer.client.javafx.dialogs.FinancerDialog;
 import org.financer.shared.model.user.User;
 import org.financer.util.Hash;
 import org.financer.util.RandomString;
-import javafx.scene.control.Label;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Region;
 
 class ChangePasswordDialog extends FinancerDialog<User> {
     private JFXPasswordField oldPasswordField;

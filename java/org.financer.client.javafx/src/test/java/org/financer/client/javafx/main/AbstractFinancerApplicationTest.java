@@ -1,6 +1,12 @@
 package org.financer.client.javafx.main;
 
 import com.jfoenix.controls.*;
+import javafx.scene.Node;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.MouseButton;
 import org.financer.client.connection.ServerRequest;
 import org.financer.client.format.I18N;
 import org.financer.client.javafx.components.DatePicker;
@@ -22,12 +28,6 @@ import org.financer.shared.model.transactions.VariableTransaction;
 import org.financer.shared.model.user.User;
 import org.financer.util.collections.TreeUtil;
 import org.financer.util.network.PortAllocator;
-import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.MouseButton;
 import org.junit.jupiter.api.*;
 import org.testfx.api.FxToolkit;
 import org.testfx.framework.junit5.ApplicationTest;

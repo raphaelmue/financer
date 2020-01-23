@@ -4,13 +4,13 @@
 <?import com.jfoenix.controls.JFXButton?>
 <?import com.jfoenix.controls.JFXComboBox?>
 <?import com.jfoenix.controls.JFXMasonryPane?>
-<?import org.financer.client.javafx.components.charts.DonutChart?>
-<?import org.financer.client.javafx.components.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import org.financer.client.javafx.components.charts.SmoothedChart?>
 <?import javafx.scene.chart.CategoryAxis?>
 <?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import org.financer.client.javafx.components.charts.DonutChart?>
+<?import org.financer.client.javafx.components.charts.SmoothedChart?>
+<?import org.financer.client.javafx.components.*?>
 <VBox fx:controller="org.financer.client.javafx.main.statistics.StatisticsController"
       xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" styleClass="content">
     <ScrollPane fx:id="statisticsScrollPane" fitToWidth="true" hbarPolicy="NEVER">

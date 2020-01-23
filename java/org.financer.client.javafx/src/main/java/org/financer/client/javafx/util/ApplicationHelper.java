@@ -1,9 +1,9 @@
 package org.financer.client.javafx.util;
 
-import org.financer.client.javafx.main.FinancerApplication;
 import javafx.application.Platform;
 import javafx.application.Preloader;
 import javafx.stage.Stage;
+import org.financer.client.javafx.main.FinancerApplication;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;

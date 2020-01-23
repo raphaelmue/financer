@@ -1,9 +1,5 @@
 package org.financer.client.javafx.main;
 
-import org.financer.client.format.I18N;
-import org.financer.client.javafx.connection.RetrievalServiceImpl;
-import org.financer.client.javafx.local.LocalStorageImpl;
-import org.financer.shared.model.user.User;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.application.Preloader;
@@ -17,6 +13,10 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import org.financer.client.format.I18N;
+import org.financer.client.javafx.connection.RetrievalServiceImpl;
+import org.financer.client.javafx.local.LocalStorageImpl;
+import org.financer.shared.model.user.User;
 
 import java.io.IOException;
 import java.util.Locale;

@@ -8,10 +8,13 @@ public interface AsyncConnectionCall extends AsyncCall<ConnectionResult> {
     void onSuccess(ConnectionResult result);
 
     @Override
-    default void onFailure(Exception exception) {}
+    default void onFailure(Exception exception) {
+    }
 
-    default void onBefore() {}
+    default void onBefore() {
+    }
 
     @Override
-    default void onAfter() {}
+    default void onAfter() {
+    }
 }

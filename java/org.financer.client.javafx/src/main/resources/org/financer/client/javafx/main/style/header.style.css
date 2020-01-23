@@ -1,6 +1,6 @@
 .header {
     -fx-background-color: -fx-color-white;
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 20, 0, 0, 0);
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.2), 20, 0, 0, 0);
     -fx-padding: 12px 20px;
 
     -fx-text-fill: -fx-color-white;

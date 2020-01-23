@@ -1,5 +1,8 @@
 package org.financer.client.javafx.main.transactions;
 
+import javafx.scene.control.Label;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Region;
 import org.financer.client.format.I18N;
 import org.financer.client.javafx.components.DatePicker;
 import org.financer.client.javafx.components.DoubleField;
@@ -7,9 +10,6 @@ import org.financer.client.javafx.dialogs.FinancerDialog;
 import org.financer.client.javafx.format.JavaFXFormatter;
 import org.financer.client.javafx.local.LocalStorageImpl;
 import org.financer.shared.model.transactions.TransactionAmount;
-import javafx.scene.control.Label;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Region;
 
 import java.time.LocalDate;
 import java.util.List;

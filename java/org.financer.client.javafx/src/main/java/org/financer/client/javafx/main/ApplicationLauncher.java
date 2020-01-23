@@ -1,7 +1,7 @@
 package org.financer.client.javafx.main;
 
-import org.financer.client.connection.ServerRequest;
 import javafx.application.Application;
+import org.financer.client.connection.ServerRequest;
 
 public class ApplicationLauncher {
     public static void main(String[] args) {

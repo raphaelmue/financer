@@ -1,12 +1,12 @@
 package org.financer.client.javafx.main;
 
 import com.jfoenix.controls.JFXTextField;
+import javafx.scene.control.Button;
 import org.financer.client.javafx.local.LocalStorageImpl;
 import org.financer.shared.model.categories.BaseCategory;
 import org.financer.shared.model.categories.Category;
 import org.financer.util.collections.Tree;
 import org.financer.util.collections.TreeUtil;
-import javafx.scene.control.Button;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -45,7 +45,7 @@ public class CategoryTest extends AbstractFinancerApplicationTest {
         confirmDialog();
         sleep(MEDIUM_SLEEP);
         Tree<Category> categoryTree = TreeUtil.getByValue(((BaseCategory) LocalStorageImpl.getInstance().readObject("categories")),
-               category, (o1, o2) -> CASE_INSENSITIVE_ORDER.compare(o1.getName(), o2.getName()));
+                category, (o1, o2) -> CASE_INSENSITIVE_ORDER.compare(o1.getName(), o2.getName()));
         Assertions.assertNotNull(categoryTree);
     }
 
@@ -58,7 +58,7 @@ public class CategoryTest extends AbstractFinancerApplicationTest {
         confirmDialog();
         sleep(MEDIUM_SLEEP);
         Tree<Category> categoryTree = TreeUtil.getByValue(((BaseCategory) LocalStorageImpl.getInstance().readObject("categories")),
-               category, (o1, o2) -> CASE_INSENSITIVE_ORDER.compare(o1.getName(), o2.getName()));
+                category, (o1, o2) -> CASE_INSENSITIVE_ORDER.compare(o1.getName(), o2.getName()));
         Assertions.assertNull(categoryTree);
     }
 }

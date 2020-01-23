@@ -1,9 +1,6 @@
 package org.financer.client.javafx.main;
 
 import com.jfoenix.controls.JFXProgressBar;
-import org.financer.client.connection.ServerRequestHandler;
-import org.financer.client.format.I18N;
-import org.financer.client.javafx.local.LocalStorageImpl;
 import javafx.application.Preloader;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
@@ -18,6 +15,9 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import org.financer.client.connection.ServerRequestHandler;
+import org.financer.client.format.I18N;
+import org.financer.client.javafx.local.LocalStorageImpl;
 
 public class SplashScreenLoader extends Preloader {
     private JFXProgressBar progressBar;

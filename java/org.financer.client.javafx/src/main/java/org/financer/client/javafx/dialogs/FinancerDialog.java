@@ -3,15 +3,15 @@ package org.financer.client.javafx.dialogs;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXDialog;
 import com.jfoenix.controls.JFXDialogLayout;
-import org.financer.client.format.I18N;
-import org.financer.client.javafx.main.FinancerController;
-import org.financer.util.collections.Action;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+import org.financer.client.format.I18N;
+import org.financer.client.javafx.main.FinancerController;
+import org.financer.util.collections.Action;
 
 /**
  * This class represents a Dialog, aligned with the needs of a general user interaction dialog.

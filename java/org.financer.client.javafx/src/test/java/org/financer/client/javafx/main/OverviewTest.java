@@ -1,10 +1,10 @@
 package org.financer.client.javafx.main;
 
+import javafx.scene.control.Button;
+import javafx.scene.layout.GridPane;
 import org.financer.client.format.I18N;
 import org.financer.client.javafx.components.DoubleField;
 import org.financer.shared.model.categories.BaseCategory;
-import javafx.scene.control.Button;
-import javafx.scene.layout.GridPane;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;

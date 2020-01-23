@@ -1,10 +1,10 @@
 package org.financer.client.javafx.components;
 
 import com.jfoenix.controls.JFXDatePicker;
+import javafx.util.StringConverter;
 import org.financer.client.format.Formatter;
 import org.financer.client.javafx.format.JavaFXFormatter;
 import org.financer.client.javafx.local.LocalStorageImpl;
-import javafx.util.StringConverter;
 
 import java.time.LocalDate;
 

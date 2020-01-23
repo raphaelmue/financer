@@ -1,5 +1,6 @@
 package org.financer.server.service;
 
+import org.apache.commons.mail.EmailException;
 import org.financer.shared.connection.ConnectionResult;
 import org.financer.shared.model.categories.BaseCategory;
 import org.financer.shared.model.categories.Category;
@@ -13,7 +14,6 @@ import org.financer.shared.model.user.VerificationToken;
 import org.financer.util.Hash;
 import org.financer.util.RandomString;
 import org.financer.util.collections.TreeUtil;
-import org.apache.commons.mail.EmailException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
@@ -204,7 +204,6 @@ public class FinancerService {
         logger.log(Level.INFO, "Verifiyng new user ...");
         int userId = (int) parameters.get("userId");
         String verificationToken = (String) parameters.get("verificationToken");
-
 
 
         Transaction transaction = session.beginTransaction();

@@ -8,6 +8,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 
 public class CategoryTreeImpl implements CategoryTree {
     private static final long serialVersionUID = -5848321222290793608L;
@@ -124,6 +125,11 @@ public class CategoryTreeImpl implements CategoryTree {
     @Override
     public boolean equals(Object obj) {
         return obj instanceof CategoryTreeImpl && ((CategoryTreeImpl) obj).getValue().getId() == this.getValue().getId();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getValue());
     }
 }
 

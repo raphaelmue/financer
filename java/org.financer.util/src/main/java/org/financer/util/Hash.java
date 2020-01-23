@@ -24,6 +24,6 @@ public class Hash {
     }
 
     private static String binToHex(byte[] data) {
-        return String.format("%0" + (data.length*2) + "X", new BigInteger(1, data));
+        return String.format("%0" + (data.length * 2) + "X", new BigInteger(1, data));
     }
 }

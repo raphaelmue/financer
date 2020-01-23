@@ -6,6 +6,7 @@ public interface Tree<T> {
     T getValue();
 
     Tree<T> getParent();
+
     void setParent(Tree<T> parent);
 
     List<? extends Tree<T>> getChildren();

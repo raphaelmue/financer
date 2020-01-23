@@ -1,6 +1,10 @@
 package org.financer.client.javafx.main;
 
 import com.jfoenix.controls.JFXButton;
+import javafx.scene.control.Button;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
 import org.financer.client.javafx.local.LocalStorageImpl;
 import org.financer.shared.model.categories.BaseCategory;
 import org.financer.shared.model.categories.Category;
@@ -8,10 +12,6 @@ import org.financer.shared.model.categories.CategoryTree;
 import org.financer.shared.model.transactions.Transaction;
 import org.financer.shared.model.transactions.VariableTransaction;
 import org.financer.util.collections.TreeUtil;
-import javafx.scene.control.Button;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
-import javafx.scene.input.KeyCode;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;

@@ -2,7 +2,6 @@
 
 <?import com.jfoenix.controls.*?>
 <?import javafx.scene.control.*?>
-<?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
 <?import org.controlsfx.glyphfont.Glyph?>
@@ -18,7 +17,7 @@
                         <VBox styleClass="profile-image-container">
                             <ImageView styleClass="profile-image" fitHeight="200.0" fitWidth="200.0"
                                        pickOnBounds="true" preserveRatio="true">
-<!--                                <Image url="/images/icons/financer-icon-square.png"/>-->
+                                <!--                                <Image url="/images/icons/financer-icon-square.png"/>-->
                             </ImageView>
                         </VBox>
                         <VBox spacing="5" HBox.hgrow="ALWAYS" styleClass="box-content">
