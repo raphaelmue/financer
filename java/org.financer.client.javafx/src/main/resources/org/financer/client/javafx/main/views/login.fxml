@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<StackPane alignment="center" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="org.financer.client.javafx.login.LoginController" fx:id="rootLayout">
+    <HBox prefWidth="800">
+        <VBox style="-fx-background-color: -fx-color-primary; -fx-background-radius: 20px 0 0 20px; -fx-padding: 50px"
+              prefWidth="400" alignment="CENTER">
+            <VBox spacing="25">
+                <Label fx:id="welcomeLabel" text="%welcome"/>
+                <Separator style="-fx-border-color: -fx-color-white;"/>
+                <Label text="%welcomeText" wrapText="true" style="-fx-text-fill: -fx-color-white"/>
+
+                <JFXButton fx:id="openRegisterDialogBtn" text="%signUp"
+                           onAction="#handleOpenRegisterDialog"/>
+            </VBox>
+        </VBox>
+        <VBox prefWidth="400">
+            <BorderPane>
+                <right>
+                    <JFXButton fx:id="closeBtn"/>
+                </right>
+            </BorderPane>
+            <StackPane>
+                <VBox style="-fx-padding: 40px" spacing="25" prefWidth="150">
+                    <Label fx:id="signInLabel" text="%signIn"/>
+                    <Separator prefWidth="50"/>
+                    <Label fx:id="loginErrorLabel" text="%incorrectCredentials" textAlignment="CENTER"
+                           textFill="crimson"
+                           visible="false"/>
+                    <VBox spacing="35">
+                        <JFXTextField fx:id="loginEmailTextField" labelFloat="true" promptText="%email"/>
+                        <JFXPasswordField fx:id="loginPasswordField" labelFloat="true" promptText="%password"/>
+                        <JFXButton fx:id="loginBtn" onAction="#handleSignInButtonAction" text="%signIn"
+                                   alignment="CENTER"/>
+                    </VBox>
+                </VBox>
+                <VBox fx:id="progressIndicatorBox" alignment="CENTER" spacing="20" visible="false">
+                    <JFXSpinner/>
+                    <Label text="%loading" textAlignment="CENTER"/>
+                </VBox>
+            </StackPane>
+        </VBox>
+    </HBox>
+</StackPane>
