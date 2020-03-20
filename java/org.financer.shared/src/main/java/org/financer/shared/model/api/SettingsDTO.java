@@ -1,23 +1,21 @@
 package org.financer.shared.model.api;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.annotations.ApiModelProperty;
+import com.google.gson.annotations.SerializedName;
 import org.financer.shared.model.user.Settings;
-import org.springframework.validation.annotation.Validated;
 
-@Validated
+// @Validated
 public class SettingsDTO {
 
-    @JsonProperty("id")
-    @ApiModelProperty(value = "Identifier", required = true, example = "123")
+    @SerializedName("id")
+    // @ApiModelProperty(value = "Identifier", required = true, example = "123")
     private int id;
 
-    @JsonProperty("property")
-    @ApiModelProperty(value = "Property", required = true)
+    @SerializedName("property")
+    // @ApiModelProperty(value = "Property", required = true)
     private Settings.Property property;
 
-    @JsonProperty("value")
-    @ApiModelProperty(value = "Value", required = true)
+    @SerializedName("value")
+    // @ApiModelProperty(value = "Value", required = true)
     private String value;
 
     public int getId() {

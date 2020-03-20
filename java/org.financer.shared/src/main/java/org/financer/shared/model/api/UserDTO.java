@@ -1,55 +1,53 @@
 package org.financer.shared.model.api;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.annotations.ApiModelProperty;
+import com.google.gson.annotations.SerializedName;
 import org.financer.shared.model.db.DataEntity;
 import org.financer.shared.model.user.User;
-import org.springframework.validation.annotation.Validated;
 
 import java.time.LocalDate;
 import java.util.List;
 
-@Validated
+// @Validated
 public class UserDTO implements DataTransferObject {
 
-    @JsonProperty("id")
-    @ApiModelProperty(value = "Identifier", required = true, example = "123")
+    @SerializedName("id")
+    // @ApiModelProperty(value = "Identifier", required = true, example = "123")
     private int id;
 
-    @JsonProperty("email")
-    @ApiModelProperty(value = "Email address", required = true, example = "test@email.com")
+    @SerializedName("email")
+    // @ApiModelProperty(value = "Email address", required = true, example = "test@email.com")
     private String email;
 
-    @JsonProperty("name")
-    @ApiModelProperty(value = "First name", required = true, example = "John")
+    @SerializedName("name")
+    // @ApiModelProperty(value = "First name", required = true, example = "John")
     private String name;
 
-    @JsonProperty("surname")
-    @ApiModelProperty(value = "Surname", required = true, example = "Doe")
+    @SerializedName("surname")
+    // @ApiModelProperty(value = "Surname", required = true, example = "Doe")
     private String surname;
 
-    @JsonProperty("birthDate")
-    @ApiModelProperty(value = "Birth Date", example = "02.03.1985")
+    @SerializedName("birthDate")
+    // @ApiModelProperty(value = "Birth Date", example = "02.03.1985")
     private LocalDate birthDate;
 
-    @JsonProperty("gender")
-    @ApiModelProperty(value = "Birth Date", example = "male", allowableValues = "male, female, notSpecified")
-    private User.Gender genderName;
+    @SerializedName("gender")
+    // @ApiModelProperty(value = "Birth Date", example = "male", allowableValues = "male, female, notSpecified")
+    private User.Gender gender;
 
-    @JsonProperty("categories")
-    @ApiModelProperty(value = "Categories")
+    @SerializedName("categories")
+    // @ApiModelProperty(value = "Categories")
     private List<CategoryDTO> categories;
 
-    @JsonProperty("settings")
-    @ApiModelProperty(value = "Settings")
+    @SerializedName("settings")
+    // @ApiModelProperty(value = "Settings")
     private List<SettingsDTO> databaseSettings;
 
-    @JsonProperty("token")
-    @ApiModelProperty(value = "Active Token")
+    @SerializedName("token")
+    // @ApiModelProperty(value = "Active Token")
     private TokenDTO token;
 
-    @JsonProperty("verified")
-    @ApiModelProperty(value = "Indicates whether user is verified", required = true, example = "false")
+    @SerializedName("verified")
+    // @ApiModelProperty(value = "Indicates whether user is verified", required = true, example = "false")
     private boolean verified;
 
     public int getId() {
@@ -97,12 +95,12 @@ public class UserDTO implements DataTransferObject {
         return this;
     }
 
-    public User.Gender getGenderName() {
-        return genderName;
+    public User.Gender getGender() {
+        return gender;
     }
 
-    public UserDTO setGenderName(User.Gender genderName) {
-        this.genderName = genderName;
+    public UserDTO setGender(User.Gender gender) {
+        this.gender = gender;
         return this;
     }
 

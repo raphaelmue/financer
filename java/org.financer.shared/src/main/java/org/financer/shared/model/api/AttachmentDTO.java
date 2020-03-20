@@ -1,28 +1,26 @@
 package org.financer.shared.model.api;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.annotations.ApiModelProperty;
-import org.springframework.validation.annotation.Validated;
+
+import com.google.gson.annotations.SerializedName;
 
 import java.time.LocalDate;
 
-@Validated
 public class AttachmentDTO {
 
-    @JsonProperty("id")
-    @ApiModelProperty(value = "Identifier", required = true, example = "123")
+    @SerializedName("id")
+    // @ApiModelProperty(value = "Identifier", required = true, example = "123")
     private int id;
 
-    @JsonProperty("name")
-    @ApiModelProperty(value = "File name", required = true, example = "file.txt")
+    @SerializedName("name")
+    // @ApiModelProperty(value = "File name", required = true, example = "file.txt")
     private String name;
 
-    @JsonProperty("uploadDate")
-    @ApiModelProperty(value = "Upload Date", required = true, example = "2020-02-02")
+    @SerializedName("uploadDate")
+    // @ApiModelProperty(value = "Upload Date", required = true, example = "2020-02-02")
     private LocalDate uploadDate;
 
-    @JsonProperty("content")
-    @ApiModelProperty(value = "Content", required = true)
+    @SerializedName("content")
+    // @ApiModelProperty(value = "Content", required = true)
     private byte[] content;
 
     public int getId() {

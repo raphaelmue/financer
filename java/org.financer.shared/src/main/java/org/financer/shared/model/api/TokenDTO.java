@@ -1,22 +1,20 @@
 package org.financer.shared.model.api;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.annotations.ApiModelProperty;
-import org.springframework.validation.annotation.Validated;
+import com.google.gson.annotations.SerializedName;
 
-@Validated
+// @Validated
 public class TokenDTO {
 
-    @JsonProperty("id")
-    @ApiModelProperty(value = "Identifier", required = true, example = "123")
+    @SerializedName("id")
+    // @ApiModelProperty(value = "Identifier", required = true, example = "123")
     private int id;
 
-    @JsonProperty("token")
-    @ApiModelProperty(value = "Token", required = true, example = "4i8va0ß3jvaih4oa9vjio5nöas0vivj4oa")
+    @SerializedName("token")
+    // @ApiModelProperty(value = "Token", required = true, example = "4i8va0ß3jvaih4oa9vjio5nöas0vivj4oa")
     private String token;
 
-    @JsonProperty("ipAddress")
-    @ApiModelProperty(value = "IP Address", required = true, example = "192.168.0.1")
+    @SerializedName("ipAddress")
+    // @ApiModelProperty(value = "IP Address", required = true, example = "192.168.0.1")
     private String ipAddress;
 
     public int getId() {

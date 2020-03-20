@@ -15,7 +15,11 @@ import org.financer.util.Hash;
 import org.financer.util.RandomString;
 import org.financer.util.collections.TreeUtil;
 import org.hibernate.Session;
-import org.hibernate.Transaction;
+import org.hibernate.SessionFactory;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.NoResultException;
 import java.io.Serializable;
@@ -23,50 +27,39 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
-@SuppressWarnings({"unused", "WeakerAccess"})
+@Service
 public class FinancerService {
 
-    private static FinancerService instance = null;
     private RandomString tokenGenerator = new RandomString(64);
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(FinancerService.class);
+
+    @Autowired
     private static VerificationService verificationService;
 
-    private FinancerService() {
-    }
-
-    public static FinancerService getInstance() {
-        if (instance == null) {
-            instance = new FinancerService();
-        }
-        return instance;
-    }
-
-    public static void setVerificationService(VerificationService verificationService) {
-        FinancerService.verificationService = verificationService;
-    }
+    @Autowired
+    private SessionFactory sessionFactory;
 
     /**
      * Checks, whether the token is valid and not expired and returns the corresponding user.
      *
-     * @param parameters [String token]
+     * @param tokenString token to be checked
      * @return User that has this token
      */
-    public User checkUsersToken(Logger logger, Session session, Map<String, Serializable> parameters) {
-        logger.log(Level.INFO, "Checking users token ...");
+    @Transactional
+    public User checkUsersToken(String tokenString) {
+        Session session = sessionFactory.getCurrentSession();
+        logger.info("Checking users token ...");
 
         User user = null;
 
-        Transaction transaction = session.beginTransaction();
         try {
             TokenEntity databaseToken = session.createQuery("from TokenEntity where token = :token", TokenEntity.class)
-                    .setParameter("token", parameters.get("token")).getSingleResult();
+                    .setParameter("token", tokenString).getSingleResult();
             if (databaseToken != null) {
                 Token token = new Token(databaseToken);
                 if (token.isValid()) {
-                    logger.log(Level.INFO, "Token of user '" + token.getUser().getFullName() + "' is approved");
+                    logger.info("Token of user '{}' is approved", token.getUser().getFullName());
                     user = new User(session.get(UserEntity.class, token.getUser().getId()));
 
                     // needs to be called to avoid LazyInitializationException
@@ -75,13 +68,11 @@ public class FinancerService {
                 }
             }
         } catch (Exception e) {
-            logger.log(Level.SEVERE, e.getMessage(), e);
+            logger.error(e.getMessage(), e);
         }
 
-        transaction.commit();
-
         if (user == null) {
-            logger.log(Level.INFO, "Token is invalid");
+            logger.info("Token is invalid");
         }
         return user;
     }
@@ -95,42 +86,38 @@ public class FinancerService {
      * @param system    operating system
      * @param isMobile  defines whether operating system is a mobile device
      */
-    User generateToken(Session session, User user, String ipAddress, String system, boolean isMobile) {
-        Transaction transaction = session.beginTransaction();
+    User generateToken(User user, String ipAddress, String system, boolean isMobile) {
+        Session session = sessionFactory.getCurrentSession();
         user = new User(session.get(UserEntity.class, user.getId()));
 
-        try {
-            boolean foundEntry = false;
-            for (TokenEntity token : user.getTokens()) {
-                if (token.getIpAddress().equals(ipAddress)) {
-                    foundEntry = true;
-                    token.setToken(this.tokenGenerator.nextString());
-                    session.merge(token);
-                    user.setActiveToken(new Token(token));
-                    break;
-                }
+        boolean foundEntry = false;
+        for (TokenEntity token : user.getTokens()) {
+            if (token.getIpAddress().equals(ipAddress)) {
+                foundEntry = true;
+                token.setToken(this.tokenGenerator.nextString());
+                session.merge(token);
+                user.setActiveToken(new Token(token));
+                break;
             }
+        }
 
-            // insert if not found
-            if (!foundEntry) {
-                TokenEntity databaseToken;
-                databaseToken = new TokenEntity();
-                databaseToken.setUser(user);
-                databaseToken.setToken(this.tokenGenerator.nextString());
-                databaseToken.setIpAddress(ipAddress);
-                databaseToken.setOperatingSystem(system);
-                databaseToken.setExpireDate(LocalDate.now().plusMonths(1));
-                databaseToken.setIsMobile(isMobile);
-                databaseToken.setId((int) session.save(databaseToken));
-                user.getTokens().add(databaseToken);
-                user.setActiveToken(new Token(databaseToken));
-            }
+        // insert if not found
+        if (!foundEntry) {
+            TokenEntity databaseToken;
+            databaseToken = new TokenEntity();
+            databaseToken.setUser(user);
+            databaseToken.setToken(this.tokenGenerator.nextString());
+            databaseToken.setIpAddress(ipAddress);
+            databaseToken.setOperatingSystem(system);
+            databaseToken.setExpireDate(LocalDate.now().plusMonths(1));
+            databaseToken.setIsMobile(isMobile);
+            databaseToken.setId((int) session.save(databaseToken));
+            user.getTokens().add(databaseToken);
+            user.setActiveToken(new Token(databaseToken));
+        }
 
-            if (user.getDatabaseSettings() != null) {
-                user.getDatabaseSettings().size();
-            }
-        } finally {
-            transaction.commit();
+        if (user.getDatabaseSettings() != null) {
+            user.getDatabaseSettings().size();
         }
         return user;
     }
@@ -138,58 +125,62 @@ public class FinancerService {
     /**
      * Checks, if the users credentials are correct
      *
-     * @param parameters [String email, String password, String ipAddress, String system, boolean isMobile]
-     * @return User object, if credentials are correct, else null
+     * @param email     email of the user
+     * @param password  password to be checked
+     * @param ipAddress IP address of the users client
+     * @param system    operating system of the users client
+     * @param isMobile  defines whether operating system is a mobile device
+     * @return User object, if credentials are correct, null otherwise
      */
-    public ConnectionResult<User> checkCredentials(Logger logger, Session session, Map<String, Serializable> parameters) {
-        logger.log(Level.INFO, "Checking credentials ...");
+    @Transactional
+    public ConnectionResult<User> checkCredentials(String email, String password, String ipAddress, String system, boolean isMobile) {
+        Session session = sessionFactory.getCurrentSession();
+        logger.info("Checking credentials ...");
 
         User user = null;
-        Transaction transaction = session.beginTransaction();
 
         try {
             user = new User(session.createQuery("from UserEntity where email = :email", UserEntity.class)
-                    .setParameter("email", parameters.get("email")).getSingleResult());
-            String password = Hash.create((String) parameters.get("password"), user.getSalt());
-            if (password.equals(user.getPassword())) {
-                logger.log(Level.INFO, "Credentials of user '" + user.getFullName() + "' are approved.");
+                    .setParameter("email", email).getSingleResult());
+            String hashedPassword = Hash.create(password, user.getSalt());
+            if (hashedPassword.equals(user.getPassword())) {
+                logger.info("Credentials of user '{}' are approved.", user.getFullName());
             } else {
                 user = null;
             }
         } catch (NoResultException ignored) {
         }
 
-        transaction.commit();
-
         if (user != null) {
-            user = this.generateToken(session, user, (String) parameters.get("ipAddress"), (String) parameters.get("system"),
-                    parameters.containsKey("isMobile") && (boolean) parameters.get("isMobile"));
+            user = this.generateToken(user, ipAddress, system, isMobile);
         } else {
-            logger.log(Level.INFO, "Credentials are incorrect.");
+            logger.info("Credentials are incorrect.");
         }
 
         return new ConnectionResult<>(user);
     }
 
+
     /**
      * Registers a new user and stores it into database.
      *
-     * @param parameters [User user, String ipAddress, String system, boolean isMobile]
-     * @return void
+     * @param user
+     * @param ipAddress
+     * @param system
+     * @param isMobile
+     * @return
      */
-    public ConnectionResult<User> registerUser(Logger logger, Session session, Map<String, Serializable> parameters) {
-        logger.log(Level.INFO, "Registering new user ...");
-        User user = (User) parameters.get("user");
+    @Transactional
+    public ConnectionResult<User> registerUser(User user, String ipAddress, String system, boolean isMobile) {
+        Session session = sessionFactory.getCurrentSession();
+        logger.info("Registering new user ...");
 
-        Transaction transaction = session.beginTransaction();
         user.setId((Integer) session.save(user.toEntity()));
-        transaction.commit();
 
         // creating new token and inserting it to database
-        user = this.generateToken(session, user, (String) parameters.get("ipAddress"), (String) parameters.get("system"),
-                parameters.containsKey("isMobile") && (boolean) parameters.get("isMobile"));
+        user = this.generateToken(user, ipAddress, system, isMobile);
 
-        this.addVerificationToken(logger, session, user);
+        this.addVerificationToken(user);
 
         return new ConnectionResult<>(user);
     }
@@ -197,16 +188,15 @@ public class FinancerService {
     /**
      * Verifying a users token.
      *
-     * @param parameters [int userId, String verificationToken]
+     * @param userId            id of the user
+     * @param verificationToken verification token string
      * @return updated user or null if token is invalid
      */
-    public ConnectionResult<User> verifyUser(Logger logger, Session session, Map<String, Serializable> parameters) {
-        logger.log(Level.INFO, "Verifiyng new user ...");
-        int userId = (int) parameters.get("userId");
-        String verificationToken = (String) parameters.get("verificationToken");
+    @Transactional
+    public ConnectionResult<User> verifyUser(int userId, String verificationToken) {
+        Session session = sessionFactory.getCurrentSession();
+        logger.info("Verifiyng new user ...");
 
-
-        Transaction transaction = session.beginTransaction();
         UserEntity user = session.get(UserEntity.class, userId);
         VerificationTokenEntity verificationTokenEntity = session.createQuery(
                 "from VerificationTokenEntity where user.id = :userId and token = :verificationToken", VerificationTokenEntity.class)
@@ -219,68 +209,64 @@ public class FinancerService {
             session.update(user);
         }
 
-        transaction.commit();
-
         return new ConnectionResult<>(new User(user));
     }
 
-    private void addVerificationToken(Logger logger, Session session, User user) {
+    /**
+     * Generates a verification token.
+     *
+     * @param user user for which the verification token should be generated
+     */
+    @Transactional
+    void addVerificationToken(User user) {
+        Session session = sessionFactory.getCurrentSession();
         try {
             VerificationToken verificationToken = verificationService.sendVerificationEmail(user);
 
-            Transaction transaction = session.beginTransaction();
             verificationToken.setId((Integer) session.save(verificationToken.toEntity()));
-            transaction.commit();
         } catch (EmailException e) {
-            logger.log(Level.SEVERE, e.getMessage(), e);
+            logger.error(e.getMessage(), e);
         }
     }
 
     /**
      * Updates users personal information
      *
-     * @param parameters [User user]
-     * @return void
+     * @param user user to be updated
      */
-    public ConnectionResult<Serializable> updateUser(Logger logger, Session session, Map<String, Serializable> parameters) {
-        logger.log(Level.INFO, "Updating users personal information ...");
-        User user = (User) parameters.get("user");
+    @Transactional
+    public void updateUser(User user) {
+        Session session = sessionFactory.getCurrentSession();
+        logger.info("Updating users personal information ...");
 
-        Transaction transaction = session.beginTransaction();
         session.merge(user.toEntity());
-        transaction.commit();
-
-        return new ConnectionResult<>(null);
     }
 
     /**
      * Deletes a token of a user.
      *
-     * @param parameters [int tokenId]
-     * @return void
+     * @param tokenId id of the token that should be deleted
      */
-    public ConnectionResult<Serializable> deleteToken(Logger logger, Session session, Map<String, Serializable> parameters) {
-        logger.log(Level.INFO, "Deleting users token ...");
+    @Transactional
+    public void deleteToken(int tokenId) {
+        Session session = sessionFactory.getCurrentSession();
+        logger.info("Deleting users token ...");
 
-        Transaction transaction = session.beginTransaction();
-        TokenEntity token = session.load(TokenEntity.class, (int) parameters.get("tokenId"));
+        TokenEntity token = session.load(TokenEntity.class, tokenId);
         session.delete(token);
-        transaction.commit();
-
-        return new ConnectionResult<>(null);
     }
 
     /**
      * Updates the settings of a user
      *
-     * @param parameters [User user]
+     * @param user user whose settings should be updated
      * @return User object
      */
-    public ConnectionResult<User> updateUsersSettings(Logger logger, Session session, Map<String, Serializable> parameters) {
-        logger.log(Level.INFO, "Updating users settings ...");
-        User user = (User) parameters.get("user");
+    @Transactional
+    public ConnectionResult<User> updateUsersSettings(User user) {
+        Session session = sessionFactory.getCurrentSession();
+        logger.info("Updating users settings ...");
 
-        Transaction transaction = session.beginTransaction();
         for (SettingsEntity settingsEntity : user.getSettings().getProperties().values()) {
             settingsEntity.setUser(user);
             if (settingsEntity.getId() > 0) {
@@ -290,23 +276,22 @@ public class FinancerService {
             }
         }
 
-        transaction.commit();
-
         return new ConnectionResult<>(user);
     }
 
     /**
      * Returns the users categories as BaseCategory
      *
-     * @param parameters [int userId]
+     * @param userId id of the user whose BaseCategory should be returned
      * @return BaseCategory object
      */
-    public ConnectionResult<BaseCategory> getUsersCategories(Logger logger, Session session, Map<String, Serializable> parameters) {
-        logger.log(Level.INFO, "Fetching users categories ...");
+    @Transactional
+    public BaseCategory getUsersCategories(int userId) {
+        Session session = sessionFactory.getCurrentSession();
+        logger.info("Fetching users categories ...");
         BaseCategory baseCategory;
 
-        Transaction transaction = session.beginTransaction();
-        User user = new User(session.get(UserEntity.class, parameters.get("userId")));
+        User user = new User(session.get(UserEntity.class, userId));
         List<CategoryEntity> categories = new ArrayList<>(user.getCategories());
         Collections.sort(categories);
 
@@ -325,55 +310,48 @@ public class FinancerService {
                 }
             }
         }
-        transaction.commit();
-        return new ConnectionResult<>(baseCategory);
+        return baseCategory;
     }
 
     /**
      * Adds a new category.
      *
-     * @param parameters [Category category]
+     * @param category category
      * @return Category object
      */
-    public ConnectionResult<Category> addCategory(Logger logger, Session session, Map<String, Serializable> parameters) {
-        logger.log(Level.INFO, "Adding new category ...");
-        Category category = (Category) parameters.get("category");
+    @Transactional
+    public Category addCategory(Category category) {
+        Session session = sessionFactory.getCurrentSession();
+        logger.info("Adding new category ...");
 
-        Transaction transaction = session.beginTransaction();
         category.setId((int) session.save(category.toEntity()));
-        transaction.commit();
-
-        return new ConnectionResult<>(category);
+        return category;
     }
 
     /**
      * Updates a category.
      *
-     * @param parameters [Category category]
-     * @return void
+     * @param category category that should be updated
      */
-    public ConnectionResult<Serializable> updateCategory(Logger logger, Session session, Map<String, Serializable> parameters) {
-        logger.log(Level.INFO, "Updating users categories ...");
-        Category category = (Category) parameters.get("category");
+    @Transactional
+    public void updateCategory(Category category) {
+        Session session = sessionFactory.getCurrentSession();
+        logger.info("Updating users categories ...");
 
-        Transaction transaction = session.beginTransaction();
         session.update(category.toEntity());
-        transaction.commit();
-
-        return new ConnectionResult<>(null);
     }
 
     /**
      * Deletes a category and all its children as well as all transactions.
      *
-     * @param parameters [int categoryId]
+     * @param categoryId id of the category that will be deleted
      * @return void
      */
-    public ConnectionResult<Serializable> deleteCategory(Logger logger, Session session, Map<String, Serializable> parameters) {
-        logger.log(Level.INFO, "Deleting category ...");
-        int categoryId = (int) parameters.get("categoryId");
+    @Transactional
+    public ConnectionResult<Serializable> deleteCategory(int categoryId) {
+        Session session = sessionFactory.getCurrentSession();
+        logger.info("Deleting category ...");
 
-        Transaction transaction = session.beginTransaction();
         session.createQuery("delete from FixedTransactionEntity where category.id = :categoryId")
                 .setParameter("categoryId", categoryId).executeUpdate();
         session.createQuery("delete from VariableTransactionEntity where category.id = :categoryId")
@@ -381,9 +359,7 @@ public class FinancerService {
         session.createQuery("delete from CategoryEntity where id = :categoryId")
                 .setParameter("categoryId", categoryId).executeUpdate();
 
-        transaction.commit();
-
-        this.deleteCategoryChildren(session, categoryId);
+        this.deleteCategoryChildren(categoryId);
 
         return new ConnectionResult<>(null);
     }
@@ -393,19 +369,17 @@ public class FinancerService {
      *
      * @param categoryId category id to delete children
      */
-    private void deleteCategoryChildren(Session session, int categoryId) {
+    @Transactional
+    void deleteCategoryChildren(int categoryId) {
+        Session session = sessionFactory.getCurrentSession();
         List<CategoryEntity> categories;
 
-        Transaction transaction = session.beginTransaction();
         categories = session.createQuery("from CategoryEntity where parentId = :parentId", CategoryEntity.class)
                 .setParameter("parentId", categoryId).list();
-        transaction.commit();
         if (!categories.isEmpty()) {
             for (CategoryEntity databaseCategory : categories) {
-                transaction = session.beginTransaction();
                 session.delete(databaseCategory);
-                transaction.commit();
-                deleteCategoryChildren(session, databaseCategory.getId());
+                deleteCategoryChildren(databaseCategory.getId());
             }
         }
     }
@@ -413,15 +387,15 @@ public class FinancerService {
     /**
      * Returns all transactions of a user.
      *
-     * @param parameters [int userId, BaseCategory baseCategory]
+     * @param userId       id of the user
+     * @param baseCategory base category
      * @return BaseCategory with transactions
      */
-    public ConnectionResult<BaseCategory> getTransactions(Logger logger, Session session, Map<String, Serializable> parameters) {
-        logger.log(Level.INFO, "Fetching users transaction ...");
-        BaseCategory baseCategory;
-        baseCategory = (BaseCategory) parameters.get("baseCategory");
+    @Transactional
+    public BaseCategory getTransactions(int userId, BaseCategory baseCategory) {
+        Session session = sessionFactory.getCurrentSession();
+        logger.info("Fetching users transaction ...");
 
-        Transaction transaction = session.beginTransaction();
         baseCategory.traverse(treeObject -> {
             CategoryTree categoryTree = (CategoryTree) treeObject;
             if (!categoryTree.getValue().getCategoryClass().isFixed()) {
@@ -439,84 +413,73 @@ public class FinancerService {
             }
         });
 
-        transaction.commit();
-        return new ConnectionResult<>(baseCategory);
+        return baseCategory;
     }
 
     /**
      * Adds a new transaction.
      *
-     * @param parameters [VariableTransaction variableTransaction]
+     * @param variableTransaction transaction that will be inserted
      * @return variable transaction object
      */
-    public ConnectionResult<VariableTransaction> addTransaction(Logger logger, Session session, Map<String, Serializable> parameters) {
-        logger.log(Level.INFO, "Adding transaction ...");
-        VariableTransaction variableTransaction = (VariableTransaction) parameters.get("variableTransaction");
+    @Transactional
+    public VariableTransaction addTransaction(VariableTransaction variableTransaction) {
+        Session session = sessionFactory.getCurrentSession();
+        logger.info("Adding transaction ...");
 
-        Transaction transaction = session.beginTransaction();
         this.adjustTransactionAmount(session, variableTransaction);
         variableTransaction.setId((int) session.save(variableTransaction.toEntity()));
-        transaction.commit();
 
-        return new ConnectionResult<>(variableTransaction);
+        return variableTransaction;
     }
 
     /**
      * Updates a variable transaction.
      *
-     * @param parameters [VariableTransaction variableTransaction]
-     * @return void
+     * @param variableTransaction transaction that will be updated
      */
-    public ConnectionResult<Serializable> updateTransaction(Logger logger, Session session, Map<String, Serializable> parameters) {
-        logger.log(Level.INFO, "Adding transaction ...");
-        VariableTransaction variableTransaction = (VariableTransaction) parameters.get("variableTransaction");
+    @Transactional
+    public void updateTransaction(VariableTransaction variableTransaction) {
+        Session session = sessionFactory.getCurrentSession();
+        logger.info("Adding transaction ...");
 
-        Transaction transaction = session.beginTransaction();
         this.adjustTransactionAmount(session, variableTransaction);
         session.update(variableTransaction.toEntity());
-        transaction.commit();
-
-
-        return new ConnectionResult<>(null);
     }
 
     /**
      * Deletes a transaction.
      *
-     * @param parameters [int variableTransactionId]
-     * @return
+     * @param variableTransactionId id of the transaction that will be deleted
      */
-    public ConnectionResult<Serializable> deleteTransaction(Logger logger, Session session, Map<String, Serializable> parameters) {
-        logger.log(Level.INFO, "Deleting transaction ...");
+    @Transactional
+    public void deleteTransaction(int variableTransactionId) {
+        Session session = sessionFactory.getCurrentSession();
+        logger.info("Deleting transaction ...");
 
-        Transaction transaction = session.beginTransaction();
         session.createQuery("delete from VariableTransactionEntity where id = :variableTransactionId")
-                .setParameter("variableTransactionId", parameters.get("variableTransactionId"))
+                .setParameter("variableTransactionId", variableTransactionId)
                 .executeUpdate();
-        transaction.commit();
-
-        return new ConnectionResult<>(null);
     }
 
     /**
      * Uploads a transaction attachment to the database
      *
-     * @param parameters [VariableTransaction transaction, ContentAttachment attachment]
+     * @param transaction transaction
+     * @param attachment  attachment that will be uploaded
      * @return ContentAttachment object
      */
-    public ConnectionResult<Attachment> uploadTransactionAttachment(Logger logger, Session session, Map<String, Serializable> parameters) {
-        logger.log(Level.INFO, "Uploading AttachmentWithContent ...");
-        ContentAttachment attachment = (ContentAttachment) parameters.get("attachment");
-
-        attachment.setTransaction((VariableTransaction) parameters.get("transaction"));
+    @Transactional
+    public ConnectionResult<Attachment> uploadTransactionAttachment(VariableTransaction transaction, ContentAttachment attachment) {
+        Session session = sessionFactory.getCurrentSession();
+        logger.info("Uploading AttachmentWithContent ...");
+        attachment.setTransaction(transaction);
         attachment.setUploadDate(LocalDate.now());
 
-        Transaction transaction = session.beginTransaction();
         attachment.setId((int) session.save(attachment.toEntity()));
-        transaction.commit();
 
         return new ConnectionResult<>(new Attachment(attachment.getId(),
-                (VariableTransaction) parameters.get("transaction"),
+                transaction,
                 attachment.getName(),
                 attachment.getUploadDate()));
     }
@@ -524,53 +487,48 @@ public class FinancerService {
     /**
      * Returns an attachment with content.
      *
-     * @param parameters [int attachmentId]
+     * @param attachmentId id of the attachment
      * @return Attachment object or null, if none found
      */
-    public ConnectionResult<ContentAttachment> getAttachment(Logger logger, Session session, Map<String, Serializable> parameters) {
-        logger.log(Level.INFO, "Fetching attachment ...");
+    @Transactional
+    public ContentAttachment getAttachment(int attachmentId) {
+        Session session = sessionFactory.getCurrentSession();
+        logger.info("Fetching attachment ...");
 
         ContentAttachment attachment = null;
-        Transaction transaction = session.beginTransaction();
-        ContentAttachmentEntity attachmentEntity = session.get(ContentAttachmentEntity.class, (int) parameters.get("attachmentId"));
+        ContentAttachmentEntity attachmentEntity = session.get(ContentAttachmentEntity.class, attachmentId);
         if (attachmentEntity != null) {
             attachment = new ContentAttachment(attachmentEntity);
         }
-        transaction.commit();
 
-        return new ConnectionResult<>(attachment);
+        return attachment;
     }
 
     /**
      * Deletes a attachment.
      *
-     * @param parameters [int attachmentId]
-     * @return void
+     * @param attachmentId id of the attachment that will be deleted
      */
-    public ConnectionResult<Serializable> deleteAttachment(Logger logger, Session session, Map<String, Serializable> parameters) {
-        logger.log(Level.INFO, "Deleting attachment ...");
+    @Transactional
+    public void deleteAttachment(int attachmentId) {
+        Session session = sessionFactory.getCurrentSession();
+        logger.info("Deleting attachment ...");
 
-        Transaction transaction = session.beginTransaction();
-        AttachmentEntity attachmentEntity = session.get(AttachmentEntity.class,
-                parameters.get("attachmentId"));
+        AttachmentEntity attachmentEntity = session.get(AttachmentEntity.class, attachmentId);
         session.delete(attachmentEntity);
-        transaction.commit();
-
-        return new ConnectionResult<>(null);
     }
 
     /**
      * Returns a BaseCategory object with all fixed transactions.
      *
-     * @param parameters [int userId, BaseCategory baseCategory]
+     * @param baseCategory base category
      * @return BaseCategory object with fixed transactions
      */
-    public ConnectionResult<BaseCategory> getFixedTransactions(Logger logger, final Session session, Map<String, Serializable> parameters) {
-        logger.log(Level.INFO, "Fetching fixed transactions ...");
-        BaseCategory baseCategory;
-        baseCategory = (BaseCategory) parameters.get("baseCategory");
+    @Transactional
+    public ConnectionResult<BaseCategory> getFixedTransactions(BaseCategory baseCategory) {
+        Session session = sessionFactory.getCurrentSession();
+        logger.info("Fetching fixed transactions ...");
 
-        Transaction transaction = session.beginTransaction();
         baseCategory.traverse(treeObject -> {
             CategoryTree categoryTree = (CategoryTree) treeObject;
             if (categoryTree.getValue().getCategoryClass().isFixed()) {
@@ -588,22 +546,20 @@ public class FinancerService {
             }
         });
 
-        transaction.commit();
-
         return new ConnectionResult<>(baseCategory);
     }
 
     /**
      * Adds a new fixed transaction and stops the old.
      *
-     * @param parameters [FixedTransaction fixedTransaction]
+     * @param fixedTransaction transaction that will be inserted
      * @return FixedTransaction object
      */
-    public synchronized ConnectionResult<FixedTransaction> addFixedTransactions(Logger logger, Session session, Map<String, Serializable> parameters) {
-        logger.log(Level.INFO, "Adding fixed transactions ...");
-        FixedTransaction fixedTransaction = (FixedTransaction) parameters.get("fixedTransaction");
+    @Transactional
+    public synchronized FixedTransaction addFixedTransactions(FixedTransaction fixedTransaction) {
+        Session session = sessionFactory.getCurrentSession();
+        logger.info("Adding fixed transactions ...");
 
-        Transaction transaction = session.beginTransaction();
         FixedTransactionEntity oldFixedTransaction = session.createQuery("from FixedTransactionEntity where category.id = :categoryId " +
                 "and endDate = null ", FixedTransactionEntity.class)
                 .setParameter("categoryId", fixedTransaction.getCategoryTree().getValue().getId())
@@ -612,26 +568,22 @@ public class FinancerService {
             oldFixedTransaction.setEndDate(fixedTransaction.getStartDate().minusDays(1));
             session.update(oldFixedTransaction);
         }
-        transaction.commit();
-        transaction = session.beginTransaction();
         this.adjustTransactionAmount(session, fixedTransaction);
         fixedTransaction.setId((int) session.save(fixedTransaction.toEntity()));
-        transaction.commit();
 
-        return new ConnectionResult<>(fixedTransaction);
+        return fixedTransaction;
     }
 
     /**
      * Updates a fixed transaction.
      *
-     * @param parameters [FixedTransaction fixedTransaction]
+     * @param newFixedTransaction transaction object
      * @return Fixed Transaction object
      */
-    public ConnectionResult<Serializable> updateFixedTransaction(Logger logger, Session session, Map<String, Serializable> parameters) {
-        logger.log(Level.INFO, "Updating fixed transaction ...");
-        FixedTransaction newFixedTransaction = (FixedTransaction) parameters.get("fixedTransaction");
-
-        Transaction transaction = session.beginTransaction();
+    @Transactional
+    public FixedTransaction updateFixedTransaction(FixedTransaction newFixedTransaction) {
+        Session session = sessionFactory.getCurrentSession();
+        logger.info("Updating fixed transaction ...");
 
         FixedTransactionEntity entity = newFixedTransaction.toEntity();
         FixedTransactionEntity oldFixedTransaction = session.get(FixedTransactionEntity.class, entity.getId());
@@ -643,25 +595,24 @@ public class FinancerService {
         for (FixedTransactionAmountEntity transactionAmountEntity : oldFixedTransaction.getTransactionAmounts()) {
             entity.getTransactionAmounts().remove(transactionAmountEntity);
         }
-        transaction.commit();
 
-        return new ConnectionResult<>(new FixedTransaction(entity));
+        return new FixedTransaction(entity);
     }
 
     /**
      * Deletes a fixed transaction.
      *
-     * @param parameters [int fixedTransactionId]
+     * @param fixedTransactionId id of the transaction that will be deleted
      * @return void
      */
-    public ConnectionResult<Serializable> deleteFixedTransaction(Logger logger, Session session, Map<String, Serializable> parameters) {
-        logger.log(Level.INFO, "Deleting fixed transaction ...");
+    @Transactional
+    public ConnectionResult<Serializable> deleteFixedTransaction(int fixedTransactionId) {
+        Session session = sessionFactory.getCurrentSession();
+        logger.info("Deleting fixed transaction ...");
 
-        Transaction transaction = session.beginTransaction();
         session.createQuery("delete from FixedTransactionEntity where id = :fixedTransactionId")
-                .setParameter("fixedTransactionId", parameters.get("fixedTransactionId"))
+                .setParameter("fixedTransactionId", fixedTransactionId)
                 .executeUpdate();
-        transaction.commit();
 
         return new ConnectionResult<>(null);
     }
@@ -676,18 +627,16 @@ public class FinancerService {
     /**
      * Adds a new transaction amount.
      *
-     * @param parameters [TransactionAmount transactionAmount]
+     * @param transactionAmount transaction amount object that will be inserted
      * @return TransactionAmount object
      */
-    public ConnectionResult<TransactionAmount> addTransactionAmount(Logger logger, Session session, Map<String, Serializable> parameters) {
-        logger.log(Level.INFO, "Adding new transaction amount ...");
+    @Transactional
+    public TransactionAmount addTransactionAmount(TransactionAmount transactionAmount) {
+        Session session = sessionFactory.getCurrentSession();
+        logger.info("Adding new transaction amount ...");
 
-        TransactionAmount transactionAmount = (TransactionAmount) parameters.get("transactionAmount");
-
-        Transaction transaction = session.beginTransaction();
         transactionAmount.setId((int) session.save(transactionAmount.toEntity()));
-        transaction.commit();
 
-        return new ConnectionResult<>(transactionAmount);
+        return transactionAmount;
     }
 }

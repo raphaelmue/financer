@@ -1,11 +1,10 @@
 package org.financer.shared.model.api;
 
-import org.financer.shared.model.db.DataEntity;
-import org.springframework.validation.annotation.Validated;
 import com.google.gson.Gson;
+import org.financer.shared.model.db.DataEntity;
 
 
-@Validated
+// @Validated
 public interface DataTransferObject {
 
     /**

@@ -7,6 +7,7 @@ import org.apache.commons.mail.HtmlEmail;
 import org.financer.shared.model.user.User;
 import org.financer.shared.model.user.VerificationToken;
 import org.financer.util.RandomString;
+import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -16,6 +17,7 @@ import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+@Service
 public class VerificationService {
 
     private final String host;

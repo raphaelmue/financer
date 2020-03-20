@@ -1,50 +1,48 @@
 package org.financer.shared.model.api;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.annotations.ApiModelProperty;
+import com.google.gson.annotations.SerializedName;
 import org.financer.shared.model.db.DataEntity;
-import org.springframework.validation.annotation.Validated;
 
 import java.time.LocalDate;
 import java.util.List;
 
-@Validated
+// @Validated
 public class FixedTransactionDTO implements DataTransferObject {
 
-    @JsonProperty("id")
-    @ApiModelProperty(value = "Identifier", required = true, example = "123")
+    @SerializedName("id")
+    // @ApiModelProperty(value = "Identifier", required = true, example = "123")
     private int id;
 
-    @JsonProperty("amount")
-    @ApiModelProperty(value = "Identifier", example = "74.99")
+    @SerializedName("amount")
+    // @ApiModelProperty(value = "Identifier", example = "74.99")
     private double amount;
 
-    @JsonProperty("startDate")
-    @ApiModelProperty(value = "Start Date", required = true, example = "2020-02-02")
+    @SerializedName("startDate")
+    // @ApiModelProperty(value = "Start Date", required = true, example = "2020-02-02")
     private LocalDate startDate;
 
-    @JsonProperty("endDate")
-    @ApiModelProperty(value = "End Date", example = "2020-02-02")
+    @SerializedName("endDate")
+    // @ApiModelProperty(value = "End Date", example = "2020-02-02")
     private LocalDate endDate;
 
-    @JsonProperty("product")
-    @ApiModelProperty(value = "Product", example = "Food")
+    @SerializedName("product")
+    // @ApiModelProperty(value = "Product", example = "Food")
     private int product;
 
-    @JsonProperty("purpose")
-    @ApiModelProperty(value = "Purpose", example = "Meal")
+    @SerializedName("purpose")
+    // @ApiModelProperty(value = "Purpose", example = "Meal")
     private int purpose;
 
-    @JsonProperty("isVariable")
-    @ApiModelProperty(value = "Indicates whether transaction is variable or not", required = true, example = "false")
+    @SerializedName("isVariable")
+    // @ApiModelProperty(value = "Indicates whether transaction is variable or not", required = true, example = "false")
     private boolean isVariable;
 
-    @JsonProperty("day")
-    @ApiModelProperty(value = "Day of reckoning", example = "1")
+    @SerializedName("day")
+    // @ApiModelProperty(value = "Day of reckoning", example = "1")
     private int day;
 
-    @JsonProperty("transactionAmounts")
-    @ApiModelProperty(value = "List of Transaction Amounts")
+    @SerializedName("transactionAmounts")
+    // @ApiModelProperty(value = "List of Transaction Amounts")
     private List<TransactionAmountDTO> transactionAmounts;
 
     public int getId() {

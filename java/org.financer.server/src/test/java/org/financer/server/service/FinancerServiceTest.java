@@ -14,6 +14,7 @@ import org.financer.util.RandomString;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.junit.jupiter.api.*;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -24,7 +25,9 @@ import java.util.logging.Logger;
 @SuppressWarnings("WeakerAccess")
 @Tag("unit")
 public class FinancerServiceTest {
-    private final FinancerService service = FinancerService.getInstance();
+
+    @Autowired
+    private final FinancerService service;
     private final Logger logger = Logger.getLogger("Test");
 
     private static UserEntity user;
@@ -544,7 +547,7 @@ public class FinancerServiceTest {
         parameters.clear();
         parameters.put("userId", user.getId());
         parameters.put("baseCategory", baseCategory);
-        ConnectionResult<BaseCategory> result = service.getFixedTransactions(logger, session, parameters);
+        ConnectionResult<BaseCategory> result = service.getFixedTransactions(session, parameters);
         Assertions.assertNotNull(result.getResult());
         Assertions.assertNull(result.getException());
 
@@ -633,7 +636,7 @@ public class FinancerServiceTest {
         parameters.clear();
         parameters.put("userId", user.getId());
         parameters.put("baseCategory", baseCategory);
-        ConnectionResult<BaseCategory> result = service.getFixedTransactions(logger, session, parameters);
+        ConnectionResult<BaseCategory> result = service.getFixedTransactions(session, parameters);
         Assertions.assertNotNull(result.getResult());
         Assertions.assertNull(result.getException());
 

@@ -1,42 +1,40 @@
 package org.financer.shared.model.api;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.annotations.ApiModelProperty;
+import com.google.gson.annotations.SerializedName;
 import org.financer.shared.model.db.DataEntity;
-import org.springframework.validation.annotation.Validated;
 
 import java.time.LocalDate;
 import java.util.List;
 
-@Validated
+// @Validated
 public class VariableTransactionDTO implements DataTransferObject {
 
-    @JsonProperty("id")
-    @ApiModelProperty(value = "Identifier", required = true, example = "123")
+    @SerializedName("id")
+    // @ApiModelProperty(value = "Identifier", required = true, example = "123")
     private int id;
 
-    @JsonProperty("valueDate")
-    @ApiModelProperty(value = "Value Date", required = true, example = "2020-02-02")
+    @SerializedName("valueDate")
+    // @ApiModelProperty(value = "Value Date", required = true, example = "2020-02-02")
     private LocalDate valueDate;
 
-    @JsonProperty("amount")
-    @ApiModelProperty(value = "Amount", required = true, example = "74.99")
+    @SerializedName("amount")
+    // @ApiModelProperty(value = "Amount", required = true, example = "74.99")
     private double amount;
 
-    @JsonProperty("product")
-    @ApiModelProperty(value = "Product", example = "Food")
+    @SerializedName("product")
+    // @ApiModelProperty(value = "Product", example = "Food")
     private int product;
 
-    @JsonProperty("purpose")
-    @ApiModelProperty(value = "Purpose", example = "Meal")
+    @SerializedName("purpose")
+    // @ApiModelProperty(value = "Purpose", example = "Meal")
     private int purpose;
 
-    @JsonProperty("shop")
-    @ApiModelProperty(value = "Shop", example = "Discounter")
+    @SerializedName("shop")
+    // @ApiModelProperty(value = "Shop", example = "Discounter")
     private int shop;
 
-    @JsonProperty("attachments")
-    @ApiModelProperty(value = "List of Attachemnts", example = "123")
+    @SerializedName("attachments")
+    // @ApiModelProperty(value = "List of Attachemnts", example = "123")
     private List<AttachmentDTO> attachments;
 
     public int getId() {

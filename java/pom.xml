@@ -15,6 +15,8 @@
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
+        <spring.version>5.2.4.RELEASE</spring.version>
+
         <project.testing.localhost>false</project.testing.localhost>
         <project.testing.tags>unit, integration</project.testing.tags>
         <project.testing.arguments>
