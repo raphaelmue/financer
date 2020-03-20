@@ -2,10 +2,7 @@ package org.financer.server.api;
 
 import org.financer.shared.model.categories.Category;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
@@ -13,6 +10,18 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 public interface CategoryApi {
+
+    /**
+     * Creates a new category.
+     *
+     * @param category category object that will be inserted
+     * @return Category object
+     */
+    @PutMapping(
+            value = "/category",
+            produces = {"application/json"},
+            headers = "Accept=application/json")
+    ResponseEntity<Category> createCategory(@NotNull @Valid @RequestParam(value = "category") Category category);
 
     /**
      * Updates a specified category.

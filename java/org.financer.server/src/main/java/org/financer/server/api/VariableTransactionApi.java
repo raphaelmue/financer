@@ -1,11 +1,9 @@
 package org.financer.server.api;
 
-import org.financer.shared.model.transactions.VariableTransaction;
+import org.financer.shared.model.api.AttachmentDTO;
+import org.financer.shared.model.api.VariableTransactionDTO;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
@@ -26,7 +24,7 @@ public interface VariableTransactionApi {
             produces = {"application/json"},
             headers = "Accept=application/json")
     ResponseEntity<Void> updateTransaction(@NotBlank @PathVariable("transactionId") @Min(1) Long transactionId,
-                                           @NotNull @Valid @RequestParam(value = "transaction") VariableTransaction variableTransaction);
+                                           @NotNull @Valid @RequestParam(value = "variableTransaction") VariableTransactionDTO variableTransaction);
 
     /**
      * Deletes a specified transaction.
@@ -39,4 +37,31 @@ public interface VariableTransactionApi {
             produces = {"application/json"},
             headers = "Accept=application/json")
     ResponseEntity<Void> deleteTransaction(@NotBlank @PathVariable("transactionId") @Min(1) Long transactionId);
+
+    /**
+     * Inserts a new attachment to the given transaction
+     *
+     * @param transactionId id of the transaction wo which the attachment will be inserted.
+     * @return null
+     */
+    @PutMapping(
+            value = "/variableTransaction/{transactionId}/attachment",
+            produces = {"application/json"},
+            headers = "Accept=application/json")
+    ResponseEntity<AttachmentDTO> createAttachment(@NotBlank @PathVariable("transactionId") @Min(1) Long transactionId,
+                                                @NotNull @Valid @RequestParam(value = "attachment") AttachmentDTO attachment);
+
+    /**
+     * Fetches an attachment with content
+     *
+     * @param transactionId id of the transaction
+     * @param attachmentId  id of the attachment whose content will be returned
+     * @return attachment with content
+     */
+    @GetMapping(
+            value = "/variableTransaction/{transactionId}/attachment/{attachmentId}",
+            produces = {"application/json"},
+            headers = "Accept=application/json")
+    ResponseEntity<AttachmentDTO> getAttachment(@NotBlank @PathVariable("transactionId") @Min(1) Long transactionId,
+                                                @NotBlank @PathVariable("attachmentId") @Min(1) Long attachmentId);
 }

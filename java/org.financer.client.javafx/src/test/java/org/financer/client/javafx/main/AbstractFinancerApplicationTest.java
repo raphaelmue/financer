@@ -14,8 +14,6 @@ import org.financer.client.javafx.components.DoubleField;
 import org.financer.client.javafx.components.IntegerField;
 import org.financer.client.javafx.format.JavaFXFormatter;
 import org.financer.client.javafx.local.LocalStorageImpl;
-import org.financer.server.db.HibernateUtil;
-import org.financer.server.main.Server;
 import org.financer.server.service.FinancerService;
 import org.financer.server.service.VerificationService;
 import org.financer.shared.model.categories.BaseCategory;

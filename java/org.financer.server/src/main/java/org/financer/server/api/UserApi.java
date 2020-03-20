@@ -1,15 +1,16 @@
 package org.financer.server.api;
 
+import org.financer.shared.model.api.CategoryDTO;
 import org.financer.shared.model.api.UserDTO;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
+import java.util.List;
 
 public interface UserApi {
 
@@ -22,7 +23,8 @@ public interface UserApi {
      */
     @GetMapping(
             value = "/user",
-            produces = {"application/json"})
+            produces = {"application/json"},
+            headers = "Accept=application/json")
     ResponseEntity<UserDTO> loginUser(@NotNull @Valid @RequestParam(value = "email") String email,
                                       @NotNull @Valid @RequestParam(value = "password") String password);
 
@@ -39,7 +41,8 @@ public interface UserApi {
      */
     @PutMapping(
             value = "/user",
-            produces = {"application/json"})
+            produces = {"application/json"},
+            headers = "Accept=application/json")
     ResponseEntity<UserDTO> registerUser(@NotNull @Valid @RequestParam(value = "email") String email,
                                          @NotNull @Valid @RequestParam(value = "name") String name,
                                          @NotNull @Valid @RequestParam(value = "surname") String surname,
@@ -55,6 +58,19 @@ public interface UserApi {
      */
     @PostMapping(
             value = "/user",
-            produces = {"application/json"})
+            produces = {"application/json"},
+            headers = "Accept=application/json")
     ResponseEntity<Void> updateUser(@NotNull @Valid @RequestParam(value = "user") UserDTO user);
+
+    /**
+     * Fetches the users categories.
+     *
+     * @param userId user id
+     * @return list of categories
+     */
+    @GetMapping(
+            value = "/user/{userId}/categories",
+            produces = {"application/json"},
+            headers = "Accept=application/json")
+    ResponseEntity<List<CategoryDTO>> getUsersCategories(@NotBlank @PathVariable("userId") @Min(1) Long userId);
 }

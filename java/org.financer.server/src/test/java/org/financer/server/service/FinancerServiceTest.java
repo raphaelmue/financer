@@ -1,6 +1,5 @@
 package org.financer.server.service;
 
-import org.financer.server.db.HibernateUtil;
 import org.financer.shared.connection.ConnectionResult;
 import org.financer.shared.model.categories.BaseCategory;
 import org.financer.shared.model.categories.Category;
