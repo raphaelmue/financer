@@ -13,7 +13,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.time.LocalDate;
-import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -27,18 +26,11 @@ public class VerificationService {
 
     private final RandomString tokenGenerator = new RandomString(128);
 
-    public VerificationService(Properties properties) {
-        if (properties.getProperty("financer.server.smtp").equals(Boolean.toString(true))) {
-            this.host = properties.getProperty("financer.server.smtp.host");
-            this.port = Integer.parseInt(properties.getProperty("financer.server.smtp.port"));
-            this.email = properties.getProperty("financer.server.smtp.email");
-            this.password = properties.getProperty("financer.server.smtp.password");
-        } else {
-            this.host = null;
-            this.port = -1;
-            this.email = null;
-            this.password = null;
-        }
+    public VerificationService(String host, int port, String email, String password) {
+        this.host = host;
+        this.port = port;
+        this.email = email;
+        this.password = password;
     }
 
     VerificationToken sendVerificationEmail(User user) throws EmailException {

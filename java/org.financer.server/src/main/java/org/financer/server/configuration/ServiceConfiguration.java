@@ -27,10 +27,17 @@ public class ServiceConfiguration {
         Properties properties = new Properties();
         try {
             properties.load(getClass().getResourceAsStream("/application.properties"));
+            if (properties.getProperty("financer.server.smtp").equals(Boolean.toString(true))) {
+                return new VerificationService(
+                        properties.getProperty("financer.server.smtp.host"),
+                        Integer.parseInt(properties.getProperty("financer.server.smtp.port")),
+                        properties.getProperty("financer.server.smtp.email"),
+                        properties.getProperty("financer.server.smtp.password")
+                );
+            }
         } catch (IOException e) {
             logger.error("Failed to load hibernate properties for instantiating data source.", e);
         }
-        return new VerificationService(properties);
+        return new VerificationService("", -1, "", "");
     }
-
 }

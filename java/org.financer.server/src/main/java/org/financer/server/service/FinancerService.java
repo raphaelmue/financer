@@ -133,7 +133,7 @@ public class FinancerService {
      * @return User object, if credentials are correct, null otherwise
      */
     @Transactional
-    public ConnectionResult<User> checkCredentials(String email, String password, String ipAddress, String system, boolean isMobile) {
+    public User checkCredentials(String email, String password, String ipAddress, String system, boolean isMobile) {
         Session session = sessionFactory.getCurrentSession();
         logger.info("Checking credentials ...");
 
@@ -157,21 +157,21 @@ public class FinancerService {
             logger.info("Credentials are incorrect.");
         }
 
-        return new ConnectionResult<>(user);
+        return user;
     }
 
 
     /**
      * Registers a new user and stores it into database.
      *
-     * @param user
-     * @param ipAddress
-     * @param system
-     * @param isMobile
+     * @param user      user to be inserted
+     * @param ipAddress IP address of the client
+     * @param system    operating system of the client
+     * @param isMobile  indicates whether the operating system is a mobile device
      * @return
      */
     @Transactional
-    public ConnectionResult<User> registerUser(User user, String ipAddress, String system, boolean isMobile) {
+    public User registerUser(User user, String ipAddress, String system, boolean isMobile) {
         Session session = sessionFactory.getCurrentSession();
         logger.info("Registering new user ...");
 
@@ -182,7 +182,7 @@ public class FinancerService {
 
         this.addVerificationToken(user);
 
-        return new ConnectionResult<>(user);
+        return user;
     }
 
     /**
@@ -193,7 +193,7 @@ public class FinancerService {
      * @return updated user or null if token is invalid
      */
     @Transactional
-    public ConnectionResult<User> verifyUser(int userId, String verificationToken) {
+    public User verifyUser(int userId, String verificationToken) {
         Session session = sessionFactory.getCurrentSession();
         logger.info("Verifiyng new user ...");
 
@@ -209,7 +209,7 @@ public class FinancerService {
             session.update(user);
         }
 
-        return new ConnectionResult<>(new User(user));
+        return new User(user);
     }
 
     /**
@@ -252,8 +252,8 @@ public class FinancerService {
         Session session = sessionFactory.getCurrentSession();
         logger.info("Deleting users token ...");
 
-        TokenEntity token = session.load(TokenEntity.class, tokenId);
-        session.delete(token);
+        session.createQuery("delete from TokenEntity where id = :tokenId")
+                .setParameter("tokenId", tokenId).executeUpdate();
     }
 
     /**
@@ -470,7 +470,7 @@ public class FinancerService {
      * @return ContentAttachment object
      */
     @Transactional
-    public ConnectionResult<Attachment> uploadTransactionAttachment(VariableTransaction transaction, ContentAttachment attachment) {
+    public Attachment uploadTransactionAttachment(VariableTransaction transaction, ContentAttachment attachment) {
         Session session = sessionFactory.getCurrentSession();
         logger.info("Uploading AttachmentWithContent ...");
         attachment.setTransaction(transaction);
@@ -478,10 +478,10 @@ public class FinancerService {
 
         attachment.setId((int) session.save(attachment.toEntity()));
 
-        return new ConnectionResult<>(new Attachment(attachment.getId(),
+        return new Attachment(attachment.getId(),
                 transaction,
                 attachment.getName(),
-                attachment.getUploadDate()));
+                attachment.getUploadDate());
     }
 
     /**
@@ -525,7 +525,7 @@ public class FinancerService {
      * @return BaseCategory object with fixed transactions
      */
     @Transactional
-    public ConnectionResult<BaseCategory> getFixedTransactions(BaseCategory baseCategory) {
+    public BaseCategory getFixedTransactions(BaseCategory baseCategory) {
         Session session = sessionFactory.getCurrentSession();
         logger.info("Fetching fixed transactions ...");
 
@@ -546,7 +546,7 @@ public class FinancerService {
             }
         });
 
-        return new ConnectionResult<>(baseCategory);
+        return baseCategory;
     }
 
     /**

@@ -23,8 +23,8 @@
             --add-reads org.financer.shared=org.hibernate.orm.core
             --add-reads org.financer.shared=ALL-UNNAMED
             --add-opens org.financer.shared/org.financer.shared.model.db=ALL-UNNAMED
-            --add-opens
-            org.financer.client.javafx/org.financer.client.javafx.main=ALL-UNNAMED
+            --add-opens org.financer.client.javafx/org.financer.client.javafx.main=ALL-UNNAMED
+            --add-opens org.financer.server/org.financer.server.configuration=ALL-UNNAMED
             --add-exports javafx.graphics/com.sun.javafx.application=ALL-UNNAMED
             --add-exports javafx.graphics/com.sun.glass.ui=ALL-UNNAMED
             --add-exports javafx.graphics/com.sun.javafx.css=org.controlsfx.controls
