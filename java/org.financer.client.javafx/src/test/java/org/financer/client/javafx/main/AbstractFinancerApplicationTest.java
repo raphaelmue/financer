@@ -7,15 +7,12 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
-import org.financer.client.connection.ServerRequest;
 import org.financer.client.format.I18N;
 import org.financer.client.javafx.components.DatePicker;
 import org.financer.client.javafx.components.DoubleField;
 import org.financer.client.javafx.components.IntegerField;
 import org.financer.client.javafx.format.JavaFXFormatter;
 import org.financer.client.javafx.local.LocalStorageImpl;
-import org.financer.server.service.FinancerService;
-import org.financer.server.service.VerificationService;
 import org.financer.shared.model.categories.BaseCategory;
 import org.financer.shared.model.categories.Category;
 import org.financer.shared.model.categories.CategoryTree;
@@ -25,21 +22,18 @@ import org.financer.shared.model.transactions.TransactionAmount;
 import org.financer.shared.model.transactions.VariableTransaction;
 import org.financer.shared.model.user.User;
 import org.financer.util.collections.TreeUtil;
-import org.financer.util.network.PortAllocator;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.testfx.api.FxToolkit;
 import org.testfx.framework.junit5.ApplicationTest;
 
-import java.io.IOException;
 import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.HashSet;
-import java.util.Properties;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Predicate;
 
 class AbstractFinancerApplicationTest extends ApplicationTest {
-    private static Server server;
 
     static final int SHORT_SLEEP = 500;
     static final int MEDIUM_SLEEP = 1000;
@@ -82,35 +76,8 @@ class AbstractFinancerApplicationTest extends ApplicationTest {
         System.setProperty("monocle.platform", "Headless");
     }
 
-    @BeforeAll
-    static void setUp() throws IOException {
-        Properties testProperties = new Properties();
-        testProperties.load(AbstractFinancerApplicationTest.class.getResourceAsStream("test.properties"));
-        Server.setServerProperties(testProperties);
-        FinancerService.setVerificationService(new VerificationService(testProperties));
-
-        testProperties.setProperty("financer.server.port", Integer.toString(PortAllocator.nextFreePort()));
-
-        new Thread(() -> {
-            try {
-                server = new Server();
-            } catch (IOException e) {
-                Assertions.fail("Test server could not be started!");
-            }
-            ServerRequest.setPort(Integer.parseInt(testProperties.getProperty("financer.server.port")));
-            server.run();
-        }).start();
-
-        LocalStorageImpl.getInstance().deleteAllData();
-
-        HibernateUtil.setDatabaseProperties(testProperties);
-    }
-
     @BeforeEach
     void setUpEach() throws Exception {
-        LocalStorageImpl.getInstance().deleteAllData();
-        HibernateUtil.cleanDatabase();
-        ApplicationTest.launch(FinancerApplication.class);
     }
 
     final <T extends Node> T find(final String query) {
@@ -271,10 +238,5 @@ class AbstractFinancerApplicationTest extends ApplicationTest {
         FxToolkit.hideStage();
         release(new KeyCode[]{});
         release(new MouseButton[]{});
-    }
-
-    @AfterAll
-    static void tearDown() {
-        server.stop();
     }
 }
