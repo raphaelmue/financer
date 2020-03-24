@@ -1,6 +1,8 @@
 package org.financer.shared.model.transactions;
 
-import java.time.LocalDate;
+import org.financer.shared.domain.model.value.objects.Amount;
+import org.financer.shared.domain.model.value.objects.TimeRange;
+import org.financer.shared.domain.model.value.objects.ValueDate;
 
 /**
  * This class is for calculating amounts.
@@ -12,23 +14,22 @@ public interface AmountProvider {
      *
      * @return amount of month
      */
-    double getAmount();
+    Amount getAmount();
 
     /**
      * Returns the amount of the specified month and year.
      *
-     * @param localDate specifies month and year
+     * @param valueDate specifies month and year
      * @return amount of month and year
      */
-    double getAmount(LocalDate localDate);
+    Amount getAmount(ValueDate valueDate);
 
     /**
      * Returns the amount within a specified time period.
      *
-     * @param startDate start date of time period
-     * @param endDate   end date of time period
+     * @param timeRange time range
      * @return amount within the time period
      */
-    double getAmount(LocalDate startDate, LocalDate endDate);
+    Amount getAmount(TimeRange timeRange);
 
 }

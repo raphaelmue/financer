@@ -19,9 +19,6 @@ import org.financer.client.javafx.dialogs.FinancerConfirmDialog;
 import org.financer.client.javafx.dialogs.FinancerDialog;
 import org.financer.client.javafx.format.JavaFXFormatter;
 import org.financer.client.javafx.local.LocalStorageImpl;
-import org.financer.shared.model.categories.CategoryTree;
-import org.financer.shared.model.transactions.FixedTransaction;
-import org.financer.shared.model.transactions.TransactionAmount;
 
 import java.time.LocalDate;
 import java.util.ArrayList;

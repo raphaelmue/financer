@@ -3,8 +3,6 @@ package org.financer.client.javafx.format;
 import org.financer.client.format.Formatter;
 import org.financer.client.format.I18N;
 import org.financer.client.javafx.local.LocalStorageImpl;
-import org.financer.shared.model.categories.Category;
-import org.financer.shared.model.user.User;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;

@@ -7,8 +7,6 @@ import org.financer.client.javafx.local.LocalStorageImpl;
 import org.financer.client.local.LocalStorage;
 import org.financer.shared.connection.AsyncCall;
 import org.financer.shared.connection.ConnectionResult;
-import org.financer.shared.model.categories.BaseCategory;
-import org.financer.shared.model.user.User;
 import org.financer.util.collections.Action;
 import org.financer.util.collections.TreeUtil;
 import org.financer.util.concurrency.FinancerExecutor;

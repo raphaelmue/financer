@@ -3,8 +3,6 @@ package org.financer.client.javafx.main;
 import com.jfoenix.controls.JFXTextField;
 import javafx.scene.control.Button;
 import org.financer.client.javafx.local.LocalStorageImpl;
-import org.financer.shared.model.categories.BaseCategory;
-import org.financer.shared.model.categories.Category;
 import org.financer.util.collections.Tree;
 import org.financer.util.collections.TreeUtil;
 import org.junit.jupiter.api.Assertions;

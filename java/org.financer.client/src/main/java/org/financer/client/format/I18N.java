@@ -1,7 +1,6 @@
 package org.financer.client.format;
 
 import org.financer.client.local.LocalStorage;
-import org.financer.shared.model.user.User;
 
 import java.text.MessageFormat;
 import java.util.*;

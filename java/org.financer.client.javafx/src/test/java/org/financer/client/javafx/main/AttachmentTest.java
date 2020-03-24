@@ -3,7 +3,6 @@ package org.financer.client.javafx.main;
 import com.jfoenix.controls.JFXButton;
 import javafx.scene.control.Button;
 import javafx.scene.input.KeyCode;
-import org.financer.shared.model.transactions.Transaction;
 import org.financer.util.RandomString;
 import org.junit.jupiter.api.*;
 

@@ -1,8 +1,5 @@
 package org.financer.shared.model.transactions;
 
-import org.financer.shared.model.categories.BaseCategory;
-import org.financer.shared.model.categories.Category;
-import org.financer.shared.model.categories.CategoryTreeImpl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;

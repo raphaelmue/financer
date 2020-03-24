@@ -29,7 +29,6 @@ import org.financer.client.format.I18N;
 import org.financer.client.javafx.dialogs.FinancerExceptionDialog;
 import org.financer.client.javafx.local.LocalStorageImpl;
 import org.financer.client.local.Application;
-import org.financer.shared.model.user.User;
 
 import java.io.IOException;
 import java.net.URL;

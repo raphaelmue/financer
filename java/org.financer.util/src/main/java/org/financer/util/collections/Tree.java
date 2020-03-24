@@ -1,15 +1,14 @@
 package org.financer.util.collections;
 
-import java.util.List;
+import java.util.Set;
 
-public interface Tree<T> {
-    T getValue();
+public interface Tree {
 
-    Tree<T> getParent();
+    Tree getParent();
 
-    void setParent(Tree<T> parent);
+    Tree setParent(Tree parent);
 
-    List<? extends Tree<T>> getChildren();
+    Set<? extends Tree> getChildren();
 
     default boolean isLeaf() {
         return getChildren().isEmpty();

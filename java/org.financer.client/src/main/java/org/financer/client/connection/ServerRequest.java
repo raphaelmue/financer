@@ -2,7 +2,6 @@ package org.financer.client.connection;
 
 import org.financer.shared.connection.ConnectionCall;
 import org.financer.shared.connection.ConnectionResult;
-import org.financer.shared.model.user.User;
 
 import java.io.*;
 import java.net.ConnectException;

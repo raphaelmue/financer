@@ -3,8 +3,6 @@ package org.financer.client.format;
 import org.financer.client.local.LocalStorage;
 import org.financer.shared.exceptions.FinancerException;
 import org.financer.shared.exceptions.NotAuthorizedException;
-import org.financer.shared.model.categories.Category;
-import org.financer.shared.model.user.User;
 
 import java.net.ConnectException;
 import java.net.UnknownHostException;

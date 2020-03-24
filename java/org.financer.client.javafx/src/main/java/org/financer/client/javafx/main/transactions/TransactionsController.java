@@ -30,13 +30,6 @@ import org.financer.client.local.Application;
 import org.financer.client.local.LocalSettingsImpl;
 import org.financer.shared.connection.AsyncCall;
 import org.financer.shared.connection.ConnectionResult;
-import org.financer.shared.model.categories.BaseCategory;
-import org.financer.shared.model.categories.Category;
-import org.financer.shared.model.categories.CategoryTree;
-import org.financer.shared.model.transactions.FixedTransaction;
-import org.financer.shared.model.transactions.Transaction;
-import org.financer.shared.model.transactions.VariableTransaction;
-import org.financer.shared.model.user.User;
 import org.financer.util.concurrency.FinancerExecutor;
 
 import java.io.Serializable;

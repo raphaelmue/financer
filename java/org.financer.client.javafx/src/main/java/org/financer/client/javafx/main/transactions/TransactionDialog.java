@@ -24,13 +24,7 @@ import org.financer.client.javafx.dialogs.FinancerDialog;
 import org.financer.client.javafx.dialogs.FinancerExceptionDialog;
 import org.financer.client.javafx.format.JavaFXFormatter;
 import org.financer.client.javafx.local.LocalStorageImpl;
-import org.financer.shared.model.categories.BaseCategory;
-import org.financer.shared.model.categories.Category;
-import org.financer.shared.model.categories.CategoryTree;
-import org.financer.shared.model.transactions.Attachment;
 import org.financer.shared.model.transactions.ContentAttachment;
-import org.financer.shared.model.transactions.VariableTransaction;
-import org.financer.shared.model.user.User;
 import org.financer.util.collections.TreeUtil;
 import org.financer.util.concurrency.FinancerExecutor;
 

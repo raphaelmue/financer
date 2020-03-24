@@ -28,10 +28,6 @@ import org.financer.client.javafx.format.JavaFXFormatter;
 import org.financer.client.javafx.local.LocalStorageImpl;
 import org.financer.client.javafx.main.FinancerController;
 import org.financer.client.local.LocalStorage;
-import org.financer.shared.model.categories.BaseCategory;
-import org.financer.shared.model.categories.Category;
-import org.financer.shared.model.categories.CategoryTree;
-import org.financer.shared.model.categories.CategoryTreeImpl;
 import org.financer.util.date.DateUtil;
 
 import java.net.URL;

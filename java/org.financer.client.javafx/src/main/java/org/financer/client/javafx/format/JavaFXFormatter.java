@@ -6,10 +6,6 @@ import javafx.scene.text.TextAlignment;
 import org.financer.client.format.FormatterImpl;
 import org.financer.client.format.I18N;
 import org.financer.client.local.LocalStorage;
-import org.financer.shared.model.categories.BaseCategory;
-import org.financer.shared.model.categories.Category;
-import org.financer.shared.model.categories.CategoryTree;
-import org.financer.shared.model.user.User;
 
 public class JavaFXFormatter extends FormatterImpl {
 

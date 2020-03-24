@@ -1,7 +1,6 @@
 package org.financer.client.javafx.main;
 
 import org.financer.client.javafx.local.LocalStorageImpl;
-import org.financer.shared.model.user.User;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;

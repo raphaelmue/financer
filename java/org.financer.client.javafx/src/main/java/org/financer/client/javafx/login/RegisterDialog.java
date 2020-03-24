@@ -12,7 +12,6 @@ import org.financer.client.javafx.components.DatePicker;
 import org.financer.client.javafx.dialogs.FinancerDialog;
 import org.financer.client.javafx.format.JavaFXFormatter;
 import org.financer.client.javafx.local.LocalStorageImpl;
-import org.financer.shared.model.user.User;
 import org.financer.util.Hash;
 import org.financer.util.RandomString;
 

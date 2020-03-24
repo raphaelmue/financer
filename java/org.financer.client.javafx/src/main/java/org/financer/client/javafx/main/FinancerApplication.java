@@ -16,7 +16,6 @@ import javafx.stage.StageStyle;
 import org.financer.client.format.I18N;
 import org.financer.client.javafx.connection.RetrievalServiceImpl;
 import org.financer.client.javafx.local.LocalStorageImpl;
-import org.financer.shared.model.user.User;
 
 import java.io.IOException;
 import java.util.Locale;

@@ -1,8 +1,5 @@
 package org.financer.client.format;
 
-import org.financer.shared.model.categories.Category;
-import org.financer.shared.model.categories.CategoryTree;
-
 import java.time.LocalDate;
 
 public interface Formatter {

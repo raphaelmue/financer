@@ -4,7 +4,6 @@ import org.financer.client.local.Application;
 import org.financer.client.local.LocalStorage;
 import org.financer.shared.connection.ConnectionCall;
 import org.financer.shared.connection.ConnectionResult;
-import org.financer.shared.model.user.User;
 
 import java.io.IOException;
 import java.io.Serializable;

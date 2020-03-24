@@ -26,8 +26,6 @@ import org.financer.client.javafx.util.ApplicationHelper;
 import org.financer.client.local.LocalSettings;
 import org.financer.client.local.LocalStorage;
 import org.financer.shared.connection.ConnectionResult;
-import org.financer.shared.model.user.Token;
-import org.financer.shared.model.user.User;
 import org.financer.util.concurrency.FinancerExecutor;
 
 import java.io.Serializable;

@@ -6,7 +6,6 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Region;
 import org.financer.client.format.I18N;
 import org.financer.client.javafx.dialogs.FinancerDialog;
-import org.financer.shared.model.user.User;
 import org.financer.util.Hash;
 import org.financer.util.RandomString;
 

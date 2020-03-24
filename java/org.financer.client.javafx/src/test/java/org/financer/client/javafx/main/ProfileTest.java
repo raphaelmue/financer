@@ -7,7 +7,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import org.financer.client.javafx.local.LocalStorageImpl;
-import org.financer.shared.model.user.User;
 import org.financer.util.Hash;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;

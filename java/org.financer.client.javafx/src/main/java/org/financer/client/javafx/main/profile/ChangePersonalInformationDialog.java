@@ -9,7 +9,6 @@ import javafx.scene.layout.Region;
 import javafx.util.StringConverter;
 import org.financer.client.format.I18N;
 import org.financer.client.javafx.dialogs.FinancerDialog;
-import org.financer.shared.model.user.User;
 
 public class ChangePersonalInformationDialog extends FinancerDialog<User> {
 
