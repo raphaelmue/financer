@@ -17,6 +17,10 @@ public class ExpireDate {
         this.expireDate = expireDate;
     }
 
+    public ExpireDate() {
+        this.expireDate = LocalDate.now();
+    }
+
     /**
      * Indicates whether this expire date is valid, i.e. whether the expire date is before or equal the current date.
      *
@@ -24,6 +28,15 @@ public class ExpireDate {
      */
     public boolean isValid() {
         return !this.expireDate.isAfter(LocalDate.now());
+    }
+
+    /**
+     * Extends the expire date by one month from now. It does not change the expire date as this class is immutable.
+     *
+     * @return expire date object
+     */
+    public ExpireDate update() {
+        return new ExpireDate(LocalDate.now().plusMonths(1))
     }
 
     /*

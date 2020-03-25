@@ -7,16 +7,17 @@ import org.financer.shared.domain.model.value.objects.OperatingSystem;
 import org.financer.shared.domain.model.value.objects.TokenString;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 @Entity
 @Table(name = "users_tokens")
-public class TokenEntity implements DataEntity, Cloneable {
+public class TokenEntity implements DataEntity {
     private static final long serialVersionUID = 8834445127500149942L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private int id;
+    private long id;
 
     @ManyToOne(targetEntity = UserEntity.class)
     private UserEntity user;
@@ -43,11 +44,11 @@ public class TokenEntity implements DataEntity, Cloneable {
     }
 
     @Override
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public TokenEntity setId(int id) {
+    public TokenEntity setId(long id) {
         this.id = id;
         return this;
     }
@@ -95,5 +96,22 @@ public class TokenEntity implements DataEntity, Cloneable {
     public TokenEntity setOperatingSystem(OperatingSystem operatingSystem) {
         this.operatingSystem = operatingSystem;
         return this;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        TokenEntity that = (TokenEntity) o;
+        if (this.id >= 0) {
+            return id == that.id;
+        } else {
+            return token.equals(that.token);
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

@@ -14,7 +14,7 @@ public class SettingEntity implements DataEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private int id;
+    private long id;
 
     @ManyToOne()
     private UserEntity user;
@@ -23,11 +23,11 @@ public class SettingEntity implements DataEntity {
     private SettingPair pair;
 
     @Override
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public SettingEntity setId(int id) {
+    public SettingEntity setId(long id) {
         this.id = id;
         return this;
     }

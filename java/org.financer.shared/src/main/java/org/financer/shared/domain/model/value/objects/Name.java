@@ -27,4 +27,9 @@ public final class Name {
     public String getSurname() {
         return surname;
     }
+
+    @Override
+    public String toString() {
+        return this.firstName + " " + this.surname;
+    }
 }

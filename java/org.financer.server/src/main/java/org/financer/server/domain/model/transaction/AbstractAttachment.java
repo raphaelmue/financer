@@ -12,7 +12,7 @@ public abstract class AbstractAttachment implements DataEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private int id;
+    private long id;
 
     @ManyToOne(targetEntity = TransactionEntity.class)
     private TransactionEntity transaction;
@@ -24,11 +24,11 @@ public abstract class AbstractAttachment implements DataEntity {
     private LocalDate uploadDate;
 
     @Override
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 

@@ -86,8 +86,8 @@ public class FinancerServiceTest {
         session.save(verificationToken);
         session.save(settings);
 
-        user.setDatabaseSettings(new HashSet<>());
-        user.getDatabaseSettings().add(settings);
+        user.setSettings(new HashSet<>());
+        user.getSettings().add(settings);
 
         user.setTokens(new HashSet<>());
         user.getTokens().add(token);
@@ -293,12 +293,12 @@ public class FinancerServiceTest {
         databaseSettings.setUser(user);
         databaseSettings.setProperty(Settings.Property.SHOW_CURRENCY_SIGN.getName());
         databaseSettings.setValue(Boolean.toString(true));
-        user.getDatabaseSettings().add(databaseSettings);
+        user.getSettings().add(databaseSettings);
 
         settings.setValue("USD");
         service.updateUsersSettings(new User(user));
 
-        Assertions.assertEquals(2, user.getDatabaseSettings().size());
+        Assertions.assertEquals(2, user.getSettings().size());
         Assertions.assertEquals(Currency.getInstance("USD"), new User(user).getSettings().getCurrency());
         Assertions.assertTrue(new User(user).getSettings().isShowCurrencySign());
     }

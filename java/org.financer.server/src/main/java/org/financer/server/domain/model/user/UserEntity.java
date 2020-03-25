@@ -1,8 +1,8 @@
 package org.financer.server.domain.model.user;
 
 
-import org.financer.server.domain.model.category.CategoryEntity;
 import org.financer.server.domain.model.DataEntity;
+import org.financer.server.domain.model.category.CategoryEntity;
 import org.financer.shared.domain.model.value.objects.*;
 
 import javax.persistence.*;
@@ -16,7 +16,7 @@ public class UserEntity implements DataEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private int id;
+    private Long id;
 
     @Embedded
     private Email email;
@@ -38,7 +38,7 @@ public class UserEntity implements DataEntity {
     private Set<CategoryEntity> categories;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private Set<SettingEntity> databaseSettings;
+    private Set<SettingEntity> settings;
 
     @OneToMany(mappedBy = "user")
     private Set<TokenEntity> tokens;
@@ -47,13 +47,12 @@ public class UserEntity implements DataEntity {
     private boolean verified;
 
     @Override
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public UserEntity setId(int id) {
+    public void setId(long id) {
         this.id = id;
-        return this;
     }
 
     public Email getEmail() {
@@ -110,12 +109,12 @@ public class UserEntity implements DataEntity {
         return this;
     }
 
-    public Set<SettingEntity> getDatabaseSettings() {
-        return databaseSettings;
+    public Set<SettingEntity> getSettings() {
+        return settings;
     }
 
-    public UserEntity setDatabaseSettings(Set<SettingEntity> databaseSettings) {
-        this.databaseSettings = databaseSettings;
+    public UserEntity setSettings(Set<SettingEntity> databaseSettings) {
+        this.settings = databaseSettings;
         return this;
     }
 

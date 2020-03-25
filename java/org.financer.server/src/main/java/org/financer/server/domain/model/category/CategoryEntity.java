@@ -21,7 +21,7 @@ public class CategoryEntity implements DataEntity, Tree, AmountProvider {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private int id;
+    private long id;
 
     @ManyToOne(targetEntity = UserEntity.class)
     private UserEntity user;
@@ -97,11 +97,11 @@ public class CategoryEntity implements DataEntity, Tree, AmountProvider {
      */
 
     @Override
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public CategoryEntity setId(int id) {
+    public CategoryEntity setId(long id) {
         this.id = id;
         return this;
     }

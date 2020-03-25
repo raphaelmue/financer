@@ -16,7 +16,7 @@ public abstract class TransactionEntity implements DataEntity, AmountProvider {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private int id;
+    private long id;
 
     @ManyToOne(targetEntity = CategoryEntity.class)
     private CategoryEntity category;
@@ -55,11 +55,11 @@ public abstract class TransactionEntity implements DataEntity, AmountProvider {
      */
 
     @Override
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public TransactionEntity setId(int id) {
+    public TransactionEntity setId(long id) {
         this.id = id;
         return this;
     }

@@ -13,7 +13,7 @@ public class VerificationTokenEntity implements DataEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private int id;
+    private long id;
 
     @ManyToOne(targetEntity = UserEntity.class)
     private UserEntity user;
@@ -25,11 +25,11 @@ public class VerificationTokenEntity implements DataEntity {
     private ExpireDate expireDate;
 
     @Override
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public VerificationTokenEntity setId(int id) {
+    public VerificationTokenEntity setId(long id) {
         this.id = id;
         return this;
     }
