@@ -6,6 +6,7 @@ import org.financer.shared.domain.model.value.objects.TokenString;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.Objects;
 
 @Entity
 @Table(name = "verification_tokens")
@@ -71,5 +72,19 @@ public class VerificationTokenEntity implements DataEntity {
 
     public void setVerifyingDate(LocalDate verifyingDate) {
         this.verifyingDate = verifyingDate;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        VerificationTokenEntity that = (VerificationTokenEntity) o;
+        return id == that.id &&
+                Objects.equals(token, that.token);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, token);
     }
 }

@@ -151,9 +151,12 @@ public class UserDomainService {
 
         Optional<VerificationTokenEntity> tokenOptional = verificationTokenRepository.findByToken(verificationToken);
         if (tokenOptional.isPresent() && tokenOptional.get().getExpireDate().isValid()) {
+            UserEntity userEntity = tokenOptional.get().getUser();
             tokenOptional.get().setVerifyingDate(LocalDate.now());
             verificationTokenRepository.save(tokenOptional.get());
-            return Optional.of(tokenOptional.get().getUser());
+            userEntity.setVerificationToken(tokenOptional.get());
+            logger.info("User [{}, '{}'] is verified.", userEntity.getId(), userEntity.getName());
+            return Optional.of(userEntity);
         }
         return Optional.empty();
     }

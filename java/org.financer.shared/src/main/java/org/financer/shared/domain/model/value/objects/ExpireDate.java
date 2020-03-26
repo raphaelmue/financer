@@ -17,7 +17,7 @@ public class ExpireDate implements Serializable {
     private final LocalDate expireDate;
 
     public ExpireDate() {
-        this.expireDate = LocalDate.now();
+        this.expireDate = LocalDate.now().plusMonths(1);
     }
 
     public ExpireDate(LocalDate expireDate) {
@@ -25,12 +25,12 @@ public class ExpireDate implements Serializable {
     }
 
     /**
-     * Indicates whether this expire date is valid, i.e. whether the expire date is before or equal the current date.
+     * Indicates whether this expire date is valid, i.e. whether the expire date is after or equal the current date.
      *
      * @return true if valid, false otherwise
      */
     public boolean isValid() {
-        return !this.expireDate.isAfter(LocalDate.now());
+        return !this.expireDate.isBefore(LocalDate.now());
     }
 
     /**

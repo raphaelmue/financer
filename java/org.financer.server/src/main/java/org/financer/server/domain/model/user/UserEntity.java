@@ -53,7 +53,8 @@ public class UserEntity implements DataEntity {
      * @return true if user is verified, false otherwise
      */
     public boolean isVerified() {
-        return this.verificationToken != null && !this.verificationToken.getVerifyingDate().isBefore(LocalDate.now());
+        return this.verificationToken != null && this.verificationToken.getVerifyingDate() != null &&
+                !this.verificationToken.getVerifyingDate().isBefore(LocalDate.now());
     }
 
     /*
@@ -146,7 +147,8 @@ public class UserEntity implements DataEntity {
         return verificationToken;
     }
 
-    public void setVerificationToken(VerificationTokenEntity verificationToken) {
+    public UserEntity setVerificationToken(VerificationTokenEntity verificationToken) {
         this.verificationToken = verificationToken;
+        return this;
     }
 }
