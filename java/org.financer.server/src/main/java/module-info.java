@@ -24,6 +24,8 @@ module org.financer.server {
     requires com.fasterxml.jackson.databind;
     requires spring.data.commons;
     requires spring.data.jpa;
+    requires org.apache.tomcat.embed.core;
+    requires modelmapper;
 
     opens org.financer.server.application.api to spring.core;
     opens org.financer.server.application.main to spring.core;

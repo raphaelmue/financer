@@ -1,5 +1,6 @@
 package org.financer.server.application.api;
 
+import org.financer.shared.domain.model.api.FixedTransactionDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,7 +26,7 @@ public interface FixedTransactionApi {
             produces = {"application/json"},
             headers = "Accept=application/json")
     ResponseEntity<Void> updateTransaction(@NotBlank @PathVariable("transactionId") @Min(1) Long transactionId,
-                                           @NotNull @Valid @RequestParam(value = "transaction") FixedTransaction fixedTransaction);
+                                           @NotNull @Valid @RequestParam(value = "transaction") FixedTransactionDTO fixedTransaction);
 
     /**
      * Deletes a specified transaction.

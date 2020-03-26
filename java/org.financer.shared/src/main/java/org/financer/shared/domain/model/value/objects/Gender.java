@@ -1,27 +1,55 @@
 package org.financer.shared.domain.model.value.objects;
 
-public enum Gender {
-    MALE("male"),
-    FEMALE("female"),
-    NOT_SPECIFIED("notSpecified");
+import org.hibernate.annotations.Immutable;
 
-    private final String name;
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 
-    Gender(String name) {
-        this.name = name;
-    }
+@Embeddable
+@Immutable
+public class Gender {
+    public enum Values {
+        MALE("male"),
+        FEMALE("female"),
+        NOT_SPECIFIED("notSpecified");
 
-    public String getName() {
-        return name;
-    }
+        private final String name;
 
-    public static Gender getGenderByName(String name) {
-        for (Gender gender : values()) {
-            if (gender.getName().equals(name)) {
-                return gender;
-            }
+        Values(String name) {
+            this.name = name;
         }
-        return null;
+
+        public String getName() {
+            return name;
+        }
+
+        public static Values getGenderByName(String name) {
+            for (Values gender : values()) {
+                if (gender.getName().equals(name)) {
+                    return gender;
+                }
+            }
+            return null;
+        }
+
     }
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "gender")
+    private final Values gender;
+
+    public Gender(Values gender) {
+        this.gender = gender;
+    }
+
+    public Gender(String genderName) {
+        this.gender = Values.getGenderByName(genderName);
+    }
+
+
+    public Values getGender() {
+        return gender;
+    }
 }

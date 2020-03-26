@@ -30,8 +30,7 @@ public class UserEntity implements DataEntity {
     @Embedded
     private BirthDate birthDate;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "gender")
+    @Embedded
     private Gender gender;
 
     @OneToMany(mappedBy = "user")

@@ -1,5 +1,6 @@
 package org.financer.server.application.api;
 
+import org.financer.shared.domain.model.api.CategoryDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,7 +21,7 @@ public interface CategoryApi {
             value = "/category",
             produces = {"application/json"},
             headers = "Accept=application/json")
-    ResponseEntity<Category> createCategory(@NotNull @Valid @RequestParam(value = "category") Category category);
+    ResponseEntity<CategoryDTO> createCategory(@NotNull @Valid @RequestParam(value = "category") CategoryDTO category);
 
     /**
      * Updates a specified category.
@@ -34,7 +35,7 @@ public interface CategoryApi {
             produces = {"application/json"},
             headers = "Accept=application/json")
     ResponseEntity<Void> updateCategory(@NotBlank @PathVariable("categoryId") @Min(1) Long categoryId,
-                                        @NotNull @Valid @RequestParam(value = "category") Category category);
+                                        @NotNull @Valid @RequestParam(value = "category") CategoryDTO category);
 
     /**
      * Deletes a specified category.

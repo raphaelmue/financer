@@ -30,15 +30,15 @@ public class UserDomainService {
      * @param password  password to be checked
      * @param ipAddress IP address of the users client
      * @param system    operating system of the users client
-     * @param isMobile  defines whether operating system is a mobile device
      * @return User object, if credentials are correct, null otherwise
      */
-    public Optional<UserEntity> checkCredentials(String email, String password, String ipAddress, String system, boolean isMobile) {
+    public Optional<UserEntity> checkCredentials(String email, String password, IPAddress ipAddress, OperatingSystem system) {
         logger.info("Checking users credentials.");
         Optional<UserEntity> userOptional = userEntityRepository.findByEmail(new Email(email));
         if (userOptional.isPresent() && userOptional.get().getPassword().isEqualTo(password)) {
             logger.info("Credentials of user [{}, '{}'] are approved.",
                     userOptional.get().getId(), userOptional.get().getName());
+            this.generateOrUpdateToken(userOptional.get(), ipAddress, system);
             return userOptional;
         }
         logger.info("Credentials are incorrect.");
