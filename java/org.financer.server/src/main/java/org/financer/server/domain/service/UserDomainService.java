@@ -1,15 +1,21 @@
 package org.financer.server.domain.service;
 
+import org.apache.commons.mail.EmailException;
+import org.financer.server.application.service.VerificationService;
 import org.financer.server.domain.model.user.TokenEntity;
 import org.financer.server.domain.model.user.UserEntity;
-import org.financer.server.domain.repository.TokenEntityRepository;
-import org.financer.server.domain.repository.UserEntityRepository;
+import org.financer.server.domain.model.user.VerificationTokenEntity;
+import org.financer.server.domain.repository.TokenRepository;
+import org.financer.server.domain.repository.UserRepository;
+import org.financer.server.domain.repository.VerificationTokenRepository;
 import org.financer.shared.domain.model.value.objects.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 @Service
@@ -18,10 +24,16 @@ public class UserDomainService {
     private static final Logger logger = LoggerFactory.getLogger(UserDomainService.class);
 
     @Autowired
-    private UserEntityRepository userEntityRepository;
+    private UserRepository userRepository;
 
     @Autowired
-    private TokenEntityRepository tokenEntityRepository;
+    private TokenRepository tokenRepository;
+
+    @Autowired
+    private VerificationTokenRepository verificationTokenRepository;
+
+    @Autowired
+    private VerificationService verificationService;
 
     /**
      * Checks, if the users credentials are correct
@@ -34,7 +46,7 @@ public class UserDomainService {
      */
     public Optional<UserEntity> checkCredentials(String email, String password, IPAddress ipAddress, OperatingSystem system) {
         logger.info("Checking users credentials.");
-        Optional<UserEntity> userOptional = userEntityRepository.findByEmail(new Email(email));
+        Optional<UserEntity> userOptional = userRepository.findByEmail(new Email(email));
         if (userOptional.isPresent() && userOptional.get().getPassword().isEqualTo(password)) {
             logger.info("Credentials of user [{}, '{}'] are approved.",
                     userOptional.get().getId(), userOptional.get().getName());
@@ -54,7 +66,7 @@ public class UserDomainService {
     public Optional<UserEntity> checkUsersToken(TokenString tokenString) {
         logger.info("Checking users token.");
 
-        Optional<TokenEntity> tokenOptional = tokenEntityRepository.getTokenByToken(tokenString);
+        Optional<TokenEntity> tokenOptional = tokenRepository.getTokenByToken(tokenString);
         if (tokenOptional.isPresent() && tokenOptional.get().getExpireDate().isValid()) {
             logger.info("Token of user [{}, '{}'] is approved",
                     tokenOptional.get().getUser().getId(), tokenOptional.get().getUser().getName());
@@ -71,8 +83,9 @@ public class UserDomainService {
      * @param operatingSystem operating system of the client
      */
     public UserEntity registerUser(UserEntity user, IPAddress ipAddress, OperatingSystem operatingSystem) {
-        UserEntity result = userEntityRepository.save(user);
+        UserEntity result = userRepository.save(user);
         this.generateOrUpdateToken(result, ipAddress, operatingSystem);
+        this.generateVerificationToken(result);
         return result;
     }
 
@@ -86,17 +99,17 @@ public class UserDomainService {
      */
     private void generateOrUpdateToken(UserEntity user, IPAddress ipAddress, OperatingSystem operatingSystem) {
         TokenEntity tokenEntity;
-        Optional<TokenEntity> tokenOptional = tokenEntityRepository.getTokenByIPAddress(ipAddress);
+        Optional<TokenEntity> tokenOptional = tokenRepository.getTokenByIPAddress(ipAddress);
         if (tokenOptional.isPresent()) {
             if (tokenOptional.get().getExpireDate().isValid()) {
                 // update expire date
                 tokenOptional.get().setExpireDate(tokenOptional.get().getExpireDate().update());
-                tokenEntity = tokenEntityRepository.save(tokenOptional.get());
+                tokenEntity = tokenRepository.save(tokenOptional.get());
             } else {
                 throw new IllegalStateException("The given token is not valid");
             }
         } else {
-            tokenEntity = tokenEntityRepository.save(
+            tokenEntity = tokenRepository.save(
                     new TokenEntity()
                             .setUser(user)
                             .setToken(new TokenString())
@@ -105,5 +118,43 @@ public class UserDomainService {
                             .setOperatingSystem(operatingSystem));
         }
         user.getTokens().add(tokenEntity);
+    }
+
+    /**
+     * Generates a verification token and sends it to the respective email address.
+     *
+     * @param user user for which the verification token should be generated
+     */
+    private void generateVerificationToken(UserEntity user) {
+        VerificationTokenEntity verificationToken = verificationTokenRepository.save(
+                new VerificationTokenEntity()
+                        .setUser(user)
+                        .setToken(new TokenString())
+                        .setExpireDate(new ExpireDate()));
+        user.setVerificationToken(verificationToken);
+        try {
+            verificationService.sendVerificationEmail(user, verificationToken);
+        } catch (EmailException e) {
+            logger.error(e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Verifying a users token.
+     *
+     * @param verificationToken verification token string
+     * @return updated user or null if token is invalid
+     */
+    @Transactional
+    public Optional<UserEntity> verifyUser(TokenString verificationToken) {
+        logger.info("Verifying new user.");
+
+        Optional<VerificationTokenEntity> tokenOptional = verificationTokenRepository.findByToken(verificationToken);
+        if (tokenOptional.isPresent() && tokenOptional.get().getExpireDate().isValid()) {
+            tokenOptional.get().setVerifyingDate(LocalDate.now());
+            verificationTokenRepository.save(tokenOptional.get());
+            return Optional.of(tokenOptional.get().getUser());
+        }
+        return Optional.empty();
     }
 }

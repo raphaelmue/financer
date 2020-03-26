@@ -22,6 +22,11 @@ public class TimeRange {
         this.endDate = endDate;
     }
 
+    public TimeRange(LocalDate startDate) {
+        this.startDate = startDate;
+        this.endDate = null;
+    }
+
     /**
      * Checks whether the current date is in between the time range or not. If the time range has an open end, it
      * returns true.
@@ -101,6 +106,10 @@ public class TimeRange {
 
     public LocalDate getEndDate() {
         return endDate;
+    }
+
+    public TimeRange setEndDate(LocalDate endDate) {
+        return new TimeRange(this.startDate, endDate);
     }
 
 

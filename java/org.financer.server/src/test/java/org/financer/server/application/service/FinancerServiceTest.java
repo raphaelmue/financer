@@ -9,7 +9,6 @@ import org.financer.server.domain.model.user.SettingEntity;
 import org.financer.server.domain.model.user.TokenEntity;
 import org.financer.server.domain.model.user.UserEntity;
 import org.financer.server.domain.model.user.VerificationTokenEntity;
-import org.financer.shared.model.user.Settings;
 import org.financer.util.Hash;
 import org.financer.util.RandomString;
 import org.hibernate.Session;

@@ -11,7 +11,7 @@ import javax.persistence.PersistenceContext;
 import java.util.Optional;
 
 @Repository
-public class UserEntityRepositoryCustomImpl implements UserEntityRepositoryCustom {
+public class UserRepositoryCustomImpl implements UserRepositoryCustom {
 
     @PersistenceContext
     EntityManager entityManager;

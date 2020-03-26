@@ -7,7 +7,7 @@ import org.financer.shared.domain.model.value.objects.Amount;
 import org.financer.shared.domain.model.value.objects.CategoryClass;
 import org.financer.shared.domain.model.value.objects.TimeRange;
 import org.financer.shared.domain.model.value.objects.ValueDate;
-import org.financer.shared.model.transactions.AmountProvider;
+import org.financer.shared.domain.model.AmountProvider;
 import org.financer.util.collections.Tree;
 
 import javax.persistence.*;

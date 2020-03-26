@@ -1,4 +1,4 @@
-package org.financer.shared.model.transactions;
+package org.financer.shared.domain.model;
 
 import org.financer.shared.domain.model.value.objects.Amount;
 import org.financer.shared.domain.model.value.objects.TimeRange;

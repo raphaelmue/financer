@@ -1,14 +1,10 @@
 package org.financer.server.application.service;
 
-import org.apache.commons.mail.EmailException;
 import org.financer.server.domain.model.category.CategoryEntity;
 import org.financer.server.domain.model.transaction.*;
 import org.financer.server.domain.model.user.SettingEntity;
-import org.financer.server.domain.model.user.TokenEntity;
 import org.financer.server.domain.model.user.UserEntity;
-import org.financer.server.domain.model.user.VerificationTokenEntity;
 import org.financer.shared.connection.ConnectionResult;
-import org.financer.util.Hash;
 import org.financer.util.RandomString;
 import org.financer.util.collections.TreeUtil;
 import org.hibernate.Session;
@@ -18,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.NoResultException;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -36,195 +31,6 @@ public class FinancerService {
 
     @Autowired
     private SessionFactory sessionFactory;
-
-    /**
-     * Checks, whether the token is valid and not expired and returns the corresponding user.
-     *
-     * @param tokenString token to be checked
-     * @return User that has this token
-     */
-    @Transactional
-    public User checkUsersToken(String tokenString) {
-        Session session = sessionFactory.getCurrentSession();
-        logger.info("Checking users token ...");
-
-        User user = null;
-
-        try {
-            TokenEntity databaseToken = session.createQuery("from TokenEntity where token = :token", TokenEntity.class)
-                    .setParameter("token", tokenString).getSingleResult();
-            if (databaseToken != null) {
-                Token token = new Token(databaseToken);
-                if (token.isValid()) {
-                    logger.info("Token of user '{}' is approved", token.getUser().getFullName());
-                    user = new User(session.get(UserEntity.class, token.getUser().getId()));
-
-                    // needs to be called to avoid LazyInitializationException
-                    user.setActiveToken(token);
-                    user.getTokens().size();
-                }
-            }
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-        }
-
-        if (user == null) {
-            logger.info("Token is invalid");
-        }
-        return user;
-    }
-
-    /**
-     * Generates a new token (or updates the token, if the IP address is already store in the database)
-     * and stores it in the database
-     *
-     * @param user      user
-     * @param ipAddress ip address of client
-     * @param system    operating system
-     * @param isMobile  defines whether operating system is a mobile device
-     */
-    User generateToken(User user, String ipAddress, String system, boolean isMobile) {
-        Session session = sessionFactory.getCurrentSession();
-        user = new User(session.get(UserEntity.class, user.getId()));
-
-        boolean foundEntry = false;
-        for (TokenEntity token : user.getTokens()) {
-            if (token.getIpAddress().equals(ipAddress)) {
-                foundEntry = true;
-                token.setToken(this.tokenGenerator.nextString());
-                session.merge(token);
-                user.setActiveToken(new Token(token));
-                break;
-            }
-        }
-
-        // insert if not found
-        if (!foundEntry) {
-            TokenEntity databaseToken;
-            databaseToken = new TokenEntity();
-            databaseToken.setUser(user);
-            databaseToken.setToken(this.tokenGenerator.nextString());
-            databaseToken.setIpAddress(ipAddress);
-            databaseToken.setOperatingSystem(system);
-            databaseToken.setExpireDate(LocalDate.now().plusMonths(1));
-            databaseToken.setIsMobile(isMobile);
-            databaseToken.setId((int) session.save(databaseToken));
-            user.getTokens().add(databaseToken);
-            user.setActiveToken(new Token(databaseToken));
-        }
-
-        if (user.getDatabaseSettings() != null) {
-            user.getDatabaseSettings().size();
-        }
-        return user;
-    }
-
-    /**
-     * Checks, if the users credentials are correct
-     *
-     * @param email     email of the user
-     * @param password  password to be checked
-     * @param ipAddress IP address of the users client
-     * @param system    operating system of the users client
-     * @param isMobile  defines whether operating system is a mobile device
-     * @return User object, if credentials are correct, null otherwise
-     */
-    @Transactional
-    public User checkCredentials(String email, String password, String ipAddress, String system, boolean isMobile) {
-        Session session = sessionFactory.getCurrentSession();
-        logger.info("Checking credentials ...");
-
-        User user = null;
-
-        try {
-            user = new User(session.createQuery("from UserEntity where email = :email", UserEntity.class)
-                    .setParameter("email", email).getSingleResult());
-            String hashedPassword = Hash.create(password, user.getSalt());
-            if (hashedPassword.equals(user.getPassword())) {
-                logger.info("Credentials of user '{}' are approved.", user.getFullName());
-            } else {
-                user = null;
-            }
-        } catch (NoResultException ignored) {
-        }
-
-        if (user != null) {
-            user = this.generateToken(user, ipAddress, system, isMobile);
-        } else {
-            logger.info("Credentials are incorrect.");
-        }
-
-        return user;
-    }
-
-
-    /**
-     * Registers a new user and stores it into database.
-     *
-     * @param user      user to be inserted
-     * @param ipAddress IP address of the client
-     * @param system    operating system of the client
-     * @param isMobile  indicates whether the operating system is a mobile device
-     * @return
-     */
-    @Transactional
-    public User registerUser(User user, String ipAddress, String system, boolean isMobile) {
-        Session session = sessionFactory.getCurrentSession();
-        logger.info("Registering new user ...");
-
-        user.setId((Integer) session.save(user.toEntity()));
-
-        // creating new token and inserting it to database
-        user = this.generateToken(user, ipAddress, system, isMobile);
-
-        this.addVerificationToken(user);
-
-        return user;
-    }
-
-    /**
-     * Verifying a users token.
-     *
-     * @param userId            id of the user
-     * @param verificationToken verification token string
-     * @return updated user or null if token is invalid
-     */
-    @Transactional
-    public User verifyUser(int userId, String verificationToken) {
-        Session session = sessionFactory.getCurrentSession();
-        logger.info("Verifiyng new user ...");
-
-        UserEntity user = session.get(UserEntity.class, userId);
-        VerificationTokenEntity verificationTokenEntity = session.createQuery(
-                "from VerificationTokenEntity where user.id = :userId and token = :verificationToken", VerificationTokenEntity.class)
-                .setParameter("userId", userId)
-                .setParameter("verificationToken", verificationToken).uniqueResult();
-
-        if (verificationTokenEntity != null) {
-            session.delete(verificationTokenEntity);
-            user.setVerified(true);
-            session.update(user);
-        }
-
-        return new User(user);
-    }
-
-    /**
-     * Generates a verification token.
-     *
-     * @param user user for which the verification token should be generated
-     */
-    @Transactional
-    void addVerificationToken(User user) {
-        Session session = sessionFactory.getCurrentSession();
-        try {
-            VerificationToken verificationToken = verificationService.sendVerificationEmail(user);
-
-            verificationToken.setId((Integer) session.save(verificationToken.toEntity()));
-        } catch (EmailException e) {
-            logger.error(e.getMessage(), e);
-        }
-    }
 
     /**
      * Updates users personal information

@@ -36,7 +36,7 @@ public class ExpireDate {
      * @return expire date object
      */
     public ExpireDate update() {
-        return new ExpireDate(LocalDate.now().plusMonths(1))
+        return new ExpireDate(LocalDate.now().plusMonths(1));
     }
 
     /*

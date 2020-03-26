@@ -1,5 +1,6 @@
 package org.financer.server.domain.model.transaction;
 
+import org.financer.server.domain.model.category.CategoryEntity;
 import org.financer.shared.domain.model.value.objects.Amount;
 import org.financer.shared.domain.model.value.objects.TimeRange;
 import org.financer.shared.domain.model.value.objects.ValueDate;
@@ -85,6 +86,54 @@ public class FixedTransactionEntity extends TransactionEntity {
     /*
      * Getters and Setters
      */
+
+    @Override
+    public FixedTransactionEntity setId(long id) {
+        super.setId(id);
+        return this;
+    }
+
+    @Override
+    public FixedTransactionEntity setCategory(CategoryEntity category) {
+        super.setCategory(category);
+        return this;
+    }
+
+    @Override
+    public FixedTransactionEntity setValueDate(ValueDate valueDate) {
+        super.setValueDate(valueDate);
+        return this;
+    }
+
+    @Override
+    public FixedTransactionEntity setAmount(Amount amount) {
+        super.setAmount(amount);
+        return this;
+    }
+
+    @Override
+    public FixedTransactionEntity setProduct(String product) {
+        super.setProduct(product);
+        return this;
+    }
+
+    @Override
+    public FixedTransactionEntity setPurpose(String purpose) {
+        super.setPurpose(purpose);
+        return this;
+    }
+
+    @Override
+    public FixedTransactionEntity setVendor(String vendor) {
+        super.setVendor(vendor);
+        return this;
+    }
+
+    @Override
+    public FixedTransactionEntity setAttachments(Set<AbstractAttachment> attachments) {
+        super.setAttachments(attachments);
+        return this;
+    }
 
     public TimeRange getTimeRange() {
         return timeRange;

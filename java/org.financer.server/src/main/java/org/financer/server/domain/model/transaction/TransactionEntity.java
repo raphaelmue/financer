@@ -4,7 +4,7 @@ import org.financer.server.domain.model.DataEntity;
 import org.financer.server.domain.model.category.CategoryEntity;
 import org.financer.shared.domain.model.value.objects.Amount;
 import org.financer.shared.domain.model.value.objects.ValueDate;
-import org.financer.shared.model.transactions.AmountProvider;
+import org.financer.shared.domain.model.AmountProvider;
 
 import javax.persistence.*;
 import java.util.Set;

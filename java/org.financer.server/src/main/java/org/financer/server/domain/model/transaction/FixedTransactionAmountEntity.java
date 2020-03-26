@@ -4,7 +4,7 @@ import org.financer.server.domain.model.DataEntity;
 import org.financer.shared.domain.model.value.objects.Amount;
 import org.financer.shared.domain.model.value.objects.TimeRange;
 import org.financer.shared.domain.model.value.objects.ValueDate;
-import org.financer.shared.model.transactions.AmountProvider;
+import org.financer.shared.domain.model.AmountProvider;
 
 import javax.persistence.*;
 
@@ -62,8 +62,9 @@ public class FixedTransactionAmountEntity implements DataEntity, AmountProvider 
         return fixedTransaction;
     }
 
-    public void setFixedTransaction(FixedTransactionEntity fixedTransaction) {
+    public FixedTransactionAmountEntity setFixedTransaction(FixedTransactionEntity fixedTransaction) {
         this.fixedTransaction = fixedTransaction;
+        return this;
     }
 
     public ValueDate getValueDate() {

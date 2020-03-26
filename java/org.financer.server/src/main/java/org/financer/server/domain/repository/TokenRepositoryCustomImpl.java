@@ -12,7 +12,7 @@ import javax.persistence.PersistenceContext;
 import java.util.Optional;
 
 @Repository
-public class TokenEntityRepositoryCustomImpl implements TokenEntityRepositoryCustom {
+public class TokenRepositoryCustomImpl implements TokenRepositoryCustom {
 
     @PersistenceContext
     EntityManager entityManager;

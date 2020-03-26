@@ -6,6 +6,7 @@ import org.financer.server.domain.model.category.CategoryEntity;
 import org.financer.shared.domain.model.value.objects.*;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.util.Set;
 
 @Entity
@@ -42,8 +43,21 @@ public class UserEntity implements DataEntity {
     @OneToMany(mappedBy = "user")
     private Set<TokenEntity> tokens;
 
-    @Column(name = "verified", columnDefinition = "boolean default false")
-    private boolean verified;
+    @OneToOne(mappedBy = "user")
+    private VerificationTokenEntity verificationToken;
+
+    /**
+     * Indicates whether the email of the user is verified.
+     *
+     * @return true if user is verified, false otherwise
+     */
+    public boolean isVerified() {
+        return this.verificationToken != null && !this.verificationToken.getVerifyingDate().isBefore(LocalDate.now());
+    }
+
+    /*
+     * Getters and Setters
+     */
 
     @Override
     public long getId() {
@@ -126,12 +140,11 @@ public class UserEntity implements DataEntity {
         return this;
     }
 
-    public boolean isVerified() {
-        return verified;
+    public VerificationTokenEntity getVerificationToken() {
+        return verificationToken;
     }
 
-    public UserEntity setVerified(boolean verified) {
-        this.verified = verified;
-        return this;
+    public void setVerificationToken(VerificationTokenEntity verificationToken) {
+        this.verificationToken = verificationToken;
     }
 }

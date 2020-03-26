@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface TokenEntityRepositoryCustom {
+public interface TokenRepositoryCustom {
 
     Optional<TokenEntity> getTokenByToken(TokenString tokenString);
 

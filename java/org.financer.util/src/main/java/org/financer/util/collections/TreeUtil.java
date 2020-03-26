@@ -9,11 +9,11 @@ public class TreeUtil {
     }
 
     @SuppressWarnings("unchecked")
-    public static <T> boolean insertByValue(Tree<T> root, Tree<T> treeItem, Comparator<T> comparator) {
-        for (Tree<T> item : root.getChildren()) {
-            if (comparator.compare(treeItem.getValue(), item.getValue()) == 0) {
+    public static boolean insertByValue(Tree root, Tree treeItem, Comparator comparator) {
+        for (Tree item : root.getChildren()) {
+            if (comparator.compare(treeItem, item) == 0) {
                 treeItem.setParent(root);
-                ((List<Tree<T>>) item.getChildren()).add(treeItem);
+                ((List<Tree>) item.getChildren()).add(treeItem);
                 return true;
             } else {
                 if (TreeUtil.insertByValue(item, treeItem, comparator)) {
@@ -24,8 +24,8 @@ public class TreeUtil {
         return false;
     }
 
-    public static <T> boolean insertByValue(List<? extends Tree<T>> roots, Tree<T> treeItem, Comparator<T> comparator) {
-        for (Tree<T> root : roots) {
+    public static boolean insertByValue(List<? extends Tree> roots, Tree treeItem, Comparator comparator) {
+        for (Tree root : roots) {
             if (insertByValue(root, treeItem, comparator)) {
                 return true;
             }
@@ -33,9 +33,9 @@ public class TreeUtil {
         return false;
     }
 
-    public static <T> boolean deleteByValue(Tree<T> root, Tree<T> treeItem, Comparator<T> comparator) {
-        for (Tree<T> item : root.getChildren()) {
-            if (comparator.compare(treeItem.getValue(), item.getValue()) == 0) {
+    public static boolean deleteByValue(Tree root, Tree treeItem, Comparator comparator) {
+        for (Tree item : root.getChildren()) {
+            if (comparator.compare(treeItem, item) == 0) {
                 item.getParent().getChildren().remove(treeItem);
                 return true;
             } else {
@@ -47,10 +47,10 @@ public class TreeUtil {
         return false;
     }
 
-    public static <T> Tree<T> getByValue(Tree<T> root, Tree<T> treeItem, Comparator<T> comparator) {
+    public static Tree getByValue(Tree root, Tree treeItem, Comparator comparator) {
         if (root != null) {
-            for (Tree<T> item : root.getChildren()) {
-                if (comparator.compare(treeItem.getValue(), item.getValue()) == 0) {
+            for (Tree item : root.getChildren()) {
+                if (comparator.compare(treeItem, item) == 0) {
                     return item;
                 } else {
                     if (TreeUtil.getByValue(item, treeItem, comparator) != null) {
@@ -62,32 +62,32 @@ public class TreeUtil {
         return null;
     }
 
-    public static <T> void traverse(Tree<T> root, Action<Tree<T>> action) {
+    public static void traverse(Tree root, Action<Tree> action) {
         action.action(root);
         if (!root.isLeaf()) {
-            for (Tree<T> item : root.getChildren()) {
+            for (Tree item : root.getChildren()) {
                 TreeUtil.traverse(item, action);
             }
         }
     }
 
-    public static <T> void traverseValue(Tree<T> root, Action<T> action) {
-        action.action(root.getValue());
+    public static void traverseValue(Tree root, Action action) {
+        action.action(root);
         if (!root.isLeaf()) {
-            for (Tree<T> item : root.getChildren()) {
+            for (Tree item : root.getChildren()) {
                 TreeUtil.traverseValue(item, action);
             }
         }
     }
 
-    public static <T> void numberItemsByValue(Tree<T> root, NumberAction<Tree<T>> action) {
+    public static void numberItemsByValue(Tree root, NumberAction<Tree> action) {
         TreeUtil.numberItemsByValue(root, action, "");
     }
 
-    private static <T> void numberItemsByValue(Tree<T> root, NumberAction<Tree<T>> action, String prefix) {
+    private static void numberItemsByValue(Tree root, NumberAction<Tree> action, String prefix) {
         int counter = 1;
         if (!root.isLeaf()) {
-            for (Tree<T> item : root.getChildren()) {
+            for (Tree item : root.getChildren()) {
                 String prefixCopy = prefix + counter + ".";
                 action.action(item, prefixCopy);
                 TreeUtil.numberItemsByValue(item, action, prefixCopy);

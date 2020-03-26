@@ -27,13 +27,13 @@ module org.financer.server {
     requires org.apache.tomcat.embed.core;
     requires modelmapper;
 
+    opens org.financer.server.application to spring.core;
     opens org.financer.server.application.api to spring.core;
-    opens org.financer.server.application.main to spring.core;
     opens org.financer.server.application.service to spring.core;
-    opens org.financer.server.configuration to spring.core;
+    opens org.financer.server.application.configuration to spring.core;
 
+    exports org.financer.server.application to spring.beans, spring.context;
     exports org.financer.server.application.api to spring.beans, spring.web;
-    exports org.financer.server.application.main to spring.beans, spring.context;
     exports org.financer.server.application.service to spring.aop;
-    exports org.financer.server.configuration to spring.beans, spring.context;
+    exports org.financer.server.application.configuration to spring.beans, spring.context;
 }

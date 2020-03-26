@@ -5,6 +5,7 @@ import org.financer.shared.domain.model.value.objects.ExpireDate;
 import org.financer.shared.domain.model.value.objects.TokenString;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "verification_tokens")
@@ -15,7 +16,7 @@ public class VerificationTokenEntity implements DataEntity {
     @Column(name = "id")
     private long id;
 
-    @ManyToOne(targetEntity = UserEntity.class)
+    @OneToOne(targetEntity = UserEntity.class)
     private UserEntity user;
 
     @Embedded
@@ -23,6 +24,9 @@ public class VerificationTokenEntity implements DataEntity {
 
     @Embedded
     private ExpireDate expireDate;
+
+    @Column(name = "verifying_date")
+    private LocalDate verifyingDate;
 
     @Override
     public long getId() {
@@ -59,5 +63,13 @@ public class VerificationTokenEntity implements DataEntity {
     public VerificationTokenEntity setExpireDate(ExpireDate expireDate) {
         this.expireDate = expireDate;
         return this;
+    }
+
+    public LocalDate getVerifyingDate() {
+        return verifyingDate;
+    }
+
+    public void setVerifyingDate(LocalDate verifyingDate) {
+        this.verifyingDate = verifyingDate;
     }
 }

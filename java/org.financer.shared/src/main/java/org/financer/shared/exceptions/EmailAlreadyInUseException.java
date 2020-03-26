@@ -1,8 +1,10 @@
 package org.financer.shared.exceptions;
 
+import org.financer.shared.domain.model.value.objects.Email;
+
 public class EmailAlreadyInUseException extends FinancerException {
-    public EmailAlreadyInUseException(User user) {
-        super("The Email address '" + user.getEmail() + "' is already in use.");
+    public EmailAlreadyInUseException(Email email) {
+        super("The Email address '" + email.getEmailAddress() + "' is already in use.");
         this.setKey("errEmailAlreadyInUse");
     }
 }

@@ -10,7 +10,9 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
         scanBasePackages = {
                 "org.financer.server.application.service",
                 "org.financer.server.application.api",
-                "org.financer.server.application.configuration"
+                "org.financer.server.application.configuration",
+                "org.financer.server.domain.service",
+                "org.financer.server.domain.repository"
         })
 @EnableJpaRepositories(basePackages = "org.financer.server.domain.repository")
 public class FinancerServer {

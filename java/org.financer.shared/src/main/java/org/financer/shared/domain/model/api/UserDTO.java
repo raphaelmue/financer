@@ -1,6 +1,7 @@
 package org.financer.shared.domain.model.api;
 
 import com.google.gson.annotations.SerializedName;
+import org.financer.shared.domain.model.value.objects.Gender;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -30,7 +31,7 @@ public class UserDTO {
 
     @SerializedName("gender")
     // @ApiModelProperty(value = "Birth Date", example = "male", allowableValues = "male, female, notSpecified")
-    private User.Gender gender;
+    private Gender.Values gender;
 
     @SerializedName("categories")
     // @ApiModelProperty(value = "Categories")
@@ -93,11 +94,11 @@ public class UserDTO {
         return this;
     }
 
-    public User.Gender getGender() {
+    public Gender.Values getGender() {
         return gender;
     }
 
-    public UserDTO setGender(User.Gender gender) {
+    public UserDTO setGender(Gender.Values gender) {
         this.gender = gender;
         return this;
     }

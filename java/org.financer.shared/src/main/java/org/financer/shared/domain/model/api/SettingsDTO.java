@@ -1,7 +1,7 @@
 package org.financer.shared.domain.model.api;
 
 import com.google.gson.annotations.SerializedName;
-import org.financer.shared.model.user.Settings;
+import org.financer.shared.domain.model.value.objects.SettingPair;
 
 // @Validated
 public class SettingsDTO {
@@ -12,7 +12,7 @@ public class SettingsDTO {
 
     @SerializedName("property")
     // @ApiModelProperty(value = "Property", required = true)
-    private Settings.Property property;
+    private SettingPair.Property property;
 
     @SerializedName("value")
     // @ApiModelProperty(value = "Value", required = true)
@@ -27,11 +27,11 @@ public class SettingsDTO {
         return this;
     }
 
-    public Settings.Property getProperty() {
+    public SettingPair.Property getProperty() {
         return property;
     }
 
-    public SettingsDTO setProperty(Settings.Property property) {
+    public SettingsDTO setProperty(SettingPair.Property property) {
         this.property = property;
         return this;
     }

@@ -1,9 +1,9 @@
 package org.financer.server.domain.repository;
 
-import org.financer.server.domain.model.user.TokenEntity;
+import org.financer.server.domain.model.user.UserEntity;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface TokenEntityRepository extends CrudRepository<TokenEntity, Long>, TokenEntityRepositoryCustom {
+public interface UserRepository extends UserRepositoryCustom, CrudRepository<UserEntity, Long> {
 }
