@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Properties;
 
 @Service
 public class VerificationService {
@@ -28,13 +29,14 @@ public class VerificationService {
 
     private final RandomString tokenGenerator = new RandomString(128);
 
-    @Autowired
-    public VerificationService() {
-        if (System.getProperty("financer.server.smpt").equals("true")) {
-            this.host = System.getProperty("financer.server.smtp.host");
-            this.port = Integer.parseInt(System.getProperty("financer.server.smtp.host"));
-            this.email = System.getProperty("financer.server.smtp.email");
-            this.password = System.getProperty("financer.server.smtp.password");
+    public VerificationService() throws IOException {
+        Properties properties = new Properties();
+        properties.load(getClass().getResourceAsStream("/application.properties"));
+        if (properties.get("financer.server.smtp").equals("true")) {
+            this.host = properties.getProperty("financer.server.smtp.host");
+            this.port = Integer.parseInt(properties.getProperty("financer.server.smtp.host"));
+            this.email = properties.getProperty("financer.server.smtp.email");
+            this.password = properties.getProperty("financer.server.smtp.password");
         }
     }
 

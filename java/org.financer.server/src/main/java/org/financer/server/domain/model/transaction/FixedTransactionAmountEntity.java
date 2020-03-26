@@ -18,7 +18,7 @@ public class FixedTransactionAmountEntity implements DataEntity, AmountProvider 
     @Column(name = "id")
     private long id;
 
-    @ManyToOne(targetEntity = FixedTransactionEntity.class, fetch = FetchType.EAGER)
+    @ManyToOne(targetEntity = FixedTransactionEntity.class, fetch = FetchType.EAGER, optional = false)
     private FixedTransactionEntity fixedTransaction;
 
     @Embedded

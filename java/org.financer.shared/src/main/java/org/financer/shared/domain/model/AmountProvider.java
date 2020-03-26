@@ -10,7 +10,7 @@ import org.financer.shared.domain.model.value.objects.ValueDate;
 public interface AmountProvider {
 
     /**
-     * Returns the amount of the current month
+     * Returns the amount
      *
      * @return amount of month
      */

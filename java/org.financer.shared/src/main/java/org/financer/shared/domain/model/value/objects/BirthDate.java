@@ -4,14 +4,20 @@ import org.hibernate.annotations.Immutable;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import java.io.Serializable;
 import java.time.LocalDate;
 
 @Embeddable
 @Immutable
-public class BirthDate {
+public class BirthDate implements Serializable {
+    private static final long serialVersionUID = -4072522792982525094L;
 
-    @Column(name = "birthDate")
-    private final LocalDate birthDate;
+
+    @Column(name = "birth_date")
+    private LocalDate birthDate;
+
+    public BirthDate() {
+    }
 
     public BirthDate(LocalDate birthDate) {
         if (birthDate.isAfter(LocalDate.now())) {

@@ -6,13 +6,16 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
 @Embeddable
 @Immutable
-public class SettingPair {
+public class SettingPair implements Serializable {
+    private static final long serialVersionUID = -9194098816495257592L;
+
     public enum Property {
         LANGUAGE("language", true, "en"),
         CURRENCY("currency", true, "USD"),
@@ -65,11 +68,14 @@ public class SettingPair {
     }
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "property")
-    private final Property property;
+    @Column(name = "property", nullable = false)
+    private Property property;
 
-    @Column(name = "value")
-    private final String value;
+    @Column(name = "value", nullable = false)
+    private String value;
+
+    public SettingPair() {
+    }
 
     public SettingPair(Property property, String value) {
         this.property = property;

@@ -6,6 +6,7 @@ import org.financer.shared.domain.model.value.objects.TimeRange;
 import org.financer.shared.domain.model.value.objects.ValueDate;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -16,14 +17,14 @@ public class FixedTransactionEntity extends TransactionEntity {
     @Embedded
     private TimeRange timeRange;
 
-    @Column(name = "is_variable")
+    @Column(name = "is_variable", nullable = false)
     private boolean isVariable;
 
     @Column(name = "day")
     private int day;
 
     @OneToMany(mappedBy = "fixedTransaction", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<FixedTransactionAmountEntity> transactionAmounts;
+    private Set<FixedTransactionAmountEntity> transactionAmounts = new HashSet<>();
 
     /**
      * Indicates whether this transaction is active, i.e. whether the time range of this transaction includes the
@@ -130,7 +131,7 @@ public class FixedTransactionEntity extends TransactionEntity {
     }
 
     @Override
-    public FixedTransactionEntity setAttachments(Set<AbstractAttachment> attachments) {
+    public FixedTransactionEntity setAttachments(Set<AttachmentEntity> attachments) {
         super.setAttachments(attachments);
         return this;
     }

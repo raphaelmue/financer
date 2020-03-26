@@ -2,6 +2,7 @@ package org.financer.server.application.api;
 
 import org.financer.shared.domain.model.api.CategoryDTO;
 import org.financer.shared.domain.model.api.UserDTO;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -47,7 +48,7 @@ public interface UserApi {
                                          @NotNull @Valid @RequestParam(value = "name") String name,
                                          @NotNull @Valid @RequestParam(value = "surname") String surname,
                                          @NotNull @Valid @RequestParam(value = "password") String password,
-                                         @NotNull @Valid @RequestParam(value = "birthDate") LocalDate birthDate,
+                                         @NotNull @Valid @RequestParam(value = "birthDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate birthDate,
                                          @NotNull @Valid @RequestParam(value = "gender") String gender);
 
     /**

@@ -27,8 +27,6 @@ public class UserApiController implements UserApi {
     @Autowired
     private UserDomainService userDomainService;
 
-    @Autowired
-    private ModelMapper modelMapper;
 
     private final ObjectMapper objectMapper;
     private final HttpServletRequest request;
@@ -42,6 +40,8 @@ public class UserApiController implements UserApi {
 
     @Override
     public ResponseEntity<UserDTO> loginUser(@NotNull @Valid String email, @NotNull @Valid String password) {
+        final ModelMapper modelMapper = new ModelMapper();
+
         Optional<UserEntity> userOptional = userDomainService.checkCredentials(email, password, new IPAddress(request.getRemoteAddr()), null);
         return userOptional
                 .map(userEntity -> new ResponseEntity<>(modelMapper.map(userEntity, UserDTO.class), HttpStatus.OK))
@@ -52,8 +52,11 @@ public class UserApiController implements UserApi {
     public ResponseEntity<UserDTO> registerUser(@NotNull @Valid String email, @NotNull @Valid String name,
                                                 @NotNull @Valid String surname, @NotNull @Valid String password,
                                                 @NotNull @Valid LocalDate birthDate, @NotNull @Valid String gender) {
+        final ModelMapper modelMapper = new ModelMapper();
+
         UserEntity userEntity = userDomainService.registerUser(
                 new UserEntity()
+                        .setId(-1)
                         .setEmail(new Email(email))
                         .setName(new Name(name, surname))
                         .setPassword(new HashedPassword(password))

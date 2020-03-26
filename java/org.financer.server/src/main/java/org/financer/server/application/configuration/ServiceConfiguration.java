@@ -6,6 +6,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+import java.io.IOException;
+
 @Configuration
 @EnableTransactionManagement
 public class ServiceConfiguration {
@@ -16,7 +18,7 @@ public class ServiceConfiguration {
     }
 
     @Bean
-    public VerificationService verificationService() {
+    public VerificationService verificationService() throws IOException {
         return new VerificationService();
     }
 }

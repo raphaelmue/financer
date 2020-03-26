@@ -4,26 +4,28 @@ import org.hibernate.annotations.Immutable;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.Objects;
 
 @Embeddable
 @Immutable
-public class ValueDate {
+public class ValueDate implements Serializable {
+    private static final long serialVersionUID = -1612116802619061353L;
 
-    @Column(name = "value_date")
+    @Column(name = "value_date", nullable = false)
     private final LocalDate date;
-
-    public ValueDate(LocalDate date) {
-        this.date = date;
-    }
 
     /**
      * Instantiates the value date with current date.
      */
     public ValueDate() {
         this.date = LocalDate.now();
+    }
+
+    public ValueDate(LocalDate date) {
+        this.date = date;
     }
 
     /**

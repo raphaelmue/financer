@@ -19,7 +19,7 @@ public class TokenEntity implements DataEntity {
     @Column(name = "id")
     private long id;
 
-    @ManyToOne(targetEntity = UserEntity.class)
+    @ManyToOne(targetEntity = UserEntity.class, optional = false)
     private UserEntity user;
 
     @Embedded

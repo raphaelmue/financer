@@ -4,21 +4,24 @@ import org.hibernate.annotations.Immutable;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import java.io.Serializable;
 import java.time.LocalDate;
 
 @Embeddable
 @Immutable
-public class ExpireDate {
+public class ExpireDate implements Serializable {
+    private static final long serialVersionUID = -6031939301023199834L;
 
-    @Column(name = "expire_date")
+
+    @Column(name = "expire_date", nullable = false)
     private final LocalDate expireDate;
-
-    public ExpireDate(LocalDate expireDate) {
-        this.expireDate = expireDate;
-    }
 
     public ExpireDate() {
         this.expireDate = LocalDate.now();
+    }
+
+    public ExpireDate(LocalDate expireDate) {
+        this.expireDate = expireDate;
     }
 
     /**

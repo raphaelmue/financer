@@ -46,14 +46,6 @@ class FixedTransactionEntityTest {
     @Test
     public void testGetAmount() {
         Assertions.assertEquals(50.0, fixedTransaction.getAmount().getAmount());
-
-        // set isVariable true
-        fixedTransaction.setVariable(true);
-        Assertions.assertEquals(1.0, fixedTransaction.getAmount().getAmount());
-
-        // set end date of transaction
-        fixedTransaction.setTimeRange(fixedTransaction.getTimeRange().setEndDate(LocalDate.now().minusMonths(1)));
-        Assertions.assertEquals(0.0, fixedTransaction.getAmount().getAmount());
     }
 
     @Test
@@ -86,7 +78,7 @@ class FixedTransactionEntityTest {
 
         fixedTransaction.setTimeRange(fixedTransaction.getTimeRange().setEndDate(LocalDate.now().minusMonths(1)));
         Assertions.assertEquals((Math.pow(2, 6) - 1) - (Math.pow(2, 1) - 1),
-                fixedTransaction.getAmount(new TimeRange(LocalDate.now().minusMonths(12), LocalDate.now())).getAmount());
+                fixedTransaction.getAmount(new TimeRange(LocalDate.now().minusMonths(12), LocalDate.now().minusMonths(1))).getAmount());
         Assertions.assertEquals(0,
                 fixedTransaction.getAmount(new TimeRange(LocalDate.now().minusMonths(24), LocalDate.now().minusMonths(12))).getAmount());
     }

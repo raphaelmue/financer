@@ -7,6 +7,7 @@ import org.financer.shared.domain.model.value.objects.*;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -34,14 +35,14 @@ public class UserEntity implements DataEntity {
     @Embedded
     private Gender gender;
 
-    @OneToMany(mappedBy = "user")
-    private Set<CategoryEntity> categories;
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private Set<CategoryEntity> categories = new HashSet<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private Set<SettingEntity> settings;
+    private Set<SettingEntity> settings = new HashSet<>();
 
     @OneToMany(mappedBy = "user")
-    private Set<TokenEntity> tokens;
+    private Set<TokenEntity> tokens = new HashSet<>();
 
     @OneToOne(mappedBy = "user")
     private VerificationTokenEntity verificationToken;
@@ -64,8 +65,9 @@ public class UserEntity implements DataEntity {
         return id;
     }
 
-    public void setId(long id) {
+    public UserEntity setId(long id) {
         this.id = id;
+        return this;
     }
 
     public Email getEmail() {

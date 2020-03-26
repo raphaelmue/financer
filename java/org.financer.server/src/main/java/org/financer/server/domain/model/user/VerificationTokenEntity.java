@@ -16,7 +16,7 @@ public class VerificationTokenEntity implements DataEntity {
     @Column(name = "id")
     private long id;
 
-    @OneToOne(targetEntity = UserEntity.class)
+    @OneToOne(targetEntity = UserEntity.class, optional = false)
     private UserEntity user;
 
     @Embedded

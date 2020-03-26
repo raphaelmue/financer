@@ -1,7 +1,10 @@
 package org.financer.shared.domain.model.value.objects;
 
+import org.hibernate.annotations.Immutable;
+
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import java.io.Serializable;
 import java.time.LocalDate;
 
 /**
@@ -9,13 +12,18 @@ import java.time.LocalDate;
  * date to null.
  */
 @Embeddable
-public class TimeRange {
+@Immutable
+public class TimeRange implements Serializable {
+    private static final long serialVersionUID = 3710079875858283394L;
 
-    @Column(name = "start_date")
-    private final LocalDate startDate;
+    @Column(name = "start_date", nullable = false)
+    private LocalDate startDate;
 
-    @Column(name = "start_date")
-    private final LocalDate endDate;
+    @Column(name = "end_date")
+    private LocalDate endDate;
+
+    public TimeRange() {
+    }
 
     public TimeRange(LocalDate startDate, LocalDate endDate) {
         this.startDate = startDate;
@@ -111,6 +119,4 @@ public class TimeRange {
     public TimeRange setEndDate(LocalDate endDate) {
         return new TimeRange(this.startDate, endDate);
     }
-
-
 }

@@ -20,7 +20,7 @@ public class PersistenceConfiguration {
 
     private static final Logger logger = LoggerFactory.getLogger(PersistenceConfiguration.class);
 
-    @Bean
+    @Bean(name="entityManagerFactory")
     public LocalSessionFactoryBean sessionFactory() {
         LocalSessionFactoryBean sessionFactory = new LocalSessionFactoryBean();
         sessionFactory.setDataSource(dataSource());
@@ -56,7 +56,7 @@ public class PersistenceConfiguration {
     }
 
     @Bean
-    public PlatformTransactionManager hibernateTransactionManager() {
+    public PlatformTransactionManager transactionManager() {
         HibernateTransactionManager transactionManager = new HibernateTransactionManager();
         transactionManager.setDataSource(dataSource());
         transactionManager.setSessionFactory(sessionFactory().getObject());

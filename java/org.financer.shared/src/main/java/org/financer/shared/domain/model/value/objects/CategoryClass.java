@@ -4,9 +4,12 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import java.io.Serializable;
 
 @Embeddable
-public class CategoryClass {
+public class CategoryClass implements Serializable {
+    private static final long serialVersionUID = -8410423694511026919L;
+
     public enum Values {
         FIXED_REVENUE("fixedRevenue"),
         VARIABLE_REVENUE("variableRevenue"),
@@ -39,8 +42,11 @@ public class CategoryClass {
     }
 
     @Enumerated(EnumType.ORDINAL)
-    @Column(name = "cat_id")
-    private final Values categoryClass;
+    @Column(name = "cat_id", nullable = false)
+    private Values categoryClass;
+
+    public CategoryClass() {
+    }
 
     public CategoryClass(Values categoryClass) {
         this.categoryClass = categoryClass;

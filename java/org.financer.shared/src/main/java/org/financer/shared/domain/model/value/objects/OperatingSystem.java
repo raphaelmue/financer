@@ -4,9 +4,12 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import java.io.Serializable;
 
 @Embeddable
-public class OperatingSystem {
+public class OperatingSystem implements Serializable {
+    private static final long serialVersionUID = -3238265087964566580L;
+
     public enum Values {
         WINDOWS("windows", false),
         LINUX("linux", false),
@@ -34,7 +37,10 @@ public class OperatingSystem {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "system")
-    private final Values operatingSystem;
+    private Values operatingSystem;
+
+    public OperatingSystem() {
+    }
 
     public OperatingSystem(Values operatingSystem) {
         this.operatingSystem = operatingSystem;

@@ -24,7 +24,13 @@
             --add-reads org.financer.shared=ALL-UNNAMED
             --add-opens org.financer.shared/org.financer.shared.model.db=ALL-UNNAMED
             --add-opens org.financer.client.javafx/org.financer.client.javafx.main=ALL-UNNAMED
-            --add-opens org.financer.server/org.financer.server.configuration=ALL-UNNAMED
+            --add-opens org.financer.server/org.financer.server.application=ALL-UNNAMED
+            --add-opens org.financer.server/org.financer.server.application.api=ALL-UNNAMED
+            --add-opens org.financer.server/org.financer.server.application.service=ALL-UNNAMED
+            --add-opens org.financer.server/org.financer.server.application.configuration=ALL-UNNAMED
+            --add-opens org.financer.server/org.financer.server.domain.service=ALL-UNNAMED
+            --add-opens org.financer.server/org.financer.server.domain.repository=ALL-UNNAMED
+            --add-opens org.financer.server/org.financer.server.domain.model.transaction=ALL-UNNAMED
             --add-exports javafx.graphics/com.sun.javafx.application=ALL-UNNAMED
             --add-exports javafx.graphics/com.sun.glass.ui=ALL-UNNAMED
             --add-exports javafx.graphics/com.sun.javafx.css=org.controlsfx.controls
@@ -188,6 +194,12 @@
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
             <version>5.5.2</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <version>3.9.1</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

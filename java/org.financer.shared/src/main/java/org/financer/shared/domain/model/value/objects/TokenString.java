@@ -5,23 +5,28 @@ import org.hibernate.annotations.Immutable;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import java.io.Serializable;
 import java.util.Objects;
 
 @Embeddable
 @Immutable
-public final class TokenString {
+public final class TokenString implements Serializable {
+    private static final long serialVersionUID = 5941856184087494870L;
 
     private static final RandomString stringGenerator = new RandomString(64);
 
-    @Column(name = "token", length = 64)
+    @Column(name = "token", length = 64, nullable = false)
     private final String token;
+
+    /**
+     * Instantiates the token by generating a token.
+     */
+    public TokenString() {
+        this.token = stringGenerator.nextString();
+    }
 
     public TokenString(String token) {
         this.token = token;
-    }
-
-    public TokenString() {
-        this.token = stringGenerator.nextString();
     }
 
     public String getToken() {

@@ -19,11 +19,11 @@ public class VerificationServiceTest {
     @Autowired
     private VerificationService verificationService;
 
-    @Test
-    public void testSendVerificationEmail() throws EmailException {
-        User user = new User();
-        user.setEmail("info@financer-project.org");
-
-        verificationService.sendVerificationEmail(user);
-    }
+//    @Test
+//    public void testSendVerificationEmail() throws EmailException {
+//        User user = new User();
+//        user.setEmail("info@financer-project.org");
+//
+//        verificationService.sendVerificationEmail(user);
+//    }
 }

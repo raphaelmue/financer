@@ -5,13 +5,18 @@ import org.hibernate.annotations.Immutable;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import java.io.Serializable;
 
 @Embeddable
 @Immutable
-public final class IPAddress {
+public final class IPAddress implements Serializable {
+    private static final long serialVersionUID = 827262547418532497L;
 
-    @Column(name = "ip_address")
-    private final String ipAddress;
+    @Column(name = "ip_address", nullable = false)
+    private String ipAddress;
+
+    public IPAddress() {
+    }
 
     public IPAddress(String ipAddress) {
         if (!InetAddressValidator.getInstance().isValid(ipAddress)) {

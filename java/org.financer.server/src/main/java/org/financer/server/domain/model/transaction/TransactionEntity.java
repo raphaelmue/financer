@@ -7,10 +7,11 @@ import org.financer.shared.domain.model.value.objects.ValueDate;
 import org.financer.shared.domain.model.AmountProvider;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+@Inheritance(strategy = InheritanceType.JOINED)
 public abstract class TransactionEntity implements DataEntity, AmountProvider {
 
     @Id
@@ -18,7 +19,7 @@ public abstract class TransactionEntity implements DataEntity, AmountProvider {
     @Column(name = "id")
     private long id;
 
-    @ManyToOne(targetEntity = CategoryEntity.class)
+    @ManyToOne(targetEntity = CategoryEntity.class, optional = false)
     private CategoryEntity category;
 
     @Embedded
@@ -37,7 +38,7 @@ public abstract class TransactionEntity implements DataEntity, AmountProvider {
     private String vendor;
 
     @OneToMany(mappedBy = "transaction")
-    private Set<AbstractAttachment> attachments;
+    private Set<AttachmentEntity> attachments = new HashSet<>();
 
     /**
      * Adjusts the amount sign, if necessary. If the category is a revenue category and the amount is negative or vice
@@ -119,11 +120,11 @@ public abstract class TransactionEntity implements DataEntity, AmountProvider {
         return this;
     }
 
-    public Set<AbstractAttachment> getAttachments() {
+    public Set<AttachmentEntity> getAttachments() {
         return attachments;
     }
 
-    public TransactionEntity setAttachments(Set<AbstractAttachment> attachments) {
+    public TransactionEntity setAttachments(Set<AttachmentEntity> attachments) {
         this.attachments = attachments;
         return this;
     }

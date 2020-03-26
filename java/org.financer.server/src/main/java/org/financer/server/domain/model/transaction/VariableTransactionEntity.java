@@ -79,7 +79,7 @@ public class VariableTransactionEntity extends TransactionEntity {
     }
 
     @Override
-    public VariableTransactionEntity setAttachments(Set<AbstractAttachment> attachments) {
+    public VariableTransactionEntity setAttachments(Set<AttachmentEntity> attachments) {
         super.setAttachments(attachments);
         return this;
     }

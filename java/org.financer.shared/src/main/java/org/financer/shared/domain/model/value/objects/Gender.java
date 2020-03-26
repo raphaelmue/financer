@@ -6,10 +6,13 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import java.io.Serializable;
 
 @Embeddable
 @Immutable
-public class Gender {
+public class Gender implements Serializable {
+    private static final long serialVersionUID = -860866161803817820L;
+
     public enum Values {
         MALE("male"),
         FEMALE("female"),
@@ -38,7 +41,10 @@ public class Gender {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "gender")
-    private final Values gender;
+    private Values gender;
+
+    public Gender() {
+    }
 
     public Gender(Values gender) {
         this.gender = gender;
@@ -47,7 +53,6 @@ public class Gender {
     public Gender(String genderName) {
         this.gender = Values.getGenderByName(genderName);
     }
-
 
     public Values getGender() {
         return gender;

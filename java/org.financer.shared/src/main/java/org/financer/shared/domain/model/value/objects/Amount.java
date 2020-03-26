@@ -1,20 +1,25 @@
 package org.financer.shared.domain.model.value.objects;
 
+import org.hibernate.annotations.Immutable;
+
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import java.io.Serializable;
 
 @Embeddable
-public class Amount {
+@Immutable
+public class Amount implements Serializable {
+    private static final long serialVersionUID = 8647653287643900256L;
 
-    @Column(name = "amount")
+    @Column(name = "amount", nullable = false)
     private final double amount;
-
-    public Amount(double amount) {
-        this.amount = amount;
-    }
 
     public Amount() {
         this.amount = 0;
+    }
+
+    public Amount(double amount) {
+        this.amount = amount;
     }
 
     public boolean isPositive() {

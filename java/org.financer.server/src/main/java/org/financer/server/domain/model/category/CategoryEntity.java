@@ -11,6 +11,7 @@ import org.financer.shared.domain.model.AmountProvider;
 import org.financer.util.collections.Tree;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -23,7 +24,7 @@ public class CategoryEntity implements DataEntity, Tree, AmountProvider {
     @Column(name = "id")
     private long id;
 
-    @ManyToOne(targetEntity = UserEntity.class)
+    @ManyToOne(targetEntity = UserEntity.class, optional = false)
     private UserEntity user;
 
     @Embedded
@@ -32,14 +33,14 @@ public class CategoryEntity implements DataEntity, Tree, AmountProvider {
     @ManyToOne(targetEntity = CategoryEntity.class)
     private CategoryEntity parent;
 
-    @Column(name = "name")
+    @Column(name = "name", nullable = false)
     private String name;
 
     @OneToMany(mappedBy = "parent")
     private Set<CategoryEntity> children;
 
     @OneToMany(mappedBy = "category")
-    private Set<TransactionEntity> transactions;
+    private Set<TransactionEntity> transactions = new HashSet<>();
 
     @Override
     public Amount getAmount() {
