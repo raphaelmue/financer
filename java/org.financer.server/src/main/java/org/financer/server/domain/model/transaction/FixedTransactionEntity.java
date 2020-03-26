@@ -101,12 +101,6 @@ public class FixedTransactionEntity extends TransactionEntity {
     }
 
     @Override
-    public FixedTransactionEntity setValueDate(ValueDate valueDate) {
-        super.setValueDate(valueDate);
-        return this;
-    }
-
-    @Override
     public FixedTransactionEntity setAmount(Amount amount) {
         super.setAmount(amount);
         return this;

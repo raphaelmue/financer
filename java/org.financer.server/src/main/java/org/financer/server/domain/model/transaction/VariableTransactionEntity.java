@@ -5,14 +5,18 @@ import org.financer.shared.domain.model.value.objects.Amount;
 import org.financer.shared.domain.model.value.objects.TimeRange;
 import org.financer.shared.domain.model.value.objects.ValueDate;
 
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import java.util.Set;
 
 @Entity
-@Table(name = "transactions")
+@Table(name = "variable_transactions")
 public class VariableTransactionEntity extends TransactionEntity {
     private static final long serialVersionUID = -118658876074097774L;
+
+    @Embedded
+    private ValueDate valueDate;
 
     @Override
     public Amount getAmount(ValueDate valueDate) {
@@ -36,6 +40,15 @@ public class VariableTransactionEntity extends TransactionEntity {
      * Getters and Setters
      */
 
+    public ValueDate getValueDate() {
+        return valueDate;
+    }
+
+    public VariableTransactionEntity setValueDate(ValueDate valueDate) {
+        this.valueDate = valueDate;
+        return this;
+    }
+
     @Override
     public VariableTransactionEntity setId(long id) {
         super.setId(id);
@@ -45,12 +58,6 @@ public class VariableTransactionEntity extends TransactionEntity {
     @Override
     public VariableTransactionEntity setCategory(CategoryEntity category) {
         super.setCategory(category);
-        return this;
-    }
-
-    @Override
-    public VariableTransactionEntity setValueDate(ValueDate valueDate) {
-        super.setValueDate(valueDate);
         return this;
     }
 

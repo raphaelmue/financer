@@ -15,7 +15,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "users_categories")
+@Table(name = "categories")
 public class CategoryEntity implements DataEntity, Tree, AmountProvider {
     private static final long serialVersionUID = 5491420625985358596L;
 

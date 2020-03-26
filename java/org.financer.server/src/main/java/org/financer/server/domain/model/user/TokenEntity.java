@@ -10,7 +10,7 @@ import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
-@Table(name = "users_tokens")
+@Table(name = "tokens")
 public class TokenEntity implements DataEntity {
     private static final long serialVersionUID = 8834445127500149942L;
 

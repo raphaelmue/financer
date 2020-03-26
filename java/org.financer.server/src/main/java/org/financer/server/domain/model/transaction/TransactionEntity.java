@@ -2,28 +2,24 @@ package org.financer.server.domain.model.transaction;
 
 import org.financer.server.domain.model.DataEntity;
 import org.financer.server.domain.model.category.CategoryEntity;
-import org.financer.shared.domain.model.value.objects.Amount;
-import org.financer.shared.domain.model.value.objects.ValueDate;
 import org.financer.shared.domain.model.AmountProvider;
+import org.financer.shared.domain.model.value.objects.Amount;
 
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Inheritance(strategy = InheritanceType.JOINED)
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public abstract class TransactionEntity implements DataEntity, AmountProvider {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "transaction_id_sequence")
     @Column(name = "id")
     private long id;
 
     @ManyToOne(targetEntity = CategoryEntity.class, optional = false)
     private CategoryEntity category;
-
-    @Embedded
-    private ValueDate valueDate;
 
     @Embedded
     private Amount amount;
@@ -71,15 +67,6 @@ public abstract class TransactionEntity implements DataEntity, AmountProvider {
 
     public TransactionEntity setCategory(CategoryEntity category) {
         this.category = category;
-        return this;
-    }
-
-    public ValueDate getValueDate() {
-        return valueDate;
-    }
-
-    public TransactionEntity setValueDate(ValueDate valueDate) {
-        this.valueDate = valueDate;
         return this;
     }
 

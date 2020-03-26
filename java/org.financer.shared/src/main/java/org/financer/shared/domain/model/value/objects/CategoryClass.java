@@ -42,7 +42,7 @@ public class CategoryClass implements Serializable {
     }
 
     @Enumerated(EnumType.ORDINAL)
-    @Column(name = "cat_id", nullable = false)
+    @Column(name = "category_class", nullable = false)
     private Values categoryClass;
 
     public CategoryClass() {

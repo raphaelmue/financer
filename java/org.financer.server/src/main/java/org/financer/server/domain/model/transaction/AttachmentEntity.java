@@ -6,6 +6,7 @@ import javax.persistence.*;
 import java.time.LocalDate;
 
 @Entity
+@Table(name = "attachments")
 public class AttachmentEntity implements DataEntity {
     private static final long serialVersionUID = 7758316425770345150L;
 
