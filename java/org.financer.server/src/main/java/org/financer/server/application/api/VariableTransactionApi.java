@@ -13,6 +13,18 @@ import javax.validation.constraints.NotNull;
 public interface VariableTransactionApi {
 
     /**
+     * Creates a variable transaction.
+     *
+     * @param variableTransaction transaction to be inserted
+     * @return transaction object
+     */
+    @PutMapping(
+            value = "/variableTransaction",
+            produces = {"application/json"},
+            headers = "Accept=application/json")
+    ResponseEntity<VariableTransactionDTO> createTransaction(@NotNull @Valid @RequestParam(value = "variableTransaction") VariableTransactionDTO variableTransaction);
+
+    /**
      * Updates a specified transaction.
      *
      * @param transactionId       transaction id that will be updated
@@ -49,7 +61,7 @@ public interface VariableTransactionApi {
             produces = {"application/json"},
             headers = "Accept=application/json")
     ResponseEntity<AttachmentDTO> createAttachment(@NotBlank @PathVariable("transactionId") @Min(1) Long transactionId,
-                                                @NotNull @Valid @RequestParam(value = "attachment") AttachmentDTO attachment);
+                                                   @NotNull @Valid @RequestParam(value = "attachment") AttachmentDTO attachment);
 
     /**
      * Fetches an attachment with content

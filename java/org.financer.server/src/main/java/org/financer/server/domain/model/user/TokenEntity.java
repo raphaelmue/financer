@@ -5,6 +5,7 @@ import org.financer.shared.domain.model.value.objects.ExpireDate;
 import org.financer.shared.domain.model.value.objects.IPAddress;
 import org.financer.shared.domain.model.value.objects.OperatingSystem;
 import org.financer.shared.domain.model.value.objects.TokenString;
+import org.springframework.security.authentication.AbstractAuthenticationToken;
 
 import javax.persistence.*;
 import java.util.Objects;

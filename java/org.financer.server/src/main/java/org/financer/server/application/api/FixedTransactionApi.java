@@ -2,10 +2,7 @@ package org.financer.server.application.api;
 
 import org.financer.shared.domain.model.api.FixedTransactionDTO;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
@@ -13,6 +10,19 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 public interface FixedTransactionApi {
+
+    /**
+     * Creates a fixed transaction.
+     *
+     * @param fixedTransaction transaction to be inserted
+     * @return transaction object
+     */
+    @PutMapping(
+            value = "/variableTransaction",
+            produces = {"application/json"},
+            headers = "Accept=application/json")
+    ResponseEntity<FixedTransactionDTO> createTransaction(@NotNull @Valid @RequestParam(value = "variableTransaction") FixedTransactionDTO fixedTransaction);
+
 
     /**
      * Updates a specified transaction.

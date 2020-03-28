@@ -28,6 +28,10 @@ module org.financer.server {
     requires org.apache.tomcat.embed.core;
     requires modelmapper;
     requires jdk.unsupported;
+    requires spring.security.web;
+    requires spring.security.core;
+    requires spring.security.config;
+    requires java.jwt;
 
 
     opens org.financer.server.domain.service to spring.core, spring.aop;
