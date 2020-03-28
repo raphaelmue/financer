@@ -1,6 +1,7 @@
 package org.financer.server.application.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.financer.server.application.service.AuthenticationService;
 import org.financer.server.domain.model.user.UserEntity;
 import org.financer.server.domain.service.UserDomainService;
 import org.financer.shared.domain.model.api.CategoryDTO;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -27,6 +29,11 @@ public class UserApiController implements UserApi {
     @Autowired
     private UserDomainService userDomainService;
 
+    @Autowired
+    private ModelMapper modelMapper;
+
+    @Autowired
+    private AuthenticationService authenticationService;
 
     private final ObjectMapper objectMapper;
     private final HttpServletRequest request;
@@ -40,11 +47,8 @@ public class UserApiController implements UserApi {
 
     @Override
     public ResponseEntity<UserDTO> loginUser(@NotNull @Valid String email, @NotNull @Valid String password) {
-        final ModelMapper modelMapper = new ModelMapper();
-
         Optional<UserEntity> userOptional = userDomainService.checkCredentials(email, password, new IPAddress(request.getRemoteAddr()), null);
-        return userOptional
-                .map(userEntity -> new ResponseEntity<>(modelMapper.map(userEntity, UserDTO.class), HttpStatus.OK))
+        return userOptional.map(userEntity -> new ResponseEntity<>(modelMapper.map(userEntity, UserDTO.class), HttpStatus.OK))
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.FORBIDDEN));
     }
 
@@ -52,8 +56,6 @@ public class UserApiController implements UserApi {
     public ResponseEntity<UserDTO> registerUser(@NotNull @Valid String email, @NotNull @Valid String name,
                                                 @NotNull @Valid String surname, @NotNull @Valid String password,
                                                 @NotNull @Valid LocalDate birthDate, @NotNull @Valid String gender) {
-        final ModelMapper modelMapper = new ModelMapper();
-
         UserEntity userEntity = userDomainService.registerUser(
                 new UserEntity()
                         .setId(-1)
@@ -72,7 +74,7 @@ public class UserApiController implements UserApi {
     }
 
     @Override
-    public ResponseEntity<List<CategoryDTO>> getUsersCategories(@NotBlank @Min(1) Long userId) {
-        return null;
+    public ResponseEntity<List<CategoryDTO>> getUsersCategories(@NotBlank @PathVariable("userId") @Min(1) Long userId) {
+        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
     }
 }

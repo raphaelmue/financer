@@ -41,7 +41,7 @@ public class UserEntity implements DataEntity {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private Set<SettingEntity> settings = new HashSet<>();
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
     private Set<TokenEntity> tokens = new HashSet<>();
 
     @OneToOne(mappedBy = "user")

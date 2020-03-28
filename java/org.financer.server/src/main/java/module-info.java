@@ -33,7 +33,6 @@ module org.financer.server {
     requires spring.security.config;
     requires java.jwt;
 
-
     opens org.financer.server.domain.service to spring.core, spring.aop;
     opens org.financer.server.domain.repository to spring.core;
 
@@ -42,9 +41,9 @@ module org.financer.server {
     opens org.financer.server.application.service to spring.core;
     opens org.financer.server.application.configuration to spring.core;
 
-    opens org.financer.server.domain.model.user to spring.core, org.hibernate.orm.core;
-    opens org.financer.server.domain.model.category to spring.core, org.hibernate.orm.core;
-    opens org.financer.server.domain.model.transaction to spring.core,  org.hibernate.orm.core;
+    opens org.financer.server.domain.model.user to spring.core, org.hibernate.orm.core, modelmapper;
+    opens org.financer.server.domain.model.category to spring.core, org.hibernate.orm.core, modelmapper;
+    opens org.financer.server.domain.model.transaction to spring.core,  org.hibernate.orm.core, modelmapper;
 
     exports org.financer.server.domain.service to spring.core, spring.beans;
     exports org.financer.server.domain.repository to spring.core, spring.beans, spring.data.commons, spring.aop;
@@ -55,6 +54,6 @@ module org.financer.server {
 
     exports org.financer.server.application to spring.beans, spring.context;
     exports org.financer.server.application.api to spring.beans, spring.web;
-    exports org.financer.server.application.service to spring.aop;
+    exports org.financer.server.application.service to spring.beans, spring.aop;
     exports org.financer.server.application.configuration to spring.beans, spring.context;
 }

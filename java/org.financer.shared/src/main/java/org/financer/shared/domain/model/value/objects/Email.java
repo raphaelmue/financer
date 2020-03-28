@@ -45,4 +45,10 @@ public final class Email implements Serializable {
     public int hashCode() {
         return Objects.hash(emailAddress);
     }
+
+    @Override
+    public String toString() {
+        return this.getEmailAddress();
+    }
 }
+

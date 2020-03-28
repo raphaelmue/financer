@@ -53,7 +53,7 @@ public class UserDomainService {
             this.generateOrUpdateToken(userOptional.get(), ipAddress, system);
             return userOptional;
         }
-        logger.info("Credentials are incorrect.");
+        logger.info("Failed to authenticate: Credentials are incorrect.");
         return Optional.empty();
     }
 
@@ -72,6 +72,7 @@ public class UserDomainService {
                     tokenOptional.get().getUser().getId(), tokenOptional.get().getUser().getName());
             return Optional.of(tokenOptional.get().getUser());
         }
+        logger.info("Failed to authenticate: Token is invalid.");
         return Optional.empty();
     }
 
@@ -106,7 +107,7 @@ public class UserDomainService {
                 tokenOptional.get().setExpireDate(tokenOptional.get().getExpireDate().update());
                 tokenEntity = tokenRepository.save(tokenOptional.get());
             } else {
-                throw new IllegalStateException("The given token is not valid");
+                throw new IllegalStateException("The given token is not valid.");
             }
         } else {
             tokenEntity = tokenRepository.save(

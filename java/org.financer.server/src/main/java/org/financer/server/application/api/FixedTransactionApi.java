@@ -18,7 +18,7 @@ public interface FixedTransactionApi {
      * @return transaction object
      */
     @PutMapping(
-            value = "/variableTransaction",
+            value = "/fixedTransaction",
             produces = {"application/json"},
             headers = "Accept=application/json")
     ResponseEntity<FixedTransactionDTO> createTransaction(@NotNull @Valid @RequestParam(value = "variableTransaction") FixedTransactionDTO fixedTransaction);

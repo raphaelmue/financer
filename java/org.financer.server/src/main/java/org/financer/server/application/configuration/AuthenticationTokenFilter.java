@@ -4,7 +4,7 @@ import org.financer.server.domain.model.user.UserEntity;
 import org.financer.server.domain.service.UserDomainService;
 import org.financer.shared.domain.model.value.objects.TokenString;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -24,7 +24,6 @@ import java.util.Optional;
 
 @Component
 public class AuthenticationTokenFilter extends OncePerRequestFilter {
-    private AuthenticationManager authenticationManager;
 
     private static final String TOKEN_PREFIX = "Bearer ";
     public static final String HEADER_STRING = "Authorization";
@@ -36,6 +35,12 @@ public class AuthenticationTokenFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
+        if (request.getRequestURI().endsWith("/user") && (HttpMethod.GET.matches(request.getMethod()) ||
+                HttpMethod.PUT.matches(request.getMethod()))) {
+            chain.doFilter(request, response);
+            return;
+        }
+
         final String header = request.getHeader(HEADER_STRING);
 
         if (header != null && header.startsWith(TOKEN_PREFIX)) {
@@ -45,19 +50,22 @@ public class AuthenticationTokenFilter extends OncePerRequestFilter {
                 Optional<UserEntity> userOptional = userDomainService.checkUsersToken(new TokenString(tokenString));
                 if (userOptional.isPresent() && SecurityContextHolder.getContext().getAuthentication() == null) {
                     List<GrantedAuthority> authList = new ArrayList<>();
-                    authList.add(new SimpleGrantedAuthority("ROLE_" + REGISTERED_USER_ROLE));
+                    authList.add(new SimpleGrantedAuthority(REGISTERED_USER_ROLE));
 
                     UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
                             new UsernamePasswordAuthenticationToken(userOptional.get().getEmail(), null, authList);
                     usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
                     SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+                    chain.doFilter(request, response);
+                    return;
                 }
             } catch (Exception e) {
                 logger.error("Unable to get JWT Token, possibly expired", e);
             }
+        } else {
+            logger.info("Failed to authenticate: Token is invalid.");
         }
-
-        chain.doFilter(request, response);
+        response.sendError(HttpServletResponse.SC_FORBIDDEN, "Failed to authenticate: Token is invalid.");
     }
 }
