@@ -6,9 +6,11 @@ import org.financer.server.domain.model.user.UserEntity;
 import org.financer.server.domain.service.UserDomainService;
 import org.financer.shared.domain.model.api.CategoryDTO;
 import org.financer.shared.domain.model.api.UserDTO;
+import org.financer.shared.domain.model.api.VariableTransactionDTO;
 import org.financer.shared.domain.model.value.objects.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -19,6 +21,8 @@ import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -53,6 +57,14 @@ public class UserApiController implements UserApi {
     }
 
     @Override
+    public ResponseEntity<Void> deleteToken(@NotBlank @Min(1) Long userId, @NotBlank @Min(1) Long tokenId) {
+        if (authenticationService.getAuthenticatedUser().getId() == userId && userDomainService.deleteToken(userId, tokenId)) {
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+    }
+
+    @Override
     public ResponseEntity<UserDTO> registerUser(@NotNull @Valid String email, @NotNull @Valid String name,
                                                 @NotNull @Valid String surname, @NotNull @Valid String password,
                                                 @NotNull @Valid LocalDate birthDate, @NotNull @Valid String gender) {
@@ -70,11 +82,45 @@ public class UserApiController implements UserApi {
 
     @Override
     public ResponseEntity<Void> updateUser(@NotNull @Valid UserDTO user) {
-        return null;
+        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+    }
+
+    @Override
+    public ResponseEntity<UserDTO> updateUsersPassword(@NotBlank @Min(1) Long userId, @NotNull @Valid String oldPassword,
+                                                       @NotNull @Valid String newPassword) {
+        if (authenticationService.getAuthenticatedUser().getId() == userId && userDomainService.updatePassword(userId, oldPassword, newPassword)) {
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+    }
+
+    @Override
+    public ResponseEntity<UserDTO> updateUsersPersonalInformation(@NotBlank @Min(1) Long userId, @NotNull @Valid String firstName, @NotNull @Valid String surname, @NotNull @Valid LocalDate birthDate, @NotNull @Valid String gender) {
+        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+    }
+
+    @Override
+    public ResponseEntity<Object> verifyUser(@NotBlank @Min(1) Long userId, @NotNull @Valid String verificationToken) throws URISyntaxException {
+        Optional<UserEntity> userOptional = userDomainService.verifyUser(new TokenString(verificationToken));
+
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setLocation(new URI(""));
+        return userOptional.map(userEntity -> new ResponseEntity<>(httpHeaders, HttpStatus.SEE_OTHER))
+                .orElseGet(() -> new ResponseEntity<>(HttpStatus.FORBIDDEN));
     }
 
     @Override
     public ResponseEntity<List<CategoryDTO>> getUsersCategories(@NotBlank @PathVariable("userId") @Min(1) Long userId) {
+        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+    }
+
+    @Override
+    public ResponseEntity<List<VariableTransactionDTO>> getUsersVariableTransactions(@NotBlank @Min(1) Long userId) {
+        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+    }
+
+    @Override
+    public ResponseEntity<List<VariableTransactionDTO>> getUsersFixedTransactions(@NotBlank @Min(1) Long userId) {
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
     }
 }

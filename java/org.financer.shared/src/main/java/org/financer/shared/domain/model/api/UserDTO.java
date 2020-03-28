@@ -33,10 +33,6 @@ public class UserDTO {
     // @ApiModelProperty(value = "Birth Date", example = "male", allowableValues = "male, female, notSpecified")
     private Gender.Values gender;
 
-    @SerializedName("categories")
-    // @ApiModelProperty(value = "Categories")
-    private List<CategoryDTO> categories;
-
     @SerializedName("settings")
     // @ApiModelProperty(value = "Settings")
     private List<SettingsDTO> databaseSettings;
@@ -100,15 +96,6 @@ public class UserDTO {
 
     public UserDTO setGender(Gender.Values gender) {
         this.gender = gender;
-        return this;
-    }
-
-    public List<CategoryDTO> getCategories() {
-        return categories;
-    }
-
-    public UserDTO setCategories(List<CategoryDTO> categories) {
-        this.categories = categories;
         return this;
     }
 

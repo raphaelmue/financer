@@ -13,7 +13,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.Optional;
@@ -146,7 +145,6 @@ public class UserDomainService {
      * @param verificationToken verification token string
      * @return updated user or null if token is invalid
      */
-    @Transactional
     public Optional<UserEntity> verifyUser(TokenString verificationToken) {
         logger.info("Verifying new user.");
 
@@ -160,5 +158,40 @@ public class UserDomainService {
             return Optional.of(userEntity);
         }
         return Optional.empty();
+    }
+
+    /**
+     * Deletes a users token by the given id. Checks whether the given user owns the given token.
+     *
+     * @param userId  id of the user who owns the token
+     * @param tokenId id of the token to delete
+     * @return true if operation was successful
+     */
+    public boolean deleteToken(long userId, long tokenId) {
+        Optional<TokenEntity> tokenOptional = tokenRepository.findById(tokenId);
+        if (tokenOptional.isPresent() && tokenOptional.get().getUser().getId() == userId) {
+            tokenRepository.delete(tokenOptional.get());
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Updates the users password. First of all, the old password is verfied. Then the new password will be hashed after
+     * concatenating it with a new generated salt.
+     *
+     * @param userId          id of user whose password will be update
+     * @param oldPassword     old password of the user in order to verify this operation
+     * @param updatedPassword new plain password
+     * @return true if operation was successful
+     */
+    public boolean updatePassword(long userId, String oldPassword, String updatedPassword) {
+        Optional<UserEntity> userOptional = userRepository.findById(userId);
+        if (userOptional.isPresent() && userOptional.get().getPassword().isEqualTo(oldPassword)) {
+            userOptional.get().setPassword(new HashedPassword(updatedPassword));
+            userRepository.save(userOptional.get());
+            return true;
+        }
+        return false;
     }
 }

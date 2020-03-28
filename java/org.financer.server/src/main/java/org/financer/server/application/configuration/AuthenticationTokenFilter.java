@@ -53,7 +53,7 @@ public class AuthenticationTokenFilter extends OncePerRequestFilter {
                     authList.add(new SimpleGrantedAuthority(REGISTERED_USER_ROLE));
 
                     UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
-                            new UsernamePasswordAuthenticationToken(userOptional.get().getEmail(), null, authList);
+                            new UsernamePasswordAuthenticationToken(userOptional.get(), null, authList);
                     usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
                     SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);

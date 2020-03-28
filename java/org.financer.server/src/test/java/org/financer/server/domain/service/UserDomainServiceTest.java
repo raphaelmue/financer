@@ -1,6 +1,7 @@
 package org.financer.server.domain.service;
 
 import org.financer.server.application.FinancerServer;
+import org.financer.server.application.service.AuthenticationService;
 import org.financer.server.domain.model.user.TokenEntity;
 import org.financer.server.domain.model.user.UserEntity;
 import org.financer.server.domain.model.user.VerificationTokenEntity;
@@ -27,7 +28,7 @@ import static org.mockito.Mockito.when;
 
 @Tag("unit")
 @ExtendWith(SpringExtension.class)
-@SpringBootTest(classes = {FinancerServer.class, UserDomainService.class},
+@SpringBootTest(classes = {FinancerServer.class, UserDomainService.class, AuthenticationService.class},
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class UserDomainServiceTest {
 
@@ -74,6 +75,7 @@ public class UserDomainServiceTest {
         when(userRepository.save(any(UserEntity.class))).thenAnswer(i -> i.getArguments()[0]);
         when(userRepository.findByEmail(user.getEmail())).thenReturn(Optional.of(user));
         when(tokenRepository.save(any(TokenEntity.class))).thenAnswer(i -> i.getArguments()[0]);
+        when(tokenRepository.findById(token.getId())).thenReturn(Optional.of(token));
         when(tokenRepository.getTokenByToken(tokenString)).thenReturn(Optional.of(token));
         when(verificationTokenRepository.save(any(VerificationTokenEntity.class))).thenAnswer(i -> i.getArguments()[0]);
         when(verificationTokenRepository.findByToken(tokenString)).thenReturn(Optional.of(verificationToken));
@@ -116,5 +118,11 @@ public class UserDomainServiceTest {
 
         assertThat(userToAssert).isPresent();
         assertThat(userToAssert.get().isVerified()).isTrue();
+    }
+
+    @Test
+    void deleteToken() {
+        assertThat(userDomainService.deleteToken(user.getId() + 1, token.getId())).isFalse();
+        assertThat(userDomainService.deleteToken(user.getId(), token.getId())).isTrue();
     }
 }
