@@ -1,7 +1,10 @@
 package org.financer.server.application.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.financer.server.domain.model.category.CategoryEntity;
+import org.financer.server.domain.service.CategoryDomainService;
 import org.financer.shared.domain.model.api.CategoryDTO;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +23,12 @@ public class CategoryApiController implements CategoryApi {
     private final HttpServletRequest request;
 
     @Autowired
+    private ModelMapper modelMapper;
+
+    @Autowired
+    private CategoryDomainService categoryDomainService;
+
+    @Autowired
     public CategoryApiController(ObjectMapper objectMapper, HttpServletRequest request) {
         this.objectMapper = objectMapper;
         this.request = request;
@@ -27,7 +36,9 @@ public class CategoryApiController implements CategoryApi {
 
     @Override
     public ResponseEntity<CategoryDTO> createCategory(@NotNull @Valid CategoryDTO category) {
-        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+        CategoryEntity result = categoryDomainService.createCategory(
+                modelMapper.map(category, CategoryEntity.class));
+        return new ResponseEntity<>(modelMapper.map(result, CategoryDTO.class), HttpStatus.OK);
     }
 
     @Override
