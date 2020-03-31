@@ -5,13 +5,12 @@ import org.financer.shared.domain.model.value.objects.ExpireDate;
 import org.financer.shared.domain.model.value.objects.IPAddress;
 import org.financer.shared.domain.model.value.objects.OperatingSystem;
 import org.financer.shared.domain.model.value.objects.TokenString;
-import org.springframework.security.authentication.AbstractAuthenticationToken;
 
 import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
-@Table(name = "tokens")
+@Table(name = "tokens", uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "token"}))
 public class TokenEntity implements DataEntity {
     private static final long serialVersionUID = 8834445127500149942L;
 

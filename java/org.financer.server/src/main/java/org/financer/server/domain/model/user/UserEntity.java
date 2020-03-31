@@ -8,6 +8,7 @@ import org.financer.shared.domain.model.value.objects.*;
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 @Entity
@@ -38,8 +39,9 @@ public class UserEntity implements DataEntity {
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private Set<CategoryEntity> categories = new HashSet<>();
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private Set<SettingEntity> settings = new HashSet<>();
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @MapKey(name = "pair.property")
+    private Map<String, SettingEntity> settings;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
     private Set<TokenEntity> tokens = new HashSet<>();
@@ -125,12 +127,12 @@ public class UserEntity implements DataEntity {
         return this;
     }
 
-    public Set<SettingEntity> getSettings() {
+    public Map<String, SettingEntity> getSettings() {
         return settings;
     }
 
-    public UserEntity setSettings(Set<SettingEntity> databaseSettings) {
-        this.settings = databaseSettings;
+    public UserEntity setSettings(Map<String, SettingEntity> settings) {
+        this.settings = settings;
         return this;
     }
 

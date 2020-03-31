@@ -9,7 +9,7 @@ import java.time.LocalDate;
 import java.util.Objects;
 
 @Entity
-@Table(name = "verification_tokens")
+@Table(name = "verification_tokens", uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "token"}))
 public class VerificationTokenEntity implements DataEntity {
 
     @Id

@@ -6,8 +6,7 @@ import org.financer.shared.domain.model.value.objects.SettingPair;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "settings")
-//        uniqueConstraints={@UniqueConstraint(columnNames={"user_id","property"})})
+@Table(name = "settings", uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "property"}))
 public class SettingEntity implements DataEntity {
     private static final long serialVersionUID = 3324663296387062431L;
 
