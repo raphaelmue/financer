@@ -3,11 +3,12 @@ package org.financer.server.domain.model.category;
 import org.financer.server.domain.model.DataEntity;
 import org.financer.server.domain.model.transaction.TransactionEntity;
 import org.financer.server.domain.model.user.UserEntity;
+import org.financer.server.domain.model.user.UserProperty;
+import org.financer.shared.domain.model.AmountProvider;
 import org.financer.shared.domain.model.value.objects.Amount;
 import org.financer.shared.domain.model.value.objects.CategoryClass;
 import org.financer.shared.domain.model.value.objects.TimeRange;
 import org.financer.shared.domain.model.value.objects.ValueDate;
-import org.financer.shared.domain.model.AmountProvider;
 import org.financer.util.collections.Tree;
 
 import javax.persistence.*;
@@ -16,7 +17,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "categories")
-public class CategoryEntity implements DataEntity, Tree, AmountProvider {
+public class CategoryEntity implements DataEntity, Tree, AmountProvider, UserProperty {
     private static final long serialVersionUID = 5491420625985358596L;
 
     @Id
@@ -41,6 +42,11 @@ public class CategoryEntity implements DataEntity, Tree, AmountProvider {
 
     @OneToMany(mappedBy = "category")
     private Set<TransactionEntity> transactions = new HashSet<>();
+
+    @Override
+    public boolean isPropertyOfUser(long userId) {
+        return this.getUser().getId() == userId;
+    }
 
     @Override
     public Amount getAmount() {

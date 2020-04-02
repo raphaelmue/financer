@@ -22,7 +22,6 @@ import javax.validation.constraints.NotNull;
 @Controller
 public class VariableTransactionApiController implements VariableTransactionApi {
 
-
     private final ObjectMapper objectMapper;
     private final HttpServletRequest request;
 
@@ -44,9 +43,9 @@ public class VariableTransactionApiController implements VariableTransactionApi 
 
     @Override
     public ResponseEntity<VariableTransactionDTO> createTransaction(@NotNull @Valid VariableTransactionDTO variableTransaction) {
-        VariableTransactionEntity result = transactionDomainService.createVariableTransaction(
-                modelMapper.map(variableTransaction, VariableTransactionEntity.class));
-        return new ResponseEntity<>(modelMapper.map(result, VariableTransactionDTO.class), HttpStatus.OK);
+        VariableTransactionEntity variableTransactionEntity = modelMapper.map(variableTransaction, VariableTransactionEntity.class);
+        variableTransactionEntity = transactionDomainService.createVariableTransaction(authenticationService.getUserId(), variableTransactionEntity);
+        return new ResponseEntity<>(modelMapper.map(variableTransactionEntity, VariableTransactionDTO.class), HttpStatus.OK);
     }
 
     @Override
@@ -56,10 +55,8 @@ public class VariableTransactionApiController implements VariableTransactionApi 
 
     @Override
     public ResponseEntity<Void> deleteTransaction(@NotBlank @PathVariable("transactionId") @Min(1) Long transactionId) {
-        if (transactionDomainService.deleteVariableTransaction(authenticationService.getAuthenticatedUser().getId(), transactionId)) {
-            return new ResponseEntity<>(HttpStatus.OK);
-        }
-        return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        transactionDomainService.deleteVariableTransaction(authenticationService.getUserId(), transactionId);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @Override

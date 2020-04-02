@@ -5,10 +5,9 @@ import org.financer.server.application.service.AuthenticationService;
 import org.financer.server.domain.model.user.TokenEntity;
 import org.financer.server.domain.model.user.UserEntity;
 import org.financer.server.domain.model.user.VerificationTokenEntity;
-import org.financer.server.domain.repository.TokenRepository;
-import org.financer.server.domain.repository.UserRepository;
-import org.financer.server.domain.repository.VerificationTokenRepository;
+import org.financer.server.domain.repository.*;
 import org.financer.shared.domain.model.value.objects.*;
+import org.financer.shared.exceptions.UnauthorizedException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -23,6 +22,7 @@ import java.util.HashSet;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -34,15 +34,6 @@ public class UserDomainServiceTest {
 
     @Autowired
     private UserDomainService userDomainService;
-
-    @MockBean
-    private UserRepository userRepository;
-
-    @MockBean
-    private TokenRepository tokenRepository;
-
-    @MockBean
-    private VerificationTokenRepository verificationTokenRepository;
 
     private static final TokenString tokenString =
             new TokenString("Z6XCS3tyyBlhPfsv7rMxLgfdyEOlUkv0CWSdbFYHCNX2wLlwpH97lJNP69Bny3XZ");
@@ -59,7 +50,7 @@ public class UserDomainServiceTest {
             .setExpireDate(new ExpireDate())
             .setToken(tokenString);
 
-    private static final UserEntity user = new UserEntity()
+    static final UserEntity user = new UserEntity()
             .setId(1)
             .setEmail(new Email("test@test.com"))
             .setName(new Name("Test", "User"))
@@ -122,7 +113,36 @@ public class UserDomainServiceTest {
 
     @Test
     void deleteToken() {
-        assertThat(userDomainService.deleteToken(user.getId() + 1, token.getId())).isFalse();
+        assertThatExceptionOfType(UnauthorizedException.class).isThrownBy(
+                () -> userDomainService.deleteToken(user.getId() + 1, token.getId()));
         assertThat(userDomainService.deleteToken(user.getId(), token.getId())).isTrue();
     }
+
+    /*
+     * Mock Beans
+     */
+
+    @MockBean
+    private UserRepository userRepository;
+
+    @MockBean
+    private TokenRepository tokenRepository;
+
+    @MockBean
+    private VerificationTokenRepository verificationTokenRepository;
+
+    @MockBean
+    private CategoryDomainService categoryDomainService;
+
+    @MockBean
+    private TransactionDomainService transactionDomainService;
+
+    @MockBean
+    private CategoryRepository categoryRepository;
+
+    @MockBean
+    private VariableTransactionRepository variableTransactionRepository;
+
+    @MockBean
+    private FixedTransactionRepository fixedTransactionRepository;
 }

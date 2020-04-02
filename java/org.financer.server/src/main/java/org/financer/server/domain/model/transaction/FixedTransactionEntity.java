@@ -6,6 +6,7 @@ import org.financer.shared.domain.model.value.objects.TimeRange;
 import org.financer.shared.domain.model.value.objects.ValueDate;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -34,6 +35,22 @@ public class FixedTransactionEntity extends TransactionEntity {
      */
     public boolean isActive() {
         return this.timeRange.includes();
+    }
+
+    /**
+     * Cancels the fixed transaction by setting the end date to current date.
+     */
+    public void cancel() {
+        this.cancel(LocalDate.now());
+    }
+
+    /**
+     * Cancels the fixed transaction by setting the end date to the given date.
+     *
+     * @param endDate end date to be set
+     */
+    public void cancel(LocalDate endDate) {
+        this.setTimeRange(timeRange.setEndDate(endDate));
     }
 
     @Override

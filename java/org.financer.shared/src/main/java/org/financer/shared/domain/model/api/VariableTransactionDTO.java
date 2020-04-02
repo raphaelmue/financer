@@ -12,6 +12,9 @@ public class VariableTransactionDTO implements DataTransferObject {
     // @ApiModelProperty(value = "Identifier", required = true, example = "123")
     private int id;
 
+    @SerializedName("category")
+    private CategoryDTO category;
+
     @SerializedName("valueDate")
     // @ApiModelProperty(value = "Value Date", required = true, example = "2020-02-02")
     private LocalDate valueDate;
@@ -101,6 +104,15 @@ public class VariableTransactionDTO implements DataTransferObject {
 
     public VariableTransactionDTO setAttachments(List<AttachmentDTO> attachments) {
         this.attachments = attachments;
+        return this;
+    }
+
+    public CategoryDTO getCategory() {
+        return category;
+    }
+
+    public VariableTransactionDTO setCategory(CategoryDTO category) {
+        this.category = category;
         return this;
     }
 }

@@ -58,10 +58,8 @@ public class UserApiController implements UserApi {
 
     @Override
     public ResponseEntity<Void> deleteToken(@NotBlank @Min(1) Long userId, @NotBlank @Min(1) Long tokenId) {
-        if (authenticationService.getAuthenticatedUser().getId() == userId && userDomainService.deleteToken(userId, tokenId)) {
-            return new ResponseEntity<>(HttpStatus.OK);
-        }
-        return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        userDomainService.deleteToken(userId, tokenId);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @Override

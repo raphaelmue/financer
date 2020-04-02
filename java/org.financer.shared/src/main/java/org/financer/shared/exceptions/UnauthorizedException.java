@@ -5,8 +5,8 @@ package org.financer.shared.exceptions;
  *
  * @author Raphael Müßeler
  */
-public class NotAuthorizedException extends FinancerException {
-    public NotAuthorizedException(String message) {
+public class UnauthorizedException extends FinancerException {
+    public UnauthorizedException(String message) {
         super(message);
     }
 }

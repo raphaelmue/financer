@@ -1,6 +1,7 @@
 package org.financer.server.application.api;
 
 import org.financer.shared.domain.model.api.FixedTransactionDTO;
+import org.financer.shared.domain.model.api.TransactionAmountDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,10 +19,10 @@ public interface FixedTransactionApi {
      * @return transaction object
      */
     @PutMapping(
-            value = "/fixedTransaction",
+            value = "/fixedTransactions",
             produces = {"application/json"},
             headers = "Accept=application/json")
-    ResponseEntity<FixedTransactionDTO> createTransaction(@NotNull @Valid @RequestParam(value = "variableTransaction") FixedTransactionDTO fixedTransaction);
+    ResponseEntity<FixedTransactionDTO> createFixedTransaction(@NotNull @Valid @RequestParam(value = "variableTransaction") FixedTransactionDTO fixedTransaction);
 
 
     /**
@@ -32,22 +33,65 @@ public interface FixedTransactionApi {
      * @return null
      */
     @PostMapping(
-            value = "/fixedTransaction/{transactionId}",
+            value = "/fixedTransactions/{transactionId}",
             produces = {"application/json"},
             headers = "Accept=application/json")
-    ResponseEntity<Void> updateTransaction(@NotBlank @PathVariable("transactionId") @Min(1) Long transactionId,
-                                           @NotNull @Valid @RequestParam(value = "transaction") FixedTransactionDTO fixedTransaction);
+    ResponseEntity<Void> updateFixedTransaction(@NotBlank @PathVariable("transactionId") @Min(1) Long transactionId,
+                                                @NotNull @Valid @RequestParam(value = "fixedTransaction") FixedTransactionDTO fixedTransaction);
 
     /**
      * Deletes a specified transaction.
      *
      * @param transactionId transaction id that refers to the transaction that will be deleted
-     * @return null
+     * @return void
      */
     @DeleteMapping(
-            value = "/fixedTransaction/{transactionId}",
+            value = "/fixedTransactions/{transactionId}",
             produces = {"application/json"},
             headers = "Accept=application/json")
-    ResponseEntity<Void> deleteTransaction(@NotBlank @PathVariable("transactionId") @Min(1) Long transactionId);
+    ResponseEntity<Void> deleteFixedTransaction(@NotBlank @PathVariable("transactionId") @Min(1) Long transactionId);
 
+    /**
+     * Creates a transaction amount to a given transaction.
+     *
+     * @param transactionId     id of transaction to add transaction amount to
+     * @param transactionAmount transaction amount to be inserted
+     * @return inserted transaction amount
+     */
+    @PutMapping(
+            value = "/fixedTransactions/{transactionId}/transactionAmounts",
+            produces = {"application/json"},
+            headers = "Accept=application/json")
+    ResponseEntity<TransactionAmountDTO> createTransactionAmount(@NotBlank @PathVariable("transactionId") @Min(1) Long transactionId,
+                                                                 @NotNull @Valid @RequestParam(value = "transactionAmount") TransactionAmountDTO transactionAmount);
+
+    /**
+     * Updates a transaction amount.
+     *
+     * @param transactionId       transaction id
+     * @param transactionAmountId transaction amount id to be updated
+     * @param transactionAmount   updated transaction amount id
+     * @return updated transaction amount
+     */
+    @PostMapping(
+            value = "/fixedTransactions/{transactionId}/transactionAmounts/{transactionAmountId}",
+            produces = {"application/json"},
+            headers = "Accept=application/json")
+    ResponseEntity<TransactionAmountDTO> createTransactionAmount(@NotBlank @PathVariable("transactionId") @Min(1) Long transactionId,
+                                                                 @NotBlank @PathVariable("transactionAmountId") @Min(1) Long transactionAmountId,
+                                                                 @NotNull @Valid @RequestParam(value = "transactionAmount") TransactionAmountDTO transactionAmount);
+
+    /**
+     * Deletes a transaction amount.
+     *
+     * @param transactionId       transaction id
+     * @param transactionAmountId transaction amount id to be deleted
+     * @return void
+     */
+    @DeleteMapping(
+            value = "/fixedTransactions/{transactionId}/transactionAmounts/{transactionAmountId}",
+            produces = {"application/json"},
+            headers = "Accept=application/json")
+    ResponseEntity<Void> deleteTransactionAmount(@NotBlank @PathVariable("transactionId") @Min(1) Long transactionId,
+                                                 @NotBlank @PathVariable("transactionAmountId") @Min(1) Long transactionAmountId);
 }

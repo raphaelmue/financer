@@ -21,4 +21,8 @@ public class AuthenticationService {
         return null;
     }
 
+    public long getUserId() {
+        return getAuthenticatedUser().getId();
+    }
+
 }

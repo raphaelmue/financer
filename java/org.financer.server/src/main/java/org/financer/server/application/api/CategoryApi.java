@@ -18,7 +18,7 @@ public interface CategoryApi {
      * @return Category object
      */
     @PutMapping(
-            value = "/category",
+            value = "/categories",
             produces = {"application/json"},
             headers = "Accept=application/json")
     ResponseEntity<CategoryDTO> createCategory(@NotNull @Valid @RequestParam(value = "category") CategoryDTO category);
@@ -31,7 +31,7 @@ public interface CategoryApi {
      * @return null
      */
     @PostMapping(
-            value = "/category/{categoryId}",
+            value = "/categories/{categoryId}",
             produces = {"application/json"},
             headers = "Accept=application/json")
     ResponseEntity<Void> updateCategory(@NotBlank @PathVariable("categoryId") @Min(1) Long categoryId,
@@ -44,7 +44,7 @@ public interface CategoryApi {
      * @return null
      */
     @DeleteMapping(
-            value = "/category/{categoryId}",
+            value = "/categories/{categoryId}",
             produces = {"application/json"},
             headers = "Accept=application/json")
     ResponseEntity<Void> deleteCategory(@NotBlank @PathVariable("categoryId") @Min(1) Long categoryId);

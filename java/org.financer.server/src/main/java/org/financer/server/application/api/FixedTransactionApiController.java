@@ -1,7 +1,12 @@
 package org.financer.server.application.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.financer.server.application.service.AuthenticationService;
+import org.financer.server.domain.model.transaction.FixedTransactionEntity;
+import org.financer.server.domain.service.TransactionDomainService;
 import org.financer.shared.domain.model.api.FixedTransactionDTO;
+import org.financer.shared.domain.model.api.TransactionAmountDTO;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,23 +25,50 @@ public class FixedTransactionApiController implements FixedTransactionApi {
     private final HttpServletRequest request;
 
     @Autowired
+    private ModelMapper modelMapper;
+
+    @Autowired
+    private AuthenticationService authenticationService;
+
+    @Autowired
+    private TransactionDomainService transactionDomainService;
+
+    @Autowired
     public FixedTransactionApiController(ObjectMapper objectMapper, HttpServletRequest request) {
         this.objectMapper = objectMapper;
         this.request = request;
     }
 
     @Override
-    public ResponseEntity<FixedTransactionDTO> createTransaction(@NotNull @Valid FixedTransactionDTO fixedTransaction) {
+    public ResponseEntity<FixedTransactionDTO> createFixedTransaction(@NotNull @Valid FixedTransactionDTO fixedTransaction) {
+        FixedTransactionEntity fixedTransactionEntity = modelMapper.map(fixedTransaction, FixedTransactionEntity.class);
+        fixedTransactionEntity = transactionDomainService.createFixedTransaction(authenticationService.getUserId(), fixedTransactionEntity);
+        return new ResponseEntity<>(modelMapper.map(fixedTransactionEntity, FixedTransactionDTO.class), HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<Void> updateFixedTransaction(@NotBlank @Min(1) Long transactionId, @NotNull @Valid FixedTransactionDTO fixedTransaction) {
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
     }
 
     @Override
-    public ResponseEntity<Void> updateTransaction(@NotBlank @Min(1) Long transactionId, @NotNull @Valid FixedTransactionDTO fixedTransaction) {
+    public ResponseEntity<Void> deleteFixedTransaction(@NotBlank @Min(1) Long transactionId) {
+        transactionDomainService.deleteFixedTransaction(authenticationService.getUserId(), transactionId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<TransactionAmountDTO> createTransactionAmount(@NotBlank @Min(1) Long transactionId, @NotNull @Valid TransactionAmountDTO transactionAmount) {
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
     }
 
     @Override
-    public ResponseEntity<Void> deleteTransaction(@NotBlank @Min(1) Long transactionId) {
+    public ResponseEntity<TransactionAmountDTO> createTransactionAmount(@NotBlank @Min(1) Long transactionId, @NotBlank @Min(1) Long transactionAmountId, @NotNull @Valid TransactionAmountDTO transactionAmount) {
+        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+    }
+
+    @Override
+    public ResponseEntity<Void> deleteTransactionAmount(@NotBlank @Min(1) Long transactionId, @NotBlank @Min(1) Long transactionAmountId) {
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
     }
 }

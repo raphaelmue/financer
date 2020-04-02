@@ -19,7 +19,7 @@ public interface VariableTransactionApi {
      * @return transaction object
      */
     @PutMapping(
-            value = "/variableTransaction",
+            value = "/variableTransactions",
             produces = {"application/json"},
             headers = "Accept=application/json")
     ResponseEntity<VariableTransactionDTO> createTransaction(@NotNull @Valid @RequestParam(value = "variableTransaction") VariableTransactionDTO variableTransaction);
@@ -32,7 +32,7 @@ public interface VariableTransactionApi {
      * @return null
      */
     @PostMapping(
-            value = "/variableTransaction/{transactionId}",
+            value = "/variableTransactions/{transactionId}",
             produces = {"application/json"},
             headers = "Accept=application/json")
     ResponseEntity<Void> updateTransaction(@NotBlank @PathVariable("transactionId") @Min(1) Long transactionId,
@@ -45,7 +45,7 @@ public interface VariableTransactionApi {
      * @return null
      */
     @DeleteMapping(
-            value = "/variableTransaction/{transactionId}",
+            value = "/variableTransactions/{transactionId}",
             produces = {"application/json"},
             headers = "Accept=application/json")
     ResponseEntity<Void> deleteTransaction(@NotBlank @PathVariable("transactionId") @Min(1) Long transactionId);
@@ -57,7 +57,7 @@ public interface VariableTransactionApi {
      * @return null
      */
     @PutMapping(
-            value = "/variableTransaction/{transactionId}/attachment",
+            value = "/variableTransactions/{transactionId}/attachment",
             produces = {"application/json"},
             headers = "Accept=application/json")
     ResponseEntity<AttachmentDTO> createAttachment(@NotBlank @PathVariable("transactionId") @Min(1) Long transactionId,
@@ -71,7 +71,7 @@ public interface VariableTransactionApi {
      * @return attachment with content
      */
     @GetMapping(
-            value = "/variableTransaction/{transactionId}/attachment/{attachmentId}",
+            value = "/variableTransactions/{transactionId}/attachment/{attachmentId}",
             produces = {"application/json"},
             headers = "Accept=application/json")
     ResponseEntity<AttachmentDTO> getAttachment(@NotBlank @PathVariable("transactionId") @Min(1) Long transactionId,

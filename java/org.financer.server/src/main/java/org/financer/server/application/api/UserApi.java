@@ -25,7 +25,7 @@ public interface UserApi {
      * @return User object if credentials are correct
      */
     @GetMapping(
-            value = "/user",
+            value = "/users",
             produces = {"application/json"},
             headers = "Accept=application/json")
     ResponseEntity<UserDTO> loginUser(@NotNull @Valid @RequestParam(value = "email") String email,
@@ -39,7 +39,7 @@ public interface UserApi {
      * @return void
      */
     @DeleteMapping(
-            value = "/user/{userId}/tokens/{tokenId}",
+            value = "/users/{userId}/tokens/{tokenId}",
             produces = {"application/json"},
             headers = "Accept=application/json")
     ResponseEntity<Void> deleteToken(@NotBlank @PathVariable("userId") @Min(1) Long userId,
@@ -57,7 +57,7 @@ public interface UserApi {
      * @return User object
      */
     @PutMapping(
-            value = "/user",
+            value = "/users",
             produces = {"application/json"},
             headers = "Accept=application/json")
     ResponseEntity<UserDTO> registerUser(@NotNull @Valid @RequestParam(value = "email") String email,
@@ -74,7 +74,7 @@ public interface UserApi {
      * @return null
      */
     @PostMapping(
-            value = "/user",
+            value = "/users",
             produces = {"application/json"},
             headers = "Accept=application/json")
     ResponseEntity<Void> updateUser(@NotNull @Valid @RequestParam(value = "user") UserDTO user);
@@ -88,7 +88,7 @@ public interface UserApi {
      * @return updated user object
      */
     @PostMapping(
-            value = "/user/{userId}/password",
+            value = "/users/{userId}/password",
             produces = {"application/json"},
             headers = "Accept=application/json")
     ResponseEntity<UserDTO> updateUsersPassword(@NotBlank @PathVariable("userId") @Min(1) Long userId,
@@ -106,7 +106,7 @@ public interface UserApi {
      * @return updated user object
      */
     @PostMapping(
-            value = "/user/{userId}/personalInformation",
+            value = "/users/{userId}/personalInformation",
             produces = {"application/json"},
             headers = "Accept=application/json")
     ResponseEntity<UserDTO> updateUsersPersonalInformation(@NotBlank @PathVariable("userId") @Min(1) Long userId,
@@ -122,7 +122,7 @@ public interface UserApi {
      * @param verificationToken verification token to check
      */
     @GetMapping(
-            value = "/user/{userId}/verificationToken",
+            value = "/users/{userId}/verificationToken",
             produces = {"application/json"},
             headers = "Accept=application/json")
     ResponseEntity<Object> verifyUser(@NotBlank @PathVariable("userId") @Min(1) Long userId,
@@ -135,7 +135,7 @@ public interface UserApi {
      * @return tree of categories
      */
     @GetMapping(
-            value = "/user/{userId}/categories",
+            value = "/users/{userId}/categories",
             produces = {"application/json"},
             headers = "Accept=application/json")
     ResponseEntity<List<CategoryDTO>> getUsersCategories(@NotBlank @PathVariable("userId") @Min(1) Long userId);
@@ -148,7 +148,7 @@ public interface UserApi {
      * @return list of transactions
      */
     @GetMapping(
-            value = "/user/{userId}/variableTransaction",
+            value = "/users/{userId}/variableTransaction",
             produces = {"application/json"},
             headers = "Accept=application/json")
     ResponseEntity<List<VariableTransactionDTO>> getUsersVariableTransactions(@NotBlank @PathVariable("userId") @Min(1) Long userId);
@@ -160,7 +160,7 @@ public interface UserApi {
      * @return list of transactions
      */
     @GetMapping(
-            value = "/user/{userId}/fixedTransaction",
+            value = "/users/{userId}/fixedTransaction",
             produces = {"application/json"},
             headers = "Accept=application/json")
     ResponseEntity<List<VariableTransactionDTO>> getUsersFixedTransactions(@NotBlank @PathVariable("userId") @Min(1) Long userId);

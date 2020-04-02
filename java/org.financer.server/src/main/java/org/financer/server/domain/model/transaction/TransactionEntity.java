@@ -2,6 +2,7 @@ package org.financer.server.domain.model.transaction;
 
 import org.financer.server.domain.model.DataEntity;
 import org.financer.server.domain.model.category.CategoryEntity;
+import org.financer.server.domain.model.user.UserProperty;
 import org.financer.shared.domain.model.AmountProvider;
 import org.financer.shared.domain.model.value.objects.Amount;
 
@@ -11,7 +12,7 @@ import java.util.Set;
 
 @Entity
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
-public abstract class TransactionEntity implements DataEntity, AmountProvider {
+public abstract class TransactionEntity implements DataEntity, AmountProvider, UserProperty {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "transaction_id_sequence")
@@ -35,6 +36,11 @@ public abstract class TransactionEntity implements DataEntity, AmountProvider {
 
     @OneToMany(mappedBy = "transaction")
     private Set<AttachmentEntity> attachments = new HashSet<>();
+
+    @Override
+    public boolean isPropertyOfUser(long userId) {
+        return this.getCategory().isPropertyOfUser(userId);
+    }
 
     /**
      * Adjusts the amount sign, if necessary. If the category is a revenue category and the amount is negative or vice

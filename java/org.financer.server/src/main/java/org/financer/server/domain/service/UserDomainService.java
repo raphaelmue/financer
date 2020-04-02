@@ -101,6 +101,9 @@ public class UserDomainService {
         TokenEntity tokenEntity;
         Optional<TokenEntity> tokenOptional = tokenRepository.getTokenByIPAddress(ipAddress);
         if (tokenOptional.isPresent()) {
+            tokenOptional.get().isPropertyOfUser(user);
+
+            // check if token is not expired
             if (tokenOptional.get().getExpireDate().isValid()) {
                 // update expire date
                 tokenOptional.get().setExpireDate(tokenOptional.get().getExpireDate().update());
@@ -168,8 +171,10 @@ public class UserDomainService {
      * @return true if operation was successful
      */
     public boolean deleteToken(long userId, long tokenId) {
+        logger.info("Deleting token. ");
         Optional<TokenEntity> tokenOptional = tokenRepository.findById(tokenId);
-        if (tokenOptional.isPresent() && tokenOptional.get().getUser().getId() == userId) {
+        if (tokenOptional.isPresent()) {
+            tokenOptional.get().throwIfNotUsersProperty(userId);
             tokenRepository.delete(tokenOptional.get());
             return true;
         }
@@ -186,6 +191,7 @@ public class UserDomainService {
      * @return true if operation was successful
      */
     public boolean updatePassword(long userId, String oldPassword, String updatedPassword) {
+        logger.info("Updating users password. ");
         Optional<UserEntity> userOptional = userRepository.findById(userId);
         if (userOptional.isPresent() && userOptional.get().getPassword().isEqualTo(oldPassword)) {
             userOptional.get().setPassword(new HashedPassword(updatedPassword));

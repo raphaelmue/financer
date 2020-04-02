@@ -2,7 +2,7 @@ package org.financer.client.format;
 
 import org.financer.client.local.LocalStorage;
 import org.financer.shared.exceptions.FinancerException;
-import org.financer.shared.exceptions.NotAuthorizedException;
+import org.financer.shared.exceptions.UnauthorizedException;
 
 import java.net.ConnectException;
 import java.net.UnknownHostException;
@@ -32,7 +32,7 @@ public abstract class FormatterImpl implements Formatter {
 
         try {
             throw exception;
-        } catch (NotAuthorizedException e) {
+        } catch (UnauthorizedException e) {
             key = "errNotAuthorized";
         } catch (UnknownHostException e) {
             key = "errDatabaseUnavailable";

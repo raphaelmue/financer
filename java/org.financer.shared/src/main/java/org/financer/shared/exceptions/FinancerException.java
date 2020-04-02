@@ -1,6 +1,6 @@
 package org.financer.shared.exceptions;
 
-public abstract class FinancerException extends Exception {
+public abstract class FinancerException extends RuntimeException {
     private String key;
 
     FinancerException(String message) {

@@ -1,13 +1,14 @@
 package org.financer.server.domain.model.transaction;
 
 import org.financer.server.domain.model.DataEntity;
+import org.financer.server.domain.model.user.UserProperty;
 
 import javax.persistence.*;
 import java.time.LocalDate;
 
 @Entity
 @Table(name = "attachments")
-public class AttachmentEntity implements DataEntity {
+public class AttachmentEntity implements DataEntity, UserProperty {
     private static final long serialVersionUID = 7758316425770345150L;
 
     @Id
@@ -27,6 +28,15 @@ public class AttachmentEntity implements DataEntity {
     @Column(name = "content", nullable = false)
     @Lob
     private byte[] content;
+
+    @Override
+    public boolean isPropertyOfUser(long userId) {
+        return this.getTransaction().isPropertyOfUser(userId);
+    }
+
+    /*
+     * Getters and Setters
+     */
 
     @Override
     public long getId() {

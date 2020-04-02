@@ -11,7 +11,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "tokens", uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "token"}))
-public class TokenEntity implements DataEntity {
+public class TokenEntity implements DataEntity, UserProperty {
     private static final long serialVersionUID = 8834445127500149942L;
 
     @Id
@@ -35,12 +35,8 @@ public class TokenEntity implements DataEntity {
     private OperatingSystem operatingSystem;
 
     @Override
-    public TokenEntity clone() {
-        try {
-            return (TokenEntity) super.clone();
-        } catch (CloneNotSupportedException e) {
-            throw new ClassCastException(e.getMessage());
-        }
+    public boolean isPropertyOfUser(long userId) {
+        return this.getUser().getId() == userId;
     }
 
     @Override
