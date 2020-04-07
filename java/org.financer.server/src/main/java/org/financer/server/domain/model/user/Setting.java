@@ -16,7 +16,7 @@ public class Setting implements DataEntity {
     private long id;
 
     @ManyToOne()
-    private UserEntity user;
+    private User user;
 
     @Embedded
     private SettingPair pair;
@@ -31,11 +31,11 @@ public class Setting implements DataEntity {
         return this;
     }
 
-    public UserEntity getUser() {
+    public User getUser() {
         return user;
     }
 
-    public Setting setUser(UserEntity user) {
+    public Setting setUser(User user) {
         this.user = user;
         return this;
     }

@@ -4,7 +4,7 @@ import org.apache.commons.mail.DefaultAuthenticator;
 import org.apache.commons.mail.Email;
 import org.apache.commons.mail.EmailException;
 import org.apache.commons.mail.HtmlEmail;
-import org.financer.server.domain.model.user.UserEntity;
+import org.financer.server.domain.model.user.User;
 import org.financer.server.domain.model.user.VerificationToken;
 import org.financer.util.RandomString;
 import org.slf4j.Logger;
@@ -39,7 +39,7 @@ public class VerificationService {
         }
     }
 
-    public void sendVerificationEmail(UserEntity user, VerificationToken tokenEntity) throws EmailException {
+    public void sendVerificationEmail(User user, VerificationToken tokenEntity) throws EmailException {
         StringBuilder content = new StringBuilder();
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(FinancerService.class.getResourceAsStream("verification-email.html")))) {
             for (String line; (line = reader.readLine()) != null; ) {

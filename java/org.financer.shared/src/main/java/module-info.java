@@ -15,8 +15,10 @@ module org.financer.shared {
     requires commons.validator;
     requires java.validation;
 
+    uses javax.persistence.spi.PersistenceProvider;
+
     opens org.financer.shared.domain.model.api to com.google.gson, modelmapper;
-    opens org.financer.shared.domain.model.api.user to org.hibernate.validator;
+    opens org.financer.shared.domain.model.api.user to org.hibernate.validator, java.persistence;
     opens org.financer.shared.domain.model.api.category to org.hibernate.validator;
     opens org.financer.shared.domain.model.api.transaction to org.hibernate.validator;
     opens org.financer.shared.domain.model.value.objects to spring.core, org.hibernate.orm.core;

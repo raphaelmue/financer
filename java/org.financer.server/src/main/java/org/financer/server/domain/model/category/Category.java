@@ -2,7 +2,7 @@ package org.financer.server.domain.model.category;
 
 import org.financer.server.domain.model.DataEntity;
 import org.financer.server.domain.model.transaction.Transaction;
-import org.financer.server.domain.model.user.UserEntity;
+import org.financer.server.domain.model.user.User;
 import org.financer.server.domain.model.user.UserProperty;
 import org.financer.shared.domain.model.AmountProvider;
 import org.financer.shared.domain.model.value.objects.Amount;
@@ -13,6 +13,7 @@ import org.financer.util.collections.Tree;
 
 import javax.persistence.*;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -25,8 +26,8 @@ public class Category implements DataEntity, Tree, AmountProvider, UserProperty 
     @Column(name = "id")
     private long id;
 
-    @ManyToOne(targetEntity = UserEntity.class, optional = false)
-    private UserEntity user;
+    @ManyToOne(targetEntity = User.class, optional = false)
+    private User user;
 
     @Embedded
     private CategoryClass categoryClass;
@@ -113,11 +114,11 @@ public class Category implements DataEntity, Tree, AmountProvider, UserProperty 
         return this;
     }
 
-    public UserEntity getUser() {
+    public User getUser() {
         return user;
     }
 
-    public Category setUser(UserEntity user) {
+    public Category setUser(User user) {
         this.user = user;
         return this;
     }
@@ -159,5 +160,18 @@ public class Category implements DataEntity, Tree, AmountProvider, UserProperty 
     public Category setChildren(Set<Category> children) {
         this.children = children;
         return this;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Category category = (Category) o;
+        return id == category.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

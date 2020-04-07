@@ -7,7 +7,7 @@ import org.financer.server.domain.model.transaction.FixedTransaction;
 import org.financer.server.domain.model.transaction.VariableTransaction;
 import org.financer.server.domain.model.user.Setting;
 import org.financer.server.domain.model.user.Token;
-import org.financer.server.domain.model.user.UserEntity;
+import org.financer.server.domain.model.user.User;
 import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,7 +26,7 @@ public class FinancerServiceTest {
     @Autowired
     private SessionFactory sessionFactory;
 
-    private static UserEntity user;
+    private static User user;
     private static Token token;
     private static Setting settings;
     private static Category fixedCategory, variableCategory;

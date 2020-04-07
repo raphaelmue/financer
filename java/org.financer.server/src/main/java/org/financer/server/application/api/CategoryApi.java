@@ -22,7 +22,7 @@ public interface CategoryApi {
             value = "/categories",
             produces = {"application/json"},
             headers = "Accept=application/json")
-    ResponseEntity<CategoryDTO> createCategory(@NotNull @RequestBody CreateCategoryDTO category);
+    ResponseEntity<CategoryDTO> createCategory(@NotNull @Valid @RequestBody CreateCategoryDTO category);
 
     /**
      * Updates a specified category.

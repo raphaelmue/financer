@@ -1,9 +1,10 @@
 package org.financer.server.domain.service;
 
 import org.apache.commons.mail.EmailException;
+import org.financer.server.application.api.error.UniqueEmailViolationException;
 import org.financer.server.application.service.VerificationService;
 import org.financer.server.domain.model.user.Token;
-import org.financer.server.domain.model.user.UserEntity;
+import org.financer.server.domain.model.user.User;
 import org.financer.server.domain.model.user.VerificationToken;
 import org.financer.server.domain.repository.TokenRepository;
 import org.financer.server.domain.repository.UserRepository;
@@ -43,9 +44,9 @@ public class UserDomainService {
      * @param system    operating system of the users client
      * @return User object, if credentials are correct, null otherwise
      */
-    public Optional<UserEntity> checkCredentials(String email, String password, IPAddress ipAddress, OperatingSystem system) {
+    public Optional<User> checkCredentials(String email, String password, IPAddress ipAddress, OperatingSystem system) {
         logger.info("Checking users credentials.");
-        Optional<UserEntity> userOptional = userRepository.findByEmail(new Email(email));
+        Optional<User> userOptional = userRepository.findByEmail(new Email(email));
         if (userOptional.isPresent() && userOptional.get().getPassword().isEqualTo(password)) {
             logger.info("Credentials of user [{}, '{}'] are approved.",
                     userOptional.get().getId(), userOptional.get().getName());
@@ -62,7 +63,7 @@ public class UserDomainService {
      * @param tokenString token to be checked
      * @return User that owns this token
      */
-    public Optional<UserEntity> checkUsersToken(TokenString tokenString) {
+    public Optional<User> checkUsersToken(TokenString tokenString) {
         logger.info("Checking users token.");
 
         Optional<Token> tokenOptional = tokenRepository.getTokenByToken(tokenString);
@@ -76,14 +77,19 @@ public class UserDomainService {
     }
 
     /**
-     * Registers a new user and stores it into database.
+     * Registers a new user and stores it into database. If the email is already assigned to another user, an {@link
+     * UniqueEmailViolationException} exception is thrown. Furthermore a new token and verification token is generated.
      *
      * @param user            user to be inserted
      * @param ipAddress       IP address of the client
      * @param operatingSystem operating system of the client
      */
-    public UserEntity registerUser(UserEntity user, IPAddress ipAddress, OperatingSystem operatingSystem) {
-        UserEntity result = userRepository.save(user);
+    public User registerUser(User user, IPAddress ipAddress, OperatingSystem operatingSystem) {
+        if (userRepository.findByEmail(user.getEmail()).isPresent()) {
+            throw new UniqueEmailViolationException(user.getEmail());
+        }
+
+        User result = userRepository.save(user);
         this.generateOrUpdateToken(result, ipAddress, operatingSystem);
         this.generateVerificationToken(result);
         return result;
@@ -97,7 +103,7 @@ public class UserDomainService {
      * @param ipAddress       ip address of client
      * @param operatingSystem operating system of the client
      */
-    private void generateOrUpdateToken(UserEntity user, IPAddress ipAddress, OperatingSystem operatingSystem) {
+    private void generateOrUpdateToken(User user, IPAddress ipAddress, OperatingSystem operatingSystem) {
         Token token;
         Optional<Token> tokenOptional = tokenRepository.getTokenByIPAddress(user.getId(), ipAddress);
         if (tokenOptional.isPresent()) {
@@ -129,7 +135,7 @@ public class UserDomainService {
      *
      * @param user user for which the verification token should be generated
      */
-    private void generateVerificationToken(UserEntity user) {
+    private void generateVerificationToken(User user) {
         VerificationToken verificationToken = verificationTokenRepository.save(
                 new VerificationToken()
                         .setUser(user)
@@ -149,17 +155,17 @@ public class UserDomainService {
      * @param verificationToken verification token string
      * @return updated user or null if token is invalid
      */
-    public Optional<UserEntity> verifyUser(TokenString verificationToken) {
+    public Optional<User> verifyUser(TokenString verificationToken) {
         logger.info("Verifying new user.");
 
         Optional<VerificationToken> tokenOptional = verificationTokenRepository.findByToken(verificationToken);
         if (tokenOptional.isPresent() && tokenOptional.get().getExpireDate().isValid()) {
-            UserEntity userEntity = tokenOptional.get().getUser();
+            User user = tokenOptional.get().getUser();
             tokenOptional.get().setVerifyingDate(LocalDate.now());
             verificationTokenRepository.save(tokenOptional.get());
-            userEntity.setVerificationToken(tokenOptional.get());
-            logger.info("User [{}, '{}'] is verified.", userEntity.getId(), userEntity.getName());
-            return Optional.of(userEntity);
+            user.setVerificationToken(tokenOptional.get());
+            logger.info("User [{}, '{}'] is verified.", user.getId(), user.getName());
+            return Optional.of(user);
         }
         return Optional.empty();
     }
@@ -193,7 +199,7 @@ public class UserDomainService {
      */
     public boolean updatePassword(long userId, String oldPassword, String updatedPassword) {
         logger.info("Updating users password. ");
-        Optional<UserEntity> userOptional = userRepository.findById(userId);
+        Optional<User> userOptional = userRepository.findById(userId);
         if (userOptional.isPresent() && userOptional.get().getPassword().isEqualTo(oldPassword)) {
             userOptional.get().setPassword(new HashedPassword(updatedPassword));
             userRepository.save(userOptional.get());

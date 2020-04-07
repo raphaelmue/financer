@@ -4,6 +4,7 @@ import org.financer.shared.domain.model.api.DataTransferObject;
 import org.financer.shared.domain.model.value.objects.CategoryClass;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 /**
  * DTO for creating a new category.
@@ -11,6 +12,7 @@ import javax.validation.constraints.NotNull;
 public class CreateCategoryDTO implements DataTransferObject {
 
     @NotNull
+    @Size(min = 1, max = 64)
     private String name;
 
     @NotNull

@@ -13,7 +13,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "users")
-public class UserEntity implements DataEntity {
+public class User implements DataEntity {
     private static final long serialVersionUID = 8551108621522985674L;
 
     @Id
@@ -46,7 +46,8 @@ public class UserEntity implements DataEntity {
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
     private Set<Token> tokens = new HashSet<>();
 
-    private transient Token activeToken;
+    @Transient
+    private Token activeToken;
 
     @OneToOne(mappedBy = "user")
     private VerificationToken verificationToken;
@@ -70,7 +71,7 @@ public class UserEntity implements DataEntity {
         return id;
     }
 
-    public UserEntity setId(long id) {
+    public User setId(long id) {
         this.id = id;
         return this;
     }
@@ -79,7 +80,7 @@ public class UserEntity implements DataEntity {
         return email;
     }
 
-    public UserEntity setEmail(Email email) {
+    public User setEmail(Email email) {
         this.email = email;
         return this;
     }
@@ -88,7 +89,7 @@ public class UserEntity implements DataEntity {
         return password;
     }
 
-    public UserEntity setPassword(HashedPassword password) {
+    public User setPassword(HashedPassword password) {
         this.password = password;
         return this;
     }
@@ -97,7 +98,7 @@ public class UserEntity implements DataEntity {
         return name;
     }
 
-    public UserEntity setName(Name name) {
+    public User setName(Name name) {
         this.name = name;
         return this;
     }
@@ -106,7 +107,7 @@ public class UserEntity implements DataEntity {
         return birthDate;
     }
 
-    public UserEntity setBirthDate(BirthDate birthDate) {
+    public User setBirthDate(BirthDate birthDate) {
         this.birthDate = birthDate;
         return this;
     }
@@ -115,7 +116,7 @@ public class UserEntity implements DataEntity {
         return gender;
     }
 
-    public UserEntity setGender(Gender gender) {
+    public User setGender(Gender gender) {
         this.gender = gender;
         return this;
     }
@@ -124,7 +125,7 @@ public class UserEntity implements DataEntity {
         return categories;
     }
 
-    public UserEntity setCategories(Set<Category> categories) {
+    public User setCategories(Set<Category> categories) {
         this.categories = categories;
         return this;
     }
@@ -133,7 +134,7 @@ public class UserEntity implements DataEntity {
         return settings;
     }
 
-    public UserEntity setSettings(Map<String, Setting> settings) {
+    public User setSettings(Map<String, Setting> settings) {
         this.settings = settings;
         return this;
     }
@@ -142,7 +143,7 @@ public class UserEntity implements DataEntity {
         return tokens;
     }
 
-    public UserEntity setTokens(Set<Token> tokens) {
+    public User setTokens(Set<Token> tokens) {
         this.tokens = tokens;
         return this;
     }
@@ -156,7 +157,7 @@ public class UserEntity implements DataEntity {
         return activeToken;
     }
 
-    public UserEntity setActiveToken(Token activeToken) {
+    public User setActiveToken(Token activeToken) {
         this.activeToken = activeToken;
         return this;
     }
@@ -165,7 +166,7 @@ public class UserEntity implements DataEntity {
         return verificationToken;
     }
 
-    public UserEntity setVerificationToken(VerificationToken verificationToken) {
+    public User setVerificationToken(VerificationToken verificationToken) {
         this.verificationToken = verificationToken;
         return this;
     }

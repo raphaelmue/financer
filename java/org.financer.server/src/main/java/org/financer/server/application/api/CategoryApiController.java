@@ -6,6 +6,7 @@ import org.financer.server.domain.model.category.Category;
 import org.financer.server.domain.service.CategoryDomainService;
 import org.financer.shared.domain.model.api.category.CategoryDTO;
 import org.financer.shared.domain.model.api.category.CreateCategoryDTO;
+import org.financer.shared.domain.model.value.objects.CategoryClass;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -40,9 +41,12 @@ public class CategoryApiController implements CategoryApi {
     }
 
     @Override
-    public ResponseEntity<CategoryDTO> createCategory(@NotNull CreateCategoryDTO category) {
-        Category categoryEntity = modelMapper.map(category, Category.class);
-        categoryEntity.setUser(authenticationService.getAuthenticatedUser());
+    public ResponseEntity<CategoryDTO> createCategory(@NotNull @Valid CreateCategoryDTO category) {
+        Category categoryEntity = new Category()
+                .setUser(authenticationService.getAuthenticatedUser())
+                .setCategoryClass(new CategoryClass(category.getCategoryClass()))
+                .setParent(category.getParentId() == 0 ? null : new Category().setId(category.getParentId()))
+                .setName(category.getName());
         categoryEntity = categoryDomainService.createCategory(categoryEntity);
         return new ResponseEntity<>(modelMapper.map(categoryEntity, CategoryDTO.class), HttpStatus.OK);
     }

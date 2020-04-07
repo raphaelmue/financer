@@ -17,8 +17,8 @@ public class VerificationToken implements DataEntity {
     @Column(name = "id")
     private long id;
 
-    @OneToOne(targetEntity = UserEntity.class, optional = false)
-    private UserEntity user;
+    @OneToOne(targetEntity = User.class, optional = false)
+    private User user;
 
     @Embedded
     private TokenString token;
@@ -39,11 +39,11 @@ public class VerificationToken implements DataEntity {
         return this;
     }
 
-    public UserEntity getUser() {
+    public User getUser() {
         return user;
     }
 
-    public VerificationToken setUser(UserEntity user) {
+    public VerificationToken setUser(User user) {
         this.user = user;
         return this;
     }

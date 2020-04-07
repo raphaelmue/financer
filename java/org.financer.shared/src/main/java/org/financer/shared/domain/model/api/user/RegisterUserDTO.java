@@ -1,5 +1,6 @@
 package org.financer.shared.domain.model.api.user;
 
+import org.financer.shared.domain.model.api.DataTransferObject;
 import org.financer.shared.domain.model.value.objects.Gender;
 
 import javax.validation.constraints.Email;
@@ -7,18 +8,18 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
 
-public class RegisterUserDTO {
+public class RegisterUserDTO implements DataTransferObject {
 
     @NotNull
     @Email
     private String email;
 
     @NotNull
-    @Size(max = 64)
+    @Size(min = 1, max = 64)
     private String name;
 
     @NotNull
-    @Size(max = 64)
+    @Size(min = 1, max = 64)
     private String surname;
 
     @NotNull

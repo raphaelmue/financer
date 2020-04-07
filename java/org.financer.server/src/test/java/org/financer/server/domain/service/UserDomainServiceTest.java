@@ -4,7 +4,7 @@ import org.financer.server.application.FinancerServer;
 import org.financer.server.application.api.error.UnauthorizedOperationException;
 import org.financer.server.application.service.AuthenticationService;
 import org.financer.server.domain.model.user.Token;
-import org.financer.server.domain.model.user.UserEntity;
+import org.financer.server.domain.model.user.User;
 import org.financer.server.domain.model.user.VerificationToken;
 import org.financer.server.domain.repository.*;
 import org.financer.shared.domain.model.value.objects.*;
@@ -50,7 +50,7 @@ public class UserDomainServiceTest {
             .setExpireDate(new ExpireDate())
             .setToken(tokenString);
 
-    static final UserEntity user = new UserEntity()
+    static final User user = new User()
             .setId(1)
             .setEmail(new Email("test@test.com"))
             .setName(new Name("Test", "User"))
@@ -63,7 +63,7 @@ public class UserDomainServiceTest {
         token.setUser(user);
         verificationToken.setUser(user);
 
-        when(userRepository.save(any(UserEntity.class))).thenAnswer(i -> i.getArguments()[0]);
+        when(userRepository.save(any(User.class))).thenAnswer(i -> i.getArguments()[0]);
         when(userRepository.findByEmail(user.getEmail())).thenReturn(Optional.of(user));
         when(tokenRepository.save(any(Token.class))).thenAnswer(i -> i.getArguments()[0]);
         when(tokenRepository.findById(token.getId())).thenReturn(Optional.of(token));
@@ -74,7 +74,7 @@ public class UserDomainServiceTest {
 
     @Test
     public void checkCredentials() {
-        Optional<UserEntity> userToAssert = userDomainService.checkCredentials("test@test.com", "password",
+        Optional<User> userToAssert = userDomainService.checkCredentials("test@test.com", "password",
                 new IPAddress("192.168.0.1"), new OperatingSystem(OperatingSystem.Values.LINUX));
 
         assertThat(userToAssert).isPresent();
@@ -85,7 +85,7 @@ public class UserDomainServiceTest {
 
     @Test
     public void checkUsersToken() {
-        Optional<UserEntity> userToAssert = userDomainService.checkUsersToken(
+        Optional<User> userToAssert = userDomainService.checkUsersToken(
                 new TokenString("Z6XCS3tyyBlhPfsv7rMxLgfdyEOlUkv0CWSdbFYHCNX2wLlwpH97lJNP69Bny3XZ"));
 
         assertThat(userToAssert).isPresent();
@@ -94,7 +94,7 @@ public class UserDomainServiceTest {
 
     @Test
     public void registerUser() {
-        UserEntity userToAssert = userDomainService.registerUser(user, new IPAddress("192.168.0.1"),
+        User userToAssert = userDomainService.registerUser(user, new IPAddress("192.168.0.1"),
                 new OperatingSystem(OperatingSystem.Values.LINUX));
 
         assertThat(userToAssert).isNotNull();
@@ -106,7 +106,7 @@ public class UserDomainServiceTest {
 
     @Test
     public void verifyUser() {
-        Optional<UserEntity> userToAssert = userDomainService.verifyUser(tokenString);
+        Optional<User> userToAssert = userDomainService.verifyUser(tokenString);
 
         assertThat(userToAssert).isPresent();
         assertThat(userToAssert.get().isVerified()).isTrue();

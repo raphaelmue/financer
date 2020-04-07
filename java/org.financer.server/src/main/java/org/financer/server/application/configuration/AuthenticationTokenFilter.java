@@ -2,7 +2,7 @@ package org.financer.server.application.configuration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.financer.server.application.api.error.RestErrorMessage;
-import org.financer.server.domain.model.user.UserEntity;
+import org.financer.server.domain.model.user.User;
 import org.financer.server.domain.service.UserDomainService;
 import org.financer.shared.domain.model.value.objects.TokenString;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,7 +58,7 @@ public class AuthenticationTokenFilter extends OncePerRequestFilter {
         if (header != null && header.startsWith(TOKEN_PREFIX)) {
             tokenString = header.substring(7);
 
-            Optional<UserEntity> userOptional = userDomainService.checkUsersToken(new TokenString(tokenString));
+            Optional<User> userOptional = userDomainService.checkUsersToken(new TokenString(tokenString));
             if (userOptional.isPresent() && SecurityContextHolder.getContext().getAuthentication() == null) {
                 List<GrantedAuthority> authList = new ArrayList<>();
                 authList.add(new SimpleGrantedAuthority(REGISTERED_USER_ROLE));

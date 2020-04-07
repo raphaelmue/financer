@@ -1,6 +1,6 @@
 package org.financer.server.domain.repository;
 
-import org.financer.server.domain.model.user.UserEntity;
+import org.financer.server.domain.model.user.User;
 import org.financer.shared.domain.model.value.objects.Email;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,9 +18,9 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
 
     @Override
     @Transactional
-    public Optional<UserEntity> findByEmail(Email email) {
+    public Optional<User> findByEmail(Email email) {
         try {
-            return Optional.of(entityManager.createQuery("from UserEntity where email = :email", UserEntity.class)
+            return Optional.of(entityManager.createQuery("from User where email = :email", User.class)
                     .setParameter("email", email).getSingleResult());
         } catch (NoResultException ignored) {
         }

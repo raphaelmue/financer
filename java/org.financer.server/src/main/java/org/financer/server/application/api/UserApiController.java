@@ -2,7 +2,7 @@ package org.financer.server.application.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.financer.server.application.service.AuthenticationService;
-import org.financer.server.domain.model.user.UserEntity;
+import org.financer.server.domain.model.user.User;
 import org.financer.server.domain.service.UserDomainService;
 import org.financer.shared.domain.model.api.category.CategoryDTO;
 import org.financer.shared.domain.model.api.transaction.VariableTransactionDTO;
@@ -52,7 +52,7 @@ public class UserApiController implements UserApi {
 
     @Override
     public ResponseEntity<UserDTO> loginUser(@NotNull @Valid String email, @NotNull @Valid String password) {
-        Optional<UserEntity> userOptional = userDomainService.checkCredentials(email, password, new IPAddress(request.getRemoteAddr()), null);
+        Optional<User> userOptional = userDomainService.checkCredentials(email, password, new IPAddress(request.getRemoteAddr()), null);
         return userOptional.map(userEntity -> new ResponseEntity<>(modelMapper.map(userEntity, UserDTO.class), HttpStatus.OK))
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.FORBIDDEN));
     }
@@ -65,8 +65,8 @@ public class UserApiController implements UserApi {
 
     @Override
     public ResponseEntity<UserDTO> registerUser(@NotNull @Valid RegisterUserDTO registerUserDTO) {
-        UserEntity userEntity = userDomainService.registerUser(
-                new UserEntity()
+        User user = userDomainService.registerUser(
+                new User()
                         .setId(-1)
                         .setEmail(new Email(registerUserDTO.getEmail()))
                         .setName(new Name(registerUserDTO.getName(), registerUserDTO.getSurname()))
@@ -74,7 +74,7 @@ public class UserApiController implements UserApi {
                         .setBirthDate(new BirthDate(registerUserDTO.getBirthDate()))
                         .setGender(new Gender(registerUserDTO.getGender())),
                 new IPAddress(request.getRemoteAddr()), null);
-        return new ResponseEntity<>(modelMapper.map(userEntity, UserDTO.class), HttpStatus.OK);
+        return new ResponseEntity<>(modelMapper.map(user, UserDTO.class), HttpStatus.OK);
     }
 
     @Override
@@ -85,7 +85,7 @@ public class UserApiController implements UserApi {
     @Override
     public ResponseEntity<UserDTO> updateUsersPassword(@NotBlank @Min(1) Long userId, @NotNull @Valid String oldPassword,
                                                        @NotNull @Valid String newPassword) {
-        UserEntity authenticatedUser = authenticationService.getAuthenticatedUser();
+        User authenticatedUser = authenticationService.getAuthenticatedUser();
         if (authenticatedUser.getId() == userId && userDomainService.updatePassword(userId, oldPassword, newPassword)) {
             return new ResponseEntity<>(modelMapper.map(authenticatedUser, UserDTO.class), HttpStatus.OK);
         }
@@ -99,7 +99,7 @@ public class UserApiController implements UserApi {
 
     @Override
     public ResponseEntity<Object> verifyUser(@NotBlank @Min(1) Long userId, @NotNull @Valid String verificationToken) throws URISyntaxException {
-        Optional<UserEntity> userOptional = userDomainService.verifyUser(new TokenString(verificationToken));
+        Optional<User> userOptional = userDomainService.verifyUser(new TokenString(verificationToken));
 
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setLocation(new URI(""));

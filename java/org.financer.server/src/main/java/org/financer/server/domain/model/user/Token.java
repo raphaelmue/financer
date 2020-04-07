@@ -19,8 +19,8 @@ public class Token implements DataEntity, UserProperty {
     @Column(name = "id")
     private long id;
 
-    @ManyToOne(targetEntity = UserEntity.class, optional = false)
-    private UserEntity user;
+    @ManyToOne(targetEntity = User.class, optional = false)
+    private User user;
 
     @Embedded
     private TokenString token;
@@ -49,11 +49,11 @@ public class Token implements DataEntity, UserProperty {
         return this;
     }
 
-    public UserEntity getUser() {
+    public User getUser() {
         return user;
     }
 
-    public Token setUser(UserEntity user) {
+    public Token setUser(User user) {
         this.user = user;
         return this;
     }

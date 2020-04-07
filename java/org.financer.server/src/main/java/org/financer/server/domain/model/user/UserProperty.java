@@ -14,8 +14,8 @@ public interface UserProperty {
      *
      * @see UserProperty#isPropertyOfUser(long)
      */
-    default boolean isPropertyOfUser(UserEntity userEntity) {
-        return isPropertyOfUser(userEntity.getId());
+    default boolean isPropertyOfUser(User user) {
+        return isPropertyOfUser(user.getId());
     }
 
     /**
