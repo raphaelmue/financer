@@ -1,6 +1,6 @@
 package org.financer.server.domain.repository;
 
-import org.financer.server.domain.model.user.TokenEntity;
+import org.financer.server.domain.model.user.Token;
 import org.financer.shared.domain.model.value.objects.IPAddress;
 import org.financer.shared.domain.model.value.objects.TokenString;
 import org.springframework.stereotype.Repository;
@@ -19,9 +19,9 @@ public class TokenRepositoryCustomImpl implements TokenRepositoryCustom {
 
     @Override
     @Transactional
-    public Optional<TokenEntity> getTokenByToken(TokenString tokenString) {
+    public Optional<Token> getTokenByToken(TokenString tokenString) {
         try {
-            return Optional.of(entityManager.createQuery("from TokenEntity where token = :token", TokenEntity.class)
+            return Optional.of(entityManager.createQuery("from Token where token = :token", Token.class)
                     .setParameter("token", tokenString).getSingleResult());
         } catch (NoResultException ignored) {
         }
@@ -29,9 +29,9 @@ public class TokenRepositoryCustomImpl implements TokenRepositoryCustom {
     }
 
     @Override
-    public Optional<TokenEntity> getTokenByIPAddress(long userId, IPAddress ipAddress) {
+    public Optional<Token> getTokenByIPAddress(long userId, IPAddress ipAddress) {
         try {
-            return Optional.of(entityManager.createQuery("from TokenEntity where ipAddress = :ipAddress and user.id = :userId", TokenEntity.class)
+            return Optional.of(entityManager.createQuery("from Token where ipAddress = :ipAddress and user.id = :userId", Token.class)
                     .setParameter("ipAddress", ipAddress)
                     .setParameter("userId", userId).getSingleResult());
         } catch (NoResultException ignored) {

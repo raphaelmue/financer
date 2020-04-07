@@ -2,9 +2,9 @@ package org.financer.server.domain.service;
 
 import org.apache.commons.mail.EmailException;
 import org.financer.server.application.service.VerificationService;
-import org.financer.server.domain.model.user.TokenEntity;
+import org.financer.server.domain.model.user.Token;
 import org.financer.server.domain.model.user.UserEntity;
-import org.financer.server.domain.model.user.VerificationTokenEntity;
+import org.financer.server.domain.model.user.VerificationToken;
 import org.financer.server.domain.repository.TokenRepository;
 import org.financer.server.domain.repository.UserRepository;
 import org.financer.server.domain.repository.VerificationTokenRepository;
@@ -65,7 +65,7 @@ public class UserDomainService {
     public Optional<UserEntity> checkUsersToken(TokenString tokenString) {
         logger.info("Checking users token.");
 
-        Optional<TokenEntity> tokenOptional = tokenRepository.getTokenByToken(tokenString);
+        Optional<Token> tokenOptional = tokenRepository.getTokenByToken(tokenString);
         if (tokenOptional.isPresent() && tokenOptional.get().getExpireDate().isValid()) {
             logger.info("Token of user [{}, '{}'] is approved",
                     tokenOptional.get().getUser().getId(), tokenOptional.get().getUser().getName());
@@ -98,8 +98,8 @@ public class UserDomainService {
      * @param operatingSystem operating system of the client
      */
     private void generateOrUpdateToken(UserEntity user, IPAddress ipAddress, OperatingSystem operatingSystem) {
-        TokenEntity tokenEntity;
-        Optional<TokenEntity> tokenOptional = tokenRepository.getTokenByIPAddress(user.getId(), ipAddress);
+        Token token;
+        Optional<Token> tokenOptional = tokenRepository.getTokenByIPAddress(user.getId(), ipAddress);
         if (tokenOptional.isPresent()) {
             tokenOptional.get().isPropertyOfUser(user);
 
@@ -107,21 +107,21 @@ public class UserDomainService {
             if (tokenOptional.get().getExpireDate().isValid()) {
                 // update expire date
                 tokenOptional.get().setExpireDate(tokenOptional.get().getExpireDate().update());
-                tokenEntity = tokenRepository.save(tokenOptional.get());
+                token = tokenRepository.save(tokenOptional.get());
             } else {
                 throw new IllegalStateException("The given token is not valid.");
             }
         } else {
-            tokenEntity = tokenRepository.save(
-                    new TokenEntity()
+            token = tokenRepository.save(
+                    new Token()
                             .setUser(user)
                             .setToken(new TokenString())
                             .setIpAddress(ipAddress)
                             .setExpireDate(new ExpireDate())
                             .setOperatingSystem(operatingSystem));
         }
-        user.setActiveToken(tokenEntity);
-        user.getTokens().add(tokenEntity);
+        user.setActiveToken(token);
+        user.getTokens().add(token);
     }
 
     /**
@@ -130,8 +130,8 @@ public class UserDomainService {
      * @param user user for which the verification token should be generated
      */
     private void generateVerificationToken(UserEntity user) {
-        VerificationTokenEntity verificationToken = verificationTokenRepository.save(
-                new VerificationTokenEntity()
+        VerificationToken verificationToken = verificationTokenRepository.save(
+                new VerificationToken()
                         .setUser(user)
                         .setToken(new TokenString())
                         .setExpireDate(new ExpireDate()));
@@ -152,7 +152,7 @@ public class UserDomainService {
     public Optional<UserEntity> verifyUser(TokenString verificationToken) {
         logger.info("Verifying new user.");
 
-        Optional<VerificationTokenEntity> tokenOptional = verificationTokenRepository.findByToken(verificationToken);
+        Optional<VerificationToken> tokenOptional = verificationTokenRepository.findByToken(verificationToken);
         if (tokenOptional.isPresent() && tokenOptional.get().getExpireDate().isValid()) {
             UserEntity userEntity = tokenOptional.get().getUser();
             tokenOptional.get().setVerifyingDate(LocalDate.now());
@@ -173,7 +173,7 @@ public class UserDomainService {
      */
     public boolean deleteToken(long userId, long tokenId) {
         logger.info("Deleting token. ");
-        Optional<TokenEntity> tokenOptional = tokenRepository.findById(tokenId);
+        Optional<Token> tokenOptional = tokenRepository.findById(tokenId);
         if (tokenOptional.isPresent()) {
             tokenOptional.get().throwIfNotUsersProperty(userId);
             tokenRepository.delete(tokenOptional.get());

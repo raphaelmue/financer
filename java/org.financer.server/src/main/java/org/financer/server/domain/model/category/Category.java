@@ -1,7 +1,7 @@
 package org.financer.server.domain.model.category;
 
 import org.financer.server.domain.model.DataEntity;
-import org.financer.server.domain.model.transaction.TransactionEntity;
+import org.financer.server.domain.model.transaction.Transaction;
 import org.financer.server.domain.model.user.UserEntity;
 import org.financer.server.domain.model.user.UserProperty;
 import org.financer.shared.domain.model.AmountProvider;
@@ -17,7 +17,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "categories")
-public class CategoryEntity implements DataEntity, Tree, AmountProvider, UserProperty {
+public class Category implements DataEntity, Tree, AmountProvider, UserProperty {
     private static final long serialVersionUID = 5491420625985358596L;
 
     @Id
@@ -31,17 +31,17 @@ public class CategoryEntity implements DataEntity, Tree, AmountProvider, UserPro
     @Embedded
     private CategoryClass categoryClass;
 
-    @ManyToOne(targetEntity = CategoryEntity.class)
-    private CategoryEntity parent;
+    @ManyToOne(targetEntity = Category.class)
+    private Category parent;
 
     @Column(name = "name", nullable = false)
     private String name;
 
     @OneToMany(mappedBy = "parent")
-    private Set<CategoryEntity> children;
+    private Set<Category> children;
 
     @OneToMany(mappedBy = "category")
-    private Set<TransactionEntity> transactions = new HashSet<>();
+    private Set<Transaction> transactions = new HashSet<>();
 
     @Override
     public boolean isPropertyOfUser(long userId) {
@@ -108,7 +108,7 @@ public class CategoryEntity implements DataEntity, Tree, AmountProvider, UserPro
         return id;
     }
 
-    public CategoryEntity setId(long id) {
+    public Category setId(long id) {
         this.id = id;
         return this;
     }
@@ -117,7 +117,7 @@ public class CategoryEntity implements DataEntity, Tree, AmountProvider, UserPro
         return user;
     }
 
-    public CategoryEntity setUser(UserEntity user) {
+    public Category setUser(UserEntity user) {
         this.user = user;
         return this;
     }
@@ -126,19 +126,19 @@ public class CategoryEntity implements DataEntity, Tree, AmountProvider, UserPro
         return categoryClass;
     }
 
-    public CategoryEntity setCategoryClass(CategoryClass categoryClass) {
+    public Category setCategoryClass(CategoryClass categoryClass) {
         this.categoryClass = categoryClass;
         return this;
     }
 
     @Override
-    public CategoryEntity getParent() {
+    public Category getParent() {
         return parent;
     }
 
     @Override
-    public CategoryEntity setParent(Tree parent) {
-        this.parent = (CategoryEntity) parent;
+    public Category setParent(Tree parent) {
+        this.parent = (Category) parent;
         return this;
     }
 
@@ -146,17 +146,17 @@ public class CategoryEntity implements DataEntity, Tree, AmountProvider, UserPro
         return name;
     }
 
-    public CategoryEntity setName(String name) {
+    public Category setName(String name) {
         this.name = name;
         return this;
     }
 
     @Override
-    public Set<CategoryEntity> getChildren() {
+    public Set<Category> getChildren() {
         return children;
     }
 
-    public CategoryEntity setChildren(Set<CategoryEntity> children) {
+    public Category setChildren(Set<Category> children) {
         this.children = children;
         return this;
     }

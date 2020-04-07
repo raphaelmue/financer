@@ -1,7 +1,7 @@
 package org.financer.server.domain.service;
 
-import org.financer.server.domain.model.transaction.FixedTransactionEntity;
-import org.financer.server.domain.model.transaction.VariableTransactionEntity;
+import org.financer.server.domain.model.transaction.FixedTransaction;
+import org.financer.server.domain.model.transaction.VariableTransaction;
 import org.financer.server.domain.repository.CategoryRepository;
 import org.financer.server.domain.repository.FixedTransactionRepository;
 import org.financer.server.domain.repository.VariableTransactionRepository;
@@ -36,7 +36,7 @@ public class TransactionDomainService {
      * @param variableTransactionEntity transaction to insert
      * @return inserted transaction object
      */
-    public VariableTransactionEntity createVariableTransaction(long userId, VariableTransactionEntity variableTransactionEntity) {
+    public VariableTransaction createVariableTransaction(long userId, VariableTransaction variableTransactionEntity) {
         logger.info("Creating new variable transaction. ");
         if (variableTransactionEntity.getCategory() != null && categoryRepository.existsById(variableTransactionEntity.getCategory().getId())) {
             variableTransactionEntity.throwIfNotUsersProperty(userId);
@@ -52,7 +52,7 @@ public class TransactionDomainService {
      * @param variableTransactionId id of the transaction to delete
      */
     public void deleteVariableTransaction(long userId, long variableTransactionId) {
-        Optional<VariableTransactionEntity> variableTransactionOptional = variableTransactionRepository.findById(variableTransactionId);
+        Optional<VariableTransaction> variableTransactionOptional = variableTransactionRepository.findById(variableTransactionId);
         if (variableTransactionOptional.isPresent()) {
             variableTransactionOptional.get().throwIfNotUsersProperty(userId);
             variableTransactionRepository.deleteById(variableTransactionId);
@@ -64,44 +64,44 @@ public class TransactionDomainService {
      *
      * <p> First the transaction object is validated by checking the category, isVariable state and the users permission. </p>
      *
-     * <p> If there is an existing transaction that is active (see {@link FixedTransactionEntity#isActive()}) of the
-     * same category, it will be canceled (see {@link FixedTransactionEntity#cancel(LocalDate)}) on the start date of
+     * <p> If there is an existing transaction that is active (see {@link FixedTransaction#isActive()}) of the
+     * same category, it will be canceled (see {@link FixedTransaction#cancel(LocalDate)}) on the start date of
      * the new transaction. </p>
      *
      * @param userId                 id of the user
-     * @param fixedTransactionEntity fixed transaction to be inserted
+     * @param fixedTransaction fixed transaction to be inserted
      * @return inserted fixed transaction
      */
-    public FixedTransactionEntity createFixedTransaction(long userId, FixedTransactionEntity fixedTransactionEntity) {
+    public FixedTransaction createFixedTransaction(long userId, FixedTransaction fixedTransaction) {
         logger.info("Creating new fixed transaction.");
-        if (categoryRepository.existsById(fixedTransactionEntity.getCategory().getId())) {
+        if (categoryRepository.existsById(fixedTransaction.getCategory().getId())) {
 
-            fixedTransactionEntity.throwIfNotUsersProperty(userId);
+            fixedTransaction.throwIfNotUsersProperty(userId);
 
             // delete transaction amounts if transaction is not variable
-            if (fixedTransactionEntity.isVariable()) {
-                fixedTransactionEntity.setAmount(null);
+            if (fixedTransaction.isVariable()) {
+                fixedTransaction.setAmount(null);
             } else {
-                fixedTransactionEntity.setTransactionAmounts(new HashSet<>());
+                fixedTransaction.setTransactionAmounts(new HashSet<>());
 
                 // amount must not be empty if transaction is not variable
-                if (fixedTransactionEntity.getAmount() == null) {
+                if (fixedTransaction.getAmount() == null) {
                     // TODO implemented custom validator
                 }
             }
 
-            Optional<FixedTransactionEntity> activeTransactionOptional = fixedTransactionRepository.findActiveTransactionByCategory(
-                    fixedTransactionEntity.getCategory());
+            Optional<FixedTransaction> activeTransactionOptional = fixedTransactionRepository.findActiveTransactionByCategory(
+                    fixedTransaction.getCategory());
 
             // cancels the current fixed transaction if exists to the start date of the current transaction.
             if (activeTransactionOptional.isPresent()) {
-                activeTransactionOptional.get().cancel(fixedTransactionEntity.getTimeRange().getStartDate().minusDays(1));
+                activeTransactionOptional.get().cancel(fixedTransaction.getTimeRange().getStartDate().minusDays(1));
                 fixedTransactionRepository.save(activeTransactionOptional.get());
             }
 
-            return fixedTransactionRepository.save(fixedTransactionEntity);
+            return fixedTransactionRepository.save(fixedTransaction);
         }
-        throw new NoResultException(String.format("No category with id %d found!", fixedTransactionEntity.getCategory().getId()));
+        throw new NoResultException(String.format("No category with id %d found!", fixedTransaction.getCategory().getId()));
     }
 
     /**
@@ -111,7 +111,7 @@ public class TransactionDomainService {
      * @param fixedTransactionId id of the fixed transaction
      */
     public void deleteFixedTransaction(long userId, long fixedTransactionId) {
-        Optional<FixedTransactionEntity> fixedTransactionOptional = fixedTransactionRepository.findById(fixedTransactionId);
+        Optional<FixedTransaction> fixedTransactionOptional = fixedTransactionRepository.findById(fixedTransactionId);
         if (fixedTransactionOptional.isPresent()) {
             fixedTransactionOptional.get().throwIfNotUsersProperty(userId);
             fixedTransactionRepository.delete(fixedTransactionOptional.get());

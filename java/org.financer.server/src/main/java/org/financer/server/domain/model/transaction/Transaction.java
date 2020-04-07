@@ -1,7 +1,7 @@
 package org.financer.server.domain.model.transaction;
 
 import org.financer.server.domain.model.DataEntity;
-import org.financer.server.domain.model.category.CategoryEntity;
+import org.financer.server.domain.model.category.Category;
 import org.financer.server.domain.model.user.UserProperty;
 import org.financer.shared.domain.model.AmountProvider;
 import org.financer.shared.domain.model.value.objects.Amount;
@@ -12,15 +12,15 @@ import java.util.Set;
 
 @Entity
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
-public abstract class TransactionEntity implements DataEntity, AmountProvider, UserProperty {
+public abstract class Transaction implements DataEntity, AmountProvider, UserProperty {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "transaction_id_sequence")
     @Column(name = "id")
     private long id;
 
-    @ManyToOne(targetEntity = CategoryEntity.class, optional = false)
-    private CategoryEntity category;
+    @ManyToOne(targetEntity = Category.class, optional = false)
+    private Category category;
 
     @Embedded
     private Amount amount;
@@ -35,7 +35,7 @@ public abstract class TransactionEntity implements DataEntity, AmountProvider, U
     private String vendor;
 
     @OneToMany(mappedBy = "transaction")
-    private Set<AttachmentEntity> attachments = new HashSet<>();
+    private Set<Attachment> attachments = new HashSet<>();
 
     @Override
     public boolean isPropertyOfUser(long userId) {
@@ -62,16 +62,16 @@ public abstract class TransactionEntity implements DataEntity, AmountProvider, U
         return id;
     }
 
-    public TransactionEntity setId(long id) {
+    public Transaction setId(long id) {
         this.id = id;
         return this;
     }
 
-    public CategoryEntity getCategory() {
+    public Category getCategory() {
         return category;
     }
 
-    public TransactionEntity setCategory(CategoryEntity category) {
+    public Transaction setCategory(Category category) {
         this.category = category;
         return this;
     }
@@ -81,7 +81,7 @@ public abstract class TransactionEntity implements DataEntity, AmountProvider, U
         return amount;
     }
 
-    public TransactionEntity setAmount(Amount amount) {
+    public Transaction setAmount(Amount amount) {
         this.amount = amount;
         return this;
     }
@@ -90,7 +90,7 @@ public abstract class TransactionEntity implements DataEntity, AmountProvider, U
         return product;
     }
 
-    public TransactionEntity setProduct(String product) {
+    public Transaction setProduct(String product) {
         this.product = product;
         return this;
     }
@@ -99,7 +99,7 @@ public abstract class TransactionEntity implements DataEntity, AmountProvider, U
         return purpose;
     }
 
-    public TransactionEntity setPurpose(String purpose) {
+    public Transaction setPurpose(String purpose) {
         this.purpose = purpose;
         return this;
     }
@@ -108,16 +108,16 @@ public abstract class TransactionEntity implements DataEntity, AmountProvider, U
         return vendor;
     }
 
-    public TransactionEntity setVendor(String vendor) {
+    public Transaction setVendor(String vendor) {
         this.vendor = vendor;
         return this;
     }
 
-    public Set<AttachmentEntity> getAttachments() {
+    public Set<Attachment> getAttachments() {
         return attachments;
     }
 
-    public TransactionEntity setAttachments(Set<AttachmentEntity> attachments) {
+    public Transaction setAttachments(Set<Attachment> attachments) {
         this.attachments = attachments;
         return this;
     }

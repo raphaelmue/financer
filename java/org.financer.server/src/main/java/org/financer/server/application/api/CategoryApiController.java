@@ -2,7 +2,7 @@ package org.financer.server.application.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.financer.server.application.service.AuthenticationService;
-import org.financer.server.domain.model.category.CategoryEntity;
+import org.financer.server.domain.model.category.Category;
 import org.financer.server.domain.service.CategoryDomainService;
 import org.financer.shared.domain.model.api.category.CategoryDTO;
 import org.financer.shared.domain.model.api.category.CreateCategoryDTO;
@@ -41,7 +41,7 @@ public class CategoryApiController implements CategoryApi {
 
     @Override
     public ResponseEntity<CategoryDTO> createCategory(@NotNull CreateCategoryDTO category) {
-        CategoryEntity categoryEntity = modelMapper.map(category, CategoryEntity.class);
+        Category categoryEntity = modelMapper.map(category, Category.class);
         categoryEntity.setUser(authenticationService.getAuthenticatedUser());
         categoryEntity = categoryDomainService.createCategory(categoryEntity);
         return new ResponseEntity<>(modelMapper.map(categoryEntity, CategoryDTO.class), HttpStatus.OK);

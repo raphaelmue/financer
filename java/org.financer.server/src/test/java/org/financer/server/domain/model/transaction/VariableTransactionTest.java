@@ -1,6 +1,6 @@
 package org.financer.server.domain.model.transaction;
 
-import org.financer.server.domain.model.category.CategoryEntity;
+import org.financer.server.domain.model.category.Category;
 import org.financer.shared.domain.model.value.objects.Amount;
 import org.financer.shared.domain.model.value.objects.CategoryClass;
 import org.financer.shared.domain.model.value.objects.TimeRange;
@@ -14,16 +14,16 @@ import java.time.LocalDate;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Tag("unit")
-public class VariableTransactionEntityTest {
+public class VariableTransactionTest {
 
-    private VariableTransactionEntity variableTransaction;
+    private VariableTransaction variableTransaction;
 
     @BeforeEach
     public void setup() {
-        variableTransaction = new VariableTransactionEntity()
+        variableTransaction = new VariableTransaction()
                 .setAmount(new Amount(50))
                 .setValueDate(new ValueDate(LocalDate.now()))
-                .setCategory(new CategoryEntity()
+                .setCategory(new Category()
                         .setName("Test Category")
                         .setCategoryClass(new CategoryClass(CategoryClass.Values.FIXED_EXPENSES)))
                 .setProduct("Test Product")

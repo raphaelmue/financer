@@ -3,9 +3,9 @@ package org.financer.server.domain.service;
 import org.financer.server.application.FinancerServer;
 import org.financer.server.application.api.error.UnauthorizedOperationException;
 import org.financer.server.application.service.AuthenticationService;
-import org.financer.server.domain.model.user.TokenEntity;
+import org.financer.server.domain.model.user.Token;
 import org.financer.server.domain.model.user.UserEntity;
-import org.financer.server.domain.model.user.VerificationTokenEntity;
+import org.financer.server.domain.model.user.VerificationToken;
 import org.financer.server.domain.repository.*;
 import org.financer.shared.domain.model.value.objects.*;
 import org.junit.jupiter.api.BeforeEach;
@@ -38,14 +38,14 @@ public class UserDomainServiceTest {
     private static final TokenString tokenString =
             new TokenString("Z6XCS3tyyBlhPfsv7rMxLgfdyEOlUkv0CWSdbFYHCNX2wLlwpH97lJNP69Bny3XZ");
 
-    private static final TokenEntity token = new TokenEntity()
+    private static final Token token = new Token()
             .setId(1)
             .setExpireDate(new ExpireDate())
             .setIpAddress(new IPAddress("192.168.0.1"))
             .setToken(tokenString)
             .setOperatingSystem(new OperatingSystem(OperatingSystem.Values.LINUX));
 
-    private static final VerificationTokenEntity verificationToken = new VerificationTokenEntity()
+    private static final VerificationToken verificationToken = new VerificationToken()
             .setId(1)
             .setExpireDate(new ExpireDate())
             .setToken(tokenString);
@@ -65,10 +65,10 @@ public class UserDomainServiceTest {
 
         when(userRepository.save(any(UserEntity.class))).thenAnswer(i -> i.getArguments()[0]);
         when(userRepository.findByEmail(user.getEmail())).thenReturn(Optional.of(user));
-        when(tokenRepository.save(any(TokenEntity.class))).thenAnswer(i -> i.getArguments()[0]);
+        when(tokenRepository.save(any(Token.class))).thenAnswer(i -> i.getArguments()[0]);
         when(tokenRepository.findById(token.getId())).thenReturn(Optional.of(token));
         when(tokenRepository.getTokenByToken(tokenString)).thenReturn(Optional.of(token));
-        when(verificationTokenRepository.save(any(VerificationTokenEntity.class))).thenAnswer(i -> i.getArguments()[0]);
+        when(verificationTokenRepository.save(any(VerificationToken.class))).thenAnswer(i -> i.getArguments()[0]);
         when(verificationTokenRepository.findByToken(tokenString)).thenReturn(Optional.of(verificationToken));
     }
 

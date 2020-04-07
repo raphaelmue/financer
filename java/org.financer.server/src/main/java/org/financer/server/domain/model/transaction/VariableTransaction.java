@@ -1,6 +1,6 @@
 package org.financer.server.domain.model.transaction;
 
-import org.financer.server.domain.model.category.CategoryEntity;
+import org.financer.server.domain.model.category.Category;
 import org.financer.shared.domain.model.value.objects.Amount;
 import org.financer.shared.domain.model.value.objects.TimeRange;
 import org.financer.shared.domain.model.value.objects.ValueDate;
@@ -12,7 +12,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "variable_transactions")
-public class VariableTransactionEntity extends TransactionEntity {
+public class VariableTransaction extends Transaction {
     private static final long serialVersionUID = -118658876074097774L;
 
     @Embedded
@@ -44,49 +44,49 @@ public class VariableTransactionEntity extends TransactionEntity {
         return valueDate;
     }
 
-    public VariableTransactionEntity setValueDate(ValueDate valueDate) {
+    public VariableTransaction setValueDate(ValueDate valueDate) {
         this.valueDate = valueDate;
         return this;
     }
 
     @Override
-    public VariableTransactionEntity setId(long id) {
+    public VariableTransaction setId(long id) {
         super.setId(id);
         return this;
     }
 
     @Override
-    public VariableTransactionEntity setCategory(CategoryEntity category) {
+    public VariableTransaction setCategory(Category category) {
         super.setCategory(category);
         return this;
     }
 
     @Override
-    public VariableTransactionEntity setAmount(Amount amount) {
+    public VariableTransaction setAmount(Amount amount) {
         super.setAmount(amount);
         return this;
     }
 
     @Override
-    public VariableTransactionEntity setProduct(String product) {
+    public VariableTransaction setProduct(String product) {
         super.setProduct(product);
         return this;
     }
 
     @Override
-    public VariableTransactionEntity setPurpose(String purpose) {
+    public VariableTransaction setPurpose(String purpose) {
         super.setPurpose(purpose);
         return this;
     }
 
     @Override
-    public VariableTransactionEntity setVendor(String vendor) {
+    public VariableTransaction setVendor(String vendor) {
         super.setVendor(vendor);
         return this;
     }
 
     @Override
-    public VariableTransactionEntity setAttachments(Set<AttachmentEntity> attachments) {
+    public VariableTransaction setAttachments(Set<Attachment> attachments) {
         super.setAttachments(attachments);
         return this;
     }

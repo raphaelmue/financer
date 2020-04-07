@@ -1,6 +1,6 @@
 package org.financer.server.domain.model.transaction;
 
-import org.financer.server.domain.model.category.CategoryEntity;
+import org.financer.server.domain.model.category.Category;
 import org.financer.shared.domain.model.value.objects.Amount;
 import org.financer.shared.domain.model.value.objects.TimeRange;
 import org.financer.shared.domain.model.value.objects.ValueDate;
@@ -12,7 +12,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "fixed_transactions")
-public class FixedTransactionEntity extends TransactionEntity {
+public class FixedTransaction extends Transaction {
     private static final long serialVersionUID = 8295185142317654835L;
 
     @Embedded
@@ -25,7 +25,7 @@ public class FixedTransactionEntity extends TransactionEntity {
     private int day;
 
     @OneToMany(mappedBy = "fixedTransaction", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<FixedTransactionAmountEntity> transactionAmounts = new HashSet<>();
+    private Set<FixedTransactionAmount> transactionAmounts = new HashSet<>();
 
     /**
      * Indicates whether this transaction is active, i.e. whether the time range of this transaction includes the
@@ -59,7 +59,7 @@ public class FixedTransactionEntity extends TransactionEntity {
         if (this.timeRange.includes(valueDate)) {
             if (this.isVariable) {
                 if (this.transactionAmounts != null) {
-                    for (FixedTransactionAmountEntity transactionAmount : this.transactionAmounts) {
+                    for (FixedTransactionAmount transactionAmount : this.transactionAmounts) {
                         result = result.add(transactionAmount.getAmount(valueDate));
                     }
                 }
@@ -76,7 +76,7 @@ public class FixedTransactionEntity extends TransactionEntity {
         Amount result = new Amount();
 
         if (this.isVariable) {
-            for (FixedTransactionAmountEntity transactionAmount : this.transactionAmounts) {
+            for (FixedTransactionAmount transactionAmount : this.transactionAmounts) {
                 result = result.add(transactionAmount.getAmount(timeRange));
             }
         } else {
@@ -90,7 +90,7 @@ public class FixedTransactionEntity extends TransactionEntity {
     @Override
     public void adjustAmountSign() {
         if (this.isVariable) {
-            for (FixedTransactionAmountEntity transactionAmount : this.getTransactionAmounts()) {
+            for (FixedTransactionAmount transactionAmount : this.getTransactionAmounts()) {
                 if ((this.getCategory().getCategoryClass().isRevenue() && transactionAmount.getAmount().isNegative()) ||
                         (!this.getCategory().getCategoryClass().isRevenue() && transactionAmount.getAmount().isPositive())) {
                     transactionAmount.setAmount(new Amount(transactionAmount.getAmount().getAmount() * (-1)));
@@ -106,43 +106,43 @@ public class FixedTransactionEntity extends TransactionEntity {
      */
 
     @Override
-    public FixedTransactionEntity setId(long id) {
+    public FixedTransaction setId(long id) {
         super.setId(id);
         return this;
     }
 
     @Override
-    public FixedTransactionEntity setCategory(CategoryEntity category) {
+    public FixedTransaction setCategory(Category category) {
         super.setCategory(category);
         return this;
     }
 
     @Override
-    public FixedTransactionEntity setAmount(Amount amount) {
+    public FixedTransaction setAmount(Amount amount) {
         super.setAmount(amount);
         return this;
     }
 
     @Override
-    public FixedTransactionEntity setProduct(String product) {
+    public FixedTransaction setProduct(String product) {
         super.setProduct(product);
         return this;
     }
 
     @Override
-    public FixedTransactionEntity setPurpose(String purpose) {
+    public FixedTransaction setPurpose(String purpose) {
         super.setPurpose(purpose);
         return this;
     }
 
     @Override
-    public FixedTransactionEntity setVendor(String vendor) {
+    public FixedTransaction setVendor(String vendor) {
         super.setVendor(vendor);
         return this;
     }
 
     @Override
-    public FixedTransactionEntity setAttachments(Set<AttachmentEntity> attachments) {
+    public FixedTransaction setAttachments(Set<Attachment> attachments) {
         super.setAttachments(attachments);
         return this;
     }
@@ -151,7 +151,7 @@ public class FixedTransactionEntity extends TransactionEntity {
         return timeRange;
     }
 
-    public FixedTransactionEntity setTimeRange(TimeRange timeRange) {
+    public FixedTransaction setTimeRange(TimeRange timeRange) {
         this.timeRange = timeRange;
         return this;
     }
@@ -160,7 +160,7 @@ public class FixedTransactionEntity extends TransactionEntity {
         return isVariable;
     }
 
-    public FixedTransactionEntity setVariable(boolean variable) {
+    public FixedTransaction setVariable(boolean variable) {
         isVariable = variable;
         return this;
     }
@@ -169,16 +169,16 @@ public class FixedTransactionEntity extends TransactionEntity {
         return day;
     }
 
-    public FixedTransactionEntity setDay(int day) {
+    public FixedTransaction setDay(int day) {
         this.day = day;
         return this;
     }
 
-    public Set<FixedTransactionAmountEntity> getTransactionAmounts() {
+    public Set<FixedTransactionAmount> getTransactionAmounts() {
         return transactionAmounts;
     }
 
-    public FixedTransactionEntity setTransactionAmounts(Set<FixedTransactionAmountEntity> transactionAmounts) {
+    public FixedTransaction setTransactionAmounts(Set<FixedTransactionAmount> transactionAmounts) {
         this.transactionAmounts = transactionAmounts;
         return this;
     }

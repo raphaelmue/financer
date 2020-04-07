@@ -1,6 +1,6 @@
 package org.financer.server.domain.service;
 
-import org.financer.server.domain.model.category.CategoryEntity;
+import org.financer.server.domain.model.category.Category;
 import org.financer.server.domain.repository.CategoryRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,11 +18,11 @@ public class CategoryDomainService {
     /**
      * Inserts a new category into database.
      *
-     * @param categoryEntity category to be inserted
+     * @param category category to be inserted
      * @return inserted category
      */
-    public CategoryEntity createCategory(CategoryEntity categoryEntity) {
-        return categoryRepository.save(categoryEntity);
+    public Category createCategory(Category category) {
+        return categoryRepository.save(category);
     }
 
 }

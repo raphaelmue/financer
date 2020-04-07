@@ -7,7 +7,7 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "settings", uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "property"}))
-public class SettingEntity implements DataEntity {
+public class Setting implements DataEntity {
     private static final long serialVersionUID = 3324663296387062431L;
 
     @Id
@@ -26,7 +26,7 @@ public class SettingEntity implements DataEntity {
         return id;
     }
 
-    public SettingEntity setId(long id) {
+    public Setting setId(long id) {
         this.id = id;
         return this;
     }
@@ -35,7 +35,7 @@ public class SettingEntity implements DataEntity {
         return user;
     }
 
-    public SettingEntity setUser(UserEntity user) {
+    public Setting setUser(UserEntity user) {
         this.user = user;
         return this;
     }
@@ -44,7 +44,7 @@ public class SettingEntity implements DataEntity {
         return pair;
     }
 
-    public SettingEntity setPair(SettingPair pair) {
+    public Setting setPair(SettingPair pair) {
         this.pair = pair;
         return this;
     }

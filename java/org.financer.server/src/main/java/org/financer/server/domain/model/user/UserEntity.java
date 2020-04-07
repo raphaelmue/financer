@@ -2,7 +2,7 @@ package org.financer.server.domain.model.user;
 
 
 import org.financer.server.domain.model.DataEntity;
-import org.financer.server.domain.model.category.CategoryEntity;
+import org.financer.server.domain.model.category.Category;
 import org.financer.shared.domain.model.value.objects.*;
 
 import javax.persistence.*;
@@ -37,19 +37,19 @@ public class UserEntity implements DataEntity {
     private Gender gender;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-    private Set<CategoryEntity> categories = new HashSet<>();
+    private Set<Category> categories = new HashSet<>();
 
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @MapKey(name = "pair.property")
-    private Map<String, SettingEntity> settings;
+    private Map<String, Setting> settings;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
-    private Set<TokenEntity> tokens = new HashSet<>();
+    private Set<Token> tokens = new HashSet<>();
 
-    private transient TokenEntity activeToken;
+    private transient Token activeToken;
 
     @OneToOne(mappedBy = "user")
-    private VerificationTokenEntity verificationToken;
+    private VerificationToken verificationToken;
 
     /**
      * Indicates whether the email of the user is verified.
@@ -120,29 +120,29 @@ public class UserEntity implements DataEntity {
         return this;
     }
 
-    public Set<CategoryEntity> getCategories() {
+    public Set<Category> getCategories() {
         return categories;
     }
 
-    public UserEntity setCategories(Set<CategoryEntity> categories) {
+    public UserEntity setCategories(Set<Category> categories) {
         this.categories = categories;
         return this;
     }
 
-    public Map<String, SettingEntity> getSettings() {
+    public Map<String, Setting> getSettings() {
         return settings;
     }
 
-    public UserEntity setSettings(Map<String, SettingEntity> settings) {
+    public UserEntity setSettings(Map<String, Setting> settings) {
         this.settings = settings;
         return this;
     }
 
-    public Set<TokenEntity> getTokens() {
+    public Set<Token> getTokens() {
         return tokens;
     }
 
-    public UserEntity setTokens(Set<TokenEntity> tokens) {
+    public UserEntity setTokens(Set<Token> tokens) {
         this.tokens = tokens;
         return this;
     }
@@ -152,20 +152,20 @@ public class UserEntity implements DataEntity {
      *
      * @return
      */
-    public TokenEntity getActiveToken() {
+    public Token getActiveToken() {
         return activeToken;
     }
 
-    public UserEntity setActiveToken(TokenEntity activeToken) {
+    public UserEntity setActiveToken(Token activeToken) {
         this.activeToken = activeToken;
         return this;
     }
 
-    public VerificationTokenEntity getVerificationToken() {
+    public VerificationToken getVerificationToken() {
         return verificationToken;
     }
 
-    public UserEntity setVerificationToken(VerificationTokenEntity verificationToken) {
+    public UserEntity setVerificationToken(VerificationToken verificationToken) {
         this.verificationToken = verificationToken;
         return this;
     }

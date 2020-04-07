@@ -10,7 +10,7 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "fixed_transactions_amounts")
-public class FixedTransactionAmountEntity implements DataEntity, AmountProvider {
+public class FixedTransactionAmount implements DataEntity, AmountProvider {
     private static final long serialVersionUID = -3901962625430867317L;
 
     @Id
@@ -18,8 +18,8 @@ public class FixedTransactionAmountEntity implements DataEntity, AmountProvider 
     @Column(name = "id")
     private long id;
 
-    @ManyToOne(targetEntity = FixedTransactionEntity.class, fetch = FetchType.EAGER, optional = false)
-    private FixedTransactionEntity fixedTransaction;
+    @ManyToOne(targetEntity = FixedTransaction.class, fetch = FetchType.EAGER, optional = false)
+    private FixedTransaction fixedTransaction;
 
     @Embedded
     private ValueDate valueDate;
@@ -58,11 +58,11 @@ public class FixedTransactionAmountEntity implements DataEntity, AmountProvider 
         this.id = id;
     }
 
-    protected FixedTransactionEntity getFixedTransaction() {
+    protected FixedTransaction getFixedTransaction() {
         return fixedTransaction;
     }
 
-    public FixedTransactionAmountEntity setFixedTransaction(FixedTransactionEntity fixedTransaction) {
+    public FixedTransactionAmount setFixedTransaction(FixedTransaction fixedTransaction) {
         this.fixedTransaction = fixedTransaction;
         return this;
     }
@@ -71,7 +71,7 @@ public class FixedTransactionAmountEntity implements DataEntity, AmountProvider 
         return valueDate;
     }
 
-    public FixedTransactionAmountEntity setValueDate(ValueDate valueDate) {
+    public FixedTransactionAmount setValueDate(ValueDate valueDate) {
         this.valueDate = valueDate;
         return this;
     }
@@ -81,7 +81,7 @@ public class FixedTransactionAmountEntity implements DataEntity, AmountProvider 
         return amount;
     }
 
-    public FixedTransactionAmountEntity setAmount(Amount amount) {
+    public FixedTransactionAmount setAmount(Amount amount) {
         this.amount = amount;
         return this;
     }

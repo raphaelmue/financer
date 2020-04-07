@@ -11,7 +11,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "tokens", uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "token"}))
-public class TokenEntity implements DataEntity, UserProperty {
+public class Token implements DataEntity, UserProperty {
     private static final long serialVersionUID = 8834445127500149942L;
 
     @Id
@@ -44,7 +44,7 @@ public class TokenEntity implements DataEntity, UserProperty {
         return id;
     }
 
-    public TokenEntity setId(long id) {
+    public Token setId(long id) {
         this.id = id;
         return this;
     }
@@ -53,7 +53,7 @@ public class TokenEntity implements DataEntity, UserProperty {
         return user;
     }
 
-    public TokenEntity setUser(UserEntity user) {
+    public Token setUser(UserEntity user) {
         this.user = user;
         return this;
     }
@@ -62,7 +62,7 @@ public class TokenEntity implements DataEntity, UserProperty {
         return token;
     }
 
-    public TokenEntity setToken(TokenString token) {
+    public Token setToken(TokenString token) {
         this.token = token;
         return this;
     }
@@ -71,7 +71,7 @@ public class TokenEntity implements DataEntity, UserProperty {
         return expireDate;
     }
 
-    public TokenEntity setExpireDate(ExpireDate expireDate) {
+    public Token setExpireDate(ExpireDate expireDate) {
         this.expireDate = expireDate;
         return this;
     }
@@ -80,7 +80,7 @@ public class TokenEntity implements DataEntity, UserProperty {
         return ipAddress;
     }
 
-    public TokenEntity setIpAddress(IPAddress ipAddress) {
+    public Token setIpAddress(IPAddress ipAddress) {
         this.ipAddress = ipAddress;
         return this;
     }
@@ -89,7 +89,7 @@ public class TokenEntity implements DataEntity, UserProperty {
         return operatingSystem;
     }
 
-    public TokenEntity setOperatingSystem(OperatingSystem operatingSystem) {
+    public Token setOperatingSystem(OperatingSystem operatingSystem) {
         this.operatingSystem = operatingSystem;
         return this;
     }
@@ -98,7 +98,7 @@ public class TokenEntity implements DataEntity, UserProperty {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        TokenEntity that = (TokenEntity) o;
+        Token that = (Token) o;
         if (this.id >= 0) {
             return id == that.id;
         } else {

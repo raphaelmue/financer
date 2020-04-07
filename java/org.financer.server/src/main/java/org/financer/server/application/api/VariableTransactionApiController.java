@@ -2,7 +2,7 @@ package org.financer.server.application.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.financer.server.application.service.AuthenticationService;
-import org.financer.server.domain.model.transaction.VariableTransactionEntity;
+import org.financer.server.domain.model.transaction.VariableTransaction;
 import org.financer.server.domain.service.TransactionDomainService;
 import org.financer.shared.domain.model.api.transaction.AttachmentDTO;
 import org.financer.shared.domain.model.api.transaction.VariableTransactionDTO;
@@ -43,7 +43,7 @@ public class VariableTransactionApiController implements VariableTransactionApi 
 
     @Override
     public ResponseEntity<VariableTransactionDTO> createTransaction(@NotNull @Valid VariableTransactionDTO variableTransaction) {
-        VariableTransactionEntity variableTransactionEntity = modelMapper.map(variableTransaction, VariableTransactionEntity.class);
+        VariableTransaction variableTransactionEntity = modelMapper.map(variableTransaction, VariableTransaction.class);
         variableTransactionEntity = transactionDomainService.createVariableTransaction(authenticationService.getUserId(), variableTransactionEntity);
         return new ResponseEntity<>(modelMapper.map(variableTransactionEntity, VariableTransactionDTO.class), HttpStatus.OK);
     }

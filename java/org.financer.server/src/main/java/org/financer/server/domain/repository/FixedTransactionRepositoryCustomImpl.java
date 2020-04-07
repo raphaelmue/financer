@@ -1,7 +1,7 @@
 package org.financer.server.domain.repository;
 
-import org.financer.server.domain.model.category.CategoryEntity;
-import org.financer.server.domain.model.transaction.FixedTransactionEntity;
+import org.financer.server.domain.model.category.Category;
+import org.financer.server.domain.model.transaction.FixedTransaction;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,10 +18,10 @@ public class FixedTransactionRepositoryCustomImpl implements FixedTransactionRep
 
     @Override
     @Transactional
-    public Optional<FixedTransactionEntity> findActiveTransactionByCategory(CategoryEntity categoryEntity) {
+    public Optional<FixedTransaction> findActiveTransactionByCategory(Category category) {
         try {
-            return Optional.of(entityManager.createQuery("from FixedTransactionEntity where category.id = :categoryId and end_date is null", FixedTransactionEntity.class)
-                    .setParameter("categoryId", categoryEntity.getId())
+            return Optional.of(entityManager.createQuery("from FixedTransaction where category.id = :categoryId and end_date is null", FixedTransaction.class)
+                    .setParameter("categoryId", category.getId())
                     .getSingleResult());
         } catch (NoResultException ignored) {
         }

@@ -1,6 +1,6 @@
 package org.financer.server.domain.model.transaction;
 
-import org.financer.server.domain.model.category.CategoryEntity;
+import org.financer.server.domain.model.category.Category;
 import org.financer.shared.domain.model.value.objects.Amount;
 import org.financer.shared.domain.model.value.objects.CategoryClass;
 import org.financer.shared.domain.model.value.objects.TimeRange;
@@ -15,16 +15,16 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Tag("unit")
-class FixedTransactionEntityTest {
+class FixedTransactionTest {
 
-    private FixedTransactionEntity fixedTransaction;
+    private FixedTransaction fixedTransaction;
 
     @BeforeEach
     public void setup() {
-        fixedTransaction = new FixedTransactionEntity()
+        fixedTransaction = new FixedTransaction()
                 .setAmount(new Amount(50.0))
                 .setTimeRange(new TimeRange(LocalDate.now().minusMonths(6)))
-                .setCategory(new CategoryEntity()
+                .setCategory(new Category()
                         .setName("Test Category")
                         .setCategoryClass(new CategoryClass(CategoryClass.Values.FIXED_EXPENSES)))
                 .setProduct("Test Product")
@@ -32,9 +32,9 @@ class FixedTransactionEntityTest {
                 .setDay(1)
                 .setVariable(false);
 
-        final Set<FixedTransactionAmountEntity> transactionAmounts = new HashSet<>();
+        final Set<FixedTransactionAmount> transactionAmounts = new HashSet<>();
         for (int i = 0; i < 6; i++) {
-            transactionAmounts.add(new FixedTransactionAmountEntity()
+            transactionAmounts.add(new FixedTransactionAmount()
                     .setFixedTransaction(fixedTransaction)
                     .setAmount(new Amount(Math.pow(2, i)))
                     .setValueDate(new ValueDate(LocalDate.now().minusMonths(i))));

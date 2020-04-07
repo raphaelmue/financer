@@ -8,7 +8,7 @@ import java.time.LocalDate;
 
 @Entity
 @Table(name = "attachments")
-public class AttachmentEntity implements DataEntity, UserProperty {
+public class Attachment implements DataEntity, UserProperty {
     private static final long serialVersionUID = 7758316425770345150L;
 
     @Id
@@ -16,8 +16,8 @@ public class AttachmentEntity implements DataEntity, UserProperty {
     @Column(name = "id")
     private long id;
 
-    @ManyToOne(targetEntity = TransactionEntity.class, optional = false)
-    private TransactionEntity transaction;
+    @ManyToOne(targetEntity = Transaction.class, optional = false)
+    private Transaction transaction;
 
     @Column(name = "name", nullable = false)
     private String name;
@@ -47,11 +47,11 @@ public class AttachmentEntity implements DataEntity, UserProperty {
         this.id = id;
     }
 
-    public TransactionEntity getTransaction() {
+    public Transaction getTransaction() {
         return transaction;
     }
 
-    public void setTransaction(TransactionEntity transaction) {
+    public void setTransaction(Transaction transaction) {
         this.transaction = transaction;
     }
 

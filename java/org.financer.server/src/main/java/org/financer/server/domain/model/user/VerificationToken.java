@@ -10,7 +10,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "verification_tokens", uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "token"}))
-public class VerificationTokenEntity implements DataEntity {
+public class VerificationToken implements DataEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,7 +34,7 @@ public class VerificationTokenEntity implements DataEntity {
         return id;
     }
 
-    public VerificationTokenEntity setId(long id) {
+    public VerificationToken setId(long id) {
         this.id = id;
         return this;
     }
@@ -43,7 +43,7 @@ public class VerificationTokenEntity implements DataEntity {
         return user;
     }
 
-    public VerificationTokenEntity setUser(UserEntity user) {
+    public VerificationToken setUser(UserEntity user) {
         this.user = user;
         return this;
     }
@@ -52,7 +52,7 @@ public class VerificationTokenEntity implements DataEntity {
         return token;
     }
 
-    public VerificationTokenEntity setToken(TokenString token) {
+    public VerificationToken setToken(TokenString token) {
         this.token = token;
         return this;
     }
@@ -61,7 +61,7 @@ public class VerificationTokenEntity implements DataEntity {
         return expireDate;
     }
 
-    public VerificationTokenEntity setExpireDate(ExpireDate expireDate) {
+    public VerificationToken setExpireDate(ExpireDate expireDate) {
         this.expireDate = expireDate;
         return this;
     }
@@ -78,7 +78,7 @@ public class VerificationTokenEntity implements DataEntity {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        VerificationTokenEntity that = (VerificationTokenEntity) o;
+        VerificationToken that = (VerificationToken) o;
         return id == that.id &&
                 Objects.equals(token, that.token);
     }

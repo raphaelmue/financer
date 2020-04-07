@@ -3,8 +3,8 @@ package org.financer.server.domain.service;
 import org.financer.server.application.FinancerServer;
 import org.financer.server.application.api.error.UnauthorizedOperationException;
 import org.financer.server.application.service.AuthenticationService;
-import org.financer.server.domain.model.category.CategoryEntity;
-import org.financer.server.domain.model.transaction.VariableTransactionEntity;
+import org.financer.server.domain.model.category.Category;
+import org.financer.server.domain.model.transaction.VariableTransaction;
 import org.financer.server.domain.repository.*;
 import org.financer.shared.domain.model.value.objects.Amount;
 import org.financer.shared.domain.model.value.objects.CategoryClass;
@@ -34,14 +34,14 @@ public class TransactionDomainServiceTest {
     @Autowired
     private TransactionDomainService transactionDomainService;
 
-    private CategoryEntity category = new CategoryEntity()
+    private Category category = new Category()
             .setId(1)
             .setUser(UserDomainServiceTest.user)
             .setCategoryClass(new CategoryClass(CategoryClass.Values.VARIABLE_EXPENSES))
             .setName("Test Category")
             .setParent(null);
 
-    private VariableTransactionEntity variableTransaction = new VariableTransactionEntity()
+    private VariableTransaction variableTransaction = new VariableTransaction()
             .setId(1)
             .setValueDate(new ValueDate())
             .setCategory(category)
@@ -56,7 +56,7 @@ public class TransactionDomainServiceTest {
         when(categoryRepository.existsById(1L)).thenReturn(true);
         when(variableTransactionRepository.findById(any())).thenReturn(Optional.empty());
         when(variableTransactionRepository.findById(1L)).thenReturn(Optional.of(variableTransaction));
-        when(variableTransactionRepository.save(any(VariableTransactionEntity.class))).thenAnswer(i -> i.getArguments()[0]);
+        when(variableTransactionRepository.save(any(VariableTransaction.class))).thenAnswer(i -> i.getArguments()[0]);
     }
 
     @Test
@@ -64,7 +64,7 @@ public class TransactionDomainServiceTest {
         assertThatExceptionOfType(UnauthorizedOperationException.class).isThrownBy(
                 () -> transactionDomainService.createVariableTransaction(-1, variableTransaction));
 
-        VariableTransactionEntity transactionToAssert = transactionDomainService.createVariableTransaction(UserDomainServiceTest.user.getId(), variableTransaction);
+        VariableTransaction transactionToAssert = transactionDomainService.createVariableTransaction(UserDomainServiceTest.user.getId(), variableTransaction);
         assertThat(transactionToAssert)
                 .isEqualTo(variableTransaction);
         assertThat(variableTransactionRepository.findById(1L)).isPresent().get()

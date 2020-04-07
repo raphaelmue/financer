@@ -2,11 +2,11 @@ package org.financer.server.application.service;
 
 import org.financer.server.application.configuration.PersistenceConfiguration;
 import org.financer.server.application.configuration.ServiceConfiguration;
-import org.financer.server.domain.model.category.CategoryEntity;
-import org.financer.server.domain.model.transaction.FixedTransactionEntity;
-import org.financer.server.domain.model.transaction.VariableTransactionEntity;
-import org.financer.server.domain.model.user.SettingEntity;
-import org.financer.server.domain.model.user.TokenEntity;
+import org.financer.server.domain.model.category.Category;
+import org.financer.server.domain.model.transaction.FixedTransaction;
+import org.financer.server.domain.model.transaction.VariableTransaction;
+import org.financer.server.domain.model.user.Setting;
+import org.financer.server.domain.model.user.Token;
 import org.financer.server.domain.model.user.UserEntity;
 import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.Tag;
@@ -27,11 +27,11 @@ public class FinancerServiceTest {
     private SessionFactory sessionFactory;
 
     private static UserEntity user;
-    private static TokenEntity token;
-    private static SettingEntity settings;
-    private static CategoryEntity fixedCategory, variableCategory;
-    private static VariableTransactionEntity variableTransaction;
-    private static FixedTransactionEntity fixedTransaction;
+    private static Token token;
+    private static Setting settings;
+    private static Category fixedCategory, variableCategory;
+    private static VariableTransaction variableTransaction;
+    private static FixedTransaction fixedTransaction;
 
 //    @BeforeEach
 //    @Transactional
