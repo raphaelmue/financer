@@ -29,10 +29,11 @@ public class TokenRepositoryCustomImpl implements TokenRepositoryCustom {
     }
 
     @Override
-    public Optional<TokenEntity> getTokenByIPAddress(IPAddress ipAddress) {
+    public Optional<TokenEntity> getTokenByIPAddress(long userId, IPAddress ipAddress) {
         try {
-            return Optional.of(entityManager.createQuery("from TokenEntity where ipAddress = :ipAddress", TokenEntity.class)
-                    .setParameter("ipAddress", ipAddress).getSingleResult());
+            return Optional.of(entityManager.createQuery("from TokenEntity where ipAddress = :ipAddress and user.id = :userId", TokenEntity.class)
+                    .setParameter("ipAddress", ipAddress)
+                    .setParameter("userId", userId).getSingleResult());
         } catch (NoResultException ignored) {
         }
         return Optional.empty();

@@ -20,7 +20,7 @@ public class PersistenceConfiguration {
 
     private static final Logger logger = LoggerFactory.getLogger(PersistenceConfiguration.class);
 
-    @Bean(name="entityManagerFactory")
+    @Bean(name = "entityManagerFactory")
     public LocalSessionFactoryBean sessionFactory() {
         LocalSessionFactoryBean sessionFactory = new LocalSessionFactoryBean();
         sessionFactory.setDataSource(dataSource());

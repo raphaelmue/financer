@@ -1,47 +1,30 @@
-package org.financer.shared.domain.model.api;
+package org.financer.shared.domain.model.api.transaction;
 
-import com.google.gson.annotations.SerializedName;
-
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.List;
 
-// @Validated
 public class FixedTransactionDTO {
 
-    @SerializedName("id")
-    // @ApiModelProperty(value = "Identifier", required = true, example = "123")
+    @NotNull
+    @Min(1)
     private int id;
 
-    @SerializedName("amount")
-    // @ApiModelProperty(value = "Identifier", example = "74.99")
     private double amount;
 
-    @SerializedName("startDate")
-    // @ApiModelProperty(value = "Start Date", required = true, example = "2020-02-02")
     private LocalDate startDate;
 
-    @SerializedName("endDate")
-    // @ApiModelProperty(value = "End Date", example = "2020-02-02")
     private LocalDate endDate;
 
-    @SerializedName("product")
-    // @ApiModelProperty(value = "Product", example = "Food")
     private int product;
 
-    @SerializedName("purpose")
-    // @ApiModelProperty(value = "Purpose", example = "Meal")
     private int purpose;
 
-    @SerializedName("isVariable")
-    // @ApiModelProperty(value = "Indicates whether transaction is variable or not", required = true, example = "false")
     private boolean isVariable;
 
-    @SerializedName("day")
-    // @ApiModelProperty(value = "Day of reckoning", example = "1")
     private int day;
 
-    @SerializedName("transactionAmounts")
-    // @ApiModelProperty(value = "List of Transaction Amounts")
     private List<TransactionAmountDTO> transactionAmounts;
 
     public int getId() {

@@ -71,7 +71,6 @@ public class UserDomainService {
                     tokenOptional.get().getUser().getId(), tokenOptional.get().getUser().getName());
             return Optional.of(tokenOptional.get().getUser());
         }
-        logger.info("Failed to authenticate: Token is invalid.");
         return Optional.empty();
     }
 
@@ -99,7 +98,7 @@ public class UserDomainService {
      */
     private void generateOrUpdateToken(UserEntity user, IPAddress ipAddress, OperatingSystem operatingSystem) {
         TokenEntity tokenEntity;
-        Optional<TokenEntity> tokenOptional = tokenRepository.getTokenByIPAddress(ipAddress);
+        Optional<TokenEntity> tokenOptional = tokenRepository.getTokenByIPAddress(user.getId(), ipAddress);
         if (tokenOptional.isPresent()) {
             tokenOptional.get().isPropertyOfUser(user);
 

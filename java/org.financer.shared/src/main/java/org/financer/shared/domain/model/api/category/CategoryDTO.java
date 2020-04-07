@@ -1,31 +1,26 @@
-package org.financer.shared.domain.model.api;
+package org.financer.shared.domain.model.api.category;
 
-import com.google.gson.annotations.SerializedName;
+import org.financer.shared.domain.model.api.transaction.VariableTransactionDTO;
 import org.financer.shared.domain.model.value.objects.CategoryClass;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.List;
 
-// @Validated
 public class CategoryDTO {
 
-    @SerializedName("id")
-    // @ApiModelProperty(value = "Identifier", required = true, example = "123")
+    @NotNull
+    @Size(min = 1)
     private int id;
 
-    @SerializedName("categoryClass")
-    // @ApiModelProperty(value = "Category Class", required = true, example = "fixedRevenue")
+    @NotNull
     private CategoryClass.Values categoryClass;
 
-    @SerializedName("name")
-    // @ApiModelProperty(value = "Name", required = true, example = "Food")
+    @NotNull
     private String name;
 
-    @SerializedName("children")
-    // @ApiModelProperty(value = "List of children categories", example = "Food")
     private List<CategoryDTO> children;
 
-    @SerializedName("variableTransactions")
-    // @ApiModelProperty(value = "Identifier")
     private List<VariableTransactionDTO> variableTransactions;
 
     public int getId() {

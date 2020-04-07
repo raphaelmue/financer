@@ -35,7 +35,7 @@ public class AuthenticationTokenFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
-        if (request.getRequestURI().endsWith("/user") && (HttpMethod.GET.matches(request.getMethod()) ||
+        if (request.getRequestURI().endsWith("/users") && (HttpMethod.GET.matches(request.getMethod()) ||
                 HttpMethod.PUT.matches(request.getMethod()))) {
             chain.doFilter(request, response);
             return;

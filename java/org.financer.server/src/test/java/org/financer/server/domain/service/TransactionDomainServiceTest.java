@@ -1,6 +1,7 @@
 package org.financer.server.domain.service;
 
 import org.financer.server.application.FinancerServer;
+import org.financer.server.application.api.error.UnauthorizedOperationException;
 import org.financer.server.application.service.AuthenticationService;
 import org.financer.server.domain.model.category.CategoryEntity;
 import org.financer.server.domain.model.transaction.VariableTransactionEntity;
@@ -8,7 +9,6 @@ import org.financer.server.domain.repository.*;
 import org.financer.shared.domain.model.value.objects.Amount;
 import org.financer.shared.domain.model.value.objects.CategoryClass;
 import org.financer.shared.domain.model.value.objects.ValueDate;
-import org.financer.shared.exceptions.UnauthorizedException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -61,7 +61,7 @@ public class TransactionDomainServiceTest {
 
     @Test
     public void createVariableTransaction() {
-        assertThatExceptionOfType(UnauthorizedException.class).isThrownBy(
+        assertThatExceptionOfType(UnauthorizedOperationException.class).isThrownBy(
                 () -> transactionDomainService.createVariableTransaction(-1, variableTransaction));
 
         VariableTransactionEntity transactionToAssert = transactionDomainService.createVariableTransaction(UserDomainServiceTest.user.getId(), variableTransaction);

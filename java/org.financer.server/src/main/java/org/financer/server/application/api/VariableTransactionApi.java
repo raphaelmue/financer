@@ -1,7 +1,7 @@
 package org.financer.server.application.api;
 
-import org.financer.shared.domain.model.api.AttachmentDTO;
-import org.financer.shared.domain.model.api.VariableTransactionDTO;
+import org.financer.shared.domain.model.api.transaction.AttachmentDTO;
+import org.financer.shared.domain.model.api.transaction.VariableTransactionDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

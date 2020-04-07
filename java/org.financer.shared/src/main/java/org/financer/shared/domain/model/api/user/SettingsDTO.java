@@ -1,21 +1,18 @@
-package org.financer.shared.domain.model.api;
+package org.financer.shared.domain.model.api.user;
 
-import com.google.gson.annotations.SerializedName;
 import org.financer.shared.domain.model.value.objects.SettingPair;
 
-// @Validated
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+
 public class SettingsDTO {
 
-    @SerializedName("id")
-    // @ApiModelProperty(value = "Identifier", required = true, example = "123")
+    @NotNull
+    @Min(1)
     private int id;
 
-    @SerializedName("property")
-    // @ApiModelProperty(value = "Property", required = true)
     private SettingPair.Property property;
 
-    @SerializedName("value")
-    // @ApiModelProperty(value = "Value", required = true)
     private String value;
 
     public int getId() {

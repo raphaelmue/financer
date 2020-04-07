@@ -1,13 +1,8 @@
 package org.financer.server.application.configuration;
 
-import org.financer.server.domain.model.user.TokenEntity;
-import org.financer.server.domain.model.user.UserEntity;
-import org.financer.shared.domain.model.api.UserDTO;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import java.util.Iterator;
 
 @Configuration
 public class ModelMapperConfiguration {
@@ -24,6 +19,11 @@ public class ModelMapperConfiguration {
                     }
                     return null;
                 }, UserDTO::setToken));*/
+
+//        modelMapper.typeMap(CategoryDTO.class, CategoryEntity.class).<CategoryClass.Values>addMapping(
+//                CategoryDTO::getCategoryClass,
+//                (destination, value) -> destination.setCategoryClass(new CategoryClass(value))
+//        );
         return modelMapper;
     }
 

@@ -1,6 +1,6 @@
 package org.financer.server.domain.model.user;
 
-import org.financer.shared.exceptions.UnauthorizedException;
+import org.financer.server.application.api.error.UnauthorizedOperationException;
 
 /**
  * This interface indicates that this is property of a user and therefore only accessible with granted access rights.
@@ -27,13 +27,13 @@ public interface UserProperty {
     boolean isPropertyOfUser(long userId);
 
     /**
-     * Throws an {@link UnauthorizedException} if the given user id does not belong to this object
+     * Throws an {@link UnauthorizedOperationException} if the given user id does not belong to this object
      *
      * @param userId user id to check
      */
     default void throwIfNotUsersProperty(long userId) {
         if (!isPropertyOfUser(userId)) {
-            throw new UnauthorizedException("User is unauthorized to perform this operation.");
+            throw new UnauthorizedOperationException(userId);
         }
     }
 

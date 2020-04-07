@@ -1,48 +1,44 @@
-package org.financer.shared.domain.model.api;
+package org.financer.shared.domain.model.api.user;
 
-import com.google.gson.annotations.SerializedName;
 import org.financer.shared.domain.model.value.objects.Gender;
 
+import javax.validation.constraints.Email;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.time.LocalDate;
 import java.util.List;
 
-// @Validated
 public class UserDTO {
 
-    @SerializedName("id")
-    // @ApiModelProperty(value = "Identifier", required = true, example = "123")
+    @NotNull
+    @Min(1)
     private int id;
 
-    @SerializedName("email")
-    // @ApiModelProperty(value = "Email address", required = true, example = "test@email.com")
+    @NotNull
+    @Email
     private String email;
 
-    @SerializedName("name")
-    // @ApiModelProperty(value = "First name", required = true, example = "John")
+    @NotNull
+    @Size(max = 64)
     private String name;
 
-    @SerializedName("surname")
-    // @ApiModelProperty(value = "Surname", required = true, example = "Doe")
+    @NotNull
+    @Size(max = 64)
     private String surname;
 
-    @SerializedName("birthDate")
-    // @ApiModelProperty(value = "Birth Date", example = "02.03.1985")
     private LocalDate birthDate;
 
-    @SerializedName("gender")
-    // @ApiModelProperty(value = "Birth Date", example = "male", allowableValues = "male, female, notSpecified")
     private Gender.Values gender;
 
-    @SerializedName("settings")
-    // @ApiModelProperty(value = "Settings")
-    private List<SettingsDTO> databaseSettings;
+    private List<SettingsDTO> settings;
 
-    @SerializedName("token")
-    // @ApiModelProperty(value = "Active Token")
-    private TokenDTO token;
+    @NotNull
+    private TokenDTO activeToken;
 
-    @SerializedName("verified")
-    // @ApiModelProperty(value = "Indicates whether user is verified", required = true, example = "false")
+    private List<TokenDTO> tokens;
+
+    @NotNull
     private boolean verified;
 
     public int getId() {
@@ -99,21 +95,30 @@ public class UserDTO {
         return this;
     }
 
-    public List<SettingsDTO> getDatabaseSettings() {
-        return databaseSettings;
+    public List<SettingsDTO> getSettings() {
+        return settings;
     }
 
-    public UserDTO setDatabaseSettings(List<SettingsDTO> databaseSettings) {
-        this.databaseSettings = databaseSettings;
+    public UserDTO setSettings(List<SettingsDTO> settings) {
+        this.settings = settings;
         return this;
     }
 
-    public TokenDTO getToken() {
-        return token;
+    public TokenDTO getActiveToken() {
+        return activeToken;
     }
 
-    public UserDTO setToken(TokenDTO token) {
-        this.token = token;
+    public UserDTO setActiveToken(TokenDTO activeToken) {
+        this.activeToken = activeToken;
+        return this;
+    }
+
+    public List<TokenDTO> getTokens() {
+        return tokens;
+    }
+
+    public UserDTO setTokens(List<TokenDTO> tokens) {
+        this.tokens = tokens;
         return this;
     }
 

@@ -1,22 +1,17 @@
-package org.financer.shared.domain.model.api;
+package org.financer.shared.domain.model.api.transaction;
 
-import com.google.gson.annotations.SerializedName;
-
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 
-// @Validated
 public class TransactionAmountDTO {
 
-    @SerializedName("id")
-    // @ApiModelProperty(value = "Identifier", required = true, example = "123")
+    @NotNull
+    @Min(1)
     private int id;
 
-    @SerializedName("valueDate")
-    // @ApiModelProperty(value = "Value Date", required = true, example = "2020-02-02")
     private LocalDate valueDate;
 
-    @SerializedName("amount")
-    // @ApiModelProperty(value = "Amount", required = true, example = "74.99")
     private double amount;
 
     public int getId() {

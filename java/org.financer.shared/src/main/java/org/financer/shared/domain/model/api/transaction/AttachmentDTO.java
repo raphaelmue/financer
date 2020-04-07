@@ -1,26 +1,20 @@
-package org.financer.shared.domain.model.api;
+package org.financer.shared.domain.model.api.transaction;
 
 
-import com.google.gson.annotations.SerializedName;
-
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 
 public class AttachmentDTO {
 
-    @SerializedName("id")
-    // @ApiModelProperty(value = "Identifier", required = true, example = "123")
+    @NotNull
+    @Min(1)
     private int id;
 
-    @SerializedName("name")
-    // @ApiModelProperty(value = "File name", required = true, example = "file.txt")
     private String name;
 
-    @SerializedName("uploadDate")
-    // @ApiModelProperty(value = "Upload Date", required = true, example = "2020-02-02")
     private LocalDate uploadDate;
 
-    @SerializedName("content")
-    // @ApiModelProperty(value = "Content", required = true)
     private byte[] content;
 
     public int getId() {

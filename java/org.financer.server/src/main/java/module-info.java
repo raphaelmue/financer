@@ -32,6 +32,7 @@ module org.financer.server {
     requires spring.security.core;
     requires spring.security.config;
     requires java.jwt;
+    requires com.google.gson;
 
     opens org.financer.server.domain.service to spring.core, spring.aop;
     opens org.financer.server.domain.repository to spring.core;
@@ -55,5 +56,6 @@ module org.financer.server {
     exports org.financer.server.application to spring.beans, spring.context;
     exports org.financer.server.application.api to spring.beans, spring.web;
     exports org.financer.server.application.service to spring.beans, spring.aop;
+    exports org.financer.server.application.api.error to com.fasterxml.jackson.databind;
     exports org.financer.server.application.configuration to spring.beans, spring.context;
 }

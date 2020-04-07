@@ -1,42 +1,31 @@
-package org.financer.shared.domain.model.api;
+package org.financer.shared.domain.model.api.transaction;
 
-import com.google.gson.annotations.SerializedName;
+import org.financer.shared.domain.model.api.DataTransferObject;
+import org.financer.shared.domain.model.api.category.CategoryDTO;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.List;
 
-// @Validated
 public class VariableTransactionDTO implements DataTransferObject {
 
-    @SerializedName("id")
-    // @ApiModelProperty(value = "Identifier", required = true, example = "123")
+    @NotNull
+    @Min(1)
     private int id;
 
-    @SerializedName("category")
     private CategoryDTO category;
 
-    @SerializedName("valueDate")
-    // @ApiModelProperty(value = "Value Date", required = true, example = "2020-02-02")
     private LocalDate valueDate;
 
-    @SerializedName("amount")
-    // @ApiModelProperty(value = "Amount", required = true, example = "74.99")
     private double amount;
 
-    @SerializedName("product")
-    // @ApiModelProperty(value = "Product", example = "Food")
     private int product;
 
-    @SerializedName("purpose")
-    // @ApiModelProperty(value = "Purpose", example = "Meal")
     private int purpose;
 
-    @SerializedName("shop")
-    // @ApiModelProperty(value = "Shop", example = "Discounter")
     private int shop;
 
-    @SerializedName("attachments")
-    // @ApiModelProperty(value = "List of Attachemnts", example = "123")
     private List<AttachmentDTO> attachments;
 
     public int getId() {
@@ -48,17 +37,21 @@ public class VariableTransactionDTO implements DataTransferObject {
         return this;
     }
 
+    public CategoryDTO getCategory() {
+        return category;
+    }
+
+    public VariableTransactionDTO setCategory(CategoryDTO category) {
+        this.category = category;
+        return this;
+    }
+
     public LocalDate getValueDate() {
         return valueDate;
     }
 
     public VariableTransactionDTO setValueDate(LocalDate valueDate) {
         this.valueDate = valueDate;
-        return this;
-    }
-
-    public VariableTransactionDTO amount(double amount) {
-        this.setAmount(amount);
         return this;
     }
 
@@ -104,15 +97,6 @@ public class VariableTransactionDTO implements DataTransferObject {
 
     public VariableTransactionDTO setAttachments(List<AttachmentDTO> attachments) {
         this.attachments = attachments;
-        return this;
-    }
-
-    public CategoryDTO getCategory() {
-        return category;
-    }
-
-    public VariableTransactionDTO setCategory(CategoryDTO category) {
-        this.category = category;
         return this;
     }
 }

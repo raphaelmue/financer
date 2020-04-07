@@ -1,24 +1,10 @@
 package org.financer.server.application.service;
 
-import org.financer.server.domain.model.category.CategoryEntity;
-import org.financer.server.domain.model.transaction.*;
-import org.financer.server.domain.model.user.SettingEntity;
-import org.financer.server.domain.model.user.UserEntity;
-import org.financer.shared.connection.ConnectionResult;
 import org.financer.util.RandomString;
-import org.financer.util.collections.TreeUtil;
-import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.io.Serializable;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 @Service
 public class FinancerService {

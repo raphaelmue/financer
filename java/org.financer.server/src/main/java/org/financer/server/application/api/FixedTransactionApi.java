@@ -1,7 +1,7 @@
 package org.financer.server.application.api;
 
-import org.financer.shared.domain.model.api.FixedTransactionDTO;
-import org.financer.shared.domain.model.api.TransactionAmountDTO;
+import org.financer.shared.domain.model.api.transaction.FixedTransactionDTO;
+import org.financer.shared.domain.model.api.transaction.TransactionAmountDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

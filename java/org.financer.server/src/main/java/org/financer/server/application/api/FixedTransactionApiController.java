@@ -4,13 +4,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.financer.server.application.service.AuthenticationService;
 import org.financer.server.domain.model.transaction.FixedTransactionEntity;
 import org.financer.server.domain.service.TransactionDomainService;
-import org.financer.shared.domain.model.api.FixedTransactionDTO;
-import org.financer.shared.domain.model.api.TransactionAmountDTO;
+import org.financer.shared.domain.model.api.transaction.FixedTransactionDTO;
+import org.financer.shared.domain.model.api.transaction.TransactionAmountDTO;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -52,7 +53,7 @@ public class FixedTransactionApiController implements FixedTransactionApi {
     }
 
     @Override
-    public ResponseEntity<Void> deleteFixedTransaction(@NotBlank @Min(1) Long transactionId) {
+    public ResponseEntity<Void> deleteFixedTransaction(@NotBlank @PathVariable("transactionId") @Min(1) Long transactionId) {
         transactionDomainService.deleteFixedTransaction(authenticationService.getUserId(), transactionId);
         return new ResponseEntity<>(HttpStatus.OK);
     }

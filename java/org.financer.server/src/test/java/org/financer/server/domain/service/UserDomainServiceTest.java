@@ -1,13 +1,13 @@
 package org.financer.server.domain.service;
 
 import org.financer.server.application.FinancerServer;
+import org.financer.server.application.api.error.UnauthorizedOperationException;
 import org.financer.server.application.service.AuthenticationService;
 import org.financer.server.domain.model.user.TokenEntity;
 import org.financer.server.domain.model.user.UserEntity;
 import org.financer.server.domain.model.user.VerificationTokenEntity;
 import org.financer.server.domain.repository.*;
 import org.financer.shared.domain.model.value.objects.*;
-import org.financer.shared.exceptions.UnauthorizedException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -113,7 +113,7 @@ public class UserDomainServiceTest {
 
     @Test
     void deleteToken() {
-        assertThatExceptionOfType(UnauthorizedException.class).isThrownBy(
+        assertThatExceptionOfType(UnauthorizedOperationException.class).isThrownBy(
                 () -> userDomainService.deleteToken(user.getId() + 1, token.getId()));
         assertThat(userDomainService.deleteToken(user.getId(), token.getId())).isTrue();
     }

@@ -1,8 +1,9 @@
 package org.financer.server.application.api;
 
-import org.financer.shared.domain.model.api.CategoryDTO;
-import org.financer.shared.domain.model.api.UserDTO;
-import org.financer.shared.domain.model.api.VariableTransactionDTO;
+import org.financer.shared.domain.model.api.category.CategoryDTO;
+import org.financer.shared.domain.model.api.transaction.VariableTransactionDTO;
+import org.financer.shared.domain.model.api.user.RegisterUserDTO;
+import org.financer.shared.domain.model.api.user.UserDTO;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -48,24 +49,13 @@ public interface UserApi {
     /**
      * Registers a new user.
      *
-     * @param email     email of the user
-     * @param name      first name of the user
-     * @param surname   surname of the user
-     * @param password  password of the user
-     * @param birthDate birth date of the user
-     * @param gender    gender of the user as string
      * @return User object
      */
     @PutMapping(
             value = "/users",
             produces = {"application/json"},
             headers = "Accept=application/json")
-    ResponseEntity<UserDTO> registerUser(@NotNull @Valid @RequestParam(value = "email") String email,
-                                         @NotNull @Valid @RequestParam(value = "name") String name,
-                                         @NotNull @Valid @RequestParam(value = "surname") String surname,
-                                         @NotNull @Valid @RequestParam(value = "password") String password,
-                                         @NotNull @Valid @RequestParam(value = "birthDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate birthDate,
-                                         @NotNull @Valid @RequestParam(value = "gender") String gender);
+    ResponseEntity<UserDTO> registerUser(@NotNull @Valid @RequestBody RegisterUserDTO registerUserDTO);
 
     /**
      * Updates the users information

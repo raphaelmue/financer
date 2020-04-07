@@ -4,9 +4,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.financer.server.application.service.AuthenticationService;
 import org.financer.server.domain.model.user.UserEntity;
 import org.financer.server.domain.service.UserDomainService;
-import org.financer.shared.domain.model.api.CategoryDTO;
-import org.financer.shared.domain.model.api.UserDTO;
-import org.financer.shared.domain.model.api.VariableTransactionDTO;
+import org.financer.shared.domain.model.api.category.CategoryDTO;
+import org.financer.shared.domain.model.api.transaction.VariableTransactionDTO;
+import org.financer.shared.domain.model.api.user.RegisterUserDTO;
+import org.financer.shared.domain.model.api.user.UserDTO;
 import org.financer.shared.domain.model.value.objects.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,17 +64,15 @@ public class UserApiController implements UserApi {
     }
 
     @Override
-    public ResponseEntity<UserDTO> registerUser(@NotNull @Valid String email, @NotNull @Valid String name,
-                                                @NotNull @Valid String surname, @NotNull @Valid String password,
-                                                @NotNull @Valid LocalDate birthDate, @NotNull @Valid String gender) {
+    public ResponseEntity<UserDTO> registerUser(@NotNull @Valid RegisterUserDTO registerUserDTO) {
         UserEntity userEntity = userDomainService.registerUser(
                 new UserEntity()
                         .setId(-1)
-                        .setEmail(new Email(email))
-                        .setName(new Name(name, surname))
-                        .setPassword(new HashedPassword(password))
-                        .setBirthDate(new BirthDate(birthDate))
-                        .setGender(new Gender(gender)),
+                        .setEmail(new Email(registerUserDTO.getEmail()))
+                        .setName(new Name(registerUserDTO.getName(), registerUserDTO.getSurname()))
+                        .setPassword(new HashedPassword(registerUserDTO.getPassword()))
+                        .setBirthDate(new BirthDate(registerUserDTO.getBirthDate()))
+                        .setGender(new Gender(registerUserDTO.getGender())),
                 new IPAddress(request.getRemoteAddr()), null);
         return new ResponseEntity<>(modelMapper.map(userEntity, UserDTO.class), HttpStatus.OK);
     }

@@ -12,6 +12,6 @@ public interface TokenRepositoryCustom {
 
     Optional<TokenEntity> getTokenByToken(TokenString tokenString);
 
-    Optional<TokenEntity> getTokenByIPAddress(IPAddress ipAddress);
+    Optional<TokenEntity> getTokenByIPAddress(long userId, IPAddress ipAddress);
 
 }
