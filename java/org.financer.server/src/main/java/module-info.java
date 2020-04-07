@@ -44,7 +44,7 @@ module org.financer.server {
 
     opens org.financer.server.domain.model.user to spring.core, org.hibernate.orm.core, modelmapper;
     opens org.financer.server.domain.model.category to spring.core, org.hibernate.orm.core, modelmapper;
-    opens org.financer.server.domain.model.transaction to spring.core,  org.hibernate.orm.core, modelmapper;
+    opens org.financer.server.domain.model.transaction to spring.core, org.hibernate.orm.core, modelmapper;
 
     exports org.financer.server.domain.service to spring.core, spring.beans;
     exports org.financer.server.domain.repository to spring.core, spring.beans, spring.data.commons, spring.aop;

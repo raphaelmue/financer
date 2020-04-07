@@ -35,6 +35,10 @@ public class RestErrorMessage implements DataTransferObject {
         this.messages = messages;
     }
 
+    public RestErrorMessage(HttpStatus httpStatus, String path, String message) {
+        this(httpStatus, path, Collections.singletonList(message));
+    }
+
     public RestErrorMessage(RestException exception, String path, String message) {
         this(exception.getHttpStatus(), path, Collections.singletonList(message));
     }

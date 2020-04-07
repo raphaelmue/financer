@@ -78,7 +78,7 @@ public class UserDomainServiceTest {
                 new IPAddress("192.168.0.1"), new OperatingSystem(OperatingSystem.Values.LINUX));
 
         assertThat(userToAssert).isPresent();
-        assertThat(userToAssert.get().getTokens()).isNotEmpty().first()
+        assertThat(userToAssert.get().getActiveToken()).isNotNull()
                 .matches(tokenEntity -> tokenEntity.getExpireDate().isValid())
                 .matches(tokenEntity -> !tokenEntity.getToken().getToken().isEmpty());
     }
@@ -98,6 +98,7 @@ public class UserDomainServiceTest {
                 new OperatingSystem(OperatingSystem.Values.LINUX));
 
         assertThat(userToAssert).isNotNull();
+        assertThat(userToAssert.getActiveToken()).isNotNull();
         assertThat(userToAssert.getTokens()).isNotEmpty();
         assertThat(userToAssert.getVerificationToken()).isNotNull();
         assertThat(userToAssert.isVerified()).isFalse();

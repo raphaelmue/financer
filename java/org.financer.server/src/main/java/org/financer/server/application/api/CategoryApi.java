@@ -1,6 +1,7 @@
 package org.financer.server.application.api;
 
 import org.financer.shared.domain.model.api.category.CategoryDTO;
+import org.financer.shared.domain.model.api.category.CreateCategoryDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,7 +22,7 @@ public interface CategoryApi {
             value = "/categories",
             produces = {"application/json"},
             headers = "Accept=application/json")
-    ResponseEntity<CategoryDTO> createCategory(@NotNull @RequestBody CategoryDTO category);
+    ResponseEntity<CategoryDTO> createCategory(@NotNull @RequestBody CreateCategoryDTO category);
 
     /**
      * Updates a specified category.

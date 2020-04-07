@@ -47,7 +47,7 @@ public class RestExceptionHandler {
     @ExceptionHandler(RestException.class)
     public ResponseEntity<RestErrorMessage> handleRestExceptions(RestException exception, Locale locale) {
         String errorMessage = messageSource.getMessage(exception.getMessageKey(), exception.getArguments(), locale);
-        logger.error(exception.getMessageKey(), exception);
+        logger.error(exception.getMessage(), exception);
         return new ResponseEntity<>(new RestErrorMessage(exception, request.getRequestURI(), errorMessage), exception.getHttpStatus());
     }
 }

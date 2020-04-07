@@ -2,8 +2,6 @@ package org.financer.shared.domain.model.api;
 
 import com.google.gson.Gson;
 
-
-// @Validated
 public interface DataTransferObject {
 
     /**

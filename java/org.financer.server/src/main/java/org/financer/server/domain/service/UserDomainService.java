@@ -69,7 +69,8 @@ public class UserDomainService {
         if (tokenOptional.isPresent() && tokenOptional.get().getExpireDate().isValid()) {
             logger.info("Token of user [{}, '{}'] is approved",
                     tokenOptional.get().getUser().getId(), tokenOptional.get().getUser().getName());
-            return Optional.of(tokenOptional.get().getUser());
+            return Optional.of(tokenOptional.get().getUser()
+                    .setActiveToken(tokenOptional.get()));
         }
         return Optional.empty();
     }
@@ -119,6 +120,7 @@ public class UserDomainService {
                             .setExpireDate(new ExpireDate())
                             .setOperatingSystem(operatingSystem));
         }
+        user.setActiveToken(tokenEntity);
         user.getTokens().add(tokenEntity);
     }
 

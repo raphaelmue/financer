@@ -46,6 +46,8 @@ public class UserEntity implements DataEntity {
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
     private Set<TokenEntity> tokens = new HashSet<>();
 
+    private transient TokenEntity activeToken;
+
     @OneToOne(mappedBy = "user")
     private VerificationTokenEntity verificationToken;
 
@@ -142,6 +144,20 @@ public class UserEntity implements DataEntity {
 
     public UserEntity setTokens(Set<TokenEntity> tokens) {
         this.tokens = tokens;
+        return this;
+    }
+
+    /**
+     * Returns the active token for the current session.
+     *
+     * @return
+     */
+    public TokenEntity getActiveToken() {
+        return activeToken;
+    }
+
+    public UserEntity setActiveToken(TokenEntity activeToken) {
+        this.activeToken = activeToken;
         return this;
     }
 
