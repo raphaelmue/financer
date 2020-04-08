@@ -54,6 +54,7 @@ public class TransactionDomainServiceTest {
     public void setUp() {
         when(categoryRepository.existsById(any())).thenReturn(false);
         when(categoryRepository.existsById(1L)).thenReturn(true);
+        when(categoryRepository.findById(1L)).thenReturn(Optional.of(category));
         when(variableTransactionRepository.findById(any())).thenReturn(Optional.empty());
         when(variableTransactionRepository.findById(1L)).thenReturn(Optional.of(variableTransaction));
         when(variableTransactionRepository.save(any(VariableTransaction.class))).thenAnswer(i -> i.getArguments()[0]);

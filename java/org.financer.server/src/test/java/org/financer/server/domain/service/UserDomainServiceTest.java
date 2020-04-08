@@ -2,6 +2,7 @@ package org.financer.server.domain.service;
 
 import org.financer.server.application.FinancerServer;
 import org.financer.server.application.api.error.UnauthorizedOperationException;
+import org.financer.server.application.api.error.UniqueEmailViolationException;
 import org.financer.server.application.service.AuthenticationService;
 import org.financer.server.domain.model.user.Token;
 import org.financer.server.domain.model.user.User;
@@ -17,6 +18,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Optional;
@@ -47,7 +49,7 @@ public class UserDomainServiceTest {
 
     private static final VerificationToken verificationToken = new VerificationToken()
             .setId(1)
-            .setExpireDate(new ExpireDate())
+            .setExpireDate(new ExpireDate(LocalDate.now().plusDays(15)))
             .setToken(tokenString);
 
     static final User user = new User()
@@ -65,9 +67,11 @@ public class UserDomainServiceTest {
 
         when(userRepository.save(any(User.class))).thenAnswer(i -> i.getArguments()[0]);
         when(userRepository.findByEmail(user.getEmail())).thenReturn(Optional.of(user));
+        when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
         when(tokenRepository.save(any(Token.class))).thenAnswer(i -> i.getArguments()[0]);
         when(tokenRepository.findById(token.getId())).thenReturn(Optional.of(token));
         when(tokenRepository.getTokenByToken(tokenString)).thenReturn(Optional.of(token));
+        when(tokenRepository.getTokenByIPAddress(user.getId(), token.getIpAddress())).thenReturn(Optional.of(token));
         when(verificationTokenRepository.save(any(VerificationToken.class))).thenAnswer(i -> i.getArguments()[0]);
         when(verificationTokenRepository.findByToken(tokenString)).thenReturn(Optional.of(verificationToken));
     }
@@ -81,6 +85,9 @@ public class UserDomainServiceTest {
         assertThat(userToAssert.get().getActiveToken()).isNotNull()
                 .matches(tokenEntity -> tokenEntity.getExpireDate().isValid())
                 .matches(tokenEntity -> !tokenEntity.getToken().getToken().isEmpty());
+
+        assertThat(userDomainService.checkCredentials("test@test.com", "wrong",
+                new IPAddress("192.168.0.1"), new OperatingSystem(OperatingSystem.Values.LINUX))).isEmpty();
     }
 
     @Test
@@ -90,12 +97,24 @@ public class UserDomainServiceTest {
 
         assertThat(userToAssert).isPresent();
         assertThat(userToAssert.get().getTokens()).isNotEmpty();
+
+        assertThat(userDomainService.checkUsersToken(new TokenString("wrongTokenString"))).isEmpty();
+
+        token.setExpireDate(new ExpireDate(LocalDate.now().minusMonths(1)));
+        assertThat(userDomainService.checkUsersToken(new TokenString("wrongTokenString"))).isEmpty();
     }
 
     @Test
     public void registerUser() {
-        User userToAssert = userDomainService.registerUser(user, new IPAddress("192.168.0.1"),
-                new OperatingSystem(OperatingSystem.Values.LINUX));
+        assertThatExceptionOfType(UniqueEmailViolationException.class).isThrownBy(() ->
+                userDomainService.registerUser(user, new IPAddress("192.168.0.1"), new OperatingSystem(OperatingSystem.Values.LINUX)));
+
+        User userToAssert = userDomainService.registerUser(new User()
+                        .setId(2)
+                        .setEmail(new Email("test2@test.com"))
+                        .setName(new Name("Test", "Test"))
+                        .setPassword(new HashedPassword("password")),
+                new IPAddress("192.168.0.1"), new OperatingSystem(OperatingSystem.Values.LINUX));
 
         assertThat(userToAssert).isNotNull();
         assertThat(userToAssert.getActiveToken()).isNotNull();
@@ -110,13 +129,25 @@ public class UserDomainServiceTest {
 
         assertThat(userToAssert).isPresent();
         assertThat(userToAssert.get().isVerified()).isTrue();
+
+        assertThat(userDomainService.verifyUser(new TokenString("wrongTokenString"))).isEmpty();
     }
 
     @Test
-    void deleteToken() {
+    public void deleteToken() {
         assertThatExceptionOfType(UnauthorizedOperationException.class).isThrownBy(
                 () -> userDomainService.deleteToken(user.getId() + 1, token.getId()));
-        assertThat(userDomainService.deleteToken(user.getId(), token.getId())).isTrue();
+
+        userDomainService.deleteToken(user.getId(), token.getId());
+    }
+
+    @Test
+    public void updatePassword() {
+        assertThatExceptionOfType(UnauthorizedOperationException.class).isThrownBy(() ->
+                userDomainService.updatePassword(user.getId(), "wrongPassword", "newPassword"));
+
+        User userToAssert = userDomainService.updatePassword(user.getId(), "password", "newPassword");
+        assertThat(userToAssert.getPassword().isEqualTo("newPassword")).isTrue();
     }
 
     /*

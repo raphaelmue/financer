@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
  */
 public class NotFoundException extends RestException {
 
+    private static final String MESSAGE = "No record of %s could be found with identifier %s.";
     private static final String MESSAGE_KEY = "exception.notFound";
 
     /**
@@ -18,6 +19,6 @@ public class NotFoundException extends RestException {
      * @param identifier      identifier which is not found
      */
     public NotFoundException(Class<?> entityClassName, Long identifier) {
-        super(HttpStatus.NOT_FOUND, MESSAGE_KEY, entityClassName.getName(), identifier.toString());
+        super(String.format(MESSAGE, entityClassName.getName(), identifier.toString()), HttpStatus.NOT_FOUND, MESSAGE_KEY, entityClassName.getName(), identifier.toString());
     }
 }

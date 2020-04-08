@@ -88,11 +88,9 @@ public class UserApiController implements UserApi {
     @Override
     public ResponseEntity<UserDTO> updateUsersPassword(@NotBlank @Min(1) Long userId, @NotNull @Valid String oldPassword,
                                                        @NotNull @Valid String newPassword) {
-        User authenticatedUser = authenticationService.getAuthenticatedUser();
-        if (authenticatedUser.getId() == userId && userDomainService.updatePassword(userId, oldPassword, newPassword)) {
-            return new ResponseEntity<>(modelMapper.map(authenticatedUser, UserDTO.class), HttpStatus.OK);
-        }
-        return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        authenticationService.getAuthenticatedUser().throwIfNotUsersProperty(userId);
+        User updateUser = userDomainService.updatePassword(userId, oldPassword, newPassword);
+        return new ResponseEntity<>(modelMapper.map(updateUser, UserDTO.class), HttpStatus.OK);
     }
 
     @Override

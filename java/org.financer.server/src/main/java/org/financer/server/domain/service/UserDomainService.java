@@ -1,6 +1,8 @@
 package org.financer.server.domain.service;
 
 import org.apache.commons.mail.EmailException;
+import org.financer.server.application.api.error.UnauthorizedOperationException;
+import org.financer.server.application.api.error.UnauthorizedTokenException;
 import org.financer.server.application.api.error.UniqueEmailViolationException;
 import org.financer.server.application.service.VerificationService;
 import org.financer.server.domain.model.category.Category;
@@ -21,6 +23,8 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+
+import static org.financer.server.domain.repository.VariableTransactionRepository.PAGE_SIZE;
 
 @Service
 public class UserDomainService {
@@ -125,7 +129,7 @@ public class UserDomainService {
                 tokenOptional.get().setExpireDate(tokenOptional.get().getExpireDate().update());
                 token = tokenRepository.save(tokenOptional.get());
             } else {
-                throw new IllegalStateException("The given token is not valid.");
+                throw new UnauthorizedTokenException(tokenOptional.get().getToken());
             }
         } else {
             token = tokenRepository.save(
@@ -185,37 +189,33 @@ public class UserDomainService {
      *
      * @param userId  id of the user who owns the token
      * @param tokenId id of the token to delete
-     * @return true if operation was successful
      */
-    public boolean deleteToken(long userId, long tokenId) {
+    public void deleteToken(long userId, long tokenId) {
         logger.info("Deleting token. ");
         Optional<Token> tokenOptional = tokenRepository.findById(tokenId);
         if (tokenOptional.isPresent()) {
             tokenOptional.get().throwIfNotUsersProperty(userId);
             tokenRepository.delete(tokenOptional.get());
-            return true;
         }
-        return false;
     }
 
     /**
-     * Updates the users password. First of all, the old password is verfied. Then the new password will be hashed after
+     * Updates the users password. First of all, the old password is verified. Then the new password will be hashed after
      * concatenating it with a new generated salt.
      *
      * @param userId          id of user whose password will be update
      * @param oldPassword     old password of the user in order to verify this operation
      * @param updatedPassword new plain password
-     * @return true if operation was successful
+     * @return update user object
      */
-    public boolean updatePassword(long userId, String oldPassword, String updatedPassword) {
-        logger.info("Updating users password. ");
+    public User updatePassword(long userId, String oldPassword, String updatedPassword) {
+        logger.info("Updating users password.");
         Optional<User> userOptional = userRepository.findById(userId);
         if (userOptional.isPresent() && userOptional.get().getPassword().isEqualTo(oldPassword)) {
             userOptional.get().setPassword(new HashedPassword(updatedPassword));
-            userRepository.save(userOptional.get());
-            return true;
+            return userRepository.save(userOptional.get());
         }
-        return false;
+        throw new UnauthorizedOperationException(userId);
     }
 
     /**
@@ -229,7 +229,7 @@ public class UserDomainService {
     }
 
     public List<VariableTransaction> fetchTransactions(long userId, int page) {
-        Pageable pageable = PageRequest.of(page, variableTransactionRepository.PAGE_SIZE, Sort.by("valueDate.date").descending());
+        Pageable pageable = PageRequest.of(page, PAGE_SIZE, Sort.by("valueDate.date").descending());
         return Iterables.toList(variableTransactionRepository.findByCategoryUserId(userId, pageable));
     }
 }
