@@ -4,17 +4,18 @@ import org.apache.commons.mail.EmailException;
 import org.financer.server.application.api.error.UniqueEmailViolationException;
 import org.financer.server.application.service.VerificationService;
 import org.financer.server.domain.model.category.Category;
+import org.financer.server.domain.model.transaction.VariableTransaction;
 import org.financer.server.domain.model.user.Token;
 import org.financer.server.domain.model.user.User;
 import org.financer.server.domain.model.user.VerificationToken;
-import org.financer.server.domain.repository.CategoryRepository;
-import org.financer.server.domain.repository.TokenRepository;
-import org.financer.server.domain.repository.UserRepository;
-import org.financer.server.domain.repository.VerificationTokenRepository;
+import org.financer.server.domain.repository.*;
 import org.financer.shared.domain.model.value.objects.*;
 import org.financer.util.collections.Iterables;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -30,14 +31,17 @@ public class UserDomainService {
     private final TokenRepository tokenRepository;
     private final VerificationTokenRepository verificationTokenRepository;
     private final CategoryRepository categoryRepository;
+    private final VariableTransactionRepository variableTransactionRepository;
     private final VerificationService verificationService;
 
     public UserDomainService(UserRepository userRepository, TokenRepository tokenRepository, VerificationTokenRepository verificationTokenRepository,
-                             CategoryRepository categoryRepository, VerificationService verificationService) {
+                             CategoryRepository categoryRepository, VariableTransactionRepository variableTransactionRepository,
+                             VerificationService verificationService) {
         this.userRepository = userRepository;
         this.tokenRepository = tokenRepository;
         this.verificationTokenRepository = verificationTokenRepository;
         this.categoryRepository = categoryRepository;
+        this.variableTransactionRepository = variableTransactionRepository;
         this.verificationService = verificationService;
     }
 
@@ -222,5 +226,10 @@ public class UserDomainService {
      */
     public List<Category> fetchCategories(long userId) {
         return Iterables.toList(categoryRepository.findAllByUserId(userId));
+    }
+
+    public List<VariableTransaction> fetchTransactions(long userId, int page) {
+        Pageable pageable = PageRequest.of(page, variableTransactionRepository.PAGE_SIZE, Sort.by("valueDate.date").descending());
+        return Iterables.toList(variableTransactionRepository.findByCategoryUserId(userId, pageable));
     }
 }

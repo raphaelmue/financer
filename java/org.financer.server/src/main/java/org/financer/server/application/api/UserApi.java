@@ -138,10 +138,11 @@ public interface UserApi {
      * @return list of transactions
      */
     @GetMapping(
-            value = "/users/{userId}/variableTransaction",
+            value = "/users/{userId}/variableTransactions",
             produces = {"application/json"},
             headers = "Accept=application/json")
-    ResponseEntity<List<VariableTransactionDTO>> getUsersVariableTransactions(@NotBlank @PathVariable("userId") @Min(1) Long userId);
+    ResponseEntity<List<VariableTransactionDTO>> getUsersVariableTransactions(@NotBlank @PathVariable("userId") @Min(1) Long userId,
+                                                                              @Valid @RequestParam(value = "page", defaultValue = "0") int page);
 
     /**
      * Fetches the users fixed transactions.
@@ -150,7 +151,7 @@ public interface UserApi {
      * @return list of transactions
      */
     @GetMapping(
-            value = "/users/{userId}/fixedTransaction",
+            value = "/users/{userId}/fixedTransactions",
             produces = {"application/json"},
             headers = "Accept=application/json")
     ResponseEntity<List<VariableTransactionDTO>> getUsersFixedTransactions(@NotBlank @PathVariable("userId") @Min(1) Long userId);
