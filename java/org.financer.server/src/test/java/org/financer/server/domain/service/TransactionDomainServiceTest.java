@@ -73,6 +73,8 @@ public class TransactionDomainServiceTest {
 
     @BeforeEach
     public void setUp() {
+        when(authenticationService.getUserId()).thenReturn(UserDomainServiceTest.user.getId());
+
         when(categoryRepository.existsById(any())).thenReturn(false);
         when(categoryRepository.existsById(1L)).thenReturn(true);
         when(categoryRepository.existsById(2L)).thenReturn(true);
@@ -88,46 +90,73 @@ public class TransactionDomainServiceTest {
     }
 
     @Test
-    public void createVariableTransaction() {
-        assertThatExceptionOfType(UnauthorizedOperationException.class).isThrownBy(
-                () -> transactionDomainService.createVariableTransaction(-1, variableTransaction));
-
-        VariableTransaction transactionToAssert = transactionDomainService.createVariableTransaction(UserDomainServiceTest.user.getId(), variableTransaction);
+    public void testCreateVariableTransaction() {
+        VariableTransaction transactionToAssert = transactionDomainService.createVariableTransaction(variableTransaction);
         assertThat(transactionToAssert)
                 .isEqualTo(variableTransaction);
         assertThat(variableTransactionRepository.findById(1L)).isPresent().get()
                 .isEqualTo(variableTransaction);
+    }
 
-
+    @Test
+    public void testCreateVariableTransactionIllegalTransactionCategoryClass() {
         variableTransaction.setCategory(fixedCategory);
         assertThatExceptionOfType(IllegalTransactionCategoryClassException.class).isThrownBy(
-                () -> transactionDomainService.createVariableTransaction(-1, variableTransaction));
+                () -> transactionDomainService.createVariableTransaction(variableTransaction));
     }
 
     @Test
-    public void deleteVariableTransaction() {
+    public void testCreateVariableTransactionUnauthorized() {
+        mockAnotherUserAuthenticated();
         assertThatExceptionOfType(UnauthorizedOperationException.class).isThrownBy(
-                () -> transactionDomainService.deleteVariableTransaction(-1, variableTransaction.getId()));
-        transactionDomainService.deleteVariableTransaction(1, variableTransaction.getId());
+                () -> transactionDomainService.createVariableTransaction(variableTransaction));
     }
 
     @Test
-    public void createFixedTransaction() {
+    public void testDeleteVariableTransaction() {
+        transactionDomainService.deleteVariableTransaction(variableTransaction.getId());
+    }
+
+    @Test
+    public void testDeleteVariableTransactionUnauthorized() {
+        mockAnotherUserAuthenticated();
         assertThatExceptionOfType(UnauthorizedOperationException.class).isThrownBy(
-                () -> transactionDomainService.createFixedTransaction(-1, fixedTransaction));
+                () -> transactionDomainService.deleteVariableTransaction(variableTransaction.getId()));
+    }
 
-        assertThat(transactionDomainService.createFixedTransaction(1, fixedTransaction)).isNotNull();
+    @Test
+    public void testCreateFixedTransaction() {
+        assertThat(transactionDomainService.createFixedTransaction(fixedTransaction)).isNotNull();
+    }
 
+    @Test
+    public void testCreateFixedTransactionIllegalTransactionCategoryClass() {
         fixedTransaction.setCategory(variableCategory);
         assertThatExceptionOfType(IllegalTransactionCategoryClassException.class).isThrownBy(
-                () -> transactionDomainService.createFixedTransaction(-1, fixedTransaction));
+                () -> transactionDomainService.createFixedTransaction(fixedTransaction));
+    }
+
+    @Test
+    public void testCreateFixedTransactionUnauthorized() {
+        mockAnotherUserAuthenticated();
+        assertThatExceptionOfType(UnauthorizedOperationException.class).isThrownBy(
+                () -> transactionDomainService.createFixedTransaction(fixedTransaction));
     }
 
     @Test
     public void deleteFixedTransaction() {
+        transactionDomainService.deleteFixedTransaction(fixedTransaction.getId());
+    }
+
+    @Test
+    public void testDeleteFixedTransactionUnauthorized() {
+        mockAnotherUserAuthenticated();
         assertThatExceptionOfType(UnauthorizedOperationException.class).isThrownBy(
-                () -> transactionDomainService.deleteFixedTransaction(-1, fixedTransaction.getId()));
-        transactionDomainService.deleteFixedTransaction(1, fixedTransaction.getId());
+                () -> transactionDomainService.deleteFixedTransaction(fixedTransaction.getId()));
+    }
+
+    private void mockAnotherUserAuthenticated() {
+        when(authenticationService.getUserId()).thenReturn(-1L);
     }
 
     /*
@@ -160,4 +189,7 @@ public class TransactionDomainServiceTest {
 
     @MockBean
     private FixedTransactionRepository fixedTransactionRepository;
+
+    @MockBean
+    private AttachmentRepository attachmentRepository;
 }

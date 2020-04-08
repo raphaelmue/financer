@@ -1,6 +1,5 @@
 package org.financer.server.application.api;
 
-import org.financer.shared.domain.model.api.transaction.AttachmentDTO;
 import org.financer.shared.domain.model.api.transaction.CreateVariableTransactionDTO;
 import org.financer.shared.domain.model.api.transaction.VariableTransactionDTO;
 import org.springframework.http.ResponseEntity;
@@ -51,30 +50,4 @@ public interface VariableTransactionApi {
             headers = "Accept=application/json")
     ResponseEntity<Void> deleteTransaction(@NotBlank @PathVariable("transactionId") @Min(1) Long transactionId);
 
-    /**
-     * Inserts a new attachment to the given transaction
-     *
-     * @param transactionId id of the transaction wo which the attachment will be inserted.
-     * @return null
-     */
-    @PutMapping(
-            value = "/variableTransactions/{transactionId}/attachment",
-            produces = {"application/json"},
-            headers = "Accept=application/json")
-    ResponseEntity<AttachmentDTO> createAttachment(@NotBlank @PathVariable("transactionId") @Min(1) Long transactionId,
-                                                   @NotNull @Valid @RequestParam(value = "attachment") AttachmentDTO attachment);
-
-    /**
-     * Fetches an attachment with content
-     *
-     * @param transactionId id of the transaction
-     * @param attachmentId  id of the attachment whose content will be returned
-     * @return attachment with content
-     */
-    @GetMapping(
-            value = "/variableTransactions/{transactionId}/attachment/{attachmentId}",
-            produces = {"application/json"},
-            headers = "Accept=application/json")
-    ResponseEntity<AttachmentDTO> getAttachment(@NotBlank @PathVariable("transactionId") @Min(1) Long transactionId,
-                                                @NotBlank @PathVariable("attachmentId") @Min(1) Long attachmentId);
 }

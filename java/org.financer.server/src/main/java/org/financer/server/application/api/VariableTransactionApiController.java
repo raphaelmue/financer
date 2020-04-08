@@ -1,10 +1,8 @@
 package org.financer.server.application.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.financer.server.application.service.AuthenticationService;
 import org.financer.server.domain.model.transaction.VariableTransaction;
 import org.financer.server.domain.service.TransactionDomainService;
-import org.financer.shared.domain.model.api.transaction.AttachmentDTO;
 import org.financer.shared.domain.model.api.transaction.CreateVariableTransactionDTO;
 import org.financer.shared.domain.model.api.transaction.VariableTransactionDTO;
 import org.modelmapper.ModelMapper;
@@ -30,9 +28,6 @@ public class VariableTransactionApiController implements VariableTransactionApi 
     private ModelMapper modelMapper;
 
     @Autowired
-    private AuthenticationService authenticationService;
-
-    @Autowired
     private TransactionDomainService transactionDomainService;
 
 
@@ -45,7 +40,7 @@ public class VariableTransactionApiController implements VariableTransactionApi 
     @Override
     public ResponseEntity<VariableTransactionDTO> createTransaction(@NotNull @Valid CreateVariableTransactionDTO variableTransaction) {
         VariableTransaction variableTransactionEntity = modelMapper.map(variableTransaction, VariableTransaction.class);
-        variableTransactionEntity = transactionDomainService.createVariableTransaction(authenticationService.getUserId(), variableTransactionEntity);
+        variableTransactionEntity = transactionDomainService.createVariableTransaction(variableTransactionEntity);
         return new ResponseEntity<>(modelMapper.map(variableTransactionEntity, VariableTransactionDTO.class), HttpStatus.OK);
     }
 
@@ -56,17 +51,7 @@ public class VariableTransactionApiController implements VariableTransactionApi 
 
     @Override
     public ResponseEntity<Void> deleteTransaction(@NotBlank @PathVariable("transactionId") @Min(1) Long transactionId) {
-        transactionDomainService.deleteVariableTransaction(authenticationService.getUserId(), transactionId);
+        transactionDomainService.deleteVariableTransaction(transactionId);
         return new ResponseEntity<>(HttpStatus.OK);
-    }
-
-    @Override
-    public ResponseEntity<AttachmentDTO> createAttachment(@NotBlank @Min(1) Long transactionId, @NotNull @Valid AttachmentDTO attachment) {
-        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
-    }
-
-    @Override
-    public ResponseEntity<AttachmentDTO> getAttachment(@NotBlank @Min(1) Long transactionId, @NotBlank @Min(1) Long attachmentId) {
-        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
     }
 }

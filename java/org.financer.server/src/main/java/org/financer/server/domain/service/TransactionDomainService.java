@@ -1,9 +1,13 @@
 package org.financer.server.domain.service;
 
 import org.financer.server.application.api.error.NotFoundException;
+import org.financer.server.application.service.AuthenticationService;
 import org.financer.server.domain.model.category.Category;
+import org.financer.server.domain.model.transaction.Attachment;
 import org.financer.server.domain.model.transaction.FixedTransaction;
+import org.financer.server.domain.model.transaction.Transaction;
 import org.financer.server.domain.model.transaction.VariableTransaction;
+import org.financer.server.domain.repository.AttachmentRepository;
 import org.financer.server.domain.repository.CategoryRepository;
 import org.financer.server.domain.repository.FixedTransactionRepository;
 import org.financer.server.domain.repository.VariableTransactionRepository;
@@ -23,31 +27,36 @@ public class TransactionDomainService {
 
     private static final Logger logger = LoggerFactory.getLogger(TransactionDomainService.class);
 
+    private final AuthenticationService authenticationService;
     private final CategoryRepository categoryRepository;
     private final VariableTransactionRepository variableTransactionRepository;
     private final FixedTransactionRepository fixedTransactionRepository;
+    private final AttachmentRepository attachmentRepository;
 
     @Autowired
-    public TransactionDomainService(CategoryRepository categoryRepository, VariableTransactionRepository variableTransactionRepository, FixedTransactionRepository fixedTransactionRepository) {
+    public TransactionDomainService(AuthenticationService authenticationService, CategoryRepository categoryRepository,
+                                    VariableTransactionRepository variableTransactionRepository,
+                                    FixedTransactionRepository fixedTransactionRepository, AttachmentRepository attachmentRepository) {
+        this.authenticationService = authenticationService;
         this.categoryRepository = categoryRepository;
         this.variableTransactionRepository = variableTransactionRepository;
         this.fixedTransactionRepository = fixedTransactionRepository;
+        this.attachmentRepository = attachmentRepository;
     }
 
     /**
      * Inserts the given transaction into the database.
      *
-     * @param userId                    user id
      * @param variableTransactionEntity transaction to insert
      * @return inserted transaction object
      */
-    public VariableTransaction createVariableTransaction(long userId, VariableTransaction variableTransactionEntity) {
+    public VariableTransaction createVariableTransaction(VariableTransaction variableTransactionEntity) {
         logger.info("Creating new variable transaction.");
         Optional<Category> categoryOptional = categoryRepository.findById(variableTransactionEntity.getCategory().getId());
         if (categoryOptional.isPresent()) {
             variableTransactionEntity.setCategory(categoryOptional.get());
             variableTransactionEntity.throwIfInvalidCategoryClass();
-            variableTransactionEntity.throwIfNotUsersProperty(userId);
+            variableTransactionEntity.throwIfNotUsersProperty(authenticationService.getUserId());
             return variableTransactionRepository.save(variableTransactionEntity);
         }
         throw new NotFoundException(Category.class, variableTransactionEntity.getCategory().getId());
@@ -56,13 +65,12 @@ public class TransactionDomainService {
     /**
      * Deletes the given transaction and checks, whether the user is allowed to perform this action.
      *
-     * @param userId                id of the user
      * @param variableTransactionId id of the transaction to delete
      */
-    public void deleteVariableTransaction(long userId, long variableTransactionId) {
+    public void deleteVariableTransaction(long variableTransactionId) {
         Optional<VariableTransaction> variableTransactionOptional = variableTransactionRepository.findById(variableTransactionId);
         if (variableTransactionOptional.isPresent()) {
-            variableTransactionOptional.get().throwIfNotUsersProperty(userId);
+            variableTransactionOptional.get().throwIfNotUsersProperty(authenticationService.getUserId());
             variableTransactionRepository.deleteById(variableTransactionId);
         }
     }
@@ -77,17 +85,16 @@ public class TransactionDomainService {
      * same category, it will be canceled (see {@link FixedTransaction#cancel(LocalDate)}) on the start date of the new
      * transaction. </p>
      *
-     * @param userId           id of the user
      * @param fixedTransaction fixed transaction to be inserted
      * @return inserted fixed transaction
      */
-    public FixedTransaction createFixedTransaction(long userId, FixedTransaction fixedTransaction) {
+    public FixedTransaction createFixedTransaction(FixedTransaction fixedTransaction) {
         logger.info("Creating new fixed transaction.");
         Optional<Category> categoryOptional = categoryRepository.findById(fixedTransaction.getCategory().getId());
         if (categoryOptional.isPresent()) {
             fixedTransaction.setCategory(categoryOptional.get());
             fixedTransaction.throwIfInvalidCategoryClass();
-            fixedTransaction.throwIfNotUsersProperty(userId);
+            fixedTransaction.throwIfNotUsersProperty(authenticationService.getUserId());
 
             // delete transaction amounts if transaction is not variable
             if (fixedTransaction.isVariable()) {
@@ -113,14 +120,72 @@ public class TransactionDomainService {
     /**
      * Deletes a fixed transaction and checks the ownership.
      *
-     * @param userId             id of the user
      * @param fixedTransactionId id of the fixed transaction
      */
-    public void deleteFixedTransaction(long userId, long fixedTransactionId) {
+    public void deleteFixedTransaction(long fixedTransactionId) {
         Optional<FixedTransaction> fixedTransactionOptional = fixedTransactionRepository.findById(fixedTransactionId);
         if (fixedTransactionOptional.isPresent()) {
-            fixedTransactionOptional.get().throwIfNotUsersProperty(userId);
+            fixedTransactionOptional.get().throwIfNotUsersProperty(authenticationService.getUserId());
             fixedTransactionRepository.delete(fixedTransactionOptional.get());
+        }
+    }
+
+    /**
+     * Creates a new attachment and inserts it into database.
+     *
+     * @param attachment attachment to insert
+     * @return inserted attachment
+     */
+    public Attachment createAttachment(long transactionId, Attachment attachment) {
+        logger.info("Creating new attachment");
+        attachment.throwIfNotUsersProperty(authenticationService.getUserId());
+        attachment.setTransaction(findTransactionById(transactionId));
+        return attachmentRepository.save(attachment);
+    }
+
+    /**
+     * Checks whether there is a transaction with the given id and returns it.
+     *
+     * @param transactionId id of transaction
+     * @return transaction object
+     */
+    private Transaction findTransactionById(long transactionId) {
+        Optional<? extends Transaction> transactionOptional = fixedTransactionRepository.findById(transactionId);
+        if (transactionOptional.isEmpty()) {
+            transactionOptional = variableTransactionRepository.findById(transactionId);
+            if (transactionOptional.isEmpty()) {
+                throw new NotFoundException(Transaction.class, transactionId);
+            }
+        }
+        return transactionOptional.get();
+    }
+
+    public Attachment getAttachmentById(long transactionId, long attachmentId) {
+        Optional<Attachment> attachmentOptional = attachmentRepository.findById(attachmentId);
+        if (attachmentOptional.isPresent()) {
+            attachmentOptional.get().throwIfNotUsersProperty(authenticationService.getUserId());
+            if (attachmentOptional.get().getTransaction().getId() == transactionId) {
+                return attachmentOptional.get();
+            }
+        }
+        throw new NotFoundException(Attachment.class, attachmentId);
+    }
+
+    /**
+     * Deletes the given attachment.
+     *
+     * @param transactionId id of the transaction
+     * @param attachmentId  id of the attachment to be deleted
+     */
+    public void deleteAttachment(long transactionId, long attachmentId) {
+        logger.info("Deleting attachment.");
+        Optional<Attachment> attachmentOptional = attachmentRepository.findById(attachmentId);
+        if (attachmentOptional.isPresent()) {
+            attachmentOptional.get().throwIfNotUsersProperty(authenticationService.getUserId());
+            if (attachmentOptional.get().getTransaction().getId() != transactionId) {
+                throw new NotFoundException(Attachment.class, attachmentId);
+            }
+            attachmentRepository.delete(attachmentOptional.get());
         }
     }
 }

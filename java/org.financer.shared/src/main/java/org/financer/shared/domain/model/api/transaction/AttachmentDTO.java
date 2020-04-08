@@ -3,6 +3,7 @@ package org.financer.shared.domain.model.api.transaction;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.PastOrPresent;
 import java.time.LocalDate;
 
 public class AttachmentDTO {
@@ -11,11 +12,12 @@ public class AttachmentDTO {
     @Min(1)
     private int id;
 
+    @NotNull
     private String name;
 
+    @NotNull
+    @PastOrPresent
     private LocalDate uploadDate;
-
-    private byte[] content;
 
     public int getId() {
         return id;
@@ -44,12 +46,4 @@ public class AttachmentDTO {
         return this;
     }
 
-    public byte[] getContent() {
-        return content;
-    }
-
-    public AttachmentDTO setContent(byte[] content) {
-        this.content = content;
-        return this;
-    }
 }

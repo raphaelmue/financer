@@ -32,7 +32,7 @@ public class VariableTransactionTest {
     }
 
     @Test
-    public void getAmount() {
+    public void testGetAmount() {
         assertEquals(50.0, variableTransaction.getAmount().getAmount());
     }
 

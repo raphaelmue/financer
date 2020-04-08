@@ -1,7 +1,6 @@
 package org.financer.server.application.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.financer.server.application.service.AuthenticationService;
 import org.financer.server.domain.model.transaction.FixedTransaction;
 import org.financer.server.domain.model.transaction.FixedTransactionAmount;
 import org.financer.server.domain.service.TransactionDomainService;
@@ -31,9 +30,6 @@ public class FixedTransactionApiController implements FixedTransactionApi {
     private ModelMapper modelMapper;
 
     @Autowired
-    private AuthenticationService authenticationService;
-
-    @Autowired
     private TransactionDomainService transactionDomainService;
 
     @Autowired
@@ -49,7 +45,7 @@ public class FixedTransactionApiController implements FixedTransactionApi {
         for (FixedTransactionAmount transactionAmount : fixedTransactionEntity.getTransactionAmounts()) {
             transactionAmount.setFixedTransaction(fixedTransactionEntity);
         }
-        fixedTransactionEntity = transactionDomainService.createFixedTransaction(authenticationService.getUserId(), fixedTransactionEntity);
+        fixedTransactionEntity = transactionDomainService.createFixedTransaction(fixedTransactionEntity);
 
         return new ResponseEntity<>(modelMapper.map(fixedTransactionEntity, FixedTransactionDTO.class), HttpStatus.OK);
     }
@@ -61,7 +57,7 @@ public class FixedTransactionApiController implements FixedTransactionApi {
 
     @Override
     public ResponseEntity<Void> deleteFixedTransaction(@NotBlank @PathVariable("transactionId") @Min(1) Long transactionId) {
-        transactionDomainService.deleteFixedTransaction(authenticationService.getUserId(), transactionId);
+        transactionDomainService.deleteFixedTransaction(transactionId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

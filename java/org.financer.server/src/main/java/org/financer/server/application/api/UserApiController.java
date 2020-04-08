@@ -62,7 +62,7 @@ public class UserApiController implements UserApi {
 
     @Override
     public ResponseEntity<Void> deleteToken(@NotBlank @Min(1) Long userId, @NotBlank @Min(1) Long tokenId) {
-        userDomainService.deleteToken(userId, tokenId);
+        userDomainService.deleteToken(tokenId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -89,7 +89,7 @@ public class UserApiController implements UserApi {
     public ResponseEntity<UserDTO> updateUsersPassword(@NotBlank @Min(1) Long userId, @NotNull @Valid String oldPassword,
                                                        @NotNull @Valid String newPassword) {
         authenticationService.getAuthenticatedUser().throwIfNotUsersProperty(userId);
-        User updateUser = userDomainService.updatePassword(userId, oldPassword, newPassword);
+        User updateUser = userDomainService.updatePassword(oldPassword, newPassword);
         return new ResponseEntity<>(modelMapper.map(updateUser, UserDTO.class), HttpStatus.OK);
     }
 
@@ -111,14 +111,14 @@ public class UserApiController implements UserApi {
     @Override
     public ResponseEntity<List<CategoryDTO>> getUsersCategories(@NotBlank @PathVariable("userId") @Min(1) Long userId) {
         authenticationService.getAuthenticatedUser().throwIfNotUsersProperty(userId);
-        List<Category> categories = userDomainService.fetchCategories(userId);
+        List<Category> categories = userDomainService.fetchCategories();
         return new ResponseEntity<>(ModelMapperUtils.mapAll(categories, CategoryDTO.class), HttpStatus.OK);
     }
 
     @Override
     public ResponseEntity<List<VariableTransactionDTO>> getUsersVariableTransactions(@NotBlank @Min(1) Long userId, int page) {
         authenticationService.getAuthenticatedUser().throwIfNotUsersProperty(userId);
-        List<VariableTransaction> categories = userDomainService.fetchTransactions(userId, page);
+        List<VariableTransaction> categories = userDomainService.fetchTransactions(page);
         return new ResponseEntity<>(ModelMapperUtils.mapAll(categories, VariableTransactionDTO.class), HttpStatus.OK);
     }
 

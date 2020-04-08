@@ -4,6 +4,7 @@ import org.apache.commons.mail.EmailException;
 import org.financer.server.application.api.error.UnauthorizedOperationException;
 import org.financer.server.application.api.error.UnauthorizedTokenException;
 import org.financer.server.application.api.error.UniqueEmailViolationException;
+import org.financer.server.application.service.AuthenticationService;
 import org.financer.server.application.service.VerificationService;
 import org.financer.server.domain.model.category.Category;
 import org.financer.server.domain.model.transaction.VariableTransaction;
@@ -31,6 +32,7 @@ public class UserDomainService {
 
     private static final Logger logger = LoggerFactory.getLogger(UserDomainService.class);
 
+    private final AuthenticationService authenticationService;
     private final UserRepository userRepository;
     private final TokenRepository tokenRepository;
     private final VerificationTokenRepository verificationTokenRepository;
@@ -38,9 +40,11 @@ public class UserDomainService {
     private final VariableTransactionRepository variableTransactionRepository;
     private final VerificationService verificationService;
 
-    public UserDomainService(UserRepository userRepository, TokenRepository tokenRepository, VerificationTokenRepository verificationTokenRepository,
+    public UserDomainService(AuthenticationService authenticationService, UserRepository userRepository,
+                             TokenRepository tokenRepository, VerificationTokenRepository verificationTokenRepository,
                              CategoryRepository categoryRepository, VariableTransactionRepository variableTransactionRepository,
                              VerificationService verificationService) {
+        this.authenticationService = authenticationService;
         this.userRepository = userRepository;
         this.tokenRepository = tokenRepository;
         this.verificationTokenRepository = verificationTokenRepository;
@@ -187,49 +191,46 @@ public class UserDomainService {
     /**
      * Deletes a users token by the given id. Checks whether the given user owns the given token.
      *
-     * @param userId  id of the user who owns the token
      * @param tokenId id of the token to delete
      */
-    public void deleteToken(long userId, long tokenId) {
+    public void deleteToken(long tokenId) {
         logger.info("Deleting token. ");
         Optional<Token> tokenOptional = tokenRepository.findById(tokenId);
         if (tokenOptional.isPresent()) {
-            tokenOptional.get().throwIfNotUsersProperty(userId);
+            tokenOptional.get().throwIfNotUsersProperty(authenticationService.getUserId());
             tokenRepository.delete(tokenOptional.get());
         }
     }
 
     /**
-     * Updates the users password. First of all, the old password is verified. Then the new password will be hashed after
-     * concatenating it with a new generated salt.
+     * Updates the users password. First of all, the old password is verified. Then the new password will be hashed
+     * after concatenating it with a new generated salt.
      *
-     * @param userId          id of user whose password will be update
      * @param oldPassword     old password of the user in order to verify this operation
      * @param updatedPassword new plain password
      * @return update user object
      */
-    public User updatePassword(long userId, String oldPassword, String updatedPassword) {
+    public User updatePassword(String oldPassword, String updatedPassword) {
         logger.info("Updating users password.");
-        Optional<User> userOptional = userRepository.findById(userId);
+        Optional<User> userOptional = userRepository.findById(authenticationService.getUserId());
         if (userOptional.isPresent() && userOptional.get().getPassword().isEqualTo(oldPassword)) {
             userOptional.get().setPassword(new HashedPassword(updatedPassword));
             return userRepository.save(userOptional.get());
         }
-        throw new UnauthorizedOperationException(userId);
+        throw new UnauthorizedOperationException(authenticationService.getUserId());
     }
 
     /**
      * Fetches all categories of the user and returns them as a tree.
      *
-     * @param userId user whose categories will be fetched
      * @return list root categories.
      */
-    public List<Category> fetchCategories(long userId) {
-        return Iterables.toList(categoryRepository.findAllByUserId(userId));
+    public List<Category> fetchCategories() {
+        return Iterables.toList(categoryRepository.findAllByUserId(authenticationService.getUserId()));
     }
 
-    public List<VariableTransaction> fetchTransactions(long userId, int page) {
+    public List<VariableTransaction> fetchTransactions(int page) {
         Pageable pageable = PageRequest.of(page, PAGE_SIZE, Sort.by("valueDate.date").descending());
-        return Iterables.toList(variableTransactionRepository.findByCategoryUserId(userId, pageable));
+        return Iterables.toList(variableTransactionRepository.findByCategoryUserId(authenticationService.getUserId(), pageable));
     }
 }
