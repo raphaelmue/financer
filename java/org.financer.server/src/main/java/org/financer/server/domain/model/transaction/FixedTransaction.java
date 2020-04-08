@@ -91,14 +91,19 @@ public class FixedTransaction extends Transaction {
     public void adjustAmountSign() {
         if (this.isVariable) {
             for (FixedTransactionAmount transactionAmount : this.getTransactionAmounts()) {
-                if ((this.getCategory().getCategoryClass().isRevenue() && transactionAmount.getAmount().isNegative()) ||
-                        (!this.getCategory().getCategoryClass().isRevenue() && transactionAmount.getAmount().isPositive())) {
+                if ((this.getCategory().isRevenue() && transactionAmount.getAmount().isNegative()) ||
+                        (!this.getCategory().isRevenue() && transactionAmount.getAmount().isPositive())) {
                     transactionAmount.setAmount(new Amount(transactionAmount.getAmount().getAmount() * (-1)));
                 }
             }
         } else {
             super.adjustAmountSign();
         }
+    }
+
+    @Override
+    public boolean isCategoryClassValid(Category category) {
+        return category.isFixed();
     }
 
     /*

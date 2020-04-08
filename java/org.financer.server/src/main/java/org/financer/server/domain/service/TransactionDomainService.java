@@ -3,12 +3,10 @@ package org.financer.server.domain.service;
 import org.financer.server.application.api.error.NotFoundException;
 import org.financer.server.domain.model.category.Category;
 import org.financer.server.domain.model.transaction.FixedTransaction;
-import org.financer.server.domain.model.transaction.FixedTransactionAmount;
 import org.financer.server.domain.model.transaction.VariableTransaction;
 import org.financer.server.domain.repository.CategoryRepository;
 import org.financer.server.domain.repository.FixedTransactionRepository;
 import org.financer.server.domain.repository.VariableTransactionRepository;
-import org.financer.shared.domain.model.api.transaction.TransactionAmountDTO;
 import org.financer.shared.domain.model.value.objects.Amount;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,6 +46,7 @@ public class TransactionDomainService {
         Optional<Category> categoryOptional = categoryRepository.findById(variableTransactionEntity.getCategory().getId());
         if (categoryOptional.isPresent()) {
             variableTransactionEntity.setCategory(categoryOptional.get());
+            variableTransactionEntity.throwIfInvalidCategoryClass();
             variableTransactionEntity.throwIfNotUsersProperty(userId);
             return variableTransactionRepository.save(variableTransactionEntity);
         }
@@ -87,6 +86,7 @@ public class TransactionDomainService {
         Optional<Category> categoryOptional = categoryRepository.findById(fixedTransaction.getCategory().getId());
         if (categoryOptional.isPresent()) {
             fixedTransaction.setCategory(categoryOptional.get());
+            fixedTransaction.throwIfInvalidCategoryClass();
             fixedTransaction.throwIfNotUsersProperty(userId);
 
             // delete transaction amounts if transaction is not variable

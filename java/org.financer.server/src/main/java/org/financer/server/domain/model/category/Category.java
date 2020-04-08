@@ -100,6 +100,16 @@ public class Category implements DataEntity, Tree, AmountProvider, UserProperty 
         return amount;
     }
 
+    @Override
+    public boolean isFixed() {
+        return this.categoryClass.isFixed();
+    }
+
+    @Override
+    public boolean isRevenue() {
+        return this.categoryClass.isRevenue();
+    }
+
     /*
      * Getters and Setters
      */
@@ -181,6 +191,6 @@ public class Category implements DataEntity, Tree, AmountProvider, UserProperty 
 
     @Override
     public String toString() {
-        return "Category{" + "id=" + id + ", categoryClass=" + categoryClass + ", name='" + name + '\'' + '}';
+        return "Category[" + "id=" + id + ", categoryClass=" + categoryClass + ", name='" + name + '\'' + ']';
     }
 }

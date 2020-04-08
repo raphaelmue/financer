@@ -36,6 +36,11 @@ public class VariableTransaction extends Transaction {
         }
     }
 
+    @Override
+    public boolean isCategoryClassValid(Category category) {
+        return category.isVariable();
+    }
+
     /*
      * Getters and Setters
      */

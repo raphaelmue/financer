@@ -32,4 +32,36 @@ public interface AmountProvider {
      */
     Amount getAmount(TimeRange timeRange);
 
+    /**
+     * Indicates whether this refers to either fixed revenue or fixed expenses.
+     *
+     * @return true if fixed
+     */
+    boolean isFixed();
+
+    /**
+     * Indicates whether this refers to either variable revenue or variable expenses.
+     *
+     * @return true if variable
+     */
+    default boolean isVariable() {
+        return !isFixed();
+    }
+
+    /**
+     * Indicates whether this is fixed or variable revenue.
+     *
+     * @return true if revenue
+     */
+    boolean isRevenue();
+
+    /**
+     * Indicates whether this is fixed or variable expenses
+     *
+     * @return true if expenses
+     */
+    default boolean isExpenses() {
+        return !isRevenue();
+    }
+
 }

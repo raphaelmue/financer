@@ -1,5 +1,6 @@
 package org.financer.server.domain.model.transaction;
 
+import org.financer.server.application.api.error.IllegalTransactionCategoryClassException;
 import org.financer.server.domain.model.DataEntity;
 import org.financer.server.domain.model.category.Category;
 import org.financer.server.domain.model.user.UserProperty;
@@ -47,11 +48,34 @@ public abstract class Transaction implements DataEntity, AmountProvider, UserPro
      * versa, the amount sign will be changed.
      */
     public void adjustAmountSign() {
-        if ((this.getCategory().getCategoryClass().isRevenue() && this.getAmount().isNegative()) ||
-                (!this.getCategory().getCategoryClass().isRevenue() && this.getAmount().isPositive())) {
+        if ((this.getCategory().isRevenue() && this.getAmount().isNegative()) ||
+                (!this.getCategory().isRevenue() && this.getAmount().isPositive())) {
             this.setAmount(new Amount(this.getAmount().getAmount() * (-1)));
         }
     }
+
+    public abstract boolean isCategoryClassValid(Category category);
+
+    public final boolean isCategoryClassValid() {
+        return isCategoryClassValid(this.category);
+    }
+
+    public final void throwIfInvalidCategoryClass() {
+        if (!isCategoryClassValid()) {
+            throw new IllegalTransactionCategoryClassException(this);
+        }
+    }
+
+    @Override
+    public boolean isFixed() {
+        return this.category.isFixed();
+    }
+
+    @Override
+    public boolean isRevenue() {
+        return this.category.isRevenue();
+    }
+
 
     /*
      * Getters and Setters
@@ -72,6 +96,7 @@ public abstract class Transaction implements DataEntity, AmountProvider, UserPro
     }
 
     public Transaction setCategory(Category category) {
+
         this.category = category;
         return this;
     }
@@ -120,5 +145,11 @@ public abstract class Transaction implements DataEntity, AmountProvider, UserPro
     public Transaction setAttachments(Set<Attachment> attachments) {
         this.attachments = attachments;
         return this;
+    }
+
+    @Override
+    public String toString() {
+        return "Transaction[" + "id=" + id + ", category=" + category + ", amount=" + amount + ", product='" + product +
+                '\'' + ", vendor='" + vendor + '\'' + ']';
     }
 }
