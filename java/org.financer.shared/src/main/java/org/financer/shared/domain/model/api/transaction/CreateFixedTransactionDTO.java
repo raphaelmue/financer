@@ -2,6 +2,7 @@ package org.financer.shared.domain.model.api.transaction;
 
 import org.financer.shared.domain.model.api.DataTransferObject;
 import org.financer.shared.domain.model.value.objects.Amount;
+import org.financer.shared.domain.model.value.objects.TimeRange;
 import org.financer.util.validation.NotNullConditional;
 
 import javax.validation.constraints.NotNull;
@@ -20,9 +21,8 @@ public class CreateFixedTransactionDTO implements DataTransferObject {
     private long categoryId;
 
     @NotNull
-    private LocalDate startDate;
+    private TimeRange timeRange;
 
-    private LocalDate endDate;
 
     private String product;
 
@@ -55,21 +55,12 @@ public class CreateFixedTransactionDTO implements DataTransferObject {
         return this;
     }
 
-    public LocalDate getStartDate() {
-        return startDate;
+    public TimeRange getTimeRange() {
+        return timeRange;
     }
 
-    public CreateFixedTransactionDTO setStartDate(LocalDate startDate) {
-        this.startDate = startDate;
-        return this;
-    }
-
-    public LocalDate getEndDate() {
-        return endDate;
-    }
-
-    public CreateFixedTransactionDTO setEndDate(LocalDate endDate) {
-        this.endDate = endDate;
+    public CreateFixedTransactionDTO setTimeRange(TimeRange timeRange) {
+        this.timeRange = timeRange;
         return this;
     }
 

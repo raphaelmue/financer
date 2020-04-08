@@ -4,6 +4,7 @@ import org.hibernate.annotations.Immutable;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.LocalDate;
 
@@ -17,6 +18,7 @@ public class TimeRange implements Serializable {
     private static final long serialVersionUID = 3710079875858283394L;
 
     @Column(name = "start_date", nullable = false)
+    @NotNull
     private LocalDate startDate;
 
     @Column(name = "end_date")
