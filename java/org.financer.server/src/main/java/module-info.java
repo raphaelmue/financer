@@ -9,6 +9,7 @@ module org.financer.server {
     requires java.naming;
     requires java.sql;
     requires java.validation;
+    requires java.jwt;
     requires commons.email;
     requires spring.boot.autoconfigure;
     requires spring.boot;
@@ -21,6 +22,9 @@ module org.financer.server {
     requires spring.data.commons;
     requires spring.data.jpa;
     requires spring.jcl;
+    requires spring.security.web;
+    requires spring.security.core;
+    requires spring.security.config;
     requires slf4j.api;
     requires net.bytebuddy;
     requires com.fasterxml.classmate;
@@ -28,10 +32,6 @@ module org.financer.server {
     requires org.apache.tomcat.embed.core;
     requires modelmapper;
     requires jdk.unsupported;
-    requires spring.security.web;
-    requires spring.security.core;
-    requires spring.security.config;
-    requires java.jwt;
     requires com.google.gson;
 
     uses javax.persistence.spi.PersistenceProvider;

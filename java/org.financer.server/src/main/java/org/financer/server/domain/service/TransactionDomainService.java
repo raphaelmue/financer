@@ -1,5 +1,6 @@
 package org.financer.server.domain.service;
 
+import org.financer.server.domain.model.category.Category;
 import org.financer.server.domain.model.transaction.FixedTransaction;
 import org.financer.server.domain.model.transaction.VariableTransaction;
 import org.financer.server.domain.repository.CategoryRepository;
@@ -62,20 +63,22 @@ public class TransactionDomainService {
     /**
      * Creates a new fixed transaction and inserts it to the database.
      *
-     * <p> First the transaction object is validated by checking the category, isVariable state and the users permission. </p>
+     * <p> First the transaction object is validated by checking the category, isVariable state and the users
+     * permission. </p>
      *
      * <p> If there is an existing transaction that is active (see {@link FixedTransaction#isActive()}) of the
-     * same category, it will be canceled (see {@link FixedTransaction#cancel(LocalDate)}) on the start date of
-     * the new transaction. </p>
+     * same category, it will be canceled (see {@link FixedTransaction#cancel(LocalDate)}) on the start date of the new
+     * transaction. </p>
      *
-     * @param userId                 id of the user
+     * @param userId           id of the user
      * @param fixedTransaction fixed transaction to be inserted
      * @return inserted fixed transaction
      */
     public FixedTransaction createFixedTransaction(long userId, FixedTransaction fixedTransaction) {
         logger.info("Creating new fixed transaction.");
-        if (categoryRepository.existsById(fixedTransaction.getCategory().getId())) {
-
+        Optional<Category> categoryOptional = categoryRepository.findById(fixedTransaction.getCategory().getId());
+        if (categoryOptional.isPresent()) {
+            fixedTransaction.setCategory(categoryOptional.get());
             fixedTransaction.throwIfNotUsersProperty(userId);
 
             // delete transaction amounts if transaction is not variable
@@ -83,11 +86,6 @@ public class TransactionDomainService {
                 fixedTransaction.setAmount(null);
             } else {
                 fixedTransaction.setTransactionAmounts(new HashSet<>());
-
-                // amount must not be empty if transaction is not variable
-                if (fixedTransaction.getAmount() == null) {
-                    // TODO implemented custom validator
-                }
             }
 
             Optional<FixedTransaction> activeTransactionOptional = fixedTransactionRepository.findActiveTransactionByCategory(

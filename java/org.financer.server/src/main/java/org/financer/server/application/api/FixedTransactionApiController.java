@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.financer.server.application.service.AuthenticationService;
 import org.financer.server.domain.model.transaction.FixedTransaction;
 import org.financer.server.domain.service.TransactionDomainService;
+import org.financer.shared.domain.model.api.transaction.CreateFixedTransactionDTO;
 import org.financer.shared.domain.model.api.transaction.FixedTransactionDTO;
 import org.financer.shared.domain.model.api.transaction.TransactionAmountDTO;
 import org.modelmapper.ModelMapper;
@@ -41,7 +42,7 @@ public class FixedTransactionApiController implements FixedTransactionApi {
     }
 
     @Override
-    public ResponseEntity<FixedTransactionDTO> createFixedTransaction(@NotNull @Valid FixedTransactionDTO fixedTransaction) {
+    public ResponseEntity<FixedTransactionDTO> createFixedTransaction(@NotNull @Valid CreateFixedTransactionDTO fixedTransaction) {
         FixedTransaction fixedTransactionEntity = modelMapper.map(fixedTransaction, FixedTransaction.class);
         fixedTransactionEntity = transactionDomainService.createFixedTransaction(authenticationService.getUserId(), fixedTransactionEntity);
         return new ResponseEntity<>(modelMapper.map(fixedTransactionEntity, FixedTransactionDTO.class), HttpStatus.OK);

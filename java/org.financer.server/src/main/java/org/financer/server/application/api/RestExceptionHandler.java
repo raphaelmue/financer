@@ -41,6 +41,7 @@ public class RestExceptionHandler {
                 .stream()
                 .map(objectError -> messageSource.getMessage(objectError, locale))
                 .collect(Collectors.toList());
+        logger.error(exception.getMessage(), exception);
         return new ResponseEntity<>(new RestErrorMessage(HttpStatus.BAD_REQUEST, request.getRequestURI(), errorMessages), HttpStatus.BAD_REQUEST);
     }
 

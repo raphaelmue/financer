@@ -1,5 +1,6 @@
 package org.financer.server.application.api;
 
+import org.financer.shared.domain.model.api.transaction.CreateFixedTransactionDTO;
 import org.financer.shared.domain.model.api.transaction.FixedTransactionDTO;
 import org.financer.shared.domain.model.api.transaction.TransactionAmountDTO;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +23,7 @@ public interface FixedTransactionApi {
             value = "/fixedTransactions",
             produces = {"application/json"},
             headers = "Accept=application/json")
-    ResponseEntity<FixedTransactionDTO> createFixedTransaction(@NotNull @Valid @RequestParam(value = "variableTransaction") FixedTransactionDTO fixedTransaction);
+    ResponseEntity<FixedTransactionDTO> createFixedTransaction(@NotNull @Valid @RequestBody CreateFixedTransactionDTO fixedTransaction);
 
 
     /**
