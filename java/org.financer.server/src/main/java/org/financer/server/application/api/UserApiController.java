@@ -2,6 +2,7 @@ package org.financer.server.application.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.financer.server.application.service.AuthenticationService;
+import org.financer.server.domain.model.category.Category;
 import org.financer.server.domain.model.user.User;
 import org.financer.server.domain.service.UserDomainService;
 import org.financer.shared.domain.model.api.category.CategoryDTO;
@@ -9,6 +10,7 @@ import org.financer.shared.domain.model.api.transaction.VariableTransactionDTO;
 import org.financer.shared.domain.model.api.user.RegisterUserDTO;
 import org.financer.shared.domain.model.api.user.UserDTO;
 import org.financer.shared.domain.model.value.objects.*;
+import org.financer.util.mapping.ModelMapperUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -109,7 +111,9 @@ public class UserApiController implements UserApi {
 
     @Override
     public ResponseEntity<List<CategoryDTO>> getUsersCategories(@NotBlank @PathVariable("userId") @Min(1) Long userId) {
-        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+        authenticationService.getAuthenticatedUser().throwIfNotUsersProperty(userId);
+        List<Category> categories = userDomainService.fetchCategories(userId);
+        return new ResponseEntity<>(ModelMapperUtils.mapAll(categories, CategoryDTO.class), HttpStatus.OK);
     }
 
     @Override

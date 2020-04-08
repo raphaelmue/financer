@@ -3,19 +3,22 @@ package org.financer.server.domain.service;
 import org.apache.commons.mail.EmailException;
 import org.financer.server.application.api.error.UniqueEmailViolationException;
 import org.financer.server.application.service.VerificationService;
+import org.financer.server.domain.model.category.Category;
 import org.financer.server.domain.model.user.Token;
 import org.financer.server.domain.model.user.User;
 import org.financer.server.domain.model.user.VerificationToken;
+import org.financer.server.domain.repository.CategoryRepository;
 import org.financer.server.domain.repository.TokenRepository;
 import org.financer.server.domain.repository.UserRepository;
 import org.financer.server.domain.repository.VerificationTokenRepository;
 import org.financer.shared.domain.model.value.objects.*;
+import org.financer.util.collections.Iterables;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -23,17 +26,20 @@ public class UserDomainService {
 
     private static final Logger logger = LoggerFactory.getLogger(UserDomainService.class);
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+    private final TokenRepository tokenRepository;
+    private final VerificationTokenRepository verificationTokenRepository;
+    private final CategoryRepository categoryRepository;
+    private final VerificationService verificationService;
 
-    @Autowired
-    private TokenRepository tokenRepository;
-
-    @Autowired
-    private VerificationTokenRepository verificationTokenRepository;
-
-    @Autowired
-    private VerificationService verificationService;
+    public UserDomainService(UserRepository userRepository, TokenRepository tokenRepository, VerificationTokenRepository verificationTokenRepository,
+                             CategoryRepository categoryRepository, VerificationService verificationService) {
+        this.userRepository = userRepository;
+        this.tokenRepository = tokenRepository;
+        this.verificationTokenRepository = verificationTokenRepository;
+        this.categoryRepository = categoryRepository;
+        this.verificationService = verificationService;
+    }
 
     /**
      * Checks, if the users credentials are correct
@@ -206,5 +212,15 @@ public class UserDomainService {
             return true;
         }
         return false;
+    }
+
+    /**
+     * Fetches all categories of the user and returns them as a tree.
+     *
+     * @param userId user whose categories will be fetched
+     * @return list root categories.
+     */
+    public List<Category> fetchCategories(long userId) {
+        return Iterables.toList(categoryRepository.findAllByUserId(userId));
     }
 }

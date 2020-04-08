@@ -137,10 +137,14 @@ public class Category implements DataEntity, Tree, AmountProvider, UserProperty 
         return parent;
     }
 
+    public Category setParent(Category parent) {
+        this.parent = parent;
+        return this;
+    }
+
     @Override
     public Category setParent(Tree parent) {
-        this.parent = (Category) parent;
-        return this;
+        return this.setParent((Category) parent);
     }
 
     public String getName() {
@@ -173,5 +177,10 @@ public class Category implements DataEntity, Tree, AmountProvider, UserProperty 
     @Override
     public int hashCode() {
         return Objects.hash(id);
+    }
+
+    @Override
+    public String toString() {
+        return "Category{" + "id=" + id + ", categoryClass=" + categoryClass + ", name='" + name + '\'' + '}';
     }
 }

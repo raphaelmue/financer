@@ -13,7 +13,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "users")
-public class User implements DataEntity {
+public class User implements DataEntity, UserProperty {
     private static final long serialVersionUID = 8551108621522985674L;
 
     @Id
@@ -60,6 +60,11 @@ public class User implements DataEntity {
     public boolean isVerified() {
         return this.verificationToken != null && this.verificationToken.getVerifyingDate() != null &&
                 !this.verificationToken.getVerifyingDate().isBefore(LocalDate.now());
+    }
+
+    @Override
+    public boolean isPropertyOfUser(long userId) {
+        return this.id == userId;
     }
 
     /*

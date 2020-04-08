@@ -5,6 +5,7 @@ import javax.persistence.Embeddable;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import java.io.Serializable;
+import java.util.Objects;
 
 @Embeddable
 public class CategoryClass implements Serializable {
@@ -66,5 +67,23 @@ public class CategoryClass implements Serializable {
 
     public Values getCategoryClass() {
         return categoryClass;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        CategoryClass that = (CategoryClass) o;
+        return categoryClass == that.categoryClass;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(categoryClass);
+    }
+
+    @Override
+    public String toString() {
+        return "CategoryClass{" + "categoryClass=" + categoryClass + '}';
     }
 }
