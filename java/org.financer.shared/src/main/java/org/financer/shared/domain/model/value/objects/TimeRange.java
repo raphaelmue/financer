@@ -20,12 +20,13 @@ public class TimeRange implements Serializable {
 
     @Column(name = "start_date", nullable = false)
     @NotNull
-    private LocalDate startDate;
+    private final LocalDate startDate;
 
     @Column(name = "end_date")
-    private LocalDate endDate;
+    private final LocalDate endDate;
 
     public TimeRange() {
+        this(LocalDate.now());
     }
 
     public TimeRange(LocalDate startDate, LocalDate endDate) {
