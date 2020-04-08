@@ -7,6 +7,7 @@ import javax.persistence.Embeddable;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import java.io.Serializable;
+import java.util.Objects;
 
 @Embeddable
 @Immutable
@@ -57,4 +58,26 @@ public class Gender implements Serializable {
     public Values getGender() {
         return gender;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Gender gender1 = (Gender) o;
+        return gender == gender1.gender;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(gender);
+    }
+
+    @Override
+    public String toString() {
+        return "Gender [" +
+                "gender=" + gender +
+                ']';
+    }
+
+
 }

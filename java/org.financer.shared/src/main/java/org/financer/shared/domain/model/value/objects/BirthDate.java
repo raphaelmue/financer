@@ -6,6 +6,7 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.Objects;
 
 @Embeddable
 @Immutable
@@ -29,4 +30,26 @@ public class BirthDate implements Serializable {
     public LocalDate getBirthDate() {
         return birthDate;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        BirthDate birthDate1 = (BirthDate) o;
+        return Objects.equals(birthDate, birthDate1.birthDate);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(birthDate);
+    }
+
+    @Override
+    public String toString() {
+        return "BirthDate [" +
+                "birthDate=" + birthDate +
+                ']';
+    }
+
+
 }

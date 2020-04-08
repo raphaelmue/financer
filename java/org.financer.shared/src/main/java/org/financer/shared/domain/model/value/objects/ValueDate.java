@@ -73,4 +73,11 @@ public class ValueDate implements Serializable {
     public int hashCode() {
         return Objects.hash(date);
     }
+
+    @Override
+    public String toString() {
+        return "ValueDate [" +
+                "date=" + date +
+                ']';
+    }
 }

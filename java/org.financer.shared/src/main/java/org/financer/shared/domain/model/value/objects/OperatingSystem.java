@@ -5,6 +5,7 @@ import javax.persistence.Embeddable;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import java.io.Serializable;
+import java.util.Objects;
 
 @Embeddable
 public class OperatingSystem implements Serializable {
@@ -48,5 +49,25 @@ public class OperatingSystem implements Serializable {
 
     public Values getOperatingSystem() {
         return operatingSystem;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        OperatingSystem that = (OperatingSystem) o;
+        return operatingSystem == that.operatingSystem;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(operatingSystem);
+    }
+
+    @Override
+    public String toString() {
+        return "OperatingSystem [" +
+                "operatingSystem=" + operatingSystem +
+                ']';
     }
 }

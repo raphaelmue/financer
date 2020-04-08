@@ -6,6 +6,7 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.Objects;
 
 @Embeddable
 @Immutable
@@ -48,5 +49,25 @@ public class ExpireDate implements Serializable {
 
     public LocalDate getExpireDate() {
         return expireDate;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ExpireDate that = (ExpireDate) o;
+        return Objects.equals(expireDate, that.expireDate);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(expireDate);
+    }
+
+    @Override
+    public String toString() {
+        return "ExpireDate [" +
+                "expireDate=" + expireDate +
+                ']';
     }
 }

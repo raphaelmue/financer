@@ -7,6 +7,7 @@ import org.hibernate.annotations.Immutable;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import java.io.Serializable;
+import java.util.Objects;
 
 @Embeddable
 @Immutable
@@ -45,4 +46,28 @@ public final class HashedPassword implements Serializable {
     public String getSalt() {
         return salt;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        HashedPassword that = (HashedPassword) o;
+        return Objects.equals(hashedPassword, that.hashedPassword) &&
+                Objects.equals(salt, that.salt);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(hashedPassword, salt);
+    }
+
+    @Override
+    public String toString() {
+        return "HashedPassword [" +
+                "hashedPassword='" + hashedPassword + '\'' +
+                ", salt='" + salt + '\'' +
+                ']';
+    }
+
+
 }

@@ -48,7 +48,9 @@ public final class Email implements Serializable {
 
     @Override
     public String toString() {
-        return this.getEmailAddress();
+        return "Email [" +
+                "emailAddress='" + emailAddress + '\'' +
+                ']';
     }
 }
 

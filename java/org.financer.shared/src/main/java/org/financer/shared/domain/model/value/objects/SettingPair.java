@@ -9,6 +9,7 @@ import javax.persistence.Enumerated;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @Embeddable
@@ -88,5 +89,27 @@ public class SettingPair implements Serializable {
 
     public String getValue() {
         return value;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        SettingPair that = (SettingPair) o;
+        return property == that.property &&
+                Objects.equals(value, that.value);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(property, value);
+    }
+
+    @Override
+    public String toString() {
+        return "SettingPair [" +
+                "property=" + property +
+                ", value='" + value + '\'' +
+                ']';
     }
 }

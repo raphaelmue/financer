@@ -84,6 +84,8 @@ public class CategoryClass implements Serializable {
 
     @Override
     public String toString() {
-        return "CategoryClass{" + "categoryClass=" + categoryClass + '}';
+        return "CategoryClass [" +
+                "categoryClass=" + categoryClass +
+                ']';
     }
 }

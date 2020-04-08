@@ -7,6 +7,7 @@ import javax.persistence.Embeddable;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.Objects;
 
 /**
  * Class that specifies a time range with a start and an end date. This time range can also be open by setting the end
@@ -120,5 +121,27 @@ public class TimeRange implements Serializable {
 
     public TimeRange setEndDate(LocalDate endDate) {
         return new TimeRange(this.startDate, endDate);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        TimeRange timeRange = (TimeRange) o;
+        return Objects.equals(startDate, timeRange.startDate) &&
+                Objects.equals(endDate, timeRange.endDate);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(startDate, endDate);
+    }
+
+    @Override
+    public String toString() {
+        return "TimeRange [" +
+                "startDate=" + startDate +
+                ", endDate=" + endDate +
+                ']';
     }
 }
