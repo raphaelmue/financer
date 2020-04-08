@@ -18,6 +18,10 @@ public class Amount implements Serializable {
         this.amount = 0;
     }
 
+    public Amount(int amount) {
+        this.amount = amount;
+    }
+
     public Amount(double amount) {
         this.amount = amount;
     }

@@ -38,7 +38,7 @@ public class Category implements DataEntity, Tree, AmountProvider, UserProperty 
     @Column(name = "name", nullable = false)
     private String name;
 
-    @OneToMany(mappedBy = "parent")
+    @OneToMany(mappedBy = "parent", fetch = FetchType.EAGER)
     private Set<Category> children;
 
     @OneToMany(mappedBy = "category")

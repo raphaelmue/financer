@@ -5,6 +5,7 @@ import org.financer.server.application.service.AuthenticationService;
 import org.financer.server.domain.model.transaction.VariableTransaction;
 import org.financer.server.domain.service.TransactionDomainService;
 import org.financer.shared.domain.model.api.transaction.AttachmentDTO;
+import org.financer.shared.domain.model.api.transaction.CreateVariableTransactionDTO;
 import org.financer.shared.domain.model.api.transaction.VariableTransactionDTO;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +43,7 @@ public class VariableTransactionApiController implements VariableTransactionApi 
     }
 
     @Override
-    public ResponseEntity<VariableTransactionDTO> createTransaction(@NotNull @Valid VariableTransactionDTO variableTransaction) {
+    public ResponseEntity<VariableTransactionDTO> createTransaction(@NotNull @Valid CreateVariableTransactionDTO variableTransaction) {
         VariableTransaction variableTransactionEntity = modelMapper.map(variableTransaction, VariableTransaction.class);
         variableTransactionEntity = transactionDomainService.createVariableTransaction(authenticationService.getUserId(), variableTransactionEntity);
         return new ResponseEntity<>(modelMapper.map(variableTransactionEntity, VariableTransactionDTO.class), HttpStatus.OK);

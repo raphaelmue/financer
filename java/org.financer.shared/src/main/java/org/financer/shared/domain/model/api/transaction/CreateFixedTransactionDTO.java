@@ -5,8 +5,8 @@ import org.financer.shared.domain.model.value.objects.Amount;
 import org.financer.shared.domain.model.value.objects.TimeRange;
 import org.financer.util.validation.NotNullConditional;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import java.time.LocalDate;
 import java.util.List;
 
 @NotNullConditional(
@@ -35,7 +35,7 @@ public class CreateFixedTransactionDTO implements DataTransferObject {
 
     private int day;
 
-    private List<TransactionAmountDTO> transactionAmounts;
+    private List<@Valid CreateFixedTransactionAmountDTO> transactionAmounts;
 
     public Amount getAmount() {
         return amount;
@@ -109,11 +109,11 @@ public class CreateFixedTransactionDTO implements DataTransferObject {
         return this;
     }
 
-    public List<TransactionAmountDTO> getTransactionAmounts() {
+    public List<CreateFixedTransactionAmountDTO> getTransactionAmounts() {
         return transactionAmounts;
     }
 
-    public CreateFixedTransactionDTO setTransactionAmounts(List<TransactionAmountDTO> transactionAmounts) {
+    public CreateFixedTransactionDTO setTransactionAmounts(List<CreateFixedTransactionAmountDTO> transactionAmounts) {
         this.transactionAmounts = transactionAmounts;
         return this;
     }

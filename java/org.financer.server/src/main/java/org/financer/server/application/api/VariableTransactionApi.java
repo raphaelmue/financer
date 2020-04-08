@@ -1,6 +1,7 @@
 package org.financer.server.application.api;
 
 import org.financer.shared.domain.model.api.transaction.AttachmentDTO;
+import org.financer.shared.domain.model.api.transaction.CreateVariableTransactionDTO;
 import org.financer.shared.domain.model.api.transaction.VariableTransactionDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,7 +23,7 @@ public interface VariableTransactionApi {
             value = "/variableTransactions",
             produces = {"application/json"},
             headers = "Accept=application/json")
-    ResponseEntity<VariableTransactionDTO> createTransaction(@NotNull @Valid @RequestParam(value = "variableTransaction") VariableTransactionDTO variableTransaction);
+    ResponseEntity<VariableTransactionDTO> createTransaction(@NotNull @Valid @RequestBody CreateVariableTransactionDTO variableTransaction);
 
     /**
      * Updates a specified transaction.

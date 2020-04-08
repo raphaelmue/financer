@@ -1,23 +1,18 @@
 package org.financer.shared.domain.model.api.transaction;
 
 import org.financer.shared.domain.model.api.DataTransferObject;
-import org.financer.shared.domain.model.api.category.CategoryDTO;
 import org.financer.shared.domain.model.value.objects.Amount;
 import org.financer.shared.domain.model.value.objects.ValueDate;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.util.List;
-import java.util.Set;
 
-public class VariableTransactionDTO implements DataTransferObject {
+public class CreateVariableTransactionDTO implements DataTransferObject {
 
     @NotNull
     @Min(1)
-    private int id;
-
-    @NotNull
-    private CategoryDTO category;
+    private long categoryId;
 
     @NotNull
     private ValueDate valueDate;
@@ -29,25 +24,16 @@ public class VariableTransactionDTO implements DataTransferObject {
 
     private String purpose;
 
-    private String shop;
+    private String vendor;
 
-    private Set<AttachmentDTO> attachments;
+    private List<AttachmentDTO> attachments;
 
-    public int getId() {
-        return id;
+    public long getCategoryId() {
+        return categoryId;
     }
 
-    public VariableTransactionDTO setId(int id) {
-        this.id = id;
-        return this;
-    }
-
-    public CategoryDTO getCategory() {
-        return category;
-    }
-
-    public VariableTransactionDTO setCategory(CategoryDTO category) {
-        this.category = category;
+    public CreateVariableTransactionDTO setCategoryId(long categoryId) {
+        this.categoryId = categoryId;
         return this;
     }
 
@@ -55,7 +41,7 @@ public class VariableTransactionDTO implements DataTransferObject {
         return valueDate;
     }
 
-    public VariableTransactionDTO setValueDate(ValueDate valueDate) {
+    public CreateVariableTransactionDTO setValueDate(ValueDate valueDate) {
         this.valueDate = valueDate;
         return this;
     }
@@ -64,7 +50,7 @@ public class VariableTransactionDTO implements DataTransferObject {
         return amount;
     }
 
-    public VariableTransactionDTO setAmount(Amount amount) {
+    public CreateVariableTransactionDTO setAmount(Amount amount) {
         this.amount = amount;
         return this;
     }
@@ -73,7 +59,7 @@ public class VariableTransactionDTO implements DataTransferObject {
         return product;
     }
 
-    public VariableTransactionDTO setProduct(String product) {
+    public CreateVariableTransactionDTO setProduct(String product) {
         this.product = product;
         return this;
     }
@@ -82,25 +68,25 @@ public class VariableTransactionDTO implements DataTransferObject {
         return purpose;
     }
 
-    public VariableTransactionDTO setPurpose(String purpose) {
+    public CreateVariableTransactionDTO setPurpose(String purpose) {
         this.purpose = purpose;
         return this;
     }
 
-    public String getShop() {
-        return shop;
+    public String getVendor() {
+        return vendor;
     }
 
-    public VariableTransactionDTO setShop(String shop) {
-        this.shop = shop;
+    public CreateVariableTransactionDTO setVendor(String vendor) {
+        this.vendor = vendor;
         return this;
     }
 
-    public Set<AttachmentDTO> getAttachments() {
+    public List<AttachmentDTO> getAttachments() {
         return attachments;
     }
 
-    public VariableTransactionDTO setAttachments(Set<AttachmentDTO> attachments) {
+    public CreateVariableTransactionDTO setAttachments(List<AttachmentDTO> attachments) {
         this.attachments = attachments;
         return this;
     }

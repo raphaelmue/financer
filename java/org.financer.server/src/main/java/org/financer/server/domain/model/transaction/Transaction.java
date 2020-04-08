@@ -31,10 +31,10 @@ public abstract class Transaction implements DataEntity, AmountProvider, UserPro
     @Column(name = "purpose")
     private String purpose;
 
-    @Column(name = "shop")
+    @Column(name = "vendor")
     private String vendor;
 
-    @OneToMany(mappedBy = "transaction")
+    @OneToMany(mappedBy = "transaction", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<Attachment> attachments = new HashSet<>();
 
     @Override

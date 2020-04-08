@@ -28,6 +28,10 @@ public class ValueDate implements Serializable {
         this.date = date;
     }
 
+    public ValueDate(String dateString) {
+        this.date = LocalDate.parse(dateString);
+    }
+
     /**
      * Checks whether month and year of both value dates are equal.
      *

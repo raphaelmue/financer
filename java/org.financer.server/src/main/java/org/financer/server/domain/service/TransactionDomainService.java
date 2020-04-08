@@ -1,11 +1,15 @@
 package org.financer.server.domain.service;
 
+import org.financer.server.application.api.error.NotFoundException;
 import org.financer.server.domain.model.category.Category;
 import org.financer.server.domain.model.transaction.FixedTransaction;
+import org.financer.server.domain.model.transaction.FixedTransactionAmount;
 import org.financer.server.domain.model.transaction.VariableTransaction;
 import org.financer.server.domain.repository.CategoryRepository;
 import org.financer.server.domain.repository.FixedTransactionRepository;
 import org.financer.server.domain.repository.VariableTransactionRepository;
+import org.financer.shared.domain.model.api.transaction.TransactionAmountDTO;
+import org.financer.shared.domain.model.value.objects.Amount;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,14 +25,16 @@ public class TransactionDomainService {
 
     private static final Logger logger = LoggerFactory.getLogger(TransactionDomainService.class);
 
-    @Autowired
-    private CategoryRepository categoryRepository;
+    private final CategoryRepository categoryRepository;
+    private final VariableTransactionRepository variableTransactionRepository;
+    private final FixedTransactionRepository fixedTransactionRepository;
 
     @Autowired
-    private VariableTransactionRepository variableTransactionRepository;
-
-    @Autowired
-    private FixedTransactionRepository fixedTransactionRepository;
+    public TransactionDomainService(CategoryRepository categoryRepository, VariableTransactionRepository variableTransactionRepository, FixedTransactionRepository fixedTransactionRepository) {
+        this.categoryRepository = categoryRepository;
+        this.variableTransactionRepository = variableTransactionRepository;
+        this.fixedTransactionRepository = fixedTransactionRepository;
+    }
 
     /**
      * Inserts the given transaction into the database.
@@ -38,12 +44,14 @@ public class TransactionDomainService {
      * @return inserted transaction object
      */
     public VariableTransaction createVariableTransaction(long userId, VariableTransaction variableTransactionEntity) {
-        logger.info("Creating new variable transaction. ");
-        if (variableTransactionEntity.getCategory() != null && categoryRepository.existsById(variableTransactionEntity.getCategory().getId())) {
+        logger.info("Creating new variable transaction.");
+        Optional<Category> categoryOptional = categoryRepository.findById(variableTransactionEntity.getCategory().getId());
+        if (categoryOptional.isPresent()) {
+            variableTransactionEntity.setCategory(categoryOptional.get());
             variableTransactionEntity.throwIfNotUsersProperty(userId);
             return variableTransactionRepository.save(variableTransactionEntity);
         }
-        throw new NoResultException(String.format("No category with id %d found!", variableTransactionEntity.getCategory().getId()));
+        throw new NotFoundException(Category.class, variableTransactionEntity.getCategory().getId());
     }
 
     /**
@@ -83,7 +91,7 @@ public class TransactionDomainService {
 
             // delete transaction amounts if transaction is not variable
             if (fixedTransaction.isVariable()) {
-                fixedTransaction.setAmount(null);
+                fixedTransaction.setAmount(new Amount());
             } else {
                 fixedTransaction.setTransactionAmounts(new HashSet<>());
             }

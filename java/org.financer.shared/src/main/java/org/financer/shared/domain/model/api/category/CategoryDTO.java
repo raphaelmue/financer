@@ -1,11 +1,10 @@
 package org.financer.shared.domain.model.api.category;
 
-import org.financer.shared.domain.model.api.transaction.VariableTransactionDTO;
 import org.financer.shared.domain.model.value.objects.CategoryClass;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.util.List;
+import java.util.Set;
 
 public class CategoryDTO {
 
@@ -19,9 +18,7 @@ public class CategoryDTO {
     @NotNull
     private String name;
 
-    private List<CategoryDTO> children;
-
-    private List<VariableTransactionDTO> variableTransactions;
+    private Set<CategoryDTO> children;
 
     public int getId() {
         return id;
@@ -50,21 +47,13 @@ public class CategoryDTO {
         return this;
     }
 
-    public List<CategoryDTO> getChildren() {
+    public Set<CategoryDTO> getChildren() {
         return children;
     }
 
-    public CategoryDTO setChildren(List<CategoryDTO> children) {
+    public CategoryDTO setChildren(Set<CategoryDTO> children) {
         this.children = children;
         return this;
     }
 
-    public List<VariableTransactionDTO> getVariableTransactions() {
-        return variableTransactions;
-    }
-
-    public CategoryDTO setVariableTransactions(List<VariableTransactionDTO> variableTransactions) {
-        this.variableTransactions = variableTransactions;
-        return this;
-    }
 }
