@@ -60,7 +60,7 @@ public class User implements DataEntity, UserProperty {
     public boolean isVerified() {
         return this.verificationToken != null && this.verificationToken.getVerifyingDate() != null &&
                 !this.verificationToken.getVerifyingDate().isAfter(LocalDate.now()) &&
-                this.verificationToken.getExpireDate().getExpireDate().isBefore(this.verificationToken.getVerifyingDate());
+                !this.verificationToken.getExpireDate().getExpireDate().isBefore(this.verificationToken.getVerifyingDate());
     }
 
     @Override

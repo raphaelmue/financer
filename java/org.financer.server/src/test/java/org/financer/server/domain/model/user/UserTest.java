@@ -38,9 +38,9 @@ public class UserTest {
         assertThat(user.isVerified()).isFalse();
 
         verificationToken.setVerifyingDate(LocalDate.now().minusMonths(2));
-        assertThat(user.isVerified()).isFalse();
+        assertThat(user.isVerified()).isTrue();
 
-        verificationToken.setExpireDate(new ExpireDate(LocalDate.now().minusMonths(1)));
+        verificationToken.setExpireDate(new ExpireDate(LocalDate.now().minusMonths(5)));
         assertThat(user.isVerified()).isFalse();
     }
 
