@@ -14,6 +14,7 @@ module org.financer.shared {
     requires java.persistence;
     requires commons.validator;
     requires java.validation;
+    requires com.fasterxml.jackson.annotation;
 
     uses javax.persistence.spi.PersistenceProvider;
 

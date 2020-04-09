@@ -21,6 +21,15 @@ public class Setting implements DataEntity {
     @Embedded
     private SettingPair pair;
 
+    public Setting setValue(String value) {
+        this.setPair(this.getPair().setValue(value));
+        return this;
+    }
+
+    /*
+     * Getters and Setters
+     */
+
     @Override
     public long getId() {
         return id;

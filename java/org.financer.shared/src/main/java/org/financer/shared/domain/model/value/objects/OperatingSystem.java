@@ -1,5 +1,7 @@
 package org.financer.shared.domain.model.value.objects;
 
+import org.financer.shared.exceptions.EnumNotFoundException;
+
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.EnumType;
@@ -33,14 +35,26 @@ public class OperatingSystem implements Serializable {
         public boolean getIsMobile() {
             return isMobile;
         }
-    }
 
+        public static Values getOperatingSystemByName(String name) {
+            for (Values operatingSystem : values()) {
+                if (operatingSystem.getName().equals(name)) {
+                    return operatingSystem;
+                }
+            }
+            throw new EnumNotFoundException(Values.class, name);
+        }
+    }
 
     @Enumerated(EnumType.STRING)
     @Column(name = "system")
     private Values operatingSystem;
 
     public OperatingSystem() {
+    }
+
+    public OperatingSystem(String operatingSystem) {
+        this.operatingSystem = Values.getOperatingSystemByName(operatingSystem);
     }
 
     public OperatingSystem(Values operatingSystem) {

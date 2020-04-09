@@ -1,5 +1,6 @@
 package org.financer.shared.domain.model.value.objects;
 
+import org.financer.shared.exceptions.EnumNotFoundException;
 import org.hibernate.annotations.Immutable;
 
 import javax.persistence.Column;
@@ -35,7 +36,7 @@ public class Gender implements Serializable {
                     return gender;
                 }
             }
-            return null;
+            throw new EnumNotFoundException(Values.class, name);
         }
 
     }

@@ -1,5 +1,7 @@
 package org.financer.shared.domain.model.value.objects;
 
+import org.financer.shared.exceptions.EnumNotFoundException;
+
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.EnumType;
@@ -33,7 +35,7 @@ public class CategoryClass implements Serializable {
                     return categoryClass;
                 }
             }
-            return null;
+            throw new EnumNotFoundException(Values.class, name);
         }
 
         public static Values getCategoryClassByIndex(int index) {
@@ -47,6 +49,10 @@ public class CategoryClass implements Serializable {
     private Values categoryClass;
 
     public CategoryClass() {
+    }
+
+    public CategoryClass(String categoryClass) {
+        this.categoryClass = Values.getCategoryClassByName(categoryClass);
     }
 
     public CategoryClass(Values categoryClass) {

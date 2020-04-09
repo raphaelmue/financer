@@ -1,6 +1,7 @@
 package org.financer.shared.domain.model.api.user;
 
 import org.financer.shared.domain.model.value.objects.Gender;
+import org.financer.shared.domain.model.value.objects.SettingPair;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.Min;
@@ -8,6 +9,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 public class UserDTO {
 
@@ -31,8 +33,6 @@ public class UserDTO {
 
     private Gender.Values gender;
 
-    private List<SettingsDTO> settings;
-
     @NotNull
     private TokenDTO activeToken;
 
@@ -40,6 +40,8 @@ public class UserDTO {
 
     @NotNull
     private boolean verified;
+
+    private Map<SettingPair.Property, SettingsDTO> settings;
 
     public int getId() {
         return id;
@@ -95,15 +97,6 @@ public class UserDTO {
         return this;
     }
 
-    public List<SettingsDTO> getSettings() {
-        return settings;
-    }
-
-    public UserDTO setSettings(List<SettingsDTO> settings) {
-        this.settings = settings;
-        return this;
-    }
-
     public TokenDTO getActiveToken() {
         return activeToken;
     }
@@ -128,6 +121,15 @@ public class UserDTO {
 
     public UserDTO setVerified(boolean verified) {
         this.verified = verified;
+        return this;
+    }
+
+    public Map<SettingPair.Property, SettingsDTO> getSettings() {
+        return settings;
+    }
+
+    public UserDTO setSettings(Map<SettingPair.Property, SettingsDTO> settings) {
+        this.settings = settings;
         return this;
     }
 }

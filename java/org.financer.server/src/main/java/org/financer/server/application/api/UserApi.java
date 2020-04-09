@@ -3,6 +3,7 @@ package org.financer.server.application.api;
 import org.financer.shared.domain.model.api.category.CategoryDTO;
 import org.financer.shared.domain.model.api.transaction.VariableTransactionDTO;
 import org.financer.shared.domain.model.api.user.RegisterUserDTO;
+import org.financer.shared.domain.model.api.user.UpdateSettingsDTO;
 import org.financer.shared.domain.model.api.user.UserDTO;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
@@ -104,6 +105,20 @@ public interface UserApi {
                                                            @NotNull @Valid @RequestParam("surname") String surname,
                                                            @NotNull @Valid @RequestParam(value = "birthDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate birthDate,
                                                            @NotNull @Valid @RequestParam(value = "gender") String gender);
+
+    /**
+     * Updates users settings.
+     *
+     * @param userId  id of the user
+     * @param setting updated settings
+     * @return update user object
+     */
+    @PostMapping(
+            value = "/users/{userId}/settings",
+            produces = {"application/json"},
+            headers = "Accept=application/json")
+    ResponseEntity<UserDTO> updateUsersSettings(@NotBlank @PathVariable("userId") @Min(1) Long userId,
+                                                @NotNull @Valid @RequestBody UpdateSettingsDTO setting);
 
     /**
      * Verifies a users email address by checking the given verification token.

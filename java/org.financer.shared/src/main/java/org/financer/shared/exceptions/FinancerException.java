@@ -17,10 +17,6 @@ public abstract class FinancerException extends RuntimeException {
      * @param messageKey message key
      * @param args       arguments for message translation
      */
-    public FinancerException(String messageKey, String... args) {
-        this(null, messageKey, args);
-    }
-
     public FinancerException(String message, String messageKey, String... args) {
         super(message);
         this.messageKey = messageKey;

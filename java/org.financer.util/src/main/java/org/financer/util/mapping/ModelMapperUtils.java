@@ -4,12 +4,14 @@ import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class ModelMapperUtils {
 
-    private static ModelMapper modelMapper = new ModelMapper();
+    private static ModelMapper modelMapper;
 
     /*
       Model mapper property setting are specified in the following block.
@@ -57,6 +59,13 @@ public class ModelMapperUtils {
         return entityList.stream()
                 .map(entity -> map(entity, outCLass))
                 .collect(Collectors.toList());
+    }
+
+    public static <K, V, K1, V1> Map<K, V> map(final Map<K1, V1> map, Class<K> keyClass, Class<V> valueClass) {
+        Map<K, V> result = new HashMap<>();
+        map.forEach((key, value) ->
+                result.put(modelMapper.map(key, keyClass), modelMapper.map(value, valueClass)));
+        return result;
     }
 
     /**

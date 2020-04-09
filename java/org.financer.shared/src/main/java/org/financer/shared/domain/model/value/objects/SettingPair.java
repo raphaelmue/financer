@@ -1,5 +1,6 @@
 package org.financer.shared.domain.model.value.objects;
 
+import org.financer.shared.exceptions.EnumNotFoundException;
 import org.hibernate.annotations.Immutable;
 
 import javax.persistence.Column;
@@ -53,7 +54,7 @@ public class SettingPair implements Serializable {
                     return property;
                 }
             }
-            throw new IllegalArgumentException("No such property with name: " + name);
+            throw new EnumNotFoundException(Property.class, name);
         }
 
         public static Set<Property> getUserProperties() {
@@ -78,6 +79,11 @@ public class SettingPair implements Serializable {
     public SettingPair() {
     }
 
+    public SettingPair(String property, String value) {
+        this.property = Property.getPropertyByName(property);
+        this.value = value;
+    }
+
     public SettingPair(Property property, String value) {
         this.property = property;
         this.value = value;
@@ -89,6 +95,10 @@ public class SettingPair implements Serializable {
 
     public String getValue() {
         return value;
+    }
+
+    public SettingPair setValue(String value) {
+        return new SettingPair(this.property, value);
     }
 
     @Override

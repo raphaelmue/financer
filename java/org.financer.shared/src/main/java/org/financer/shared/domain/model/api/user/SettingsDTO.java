@@ -1,6 +1,6 @@
 package org.financer.shared.domain.model.api.user;
 
-import org.financer.shared.domain.model.value.objects.SettingPair;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -11,9 +11,9 @@ public class SettingsDTO {
     @Min(1)
     private int id;
 
-    private SettingPair.Property property;
-
-    private String value;
+    @NotNull
+    @JsonProperty("value")
+    private String pairValue;
 
     public int getId() {
         return id;
@@ -24,21 +24,12 @@ public class SettingsDTO {
         return this;
     }
 
-    public SettingPair.Property getProperty() {
-        return property;
+    public String getPairValue() {
+        return pairValue;
     }
 
-    public SettingsDTO setProperty(SettingPair.Property property) {
-        this.property = property;
-        return this;
-    }
-
-    public String getValue() {
-        return value;
-    }
-
-    public SettingsDTO setValue(String value) {
-        this.value = value;
+    public SettingsDTO setPairValue(String pairValue) {
+        this.pairValue = pairValue;
         return this;
     }
 }

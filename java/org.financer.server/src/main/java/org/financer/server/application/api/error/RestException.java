@@ -22,7 +22,7 @@ public class RestException extends FinancerException {
      * @param args       arguments for message key
      */
     public RestException(HttpStatus httpStatus, String messageKey, String... args) {
-        super(messageKey, args);
+        super(null, messageKey, args);
         this.httpStatus = httpStatus;
     }
 
@@ -33,7 +33,7 @@ public class RestException extends FinancerException {
 
 
     public RestException() {
-        super(MESSAGE_KEY);
+        super(null, MESSAGE_KEY);
         this.httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
     }
 

@@ -9,6 +9,7 @@ import org.financer.server.domain.service.UserDomainService;
 import org.financer.shared.domain.model.api.category.CategoryDTO;
 import org.financer.shared.domain.model.api.transaction.VariableTransactionDTO;
 import org.financer.shared.domain.model.api.user.RegisterUserDTO;
+import org.financer.shared.domain.model.api.user.UpdateSettingsDTO;
 import org.financer.shared.domain.model.api.user.UserDTO;
 import org.financer.shared.domain.model.value.objects.*;
 import org.financer.util.mapping.ModelMapperUtils;
@@ -91,6 +92,13 @@ public class UserApiController implements UserApi {
         authenticationService.getAuthenticatedUser().throwIfNotUsersProperty(userId);
         User updateUser = userDomainService.updatePassword(oldPassword, newPassword);
         return new ResponseEntity<>(modelMapper.map(updateUser, UserDTO.class), HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<UserDTO> updateUsersSettings(@NotBlank @Min(1) Long userId, @NotNull @Valid UpdateSettingsDTO setting) {
+        authenticationService.getAuthenticatedUser().throwIfNotUsersProperty(userId);
+        User updatedUser = userDomainService.updateUsersSettings(setting.getSettings());
+        return new ResponseEntity<>(modelMapper.map(updatedUser, UserDTO.class), HttpStatus.OK);
     }
 
     @Override

@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static org.financer.server.domain.repository.VariableTransactionRepository.PAGE_SIZE;
@@ -218,6 +219,19 @@ public class UserDomainService {
             return userRepository.save(userOptional.get());
         }
         throw new UnauthorizedOperationException(authenticationService.getUserId());
+    }
+
+
+    /**
+     * Updates the users settings, i.e. either the property's value is update or the property is added to settings.
+     *
+     * @param setting updated settings
+     * @return update user
+     */
+    public User updateUsersSettings(Map<SettingPair.Property, String> setting) {
+        User user = authenticationService.getAuthenticatedUser();
+        setting.forEach(user::putOrUpdateSettingProperty);
+        return userRepository.save(user);
     }
 
     /**

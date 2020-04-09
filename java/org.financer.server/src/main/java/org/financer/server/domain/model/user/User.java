@@ -41,7 +41,7 @@ public class User implements DataEntity, UserProperty {
 
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @MapKey(name = "pair.property")
-    private Map<String, Setting> settings;
+    private Map<SettingPair.Property, Setting> settings;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
     private Set<Token> tokens = new HashSet<>();
@@ -59,12 +59,23 @@ public class User implements DataEntity, UserProperty {
      */
     public boolean isVerified() {
         return this.verificationToken != null && this.verificationToken.getVerifyingDate() != null &&
-                !this.verificationToken.getVerifyingDate().isBefore(LocalDate.now());
+                !this.verificationToken.getVerifyingDate().isAfter(LocalDate.now()) &&
+                this.verificationToken.getExpireDate().getExpireDate().isBefore(this.verificationToken.getVerifyingDate());
     }
 
     @Override
     public boolean isPropertyOfUser(long userId) {
         return this.id == userId;
+    }
+
+    public void putOrUpdateSettingProperty(SettingPair.Property property, String value) {
+        if (this.getSettings().containsKey(property)) {
+            this.getSettings().get(property).setValue(value);
+        } else {
+            this.getSettings().put(property, new Setting()
+                    .setUser(this)
+                    .setPair(new SettingPair(property, value)));
+        }
     }
 
     /*
@@ -135,11 +146,11 @@ public class User implements DataEntity, UserProperty {
         return this;
     }
 
-    public Map<String, Setting> getSettings() {
+    public Map<SettingPair.Property, Setting> getSettings() {
         return settings;
     }
 
-    public User setSettings(Map<String, Setting> settings) {
+    public User setSettings(Map<SettingPair.Property, Setting> settings) {
         this.settings = settings;
         return this;
     }
