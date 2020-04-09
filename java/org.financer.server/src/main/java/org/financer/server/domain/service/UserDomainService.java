@@ -7,6 +7,7 @@ import org.financer.server.application.api.error.UniqueEmailViolationException;
 import org.financer.server.application.service.AuthenticationService;
 import org.financer.server.application.service.VerificationService;
 import org.financer.server.domain.model.category.Category;
+import org.financer.server.domain.model.transaction.FixedTransaction;
 import org.financer.server.domain.model.transaction.VariableTransaction;
 import org.financer.server.domain.model.user.Token;
 import org.financer.server.domain.model.user.User;
@@ -39,18 +40,20 @@ public class UserDomainService {
     private final VerificationTokenRepository verificationTokenRepository;
     private final CategoryRepository categoryRepository;
     private final VariableTransactionRepository variableTransactionRepository;
+    private final FixedTransactionRepository fixedTransactionRepository;
     private final VerificationService verificationService;
 
     public UserDomainService(AuthenticationService authenticationService, UserRepository userRepository,
                              TokenRepository tokenRepository, VerificationTokenRepository verificationTokenRepository,
                              CategoryRepository categoryRepository, VariableTransactionRepository variableTransactionRepository,
-                             VerificationService verificationService) {
+                             FixedTransactionRepository fixedTransactionRepository, VerificationService verificationService) {
         this.authenticationService = authenticationService;
         this.userRepository = userRepository;
         this.tokenRepository = tokenRepository;
         this.verificationTokenRepository = verificationTokenRepository;
         this.categoryRepository = categoryRepository;
         this.variableTransactionRepository = variableTransactionRepository;
+        this.fixedTransactionRepository = fixedTransactionRepository;
         this.verificationService = verificationService;
     }
 
@@ -243,8 +246,23 @@ public class UserDomainService {
         return Iterables.toList(categoryRepository.findAllByUserId(authenticationService.getUserId()));
     }
 
-    public List<VariableTransaction> fetchTransactions(int page) {
+    /**
+     * Returns a list of variable transactions that belong to a user.
+     *
+     * @param page page number that is fetched
+     * @return list of variable transactions.
+     */
+    public List<VariableTransaction> fetchVariableTransactions(int page) {
         Pageable pageable = PageRequest.of(page, PAGE_SIZE, Sort.by("valueDate.date").descending());
         return Iterables.toList(variableTransactionRepository.findByCategoryUserId(authenticationService.getUserId(), pageable));
+    }
+
+    /**
+     * Returns a list of all fixed transactions that belong to a user.
+     *
+     * @return list of fixed transactions
+     */
+    public List<FixedTransaction> fetchFixedTransactions() {
+        return Iterables.toList(fixedTransactionRepository.findAllActiveTransactionsByUserId(authenticationService.getUserId()));
     }
 }

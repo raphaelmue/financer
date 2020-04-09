@@ -3,10 +3,12 @@ package org.financer.server.application.api;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.financer.server.application.service.AuthenticationService;
 import org.financer.server.domain.model.category.Category;
+import org.financer.server.domain.model.transaction.FixedTransaction;
 import org.financer.server.domain.model.transaction.VariableTransaction;
 import org.financer.server.domain.model.user.User;
 import org.financer.server.domain.service.UserDomainService;
 import org.financer.shared.domain.model.api.category.CategoryDTO;
+import org.financer.shared.domain.model.api.transaction.FixedTransactionDTO;
 import org.financer.shared.domain.model.api.transaction.VariableTransactionDTO;
 import org.financer.shared.domain.model.api.user.RegisterUserDTO;
 import org.financer.shared.domain.model.api.user.UpdateSettingsDTO;
@@ -126,12 +128,14 @@ public class UserApiController implements UserApi {
     @Override
     public ResponseEntity<List<VariableTransactionDTO>> getUsersVariableTransactions(@NotBlank @Min(1) Long userId, int page) {
         authenticationService.getAuthenticatedUser().throwIfNotUsersProperty(userId);
-        List<VariableTransaction> categories = userDomainService.fetchTransactions(page);
-        return new ResponseEntity<>(ModelMapperUtils.mapAll(categories, VariableTransactionDTO.class), HttpStatus.OK);
+        List<VariableTransaction> variableTransactions = userDomainService.fetchVariableTransactions(page);
+        return new ResponseEntity<>(ModelMapperUtils.mapAll(variableTransactions, VariableTransactionDTO.class), HttpStatus.OK);
     }
 
     @Override
-    public ResponseEntity<List<VariableTransactionDTO>> getUsersFixedTransactions(@NotBlank @Min(1) Long userId) {
-        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+    public ResponseEntity<List<FixedTransactionDTO>> getUsersFixedTransactions(@NotBlank @Min(1) Long userId) {
+        authenticationService.getAuthenticatedUser().throwIfNotUsersProperty(userId);
+        List<FixedTransaction> fixedTransactions = userDomainService.fetchFixedTransactions();
+        return new ResponseEntity<>(ModelMapperUtils.mapAll(fixedTransactions, FixedTransactionDTO.class), HttpStatus.OK);
     }
 }

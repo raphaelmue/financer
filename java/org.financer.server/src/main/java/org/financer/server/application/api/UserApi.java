@@ -1,6 +1,7 @@
 package org.financer.server.application.api;
 
 import org.financer.shared.domain.model.api.category.CategoryDTO;
+import org.financer.shared.domain.model.api.transaction.FixedTransactionDTO;
 import org.financer.shared.domain.model.api.transaction.VariableTransactionDTO;
 import org.financer.shared.domain.model.api.user.RegisterUserDTO;
 import org.financer.shared.domain.model.api.user.UpdateSettingsDTO;
@@ -169,5 +170,5 @@ public interface UserApi {
             value = "/users/{userId}/fixedTransactions",
             produces = {"application/json"},
             headers = "Accept=application/json")
-    ResponseEntity<List<VariableTransactionDTO>> getUsersFixedTransactions(@NotBlank @PathVariable("userId") @Min(1) Long userId);
+    ResponseEntity<List<FixedTransactionDTO>> getUsersFixedTransactions(@NotBlank @PathVariable("userId") @Min(1) Long userId);
 }

@@ -44,7 +44,7 @@ public interface AmountProvider {
      *
      * @return true if variable
      */
-    default boolean isVariable() {
+    default boolean getIsVariable() {
         return !isFixed();
     }
 

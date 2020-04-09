@@ -33,29 +33,6 @@ public class FinancerService {
 //
 //
 //    /**
-//     * Updates the settings of a user
-//     *
-//     * @param user user whose settings should be updated
-//     * @return User object
-//     */
-//    @Transactional
-//    public ConnectionResult<User> updateUsersSettings(User user) {
-//        Session session = sessionFactory.getCurrentSession();
-//        logger.info("Updating users settings ...");
-//
-//        for (SettingEntity settingEntity : user.getSettings().getProperties().values()) {
-//            settingEntity.setUser(user);
-//            if (settingEntity.getId() > 0) {
-//                session.merge(settingEntity.toEntity());
-//            } else {
-//                settingEntity.setId((int) session.save(settingEntity.toEntity()));
-//            }
-//        }
-//
-//        return new ConnectionResult<>(user);
-//    }
-
-//    /**
 //     * Updates a category.
 //     *
 //     * @param category category that should be updated
@@ -123,37 +100,6 @@ public class FinancerService {
 //
 //        this.adjustTransactionAmount(session, variableTransaction);
 //        session.update(variableTransaction.toEntity());
-//    }
-//
-//    /**
-//     * Returns a BaseCategory object with all fixed transactions.
-//     *
-//     * @param baseCategory base category
-//     * @return BaseCategory object with fixed transactions
-//     */
-//    @Transactional
-//    public BaseCategory getFixedTransactions(BaseCategory baseCategory) {
-//        Session session = sessionFactory.getCurrentSession();
-//        logger.info("Fetching fixed transactions ...");
-//
-//        baseCategory.traverse(treeObject -> {
-//            CategoryTree categoryTree = (CategoryTree) treeObject;
-//            if (categoryTree.getValue().getCategoryClass().isFixed()) {
-//                List<FixedTransactionEntity> databaseFixedTransactions = session
-//                        .createQuery("from FixedTransactionEntity where category.id = :categoryId",
-//                                FixedTransactionEntity.class)
-//                        .setParameter("categoryId", treeObject.getValue().getId())
-//                        .list();
-//                for (FixedTransactionEntity fixedTransactionEntity : databaseFixedTransactions) {
-//                    fixedTransactionEntity.getTransactionAmounts().size();
-//                    FixedTransaction fixedTransaction = new FixedTransaction(fixedTransactionEntity, categoryTree);
-//                    categoryTree.getTransactions().remove(fixedTransaction);
-//                    categoryTree.getTransactions().add(fixedTransaction);
-//                }
-//            }
-//        });
-//
-//        return baseCategory;
 //    }
 //
 //    /**

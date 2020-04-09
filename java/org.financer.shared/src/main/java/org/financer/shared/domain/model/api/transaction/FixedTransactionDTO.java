@@ -1,8 +1,9 @@
 package org.financer.shared.domain.model.api.transaction;
 
+import org.financer.shared.domain.model.value.objects.TimeRange;
+
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import java.time.LocalDate;
 import java.util.List;
 
 public class FixedTransactionDTO {
@@ -11,11 +12,11 @@ public class FixedTransactionDTO {
     @Min(1)
     private int id;
 
+    @NotNull
     private double amount;
 
-    private LocalDate startDate;
-
-    private LocalDate endDate;
+    @NotNull
+    private TimeRange timeRange;
 
     private String product;
 
@@ -48,21 +49,12 @@ public class FixedTransactionDTO {
         return this;
     }
 
-    public LocalDate getStartDate() {
-        return startDate;
+    public TimeRange getTimeRange() {
+        return timeRange;
     }
 
-    public FixedTransactionDTO setStartDate(LocalDate startDate) {
-        this.startDate = startDate;
-        return this;
-    }
-
-    public LocalDate getEndDate() {
-        return endDate;
-    }
-
-    public FixedTransactionDTO setEndDate(LocalDate endDate) {
-        this.endDate = endDate;
+    public FixedTransactionDTO setTimeRange(TimeRange timeRange) {
+        this.timeRange = timeRange;
         return this;
     }
 
@@ -93,11 +85,11 @@ public class FixedTransactionDTO {
         return this;
     }
 
-    public boolean isVariable() {
+    public boolean getIsVariable() {
         return isVariable;
     }
 
-    public FixedTransactionDTO setVariable(boolean variable) {
+    public FixedTransactionDTO setIsVariable(boolean variable) {
         isVariable = variable;
         return this;
     }

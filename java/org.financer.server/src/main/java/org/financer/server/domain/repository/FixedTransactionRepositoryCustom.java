@@ -18,4 +18,6 @@ public interface FixedTransactionRepositoryCustom {
      */
     Optional<FixedTransaction> findActiveTransactionByCategory(Category category);
 
+    Iterable<FixedTransaction> findAllActiveTransactionsByUserId(long userId);
+
 }

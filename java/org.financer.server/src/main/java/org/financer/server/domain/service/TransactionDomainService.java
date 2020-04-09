@@ -97,7 +97,7 @@ public class TransactionDomainService {
             fixedTransaction.throwIfNotUsersProperty(authenticationService.getUserId());
 
             // delete transaction amounts if transaction is not variable
-            if (fixedTransaction.isVariable()) {
+            if (fixedTransaction.getIsVariable()) {
                 fixedTransaction.setAmount(new Amount());
             } else {
                 fixedTransaction.setTransactionAmounts(new HashSet<>());

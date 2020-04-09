@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
+import java.util.Collections;
 import java.util.Optional;
 
 @Repository
@@ -20,11 +21,22 @@ public class FixedTransactionRepositoryCustomImpl implements FixedTransactionRep
     @Transactional
     public Optional<FixedTransaction> findActiveTransactionByCategory(Category category) {
         try {
-            return Optional.of(entityManager.createQuery("from FixedTransaction where category.id = :categoryId and end_date is null", FixedTransaction.class)
+            return Optional.of(entityManager.createQuery("from FixedTransaction where category.id = :categoryId and timeRange.endDate is null", FixedTransaction.class)
                     .setParameter("categoryId", category.getId())
                     .getSingleResult());
         } catch (NoResultException ignored) {
         }
         return Optional.empty();
+    }
+
+    @Override
+    public Iterable<FixedTransaction> findAllActiveTransactionsByUserId(long userId) {
+        try {
+            return entityManager.createQuery("from FixedTransaction where category.user.id = :userId and timeRange.endDate is null", FixedTransaction.class)
+                    .setParameter("userId", userId)
+                    .getResultList();
+        } catch (NoResultException ignored) {
+        }
+        return Collections.emptyList();
     }
 }

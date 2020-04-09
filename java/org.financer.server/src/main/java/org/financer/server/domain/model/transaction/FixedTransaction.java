@@ -24,7 +24,7 @@ public class FixedTransaction extends Transaction {
     @Column(name = "day")
     private int day;
 
-    @OneToMany(mappedBy = "fixedTransaction", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "fixedTransaction", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<FixedTransactionAmount> transactionAmounts = new HashSet<>();
 
     /**
@@ -161,7 +161,7 @@ public class FixedTransaction extends Transaction {
         return this;
     }
 
-    public boolean isVariable() {
+    public boolean getIsVariable() {
         return isVariable;
     }
 
@@ -180,7 +180,7 @@ public class FixedTransaction extends Transaction {
     }
 
     public Set<FixedTransactionAmount> getTransactionAmounts() {
-        return transactionAmounts;
+        return isVariable ? new HashSet<>() : transactionAmounts;
     }
 
     public FixedTransaction setTransactionAmounts(Set<FixedTransactionAmount> transactionAmounts) {
