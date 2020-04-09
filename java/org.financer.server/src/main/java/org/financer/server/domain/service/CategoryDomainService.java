@@ -59,8 +59,8 @@ public class CategoryDomainService {
         category.isPropertyOfUser(authenticationService.getUserId());
 
         boolean categoryChanged = changeCategoryParent(category, parentId)
-                & changeCategoryClass(category, categoryClass)
-                & changeCategoryName(category, name);
+                | changeCategoryClass(category, categoryClass)
+                | changeCategoryName(category, name);
 
         if (categoryChanged) {
             return categoryRepository.save(category);
@@ -132,10 +132,16 @@ public class CategoryDomainService {
         return false;
     }
 
-    private Category getCategoryById(long parentId) {
-        Optional<Category> parentOptional = categoryRepository.findById(parentId);
+    /**
+     * Fetches the category by id. Throws {@link NotFoundException} when the category id does not exist.
+     *
+     * @param categoryId category id
+     * @return category object
+     */
+    Category getCategoryById(long categoryId) {
+        Optional<Category> parentOptional = categoryRepository.findById(categoryId);
         if (parentOptional.isEmpty()) {
-            throw new NotFoundException(Category.class, parentId);
+            throw new NotFoundException(Category.class, categoryId);
         }
         return parentOptional.get();
     }

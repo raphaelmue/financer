@@ -1,12 +1,16 @@
-package org.financer.shared.domain.model.api.transaction;
+package org.financer.shared.domain.model.api.transaction.variable;
 
-import org.financer.shared.domain.model.api.DataTransferObject;
 import org.financer.shared.domain.model.value.objects.Amount;
 import org.financer.shared.domain.model.value.objects.Quantity;
 
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
-public class CreateProductDTO implements DataTransferObject {
+public class ProductDTO {
+
+    @NotNull
+    @Min(1)
+    private int id;
 
     @NotNull
     private String name;
@@ -17,11 +21,20 @@ public class CreateProductDTO implements DataTransferObject {
     @NotNull
     private Quantity quantity;
 
+    public int getId() {
+        return id;
+    }
+
+    public ProductDTO setId(int id) {
+        this.id = id;
+        return this;
+    }
+
     public String getName() {
         return name;
     }
 
-    public CreateProductDTO setName(String name) {
+    public ProductDTO setName(String name) {
         this.name = name;
         return this;
     }
@@ -30,7 +43,7 @@ public class CreateProductDTO implements DataTransferObject {
         return amount;
     }
 
-    public CreateProductDTO setAmount(Amount amount) {
+    public ProductDTO setAmount(Amount amount) {
         this.amount = amount;
         return this;
     }
@@ -39,7 +52,7 @@ public class CreateProductDTO implements DataTransferObject {
         return quantity;
     }
 
-    public CreateProductDTO setQuantity(Quantity quantity) {
+    public ProductDTO setQuantity(Quantity quantity) {
         this.quantity = quantity;
         return this;
     }

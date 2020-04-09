@@ -1,7 +1,9 @@
 package org.financer.server.application.api;
 
-import org.financer.shared.domain.model.api.transaction.CreateVariableTransactionDTO;
-import org.financer.shared.domain.model.api.transaction.VariableTransactionDTO;
+import org.financer.server.domain.model.transaction.VariableTransaction;
+import org.financer.shared.domain.model.api.transaction.variable.CreateVariableTransactionDTO;
+import org.financer.shared.domain.model.api.transaction.variable.UpdateVariableTransactionDTO;
+import org.financer.shared.domain.model.api.transaction.variable.VariableTransactionDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,8 +37,8 @@ public interface VariableTransactionApi {
             value = "/variableTransactions/{transactionId}",
             produces = {"application/json"},
             headers = "Accept=application/json")
-    ResponseEntity<Void> updateTransaction(@NotBlank @PathVariable("transactionId") @Min(1) Long transactionId,
-                                           @NotNull @Valid @RequestParam(value = "variableTransaction") VariableTransactionDTO variableTransaction);
+    ResponseEntity<VariableTransactionDTO> updateTransaction(@NotBlank @PathVariable("transactionId") @Min(1) Long transactionId,
+                                                          @NotNull @Valid @RequestBody UpdateVariableTransactionDTO variableTransaction);
 
     /**
      * Deletes a specified transaction.

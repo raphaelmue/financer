@@ -3,6 +3,7 @@ package org.financer.server.domain.service;
 import org.financer.server.SpringTest;
 import org.financer.server.application.FinancerServer;
 import org.financer.server.application.api.error.IllegalTransactionCategoryClassException;
+import org.financer.server.application.api.error.NotFoundException;
 import org.financer.server.application.api.error.UnauthorizedOperationException;
 import org.financer.server.domain.model.category.Category;
 import org.financer.server.domain.model.transaction.FixedTransaction;
@@ -20,6 +21,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -29,52 +31,54 @@ import static org.mockito.Mockito.when;
 
 @Tag("unit")
 @ExtendWith(SpringExtension.class)
-@SpringBootTest(classes = {FinancerServer.class, TransactionDomainService.class},
+@SpringBootTest(classes = {FinancerServer.class, TransactionDomainService.class, CategoryDomainService.class},
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class TransactionDomainServiceTest extends SpringTest {
 
     @MockBean
     private UserDomainService userDomainService;
 
-    @MockBean
+    @Autowired
     private CategoryDomainService categoryDomainService;
 
     @Autowired
     private TransactionDomainService transactionDomainService;
 
-    private Category variableCategory = new Category()
-            .setId(1)
-            .setUser(UserDomainServiceTest.user)
-            .setCategoryClass(new CategoryClass(CategoryClass.Values.VARIABLE_EXPENSES))
-            .setName("Variable Category")
-            .setParent(null);
-
-    private Category fixedCategory = new Category()
-            .setId(2)
-            .setUser(UserDomainServiceTest.user)
-            .setCategoryClass(new CategoryClass(CategoryClass.Values.FIXED_EXPENSES))
-            .setName("Fixed Category")
-            .setParent(null);
-
-    private VariableTransaction variableTransaction = new VariableTransaction()
-            .setId(1)
-            .setValueDate(new ValueDate())
-            .setCategory(variableCategory)
-            .setDescription("Test Purpose")
-            .setVendor("Test Vendor");
-
-    private FixedTransaction fixedTransaction = new FixedTransaction()
-            .setId(2)
-            .setCategory(fixedCategory)
-            .setTimeRange(new TimeRange())
-            .setVariable(false)
-            .setAmount(new Amount(50.0))
-            .setDay(1)
-            .setDescription("Test Purpose")
-            .setVendor("Test Vendor");
+    private Category variableCategory;
+    private Category fixedCategory;
+    private VariableTransaction variableTransaction;
+    private FixedTransaction fixedTransaction;
 
     @BeforeEach
     public void setUp() {
+        variableCategory = new Category()
+                .setId(1)
+                .setUser(UserDomainServiceTest.user)
+                .setCategoryClass(new CategoryClass(CategoryClass.Values.VARIABLE_EXPENSES))
+                .setName("Variable Category")
+                .setParent(null);
+        fixedCategory = new Category()
+                .setId(2)
+                .setUser(UserDomainServiceTest.user)
+                .setCategoryClass(new CategoryClass(CategoryClass.Values.FIXED_EXPENSES))
+                .setName("Fixed Category")
+                .setParent(null);
+        variableTransaction = new VariableTransaction()
+                .setId(1)
+                .setValueDate(new ValueDate())
+                .setCategory(variableCategory)
+                .setDescription("Test Purpose")
+                .setVendor("Test Vendor");
+        fixedTransaction = new FixedTransaction()
+                .setId(2)
+                .setCategory(fixedCategory)
+                .setTimeRange(new TimeRange())
+                .setVariable(false)
+                .setAmount(new Amount(50.0))
+                .setDay(1)
+                .setDescription("Test Purpose")
+                .setVendor("Test Vendor");
+
         when(authenticationService.getUserId()).thenReturn(UserDomainServiceTest.user.getId());
 
         when(categoryRepository.existsById(any())).thenReturn(false);
@@ -112,6 +116,35 @@ public class TransactionDomainServiceTest extends SpringTest {
         mockAnotherUserAuthenticated();
         assertThatExceptionOfType(UnauthorizedOperationException.class).isThrownBy(
                 () -> transactionDomainService.createVariableTransaction(variableTransaction));
+    }
+
+    @Test
+    public void testUpdateVariableTransaction() {
+        final String description = "Updated description";
+        final String vendor = "Updated vendor";
+        fixedCategory.setCategoryClass(variableCategory.getCategoryClass());
+        VariableTransaction transactionToAssert = transactionDomainService.updateVariableTransaction(
+                variableTransaction.getId(), fixedCategory.getId(), LocalDate.now().plusMonths(1), description, vendor);
+
+        assertThat(transactionToAssert).isNotNull();
+        assertThat(transactionToAssert.getCategory().getId()).isEqualTo(fixedCategory.getId());
+        assertThat(transactionToAssert.getValueDate().getDate()).isEqualTo(LocalDate.now().plusMonths(1));
+        assertThat(transactionToAssert.getDescription()).isEqualTo(description);
+        assertThat(transactionToAssert.getVendor()).isEqualTo(vendor);
+    }
+
+    @Test
+    public void testUpdateVariableTransactionWithoutChanges() {
+        VariableTransaction transactionToAssert = transactionDomainService.updateVariableTransaction(
+                variableTransaction.getId(), -1, null, null, null);
+
+        assertThat(transactionToAssert).isEqualToComparingFieldByField(variableTransaction);
+    }
+
+    @Test
+    public void testUpdateVariableTransactionCategoryNotFound() {
+        assertThatExceptionOfType(NotFoundException.class).isThrownBy(
+                () -> transactionDomainService.updateVariableTransaction(variableTransaction.getId(), 3, null, null, null));
     }
 
     @Test

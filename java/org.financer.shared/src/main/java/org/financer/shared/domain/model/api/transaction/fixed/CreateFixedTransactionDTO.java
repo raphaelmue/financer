@@ -1,4 +1,4 @@
-package org.financer.shared.domain.model.api.transaction;
+package org.financer.shared.domain.model.api.transaction.fixed;
 
 import org.financer.shared.domain.model.api.DataTransferObject;
 import org.financer.shared.domain.model.value.objects.Amount;

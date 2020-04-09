@@ -1,8 +1,8 @@
 package org.financer.server.application.api;
 
 import org.financer.shared.domain.model.api.category.CategoryDTO;
-import org.financer.shared.domain.model.api.transaction.FixedTransactionDTO;
-import org.financer.shared.domain.model.api.transaction.VariableTransactionDTO;
+import org.financer.shared.domain.model.api.transaction.fixed.FixedTransactionDTO;
+import org.financer.shared.domain.model.api.transaction.variable.VariableTransactionDTO;
 import org.financer.shared.domain.model.api.user.RegisterUserDTO;
 import org.financer.shared.domain.model.api.user.UpdateSettingsDTO;
 import org.financer.shared.domain.model.api.user.UserDTO;

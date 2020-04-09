@@ -9,6 +9,7 @@ import org.financer.server.domain.repository.CategoryRepository;
 import org.financer.server.domain.repository.FixedTransactionRepository;
 import org.financer.server.domain.repository.VariableTransactionRepository;
 import org.financer.shared.domain.model.value.objects.Amount;
+import org.financer.shared.domain.model.value.objects.ValueDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,16 +26,18 @@ public class TransactionDomainService {
     private static final Logger logger = LoggerFactory.getLogger(TransactionDomainService.class);
 
     private final AuthenticationService authenticationService;
+    private final CategoryDomainService categoryDomainService;
     private final CategoryRepository categoryRepository;
     private final VariableTransactionRepository variableTransactionRepository;
     private final FixedTransactionRepository fixedTransactionRepository;
     private final AttachmentRepository attachmentRepository;
 
     @Autowired
-    public TransactionDomainService(AuthenticationService authenticationService, CategoryRepository categoryRepository,
-                                    VariableTransactionRepository variableTransactionRepository,
+    public TransactionDomainService(AuthenticationService authenticationService, CategoryDomainService categoryDomainService,
+                                    CategoryRepository categoryRepository, VariableTransactionRepository variableTransactionRepository,
                                     FixedTransactionRepository fixedTransactionRepository, AttachmentRepository attachmentRepository) {
         this.authenticationService = authenticationService;
+        this.categoryDomainService = categoryDomainService;
         this.categoryRepository = categoryRepository;
         this.variableTransactionRepository = variableTransactionRepository;
         this.fixedTransactionRepository = fixedTransactionRepository;
@@ -62,6 +65,77 @@ public class TransactionDomainService {
             return variableTransactionRepository.save(variableTransactionEntity);
         }
         throw new NotFoundException(Category.class, variableTransactionEntity.getCategory().getId());
+    }
+
+    /**
+     * Updates the variable transaction with given values.
+     *
+     * <p> The values are validated, before updating the transaction. If the given parameters are null or equal to the
+     * transaction that will be updated, they will be ignored in the updating process. If no changes are applied to the
+     * transaction, the transaction is returned.</p>
+     *
+     * @param transactionId id of the transaction to be updated
+     * @param categoryId    updated category id
+     * @param valueDate     updated value date
+     * @param description   updated description
+     * @param vendor        updated vendor
+     * @return update variable transaction
+     */
+    public VariableTransaction updateVariableTransaction(long transactionId, long categoryId, LocalDate valueDate, String description, String vendor) {
+        logger.info("Updating transaction with id {}.", transactionId);
+        VariableTransaction variableTransaction = getVariableTransactionById(transactionId);
+        variableTransaction.throwIfNotUsersProperty(authenticationService.getUserId());
+
+        boolean transactionChanged = changeTransactionCategory(variableTransaction, categoryId)
+                | changeVariableTransactionValueDate(variableTransaction, valueDate)
+                | changeTransactionDescription(variableTransaction, description)
+                | changeTransactionVendor(variableTransaction, vendor);
+
+        if (transactionChanged) {
+            return variableTransactionRepository.save(variableTransaction);
+        }
+        return variableTransaction;
+    }
+
+    private VariableTransaction getVariableTransactionById(long variableTransactionId) {
+        Optional<VariableTransaction> variableTransactionOptional = variableTransactionRepository.findById(variableTransactionId);
+        if (variableTransactionOptional.isEmpty()) {
+            throw new NotFoundException(VariableTransaction.class, variableTransactionId);
+        }
+        return variableTransactionOptional.get();
+    }
+
+    private boolean changeVariableTransactionValueDate(VariableTransaction transaction, LocalDate valueDate) {
+        if (valueDate != null) {
+            transaction.setValueDate(new ValueDate(valueDate));
+            return true;
+        }
+        return false;
+    }
+
+    private boolean changeTransactionCategory(Transaction transaction, long categoryId) {
+        if (categoryId > 0) {
+            transaction.setCategory(categoryDomainService.getCategoryById(categoryId));
+            transaction.throwIfInvalidCategoryClass();
+            return true;
+        }
+        return false;
+    }
+
+    private boolean changeTransactionDescription(Transaction transaction, String description) {
+        if (description != null) {
+            transaction.setDescription(description);
+            return true;
+        }
+        return false;
+    }
+
+    private boolean changeTransactionVendor(Transaction transaction, String vendor) {
+        if (vendor != null) {
+            transaction.setVendor(vendor);
+            return true;
+        }
+        return false;
     }
 
     /**

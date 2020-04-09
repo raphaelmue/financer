@@ -1,6 +1,7 @@
-package org.financer.shared.domain.model.api.transaction;
+package org.financer.shared.domain.model.api.transaction.variable;
 
 import org.financer.shared.domain.model.api.DataTransferObject;
+import org.financer.shared.domain.model.api.transaction.AttachmentDTO;
 import org.financer.shared.domain.model.value.objects.ValueDate;
 
 import javax.validation.Valid;
@@ -17,7 +18,7 @@ public class CreateVariableTransactionDTO implements DataTransferObject {
     @NotNull
     private ValueDate valueDate;
 
-    private String purpose;
+    private String description;
 
     private String vendor;
 
@@ -43,12 +44,12 @@ public class CreateVariableTransactionDTO implements DataTransferObject {
         return this;
     }
 
-    public String getPurpose() {
-        return purpose;
+    public String getDescription() {
+        return description;
     }
 
-    public CreateVariableTransactionDTO setPurpose(String purpose) {
-        this.purpose = purpose;
+    public CreateVariableTransactionDTO setDescription(String description) {
+        this.description = description;
         return this;
     }
 

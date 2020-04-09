@@ -1,8 +1,8 @@
-package org.financer.shared.domain.model.api.transaction;
+package org.financer.shared.domain.model.api.transaction.variable;
 
 import org.financer.shared.domain.model.api.DataTransferObject;
 import org.financer.shared.domain.model.api.category.CategoryDTO;
-import org.financer.shared.domain.model.value.objects.Amount;
+import org.financer.shared.domain.model.api.transaction.AttachmentDTO;
 import org.financer.shared.domain.model.value.objects.ValueDate;
 
 import javax.validation.Valid;
@@ -22,12 +22,9 @@ public class VariableTransactionDTO implements DataTransferObject {
     @NotNull
     private ValueDate valueDate;
 
-    @NotNull
-    private Amount amount;
+    private String description;
 
-    private String purpose;
-
-    private String shop;
+    private String vendor;
 
     private Set<AttachmentDTO> attachments;
 
@@ -60,30 +57,21 @@ public class VariableTransactionDTO implements DataTransferObject {
         return this;
     }
 
-    public Amount getAmount() {
-        return amount;
+    public String getDescription() {
+        return description;
     }
 
-    public VariableTransactionDTO setAmount(Amount amount) {
-        this.amount = amount;
+    public VariableTransactionDTO setDescription(String description) {
+        this.description = description;
         return this;
     }
 
-    public String getPurpose() {
-        return purpose;
+    public String getVendor() {
+        return vendor;
     }
 
-    public VariableTransactionDTO setPurpose(String purpose) {
-        this.purpose = purpose;
-        return this;
-    }
-
-    public String getShop() {
-        return shop;
-    }
-
-    public VariableTransactionDTO setShop(String shop) {
-        this.shop = shop;
+    public VariableTransactionDTO setVendor(String vendor) {
+        this.vendor = vendor;
         return this;
     }
 

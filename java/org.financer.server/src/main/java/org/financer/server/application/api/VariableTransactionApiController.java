@@ -3,8 +3,9 @@ package org.financer.server.application.api;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.financer.server.domain.model.transaction.VariableTransaction;
 import org.financer.server.domain.service.TransactionDomainService;
-import org.financer.shared.domain.model.api.transaction.CreateVariableTransactionDTO;
-import org.financer.shared.domain.model.api.transaction.VariableTransactionDTO;
+import org.financer.shared.domain.model.api.transaction.variable.CreateVariableTransactionDTO;
+import org.financer.shared.domain.model.api.transaction.variable.UpdateVariableTransactionDTO;
+import org.financer.shared.domain.model.api.transaction.variable.VariableTransactionDTO;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -45,8 +46,12 @@ public class VariableTransactionApiController implements VariableTransactionApi 
     }
 
     @Override
-    public ResponseEntity<Void> updateTransaction(@NotBlank @Min(1) Long transactionId, @NotNull @Valid VariableTransactionDTO variableTransaction) {
-        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+    public ResponseEntity<VariableTransactionDTO> updateTransaction(@NotBlank @Min(1) Long transactionId,
+                                                                    @NotNull @Valid UpdateVariableTransactionDTO variableTransaction) {
+        VariableTransaction updateTransaction = transactionDomainService.updateVariableTransaction(transactionId,
+                variableTransaction.getCategoryId(), variableTransaction.getValueDate(), variableTransaction.getDescription(),
+                variableTransaction.getVendor());
+        return new ResponseEntity<>(modelMapper.map(updateTransaction, VariableTransactionDTO.class), HttpStatus.OK);
     }
 
     @Override

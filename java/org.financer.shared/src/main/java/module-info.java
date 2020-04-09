@@ -23,5 +23,7 @@ module org.financer.shared {
     opens org.financer.shared.domain.model.api.category to org.hibernate.validator, modelmapper;
     opens org.financer.shared.domain.model.api.transaction to org.hibernate.validator;
     opens org.financer.shared.domain.model.value.objects to spring.core, org.hibernate.orm.core, com.fasterxml.jackson.databind;
+    exports org.financer.shared.domain.model.api.transaction.variable;
+    exports org.financer.shared.domain.model.api.transaction.fixed;
 
 }

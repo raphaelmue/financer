@@ -1,11 +1,10 @@
-package org.financer.shared.domain.model.api.transaction;
+package org.financer.shared.domain.model.api.transaction.fixed;
 
 import org.financer.shared.domain.model.value.objects.Amount;
 import org.financer.shared.domain.model.value.objects.ValueDate;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import java.time.LocalDate;
 
 public class TransactionAmountDTO {
 
