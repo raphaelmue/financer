@@ -45,49 +45,7 @@ public class FinancerService {
 //        session.update(category.toEntity());
 //    }
 //
-//    /**
-//     * Deletes a category and all its children as well as all transactions.
-//     *
-//     * @param categoryId id of the category that will be deleted
-//     * @return void
-//     */
-//    @Transactional
-//    public ConnectionResult<Serializable> deleteCategory(int categoryId) {
-//        Session session = sessionFactory.getCurrentSession();
-//        logger.info("Deleting category ...");
-//
-//        session.createQuery("delete from FixedTransactionEntity where category.id = :categoryId")
-//                .setParameter("categoryId", categoryId).executeUpdate();
-//        session.createQuery("delete from VariableTransactionEntity where category.id = :categoryId")
-//                .setParameter("categoryId", categoryId).executeUpdate();
-//        session.createQuery("delete from CategoryEntity where id = :categoryId")
-//                .setParameter("categoryId", categoryId).executeUpdate();
-//
-//        this.deleteCategoryChildren(categoryId);
-//
-//        return new ConnectionResult<>(null);
-//    }
-//
-//    /**
-//     * Deletes all children of a given category.
-//     *
-//     * @param categoryId category id to delete children
-//     */
-//    @Transactional
-//    void deleteCategoryChildren(int categoryId) {
-//        Session session = sessionFactory.getCurrentSession();
-//        List<CategoryEntity> categories;
-//
-//        categories = session.createQuery("from CategoryEntity where parentId = :parentId", CategoryEntity.class)
-//                .setParameter("parentId", categoryId).list();
-//        if (!categories.isEmpty()) {
-//            for (CategoryEntity databaseCategory : categories) {
-//                session.delete(databaseCategory);
-//                deleteCategoryChildren(databaseCategory.getId());
-//            }
-//        }
-//    }
-//
+//    /
 //    /**
 //     * Updates a variable transaction.
 //     *

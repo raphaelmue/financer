@@ -1,4 +1,4 @@
-package org.financer.server.domain.service;
+package org.financer.server;
 
 import org.financer.server.application.service.AuthenticationService;
 import org.financer.server.domain.repository.*;
@@ -6,7 +6,9 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 
 import static org.mockito.Mockito.when;
 
-public abstract class ServiceTest {
+public abstract class SpringTest {
+
+    protected static final String CONTEXT_PATH = "/api";
 
     @MockBean
     protected AuthenticationService authenticationService;

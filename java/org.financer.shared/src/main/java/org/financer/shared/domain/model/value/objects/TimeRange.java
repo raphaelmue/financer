@@ -1,5 +1,6 @@
 package org.financer.shared.domain.model.value.objects;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.Immutable;
 
 import javax.persistence.Column;
@@ -101,6 +102,7 @@ public class TimeRange implements Serializable {
      *
      * @return month difference
      */
+    @JsonIgnore
     public int getMonthDifference() {
         if (this.endDate == null) {
             return Integer.MAX_VALUE;

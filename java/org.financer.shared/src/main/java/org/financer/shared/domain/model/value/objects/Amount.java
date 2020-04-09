@@ -1,5 +1,6 @@
 package org.financer.shared.domain.model.value.objects;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.Immutable;
 
 import javax.persistence.Column;
@@ -27,12 +28,22 @@ public class Amount implements Serializable {
         this.amount = amount;
     }
 
+    @JsonIgnore
     public boolean isPositive() {
         return this.amount >= 0;
     }
 
+    @JsonIgnore
     public boolean isNegative() {
         return !this.isPositive();
+    }
+
+    public Amount calculate(Quantity quantity) {
+        return new Amount(this.getAmount() * quantity.getNumberOfItems());
+    }
+
+    public Amount adjustSign() {
+        return new Amount(this.getAmount() * (-1));
     }
 
     public Amount add(Amount value) {

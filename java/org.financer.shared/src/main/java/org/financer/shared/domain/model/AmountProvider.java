@@ -64,4 +64,10 @@ public interface AmountProvider {
         return !isRevenue();
     }
 
+    /**
+     * Adjusts the amount sign, if necessary. If the category is a revenue category and the amount is negative or vice
+     * versa, the amount sign will be changed.
+     */
+    public void adjustAmountSign();
+
 }

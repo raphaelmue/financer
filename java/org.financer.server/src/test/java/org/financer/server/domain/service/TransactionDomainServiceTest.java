@@ -1,13 +1,12 @@
 package org.financer.server.domain.service;
 
+import org.financer.server.SpringTest;
 import org.financer.server.application.FinancerServer;
 import org.financer.server.application.api.error.IllegalTransactionCategoryClassException;
 import org.financer.server.application.api.error.UnauthorizedOperationException;
-import org.financer.server.application.service.AuthenticationService;
 import org.financer.server.domain.model.category.Category;
 import org.financer.server.domain.model.transaction.FixedTransaction;
 import org.financer.server.domain.model.transaction.VariableTransaction;
-import org.financer.server.domain.repository.*;
 import org.financer.shared.domain.model.value.objects.Amount;
 import org.financer.shared.domain.model.value.objects.CategoryClass;
 import org.financer.shared.domain.model.value.objects.TimeRange;
@@ -32,7 +31,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = {FinancerServer.class, TransactionDomainService.class},
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class TransactionDomainServiceTest extends ServiceTest {
+public class TransactionDomainServiceTest extends SpringTest {
 
     @MockBean
     private UserDomainService userDomainService;
@@ -61,9 +60,7 @@ public class TransactionDomainServiceTest extends ServiceTest {
             .setId(1)
             .setValueDate(new ValueDate())
             .setCategory(variableCategory)
-            .setAmount(new Amount(50.0))
-            .setProduct("Test Product")
-            .setPurpose("Test Purpose")
+            .setDescription("Test Purpose")
             .setVendor("Test Vendor");
 
     private FixedTransaction fixedTransaction = new FixedTransaction()
@@ -73,8 +70,7 @@ public class TransactionDomainServiceTest extends ServiceTest {
             .setVariable(false)
             .setAmount(new Amount(50.0))
             .setDay(1)
-            .setProduct("Test Product")
-            .setPurpose("Test Purpose")
+            .setDescription("Test Purpose")
             .setVendor("Test Vendor");
 
     @BeforeEach

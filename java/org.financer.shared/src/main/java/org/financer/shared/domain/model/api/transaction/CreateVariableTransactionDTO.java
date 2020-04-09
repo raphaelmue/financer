@@ -1,9 +1,9 @@
 package org.financer.shared.domain.model.api.transaction;
 
 import org.financer.shared.domain.model.api.DataTransferObject;
-import org.financer.shared.domain.model.value.objects.Amount;
 import org.financer.shared.domain.model.value.objects.ValueDate;
 
+import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.util.List;
@@ -17,14 +17,11 @@ public class CreateVariableTransactionDTO implements DataTransferObject {
     @NotNull
     private ValueDate valueDate;
 
-    @NotNull
-    private Amount amount;
-
-    private String product;
-
     private String purpose;
 
     private String vendor;
+
+    private List<@Valid CreateProductDTO> products;
 
     private List<AttachmentDTO> attachments;
 
@@ -43,24 +40,6 @@ public class CreateVariableTransactionDTO implements DataTransferObject {
 
     public CreateVariableTransactionDTO setValueDate(ValueDate valueDate) {
         this.valueDate = valueDate;
-        return this;
-    }
-
-    public Amount getAmount() {
-        return amount;
-    }
-
-    public CreateVariableTransactionDTO setAmount(Amount amount) {
-        this.amount = amount;
-        return this;
-    }
-
-    public String getProduct() {
-        return product;
-    }
-
-    public CreateVariableTransactionDTO setProduct(String product) {
-        this.product = product;
         return this;
     }
 
@@ -88,6 +67,15 @@ public class CreateVariableTransactionDTO implements DataTransferObject {
 
     public CreateVariableTransactionDTO setAttachments(List<AttachmentDTO> attachments) {
         this.attachments = attachments;
+        return this;
+    }
+
+    public List<CreateProductDTO> getProducts() {
+        return products;
+    }
+
+    public CreateVariableTransactionDTO setProducts(List<CreateProductDTO> products) {
+        this.products = products;
         return this;
     }
 }

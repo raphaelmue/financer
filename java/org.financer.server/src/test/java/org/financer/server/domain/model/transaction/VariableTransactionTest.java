@@ -1,10 +1,7 @@
 package org.financer.server.domain.model.transaction;
 
 import org.financer.server.domain.model.category.Category;
-import org.financer.shared.domain.model.value.objects.Amount;
-import org.financer.shared.domain.model.value.objects.CategoryClass;
-import org.financer.shared.domain.model.value.objects.TimeRange;
-import org.financer.shared.domain.model.value.objects.ValueDate;
+import org.financer.shared.domain.model.value.objects.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -17,18 +14,22 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class VariableTransactionTest {
 
     private VariableTransaction variableTransaction;
+    private Product product;
 
     @BeforeEach
     public void setup() {
+        product = new Product()
+                .setQuantity(new Quantity())
+                .setAmount(new Amount(50));
         variableTransaction = new VariableTransaction()
-                .setAmount(new Amount(50))
                 .setValueDate(new ValueDate(LocalDate.now()))
                 .setCategory(new Category()
                         .setName("Test Category")
                         .setCategoryClass(new CategoryClass(CategoryClass.Values.FIXED_EXPENSES)))
-                .setProduct("Test Product")
-                .setPurpose("Test Purpose")
-                .setVendor("Test Shop");
+                .setDescription("Test Purpose")
+                .setVendor("Test Shop")
+                .addProduct(product);
+        product.setTransaction(variableTransaction);
     }
 
     @Test

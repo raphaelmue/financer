@@ -1,6 +1,7 @@
 package org.financer.server.domain.model.transaction;
 
 import org.financer.server.domain.model.category.Category;
+import org.financer.shared.domain.model.AmountProvider;
 import org.financer.shared.domain.model.value.objects.Amount;
 import org.financer.shared.domain.model.value.objects.TimeRange;
 import org.financer.shared.domain.model.value.objects.ValueDate;
@@ -12,8 +13,11 @@ import java.util.Set;
 
 @Entity
 @Table(name = "fixed_transactions")
-public class FixedTransaction extends Transaction {
+public final class FixedTransaction extends Transaction {
     private static final long serialVersionUID = 8295185142317654835L;
+
+    @Embedded
+    private Amount amount;
 
     @Embedded
     private TimeRange timeRange;
@@ -90,14 +94,13 @@ public class FixedTransaction extends Transaction {
     @Override
     public void adjustAmountSign() {
         if (this.isVariable) {
-            for (FixedTransactionAmount transactionAmount : this.getTransactionAmounts()) {
-                if ((this.getCategory().isRevenue() && transactionAmount.getAmount().isNegative()) ||
-                        (!this.getCategory().isRevenue() && transactionAmount.getAmount().isPositive())) {
-                    transactionAmount.setAmount(new Amount(transactionAmount.getAmount().getAmount() * (-1)));
-                }
+            for (AmountProvider amountProvider : this.getTransactionAmounts()) {
+                amountProvider.adjustAmountSign();
             }
         } else {
-            super.adjustAmountSign();
+            if ((this.isRevenue() == this.getAmount().isNegative())) {
+                this.setAmount(this.getAmount().adjustSign());
+            }
         }
     }
 
@@ -109,6 +112,16 @@ public class FixedTransaction extends Transaction {
     /*
      * Getters and Setters
      */
+
+    @Override
+    public Amount getAmount() {
+        return amount;
+    }
+
+    public FixedTransaction setAmount(Amount amount) {
+        this.amount = amount;
+        return this;
+    }
 
     @Override
     public FixedTransaction setId(long id) {
@@ -123,20 +136,8 @@ public class FixedTransaction extends Transaction {
     }
 
     @Override
-    public FixedTransaction setAmount(Amount amount) {
-        super.setAmount(amount);
-        return this;
-    }
-
-    @Override
-    public FixedTransaction setProduct(String product) {
-        super.setProduct(product);
-        return this;
-    }
-
-    @Override
-    public FixedTransaction setPurpose(String purpose) {
-        super.setPurpose(purpose);
+    public FixedTransaction setDescription(String purpose) {
+        super.setDescription(purpose);
         return this;
     }
 

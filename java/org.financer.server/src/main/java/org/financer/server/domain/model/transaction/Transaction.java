@@ -5,7 +5,6 @@ import org.financer.server.domain.model.DataEntity;
 import org.financer.server.domain.model.category.Category;
 import org.financer.server.domain.model.user.UserProperty;
 import org.financer.shared.domain.model.AmountProvider;
-import org.financer.shared.domain.model.value.objects.Amount;
 
 import javax.persistence.*;
 import java.util.HashSet;
@@ -23,14 +22,8 @@ public abstract class Transaction implements DataEntity, AmountProvider, UserPro
     @ManyToOne(targetEntity = Category.class, optional = false)
     private Category category;
 
-    @Embedded
-    private Amount amount;
-
-    @Column(name = "product")
-    private String product;
-
-    @Column(name = "purpose")
-    private String purpose;
+    @Column(name = "description")
+    private String description;
 
     @Column(name = "vendor")
     private String vendor;
@@ -41,17 +34,6 @@ public abstract class Transaction implements DataEntity, AmountProvider, UserPro
     @Override
     public boolean isPropertyOfUser(long userId) {
         return this.getCategory().isPropertyOfUser(userId);
-    }
-
-    /**
-     * Adjusts the amount sign, if necessary. If the category is a revenue category and the amount is negative or vice
-     * versa, the amount sign will be changed.
-     */
-    public void adjustAmountSign() {
-        if ((this.getCategory().isRevenue() && this.getAmount().isNegative()) ||
-                (!this.getCategory().isRevenue() && this.getAmount().isPositive())) {
-            this.setAmount(new Amount(this.getAmount().getAmount() * (-1)));
-        }
     }
 
     public abstract boolean isCategoryClassValid(Category category);
@@ -101,31 +83,12 @@ public abstract class Transaction implements DataEntity, AmountProvider, UserPro
         return this;
     }
 
-    @Override
-    public Amount getAmount() {
-        return amount;
+    public String getDescription() {
+        return description;
     }
 
-    public Transaction setAmount(Amount amount) {
-        this.amount = amount;
-        return this;
-    }
-
-    public String getProduct() {
-        return product;
-    }
-
-    public Transaction setProduct(String product) {
-        this.product = product;
-        return this;
-    }
-
-    public String getPurpose() {
-        return purpose;
-    }
-
-    public Transaction setPurpose(String purpose) {
-        this.purpose = purpose;
+    public Transaction setDescription(String purpose) {
+        this.description = purpose;
         return this;
     }
 
@@ -149,7 +112,6 @@ public abstract class Transaction implements DataEntity, AmountProvider, UserPro
 
     @Override
     public String toString() {
-        return "Transaction[" + "id=" + id + ", category=" + category + ", amount=" + amount + ", product='" + product +
-                '\'' + ", vendor='" + vendor + '\'' + ']';
+        return "Transaction[" + "id=" + id + ", category=" + category + ", vendor='" + vendor + '\'' + ']';
     }
 }

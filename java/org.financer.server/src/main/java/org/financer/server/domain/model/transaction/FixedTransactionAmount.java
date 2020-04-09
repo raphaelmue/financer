@@ -55,6 +55,13 @@ public class FixedTransactionAmount implements DataEntity, AmountProvider {
         return this.fixedTransaction.isRevenue();
     }
 
+    @Override
+    public void adjustAmountSign() {
+        if ((this.isRevenue() == this.getAmount().isNegative())) {
+            this.setAmount(this.getAmount().adjustSign());
+        }
+    }
+
     /*
      * Getters and Setters
      */

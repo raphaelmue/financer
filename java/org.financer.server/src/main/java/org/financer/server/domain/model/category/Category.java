@@ -54,11 +54,10 @@ public class Category implements DataEntity, Tree, AmountProvider, UserProperty 
     public Amount getAmount() {
         Amount amount = new Amount();
 
+        for (AmountProvider amountProvider : this.transactions) {
+            amount = amount.add(amountProvider.getAmount());
+        }
         if (this.isLeaf()) {
-            for (AmountProvider amountProvider : this.transactions) {
-                amount = amount.add(amountProvider.getAmount());
-            }
-        } else {
             for (AmountProvider amountProvider : this.children) {
                 amount = amount.add(amountProvider.getAmount());
             }
@@ -71,11 +70,10 @@ public class Category implements DataEntity, Tree, AmountProvider, UserProperty 
     public Amount getAmount(ValueDate valueDate) {
         Amount amount = new Amount();
 
+        for (AmountProvider amountProvider : this.transactions) {
+            amount = amount.add(amountProvider.getAmount(valueDate));
+        }
         if (this.isLeaf()) {
-            for (AmountProvider amountProvider : this.transactions) {
-                amount = amount.add(amountProvider.getAmount(valueDate));
-            }
-        } else {
             for (AmountProvider amountProvider : this.children) {
                 amount = amount.add(amountProvider.getAmount(valueDate));
             }
@@ -88,11 +86,10 @@ public class Category implements DataEntity, Tree, AmountProvider, UserProperty 
     public Amount getAmount(TimeRange timeRange) {
         Amount amount = new Amount();
 
-        if (this.isLeaf()) {
-            for (AmountProvider amountProvider : this.transactions) {
-                amount = amount.add(amountProvider.getAmount(timeRange));
-            }
-        } else {
+        for (AmountProvider amountProvider : this.transactions) {
+            amount = amount.add(amountProvider.getAmount(timeRange));
+        }
+        if (!this.isLeaf()) {
             for (AmountProvider amountProvider : this.children) {
                 amount = amount.add(amountProvider.getAmount(timeRange));
             }
@@ -109,6 +106,18 @@ public class Category implements DataEntity, Tree, AmountProvider, UserProperty 
     @Override
     public boolean isRevenue() {
         return this.categoryClass.isRevenue();
+    }
+
+    @Override
+    public void adjustAmountSign() {
+        for (AmountProvider amountProvider : this.transactions) {
+            amountProvider.adjustAmountSign();
+        }
+        if (!this.isLeaf()) {
+            for (AmountProvider amountProvider : this.children) {
+                amountProvider.adjustAmountSign();
+            }
+        }
     }
 
     public void throwIfParentCategoryClassIsInvalid() {

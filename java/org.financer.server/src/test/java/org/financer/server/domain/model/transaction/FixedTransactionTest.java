@@ -27,8 +27,7 @@ class FixedTransactionTest {
                 .setCategory(new Category()
                         .setName("Test Category")
                         .setCategoryClass(new CategoryClass(CategoryClass.Values.FIXED_EXPENSES)))
-                .setProduct("Test Product")
-                .setPurpose("Test Purpose")
+                .setDescription("Test Purpose")
                 .setDay(1)
                 .setVariable(false);
 

@@ -5,9 +5,9 @@ import org.financer.shared.domain.model.api.category.CategoryDTO;
 import org.financer.shared.domain.model.value.objects.Amount;
 import org.financer.shared.domain.model.value.objects.ValueDate;
 
+import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import java.util.List;
 import java.util.Set;
 
 public class VariableTransactionDTO implements DataTransferObject {
@@ -25,13 +25,13 @@ public class VariableTransactionDTO implements DataTransferObject {
     @NotNull
     private Amount amount;
 
-    private String product;
-
     private String purpose;
 
     private String shop;
 
     private Set<AttachmentDTO> attachments;
+
+    private Set<@Valid ProductDTO> products;
 
     public int getId() {
         return id;
@@ -69,15 +69,6 @@ public class VariableTransactionDTO implements DataTransferObject {
         return this;
     }
 
-    public String getProduct() {
-        return product;
-    }
-
-    public VariableTransactionDTO setProduct(String product) {
-        this.product = product;
-        return this;
-    }
-
     public String getPurpose() {
         return purpose;
     }
@@ -102,6 +93,15 @@ public class VariableTransactionDTO implements DataTransferObject {
 
     public VariableTransactionDTO setAttachments(Set<AttachmentDTO> attachments) {
         this.attachments = attachments;
+        return this;
+    }
+
+    public Set<ProductDTO> getProducts() {
+        return products;
+    }
+
+    public VariableTransactionDTO setProducts(Set<ProductDTO> products) {
+        this.products = products;
         return this;
     }
 }

@@ -1,5 +1,6 @@
 package org.financer.server.domain.service;
 
+import org.financer.server.SpringTest;
 import org.financer.server.application.FinancerServer;
 import org.financer.server.application.api.error.IllegalCategoryParentStateException;
 import org.financer.server.application.api.error.IllegalUpdateCategoryClassException;
@@ -29,7 +30,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = {FinancerServer.class, CategoryDomainService.class},
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class CategoryDomainServiceTest extends ServiceTest {
+public class CategoryDomainServiceTest extends SpringTest {
 
     @MockBean
     private UserDomainService userDomainService;

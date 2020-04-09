@@ -1,38 +1,57 @@
 package org.financer.server.domain.model.transaction;
 
 import org.financer.server.domain.model.category.Category;
+import org.financer.shared.domain.model.AmountProvider;
 import org.financer.shared.domain.model.value.objects.Amount;
 import org.financer.shared.domain.model.value.objects.TimeRange;
 import org.financer.shared.domain.model.value.objects.ValueDate;
 
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
 @Table(name = "variable_transactions")
-public class VariableTransaction extends Transaction {
+public final class VariableTransaction extends Transaction {
     private static final long serialVersionUID = -118658876074097774L;
 
     @Embedded
     private ValueDate valueDate;
 
+    @OneToMany(mappedBy = "transaction", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Product> products = new HashSet<>();
+
+    @Override
+    public Amount getAmount() {
+        Amount amount = new Amount();
+        for (AmountProvider amountProvider : this.products) {
+            amount = amount.add(amountProvider.getAmount());
+        }
+        return amount;
+    }
+
     @Override
     public Amount getAmount(ValueDate valueDate) {
-        if (this.getValueDate().isInSameMonth(valueDate)) {
-            return this.getAmount();
-        } else {
-            return new Amount(0);
+        Amount amount = new Amount();
+        for (AmountProvider amountProvider : this.products) {
+            amount = amount.add(amountProvider.getAmount(valueDate));
         }
+        return amount;
     }
 
     @Override
     public Amount getAmount(TimeRange timeRange) {
-        if (timeRange.includes(this.getValueDate())) {
-            return this.getAmount();
-        } else {
-            return new Amount(0);
+        Amount amount = new Amount();
+        for (AmountProvider amountProvider : this.products) {
+            amount = amount.add(amountProvider.getAmount(timeRange));
+        }
+        return amount;
+    }
+
+    @Override
+    public void adjustAmountSign() {
+        for (AmountProvider amountProvider : this.getProducts()) {
+            amountProvider.adjustAmountSign();
         }
     }
 
@@ -54,6 +73,20 @@ public class VariableTransaction extends Transaction {
         return this;
     }
 
+    public Set<Product> getProducts() {
+        return products;
+    }
+
+    public VariableTransaction setProducts(Set<Product> products) {
+        this.products = products;
+        return this;
+    }
+
+    public VariableTransaction addProduct(Product product) {
+        this.products.add(product);
+        return this;
+    }
+
     @Override
     public VariableTransaction setId(long id) {
         super.setId(id);
@@ -67,20 +100,8 @@ public class VariableTransaction extends Transaction {
     }
 
     @Override
-    public VariableTransaction setAmount(Amount amount) {
-        super.setAmount(amount);
-        return this;
-    }
-
-    @Override
-    public VariableTransaction setProduct(String product) {
-        super.setProduct(product);
-        return this;
-    }
-
-    @Override
-    public VariableTransaction setPurpose(String purpose) {
-        super.setPurpose(purpose);
+    public VariableTransaction setDescription(String purpose) {
+        super.setDescription(purpose);
         return this;
     }
 

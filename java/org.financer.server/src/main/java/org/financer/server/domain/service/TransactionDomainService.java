@@ -3,10 +3,7 @@ package org.financer.server.domain.service;
 import org.financer.server.application.api.error.NotFoundException;
 import org.financer.server.application.service.AuthenticationService;
 import org.financer.server.domain.model.category.Category;
-import org.financer.server.domain.model.transaction.Attachment;
-import org.financer.server.domain.model.transaction.FixedTransaction;
-import org.financer.server.domain.model.transaction.Transaction;
-import org.financer.server.domain.model.transaction.VariableTransaction;
+import org.financer.server.domain.model.transaction.*;
 import org.financer.server.domain.repository.AttachmentRepository;
 import org.financer.server.domain.repository.CategoryRepository;
 import org.financer.server.domain.repository.FixedTransactionRepository;
@@ -57,6 +54,11 @@ public class TransactionDomainService {
             variableTransactionEntity.setCategory(categoryOptional.get());
             variableTransactionEntity.throwIfInvalidCategoryClass();
             variableTransactionEntity.throwIfNotUsersProperty(authenticationService.getUserId());
+
+            for (Product product : variableTransactionEntity.getProducts()) {
+                product.setTransaction(variableTransactionEntity);
+            }
+
             return variableTransactionRepository.save(variableTransactionEntity);
         }
         throw new NotFoundException(Category.class, variableTransactionEntity.getCategory().getId());
