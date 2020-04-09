@@ -1,20 +1,43 @@
 package org.financer.shared.domain.model.api.category;
 
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
+import org.financer.shared.domain.model.api.DataTransferObject;
+import org.financer.shared.domain.model.value.objects.CategoryClass;
 
-public class UpdateCategoryDTO extends CreateCategoryDTO {
+import javax.validation.constraints.Size;
 
-    @NotNull
-    @Min(1)
-    private long id;
+public class UpdateCategoryDTO implements DataTransferObject {
 
-    public long getId() {
-        return id;
+    @Size(min = 1, max = 64)
+    private String name = null;
+
+    private CategoryClass.Values categoryClass = null;
+
+    private long parentId = -1;
+
+    public String getName() {
+        return name;
     }
 
-    public UpdateCategoryDTO setId(long id) {
-        this.id = id;
+    public UpdateCategoryDTO setName(String name) {
+        this.name = name;
+        return this;
+    }
+
+    public CategoryClass.Values getCategoryClass() {
+        return categoryClass;
+    }
+
+    public UpdateCategoryDTO setCategoryClass(CategoryClass.Values categoryClass) {
+        this.categoryClass = categoryClass;
+        return this;
+    }
+
+    public long getParentId() {
+        return parentId;
+    }
+
+    public UpdateCategoryDTO setParentId(long parentId) {
+        this.parentId = parentId;
         return this;
     }
 }

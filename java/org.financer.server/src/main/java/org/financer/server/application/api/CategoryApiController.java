@@ -6,6 +6,7 @@ import org.financer.server.domain.model.category.Category;
 import org.financer.server.domain.service.CategoryDomainService;
 import org.financer.shared.domain.model.api.category.CategoryDTO;
 import org.financer.shared.domain.model.api.category.CreateCategoryDTO;
+import org.financer.shared.domain.model.api.category.UpdateCategoryDTO;
 import org.financer.shared.domain.model.value.objects.CategoryClass;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,12 +53,15 @@ public class CategoryApiController implements CategoryApi {
     }
 
     @Override
-    public ResponseEntity<Void> updateCategory(@NotBlank @Min(1) Long categoryId, @NotNull @Valid CategoryDTO category) {
-        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+    public ResponseEntity<CategoryDTO> updateCategory(@NotBlank @Min(1) Long categoryId, @NotNull @Valid UpdateCategoryDTO category) {
+        Category updatedCategory = categoryDomainService.updateCategory(categoryId,
+                category.getParentId(), category.getCategoryClass(), category.getName());
+        return new ResponseEntity<>(modelMapper.map(updatedCategory, CategoryDTO.class), HttpStatus.OK);
     }
 
     @Override
     public ResponseEntity<Void> deleteCategory(@NotBlank @Min(1) Long categoryId) {
-        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+        categoryDomainService.deleteCategory(categoryId);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

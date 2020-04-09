@@ -11,7 +11,7 @@ public interface Tree {
     Set<? extends Tree> getChildren();
 
     default boolean isLeaf() {
-        return getChildren().isEmpty();
+        return getChildren() == null || getChildren().isEmpty();
     }
 
     default boolean isRoot() {

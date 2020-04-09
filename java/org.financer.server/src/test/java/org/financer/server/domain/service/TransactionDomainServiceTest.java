@@ -32,7 +32,13 @@ import static org.mockito.Mockito.when;
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = {FinancerServer.class, TransactionDomainService.class},
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class TransactionDomainServiceTest {
+public class TransactionDomainServiceTest extends ServiceTest {
+
+    @MockBean
+    private UserDomainService userDomainService;
+
+    @MockBean
+    private CategoryDomainService categoryDomainService;
 
     @Autowired
     private TransactionDomainService transactionDomainService;
@@ -154,42 +160,4 @@ public class TransactionDomainServiceTest {
         assertThatExceptionOfType(UnauthorizedOperationException.class).isThrownBy(
                 () -> transactionDomainService.deleteFixedTransaction(fixedTransaction.getId()));
     }
-
-    private void mockAnotherUserAuthenticated() {
-        when(authenticationService.getUserId()).thenReturn(-1L);
-    }
-
-    /*
-     * Mock Beans
-     */
-
-    @MockBean
-    private AuthenticationService authenticationService;
-
-    @MockBean
-    private UserDomainService userDomainService;
-
-    @MockBean
-    private UserRepository userRepository;
-
-    @MockBean
-    private VerificationTokenRepository verificationTokenRepository;
-
-    @MockBean
-    private TokenRepository tokenRepository;
-
-    @MockBean
-    private CategoryDomainService categoryDomainService;
-
-    @MockBean
-    private CategoryRepository categoryRepository;
-
-    @MockBean
-    private VariableTransactionRepository variableTransactionRepository;
-
-    @MockBean
-    private FixedTransactionRepository fixedTransactionRepository;
-
-    @MockBean
-    private AttachmentRepository attachmentRepository;
 }

@@ -2,6 +2,7 @@ package org.financer.server.application.api;
 
 import org.financer.shared.domain.model.api.category.CategoryDTO;
 import org.financer.shared.domain.model.api.category.CreateCategoryDTO;
+import org.financer.shared.domain.model.api.category.UpdateCategoryDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,14 +30,14 @@ public interface CategoryApi {
      *
      * @param categoryId category id that will be updated
      * @param category   category object with updated information
-     * @return null
+     * @return update category
      */
     @PostMapping(
             value = "/categories/{categoryId}",
             produces = {"application/json"},
             headers = "Accept=application/json")
-    ResponseEntity<Void> updateCategory(@NotBlank @PathVariable("categoryId") @Min(1) Long categoryId,
-                                        @NotNull @Valid @RequestParam(value = "category") CategoryDTO category);
+    ResponseEntity<CategoryDTO> updateCategory(@NotBlank @PathVariable("categoryId") @Min(1) Long categoryId,
+                                               @NotNull @Valid @RequestBody UpdateCategoryDTO category);
 
     /**
      * Deletes a specified category.

@@ -1,5 +1,6 @@
 package org.financer.server.domain.model.category;
 
+import org.financer.server.application.api.error.IllegalCategoryParentStateException;
 import org.financer.server.domain.model.DataEntity;
 import org.financer.server.domain.model.transaction.Transaction;
 import org.financer.server.domain.model.user.User;
@@ -38,10 +39,10 @@ public class Category implements DataEntity, Tree, AmountProvider, UserProperty 
     @Column(name = "name", nullable = false)
     private String name;
 
-    @OneToMany(mappedBy = "parent", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "parent", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Category> children;
 
-    @OneToMany(mappedBy = "category")
+    @OneToMany(mappedBy = "category", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private Set<Transaction> transactions = new HashSet<>();
 
     @Override
@@ -108,6 +109,12 @@ public class Category implements DataEntity, Tree, AmountProvider, UserProperty 
     @Override
     public boolean isRevenue() {
         return this.categoryClass.isRevenue();
+    }
+
+    public void throwIfParentCategoryClassIsInvalid() {
+        if (this.parent != null && !this.parent.getCategoryClass().equals(this.categoryClass)) {
+            throw new IllegalCategoryParentStateException(this, this.parent);
+        }
     }
 
     /*

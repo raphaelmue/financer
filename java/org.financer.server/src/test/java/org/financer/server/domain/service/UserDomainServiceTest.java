@@ -7,7 +7,6 @@ import org.financer.server.application.service.AuthenticationService;
 import org.financer.server.domain.model.user.Token;
 import org.financer.server.domain.model.user.User;
 import org.financer.server.domain.model.user.VerificationToken;
-import org.financer.server.domain.repository.*;
 import org.financer.shared.domain.model.value.objects.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -32,7 +31,13 @@ import static org.mockito.Mockito.when;
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = {FinancerServer.class, UserDomainService.class, AuthenticationService.class},
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class UserDomainServiceTest {
+public class UserDomainServiceTest extends ServiceTest {
+
+    @MockBean
+    private CategoryDomainService categoryDomainService;
+
+    @MockBean
+    private TransactionDomainService transactionDomainService;
 
     @Autowired
     private UserDomainService userDomainService;
@@ -171,42 +176,4 @@ public class UserDomainServiceTest {
         assertThatExceptionOfType(UnauthorizedOperationException.class).isThrownBy(() ->
                 userDomainService.updatePassword("wrongPassword", "newPassword"));
     }
-
-    private void mockAnotherUserAuthenticated() {
-        when(authenticationService.getUserId()).thenReturn(-1L);
-    }
-
-    /*
-     * Mock Beans
-     */
-
-    @MockBean
-    private AuthenticationService authenticationService;
-
-    @MockBean
-    private UserRepository userRepository;
-
-    @MockBean
-    private TokenRepository tokenRepository;
-
-    @MockBean
-    private VerificationTokenRepository verificationTokenRepository;
-
-    @MockBean
-    private CategoryDomainService categoryDomainService;
-
-    @MockBean
-    private TransactionDomainService transactionDomainService;
-
-    @MockBean
-    private CategoryRepository categoryRepository;
-
-    @MockBean
-    private VariableTransactionRepository variableTransactionRepository;
-
-    @MockBean
-    private FixedTransactionRepository fixedTransactionRepository;
-
-    @MockBean
-    private AttachmentRepository attachmentRepository;
 }
