@@ -1,12 +1,14 @@
 package org.financer.server.application.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.financer.server.application.api.error.NotFoundException;
+import org.financer.server.domain.model.transaction.Product;
 import org.financer.server.domain.model.transaction.VariableTransaction;
 import org.financer.server.domain.service.TransactionDomainService;
-import org.financer.shared.domain.model.api.transaction.variable.CreateVariableTransactionDTO;
-import org.financer.shared.domain.model.api.transaction.variable.UpdateVariableTransactionDTO;
-import org.financer.shared.domain.model.api.transaction.variable.VariableTransactionDTO;
+import org.financer.shared.domain.model.api.transaction.variable.*;
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +26,8 @@ public class VariableTransactionApiController implements VariableTransactionApi 
 
     private final ObjectMapper objectMapper;
     private final HttpServletRequest request;
+
+    private static final Logger logger = LoggerFactory.getLogger(VariableTransactionApiController.class);
 
     @Autowired
     private ModelMapper modelMapper;
@@ -57,6 +61,23 @@ public class VariableTransactionApiController implements VariableTransactionApi 
     @Override
     public ResponseEntity<Void> deleteTransaction(@NotBlank @PathVariable("transactionId") @Min(1) Long transactionId) {
         transactionDomainService.deleteVariableTransaction(transactionId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<ProductDTO> createProduct(@NotBlank @Min(1) Long transactionId, @NotNull @Valid CreateProductDTO product) {
+        Product productEntity = modelMapper.map(product, Product.class);
+        productEntity = transactionDomainService.createProduct(transactionId, productEntity);
+        return new ResponseEntity<>(modelMapper.map(productEntity, ProductDTO.class), HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<Void> deleteProduct(@NotBlank @Min(1) Long transactionId, @NotBlank @Min(1) Long productId) {
+        try {
+            transactionDomainService.deleteProduct(transactionId, productId);
+        } catch (NotFoundException exception) {
+            logger.error(exception.getMessage(), exception);
+        }
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

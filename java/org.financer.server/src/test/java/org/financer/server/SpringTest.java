@@ -34,6 +34,9 @@ public abstract class SpringTest {
     @MockBean
     protected AttachmentRepository attachmentRepository;
 
+    @MockBean
+    protected ProductRepository productRepository;
+
     protected void mockAnotherUserAuthenticated() {
         when(authenticationService.getUserId()).thenReturn(-1L);
     }

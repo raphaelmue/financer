@@ -1,6 +1,7 @@
 package org.financer.server.domain.model.transaction;
 
 import org.financer.server.domain.model.DataEntity;
+import org.financer.server.domain.model.user.UserProperty;
 import org.financer.shared.domain.model.AmountProvider;
 import org.financer.shared.domain.model.value.objects.Amount;
 import org.financer.shared.domain.model.value.objects.Quantity;
@@ -12,7 +13,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "products")
-public class Product implements DataEntity, AmountProvider {
+public class Product implements DataEntity, AmountProvider, UserProperty {
     private static final long serialVersionUID = -3732346378113344348L;
 
     @Id
@@ -35,7 +36,7 @@ public class Product implements DataEntity, AmountProvider {
     @Override
     public Amount getAmount() {
         return this.amount.calculate(this.quantity);
-     }
+    }
 
     @Override
     public Amount getAmount(ValueDate valueDate) {
@@ -68,6 +69,11 @@ public class Product implements DataEntity, AmountProvider {
         if ((this.isRevenue() == this.getAmount().isNegative())) {
             this.setAmount(this.getAmount().adjustSign());
         }
+    }
+
+    @Override
+    public boolean isPropertyOfUser(long userId) {
+        return this.transaction.isPropertyOfUser(userId);
     }
 
     /*

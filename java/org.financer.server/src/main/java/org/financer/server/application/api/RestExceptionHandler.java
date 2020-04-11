@@ -51,4 +51,12 @@ public class RestExceptionHandler {
         logger.error(exception.getMessage(), exception);
         return new ResponseEntity<>(new RestErrorMessage(exception, request.getRequestURI(), errorMessage), exception.getHttpStatus());
     }
+
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<RestErrorMessage> handleRestExceptions(RuntimeException exception, Locale locale) {
+        String errorMessage = messageSource.getMessage("exception.unexpected", new String[]{}, locale);
+        logger.error(exception.getMessage(), exception);
+        return new ResponseEntity<>(new RestErrorMessage(HttpStatus.INTERNAL_SERVER_ERROR, request.getRequestURI(), errorMessage),
+                HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 }

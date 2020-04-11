@@ -6,6 +6,8 @@ module org.financer.shared {
     exports org.financer.shared.domain.model.api.user;
     exports org.financer.shared.domain.model.api.category;
     exports org.financer.shared.domain.model.api.transaction;
+    exports org.financer.shared.domain.model.api.transaction.variable;
+    exports org.financer.shared.domain.model.api.transaction.fixed;
     exports org.financer.shared.domain.model.value.objects;
 
     requires org.financer.util;
@@ -22,8 +24,7 @@ module org.financer.shared {
     opens org.financer.shared.domain.model.api.user to org.hibernate.validator, java.persistence;
     opens org.financer.shared.domain.model.api.category to org.hibernate.validator, modelmapper;
     opens org.financer.shared.domain.model.api.transaction to org.hibernate.validator;
+    opens org.financer.shared.domain.model.api.transaction.fixed to org.hibernate.validator;
+    opens org.financer.shared.domain.model.api.transaction.variable to org.hibernate.validator;
     opens org.financer.shared.domain.model.value.objects to spring.core, org.hibernate.orm.core, com.fasterxml.jackson.databind;
-    exports org.financer.shared.domain.model.api.transaction.variable;
-    exports org.financer.shared.domain.model.api.transaction.fixed;
-
 }

@@ -1,9 +1,6 @@
 package org.financer.server.application.api;
 
-import org.financer.server.domain.model.transaction.VariableTransaction;
-import org.financer.shared.domain.model.api.transaction.variable.CreateVariableTransactionDTO;
-import org.financer.shared.domain.model.api.transaction.variable.UpdateVariableTransactionDTO;
-import org.financer.shared.domain.model.api.transaction.variable.VariableTransactionDTO;
+import org.financer.shared.domain.model.api.transaction.variable.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,7 +35,7 @@ public interface VariableTransactionApi {
             produces = {"application/json"},
             headers = "Accept=application/json")
     ResponseEntity<VariableTransactionDTO> updateTransaction(@NotBlank @PathVariable("transactionId") @Min(1) Long transactionId,
-                                                          @NotNull @Valid @RequestBody UpdateVariableTransactionDTO variableTransaction);
+                                                             @NotNull @Valid @RequestBody UpdateVariableTransactionDTO variableTransaction);
 
     /**
      * Deletes a specified transaction.
@@ -52,4 +49,31 @@ public interface VariableTransactionApi {
             headers = "Accept=application/json")
     ResponseEntity<Void> deleteTransaction(@NotBlank @PathVariable("transactionId") @Min(1) Long transactionId);
 
+    /**
+     * Creates a product.
+     *
+     * @param transactionId transaction id to which the product will be assigned to
+     * @param product       product to insert
+     * @return product object
+     */
+    @PutMapping(
+            value = "/variableTransactions/{transactionId}/products",
+            produces = {"application/json"},
+            headers = "Accept=application/json")
+    ResponseEntity<ProductDTO> createProduct(@NotBlank @PathVariable("transactionId") @Min(1) Long transactionId,
+                                             @NotNull @Valid @RequestBody CreateProductDTO product);
+
+    /**
+     * Deletes a product.
+     *
+     * @param transactionId transaction id to which the product is assigned to
+     * @param productId     product id to delete
+     * @return void
+     */
+    @DeleteMapping(
+            value = "/variableTransactions/{transactionId}/products/{productId}",
+            produces = {"application/json"},
+            headers = "Accept=application/json")
+    ResponseEntity<Void> deleteProduct(@NotBlank @PathVariable("transactionId") @Min(1) Long transactionId,
+                                       @NotBlank @PathVariable("productId") @Min(1) Long productId);
 }

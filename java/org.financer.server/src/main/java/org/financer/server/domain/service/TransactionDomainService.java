@@ -4,10 +4,7 @@ import org.financer.server.application.api.error.NotFoundException;
 import org.financer.server.application.service.AuthenticationService;
 import org.financer.server.domain.model.category.Category;
 import org.financer.server.domain.model.transaction.*;
-import org.financer.server.domain.repository.AttachmentRepository;
-import org.financer.server.domain.repository.CategoryRepository;
-import org.financer.server.domain.repository.FixedTransactionRepository;
-import org.financer.server.domain.repository.VariableTransactionRepository;
+import org.financer.server.domain.repository.*;
 import org.financer.shared.domain.model.value.objects.Amount;
 import org.financer.shared.domain.model.value.objects.ValueDate;
 import org.slf4j.Logger;
@@ -29,17 +26,20 @@ public class TransactionDomainService {
     private final CategoryDomainService categoryDomainService;
     private final CategoryRepository categoryRepository;
     private final VariableTransactionRepository variableTransactionRepository;
+    private final ProductRepository productRepository;
     private final FixedTransactionRepository fixedTransactionRepository;
     private final AttachmentRepository attachmentRepository;
 
     @Autowired
     public TransactionDomainService(AuthenticationService authenticationService, CategoryDomainService categoryDomainService,
                                     CategoryRepository categoryRepository, VariableTransactionRepository variableTransactionRepository,
-                                    FixedTransactionRepository fixedTransactionRepository, AttachmentRepository attachmentRepository) {
+                                    ProductRepository productRepository, FixedTransactionRepository fixedTransactionRepository,
+                                    AttachmentRepository attachmentRepository) {
         this.authenticationService = authenticationService;
         this.categoryDomainService = categoryDomainService;
         this.categoryRepository = categoryRepository;
         this.variableTransactionRepository = variableTransactionRepository;
+        this.productRepository = productRepository;
         this.fixedTransactionRepository = fixedTransactionRepository;
         this.attachmentRepository = attachmentRepository;
     }
@@ -149,6 +149,43 @@ public class TransactionDomainService {
             variableTransactionOptional.get().throwIfNotUsersProperty(authenticationService.getUserId());
             variableTransactionRepository.deleteById(variableTransactionId);
         }
+    }
+
+    /**
+     * Creates a new product and inserts it into database. If the transaction id does not exist, {@link
+     * NotFoundException} is thrown.
+     *
+     * @param transactionId transaction id to which the product is assigned
+     * @param product       product to be inserted
+     * @return product object
+     */
+    public Product createProduct(long transactionId, Product product) {
+        logger.info("Creating new product for variable transaction with {}", transactionId);
+        VariableTransaction variableTransaction = getVariableTransactionById(transactionId);
+        product.setTransaction(variableTransaction);
+        product.throwIfNotUsersProperty(authenticationService.getUserId());
+        return productRepository.save(product);
+    }
+
+    /**
+     * Deletes a product by id.
+     *
+     * @param transactionId id of the transaction
+     * @param productId     id of the product to delete
+     * @throws NoResultException thrown when the product does not exist or the product is not assigned to the given
+     *                           transaction id
+     */
+    public void deleteProduct(long transactionId, long productId) {
+        logger.info("Deleting product with id {} (transaction id {})", productId, transactionId);
+        Optional<Product> productOptional = productRepository.findById(productId);
+        if (productOptional.isPresent()) {
+            productOptional.get().throwIfNotUsersProperty(authenticationService.getUserId());
+            if (productOptional.get().getTransaction().getId() == transactionId) {
+                productOptional.get().getTransaction().getProducts().remove(productOptional.get());
+                variableTransactionRepository.save(productOptional.get().getTransaction());
+            }
+        }
+        throw new NotFoundException(Product.class, productId);
     }
 
     /**
