@@ -35,8 +35,8 @@ public interface FixedTransactionApi {
             value = "/fixedTransactions/{transactionId}",
             produces = {"application/json"},
             headers = "Accept=application/json")
-    ResponseEntity<Void> updateFixedTransaction(@NotBlank @PathVariable("transactionId") @Min(1) Long transactionId,
-                                                @NotNull @Valid @RequestParam(value = "fixedTransaction") FixedTransactionDTO fixedTransaction);
+    ResponseEntity<FixedTransactionDTO> updateFixedTransaction(@NotBlank @PathVariable("transactionId") @Min(1) Long transactionId,
+                                                @NotNull @Valid @RequestParam(value = "fixedTransaction") UpdateFixedTransactionDTO fixedTransaction);
 
     /**
      * Deletes a specified transaction.

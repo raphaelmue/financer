@@ -6,6 +6,7 @@ import org.financer.server.domain.model.category.Category;
 import org.financer.server.domain.model.transaction.*;
 import org.financer.server.domain.repository.*;
 import org.financer.shared.domain.model.value.objects.Amount;
+import org.financer.shared.domain.model.value.objects.TimeRange;
 import org.financer.shared.domain.model.value.objects.ValueDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +17,7 @@ import javax.persistence.NoResultException;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class TransactionDomainService {
@@ -230,6 +232,96 @@ public class TransactionDomainService {
             return fixedTransactionRepository.save(fixedTransaction);
         }
         throw new NoResultException(String.format("No category with id %d found!", fixedTransaction.getCategory().getId()));
+    }
+
+    /**
+     * Updates the fixed transaction with given values.
+     *
+     * <p> The values are validated, before updating the transaction. If the given parameters are null or equal to the
+     * transaction that will be updated, they will be ignored in the updating process. If no changes are applied to the
+     * transaction, the transaction is returned.</p>
+     *
+     * @param fixedTransactionId id of the transaction to be updated
+     * @param categoryId         updated category id
+     * @param amount             updated amount
+     * @param timeRange          updated time range
+     * @param product            updated product
+     * @param description        updated description
+     * @param vendor             updated vendor
+     * @param isVariable         updated is variable
+     * @param day                update day
+     * @param transactionAmounts updated set of transaction amounts
+     * @return update fixed transaction
+     */
+    public FixedTransaction updateFixedTransaction(long fixedTransactionId, long categoryId, Amount amount, TimeRange timeRange,
+                                                   String product, String description, String vendor, boolean isVariable, int day,
+                                                   Set<FixedTransactionAmount> transactionAmounts) {
+        logger.info("Updating fixed transaction {}", fixedTransactionId);
+        FixedTransaction fixedTransaction = getFixedTransactionById(fixedTransactionId);
+        fixedTransaction.throwIfNotUsersProperty(authenticationService.getUserId());
+
+        boolean fixedTransactionChanged = changeTransactionCategory(fixedTransaction, categoryId)
+                | changeFixedTransactionAmount(fixedTransaction, amount)
+                | changeFixedTransactionTimeRange(fixedTransaction, timeRange)
+                | changeFixedTransactionProduct(fixedTransaction, product)
+                | changeTransactionDescription(fixedTransaction, description)
+                | changeTransactionVendor(fixedTransaction, vendor)
+                | changeFixedTransactionIsVariable(fixedTransaction, isVariable)
+                | changeFixedTransactionDay(fixedTransaction, day)
+                | changeFixedTransactionTransactionAmounts(fixedTransaction, transactionAmounts);
+
+        if (fixedTransactionChanged) {
+            fixedTransactionRepository.save(fixedTransaction);
+        }
+        return fixedTransaction;
+    }
+
+    private boolean changeFixedTransactionAmount(FixedTransaction fixedTransaction, Amount amount) {
+        if (amount != null && amount.getAmount() != 0 && amount != fixedTransaction.getAmount()) {
+            fixedTransaction.setAmount(amount);
+            return true;
+        }
+        return false;
+    }
+
+    private boolean changeFixedTransactionTimeRange(FixedTransaction fixedTransaction, TimeRange timeRange) {
+        if (timeRange != null && timeRange != fixedTransaction.getTimeRange()) {
+            fixedTransaction.setTimeRange(timeRange);
+            return true;
+        }
+        return false;
+    }
+
+    private boolean changeFixedTransactionProduct(FixedTransaction fixedTransaction, String product) {
+        if (product != null && !product.equals(fixedTransaction.getProduct())) {
+            fixedTransaction.setProduct(product);
+            return true;
+        }
+        return false;
+    }
+
+    private boolean changeFixedTransactionIsVariable(FixedTransaction fixedTransaction, boolean isVariable) {
+        if (isVariable != fixedTransaction.getIsVariable()) {
+            fixedTransaction.setVariable(isVariable);
+            return true;
+        }
+        return false;
+    }
+
+    private boolean changeFixedTransactionDay(FixedTransaction fixedTransaction, int day) {
+        if (day > 0 && day != fixedTransaction.getDay()) {
+            fixedTransaction.setDay(day);
+            return true;
+        }
+        return false;
+    }
+
+    private boolean changeFixedTransactionTransactionAmounts(FixedTransaction fixedTransaction, Set<FixedTransactionAmount> transactionAmounts) {
+        if (transactionAmounts != null && !transactionAmounts.isEmpty()) {
+            fixedTransaction.getTransactionAmounts().addAll(transactionAmounts);
+            return true;
+        }
+        return false;
     }
 
     /**

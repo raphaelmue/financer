@@ -6,6 +6,7 @@ import org.financer.server.domain.model.transaction.FixedTransaction;
 import org.financer.server.domain.model.transaction.FixedTransactionAmount;
 import org.financer.server.domain.service.TransactionDomainService;
 import org.financer.shared.domain.model.api.transaction.fixed.*;
+import org.financer.util.mapping.ModelMapperUtils;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,8 +56,14 @@ public class FixedTransactionApiController implements FixedTransactionApi {
     }
 
     @Override
-    public ResponseEntity<Void> updateFixedTransaction(@NotBlank @Min(1) Long transactionId, @NotNull @Valid FixedTransactionDTO fixedTransaction) {
-        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+    public ResponseEntity<FixedTransactionDTO> updateFixedTransaction(@NotBlank @Min(1) Long transactionId,
+                                                                      @NotNull @Valid UpdateFixedTransactionDTO fixedTransaction) {
+        FixedTransaction updateFixedTransaction = transactionDomainService.updateFixedTransaction(transactionId,
+                fixedTransaction.getCategoryId(), fixedTransaction.getAmount(), fixedTransaction.getTimeRange(),
+                fixedTransaction.getProduct(), fixedTransaction.getDescription(), fixedTransaction.getVendor(),
+                fixedTransaction.isVariable(), fixedTransaction.getDay(),
+                ModelMapperUtils.mapAll(fixedTransaction.getTransactionAmounts(), FixedTransactionAmount.class));
+        return new ResponseEntity<>(modelMapper.map(updateFixedTransaction, FixedTransactionDTO.class), HttpStatus.OK);
     }
 
     @Override

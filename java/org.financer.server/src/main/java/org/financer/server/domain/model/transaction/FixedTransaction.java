@@ -28,6 +28,9 @@ public final class FixedTransaction extends Transaction {
     @Column(name = "day")
     private int day;
 
+    @Column(name = "product")
+    private String product;
+
     @OneToMany(mappedBy = "fixedTransaction", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<FixedTransactionAmount> transactionAmounts = new HashSet<>();
 
@@ -177,6 +180,15 @@ public final class FixedTransaction extends Transaction {
 
     public FixedTransaction setDay(int day) {
         this.day = day;
+        return this;
+    }
+
+    public String getProduct() {
+        return product;
+    }
+
+    public FixedTransaction setProduct(String product) {
+        this.product = product;
         return this;
     }
 

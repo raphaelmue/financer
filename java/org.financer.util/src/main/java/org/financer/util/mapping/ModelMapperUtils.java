@@ -3,10 +3,10 @@ package org.financer.util.mapping;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class ModelMapperUtils {
@@ -55,10 +55,25 @@ public class ModelMapperUtils {
      * @param <T>        type of entity in <code>entityList</code>
      * @return list of mapped object with <code><D></code> type.
      */
-    public static <D, T> List<D> mapAll(final Collection<T> entityList, Class<D> outCLass) {
+    public static <D, T> List<D> mapAll(final List<T> entityList, Class<D> outCLass) {
         return entityList.stream()
                 .map(entity -> map(entity, outCLass))
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * <p>Note: outClass object must have default constructor with no arguments</p>
+     *
+     * @param entityList list of entities that needs to be mapped
+     * @param outCLass   class of result list element
+     * @param <D>        type of objects in result list
+     * @param <T>        type of entity in <code>entityList</code>
+     * @return list of mapped object with <code><D></code> type.
+     */
+    public static <D, T> Set<D> mapAll(final Set<T> entityList, Class<D> outCLass) {
+        return entityList.stream()
+                .map(entity -> map(entity, outCLass))
+                .collect(Collectors.toSet());
     }
 
     public static <K, V, K1, V1> Map<K, V> map(final Map<K1, V1> map, Class<K> keyClass, Class<V> valueClass) {
