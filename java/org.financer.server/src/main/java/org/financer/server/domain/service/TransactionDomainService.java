@@ -28,12 +28,14 @@ public class TransactionDomainService {
     private final VariableTransactionRepository variableTransactionRepository;
     private final ProductRepository productRepository;
     private final FixedTransactionRepository fixedTransactionRepository;
+    private final FixedTransactionAmountRepository fixedTransactionAmountRepository;
     private final AttachmentRepository attachmentRepository;
 
     @Autowired
     public TransactionDomainService(AuthenticationService authenticationService, CategoryDomainService categoryDomainService,
                                     CategoryRepository categoryRepository, VariableTransactionRepository variableTransactionRepository,
                                     ProductRepository productRepository, FixedTransactionRepository fixedTransactionRepository,
+                                    FixedTransactionAmountRepository fixedTransactionAmountRepository,
                                     AttachmentRepository attachmentRepository) {
         this.authenticationService = authenticationService;
         this.categoryDomainService = categoryDomainService;
@@ -41,6 +43,7 @@ public class TransactionDomainService {
         this.variableTransactionRepository = variableTransactionRepository;
         this.productRepository = productRepository;
         this.fixedTransactionRepository = fixedTransactionRepository;
+        this.fixedTransactionAmountRepository = fixedTransactionAmountRepository;
         this.attachmentRepository = attachmentRepository;
     }
 
@@ -144,11 +147,10 @@ public class TransactionDomainService {
      * @param variableTransactionId id of the transaction to delete
      */
     public void deleteVariableTransaction(long variableTransactionId) {
-        Optional<VariableTransaction> variableTransactionOptional = variableTransactionRepository.findById(variableTransactionId);
-        if (variableTransactionOptional.isPresent()) {
-            variableTransactionOptional.get().throwIfNotUsersProperty(authenticationService.getUserId());
-            variableTransactionRepository.deleteById(variableTransactionId);
-        }
+        logger.info("Deleting variable transaction {}", variableTransactionId);
+        VariableTransaction variableTransaction = getVariableTransactionById(variableTransactionId);
+        variableTransaction.throwIfNotUsersProperty(variableTransactionId);
+        variableTransactionRepository.delete(variableTransaction);
     }
 
     /**
@@ -236,11 +238,109 @@ public class TransactionDomainService {
      * @param fixedTransactionId id of the fixed transaction
      */
     public void deleteFixedTransaction(long fixedTransactionId) {
+        logger.info("Deleting fixed transaction {}.", fixedTransactionId);
+        FixedTransaction fixedTransaction = getFixedTransactionById(fixedTransactionId);
+        fixedTransaction.throwIfNotUsersProperty(authenticationService.getUserId());
+        fixedTransactionRepository.delete(fixedTransaction);
+    }
+
+    /**
+     * Returns the fixed transaction by id.
+     *
+     * @param fixedTransactionId id of the fixed transaction
+     * @return fixed transaction object
+     * @throws NotFoundException thrown when the given transaction id does not exist
+     */
+    private FixedTransaction getFixedTransactionById(long fixedTransactionId) {
         Optional<FixedTransaction> fixedTransactionOptional = fixedTransactionRepository.findById(fixedTransactionId);
         if (fixedTransactionOptional.isPresent()) {
-            fixedTransactionOptional.get().throwIfNotUsersProperty(authenticationService.getUserId());
-            fixedTransactionRepository.delete(fixedTransactionOptional.get());
+            return fixedTransactionOptional.get();
         }
+        throw new NotFoundException(FixedTransaction.class, fixedTransactionId);
+    }
+
+    /**
+     * Creates a new transaction amount for a given transaction.
+     *
+     * @param fixedTransactionId id of transaction to add transaction amount to
+     * @param transactionAmount  transaction amount to insert
+     * @return update fixed transaction
+     */
+    public FixedTransactionAmount createFixedTransactionAmount(long fixedTransactionId, FixedTransactionAmount transactionAmount) {
+        logger.info("Create new transaction amount for transaction {}", fixedTransactionId);
+        FixedTransaction fixedTransaction = getFixedTransactionById(fixedTransactionId);
+        transactionAmount.setFixedTransaction(fixedTransaction);
+        return fixedTransactionAmountRepository.save(transactionAmount);
+    }
+
+    /**
+     * Updates a fixed transaction amount with given values.
+     *
+     * <p> The values are validated, before updating the transaction amount. If the given parameters are null or equal
+     * to the transaction amount that will be updated, they will be ignored in the updating process. If no changes are
+     * applied to the transaction amount, the transaction amount is returned.</p>
+     *
+     * @param fixedTransactionId       id of the fixed transaction that owns the transaction amount
+     * @param fixedTransactionAmountId id of the fixed transaction amount
+     * @param amount                   update amount
+     * @param valueDate                updated value date
+     * @return update transaction amount
+     */
+    public FixedTransactionAmount updateFixedTransactionAmount(long fixedTransactionId, long fixedTransactionAmountId,
+                                                               Amount amount, ValueDate valueDate) {
+        logger.info("Updating fixed transaction amount {} which belongs to transaction {}", fixedTransactionAmountId, fixedTransactionId);
+        FixedTransactionAmount fixedTransactionAmount = getFixedTransactionAmountById(fixedTransactionId, fixedTransactionAmountId);
+        fixedTransactionAmount.throwIfNotUsersProperty(authenticationService.getUserId());
+
+        boolean fixedTransactionAmountChanged = changeFixedTransactionAmountAmount(fixedTransactionAmount, amount)
+                | changeFixedTransactionAmountValueDate(fixedTransactionAmount, valueDate);
+
+        if (fixedTransactionAmountChanged) {
+            return fixedTransactionAmountRepository.save(fixedTransactionAmount);
+        }
+        return fixedTransactionAmount;
+    }
+
+    private boolean changeFixedTransactionAmountAmount(FixedTransactionAmount fixedTransactionAmount, Amount amount) {
+        if (amount != null && amount.getAmount() != 0) {
+            fixedTransactionAmount.setAmount(amount);
+            return true;
+        }
+        return false;
+    }
+
+    private boolean changeFixedTransactionAmountValueDate(FixedTransactionAmount fixedTransactionAmount, ValueDate valueDate) {
+        if (valueDate != null) {
+            fixedTransactionAmount.setValueDate(valueDate);
+            return true;
+        }
+        return false;
+    }
+
+
+    /**
+     * Deletes a fixed transaction amount.
+     *
+     * @param fixedTransactionId       id of transaction to which the fixed transaction amount belongs
+     * @param fixedTransactionAmountId id of fixed transaction amount that will be deleted
+     * @throws NotFoundException thrown when either the fixed transaction amount id does not exist or the transaction
+     *                           amount is not assigned to the given fixed transaction id
+     */
+    public void deleteFixedTransactionAmount(long fixedTransactionId, long fixedTransactionAmountId) {
+        logger.info("Deleting fixed transaction amount {} of transaction {}", fixedTransactionAmountId, fixedTransactionId);
+        FixedTransactionAmount fixedTransactionAmount = getFixedTransactionAmountById(fixedTransactionId, fixedTransactionAmountId);
+        fixedTransactionAmount.throwIfNotUsersProperty(authenticationService.getUserId());
+        FixedTransaction fixedTransaction = fixedTransactionAmount.getFixedTransaction();
+        fixedTransaction.removeFixedTransactionAmount(fixedTransactionAmount);
+        fixedTransactionRepository.save(fixedTransaction);
+    }
+
+    private FixedTransactionAmount getFixedTransactionAmountById(long fixedTransactionId, long fixedTransactionAmountId) {
+        Optional<FixedTransactionAmount> fixedTransactionAmountOptional = fixedTransactionAmountRepository.findById(fixedTransactionAmountId);
+        if (fixedTransactionAmountOptional.isPresent() && fixedTransactionAmountOptional.get().getFixedTransaction().getId() == fixedTransactionId) {
+            return fixedTransactionAmountOptional.get();
+        }
+        throw new NotFoundException(FixedTransaction.class, fixedTransactionAmountId);
     }
 
     /**

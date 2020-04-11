@@ -1,8 +1,6 @@
 package org.financer.server.application.api;
 
-import org.financer.shared.domain.model.api.transaction.fixed.CreateFixedTransactionDTO;
-import org.financer.shared.domain.model.api.transaction.fixed.FixedTransactionDTO;
-import org.financer.shared.domain.model.api.transaction.fixed.TransactionAmountDTO;
+import org.financer.shared.domain.model.api.transaction.fixed.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -63,8 +61,8 @@ public interface FixedTransactionApi {
             value = "/fixedTransactions/{transactionId}/transactionAmounts",
             produces = {"application/json"},
             headers = "Accept=application/json")
-    ResponseEntity<TransactionAmountDTO> createTransactionAmount(@NotBlank @PathVariable("transactionId") @Min(1) Long transactionId,
-                                                                 @NotNull @Valid @RequestParam(value = "transactionAmount") TransactionAmountDTO transactionAmount);
+    ResponseEntity<FixedTransactionAmountDTO> createTransactionAmount(@NotBlank @PathVariable("transactionId") @Min(1) Long transactionId,
+                                                                      @NotNull @Valid @RequestBody CreateFixedTransactionAmountDTO transactionAmount);
 
     /**
      * Updates a transaction amount.
@@ -78,9 +76,9 @@ public interface FixedTransactionApi {
             value = "/fixedTransactions/{transactionId}/transactionAmounts/{transactionAmountId}",
             produces = {"application/json"},
             headers = "Accept=application/json")
-    ResponseEntity<TransactionAmountDTO> createTransactionAmount(@NotBlank @PathVariable("transactionId") @Min(1) Long transactionId,
-                                                                 @NotBlank @PathVariable("transactionAmountId") @Min(1) Long transactionAmountId,
-                                                                 @NotNull @Valid @RequestParam(value = "transactionAmount") TransactionAmountDTO transactionAmount);
+    ResponseEntity<FixedTransactionAmountDTO> updateTransactionAmount(@NotBlank @PathVariable("transactionId") @Min(1) Long transactionId,
+                                                                      @NotBlank @PathVariable("transactionAmountId") @Min(1) Long transactionAmountId,
+                                                                      @NotNull @Valid @RequestBody UpdateFixedTransactionAmountDTO transactionAmount);
 
     /**
      * Deletes a transaction amount.

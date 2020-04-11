@@ -188,4 +188,14 @@ public final class FixedTransaction extends Transaction {
         this.transactionAmounts = transactionAmounts;
         return this;
     }
+
+    public FixedTransaction addFixedTransactionAmount(FixedTransactionAmount fixedTransactionAmount) {
+        this.transactionAmounts.add(fixedTransactionAmount);
+        return this;
+    }
+
+    public FixedTransaction removeFixedTransactionAmount(FixedTransactionAmount fixedTransactionAmount) {
+        this.transactionAmounts.remove(fixedTransactionAmount);
+        return this;
+    }
 }

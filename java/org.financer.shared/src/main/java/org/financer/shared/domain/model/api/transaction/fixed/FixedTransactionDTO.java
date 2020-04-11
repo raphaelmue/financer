@@ -29,7 +29,7 @@ public class FixedTransactionDTO {
 
     private int day;
 
-    private List<TransactionAmountDTO> transactionAmounts;
+    private List<FixedTransactionAmountDTO> transactionAmounts;
 
     public int getId() {
         return id;
@@ -103,11 +103,11 @@ public class FixedTransactionDTO {
         return this;
     }
 
-    public List<TransactionAmountDTO> getTransactionAmounts() {
+    public List<FixedTransactionAmountDTO> getTransactionAmounts() {
         return transactionAmounts;
     }
 
-    public FixedTransactionDTO setTransactionAmounts(List<TransactionAmountDTO> transactionAmounts) {
+    public FixedTransactionDTO setTransactionAmounts(List<FixedTransactionAmountDTO> transactionAmounts) {
         this.transactionAmounts = transactionAmounts;
         return this;
     }

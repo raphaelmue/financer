@@ -6,7 +6,7 @@ import org.financer.shared.domain.model.value.objects.ValueDate;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
-public class TransactionAmountDTO {
+public class FixedTransactionAmountDTO {
 
     @NotNull
     @Min(1)
@@ -22,7 +22,7 @@ public class TransactionAmountDTO {
         return id;
     }
 
-    public TransactionAmountDTO setId(int id) {
+    public FixedTransactionAmountDTO setId(int id) {
         this.id = id;
         return this;
     }
@@ -31,7 +31,7 @@ public class TransactionAmountDTO {
         return valueDate;
     }
 
-    public TransactionAmountDTO setValueDate(ValueDate valueDate) {
+    public FixedTransactionAmountDTO setValueDate(ValueDate valueDate) {
         this.valueDate = valueDate;
         return this;
     }
@@ -40,7 +40,7 @@ public class TransactionAmountDTO {
         return amount;
     }
 
-    public TransactionAmountDTO setAmount(Amount amount) {
+    public FixedTransactionAmountDTO setAmount(Amount amount) {
         this.amount = amount;
         return this;
     }

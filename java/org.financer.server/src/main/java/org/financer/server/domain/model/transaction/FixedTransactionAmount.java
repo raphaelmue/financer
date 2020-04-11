@@ -1,16 +1,18 @@
 package org.financer.server.domain.model.transaction;
 
 import org.financer.server.domain.model.DataEntity;
+import org.financer.server.domain.model.user.UserProperty;
 import org.financer.shared.domain.model.AmountProvider;
 import org.financer.shared.domain.model.value.objects.Amount;
 import org.financer.shared.domain.model.value.objects.TimeRange;
 import org.financer.shared.domain.model.value.objects.ValueDate;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 @Entity
 @Table(name = "fixed_transactions_amounts")
-public class FixedTransactionAmount implements DataEntity, AmountProvider {
+public class FixedTransactionAmount implements DataEntity, AmountProvider, UserProperty {
     private static final long serialVersionUID = -3901962625430867317L;
 
     @Id
@@ -62,6 +64,11 @@ public class FixedTransactionAmount implements DataEntity, AmountProvider {
         }
     }
 
+    @Override
+    public boolean isPropertyOfUser(long userId) {
+        return this.fixedTransaction.isPropertyOfUser(userId);
+    }
+
     /*
      * Getters and Setters
      */
@@ -75,7 +82,7 @@ public class FixedTransactionAmount implements DataEntity, AmountProvider {
         this.id = id;
     }
 
-    protected FixedTransaction getFixedTransaction() {
+    public FixedTransaction getFixedTransaction() {
         return fixedTransaction;
     }
 
@@ -101,5 +108,27 @@ public class FixedTransactionAmount implements DataEntity, AmountProvider {
     public FixedTransactionAmount setAmount(Amount amount) {
         this.amount = amount;
         return this;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        FixedTransactionAmount that = (FixedTransactionAmount) o;
+        return id == that.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
+
+    @Override
+    public String toString() {
+        return "FixedTransactionAmount [" +
+                "id=" + id +
+                ", valueDate=" + valueDate +
+                ", amount=" + amount +
+                ']';
     }
 }

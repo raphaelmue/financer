@@ -1,13 +1,14 @@
 package org.financer.server.application.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.financer.server.application.api.error.NotFoundException;
 import org.financer.server.domain.model.transaction.FixedTransaction;
 import org.financer.server.domain.model.transaction.FixedTransactionAmount;
 import org.financer.server.domain.service.TransactionDomainService;
-import org.financer.shared.domain.model.api.transaction.fixed.CreateFixedTransactionDTO;
-import org.financer.shared.domain.model.api.transaction.fixed.FixedTransactionDTO;
-import org.financer.shared.domain.model.api.transaction.fixed.TransactionAmountDTO;
+import org.financer.shared.domain.model.api.transaction.fixed.*;
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +26,9 @@ public class FixedTransactionApiController implements FixedTransactionApi {
 
     private final ObjectMapper objectMapper;
     private final HttpServletRequest request;
+
+    private static final Logger logger = LoggerFactory.getLogger(FixedTransactionApiController.class);
+
 
     @Autowired
     private ModelMapper modelMapper;
@@ -62,17 +66,29 @@ public class FixedTransactionApiController implements FixedTransactionApi {
     }
 
     @Override
-    public ResponseEntity<TransactionAmountDTO> createTransactionAmount(@NotBlank @Min(1) Long transactionId, @NotNull @Valid TransactionAmountDTO transactionAmount) {
-        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+    public ResponseEntity<FixedTransactionAmountDTO> createTransactionAmount(@NotBlank @Min(1) Long transactionId,
+                                                                             @NotNull @Valid CreateFixedTransactionAmountDTO transactionAmount) {
+        FixedTransactionAmount transactionAmountEntity = modelMapper.map(transactionAmount, FixedTransactionAmount.class);
+        transactionAmountEntity = this.transactionDomainService.createFixedTransactionAmount(transactionId, transactionAmountEntity);
+        return new ResponseEntity<>(modelMapper.map(transactionAmountEntity, FixedTransactionAmountDTO.class), HttpStatus.OK);
     }
 
     @Override
-    public ResponseEntity<TransactionAmountDTO> createTransactionAmount(@NotBlank @Min(1) Long transactionId, @NotBlank @Min(1) Long transactionAmountId, @NotNull @Valid TransactionAmountDTO transactionAmount) {
-        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+    public ResponseEntity<FixedTransactionAmountDTO> updateTransactionAmount(@NotBlank @Min(1) Long transactionId,
+                                                                             @NotBlank @Min(1) Long transactionAmountId,
+                                                                             @NotNull @Valid UpdateFixedTransactionAmountDTO transactionAmount) {
+        FixedTransactionAmount transactionAmountEntity = transactionDomainService.updateFixedTransactionAmount(
+                transactionId, transactionAmountId, transactionAmount.getAmount(), transactionAmount.getValueDate());
+        return new ResponseEntity<>(modelMapper.map(transactionAmountEntity, FixedTransactionAmountDTO.class), HttpStatus.OK);
     }
 
     @Override
     public ResponseEntity<Void> deleteTransactionAmount(@NotBlank @Min(1) Long transactionId, @NotBlank @Min(1) Long transactionAmountId) {
-        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+        try {
+            transactionDomainService.deleteFixedTransactionAmount(transactionId, transactionAmountId);
+        } catch (NotFoundException exception) {
+            logger.info(exception.getMessage(), exception);
+        }
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
