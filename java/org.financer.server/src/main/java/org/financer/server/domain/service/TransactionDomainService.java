@@ -151,7 +151,7 @@ public class TransactionDomainService {
     public void deleteVariableTransaction(long variableTransactionId) {
         logger.info("Deleting variable transaction {}", variableTransactionId);
         VariableTransaction variableTransaction = getVariableTransactionById(variableTransactionId);
-        variableTransaction.throwIfNotUsersProperty(variableTransactionId);
+        variableTransaction.throwIfNotUsersProperty(authenticationService.getUserId());
         variableTransactionRepository.delete(variableTransaction);
     }
 
@@ -302,7 +302,7 @@ public class TransactionDomainService {
 
     private boolean changeFixedTransactionIsVariable(FixedTransaction fixedTransaction, boolean isVariable) {
         if (isVariable != fixedTransaction.getIsVariable()) {
-            fixedTransaction.setVariable(isVariable);
+            fixedTransaction.setIsVariable(isVariable);
             return true;
         }
         return false;

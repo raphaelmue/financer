@@ -11,8 +11,6 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Set;
 
 @Tag("unit")
 class FixedTransactionTest {
@@ -29,17 +27,15 @@ class FixedTransactionTest {
                         .setCategoryClass(new CategoryClass(CategoryClass.Values.FIXED_EXPENSES)))
                 .setDescription("Test Purpose")
                 .setDay(1)
-                .setVariable(false);
+                .setIsVariable(false);
 
-        final Set<FixedTransactionAmount> transactionAmounts = new HashSet<>();
         for (int i = 0; i < 6; i++) {
-            transactionAmounts.add(new FixedTransactionAmount()
+            fixedTransaction.addFixedTransactionAmount(new FixedTransactionAmount()
+                    .setId(i + 1)
                     .setFixedTransaction(fixedTransaction)
                     .setAmount(new Amount(Math.pow(2, i)))
                     .setValueDate(new ValueDate(LocalDate.now().minusMonths(i))));
         }
-
-        fixedTransaction.setTransactionAmounts(transactionAmounts);
     }
 
     @Test
@@ -53,7 +49,7 @@ class FixedTransactionTest {
                 fixedTransaction.getAmount(new ValueDate(LocalDate.now().minusMonths(1))).getAmount());
 
         // set isVariable true
-        fixedTransaction.setVariable(true);
+        fixedTransaction.setIsVariable(true);
         Assertions.assertEquals(2.0,
                 fixedTransaction.getAmount(new ValueDate(LocalDate.now().minusMonths(1))).getAmount());
 
@@ -69,7 +65,7 @@ class FixedTransactionTest {
                 fixedTransaction.getAmount(new TimeRange(LocalDate.now().minusMonths(12), LocalDate.now())).getAmount());
 
         // set isVariable true
-        fixedTransaction.setVariable(true);
+        fixedTransaction.setIsVariable(true);
         Assertions.assertEquals(Math.pow(2, 6) - 1,
                 fixedTransaction.getAmount(new TimeRange(LocalDate.now().minusMonths(12), LocalDate.now())).getAmount());
         Assertions.assertEquals(Math.pow(2, 6) - 1,
@@ -96,7 +92,7 @@ class FixedTransactionTest {
         Assertions.assertTrue(fixedTransaction.getAmount().getAmount() < 0);
 
         // set isVariable true
-        fixedTransaction.setVariable(true);
+        fixedTransaction.setIsVariable(true);
         fixedTransaction.adjustAmountSign();
         Assertions.assertTrue(fixedTransaction.getAmount().getAmount() < 0);
     }

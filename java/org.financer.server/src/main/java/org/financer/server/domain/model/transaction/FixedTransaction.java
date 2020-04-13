@@ -169,8 +169,8 @@ public final class FixedTransaction extends Transaction {
         return isVariable;
     }
 
-    public FixedTransaction setVariable(boolean variable) {
-        isVariable = variable;
+    public FixedTransaction setIsVariable(boolean isVariable) {
+        this.isVariable = isVariable;
         return this;
     }
 

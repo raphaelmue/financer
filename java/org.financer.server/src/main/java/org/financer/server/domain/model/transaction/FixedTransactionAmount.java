@@ -78,8 +78,9 @@ public class FixedTransactionAmount implements DataEntity, AmountProvider, UserP
         return id;
     }
 
-    public void setId(long id) {
+    public FixedTransactionAmount setId(long id) {
         this.id = id;
+        return this;
     }
 
     public FixedTransaction getFixedTransaction() {

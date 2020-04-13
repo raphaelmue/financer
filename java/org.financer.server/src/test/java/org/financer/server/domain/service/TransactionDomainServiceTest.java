@@ -73,7 +73,7 @@ public class TransactionDomainServiceTest extends SpringTest {
                 .setId(2)
                 .setCategory(fixedCategory)
                 .setTimeRange(new TimeRange())
-                .setVariable(false)
+                .setIsVariable(false)
                 .setAmount(new Amount(50.0))
                 .setDay(1)
                 .setDescription("Test Purpose")
