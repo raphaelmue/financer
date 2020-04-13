@@ -11,6 +11,7 @@ import org.financer.shared.domain.model.api.category.CategoryDTO;
 import org.financer.shared.domain.model.api.transaction.fixed.FixedTransactionDTO;
 import org.financer.shared.domain.model.api.transaction.variable.VariableTransactionDTO;
 import org.financer.shared.domain.model.api.user.RegisterUserDTO;
+import org.financer.shared.domain.model.api.user.UpdatePersonalInformationDTO;
 import org.financer.shared.domain.model.api.user.UpdateSettingsDTO;
 import org.financer.shared.domain.model.api.user.UserDTO;
 import org.financer.shared.domain.model.value.objects.*;
@@ -30,7 +31,6 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -84,11 +84,6 @@ public class UserApiController implements UserApi {
     }
 
     @Override
-    public ResponseEntity<Void> updateUser(@NotNull @Valid UserDTO user) {
-        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
-    }
-
-    @Override
     public ResponseEntity<UserDTO> updateUsersPassword(@NotBlank @Min(1) Long userId, @NotNull @Valid String oldPassword,
                                                        @NotNull @Valid String newPassword) {
         authenticationService.getAuthenticatedUser().throwIfNotUsersProperty(userId);
@@ -104,8 +99,11 @@ public class UserApiController implements UserApi {
     }
 
     @Override
-    public ResponseEntity<UserDTO> updateUsersPersonalInformation(@NotBlank @Min(1) Long userId, @NotNull @Valid String firstName, @NotNull @Valid String surname, @NotNull @Valid LocalDate birthDate, @NotNull @Valid String gender) {
-        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+    public ResponseEntity<UserDTO> updateUsersPersonalInformation(@NotBlank @Min(1) Long userId,
+                                                                  @NotNull @Valid UpdatePersonalInformationDTO personalInformation) {
+        User updateUser = userDomainService.updatePersonalInformation(personalInformation.getName(),
+                personalInformation.getBirthDate(), personalInformation.getGender());
+        return new ResponseEntity<>(modelMapper.map(updateUser, UserDTO.class), HttpStatus.OK);
     }
 
     @Override

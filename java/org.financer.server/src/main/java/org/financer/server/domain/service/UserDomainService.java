@@ -224,6 +224,56 @@ public class UserDomainService {
         throw new UnauthorizedOperationException(authenticationService.getUserId());
     }
 
+    /**
+     * Updates the users personal information with given values.
+     *
+     * <p> The values are validated, before updating the user. If the given parameters are null or equal to the
+     * user that will be updated, they will be ignored in the updating process. If no changes are applied to the user,
+     * the user is returned.</p>
+     *
+     * @param name      updated name
+     * @param birthDate updated birth date
+     * @param gender    updated gender
+     * @return updated user
+     */
+    public User updatePersonalInformation(Name name, BirthDate birthDate, Gender.Values gender) {
+        logger.info("Updating personal information of user {}", authenticationService.getUserId());
+        User user = authenticationService.getAuthenticatedUser();
+
+        boolean userChanged = changeUserName(user, name)
+                | changeUserBirthDate(user, birthDate)
+                | changeUserGender(user, gender);
+
+        if (userChanged) {
+            return userRepository.save(user);
+        }
+        return user;
+    }
+
+    private boolean changeUserName(User user, Name name) {
+        if (name != null && user.getName() != name) {
+            user.setName(name);
+            return true;
+        }
+        return false;
+    }
+
+    private boolean changeUserBirthDate(User user, BirthDate birthDate) {
+        if (birthDate != null && user.getBirthDate() != birthDate) {
+            user.setBirthDate(birthDate);
+            return true;
+        }
+        return false;
+    }
+
+    private boolean changeUserGender(User user, Gender.Values gender) {
+        if (gender != null && (user.getGender() == null || gender != user.getGender().getGender())) {
+            user.setGender(new Gender(gender));
+            return true;
+        }
+        return false;
+    }
+
 
     /**
      * Updates the users settings, i.e. either the property's value is update or the property is added to settings.

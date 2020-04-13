@@ -71,6 +71,7 @@ public class UserDomainServiceTest extends SpringTest {
         token.setUser(user);
         verificationToken.setUser(user);
 
+        when(authenticationService.getAuthenticatedUser()).thenReturn(user);
         when(authenticationService.getUserId()).thenReturn(UserDomainServiceTest.user.getId());
 
         when(userRepository.save(any(User.class))).thenAnswer(i -> i.getArguments()[0]);
@@ -169,6 +170,24 @@ public class UserDomainServiceTest extends SpringTest {
     public void testUpdatePassword() {
         User userToAssert = userDomainService.updatePassword("password", "newPassword");
         assertThat(userToAssert.getPassword().isEqualTo("newPassword")).isTrue();
+    }
+
+    @Test
+    public void testUpdatePersonalInformation() {
+        final Name name = new Name("Another", "Name");
+        final BirthDate birthDate = new BirthDate(LocalDate.now().minusYears(20));
+        final Gender.Values gender = Gender.Values.FEMALE;
+        User userToAssert = userDomainService.updatePersonalInformation(name, birthDate, gender);
+
+        assertThat(userToAssert.getName()).isEqualTo(name);
+        assertThat(userToAssert.getBirthDate()).isEqualTo(birthDate);
+        assertThat(userToAssert.getGender().getGender()).isEqualTo(gender);
+    }
+
+    @Test
+    public void testUpdatePersonalInformationWithoutChanges() {
+        User userToAssert = userDomainService.updatePersonalInformation(user.getName(), user.getBirthDate(), user.getGender().getGender());
+        assertThat(userToAssert).isEqualToComparingFieldByField(user);
     }
 
     @Test

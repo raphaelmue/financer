@@ -32,6 +32,9 @@ public abstract class SpringTest {
     protected FixedTransactionRepository fixedTransactionRepository;
 
     @MockBean
+    protected FixedTransactionAmountRepository fixedTransactionAmountRepository;
+
+    @MockBean
     protected AttachmentRepository attachmentRepository;
 
     @MockBean

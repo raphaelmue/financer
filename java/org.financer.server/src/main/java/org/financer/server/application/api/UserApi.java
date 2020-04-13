@@ -4,6 +4,7 @@ import org.financer.shared.domain.model.api.category.CategoryDTO;
 import org.financer.shared.domain.model.api.transaction.fixed.FixedTransactionDTO;
 import org.financer.shared.domain.model.api.transaction.variable.VariableTransactionDTO;
 import org.financer.shared.domain.model.api.user.RegisterUserDTO;
+import org.financer.shared.domain.model.api.user.UpdatePersonalInformationDTO;
 import org.financer.shared.domain.model.api.user.UpdateSettingsDTO;
 import org.financer.shared.domain.model.api.user.UserDTO;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -60,18 +61,6 @@ public interface UserApi {
     ResponseEntity<UserDTO> registerUser(@NotNull @Valid @RequestBody RegisterUserDTO registerUserDTO);
 
     /**
-     * Updates the users information
-     *
-     * @param user user object with updated information
-     * @return null
-     */
-    @PostMapping(
-            value = "/users",
-            produces = {"application/json"},
-            headers = "Accept=application/json")
-    ResponseEntity<Void> updateUser(@NotNull @Valid @RequestParam(value = "user") UserDTO user);
-
-    /**
      * Updates the password of the given user.
      *
      * @param userId      id of the user
@@ -91,10 +80,7 @@ public interface UserApi {
      * Updates the users personal information
      *
      * @param userId    id of the user
-     * @param firstName updated first name of the user
-     * @param surname   updated surname of the user
-     * @param birthDate updated birth date of the user
-     * @param gender    updated gender of the user
+     * @param personalInformation updated personal information
      * @return updated user object
      */
     @PostMapping(
@@ -102,10 +88,7 @@ public interface UserApi {
             produces = {"application/json"},
             headers = "Accept=application/json")
     ResponseEntity<UserDTO> updateUsersPersonalInformation(@NotBlank @PathVariable("userId") @Min(1) Long userId,
-                                                           @NotNull @Valid @RequestParam("firstName") String firstName,
-                                                           @NotNull @Valid @RequestParam("surname") String surname,
-                                                           @NotNull @Valid @RequestParam(value = "birthDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate birthDate,
-                                                           @NotNull @Valid @RequestParam(value = "gender") String gender);
+                                                           @NotNull @Valid @RequestBody UpdatePersonalInformationDTO personalInformation);
 
     /**
      * Updates users settings.
