@@ -110,6 +110,16 @@ public abstract class Transaction implements DataEntity, AmountProvider, UserPro
         return this;
     }
 
+    public Transaction addAttachment(Attachment attachment) {
+        this.attachments.add(attachment);
+        return this;
+    }
+
+    public Transaction removeAttachment(Attachment attachment) {
+        this.attachments.remove(attachment);
+        return this;
+    }
+
     @Override
     public String toString() {
         return "Transaction[" + "id=" + id + ", category=" + category + ", vendor='" + vendor + '\'' + ']';

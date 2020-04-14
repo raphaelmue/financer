@@ -43,39 +43,44 @@ public class Attachment implements DataEntity, UserProperty {
         return id;
     }
 
-    public void setId(long id) {
+    public Attachment setId(long id) {
         this.id = id;
+        return this;
     }
 
     public Transaction getTransaction() {
         return transaction;
     }
 
-    public void setTransaction(Transaction transaction) {
+    public Attachment setTransaction(Transaction transaction) {
         this.transaction = transaction;
+        return this;
     }
 
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
+    public Attachment setName(String name) {
         this.name = name;
+        return this;
     }
 
     public LocalDate getUploadDate() {
         return uploadDate;
     }
 
-    public void setUploadDate(LocalDate uploadDate) {
+    public Attachment setUploadDate(LocalDate uploadDate) {
         this.uploadDate = uploadDate;
+        return this;
     }
 
     public byte[] getContent() {
         return content;
     }
 
-    public void setContent(byte[] content) {
+    public Attachment setContent(byte[] content) {
         this.content = content;
+        return this;
     }
 }

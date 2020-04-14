@@ -139,11 +139,11 @@ public class CategoryDomainService {
      * @return category object
      */
     Category getCategoryById(long categoryId) {
-        Optional<Category> parentOptional = categoryRepository.findById(categoryId);
-        if (parentOptional.isEmpty()) {
+        Optional<Category> categoryOptional = categoryRepository.findById(categoryId);
+        if (categoryOptional.isEmpty()) {
             throw new NotFoundException(Category.class, categoryId);
         }
-        return parentOptional.get();
+        return categoryOptional.get();
     }
 
 

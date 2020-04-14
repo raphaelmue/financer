@@ -187,6 +187,7 @@ public class TransactionDomainService {
             if (productOptional.get().getTransaction().getId() == transactionId) {
                 productOptional.get().getTransaction().getProducts().remove(productOptional.get());
                 variableTransactionRepository.save(productOptional.get().getTransaction());
+                return;
             }
         }
         throw new NotFoundException(Product.class, productId);
@@ -442,7 +443,7 @@ public class TransactionDomainService {
      * @return inserted attachment
      */
     public Attachment createAttachment(long transactionId, Attachment attachment) {
-        logger.info("Creating new attachment");
+        logger.info("Creating new attachment for transaction {}", transactionId);
         attachment.throwIfNotUsersProperty(authenticationService.getUserId());
         attachment.setTransaction(findTransactionById(transactionId));
         return attachmentRepository.save(attachment);
@@ -465,6 +466,15 @@ public class TransactionDomainService {
         return transactionOptional.get();
     }
 
+    /**
+     * Fetches an attachment by id.
+     *
+     * @param transactionId id of transaction
+     * @param attachmentId  id of attachment to fetch
+     * @return attachment
+     * @throws NoResultException thrown when the attachment does not exist or the attachment is not assigned to the
+     *                           given transaction id
+     */
     public Attachment getAttachmentById(long transactionId, long attachmentId) {
         Optional<Attachment> attachmentOptional = attachmentRepository.findById(attachmentId);
         if (attachmentOptional.isPresent()) {
@@ -483,14 +493,8 @@ public class TransactionDomainService {
      * @param attachmentId  id of the attachment to be deleted
      */
     public void deleteAttachment(long transactionId, long attachmentId) {
-        logger.info("Deleting attachment.");
-        Optional<Attachment> attachmentOptional = attachmentRepository.findById(attachmentId);
-        if (attachmentOptional.isPresent()) {
-            attachmentOptional.get().throwIfNotUsersProperty(authenticationService.getUserId());
-            if (attachmentOptional.get().getTransaction().getId() != transactionId) {
-                throw new NotFoundException(Attachment.class, attachmentId);
-            }
-            attachmentRepository.delete(attachmentOptional.get());
-        }
+        logger.info("Deleting attachment {} of transaction {}.", attachmentId, transactionId);
+        Attachment attachment = getAttachmentById(transactionId, attachmentId);
+        attachmentRepository.delete(attachment);
     }
 }
