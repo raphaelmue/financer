@@ -20,6 +20,10 @@ public class BirthDate implements Serializable {
     public BirthDate() {
     }
 
+    public BirthDate(String birthDateString) {
+        this.birthDate = LocalDate.parse(birthDateString);
+    }
+
     public BirthDate(LocalDate birthDate) {
         if (birthDate.isAfter(LocalDate.now())) {
             throw new IllegalArgumentException("Birth date cannot be in the future.");

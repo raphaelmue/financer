@@ -1,16 +1,20 @@
 package org.financer.shared.domain.model.value.objects;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.financer.shared.domain.model.Formattable;
+import org.financer.shared.domain.model.Settings;
 import org.hibernate.annotations.Immutable;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import java.io.Serializable;
+import java.util.Currency;
+import java.util.Locale;
 import java.util.Objects;
 
 @Embeddable
 @Immutable
-public class Amount implements Serializable {
+public class Amount implements Serializable, Formattable {
     private static final long serialVersionUID = 8647653287643900256L;
 
     @Column(name = "amount", nullable = false)
@@ -52,6 +56,19 @@ public class Amount implements Serializable {
 
     public Amount multiply(Amount value) {
         return new Amount(this.amount * value.getAmount());
+    }
+
+    @Override
+    public String format(Settings settings) {
+        Locale locale = settings.getValueOrDefault(SettingPair.Property.LANGUAGE);
+        Currency currency = settings.getValueOrDefault(SettingPair.Property.CURRENCY);
+        StringBuilder result = new StringBuilder(String.format(locale, "%.2f", amount)).append(" ");
+        if (settings.getValueOrDefault(SettingPair.Property.SHOW_CURRENCY_SIGN).equals(Boolean.toString(true))) {
+            result.append(currency.getSymbol());
+        } else {
+            result.append(currency.getCurrencyCode());
+        }
+        return result.toString();
     }
 
     /*

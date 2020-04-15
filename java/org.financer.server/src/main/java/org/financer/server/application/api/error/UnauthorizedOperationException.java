@@ -17,7 +17,7 @@ public class UnauthorizedOperationException extends RestException {
      * @param userId id of the user that tried to perform this action
      */
     public UnauthorizedOperationException(Long userId) {
-        super(String.format(MESSAGE, userId), HttpStatus.FORBIDDEN, MESSAGE_KEY, userId.toString());
+        super(MESSAGE, HttpStatus.FORBIDDEN, MESSAGE_KEY, userId);
     }
 
 }

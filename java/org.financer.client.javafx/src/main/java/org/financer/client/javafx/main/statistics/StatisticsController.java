@@ -191,7 +191,7 @@ public class StatisticsController implements Initializable {
             Platform.runLater(() -> Tooltip.install(dataSet.getNode(),
                     new Tooltip(I18N.get("category") + ": \t" + formatter.formatCategoryName(categoryTree) + "\n" +
                             I18N.get("valueDate") + ": \t" + dataSet.getXValue() + "\n" +
-                            I18N.get("amount") + ": \t" + formatter.formatCurrency((Double) dataSet.getYValue()))));
+                            I18N.get("amount") + ": \t" + formatter.format((Double) dataSet.getYValue()))));
             series.getData().add(dataSet);
         }
 

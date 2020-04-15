@@ -8,7 +8,13 @@ package org.financer.shared.exceptions;
 public abstract class FinancerException extends RuntimeException {
 
     private final String messageKey;
-    private final String[] args;
+    private final Object[] args;
+
+    public FinancerException(String message, Throwable cause) {
+        super(message, cause);
+        this.messageKey = null;
+        this.args = new Object[]{};
+    }
 
     /**
      * Instantiates the exception with message key and argument for that message key. The message key and the args are
@@ -17,8 +23,8 @@ public abstract class FinancerException extends RuntimeException {
      * @param messageKey message key
      * @param args       arguments for message translation
      */
-    public FinancerException(String message, String messageKey, String... args) {
-        super(message);
+    public FinancerException(String message, String messageKey, Object... args) {
+        super(String.format(message, args));
         this.messageKey = messageKey;
         this.args = args;
     }
@@ -38,7 +44,7 @@ public abstract class FinancerException extends RuntimeException {
      *
      * @return arguments
      */
-    public String[] getArguments() {
+    public Object[] getArguments() {
         return args;
     }
 }

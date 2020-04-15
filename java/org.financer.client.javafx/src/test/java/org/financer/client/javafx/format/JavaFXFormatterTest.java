@@ -36,17 +36,17 @@ public class JavaFXFormatterTest {
     public void testCurrencyFormat() {
         final double amount = 5.387;
 
-        String currencyFormat = formatter.formatCurrency(amount);
+        String currencyFormat = formatter.format(amount);
         Assertions.assertEquals(String.format(Locale.ENGLISH, "%.2f", amount) + " " + Currency.getInstance("USD").getCurrencyCode(), currencyFormat);
 
         user.getSettings().setShowCurrencySign(true);
 
-        currencyFormat = formatter.formatCurrency(amount);
+        currencyFormat = formatter.format(amount);
         Assertions.assertEquals(String.format(Locale.ENGLISH, "%.2f", amount) + " " + Currency.getInstance("USD").getSymbol(), currencyFormat);
 
         user.getSettings().setLanguage(Locale.GERMAN);
 
-        currencyFormat = formatter.formatCurrency(amount);
+        currencyFormat = formatter.format(amount);
         Assertions.assertEquals(String.format(Locale.GERMAN, "%.2f", amount).replace(".", ",") + " " +
                 Currency.getInstance("USD").getSymbol(), currencyFormat);
     }

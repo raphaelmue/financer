@@ -10,7 +10,7 @@ import javafx.util.StringConverter;
 import org.controlsfx.glyphfont.FontAwesome;
 import org.controlsfx.glyphfont.GlyphFont;
 import org.controlsfx.glyphfont.GlyphFontRegistry;
-import org.financer.client.connection.AsyncConnectionCall;
+import org.financer.client.connection.RestCallback;
 import org.financer.client.connection.ServerRequestHandler;
 import org.financer.client.format.I18N;
 import org.financer.client.javafx.connection.RetrievalServiceImpl;
@@ -84,7 +84,7 @@ public class ProfileController implements Initializable {
                     parameters.put("user", user);
 
                     FinancerExecutor.getExecutor().execute(new ServerRequestHandler(user, "changePassword", parameters,
-                            new AsyncConnectionCall() {
+                            new RestCallback() {
                                 @Override
                                 public void onSuccess(ConnectionResult result) {
                                     FinancerController.getInstance().showToast(Application.MessageType.SUCCESS, I18N.get("succChangedPassword"));
@@ -102,7 +102,7 @@ public class ProfileController implements Initializable {
             parameters.put("user", user);
 
             FinancerExecutor.getExecutor().execute(new ServerRequestHandler(user, "updateUser", parameters,
-                    new AsyncConnectionCall() {
+                    new RestCallback() {
                         @Override
                         public void onSuccess(ConnectionResult result) {
                             FinancerController.getInstance().showToast(Application.MessageType.SUCCESS, I18N.get("succChangedPassword"));
@@ -135,7 +135,7 @@ public class ProfileController implements Initializable {
                     if (user != null) {
                         parameters.clear();
                         parameters.put("user", user);
-                        FinancerExecutor.getExecutor().execute(new ServerRequestHandler(user, "updateUser", parameters, new AsyncConnectionCall() {
+                        FinancerExecutor.getExecutor().execute(new ServerRequestHandler(user, "updateUser", parameters, new RestCallback() {
                             @Override
                             public void onSuccess(ConnectionResult result) {
                                 FinancerController.getInstance().showToast(Application.MessageType.SUCCESS, I18N.get("succChangedPersonalInformation"));

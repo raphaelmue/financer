@@ -16,14 +16,13 @@ import javafx.stage.Stage;
 import org.controlsfx.glyphfont.FontAwesome;
 import org.controlsfx.glyphfont.GlyphFont;
 import org.controlsfx.glyphfont.GlyphFontRegistry;
-import org.financer.client.connection.AsyncConnectionCall;
+import org.financer.client.connection.RestCallback;
 import org.financer.client.connection.ServerRequestHandler;
 import org.financer.client.format.I18N;
 import org.financer.client.javafx.dialogs.FinancerConfirmDialog;
 import org.financer.client.javafx.local.LocalStorageImpl;
 import org.financer.client.javafx.main.FinancerController;
 import org.financer.client.javafx.util.ApplicationHelper;
-import org.financer.client.local.LocalSettings;
 import org.financer.client.local.LocalStorage;
 import org.financer.shared.connection.ConnectionResult;
 import org.financer.util.concurrency.FinancerExecutor;
@@ -123,7 +122,7 @@ public class SettingsController implements Initializable {
     private void updateSettings() {
         Map<String, Serializable> parameters = new HashMap<>();
         parameters.put("user", user);
-        FinancerExecutor.getExecutor().execute(new ServerRequestHandler(user, "updateUsersSettings", parameters, new AsyncConnectionCall() {
+        FinancerExecutor.getExecutor().execute(new ServerRequestHandler(user, "updateUsersSettings", parameters, new RestCallback() {
             @Override
             public void onSuccess(ConnectionResult result) {
                 localStorage.writeObject("user", (Serializable) result.getResult());

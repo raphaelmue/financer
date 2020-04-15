@@ -1,6 +1,8 @@
 package org.financer.client.format;
 
+import org.financer.client.domain.model.user.User;
 import org.financer.client.local.LocalStorage;
+import org.financer.shared.domain.model.value.objects.SettingPair;
 
 import java.text.MessageFormat;
 import java.util.*;
@@ -69,7 +71,8 @@ public final class I18N {
     }
 
     /**
-     * getObject the default locale. This is the systems default if contained in the supported locales, english otherwise.
+     * getObject the default locale. This is the systems default if contained in the supported locales, english
+     * otherwise.
      *
      * @return default locale (en)
      */
@@ -80,9 +83,9 @@ public final class I18N {
 
     private static Locale getLocale() {
         if (I18N.localStorage.readObject("user") != null) {
-            return ((User) I18N.localStorage.readObject("user")).getSettings().getLanguage();
+            return ((User) I18N.localStorage.readObject("user")).getValueOrDefault(SettingPair.Property.LANGUAGE);
         } else {
-            return Locale.ENGLISH;
+            return (Locale) SettingPair.Property.LANGUAGE.getDefaultValue();
         }
     }
 

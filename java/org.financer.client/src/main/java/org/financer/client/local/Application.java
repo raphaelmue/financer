@@ -1,5 +1,7 @@
 package org.financer.client.local;
 
+import java.util.List;
+
 public interface Application {
     public enum MessageType {
         ERROR("error"),
@@ -27,6 +29,10 @@ public interface Application {
     void setOnline();
 
     void showToast(MessageType messageType, String message);
+
+    default void showToast(MessageType messageType, List<String> messages) {
+        messages.forEach(message -> showToast(messageType, message));
+    }
 
     void showErrorDialog(Exception exception);
 }

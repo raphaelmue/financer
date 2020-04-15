@@ -1,7 +1,6 @@
 package org.financer.client.javafx.connection;
 
-import org.financer.client.connection.AsyncConnectionCall;
-import org.financer.client.connection.RetrievalService;
+import org.financer.client.connection.RestCallback;
 import org.financer.client.connection.ServerRequestHandler;
 import org.financer.client.javafx.local.LocalStorageImpl;
 import org.financer.client.local.LocalStorage;
@@ -66,8 +65,8 @@ public class RetrievalServiceImpl implements RetrievalService {
                 this.getAsyncCall(asyncConnectionCall)));
     }
 
-    private AsyncConnectionCall getAsyncCall(final AsyncCall<BaseCategory> asyncCall) {
-        return new AsyncConnectionCall() {
+    private RestCallback getAsyncCall(final AsyncCall<BaseCategory> asyncCall) {
+        return new RestCallback() {
             @Override
             public void onSuccess(ConnectionResult result) {
                 saveBaseCategory((BaseCategory) result.getResult());

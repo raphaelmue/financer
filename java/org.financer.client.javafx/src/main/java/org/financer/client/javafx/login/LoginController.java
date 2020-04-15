@@ -20,8 +20,6 @@ import org.financer.client.javafx.dialogs.FinancerExceptionDialog;
 import org.financer.client.javafx.local.LocalStorageImpl;
 import org.financer.client.javafx.util.ApplicationHelper;
 import org.financer.client.local.Application;
-import org.financer.client.local.LocalSettings;
-import org.financer.client.local.LocalSettingsImpl;
 import org.financer.util.concurrency.FinancerExecutor;
 
 import java.io.Serializable;

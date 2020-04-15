@@ -8,44 +8,53 @@ import javax.persistence.Embeddable;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import java.io.Serializable;
-import java.util.Arrays;
-import java.util.HashSet;
+import java.util.Currency;
+import java.util.Locale;
 import java.util.Objects;
-import java.util.Set;
 
 @Embeddable
 @Immutable
 public class SettingPair implements Serializable {
     private static final long serialVersionUID = -9194098816495257592L;
 
+    public interface PropertyConverter<T> {
+        T toObject(String value);
+    }
+
     public enum Property {
-        LANGUAGE("language", true, "en"),
-        CURRENCY("currency", true, "USD"),
-        SHOW_CURRENCY_SIGN("showCurrencySign", true, "false"),
-        CHANGE_AMOUNT_SIGN_AUTOMATICALLY("changeAmountSignAutomatically", true, "false"),
-        MAX_NUMBER_OF_MONTHS_DISPLAYED("maxNumberOfMonthsDisplayed", false, "6"),
-        THEME("theme", true, "");
+        LANGUAGE("language", Locale.ENGLISH, Locale.class, Locale::forLanguageTag),
+        CURRENCY("currency", Currency.getInstance("USD"), Currency.class, Currency::getInstance),
+        SHOW_CURRENCY_SIGN("showCurrencySign", false, Boolean.class, Boolean::getBoolean),
+        CHANGE_AMOUNT_SIGN_AUTOMATICALLY("changeAmountSignAutomatically", false, Boolean.class, Boolean::getBoolean),
+        MAX_NUMBER_OF_MONTHS_DISPLAYED("maxNumberOfMonthsDisplayed", 6, Integer.class, Integer::getInteger),
+        THEME("theme", "", String.class, value -> value);
 
         private final String name;
-        private final String defaultValue;
-        private final boolean isUserProperty;
+        private final Object defaultValue;
+        private final Class<?> type;
+        private final PropertyConverter<?> propertyConverter;
 
-        Property(String name, boolean isUserProperty, String defaultValue) {
+        Property(String name, Object defaultValue, Class<?> type, PropertyConverter<?> propertyConverter) {
             this.name = name;
-            this.isUserProperty = isUserProperty;
             this.defaultValue = defaultValue;
+            this.type = type;
+            this.propertyConverter = propertyConverter;
         }
 
         public String getName() {
             return name;
         }
 
-        public String getDefaultValue() {
+        public Object getDefaultValue() {
             return defaultValue;
         }
 
-        public boolean isUserProperty() {
-            return isUserProperty;
+        public Class<?> getType() {
+            return type;
+        }
+
+        public PropertyConverter<?> getPropertyConverter() {
+            return propertyConverter;
         }
 
         public static Property getPropertyByName(String name) {
@@ -55,12 +64,6 @@ public class SettingPair implements Serializable {
                 }
             }
             throw new EnumNotFoundException(Property.class, name);
-        }
-
-        public static Set<Property> getUserProperties() {
-            Set<Property> result = new HashSet<>(Arrays.asList(values()));
-            result.removeIf(Property::isUserProperty);
-            return result;
         }
 
         @Override
@@ -80,13 +83,21 @@ public class SettingPair implements Serializable {
     }
 
     public SettingPair(String property, String value) {
-        this.property = Property.getPropertyByName(property);
-        this.value = value;
+        this(Property.getPropertyByName(property), value);
+    }
+
+    public SettingPair(Property property, Object value) {
+        this.property = property;
+        this.value = value.toString();
     }
 
     public SettingPair(Property property, String value) {
         this.property = property;
         this.value = value;
+    }
+
+    public Object getValueObject() {
+        return this.property.getPropertyConverter().toObject(this.value);
     }
 
     public Property getProperty() {

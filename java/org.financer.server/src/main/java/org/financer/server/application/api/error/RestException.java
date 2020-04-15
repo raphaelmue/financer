@@ -21,12 +21,12 @@ public class RestException extends FinancerException {
      * @param messageKey message key
      * @param args       arguments for message key
      */
-    public RestException(HttpStatus httpStatus, String messageKey, String... args) {
+    public RestException(HttpStatus httpStatus, String messageKey, Object... args) {
         super(null, messageKey, args);
         this.httpStatus = httpStatus;
     }
 
-    public RestException(String message, HttpStatus httpStatus, String messageKey, String... args) {
+    public RestException(String message, HttpStatus httpStatus, String messageKey, Object... args) {
         super(message, messageKey, args);
         this.httpStatus = httpStatus;
     }

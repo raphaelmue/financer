@@ -1,33 +1,28 @@
 package org.financer.shared.domain.model.api.user;
 
+import org.financer.shared.domain.model.api.DataTransferObject;
+import org.financer.shared.domain.model.value.objects.Email;
 import org.financer.shared.domain.model.value.objects.Gender;
+import org.financer.shared.domain.model.value.objects.Name;
 import org.financer.shared.domain.model.value.objects.SettingPair;
 
-import javax.validation.constraints.Email;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
-public class UserDTO {
+public class UserDTO implements DataTransferObject {
 
     @NotNull
     @Min(1)
     private int id;
 
     @NotNull
-    @Email
-    private String email;
+    private Email email;
 
     @NotNull
-    @Size(max = 64)
-    private String name;
-
-    @NotNull
-    @Size(max = 64)
-    private String surname;
+    private Name name;
 
     private LocalDate birthDate;
 
@@ -52,30 +47,21 @@ public class UserDTO {
         return this;
     }
 
-    public String getEmail() {
+    public Email getEmail() {
         return email;
     }
 
-    public UserDTO setEmail(String email) {
+    public UserDTO setEmail(Email email) {
         this.email = email;
         return this;
     }
 
-    public String getName() {
+    public Name getName() {
         return name;
     }
 
-    public UserDTO setName(String name) {
+    public UserDTO setName(Name name) {
         this.name = name;
-        return this;
-    }
-
-    public String getSurname() {
-        return surname;
-    }
-
-    public UserDTO setSurname(String surname) {
-        this.surname = surname;
         return this;
     }
 

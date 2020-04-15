@@ -22,6 +22,7 @@
         <project.testing.arguments>
             --add-reads org.financer.shared=org.hibernate.orm.core
             --add-reads org.financer.shared=ALL-UNNAMED
+            --add-opens java.base/java.time=com.fasterxml.jackson.databind
             --add-opens org.financer.shared/org.financer.shared.model.db=ALL-UNNAMED
             --add-opens org.financer.client.javafx/org.financer.client.javafx.main=ALL-UNNAMED
             --add-opens org.financer.server/org.financer.server=ALL-UNNAMED
@@ -31,6 +32,7 @@
             --add-opens org.financer.server/org.financer.server.application.configuration=ALL-UNNAMED
             --add-opens org.financer.server/org.financer.server.domain.service=ALL-UNNAMED
             --add-opens org.financer.server/org.financer.server.domain.repository=ALL-UNNAMED
+            --add-opens org.financer.server/org.financer.server.domain.model.user=ALL-UNNAMED
             --add-opens org.financer.server/org.financer.server.domain.model.transaction=ALL-UNNAMED
             --add-opens org.financer.server/org.financer.server.domain.model.category=ALL-UNNAMED
             --add-exports javafx.graphics/com.sun.javafx.application=ALL-UNNAMED
@@ -182,6 +184,18 @@
                     <argLine>@{argLine} ${project.testing.headless} ${project.testing.arguments}</argLine>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                            <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
@@ -202,6 +216,12 @@
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
             <version>3.9.1</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>3.3.3</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

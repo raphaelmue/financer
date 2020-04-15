@@ -1,5 +1,7 @@
 package org.financer.shared.domain.model.value.objects;
 
+import org.financer.shared.domain.model.Formattable;
+import org.financer.shared.domain.model.Settings;
 import org.hibernate.annotations.Immutable;
 
 import javax.persistence.Column;
@@ -7,11 +9,14 @@ import javax.persistence.Embeddable;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.Period;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
+import java.util.Locale;
 import java.util.Objects;
 
 @Embeddable
 @Immutable
-public class ValueDate implements Serializable {
+public class ValueDate implements Serializable, Formattable {
     private static final long serialVersionUID = -1612116802619061353L;
 
     @Column(name = "value_date", nullable = false)
@@ -54,6 +59,12 @@ public class ValueDate implements Serializable {
                 Period.between(this.getDate().withDayOfMonth(1), valueDate.getDate().withDayOfMonth(1)).getMonths();
     }
 
+    @Override
+    public String format(Settings settings) {
+        Locale locale = settings.getValue(SettingPair.Property.LANGUAGE);
+        DateTimeFormatter formatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(locale);
+        return this.getDate().format(formatter);
+    }
     /*
      * Getters and Setters
      */
