@@ -15,7 +15,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import org.financer.client.connection.ServerRequestHandler;
+import org.financer.client.connection.ServerRequest;
 import org.financer.client.format.I18N;
 import org.financer.client.javafx.local.LocalStorageImpl;
 
@@ -58,7 +58,7 @@ public class SplashScreenLoader extends Preloader {
 
     public void start(Stage primaryStage) {
         I18N.setLocalStorage(LocalStorageImpl.getInstance());
-        ServerRequestHandler.setLocalStorage(LocalStorageImpl.getInstance());
+        ServerRequest.setLocalStorage(LocalStorageImpl.getInstance());
 
         Scene scene = new Scene(getContent(), 500, 300);
         scene.getStylesheets().add(getClass().getResource("style/colors.style.css").toExternalForm());

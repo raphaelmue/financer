@@ -14,7 +14,7 @@ import javafx.scene.layout.VBox;
 import org.controlsfx.glyphfont.FontAwesome;
 import org.controlsfx.glyphfont.GlyphFont;
 import org.controlsfx.glyphfont.GlyphFontRegistry;
-import org.financer.client.connection.ServerRequestHandler;
+import org.financer.client.connection.ServerRequest;
 import org.financer.client.format.I18N;
 import org.financer.client.javafx.components.DatePicker;
 import org.financer.client.javafx.components.DoubleField;
@@ -242,7 +242,7 @@ class TransactionDialog extends FinancerDialog<VariableTransaction> {
                     parameters.put("transaction", this.getValue());
                     parameters.put("attachment", new ContentAttachment(0, this.getValue(),
                             attachmentFile.getName(), LocalDate.now(), attachmentContent));
-                    Executors.newCachedThreadPool().execute(new ServerRequestHandler((User) LocalStorageImpl.getInstance().readObject("user"),
+                    Executors.newCachedThreadPool().execute(new ServerRequest((User) LocalStorageImpl.getInstance().readObject("user"),
                             "uploadTransactionAttachment", parameters, result -> {
                         attachmentListView.getItems().add((Attachment) result.getResult());
                         if (getValue().getAttachments() == null) {
@@ -276,7 +276,7 @@ class TransactionDialog extends FinancerDialog<VariableTransaction> {
             Map<String, Serializable> parameters = new HashMap<>();
             parameters.put("attachmentId", this.attachmentListView.getSelectionModel().getSelectedItem().getId());
 
-            FinancerExecutor.getExecutor().execute(new ServerRequestHandler(
+            FinancerExecutor.getExecutor().execute(new ServerRequest(
                     (User) LocalStorageImpl.getInstance().readObject("user"),
                     "getAttachment", parameters,
                     result -> {
@@ -298,7 +298,7 @@ class TransactionDialog extends FinancerDialog<VariableTransaction> {
             Map<String, Serializable> parameters = new HashMap<>();
             parameters.put("attachmentId", attachment.getId());
 
-            FinancerExecutor.getExecutor().execute(new ServerRequestHandler(
+            FinancerExecutor.getExecutor().execute(new ServerRequest(
                     (User) LocalStorageImpl.getInstance().readObject("user"), "deleteAttachment",
                     parameters, result1 -> {
                 getValue().getAttachments().remove(attachment);

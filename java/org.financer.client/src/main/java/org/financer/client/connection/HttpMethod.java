@@ -1,6 +1,5 @@
 package org.financer.client.connection;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import org.financer.shared.domain.model.api.DataTransferObject;
@@ -8,7 +7,7 @@ import org.financer.shared.domain.model.api.DataTransferObject;
 public interface HttpMethod {
 
     default RequestBody requestBody(DataTransferObject body) {
-        return RequestBody.create(body.toJson(), ServerRequestHandler.MEDIA_TYPE_JSON);
+        return RequestBody.create(body.toJson(), ServerRequest.MEDIA_TYPE_JSON);
     }
 
     Request.Builder build(Request.Builder builder, DataTransferObject body);

@@ -28,23 +28,22 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @Tag("unit")
-public class ServerRequestHandlerTest {
+public class ServerRequestTest {
 
     private final MockWebServer server = new MockWebServer();
     private HttpUrl httpUrl;
 
-
     @BeforeEach
     public void setUp() throws IOException {
-        if (ServerRequestHandler.MEDIA_TYPE_JSON == null) {
+        if (ServerRequest.MEDIA_TYPE_JSON == null) {
             throw new IllegalArgumentException("Illegal media type");
         }
 
         final LocalStorage localStorage = Mockito.mock(LocalStorage.class);
         when(localStorage.readObject(any(String.class))).thenReturn(null);
 
-        ServerRequestHandler.setLocalStorage(localStorage);
-        ServerRequestHandler.setApplication(Mockito.mock(Application.class));
+        ServerRequest.setLocalStorage(localStorage);
+        ServerRequest.setApplication(Mockito.mock(Application.class));
 
         server.setDispatcher(new Dispatcher() {
             @NotNull
@@ -54,7 +53,7 @@ public class ServerRequestHandlerTest {
                     case "/api/users":
                         return new MockResponse()
                                 .setResponseCode(200)
-                                .setHeader("Content-Type", ServerRequestHandler.MEDIA_TYPE_JSON)
+                                .setHeader("Content-Type", ServerRequest.MEDIA_TYPE_JSON)
                                 .setBody(new UserDTO()
                                         .setEmail(new Email("test@test.com"))
                                         .setName(new Name("test", "Name"))
@@ -86,17 +85,17 @@ public class ServerRequestHandlerTest {
 
     @Test
     public void testCreateServerRequestSuccess() {
-        ServerRequestHandler<User> serverRequestHandler = new ServerRequestHandler<>(new RequestConfig(
+        ServerRequest<User> serverRequest = new ServerRequest<>(new RequestConfig(
                 new HttpMethod.Get(), "/users"), User.class, result -> {
             assertThat(result).isNotNull();
             assertThat(result.getEmail()).isEqualTo(new Email("test@test.com"));
         });
-        serverRequestHandler.run();
+        serverRequest.run();
     }
 
     @Test
     public void testCreateServerRequestUnauthorized() {
-        ServerRequestHandler<User> serverRequestHandler = new ServerRequestHandler<>(new RequestConfig(
+        ServerRequest<User> serverRequest = new ServerRequest<>(new RequestConfig(
                 new HttpMethod.Get(), "/users/unauthorized"), User.class, new RestCallback<>() {
             @Override
             public void onSuccess(User result) {
@@ -108,7 +107,7 @@ public class ServerRequestHandlerTest {
                 assertThat(exception).isNotNull();
             }
         });
-        serverRequestHandler.run();
+        serverRequest.run();
     }
 
     @AfterEach

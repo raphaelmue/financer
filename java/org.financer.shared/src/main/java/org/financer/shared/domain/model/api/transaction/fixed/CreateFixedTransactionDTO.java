@@ -26,7 +26,7 @@ public class CreateFixedTransactionDTO implements DataTransferObject {
 
     private String product;
 
-    private String purpose;
+    private String description;
 
     private String vendor;
 
@@ -73,12 +73,12 @@ public class CreateFixedTransactionDTO implements DataTransferObject {
         return this;
     }
 
-    public String getPurpose() {
-        return purpose;
+    public String getDescription() {
+        return description;
     }
 
-    public CreateFixedTransactionDTO setPurpose(String purpose) {
-        this.purpose = purpose;
+    public CreateFixedTransactionDTO setDescription(String description) {
+        this.description = description;
         return this;
     }
 

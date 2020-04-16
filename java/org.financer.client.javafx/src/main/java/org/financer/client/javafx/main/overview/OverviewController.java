@@ -14,7 +14,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
-import org.financer.client.connection.ServerRequestHandler;
+import org.financer.client.connection.ServerRequest;
 import org.financer.client.format.I18N;
 import org.financer.client.javafx.components.charts.DonutChart;
 import org.financer.client.javafx.components.charts.SmoothedChart;
@@ -252,7 +252,7 @@ public class OverviewController implements Initializable {
         dialog.setOnConfirm(result -> {
             Map<String, Serializable> parameters = new HashMap<>();
             parameters.put("transactionAmount", result);
-            FinancerExecutor.getExecutor().execute(new ServerRequestHandler(user, "addTransactionAmount", parameters, result1 -> {
+            FinancerExecutor.getExecutor().execute(new ServerRequest(user, "addTransactionAmount", parameters, result1 -> {
                 transaction.getTransactionAmounts().add((TransactionAmount) result1.getResult());
                 localStorage.writeObject("categories", categories);
                 Platform.runLater(() -> upcomingFixedTransactionGridPane.getChildren().clear());

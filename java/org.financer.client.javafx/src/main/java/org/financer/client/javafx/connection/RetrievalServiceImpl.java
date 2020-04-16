@@ -1,7 +1,7 @@
 package org.financer.client.javafx.connection;
 
 import org.financer.client.connection.RestCallback;
-import org.financer.client.connection.ServerRequestHandler;
+import org.financer.client.connection.ServerRequest;
 import org.financer.client.javafx.local.LocalStorageImpl;
 import org.financer.client.local.LocalStorage;
 import org.financer.shared.connection.AsyncCall;
@@ -40,7 +40,7 @@ public class RetrievalServiceImpl implements RetrievalService {
         Map<String, Serializable> parameters = new HashMap<>();
         parameters.put("userId", user.getId());
 
-        FinancerExecutor.getExecutor().execute(new ServerRequestHandler(user, "getUsersCategories", parameters,
+        FinancerExecutor.getExecutor().execute(new ServerRequest(user, "getUsersCategories", parameters,
                 this.getAsyncCall(asyncCall)));
     }
 
@@ -50,7 +50,7 @@ public class RetrievalServiceImpl implements RetrievalService {
         parameters.put("userId", user.getId());
         parameters.put("baseCategory", localStorage.readObject("categories"));
 
-        FinancerExecutor.getExecutor().execute(new ServerRequestHandler(user, "getTransactions", parameters,
+        FinancerExecutor.getExecutor().execute(new ServerRequest(user, "getTransactions", parameters,
                 this.getAsyncCall(asyncCall)));
     }
 
@@ -61,7 +61,7 @@ public class RetrievalServiceImpl implements RetrievalService {
         parameters.put("baseCategory", localStorage.readObject("categories"));
 
 
-        FinancerExecutor.getExecutor().execute(new ServerRequestHandler(user, "getFixedTransactions", parameters,
+        FinancerExecutor.getExecutor().execute(new ServerRequest(user, "getFixedTransactions", parameters,
                 this.getAsyncCall(asyncConnectionCall)));
     }
 

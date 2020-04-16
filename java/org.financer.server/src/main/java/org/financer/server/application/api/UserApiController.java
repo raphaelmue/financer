@@ -14,7 +14,8 @@ import org.financer.shared.domain.model.api.user.RegisterUserDTO;
 import org.financer.shared.domain.model.api.user.UpdatePersonalInformationDTO;
 import org.financer.shared.domain.model.api.user.UpdateSettingsDTO;
 import org.financer.shared.domain.model.api.user.UserDTO;
-import org.financer.shared.domain.model.value.objects.*;
+import org.financer.shared.domain.model.value.objects.IPAddress;
+import org.financer.shared.domain.model.value.objects.TokenString;
 import org.financer.util.mapping.ModelMapperUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,14 +72,7 @@ public class UserApiController implements UserApi {
 
     @Override
     public ResponseEntity<UserDTO> registerUser(@NotNull @Valid RegisterUserDTO registerUserDTO) {
-        User user = userDomainService.registerUser(
-                new User()
-                        .setId(-1)
-                        .setEmail(new Email(registerUserDTO.getEmail()))
-                        .setName(new Name(registerUserDTO.getName(), registerUserDTO.getSurname()))
-                        .setPassword(new HashedPassword(registerUserDTO.getPassword()))
-                        .setBirthDate(new BirthDate(registerUserDTO.getBirthDate()))
-                        .setGender(new Gender(registerUserDTO.getGender())),
+        User user = userDomainService.registerUser(modelMapper.map(registerUserDTO, User.class),
                 new IPAddress(request.getRemoteAddr()), null);
         return new ResponseEntity<>(modelMapper.map(user, UserDTO.class), HttpStatus.OK);
     }

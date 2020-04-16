@@ -11,7 +11,7 @@ import org.controlsfx.glyphfont.FontAwesome;
 import org.controlsfx.glyphfont.GlyphFont;
 import org.controlsfx.glyphfont.GlyphFontRegistry;
 import org.financer.client.connection.RestCallback;
-import org.financer.client.connection.ServerRequestHandler;
+import org.financer.client.connection.ServerRequest;
 import org.financer.client.format.I18N;
 import org.financer.client.javafx.connection.RetrievalServiceImpl;
 import org.financer.client.javafx.dialogs.FinancerConfirmDialog;
@@ -83,7 +83,7 @@ public class ProfileController implements Initializable {
                     Map<String, Serializable> parameters = new HashMap<>();
                     parameters.put("user", user);
 
-                    FinancerExecutor.getExecutor().execute(new ServerRequestHandler(user, "changePassword", parameters,
+                    FinancerExecutor.getExecutor().execute(new ServerRequest(user, "changePassword", parameters,
                             new RestCallback() {
                                 @Override
                                 public void onSuccess(ConnectionResult result) {
@@ -101,7 +101,7 @@ public class ProfileController implements Initializable {
             Map<String, Serializable> parameters = new HashMap<>();
             parameters.put("user", user);
 
-            FinancerExecutor.getExecutor().execute(new ServerRequestHandler(user, "updateUser", parameters,
+            FinancerExecutor.getExecutor().execute(new ServerRequest(user, "updateUser", parameters,
                     new RestCallback() {
                         @Override
                         public void onSuccess(ConnectionResult result) {
@@ -135,7 +135,7 @@ public class ProfileController implements Initializable {
                     if (user != null) {
                         parameters.clear();
                         parameters.put("user", user);
-                        FinancerExecutor.getExecutor().execute(new ServerRequestHandler(user, "updateUser", parameters, new RestCallback() {
+                        FinancerExecutor.getExecutor().execute(new ServerRequest(user, "updateUser", parameters, new RestCallback() {
                             @Override
                             public void onSuccess(ConnectionResult result) {
                                 FinancerController.getInstance().showToast(Application.MessageType.SUCCESS, I18N.get("succChangedPersonalInformation"));
@@ -233,7 +233,7 @@ public class ProfileController implements Initializable {
                 categoryTree.getValue().setUser(user.toEntity());
                 parameters.put("category", categoryTree.getValue());
 
-                FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "addCategory", parameters, result -> {
+                FinancerExecutor.getExecutor().execute(new ServerRequest(this.user, "addCategory", parameters, result -> {
                     categoryTree.getValue().setId(((Category) result.getResult()).getId());
                     categoryTree.getValue().setPrefix(categoryTree.getParent().getValue().getPrefix() + (categoryTree.getParent().getChildren().size() + 1) + ".");
                     if (categoriesTreeView.getSelectionModel().getSelectedItem().getValue().isRoot()) {
@@ -269,7 +269,7 @@ public class ProfileController implements Initializable {
         Map<String, Serializable> parameters = new HashMap<>();
         parameters.put("category", category.getValue());
 
-        FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "updateCategory", parameters, result -> {
+        FinancerExecutor.getExecutor().execute(new ServerRequest(this.user, "updateCategory", parameters, result -> {
             categoriesTreeView.getSelectionModel().getSelectedItem().getValue().getValue().setName(category.getValue().getName());
             localStorage.writeObject("categories", categories);
         }, true));
@@ -287,7 +287,7 @@ public class ProfileController implements Initializable {
                 parameters.put("categoryId", this.categoriesTreeView.getSelectionModel()
                         .getSelectedItem().getValue().getValue().getId());
 
-                FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "deleteCategory", parameters, result1 -> {
+                FinancerExecutor.getExecutor().execute(new ServerRequest(this.user, "deleteCategory", parameters, result1 -> {
                     TreeUtil.deleteByValue(categories,
                             categoriesTreeView.getSelectionModel().getSelectedItem().getValue(), Comparator.comparingInt(Category::getId));
                     localStorage.writeObject("categories", categories);

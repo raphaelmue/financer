@@ -24,7 +24,7 @@ import javafx.util.Duration;
 import org.controlsfx.glyphfont.FontAwesome;
 import org.controlsfx.glyphfont.GlyphFont;
 import org.controlsfx.glyphfont.GlyphFontRegistry;
-import org.financer.client.connection.ServerRequestHandler;
+import org.financer.client.connection.ServerRequest;
 import org.financer.client.format.I18N;
 import org.financer.client.javafx.dialogs.FinancerExceptionDialog;
 import org.financer.client.javafx.local.LocalStorageImpl;
@@ -96,11 +96,11 @@ public class FinancerController implements Initializable, Application {
     @FXML
     public void initialize(URL location, ResourceBundle resources) {
         instance = this;
-        ServerRequestHandler.setApplication(this);
-        ServerRequestHandler.setLocalStorage(this.localStorage);
+        ServerRequest.setApplication(this);
+        ServerRequest.setLocalStorage(this.localStorage);
 
         try {
-            ServerRequestHandler.makeRequests(Executors.newCachedThreadPool());
+            ServerRequest.makeRequests(Executors.newCachedThreadPool());
         } catch (IOException e) {
             logger.log(Level.SEVERE, e.getMessage(), e);
         }

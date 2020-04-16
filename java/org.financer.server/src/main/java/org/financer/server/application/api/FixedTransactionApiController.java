@@ -61,7 +61,7 @@ public class FixedTransactionApiController implements FixedTransactionApi {
         FixedTransaction updateFixedTransaction = transactionDomainService.updateFixedTransaction(transactionId,
                 fixedTransaction.getCategoryId(), fixedTransaction.getAmount(), fixedTransaction.getTimeRange(),
                 fixedTransaction.getProduct(), fixedTransaction.getDescription(), fixedTransaction.getVendor(),
-                fixedTransaction.isVariable(), fixedTransaction.getDay(),
+                fixedTransaction.getIsVariable(), fixedTransaction.getDay(),
                 ModelMapperUtils.mapAll(fixedTransaction.getTransactionAmounts(), FixedTransactionAmount.class));
         return new ResponseEntity<>(modelMapper.map(updateFixedTransaction, FixedTransactionDTO.class), HttpStatus.OK);
     }

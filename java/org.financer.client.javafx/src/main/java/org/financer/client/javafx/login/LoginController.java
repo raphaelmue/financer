@@ -14,7 +14,7 @@ import javafx.stage.Stage;
 import org.controlsfx.glyphfont.FontAwesome;
 import org.controlsfx.glyphfont.GlyphFont;
 import org.controlsfx.glyphfont.GlyphFontRegistry;
-import org.financer.client.connection.ServerRequestHandler;
+import org.financer.client.connection.ServerRequest;
 import org.financer.client.format.I18N;
 import org.financer.client.javafx.dialogs.FinancerExceptionDialog;
 import org.financer.client.javafx.local.LocalStorageImpl;
@@ -71,8 +71,8 @@ public class LoginController implements Initializable, Application {
         }
         I18N.setLocalStorage(this.localStorage);
 
-        ServerRequestHandler.setApplication(this);
-        ServerRequestHandler.setLocalStorage(this.localStorage);
+        ServerRequest.setApplication(this);
+        ServerRequest.setLocalStorage(this.localStorage);
 
         Platform.runLater(() -> this.rootLayout.getScene().setOnKeyPressed(e -> {
             if (e.getCode() == KeyCode.ENTER) {
@@ -107,7 +107,7 @@ public class LoginController implements Initializable, Application {
         parameters.put("email", this.loginEmailTextField.getText());
         parameters.put("password", this.loginPasswordField.getText());
         logger.log(Level.INFO, "User's credentials will be checked ...");
-        FinancerExecutor.getExecutor().execute(new ServerRequestHandler("checkCredentials", parameters, result -> {
+        FinancerExecutor.getExecutor().execute(new ServerRequest("checkCredentials", parameters, result -> {
             if (result.getResult() != null) {
                 Platform.runLater(() -> loginUser((User) result.getResult()));
             } else {
@@ -124,7 +124,7 @@ public class LoginController implements Initializable, Application {
             Map<String, Serializable> parameters = new HashMap<>();
             parameters.put("user", user);
 
-            FinancerExecutor.getExecutor().execute(new ServerRequestHandler("registerUser", parameters,
+            FinancerExecutor.getExecutor().execute(new ServerRequest("registerUser", parameters,
                     result -> Platform.runLater(() -> loginUser((User) result.getResult()))));
         });
     }

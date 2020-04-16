@@ -19,7 +19,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.TextAlignment;
 import org.financer.client.connection.RestCallback;
-import org.financer.client.connection.ServerRequestHandler;
+import org.financer.client.connection.ServerRequest;
 import org.financer.client.format.I18N;
 import org.financer.client.javafx.connection.RetrievalServiceImpl;
 import org.financer.client.javafx.dialogs.FinancerConfirmDialog;
@@ -369,7 +369,7 @@ public class TransactionsController implements Initializable {
             Map<String, Serializable> parameters = new HashMap<>();
             parameters.put("variableTransaction", transaction);
 
-            FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "addTransaction", parameters, new RestCallback() {
+            FinancerExecutor.getExecutor().execute(new ServerRequest(this.user, "addTransaction", parameters, new RestCallback() {
                 @Override
                 public void onSuccess(ConnectionResult result) {
                     transaction.setId(((VariableTransaction) result.getResult()).getId());
@@ -401,7 +401,7 @@ public class TransactionsController implements Initializable {
             Map<String, Serializable> parameters = new HashMap<>();
             parameters.put("fixedTransaction", fixedTransaction);
 
-            FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "addFixedTransactions", parameters, new RestCallback() {
+            FinancerExecutor.getExecutor().execute(new ServerRequest(this.user, "addFixedTransactions", parameters, new RestCallback() {
                 @Override
                 public void onSuccess(ConnectionResult result) {
                     handleRefreshFixedTransactions();
@@ -428,7 +428,7 @@ public class TransactionsController implements Initializable {
             Map<String, Serializable> parameters = new HashMap<>();
             parameters.put("variableTransaction", transaction);
 
-            FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "updateTransaction",
+            FinancerExecutor.getExecutor().execute(new ServerRequest(this.user, "updateTransaction",
                     parameters, new RestCallback() {
                 @Override
                 public void onSuccess(ConnectionResult result) {
@@ -460,7 +460,7 @@ public class TransactionsController implements Initializable {
             parameters.put("user", this.user);
             parameters.put("fixedTransaction", fixedTransaction);
 
-            FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "updateFixedTransaction", parameters, new RestCallback() {
+            FinancerExecutor.getExecutor().execute(new ServerRequest(this.user, "updateFixedTransaction", parameters, new RestCallback() {
                 @Override
                 public void onSuccess(ConnectionResult result) {
                     fixedTransaction.getTransactionAmounts().clear();
@@ -491,7 +491,7 @@ public class TransactionsController implements Initializable {
                 Map<String, Serializable> parameters = new HashMap<>();
                 parameters.put("variableTransactionId", transaction.getId());
 
-                FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "deleteTransaction", parameters, new RestCallback() {
+                FinancerExecutor.getExecutor().execute(new ServerRequest(this.user, "deleteTransaction", parameters, new RestCallback() {
                     @Override
                     public void onSuccess(ConnectionResult result) {
                         Platform.runLater(() -> {
@@ -518,7 +518,7 @@ public class TransactionsController implements Initializable {
             Map<String, Serializable> parameters = new HashMap<>();
             parameters.put("fixedTransactionId", this.fixedTransactionsListView.getSelectionModel().getSelectedItem().getId());
 
-            FinancerExecutor.getExecutor().execute(new ServerRequestHandler(this.user, "deleteFixedTransaction",
+            FinancerExecutor.getExecutor().execute(new ServerRequest(this.user, "deleteFixedTransaction",
                     parameters, new RestCallback() {
                 @Override
                 public void onSuccess(ConnectionResult result) {

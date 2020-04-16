@@ -81,11 +81,11 @@ public class UpdateFixedTransactionDTO implements DataTransferObject {
         return this;
     }
 
-    public boolean isVariable() {
+    public boolean getIsVariable() {
         return isVariable;
     }
 
-    public UpdateFixedTransactionDTO setVariable(boolean variable) {
+    public UpdateFixedTransactionDTO setIsVariable(boolean variable) {
         isVariable = variable;
         return this;
     }

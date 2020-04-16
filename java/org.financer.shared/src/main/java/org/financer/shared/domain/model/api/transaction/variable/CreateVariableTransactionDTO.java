@@ -24,7 +24,7 @@ public class CreateVariableTransactionDTO implements DataTransferObject {
 
     private List<@Valid CreateProductDTO> products;
 
-    private List<AttachmentDTO> attachments;
+    private List<@Valid AttachmentDTO> attachments;
 
     public long getCategoryId() {
         return categoryId;

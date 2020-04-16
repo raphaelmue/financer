@@ -1,85 +1,67 @@
 package org.financer.shared.domain.model.api.user;
 
 import org.financer.shared.domain.model.api.DataTransferObject;
-import org.financer.shared.domain.model.value.objects.Gender;
+import org.financer.shared.domain.model.value.objects.*;
 
-import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.time.LocalDate;
 
 public class RegisterUserDTO implements DataTransferObject {
 
     @NotNull
-    @Email
-    private String email;
+    private Email email;
 
     @NotNull
-    @Size(min = 1, max = 64)
-    private String name;
+    private Name name;
 
     @NotNull
-    @Size(min = 1, max = 64)
-    private String surname;
+    private HashedPassword password;
 
-    @NotNull
-    @Size(min = 4, max = 64)
-    private String password;
+    private BirthDate birthDate;
 
-    private LocalDate birthDate;
+    private Gender gender;
 
-    private Gender.Values gender;
-
-    public String getEmail() {
+    public Email getEmail() {
         return email;
     }
 
-    public RegisterUserDTO setEmail(String email) {
+    public RegisterUserDTO setEmail(Email email) {
         this.email = email;
         return this;
     }
 
-    public String getName() {
+    public Name getName() {
         return name;
     }
 
-    public RegisterUserDTO setName(String name) {
+    public RegisterUserDTO setName(Name name) {
         this.name = name;
         return this;
     }
 
-    public String getSurname() {
-        return surname;
-    }
-
-    public RegisterUserDTO setSurname(String surname) {
-        this.surname = surname;
-        return this;
-    }
-
-    public String getPassword() {
+    public HashedPassword getPassword() {
         return password;
     }
 
-    public RegisterUserDTO setPassword(String password) {
+    public RegisterUserDTO setPassword(HashedPassword password) {
         this.password = password;
         return this;
     }
 
-    public LocalDate getBirthDate() {
+    public BirthDate getBirthDate() {
         return birthDate;
     }
 
-    public RegisterUserDTO setBirthDate(LocalDate birthDate) {
+    public RegisterUserDTO setBirthDate(BirthDate birthDate) {
         this.birthDate = birthDate;
         return this;
     }
 
-    public Gender.Values getGender() {
+    public Gender getGender() {
         return gender;
     }
 
-    public RegisterUserDTO setGender(Gender.Values gender) {
+    public RegisterUserDTO setGender(Gender gender) {
         this.gender = gender;
         return this;
     }
