@@ -7,7 +7,6 @@ import org.financer.server.domain.service.UserDomainService;
 import org.financer.shared.domain.model.value.objects.TokenString;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
@@ -46,12 +45,6 @@ public class AuthenticationTokenFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
-        if (request.getRequestURI().endsWith("/users") && (HttpMethod.GET.matches(request.getMethod()) ||
-                HttpMethod.PUT.matches(request.getMethod()))) {
-            chain.doFilter(request, response);
-            return;
-        }
-
         final String header = request.getHeader(HEADER_STRING);
 
         String tokenString = "";
@@ -72,7 +65,8 @@ public class AuthenticationTokenFilter extends OncePerRequestFilter {
                 return;
             }
         }
-        sendErrorResponse(request, response, tokenString);
+        //sendErrorResponse(request, response, tokenString);
+        chain.doFilter(request, response);
     }
 
     private void sendErrorResponse(HttpServletRequest request, HttpServletResponse response, String tokenString) {

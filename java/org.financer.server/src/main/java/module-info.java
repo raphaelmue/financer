@@ -2,15 +2,21 @@ module org.financer.server {
     requires org.financer.shared;
     requires org.financer.util;
 
+    // hibernate
     requires org.hibernate.orm.core;
+
+    // java
     requires java.persistence;
     requires java.xml;
     requires java.logging;
     requires java.naming;
     requires java.sql;
+    requires java.activation;
     requires java.validation;
     requires java.jwt;
     requires commons.email;
+
+    //spring
     requires spring.boot.autoconfigure;
     requires spring.boot;
     requires spring.web;
@@ -33,6 +39,15 @@ module org.financer.server {
     requires modelmapper;
     requires jdk.unsupported;
     requires com.google.gson;
+
+    // springdoc
+    requires springdoc.openapi.common;
+    requires springdoc.openapi.ui;
+    requires springdoc.openapi.webmvc.core;
+    requires io.swagger.v3.oas.models;
+    requires io.swagger.v3.oas.annotations;
+    requires io.github.classgraph;
+    requires java.xml.bind;
 
     uses javax.persistence.spi.PersistenceProvider;
 

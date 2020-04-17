@@ -86,7 +86,7 @@ public class TransactionDomainService {
      * @param vendor        updated vendor
      * @return update variable transaction
      */
-    public VariableTransaction updateVariableTransaction(long transactionId, long categoryId, LocalDate valueDate, String description, String vendor) {
+    public VariableTransaction updateVariableTransaction(long transactionId, long categoryId, ValueDate valueDate, String description, String vendor) {
         logger.info("Updating transaction with id {}.", transactionId);
         VariableTransaction variableTransaction = getVariableTransactionById(transactionId);
         variableTransaction.throwIfNotUsersProperty(authenticationService.getUserId());
@@ -110,9 +110,9 @@ public class TransactionDomainService {
         return variableTransactionOptional.get();
     }
 
-    private boolean changeVariableTransactionValueDate(VariableTransaction transaction, LocalDate valueDate) {
-        if (valueDate != null) {
-            transaction.setValueDate(new ValueDate(valueDate));
+    private boolean changeVariableTransactionValueDate(VariableTransaction transaction, ValueDate valueDate) {
+        if (valueDate != null && valueDate != transaction.getValueDate()) {
+            transaction.setValueDate(valueDate);
             return true;
         }
         return false;

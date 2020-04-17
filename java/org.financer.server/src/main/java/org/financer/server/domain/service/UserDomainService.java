@@ -236,7 +236,7 @@ public class UserDomainService {
      * @param gender    updated gender
      * @return updated user
      */
-    public User updatePersonalInformation(Name name, BirthDate birthDate, Gender.Values gender) {
+    public User updatePersonalInformation(Name name, BirthDate birthDate, Gender gender) {
         logger.info("Updating personal information of user {}", authenticationService.getUserId());
         User user = authenticationService.getAuthenticatedUser();
 
@@ -266,9 +266,9 @@ public class UserDomainService {
         return false;
     }
 
-    private boolean changeUserGender(User user, Gender.Values gender) {
-        if (gender != null && (user.getGender() == null || gender != user.getGender().getGender())) {
-            user.setGender(new Gender(gender));
+    private boolean changeUserGender(User user, Gender gender) {
+        if (gender != null && (user.getGender() == null || gender != user.getGender())) {
+            user.setGender(gender);
             return true;
         }
         return false;

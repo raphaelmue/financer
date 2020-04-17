@@ -1,5 +1,6 @@
 package org.financer.shared.domain.model.value.objects;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.financer.shared.domain.model.Formattable;
 import org.financer.shared.domain.model.Settings;
 import org.hibernate.annotations.Immutable;
@@ -16,10 +17,12 @@ import java.util.Objects;
 
 @Embeddable
 @Immutable
+@Schema(description = "Value object for value date")
 public class ValueDate implements Serializable, Formattable {
     private static final long serialVersionUID = -1612116802619061353L;
 
     @Column(name = "value_date", nullable = false)
+    @Schema(description = "Value date", required = true, example = "2020-01-01")
     private final LocalDate date;
 
     /**

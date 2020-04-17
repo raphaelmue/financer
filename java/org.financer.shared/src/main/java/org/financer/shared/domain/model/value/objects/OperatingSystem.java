@@ -1,5 +1,6 @@
 package org.financer.shared.domain.model.value.objects;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.financer.shared.exceptions.EnumNotFoundException;
 
 import javax.persistence.Column;
@@ -10,6 +11,7 @@ import java.io.Serializable;
 import java.util.Objects;
 
 @Embeddable
+@Schema(description = "Value object for the operating system")
 public class OperatingSystem implements Serializable {
     private static final long serialVersionUID = -3238265087964566580L;
 
@@ -48,6 +50,7 @@ public class OperatingSystem implements Serializable {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "system")
+    @Schema(description = "Operating system", required = true, example = "MAC_OS", enumAsRef = true)
     private Values operatingSystem;
 
     public OperatingSystem() {

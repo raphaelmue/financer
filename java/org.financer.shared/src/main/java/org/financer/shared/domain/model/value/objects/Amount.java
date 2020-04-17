@@ -1,6 +1,7 @@
 package org.financer.shared.domain.model.value.objects;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.financer.shared.domain.model.Formattable;
 import org.financer.shared.domain.model.Settings;
 import org.hibernate.annotations.Immutable;
@@ -14,10 +15,12 @@ import java.util.Objects;
 
 @Embeddable
 @Immutable
+@Schema(description = "Value object for amount")
 public class Amount implements Serializable, Formattable {
     private static final long serialVersionUID = 8647653287643900256L;
 
     @Column(name = "amount", nullable = false)
+    @Schema(description = "Amount property", required = true, example = "50.0")
     private final double amount;
 
     public Amount() {

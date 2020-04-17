@@ -1,33 +1,38 @@
 package org.financer.shared.domain.model.api.transaction.variable;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.financer.shared.domain.model.api.DataTransferObject;
+import org.financer.shared.domain.model.value.objects.ValueDate;
 
-import java.time.LocalDate;
-
+@Schema(name = "UpdateVariableTransaction", description = "Schema for updating a variable transaction")
 public class UpdateVariableTransactionDTO implements DataTransferObject {
 
-    private int categoryId = -1;
+    @Schema(description = "Category ID of the variable transaction", required = true)
+    private long categoryId;
 
-    private LocalDate valueDate = null;
+    @Schema(description = "Value date of the variable transaction", required = true, example = "2020-01-01")
+    private ValueDate valueDate;
 
-    private String description = null;
+    @Schema(description = "Description of the variable transaction", example = "This is a description.")
+    private String description;
 
-    private String vendor = null;
+    @Schema(description = "Vendor of the variable transaction", example = "Amazon")
+    private String vendor;
 
-    public int getCategoryId() {
+    public long getCategoryId() {
         return categoryId;
     }
 
-    public UpdateVariableTransactionDTO setCategoryId(int categoryId) {
+    public UpdateVariableTransactionDTO setCategoryId(long categoryId) {
         this.categoryId = categoryId;
         return this;
     }
 
-    public LocalDate getValueDate() {
+    public ValueDate getValueDate() {
         return valueDate;
     }
 
-    public UpdateVariableTransactionDTO setValueDate(LocalDate valueDate) {
+    public UpdateVariableTransactionDTO setValueDate(ValueDate valueDate) {
         this.valueDate = valueDate;
         return this;
     }

@@ -1,5 +1,6 @@
 package org.financer.shared.domain.model.value.objects;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.financer.shared.exceptions.EnumNotFoundException;
 import org.hibernate.annotations.Immutable;
 
@@ -12,6 +13,7 @@ import java.util.Objects;
 
 @Embeddable
 @Immutable
+@Schema(description = "Value object for gender")
 public class Gender implements Serializable {
     private static final long serialVersionUID = -860866161803817820L;
 
@@ -43,6 +45,7 @@ public class Gender implements Serializable {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "gender")
+    @Schema(description = "Gender", required = true, enumAsRef = true, example = "FEMALE")
     private Values gender;
 
     public Gender() {

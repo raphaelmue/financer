@@ -1,5 +1,12 @@
 package org.financer.server.application.api;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.financer.shared.domain.model.api.category.CategoryDTO;
 import org.financer.shared.domain.model.api.transaction.fixed.FixedTransactionDTO;
 import org.financer.shared.domain.model.api.transaction.variable.VariableTransactionDTO;
@@ -7,7 +14,6 @@ import org.financer.shared.domain.model.api.user.RegisterUserDTO;
 import org.financer.shared.domain.model.api.user.UpdatePersonalInformationDTO;
 import org.financer.shared.domain.model.api.user.UpdateSettingsDTO;
 import org.financer.shared.domain.model.api.user.UserDTO;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,9 +22,9 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.net.URISyntaxException;
-import java.time.LocalDate;
 import java.util.List;
 
+@Tag(name = "user", description = "Operations with users")
 public interface UserApi {
 
     /**
@@ -28,12 +34,25 @@ public interface UserApi {
      * @param password password of the user
      * @return User object if credentials are correct
      */
+    @Operation(
+            summary = "Logs the user into the system",
+            tags = {"user"})
+    @ApiResponse(
+            responseCode = "200",
+            description = "Users credentials are correct.",
+            content = @Content(schema = @Schema(implementation = UserDTO.class)))
+    @ApiResponse(
+            responseCode = "403",
+            description = "Users credentials are invalid.")
     @GetMapping(
             value = "/users",
             produces = {"application/json"},
             headers = "Accept=application/json")
-    ResponseEntity<UserDTO> loginUser(@NotNull @Valid @RequestParam(value = "email") String email,
-                                      @NotNull @Valid @RequestParam(value = "password") String password);
+    ResponseEntity<UserDTO> loginUser(
+            @Parameter(description = "Email of the user to log in", required = true)
+            @RequestParam(value = "email") @NotNull @Valid String email,
+            @Parameter(description = "Plain text password of the user to log in", required = true)
+            @RequestParam(value = "password") @NotNull @Valid String password);
 
     /**
      * Deletes a token. This is called, when the user logs out of a client.
@@ -42,23 +61,44 @@ public interface UserApi {
      * @param tokenId id of the token to delete
      * @return void
      */
+    @Operation(
+            summary = "Deletes a token",
+            tags = {"user"})
+    @ApiResponse(
+            responseCode = "200",
+            description = "Token was successfully deleted")
     @DeleteMapping(
             value = "/users/{userId}/tokens/{tokenId}",
             produces = {"application/json"},
             headers = "Accept=application/json")
-    ResponseEntity<Void> deleteToken(@NotBlank @PathVariable("userId") @Min(1) Long userId,
-                                     @NotBlank @PathVariable("tokenId") @Min(1) Long tokenId);
+    ResponseEntity<Void> deleteToken(
+            @Parameter(description = "ID of the user to which the token is assigned", required = true)
+            @PathVariable("userId") @NotBlank @Min(1) Long userId,
+            @Parameter(description = "ID of the token that will be deleted", required = true)
+            @PathVariable("tokenId") @NotBlank @Min(1) Long tokenId);
 
     /**
      * Registers a new user.
      *
      * @return User object
      */
+    @Operation(
+            summary = "Registers a new user",
+            tags = {"user"})
+    @ApiResponse(
+            responseCode = "200",
+            description = "User was successfully registered",
+            content = @Content(schema = @Schema(implementation = UserDTO.class)))
     @PutMapping(
             value = "/users",
             produces = {"application/json"},
             headers = "Accept=application/json")
-    ResponseEntity<UserDTO> registerUser(@NotNull @Valid @RequestBody RegisterUserDTO registerUserDTO);
+    ResponseEntity<UserDTO> registerUser(
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "User that will be registered",
+                    required = true,
+                    content = @Content(schema = @Schema(implementation = RegisterUserDTO.class)))
+            @RequestBody @NotNull @Valid RegisterUserDTO registerUserDTO);
 
     /**
      * Updates the password of the given user.
@@ -68,27 +108,51 @@ public interface UserApi {
      * @param newPassword updated unencrypted password
      * @return updated user object
      */
+    @Operation(
+            summary = "Updates the users password",
+            tags = {"user"})
+    @ApiResponse(
+            responseCode = "200",
+            description = "Users password was successfully updated",
+            content = @Content(schema = @Schema(implementation = UserDTO.class)))
     @PostMapping(
             value = "/users/{userId}/password",
             produces = {"application/json"},
             headers = "Accept=application/json")
-    ResponseEntity<UserDTO> updateUsersPassword(@NotBlank @PathVariable("userId") @Min(1) Long userId,
-                                                @NotNull @Valid @RequestParam("oldPassword") String oldPassword,
-                                                @NotNull @Valid @RequestParam("newPassword") String newPassword);
+    ResponseEntity<UserDTO> updateUsersPassword(
+            @Parameter(description = "ID of the user whose password will be changed", required = true)
+            @PathVariable("userId") @NotBlank @Min(1) Long userId,
+            @Parameter(description = "Old plain text password of the user", required = true)
+            @RequestParam("oldPassword") @NotNull @Valid String oldPassword,
+            @Parameter(description = "New plain text password of the user", required = true)
+            @RequestParam("newPassword") @NotNull @Valid String newPassword);
 
     /**
      * Updates the users personal information
      *
-     * @param userId    id of the user
+     * @param userId              id of the user
      * @param personalInformation updated personal information
      * @return updated user object
      */
+    @Operation(
+            summary = "Updates the users personal information",
+            tags = {"user"})
+    @ApiResponse(
+            responseCode = "200",
+            description = "Users personal information were successfully updated",
+            content = @Content(schema = @Schema(implementation = UserDTO.class)))
     @PostMapping(
             value = "/users/{userId}/personalInformation",
             produces = {"application/json"},
             headers = "Accept=application/json")
-    ResponseEntity<UserDTO> updateUsersPersonalInformation(@NotBlank @PathVariable("userId") @Min(1) Long userId,
-                                                           @NotNull @Valid @RequestBody UpdatePersonalInformationDTO personalInformation);
+    ResponseEntity<UserDTO> updateUsersPersonalInformation(
+            @Parameter(description = "ID of the user whose personal information will be changed", required = true)
+            @PathVariable("userId") @NotBlank @Min(1) Long userId,
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Users personal information that will be updated",
+                    required = true,
+                    content = @Content(schema = @Schema(implementation = UpdatePersonalInformationDTO.class)))
+            @RequestBody @NotNull @Valid UpdatePersonalInformationDTO personalInformation);
 
     /**
      * Updates users settings.
@@ -97,12 +161,25 @@ public interface UserApi {
      * @param setting updated settings
      * @return update user object
      */
+    @Operation(
+            summary = "Updates the users settings",
+            tags = {"user"})
+    @ApiResponse(
+            responseCode = "200",
+            description = "Users settings were successfully updated",
+            content = @Content(schema = @Schema(implementation = UserDTO.class)))
     @PostMapping(
             value = "/users/{userId}/settings",
             produces = {"application/json"},
             headers = "Accept=application/json")
-    ResponseEntity<UserDTO> updateUsersSettings(@NotBlank @PathVariable("userId") @Min(1) Long userId,
-                                                @NotNull @Valid @RequestBody UpdateSettingsDTO setting);
+    ResponseEntity<UserDTO> updateUsersSettings(
+            @Parameter(description = "ID of the user whose settings will be updated", required = true)
+            @PathVariable("userId") @NotBlank @Min(1) Long userId,
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Users personal information that will be updated",
+                    required = true,
+                    content = @Content(schema = @Schema(implementation = UpdateSettingsDTO.class)))
+            @RequestBody @NotNull @Valid UpdateSettingsDTO setting);
 
     /**
      * Verifies a users email address by checking the given verification token.
@@ -110,12 +187,21 @@ public interface UserApi {
      * @param userId            id of the user to check
      * @param verificationToken verification token to check
      */
+    @Operation(
+            summary = "Verifies a users email address",
+            tags = {"user"})
+    @ApiResponse(
+            responseCode = "200",
+            description = "User is successfully verified")
     @GetMapping(
             value = "/users/{userId}/verificationToken",
             produces = {"application/json"},
             headers = "Accept=application/json")
-    ResponseEntity<Object> verifyUser(@NotBlank @PathVariable("userId") @Min(1) Long userId,
-                                      @NotNull @Valid @RequestParam("verificationToken") String verificationToken) throws URISyntaxException;
+    ResponseEntity<Object> verifyUser(
+            @Parameter(description = "ID of the user that will be verified", required = true)
+            @PathVariable("userId") @NotBlank @Min(1) Long userId,
+            @Parameter(description = "Verification token to verify user", required = true)
+            @RequestParam("verificationToken") @NotNull @Valid String verificationToken) throws URISyntaxException;
 
     /**
      * Fetches the users categories.
@@ -123,11 +209,20 @@ public interface UserApi {
      * @param userId user id
      * @return tree of categories
      */
+    @Operation(
+            summary = "Fetches all categories of the user",
+            tags = {"user"})
+    @ApiResponse(
+            responseCode = "200",
+            description = "Users categories were successfully fetched",
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = UserDTO.class))))
     @GetMapping(
             value = "/users/{userId}/categories",
             produces = {"application/json"},
             headers = "Accept=application/json")
-    ResponseEntity<List<CategoryDTO>> getUsersCategories(@NotBlank @PathVariable("userId") @Min(1) Long userId);
+    ResponseEntity<List<CategoryDTO>> getUsersCategories(
+            @Parameter(description = "ID of the user whose categories will be fetched", required = true)
+            @PathVariable("userId") @NotBlank @Min(1) Long userId);
 
 
     /**
@@ -136,12 +231,22 @@ public interface UserApi {
      * @param userId user id
      * @return list of transactions
      */
+    @Operation(
+            summary = "Fetches all variable transactions of the user",
+            tags = {"user"})
+    @ApiResponse(
+            responseCode = "200",
+            description = "Users variable transactions were successfully fetched",
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = VariableTransactionDTO.class))))
     @GetMapping(
             value = "/users/{userId}/variableTransactions",
             produces = {"application/json"},
             headers = "Accept=application/json")
-    ResponseEntity<List<VariableTransactionDTO>> getUsersVariableTransactions(@NotBlank @PathVariable("userId") @Min(1) Long userId,
-                                                                              @Valid @RequestParam(value = "page", defaultValue = "0") int page);
+    ResponseEntity<List<VariableTransactionDTO>> getUsersVariableTransactions(
+            @Parameter(description = "ID of the user whose variable transactions will be fetched", required = true)
+            @PathVariable("userId") @NotBlank @Min(1) Long userId,
+            @Parameter(description = "Number of the page (page size is 20)")
+            @Valid @RequestParam(value = "page", defaultValue = "0") int page);
 
     /**
      * Fetches the users fixed transactions.
@@ -149,9 +254,18 @@ public interface UserApi {
      * @param userId user id
      * @return list of transactions
      */
+    @Operation(
+            summary = "Fetches all fixed transactions of the user",
+            tags = {"user"})
+    @ApiResponse(
+            responseCode = "200",
+            description = "Users fixed transactions were successfully fetched",
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = FixedTransactionDTO.class))))
     @GetMapping(
             value = "/users/{userId}/fixedTransactions",
             produces = {"application/json"},
             headers = "Accept=application/json")
-    ResponseEntity<List<FixedTransactionDTO>> getUsersFixedTransactions(@NotBlank @PathVariable("userId") @Min(1) Long userId);
+    ResponseEntity<List<FixedTransactionDTO>> getUsersFixedTransactions(
+            @Parameter(description = "ID of the user whose fixed transactions will be fetched", required = true)
+            @PathVariable("userId") @NotBlank @Min(1) Long userId);
 }

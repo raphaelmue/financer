@@ -1,5 +1,6 @@
 package org.financer.shared.domain.model.value.objects;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.financer.util.RandomString;
 import org.hibernate.annotations.Immutable;
 
@@ -15,6 +16,8 @@ public final class TokenString implements Serializable {
 
     private static final RandomString stringGenerator = new RandomString(64);
 
+    @Schema(description = "Token string", required = true, maxLength = 64, minLength = 64,
+            example = "UPOPBEZR7c9GqpGs0IFrKdgtRvUuZMsI8ubfOK33cDX6ArmtFiqxnP6ayHQFHsbu")
     @Column(name = "token", length = 64, nullable = false)
     private final String token;
 

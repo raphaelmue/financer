@@ -1,5 +1,11 @@
 package org.financer.server.application.api;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.financer.shared.domain.model.api.category.CategoryDTO;
 import org.financer.shared.domain.model.api.category.CreateCategoryDTO;
 import org.financer.shared.domain.model.api.category.UpdateCategoryDTO;
@@ -11,6 +17,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+@Tag(name = "category", description = "Operations with categories")
 public interface CategoryApi {
 
     /**
@@ -19,11 +26,21 @@ public interface CategoryApi {
      * @param category category object that will be inserted
      * @return Category object
      */
+    @Operation(
+            summary = "Creates a new category",
+            tags = {"category"})
+    @ApiResponse(
+            responseCode = "201",
+            description = "Category was successfully created.",
+            content = @Content(schema = @Schema(implementation = CategoryDTO.class)))
     @PutMapping(
             value = "/categories",
             produces = {"application/json"},
             headers = "Accept=application/json")
-    ResponseEntity<CategoryDTO> createCategory(@NotNull @Valid @RequestBody CreateCategoryDTO category);
+    ResponseEntity<CategoryDTO> createCategory(
+            @Parameter(description = "Category to be created", required = true,
+                    schema = @Schema(implementation = CreateCategoryDTO.class))
+            @RequestBody @NotNull @Valid CreateCategoryDTO category);
 
     /**
      * Updates a specified category.
@@ -32,12 +49,26 @@ public interface CategoryApi {
      * @param category   category object with updated information
      * @return update category
      */
+    @Operation(
+            summary = "Updates a category",
+            tags = {"category"})
+    @ApiResponse(
+            responseCode = "200",
+            description = "Category was successfully updated.",
+            content = @Content(schema = @Schema(implementation = CategoryDTO.class)))
+    @ApiResponse(
+            responseCode = "400",
+            description = "Category ID was not found")
     @PostMapping(
             value = "/categories/{categoryId}",
             produces = {"application/json"},
             headers = "Accept=application/json")
-    ResponseEntity<CategoryDTO> updateCategory(@NotBlank @PathVariable("categoryId") @Min(1) Long categoryId,
-                                               @NotNull @Valid @RequestBody UpdateCategoryDTO category);
+    ResponseEntity<CategoryDTO> updateCategory(
+            @Parameter(description = "ID of the category that will be updated", required = true)
+            @PathVariable("categoryId") @NotBlank @Min(1) Long categoryId,
+            @Parameter(description = "Category to be updated", required = true,
+                    schema = @Schema(implementation = UpdateCategoryDTO.class))
+            @RequestBody @NotNull @Valid UpdateCategoryDTO category);
 
     /**
      * Deletes a specified category.
@@ -45,10 +76,18 @@ public interface CategoryApi {
      * @param categoryId category id that refers to the category that will be deleted
      * @return null
      */
+    @Operation(
+            summary = "Deletes a category",
+            tags = {"category"})
+    @ApiResponse(
+            responseCode = "200",
+            description = "Category was successfully deleted.")
     @DeleteMapping(
             value = "/categories/{categoryId}",
             produces = {"application/json"},
             headers = "Accept=application/json")
-    ResponseEntity<Void> deleteCategory(@NotBlank @PathVariable("categoryId") @Min(1) Long categoryId);
+    ResponseEntity<Void> deleteCategory(
+            @Parameter(description = "ID of the category that will be deleted", required = true)
+            @PathVariable("categoryId") @NotBlank @Min(1) Long categoryId);
 
 }

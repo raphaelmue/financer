@@ -176,7 +176,7 @@ public class UserDomainServiceTest extends SpringTest {
     public void testUpdatePersonalInformation() {
         final Name name = new Name("Another", "Name");
         final BirthDate birthDate = new BirthDate(LocalDate.now().minusYears(20));
-        final Gender.Values gender = Gender.Values.FEMALE;
+        final Gender gender = new Gender(Gender.Values.FEMALE);
         User userToAssert = userDomainService.updatePersonalInformation(name, birthDate, gender);
 
         assertThat(userToAssert.getName()).isEqualTo(name);
@@ -186,7 +186,7 @@ public class UserDomainServiceTest extends SpringTest {
 
     @Test
     public void testUpdatePersonalInformationWithoutChanges() {
-        User userToAssert = userDomainService.updatePersonalInformation(user.getName(), user.getBirthDate(), user.getGender().getGender());
+        User userToAssert = userDomainService.updatePersonalInformation(user.getName(), user.getBirthDate(), user.getGender());
         assertThat(userToAssert).isEqualToComparingFieldByField(user);
     }
 

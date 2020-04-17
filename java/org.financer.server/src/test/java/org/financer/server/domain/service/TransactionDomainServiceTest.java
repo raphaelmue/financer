@@ -151,7 +151,7 @@ public class TransactionDomainServiceTest extends SpringTest {
         final String vendor = "Updated vendor";
         fixedCategory.setCategoryClass(variableCategory.getCategoryClass());
         VariableTransaction transactionToAssert = transactionDomainService.updateVariableTransaction(
-                variableTransaction.getId(), fixedCategory.getId(), LocalDate.now().plusMonths(1), description, vendor);
+                variableTransaction.getId(), fixedCategory.getId(), new ValueDate(LocalDate.now().plusMonths(1)), description, vendor);
 
         assertThat(transactionToAssert).isNotNull();
         assertThat(transactionToAssert.getCategory().getId()).isEqualTo(fixedCategory.getId());

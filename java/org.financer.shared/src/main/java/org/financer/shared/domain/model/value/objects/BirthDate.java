@@ -1,5 +1,6 @@
 package org.financer.shared.domain.model.value.objects;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.hibernate.annotations.Immutable;
 
 import javax.persistence.Column;
@@ -10,11 +11,13 @@ import java.util.Objects;
 
 @Embeddable
 @Immutable
+@Schema(description = "Value object for birth date")
 public class BirthDate implements Serializable {
     private static final long serialVersionUID = -4072522792982525094L;
 
 
     @Column(name = "birth_date")
+    @Schema(description = "Birth date", required = true, example = "1980-01-01")
     private LocalDate birthDate;
 
     public BirthDate() {

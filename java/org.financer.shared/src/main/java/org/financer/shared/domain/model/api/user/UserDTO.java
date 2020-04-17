@@ -1,5 +1,6 @@
 package org.financer.shared.domain.model.api.user;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.financer.shared.domain.model.api.DataTransferObject;
 import org.financer.shared.domain.model.value.objects.Email;
 import org.financer.shared.domain.model.value.objects.Gender;
@@ -12,25 +13,34 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
+@Schema(name = "User", description = "Schema for a user")
 public class UserDTO implements DataTransferObject {
 
     @NotNull
     @Min(1)
+    @Schema(description = "Identifier of the user", required = true, example = "1")
     private int id;
 
     @NotNull
+    @Schema(description = "Email address of the user", required = true, example = "test@gmail.com")
     private Email email;
 
     @NotNull
+    @Schema(description = "Name of the user", required = true)
     private Name name;
 
+    @Schema(description = "Birth date of the user", required = true, example = "2020-01-01")
     private LocalDate birthDate;
 
+    @Schema(description = "Gender of the user", required = true, example = "FEMALE", enumAsRef = true)
     private Gender.Values gender;
 
     @NotNull
+    @Schema(description = "Active token of the user that is used to authorize API calls for this client",
+            required = true)
     private TokenDTO activeToken;
 
+    @Schema(description = "List of all tokens that are assigned to the user")
     private List<TokenDTO> tokens;
 
     @NotNull

@@ -1,6 +1,7 @@
 package org.financer.shared.domain.model.value.objects;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.hibernate.annotations.Immutable;
 
 import javax.persistence.Column;
@@ -16,14 +17,17 @@ import java.util.Objects;
  */
 @Embeddable
 @Immutable
+@Schema(description = "Value object for time range")
 public class TimeRange implements Serializable {
     private static final long serialVersionUID = 3710079875858283394L;
 
     @Column(name = "start_date", nullable = false)
     @NotNull
+    @Schema(description = "Start date", required = true, example = "2020-01-01")
     private final LocalDate startDate;
 
     @Column(name = "end_date")
+    @Schema(description = "End date", example = "2030-01-01")
     private final LocalDate endDate;
 
     public TimeRange() {

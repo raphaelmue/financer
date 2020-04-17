@@ -1,5 +1,11 @@
 package org.financer.server.application.api;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.financer.shared.domain.model.api.transaction.AttachmentDTO;
 import org.financer.shared.domain.model.api.transaction.AttachmentWithContentDTO;
 import org.financer.shared.domain.model.api.transaction.CreateAttachmentDTO;
@@ -11,6 +17,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+@Tag(name = "attachment", description = "Operations with attachments")
 public interface AttachmentApi {
 
     /**
@@ -19,13 +26,24 @@ public interface AttachmentApi {
      * @param transactionId id of the transaction wo which the attachment will be inserted.
      * @return null
      */
+    @Operation(
+            summary = "Creates a new attachment",
+            tags = {"transaction", "attachment"})
+    @ApiResponse(
+            responseCode = "201",
+            description = "Attachment was successfully created.",
+            content = @Content(schema = @Schema(implementation = AttachmentDTO.class)))
     @PutMapping(
             value = {"/variableTransactions/{transactionId}/attachments",
                     "/fixedTransactions/{transactionId}/attachments"},
             produces = {"application/json"},
             headers = "Accept=application/json")
-    ResponseEntity<AttachmentDTO> createAttachment(@NotBlank @PathVariable("transactionId") @Min(1) Long transactionId,
-                                                   @NotNull @Valid @RequestBody CreateAttachmentDTO attachment);
+    ResponseEntity<AttachmentDTO> createAttachment(
+            @Parameter(description = "ID of the transaction to which the attachment is added", required = true)
+            @PathVariable("transactionId") @NotBlank @Min(1) Long transactionId,
+            @Parameter(description = "Attachment to be created", required = true,
+                    schema = @Schema(implementation = CreateAttachmentDTO.class))
+            @RequestBody @NotNull @Valid CreateAttachmentDTO attachment);
 
     /**
      * Fetches an attachment with content
@@ -34,13 +52,26 @@ public interface AttachmentApi {
      * @param attachmentId  id of the attachment whose content will be returned
      * @return attachment with content
      */
+    @Operation(
+            summary = "Fetches an attachment with content",
+            tags = {"transaction", "attachment"})
+    @ApiResponse(
+            responseCode = "200",
+            description = "successful operation",
+            content = @Content(schema = @Schema(implementation = AttachmentWithContentDTO.class)))
+    @ApiResponse(
+            responseCode = "400",
+            description = "Attachment ID was not found.")
     @GetMapping(
             value = {"/variableTransactions/{transactionId}/attachments/{attachmentId}",
                     "/fixedTransactions/{transactionId}/attachments/{attachmentId}"},
             produces = {"application/json"},
             headers = "Accept=application/json")
-    ResponseEntity<AttachmentWithContentDTO> getAttachment(@NotBlank @PathVariable("transactionId") @Min(1) Long transactionId,
-                                                           @NotBlank @PathVariable("attachmentId") @Min(1) Long attachmentId);
+    ResponseEntity<AttachmentWithContentDTO> getAttachment(
+            @Parameter(description = "ID of the transaction to which the attachment belongs", required = true)
+            @PathVariable("transactionId") @NotBlank @Min(1) Long transactionId,
+            @Parameter(description = "ID of the attachment to return", required = true)
+            @NotBlank @PathVariable("attachmentId") @Min(1) Long attachmentId);
 
     /**
      * Deletes a specified attachment.
@@ -49,12 +80,21 @@ public interface AttachmentApi {
      * @param attachmentId  id of attachment that will be deleted
      * @return null
      */
+    @Operation(
+            summary = "Fetches an attachment with content",
+            tags = {"transaction", "attachment"})
+    @ApiResponse(
+            responseCode = "200",
+            description = "Attachment was successfully deleted")
     @DeleteMapping(
             value = {"/variableTransactions/{transactionId}/attachments/{attachmentId}",
                     "/fixedTransactions/{transactionId}/attachments/{attachmentId}"},
             produces = {"application/json"},
             headers = "Accept=application/json")
-    ResponseEntity<Void> deleteTransaction(@NotBlank @PathVariable("transactionId") @Min(1) Long transactionId,
-                                           @NotBlank @PathVariable("attachmentId") @Min(1) Long attachmentId);
+    ResponseEntity<Void> deleteTransaction(
+            @Parameter(description = "ID of the transaction to which the attachment belongs", required = true)
+            @PathVariable("transactionId") @NotBlank @Min(1) Long transactionId,
+            @Parameter(description = "ID of the attachment to be deleted", required = true)
+            @NotBlank @PathVariable("attachmentId") @Min(1) Long attachmentId);
 
 }

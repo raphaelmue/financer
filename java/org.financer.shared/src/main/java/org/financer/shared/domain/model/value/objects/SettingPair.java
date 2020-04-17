@@ -1,5 +1,6 @@
 package org.financer.shared.domain.model.value.objects;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.financer.shared.exceptions.EnumNotFoundException;
 import org.hibernate.annotations.Immutable;
 
@@ -14,6 +15,7 @@ import java.util.Objects;
 
 @Embeddable
 @Immutable
+@Schema(description = "Value object for property value pair")
 public class SettingPair implements Serializable {
     private static final long serialVersionUID = -9194098816495257592L;
 
@@ -74,9 +76,11 @@ public class SettingPair implements Serializable {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "property", nullable = false)
+    @Schema(description = "Property", required = true, example = "CURRENCY", enumAsRef = true)
     private Property property;
 
     @Column(name = "value", nullable = false)
+    @Schema(description = "Value", required = true, example = "EUR")
     private String value;
 
     public SettingPair() {

@@ -1,5 +1,6 @@
 package org.financer.shared.domain.model.api.transaction.variable;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.financer.shared.domain.model.api.DataTransferObject;
 import org.financer.shared.domain.model.api.transaction.AttachmentDTO;
 import org.financer.shared.domain.model.value.objects.ValueDate;
@@ -7,24 +8,31 @@ import org.financer.shared.domain.model.value.objects.ValueDate;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import java.util.List;
+import java.util.Set;
 
+@Schema(name = "CreateVariableTransaction", description = "Schema for creating a new variable transaction")
 public class CreateVariableTransactionDTO implements DataTransferObject {
 
     @NotNull
     @Min(1)
+    @Schema(description = "Category ID of the variable transaction", required = true)
     private long categoryId;
 
     @NotNull
+    @Schema(description = "Value date of the variable transaction", required = true, example = "2020-01-01")
     private ValueDate valueDate;
 
+    @Schema(description = "Description of the variable transaction", example = "This is a description.")
     private String description;
 
+    @Schema(description = "Vendor of the variable transaction", example = "Amazon")
     private String vendor;
 
-    private List<@Valid CreateProductDTO> products;
+    @Schema(description = "List of attachments of the variable transaction")
+    private Set<@Valid AttachmentDTO> attachments;
 
-    private List<@Valid AttachmentDTO> attachments;
+    @Schema(description = "List of products of the variable transaction")
+    private Set<@Valid CreateProductDTO> products;
 
     public long getCategoryId() {
         return categoryId;
@@ -62,20 +70,20 @@ public class CreateVariableTransactionDTO implements DataTransferObject {
         return this;
     }
 
-    public List<AttachmentDTO> getAttachments() {
+    public Set<AttachmentDTO> getAttachments() {
         return attachments;
     }
 
-    public CreateVariableTransactionDTO setAttachments(List<AttachmentDTO> attachments) {
+    public CreateVariableTransactionDTO setAttachments(Set<AttachmentDTO> attachments) {
         this.attachments = attachments;
         return this;
     }
 
-    public List<CreateProductDTO> getProducts() {
+    public Set<CreateProductDTO> getProducts() {
         return products;
     }
 
-    public CreateVariableTransactionDTO setProducts(List<CreateProductDTO> products) {
+    public CreateVariableTransactionDTO setProducts(Set<CreateProductDTO> products) {
         this.products = products;
         return this;
     }

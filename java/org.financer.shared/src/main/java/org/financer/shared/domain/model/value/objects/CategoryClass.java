@@ -1,5 +1,6 @@
 package org.financer.shared.domain.model.value.objects;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.financer.shared.exceptions.EnumNotFoundException;
 
 import javax.persistence.Column;
@@ -10,6 +11,7 @@ import java.io.Serializable;
 import java.util.Objects;
 
 @Embeddable
+@Schema(description = "Value object for category class")
 public class CategoryClass implements Serializable {
     private static final long serialVersionUID = -8410423694511026919L;
 
@@ -46,6 +48,7 @@ public class CategoryClass implements Serializable {
 
     @Enumerated(EnumType.ORDINAL)
     @Column(name = "category_class", nullable = false)
+    @Schema(description = "Category class", required = true, enumAsRef = true, example = "FIXED_REVENUE")
     private Values categoryClass;
 
     public CategoryClass() {
