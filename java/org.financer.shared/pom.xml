@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.financer</groupId>
         <artifactId>financer</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>${revision}</version>
     </parent>
 
     <artifactId>org.financer.shared</artifactId>
@@ -50,24 +50,6 @@
             <artifactId>hibernate-core</artifactId>
             <version>5.4.12.Final</version>
             <scope>compile</scope>
-        </dependency>
-
-
-        <!--        waiting for swagger 3.0 to come-->
-        <!--        <dependency>-->
-        <!--            <groupId>io.springfox</groupId>-->
-        <!--            <artifactId>springfox-swagger2</artifactId>-->
-        <!--            <version>2.9.2</version>-->
-        <!--        </dependency>-->
-        <!--        <dependency>-->
-        <!--            <groupId>io.springfox</groupId>-->
-        <!--            <artifactId>springfox-swagger-ui</artifactId>-->
-        <!--            <version>2.9.2</version>-->
-        <!--        </dependency>-->
-        <dependency>
-            <groupId>com.google.code.gson</groupId>
-            <artifactId>gson</artifactId>
-            <version>2.8.6</version>
         </dependency>
         <dependency>
             <groupId>io.swagger.core.v3</groupId>

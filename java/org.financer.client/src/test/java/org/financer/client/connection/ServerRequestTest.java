@@ -11,6 +11,7 @@ import org.financer.client.local.LocalStorage;
 import org.financer.shared.domain.model.api.user.UserDTO;
 import org.financer.shared.domain.model.value.objects.Email;
 import org.financer.shared.domain.model.value.objects.Name;
+import org.financer.shared.path.PathBuilder;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -59,7 +60,7 @@ public class ServerRequestTest {
                                         .setName(new Name("test", "Name"))
                                         .setId(1)
                                         .toJson());
-                    case "/api/users/unauthorized":
+                    case "/api/categories":
                         return new MockResponse()
                                 .setResponseCode(403)
                                 .setBody(new RestErrorMessage()
@@ -86,7 +87,7 @@ public class ServerRequestTest {
     @Test
     public void testCreateServerRequestSuccess() {
         ServerRequest<User> serverRequest = new ServerRequest<>(new RequestConfig(
-                new HttpMethod.Get(), "/users"), User.class, result -> {
+               PathBuilder.Get().users().build()), User.class, result -> {
             assertThat(result).isNotNull();
             assertThat(result.getEmail()).isEqualTo(new Email("test@test.com"));
         });
@@ -96,7 +97,7 @@ public class ServerRequestTest {
     @Test
     public void testCreateServerRequestUnauthorized() {
         ServerRequest<User> serverRequest = new ServerRequest<>(new RequestConfig(
-                new HttpMethod.Get(), "/users/unauthorized"), User.class, new RestCallback<>() {
+                PathBuilder.Get().categories().build()), User.class, new RestCallback<>() {
             @Override
             public void onSuccess(User result) {
 

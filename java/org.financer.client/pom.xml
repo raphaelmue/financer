@@ -7,7 +7,7 @@
     <parent>
         <groupId>org.financer</groupId>
         <artifactId>financer</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>${revision}</version>
     </parent>
 
     <artifactId>org.financer.client</artifactId>

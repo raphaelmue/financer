@@ -13,7 +13,6 @@ module org.financer.server {
     requires java.sql;
     requires java.activation;
     requires java.validation;
-    requires java.jwt;
     requires commons.email;
 
     //spring
@@ -39,7 +38,6 @@ module org.financer.server {
     requires org.apache.tomcat.embed.core;
     requires modelmapper;
     requires jdk.unsupported;
-    requires com.google.gson;
 
     // springdoc
     requires springdoc.openapi.common;

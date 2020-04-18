@@ -181,7 +181,7 @@ public class UserDomainServiceTest extends SpringTest {
 
         assertThat(userToAssert.getName()).isEqualTo(name);
         assertThat(userToAssert.getBirthDate()).isEqualTo(birthDate);
-        assertThat(userToAssert.getGender().getGender()).isEqualTo(gender);
+        assertThat(userToAssert.getGender()).isEqualTo(gender);
     }
 
     @Test
