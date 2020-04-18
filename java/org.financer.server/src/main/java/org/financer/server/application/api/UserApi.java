@@ -2,11 +2,16 @@ package org.financer.server.application.api;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.SecuritySchemeIn;
+import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.financer.server.application.configuration.AuthenticationTokenFilter;
 import org.financer.shared.domain.model.api.category.CategoryDTO;
 import org.financer.shared.domain.model.api.transaction.fixed.FixedTransactionDTO;
 import org.financer.shared.domain.model.api.transaction.variable.VariableTransactionDTO;
@@ -15,6 +20,7 @@ import org.financer.shared.domain.model.api.user.UpdatePersonalInformationDTO;
 import org.financer.shared.domain.model.api.user.UpdateSettingsDTO;
 import org.financer.shared.domain.model.api.user.UserDTO;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -24,6 +30,15 @@ import javax.validation.constraints.NotNull;
 import java.net.URISyntaxException;
 import java.util.List;
 
+import static org.financer.server.application.configuration.AuthenticationTokenFilter.*;
+
+@SecurityScheme(
+        name = "TokenAuth",
+        scheme = "bearer",
+        bearerFormat = "Token",
+        type = SecuritySchemeType.HTTP,
+        in = SecuritySchemeIn.HEADER,
+        description = "Authentication requires a token that is generated when login or register.")
 @Tag(name = "user", description = "Operations with users")
 public interface UserApi {
 
@@ -63,7 +78,8 @@ public interface UserApi {
      */
     @Operation(
             summary = "Deletes a token",
-            tags = {"user"})
+            tags = {"user"},
+            security = @SecurityRequirement(name = "TokenAuth"))
     @ApiResponse(
             responseCode = "200",
             description = "Token was successfully deleted")
@@ -110,7 +126,8 @@ public interface UserApi {
      */
     @Operation(
             summary = "Updates the users password",
-            tags = {"user"})
+            tags = {"user"},
+            security = @SecurityRequirement(name = "TokenAuth"))
     @ApiResponse(
             responseCode = "200",
             description = "Users password was successfully updated",
@@ -136,7 +153,8 @@ public interface UserApi {
      */
     @Operation(
             summary = "Updates the users personal information",
-            tags = {"user"})
+            tags = {"user"},
+            security = @SecurityRequirement(name = "TokenAuth"))
     @ApiResponse(
             responseCode = "200",
             description = "Users personal information were successfully updated",
@@ -163,7 +181,8 @@ public interface UserApi {
      */
     @Operation(
             summary = "Updates the users settings",
-            tags = {"user"})
+            tags = {"user"},
+            security = @SecurityRequirement(name = "TokenAuth"))
     @ApiResponse(
             responseCode = "200",
             description = "Users settings were successfully updated",
@@ -189,7 +208,8 @@ public interface UserApi {
      */
     @Operation(
             summary = "Verifies a users email address",
-            tags = {"user"})
+            tags = {"user"},
+            security = @SecurityRequirement(name = "TokenAuth"))
     @ApiResponse(
             responseCode = "200",
             description = "User is successfully verified")
@@ -204,6 +224,28 @@ public interface UserApi {
             @RequestParam("verificationToken") @NotNull @Valid String verificationToken) throws URISyntaxException;
 
     /**
+     * Fetches the users fixed transactions.
+     *
+     * @param userId user id
+     * @return list of transactions
+     */
+    @Operation(
+            summary = "Fetches all fixed transactions of the user",
+            tags = {"user"},
+            security = @SecurityRequirement(name = "TokenAuth"))
+    @ApiResponse(
+            responseCode = "200",
+            description = "Users fixed transactions were successfully fetched",
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = FixedTransactionDTO.class))))
+    @GetMapping(
+            value = "/users/{userId}/fixedTransactions",
+            produces = {"application/json"},
+            headers = "Accept=application/json")
+    ResponseEntity<List<FixedTransactionDTO>> getUsersFixedTransactions(
+            @Parameter(description = "ID of the user whose fixed transactions will be fetched", required = true)
+            @PathVariable("userId") @NotBlank @Min(1) Long userId);
+
+    /**
      * Fetches the users categories.
      *
      * @param userId user id
@@ -211,7 +253,8 @@ public interface UserApi {
      */
     @Operation(
             summary = "Fetches all categories of the user",
-            tags = {"user"})
+            tags = {"user"},
+            security = @SecurityRequirement(name = "TokenAuth"))
     @ApiResponse(
             responseCode = "200",
             description = "Users categories were successfully fetched",
@@ -233,7 +276,8 @@ public interface UserApi {
      */
     @Operation(
             summary = "Fetches all variable transactions of the user",
-            tags = {"user"})
+            tags = {"user"},
+            security = @SecurityRequirement(name = "TokenAuth"))
     @ApiResponse(
             responseCode = "200",
             description = "Users variable transactions were successfully fetched",
@@ -247,25 +291,4 @@ public interface UserApi {
             @PathVariable("userId") @NotBlank @Min(1) Long userId,
             @Parameter(description = "Number of the page (page size is 20)")
             @Valid @RequestParam(value = "page", defaultValue = "0") int page);
-
-    /**
-     * Fetches the users fixed transactions.
-     *
-     * @param userId user id
-     * @return list of transactions
-     */
-    @Operation(
-            summary = "Fetches all fixed transactions of the user",
-            tags = {"user"})
-    @ApiResponse(
-            responseCode = "200",
-            description = "Users fixed transactions were successfully fetched",
-            content = @Content(array = @ArraySchema(schema = @Schema(implementation = FixedTransactionDTO.class))))
-    @GetMapping(
-            value = "/users/{userId}/fixedTransactions",
-            produces = {"application/json"},
-            headers = "Accept=application/json")
-    ResponseEntity<List<FixedTransactionDTO>> getUsersFixedTransactions(
-            @Parameter(description = "ID of the user whose fixed transactions will be fetched", required = true)
-            @PathVariable("userId") @NotBlank @Min(1) Long userId);
 }

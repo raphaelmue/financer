@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -43,6 +44,14 @@ public class RestExceptionHandler {
                 .collect(Collectors.toList());
         logger.error(exception.getMessage(), exception);
         return new ResponseEntity<>(new RestErrorMessage(HttpStatus.BAD_REQUEST, request.getRequestURI(), errorMessages), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<RestErrorMessage> handleAccessDeniedException(AccessDeniedException exception, Locale locale) {
+        String errorMessage = messageSource.getMessage("exception.unauthorizedToken", null, locale);
+        logger.error(exception.getMessage(), exception);
+        return new ResponseEntity<>(new RestErrorMessage(HttpStatus.UNAUTHORIZED, request.getRequestURI(), errorMessage),
+                HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(RestException.class)

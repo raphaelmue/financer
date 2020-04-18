@@ -6,6 +6,25 @@ import org.financer.shared.domain.model.api.DataTransferObject;
 
 public interface HttpMethod {
 
+    static HttpMethod fromString(String httpMethod) {
+        switch (httpMethod) {
+            case "GET":
+                return new Get();
+            case "POST":
+                return new Post();
+            case "PUT":
+                return new Put();
+            case "DELETE":
+                return new Delete();
+            case "PATCH":
+                return new Patch();
+            case "OPTIONS":
+                return new Options();
+            default:
+                throw new IllegalArgumentException("Illegal Http Method");
+        }
+    }
+
     default RequestBody requestBody(DataTransferObject body) {
         return RequestBody.create(body.toJson(), ServerRequest.MEDIA_TYPE_JSON);
     }

@@ -5,15 +5,20 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.financer.server.application.configuration.AuthenticationTokenFilter;
 import org.financer.shared.domain.model.api.transaction.fixed.*;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+
+import static org.financer.server.application.configuration.AuthenticationTokenFilter.*;
 
 @Tag(name = "fixed-transaction", description = "Operations with fixed transactions")
 public interface FixedTransactionApi {
@@ -26,7 +31,8 @@ public interface FixedTransactionApi {
      */
     @Operation(
             summary = "Creates a new fixed transaction",
-            tags = {"fixed-transaction", "transaction"})
+            tags = {"fixed-transaction", "transaction"},
+            security = @SecurityRequirement(name = "TokenAuth"))
     @ApiResponse(
             responseCode = "201",
             description = "Fixed transaction was successfully created.",
@@ -52,7 +58,8 @@ public interface FixedTransactionApi {
      */
     @Operation(
             summary = "Updates a fixed transaction",
-            tags = {"fixed-transaction", "transaction"})
+            tags = {"fixed-transaction", "transaction"},
+            security = @SecurityRequirement(name = "TokenAuth"))
     @ApiResponse(
             responseCode = "200",
             description = "Fixed transaction was successfully updated.",
@@ -81,7 +88,8 @@ public interface FixedTransactionApi {
      */
     @Operation(
             summary = "Deletes a fixed transaction",
-            tags = {"fixed-transaction", "transaction"})
+            tags = {"fixed-transaction", "transaction"},
+            security = @SecurityRequirement(name = "TokenAuth"))
     @ApiResponse(
             responseCode = "200",
             description = "Fixed transaction was successfully deleted.")
@@ -102,7 +110,8 @@ public interface FixedTransactionApi {
      */
     @Operation(
             summary = "Creates a new fixed transaction amount",
-            tags = {"fixed-transaction", "transaction"})
+            tags = {"fixed-transaction", "transaction"},
+            security = @SecurityRequirement(name = "TokenAuth"))
     @ApiResponse(
             responseCode = "201",
             description = "Fixed transaction amount was successfully created.",
@@ -130,7 +139,8 @@ public interface FixedTransactionApi {
      */
     @Operation(
             summary = "Updates a fixed transaction amount",
-            tags = {"fixed-transaction", "transaction"})
+            tags = {"fixed-transaction", "transaction"},
+            security = @SecurityRequirement(name = "TokenAuth"))
     @ApiResponse(
             responseCode = "200",
             description = "Fixed transaction amount was successfully updated.",
@@ -159,7 +169,8 @@ public interface FixedTransactionApi {
      */
     @Operation(
             summary = "Deletes a fixed transaction amount",
-            tags = {"fixed-transaction", "transaction"})
+            tags = {"fixed-transaction", "transaction"},
+            security = @SecurityRequirement(name = "TokenAuth"))
     @ApiResponse(
             responseCode = "200",
             description = "Fixed transaction amount was successfully deleted.")

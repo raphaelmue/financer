@@ -30,10 +30,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable().authorizeRequests()
-                .antMatchers(HttpMethod.GET, servletContext.getContextPath() + "/user").permitAll()
-                .antMatchers(HttpMethod.PUT, servletContext.getContextPath() + "/user").permitAll()
-                .antMatchers(servletContext.getContextPath() + "/**").hasRole(AuthenticationTokenFilter.REGISTERED_USER_ROLE)
-                .and()
+                .antMatchers("/").permitAll().and()
                 .addFilterBefore(authenticationTokenFilter, UsernamePasswordAuthenticationFilter.class);
 
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);

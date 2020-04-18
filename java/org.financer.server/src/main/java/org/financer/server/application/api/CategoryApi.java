@@ -5,17 +5,21 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.financer.shared.domain.model.api.category.CategoryDTO;
 import org.financer.shared.domain.model.api.category.CreateCategoryDTO;
 import org.financer.shared.domain.model.api.category.UpdateCategoryDTO;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+
+import static org.financer.server.application.configuration.AuthenticationTokenFilter.REGISTERED_USER_ROLE;
 
 @Tag(name = "category", description = "Operations with categories")
 public interface CategoryApi {
@@ -28,7 +32,8 @@ public interface CategoryApi {
      */
     @Operation(
             summary = "Creates a new category",
-            tags = {"category"})
+            tags = {"category"},
+            security = @SecurityRequirement(name = "TokenAuth"))
     @ApiResponse(
             responseCode = "201",
             description = "Category was successfully created.",
@@ -38,8 +43,10 @@ public interface CategoryApi {
             produces = {"application/json"},
             headers = "Accept=application/json")
     ResponseEntity<CategoryDTO> createCategory(
-            @Parameter(description = "Category to be created", required = true,
-                    schema = @Schema(implementation = CreateCategoryDTO.class))
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Category to be created",
+                    required = true,
+                    content = @Content(schema = @Schema(implementation = CreateCategoryDTO.class)))
             @RequestBody @NotNull @Valid CreateCategoryDTO category);
 
     /**
@@ -51,7 +58,8 @@ public interface CategoryApi {
      */
     @Operation(
             summary = "Updates a category",
-            tags = {"category"})
+            tags = {"category"},
+            security = @SecurityRequirement(name = "TokenAuth"))
     @ApiResponse(
             responseCode = "200",
             description = "Category was successfully updated.",
@@ -66,8 +74,10 @@ public interface CategoryApi {
     ResponseEntity<CategoryDTO> updateCategory(
             @Parameter(description = "ID of the category that will be updated", required = true)
             @PathVariable("categoryId") @NotBlank @Min(1) Long categoryId,
-            @Parameter(description = "Category to be updated", required = true,
-                    schema = @Schema(implementation = UpdateCategoryDTO.class))
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Category to be updated",
+                    required = true,
+                    content = @Content(schema = @Schema(implementation = CreateCategoryDTO.class)))
             @RequestBody @NotNull @Valid UpdateCategoryDTO category);
 
     /**
@@ -78,7 +88,8 @@ public interface CategoryApi {
      */
     @Operation(
             summary = "Deletes a category",
-            tags = {"category"})
+            tags = {"category"},
+            security = @SecurityRequirement(name = "TokenAuth"))
     @ApiResponse(
             responseCode = "200",
             description = "Category was successfully deleted.")

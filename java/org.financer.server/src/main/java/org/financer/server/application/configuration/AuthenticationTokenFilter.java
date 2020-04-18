@@ -5,6 +5,8 @@ import org.financer.server.application.api.error.RestErrorMessage;
 import org.financer.server.domain.model.user.User;
 import org.financer.server.domain.service.UserDomainService;
 import org.financer.shared.domain.model.value.objects.TokenString;
+import org.financer.shared.path.Path;
+import org.financer.shared.path.PathBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
@@ -14,6 +16,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
@@ -23,6 +26,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,6 +37,12 @@ public class AuthenticationTokenFilter extends OncePerRequestFilter {
     public static final String HEADER_STRING = "Authorization";
 
     public static final String REGISTERED_USER_ROLE = "REGISTERED_USER";
+
+    private static final List<Path> paths = Arrays.asList(
+            PathBuilder.Get().users().build(),
+            PathBuilder.Put().users().build(),
+            PathBuilder.Get().apiDocumentation().any().build(),
+            PathBuilder.Get().apiDocumentationUI().any().build());
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -65,8 +75,14 @@ public class AuthenticationTokenFilter extends OncePerRequestFilter {
                 return;
             }
         }
-        //sendErrorResponse(request, response, tokenString);
-        chain.doFilter(request, response);
+        sendErrorResponse(request, response, tokenString);
+    }
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        return paths.stream().anyMatch(path ->
+                request.getMethod().equals(path.getMethod())
+                        && new AntPathMatcher().match(path.getPath(), request.getServletPath()));
     }
 
     private void sendErrorResponse(HttpServletRequest request, HttpServletResponse response, String tokenString) {

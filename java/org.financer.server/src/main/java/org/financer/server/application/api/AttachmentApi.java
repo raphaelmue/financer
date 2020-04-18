@@ -5,17 +5,22 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.financer.server.application.configuration.AuthenticationTokenFilter;
 import org.financer.shared.domain.model.api.transaction.AttachmentDTO;
 import org.financer.shared.domain.model.api.transaction.AttachmentWithContentDTO;
 import org.financer.shared.domain.model.api.transaction.CreateAttachmentDTO;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+
+import static org.financer.server.application.configuration.AuthenticationTokenFilter.*;
 
 @Tag(name = "attachment", description = "Operations with attachments")
 public interface AttachmentApi {
@@ -28,7 +33,8 @@ public interface AttachmentApi {
      */
     @Operation(
             summary = "Creates a new attachment",
-            tags = {"transaction", "attachment"})
+            tags = {"transaction", "attachment"},
+            security = @SecurityRequirement(name = "TokenAuth"))
     @ApiResponse(
             responseCode = "201",
             description = "Attachment was successfully created.",
@@ -54,7 +60,8 @@ public interface AttachmentApi {
      */
     @Operation(
             summary = "Fetches an attachment with content",
-            tags = {"transaction", "attachment"})
+            tags = {"transaction", "attachment"},
+            security = @SecurityRequirement(name = "TokenAuth"))
     @ApiResponse(
             responseCode = "200",
             description = "successful operation",
@@ -82,7 +89,8 @@ public interface AttachmentApi {
      */
     @Operation(
             summary = "Fetches an attachment with content",
-            tags = {"transaction", "attachment"})
+            tags = {"transaction", "attachment"},
+            security = @SecurityRequirement(name = "TokenAuth"))
     @ApiResponse(
             responseCode = "200",
             description = "Attachment was successfully deleted")

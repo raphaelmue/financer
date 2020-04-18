@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.financer.shared.domain.model.api.transaction.variable.*;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +27,8 @@ public interface VariableTransactionApi {
      */
     @Operation(
             summary = "Creates a new variable transaction",
-            tags = {"user"})
+            tags = {"variable-transaction", "transaction"},
+            security = @SecurityRequirement(name = "TokenAuth"))
     @ApiResponse(
             responseCode = "201",
             description = "Variable transaction was successfully created.",
@@ -51,7 +53,8 @@ public interface VariableTransactionApi {
      */
     @Operation(
             summary = "Updates a variable transaction",
-            tags = {"user"})
+            tags = {"variable-transaction", "transaction"},
+            security = @SecurityRequirement(name = "TokenAuth"))
     @ApiResponse(
             responseCode = "200",
             description = "Variable transaction was successfully updated.",
@@ -77,7 +80,8 @@ public interface VariableTransactionApi {
      */
     @Operation(
             summary = "Deletes a variable transaction",
-            tags = {"user"})
+            tags = {"variable-transaction", "transaction"},
+            security = @SecurityRequirement(name = "TokenAuth"))
     @ApiResponse(
             responseCode = "200",
             description = "Variable transaction was successfully deleted.")
@@ -98,7 +102,8 @@ public interface VariableTransactionApi {
      */
     @Operation(
             summary = "Creates a new product",
-            tags = {"user"})
+            tags = {"variable-transaction", "transaction"},
+            security = @SecurityRequirement(name = "TokenAuth"))
     @ApiResponse(
             responseCode = "201",
             description = "Product was successfully created.",
@@ -125,7 +130,8 @@ public interface VariableTransactionApi {
      */
     @Operation(
             summary = "Deletes a product",
-            tags = {"user"})
+            tags = {"variable-transaction", "transaction"},
+            security = @SecurityRequirement(name = "TokenAuth"))
     @ApiResponse(
             responseCode = "200",
             description = "Product was successfully deleted.")

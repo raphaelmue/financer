@@ -31,6 +31,7 @@ module org.financer.server {
     requires spring.security.web;
     requires spring.security.core;
     requires spring.security.config;
+    requires spring.core;
     requires slf4j.api;
     requires net.bytebuddy;
     requires com.fasterxml.classmate;

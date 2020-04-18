@@ -1,7 +1,6 @@
 package org.financer.client.domain.api;
 
 import org.financer.client.connection.*;
-import org.financer.client.domain.api.path.PathBuilder;
 import org.financer.client.domain.model.category.Category;
 import org.financer.client.domain.model.transaction.FixedTransaction;
 import org.financer.client.domain.model.transaction.FixedTransactionAmount;
@@ -22,6 +21,8 @@ import org.financer.shared.domain.model.api.user.RegisterUserDTO;
 import org.financer.shared.domain.model.api.user.UpdatePersonalInformationDTO;
 import org.financer.shared.domain.model.api.user.UpdateSettingsDTO;
 import org.financer.shared.domain.model.value.objects.SettingPair;
+import org.financer.shared.path.Path;
+import org.financer.shared.path.PathBuilder;
 import org.financer.util.concurrency.FinancerExecutor;
 import org.financer.util.mapping.ModelMapperUtils;
 
@@ -46,8 +47,7 @@ public class RestApiImpl implements RestApi {
     public ServerRequestHandler createCategory(Category category, RestCallback<Category> callback) {
         return new ServerRequestHandler(this.executor, new ServerRequest<>(
                 new RequestConfig(
-                        new HttpMethod.Put(),
-                        PathBuilder.start().categories().categoryId(category.getId()).build(),
+                        PathBuilder.Put().categories().categoryId(category.getId()).build(),
                         ModelMapperUtils.map(category, CreateCategoryDTO.class)),
                 Category.class,
                 callback));
@@ -57,8 +57,7 @@ public class RestApiImpl implements RestApi {
     public ServerRequestHandler updateCategory(Category category, RestCallback<Category> callback) {
         return new ServerRequestHandler(this.executor, new ServerRequest<>(
                 new RequestConfig(
-                        new HttpMethod.Post(),
-                        PathBuilder.start().categories().categoryId(category.getId()).build(),
+                        PathBuilder.Post().categories().categoryId(category.getId()).build(),
                         ModelMapperUtils.map(category, UpdateCategoryDTO.class)),
                 Category.class,
                 callback));
@@ -66,15 +65,14 @@ public class RestApiImpl implements RestApi {
 
     @Override
     public ServerRequestHandler deleteCategory(Long categoryId, RestCallback<Void> callback) {
-        return delete(PathBuilder.start().categories().categoryId(categoryId).build(), callback);
+        return delete(PathBuilder.Delete().categories().categoryId(categoryId).build(), callback);
     }
 
     @Override
     public ServerRequestHandler createFixedTransaction(FixedTransaction fixedTransaction, RestCallback<FixedTransaction> callback) {
         return new ServerRequestHandler(this.executor, new ServerRequest<>(
                 new RequestConfig(
-                        new HttpMethod.Put(),
-                        PathBuilder.start().fixedTransactions().build(),
+                        PathBuilder.Put().fixedTransactions().build(),
                         ModelMapperUtils.map(fixedTransaction, CreateFixedTransactionDTO.class)),
                 callback));
     }
@@ -84,8 +82,7 @@ public class RestApiImpl implements RestApi {
                                                        RestCallback<FixedTransaction> callback) {
         return new ServerRequestHandler(this.executor, new ServerRequest<>(
                 new RequestConfig(
-                        new HttpMethod.Post(),
-                        PathBuilder.start().fixedTransactions().build(),
+                        PathBuilder.Post().fixedTransactions().build(),
                         ModelMapperUtils.map(fixedTransaction, UpdateFixedTransactionDTO.class)),
                 callback));
     }
@@ -100,8 +97,7 @@ public class RestApiImpl implements RestApi {
                                                         RestCallback<FixedTransactionAmount> callback) {
         return new ServerRequestHandler(this.executor, new ServerRequest<>(
                 new RequestConfig(
-                        new HttpMethod.Put(),
-                        PathBuilder.start().fixedTransactions().fixedTransactionId(transactionId).transactionAmounts().build(),
+                        PathBuilder.Put().fixedTransactions().fixedTransactionId(transactionId).transactionAmounts().build(),
                         ModelMapperUtils.map(transactionAmount, CreateFixedTransactionAmountDTO.class)),
                 callback));
     }
@@ -111,8 +107,7 @@ public class RestApiImpl implements RestApi {
                                                         RestCallback<FixedTransactionAmount> callback) {
         return new ServerRequestHandler(this.executor, new ServerRequest<>(
                 new RequestConfig(
-                        new HttpMethod.Put(),
-                        PathBuilder.start().fixedTransactions().fixedTransactionId(transactionId).
+                        PathBuilder.Put().fixedTransactions().fixedTransactionId(transactionId).
                                 transactionAmounts().transactionAmountId(transactionAmount.getId()).build(),
                         ModelMapperUtils.map(transactionAmount, UpdateFixedTransactionAmountDTO.class)),
                 callback));
@@ -128,8 +123,7 @@ public class RestApiImpl implements RestApi {
     public ServerRequestHandler loginUser(String email, String password, RestCallback<User> callback) {
         return new ServerRequestHandler(this.executor, new ServerRequest<>(
                 new RequestConfig(
-                        new HttpMethod.Get(),
-                        PathBuilder.start().users().build(),
+                        PathBuilder.Get().users().build(),
                         Map.of("email", email,
                                 "password", password)),
                 callback));
@@ -144,8 +138,7 @@ public class RestApiImpl implements RestApi {
     public ServerRequestHandler registerUser(User user, RestCallback<User> callback) {
         return new ServerRequestHandler(this.executor, new ServerRequest<>(
                 new RequestConfig(
-                        new HttpMethod.Put(),
-                        PathBuilder.start().users().build(),
+                        PathBuilder.Put().users().build(),
                         ModelMapperUtils.map(user, RegisterUserDTO.class)),
                 callback));
     }
@@ -155,8 +148,7 @@ public class RestApiImpl implements RestApi {
                                                     RestCallback<User> callback) {
         return new ServerRequestHandler(this.executor, new ServerRequest<>(
                 new RequestConfig(
-                        new HttpMethod.Post(),
-                        PathBuilder.start().users().userId(userId).password().build(),
+                        PathBuilder.Post().users().userId(userId).password().build(),
                         Map.of("oldPassword", oldPassword,
                                 "newPassword", newPassword)),
                 callback));
@@ -166,8 +158,7 @@ public class RestApiImpl implements RestApi {
     public ServerRequestHandler updateUsersPersonalInformation(User user, RestCallback<User> callback) {
         return new ServerRequestHandler(this.executor, new ServerRequest<>(
                 new RequestConfig(
-                        new HttpMethod.Put(),
-                        PathBuilder.start().users().userId(user.getId()).personalInformation().build(),
+                        PathBuilder.Put().users().userId(user.getId()).personalInformation().build(),
                         ModelMapperUtils.map(user, UpdatePersonalInformationDTO.class)),
                 callback));
     }
@@ -179,8 +170,7 @@ public class RestApiImpl implements RestApi {
         settings.forEach((property, setting) -> settingsMap.put(property, setting.getPair().getValue()));
         return new ServerRequestHandler(this.executor, new ServerRequest<>(
                 new RequestConfig(
-                        new HttpMethod.Post(),
-                        PathBuilder.start().users().userId(userId).password().build(),
+                        PathBuilder.Post().users().userId(userId).password().build(),
                         new UpdateSettingsDTO()
                                 .setSettings(settingsMap)),
                 callback));
@@ -190,8 +180,7 @@ public class RestApiImpl implements RestApi {
     public ServerRequestHandler getUsersCategories(Long userId, RestCallback<List<Category>> callback) {
         return new ServerRequestHandler(this.executor, new ServerRequest<>(
                 new RequestConfig(
-                        new HttpMethod.Get(),
-                        PathBuilder.start().users().userId(userId).categories().build()),
+                        PathBuilder.Get().users().userId(userId).categories().build()),
                 callback));
     }
 
@@ -199,8 +188,7 @@ public class RestApiImpl implements RestApi {
     public ServerRequestHandler getUsersVariableTransactions(Long userId, int page, RestCallback<List<VariableTransaction>> callback) {
         return new ServerRequestHandler(this.executor, new ServerRequest<>(
                 new RequestConfig(
-                        new HttpMethod.Get(),
-                        PathBuilder.start().users().userId(userId).variableTransactions().build()),
+                        PathBuilder.Get().users().userId(userId).variableTransactions().build()),
                 callback));
     }
 
@@ -208,8 +196,7 @@ public class RestApiImpl implements RestApi {
     public ServerRequestHandler getUsersFixedTransactions(Long userId, RestCallback<List<FixedTransaction>> callback) {
         return new ServerRequestHandler(this.executor, new ServerRequest<>(
                 new RequestConfig(
-                        new HttpMethod.Get(),
-                        PathBuilder.start().users().userId(userId).fixedTransactions().build()),
+                        PathBuilder.Get().users().userId(userId).fixedTransactions().build()),
                 callback));
     }
 
@@ -217,8 +204,7 @@ public class RestApiImpl implements RestApi {
     public ServerRequestHandler createVariableTransaction(VariableTransaction variableTransaction, RestCallback<VariableTransaction> callback) {
         return new ServerRequestHandler(this.executor, new ServerRequest<>(
                 new RequestConfig(
-                        new HttpMethod.Put(),
-                        PathBuilder.start().variableTransactions().build(),
+                        PathBuilder.Put().variableTransactions().build(),
                         ModelMapperUtils.map(variableTransaction, CreateVariableTransactionDTO.class)),
                 callback));
     }
@@ -228,8 +214,7 @@ public class RestApiImpl implements RestApi {
                                                           RestCallback<VariableTransaction> callback) {
         return new ServerRequestHandler(this.executor, new ServerRequest<>(
                 new RequestConfig(
-                        new HttpMethod.Post(),
-                        PathBuilder.start().variableTransactions().variableTransactionId(variableTransaction.getId()).build(),
+                        PathBuilder.Post().variableTransactions().variableTransactionId(variableTransaction.getId()).build(),
                         ModelMapperUtils.map(variableTransaction, UpdateVariableTransactionDTO.class)),
                 callback));
     }
@@ -243,8 +228,7 @@ public class RestApiImpl implements RestApi {
     public ServerRequestHandler createProduct(Long transactionId, Product product, RestCallback<Product> callback) {
         return new ServerRequestHandler(this.executor, new ServerRequest<>(
                 new RequestConfig(
-                        new HttpMethod.Put(),
-                        PathBuilder.start().variableTransactions().variableTransactionId(transactionId)
+                        PathBuilder.Put().variableTransactions().variableTransactionId(transactionId)
                                 .products().build(),
                         ModelMapperUtils.map(product, CreateProductDTO.class)),
                 callback));
@@ -252,12 +236,12 @@ public class RestApiImpl implements RestApi {
 
     @Override
     public ServerRequestHandler deleteProduct(Long transactionId, Long productId, RestCallback<Void> callback) {
-        return delete(PathBuilder.start().variableTransactions().variableTransactionId(transactionId)
+        return delete(PathBuilder.Delete().variableTransactions().variableTransactionId(transactionId)
                 .products().productId(productId).build(), callback);
     }
 
-    private ServerRequestHandler delete(String path, RestCallback<Void> callback) {
+    private ServerRequestHandler delete(Path path, RestCallback<Void> callback) {
         return new ServerRequestHandler(this.executor, new ServerRequest<>(
-                new RequestConfig(new HttpMethod.Delete(), path), callback));
+                new RequestConfig(path), callback));
     }
 }

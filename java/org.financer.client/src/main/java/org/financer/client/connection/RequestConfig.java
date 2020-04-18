@@ -1,6 +1,7 @@
 package org.financer.client.connection;
 
 import org.financer.shared.domain.model.api.DataTransferObject;
+import org.financer.shared.path.Path;
 
 import java.util.Collections;
 import java.util.Map;
@@ -12,16 +13,16 @@ public class RequestConfig {
     private final Map<String, String> queryParameters;
     private final DataTransferObject body;
 
-    public RequestConfig(HttpMethod httpMethod, String path) {
-        this(httpMethod, path, Collections.emptyMap());
+    public RequestConfig(Path path) {
+        this(path, Collections.emptyMap());
     }
 
-    public RequestConfig(HttpMethod httpMethod, String path, DataTransferObject body) {
-        this(httpMethod, path, Collections.emptyMap(), body);
+    public RequestConfig(Path path, DataTransferObject body) {
+        this(HttpMethod.fromString(path.getMethod()), path.getPath(), Collections.emptyMap(), body);
     }
 
-    public RequestConfig(HttpMethod httpMethod, String path, Map<String, String> queryParameters) {
-        this(httpMethod, path, queryParameters, new DataTransferObject() {
+    public RequestConfig(Path path, Map<String, String> parameters) {
+        this(HttpMethod.fromString(path.getMethod()), path.getPath(), parameters, new DataTransferObject() {
             @Override
             public String toJson() {
                 return "";

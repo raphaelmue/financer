@@ -1,11 +1,13 @@
-package org.financer.client.domain.api.path;
+package org.financer.shared.path;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class PathBuilder implements PathCreator, PathCreator.UserParameterPath, PathCreator.TokenParameterPath,
         PathCreator.VariableTransactionParameterPath, PathCreator.FixedTransactionParameterPath, PathCreator.CategoryParameterPath,
         PathCreator.ProductParameterPath, PathCreator.TransactionAmountParameterPath,
-        PathCreator.UserPath, PathCreator.FixedTransactionPath, PathCreator.VariableTransactionPath {
+        PathCreator.UserPath, PathCreator.FixedTransactionPath, PathCreator.VariableTransactionPath,
+        Path {
 
     private static final String USERS_ENDPOINT = "/user";
     private static final String TOKENS_ENDPOINT = "/tokens";
@@ -25,15 +27,40 @@ public class PathBuilder implements PathCreator, PathCreator.UserParameterPath, 
     private static final String TRANSACTION_AMOUNT_ID_PARAMETER = "transactionAmountId";
     private static final String PRODUCT_ID_PARAMETER = "productId";
 
-    private String path;
-    private Map<String, String> parameters;
+    private String path = "";
+    private final String httpMethod;
+    private final Map<String, String> parameters = new HashMap<>();
 
-    private PathBuilder() {
-
+    private PathBuilder(String httpMethod) {
+        this.httpMethod = httpMethod;
     }
 
     public static PathCreator start() {
-        return new PathBuilder();
+        return new PathBuilder(null);
+    }
+
+    public static PathCreator Get() {
+        return new PathBuilder("GET");
+    }
+
+    public static PathCreator Post() {
+        return new PathBuilder("POST");
+    }
+
+    public static PathCreator Put() {
+        return new PathBuilder("PUT");
+    }
+
+    public static PathCreator Delete() {
+        return new PathBuilder("DELETE");
+    }
+
+    public static PathCreator Patch() {
+        return new PathBuilder("PATCH");
+    }
+
+    public static PathCreator Options() {
+        return new PathBuilder("OPTIONS");
     }
 
     private String toPathParameter(String parameter) {
@@ -41,16 +68,34 @@ public class PathBuilder implements PathCreator, PathCreator.UserParameterPath, 
     }
 
     private void insertParameters() {
-        for (Map.Entry<String, String> entry : this.parameters.entrySet()) {
-            path = path.replace("{" + entry.getKey() + "}", entry.getValue());
-            this.parameters.remove(entry.getKey());
+        if (!this.parameters.isEmpty()) {
+            for (Map.Entry<String, String> entry : this.parameters.entrySet()) {
+                path = path.replace("{" + entry.getKey() + "}", entry.getValue());
+                this.parameters.remove(entry.getKey());
+            }
         }
     }
 
     @Override
-    public String build() {
-        insertParameters();
+    public String getMethod() {
+        return this.httpMethod;
+    }
+
+    @Override
+    public String getPath() {
         return path;
+    }
+
+    @Override
+    public Path build() {
+        insertParameters();
+        return this;
+    }
+
+    @Override
+    public CompletePath any() {
+        this.path += "/**";
+        return this;
     }
 
     @Override
@@ -195,5 +240,17 @@ public class PathBuilder implements PathCreator, PathCreator.UserParameterPath, 
     public FixedTransactionPath fixedTransactionId(long fixedTransactionId) {
         this.parameters.put(TRANSACTION_ID_PARAMETER, String.valueOf(fixedTransactionId));
         return this.fixedTransactionId();
+    }
+
+    @Override
+    public CompletePath apiDocumentation() {
+        this.path += "/api-docs";
+        return this;
+    }
+
+    @Override
+    public CompletePath apiDocumentationUI() {
+        this.path += "/swagger-ui";
+        return this;
     }
 }
