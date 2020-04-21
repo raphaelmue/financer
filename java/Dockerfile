@@ -14,9 +14,9 @@ COPY org.financer.util ./org.financer.util
 COPY pom.xml .
 
 # Compile source files
-RUN mvn clean install -DskipTests -pl org.financer.server,org.financer.shared,org.financer.util
+RUN mvn clean install -DskipTests -pl !org.financer.client,!org.financer.client.javafx
 
-EXPOSE 3500
+EXPOSE 3000
 
 # Run Financer server
-CMD ["java", "-jar", "org.financer.server/target/financer-server.jar", "--database=prod"]
+CMD ["java", "-jar", "org.financer.server/target/financer-server.jar"]

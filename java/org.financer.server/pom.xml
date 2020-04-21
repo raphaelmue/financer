@@ -30,6 +30,9 @@
                 <configuration>
                     <jvmArguments>--add-modules java.xml.bind</jvmArguments>
                     <mainClass>org.financer.server.application.FinancerServer</mainClass>
+                    <fork>true</fork>
+                    <skip>false</skip>
+                    <finalName>financer-server</finalName>
                 </configuration>
                 <executions>
                     <execution>
@@ -46,7 +49,7 @@
         <dependency>
             <groupId>org.financer</groupId>
             <artifactId>org.financer.shared</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>${revision}</version>
         </dependency>
 
         <dependency>

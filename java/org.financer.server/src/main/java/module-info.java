@@ -1,5 +1,5 @@
 module org.financer.server {
-    requires org.financer.shared;
+    requires transitive org.financer.shared;
     requires org.financer.util;
 
     // hibernate
@@ -44,9 +44,7 @@ module org.financer.server {
     requires springdoc.openapi.ui;
     requires springdoc.openapi.webmvc.core;
     requires io.swagger.v3.oas.models;
-    requires io.swagger.v3.oas.annotations;
     requires io.github.classgraph;
-    requires java.xml.bind;
 
     uses javax.persistence.spi.PersistenceProvider;
 

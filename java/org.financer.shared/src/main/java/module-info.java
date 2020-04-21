@@ -12,6 +12,7 @@ module org.financer.shared {
 
     requires org.financer.util;
     requires org.hibernate.orm.core;
+    requires java.xml.bind;
     requires java.persistence;
     requires commons.validator;
     requires java.validation;

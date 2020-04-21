@@ -47,7 +47,7 @@
         <dependency>
             <groupId>org.financer</groupId>
             <artifactId>org.financer.shared</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>${revision}</version>
         </dependency>
         <dependency>
             <groupId>com.squareup.okhttp3</groupId>
