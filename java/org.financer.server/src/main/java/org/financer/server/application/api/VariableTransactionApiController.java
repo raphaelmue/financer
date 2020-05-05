@@ -24,22 +24,15 @@ import javax.validation.constraints.NotNull;
 @RestController
 public class VariableTransactionApiController implements VariableTransactionApi {
 
-    private final ObjectMapper objectMapper;
-    private final HttpServletRequest request;
-
     private static final Logger logger = LoggerFactory.getLogger(VariableTransactionApiController.class);
 
-    @Autowired
-    private ModelMapper modelMapper;
+    private final ModelMapper modelMapper;
+    private final TransactionDomainService transactionDomainService;
 
     @Autowired
-    private TransactionDomainService transactionDomainService;
-
-
-    @Autowired
-    public VariableTransactionApiController(ObjectMapper objectMapper, HttpServletRequest request) {
-        this.objectMapper = objectMapper;
-        this.request = request;
+    public VariableTransactionApiController(ModelMapper modelMapper, TransactionDomainService transactionDomainService) {
+        this.modelMapper = modelMapper;
+        this.transactionDomainService = transactionDomainService;
     }
 
     @Override

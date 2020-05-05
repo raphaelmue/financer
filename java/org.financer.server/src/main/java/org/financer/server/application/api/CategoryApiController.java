@@ -1,6 +1,5 @@
 package org.financer.server.application.api;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.financer.server.application.service.AuthenticationService;
 import org.financer.server.domain.model.category.Category;
 import org.financer.server.domain.service.CategoryDomainService;
@@ -14,7 +13,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
@@ -23,22 +21,15 @@ import javax.validation.constraints.NotNull;
 @RestController
 public class CategoryApiController implements CategoryApi {
 
-    private final ObjectMapper objectMapper;
-    private final HttpServletRequest request;
+    private final ModelMapper modelMapper;
+    private final AuthenticationService authenticationService;
+    private final CategoryDomainService categoryDomainService;
 
     @Autowired
-    private ModelMapper modelMapper;
-
-    @Autowired
-    private AuthenticationService authenticationService;
-
-    @Autowired
-    private CategoryDomainService categoryDomainService;
-
-    @Autowired
-    public CategoryApiController(ObjectMapper objectMapper, HttpServletRequest request) {
-        this.objectMapper = objectMapper;
-        this.request = request;
+    public CategoryApiController(ModelMapper modelMapper, AuthenticationService authenticationService, CategoryDomainService categoryDomainService) {
+        this.modelMapper = modelMapper;
+        this.authenticationService = authenticationService;
+        this.categoryDomainService = categoryDomainService;
     }
 
     @Override

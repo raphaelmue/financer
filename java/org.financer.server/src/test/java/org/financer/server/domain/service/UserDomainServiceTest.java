@@ -19,8 +19,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.LocalDate;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -43,36 +41,23 @@ public class UserDomainServiceTest extends SpringTest {
     @Autowired
     private UserDomainService userDomainService;
 
-    private static final TokenString tokenString =
-            new TokenString("Z6XCS3tyyBlhPfsv7rMxLgfdyEOlUkv0CWSdbFYHCNX2wLlwpH97lJNP69Bny3XZ");
+    private User user;
+    private Token token;
+    private TokenString tokenString;
 
-    private static final Token token = new Token()
-            .setId(1)
-            .setExpireDate(new ExpireDate())
-            .setIpAddress(new IPAddress("192.168.0.1"))
-            .setToken(tokenString)
-            .setOperatingSystem(new OperatingSystem(OperatingSystem.Values.LINUX));
-
-    private static final VerificationToken verificationToken = new VerificationToken()
-            .setId(1)
-            .setExpireDate(new ExpireDate(LocalDate.now().plusDays(15)))
-            .setToken(tokenString);
-
-    static final User user = new User()
-            .setId(1)
-            .setEmail(new Email("test@test.com"))
-            .setName(new Name("Test", "User"))
-            .setPassword(new HashedPassword("password"))
-            .setTokens(new HashSet<>(Collections.singletonList(token)))
-            .setVerificationToken(verificationToken);
 
     @BeforeEach
     public void setUp() {
+        user = user();
+        token = token();
+        tokenString = tokenString();
+        VerificationToken verificationToken = verificationToken();
+
         token.setUser(user);
         verificationToken.setUser(user);
 
         when(authenticationService.getAuthenticatedUser()).thenReturn(user);
-        when(authenticationService.getUserId()).thenReturn(UserDomainServiceTest.user.getId());
+        when(authenticationService.getUserId()).thenReturn(user.getId());
 
         when(userRepository.save(any(User.class))).thenAnswer(i -> i.getArguments()[0]);
         when(userRepository.findByEmail(user.getEmail())).thenReturn(Optional.of(user));

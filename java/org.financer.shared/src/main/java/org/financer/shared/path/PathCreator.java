@@ -32,6 +32,8 @@ public interface PathCreator extends AnyPath {
         CompletePath fixedTransactions();
 
         CompletePath variableTransactions();
+
+        CompletePath verificationToken();
     }
 
     interface CategoryParameterPath extends CompletePath, AnyPath {

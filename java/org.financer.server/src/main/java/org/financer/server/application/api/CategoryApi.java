@@ -11,15 +11,12 @@ import org.financer.shared.domain.model.api.category.CategoryDTO;
 import org.financer.shared.domain.model.api.category.CreateCategoryDTO;
 import org.financer.shared.domain.model.api.category.UpdateCategoryDTO;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-
-import static org.financer.server.application.configuration.AuthenticationTokenFilter.REGISTERED_USER_ROLE;
 
 @Tag(name = "category", description = "Operations with categories")
 public interface CategoryApi {

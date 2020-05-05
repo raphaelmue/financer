@@ -7,18 +7,14 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.financer.server.application.configuration.AuthenticationTokenFilter;
 import org.financer.shared.domain.model.api.transaction.fixed.*;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-
-import static org.financer.server.application.configuration.AuthenticationTokenFilter.*;
 
 @Tag(name = "fixed-transaction", description = "Operations with fixed transactions")
 public interface FixedTransactionApi {

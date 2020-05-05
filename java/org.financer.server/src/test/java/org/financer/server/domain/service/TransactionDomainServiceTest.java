@@ -7,7 +7,11 @@ import org.financer.server.application.api.error.NotFoundException;
 import org.financer.server.application.api.error.UnauthorizedOperationException;
 import org.financer.server.domain.model.category.Category;
 import org.financer.server.domain.model.transaction.*;
-import org.financer.shared.domain.model.value.objects.*;
+import org.financer.server.domain.model.user.User;
+import org.financer.shared.domain.model.value.objects.Amount;
+import org.financer.shared.domain.model.value.objects.Quantity;
+import org.financer.shared.domain.model.value.objects.TimeRange;
+import org.financer.shared.domain.model.value.objects.ValueDate;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -50,53 +54,18 @@ public class TransactionDomainServiceTest extends SpringTest {
 
     @BeforeEach
     public void setUp() {
-        variableCategory = new Category()
-                .setId(1)
-                .setUser(UserDomainServiceTest.user)
-                .setCategoryClass(new CategoryClass(CategoryClass.Values.VARIABLE_EXPENSES))
-                .setName("Variable Category")
-                .setParent(null);
-        fixedCategory = new Category()
-                .setId(2)
-                .setUser(UserDomainServiceTest.user)
-                .setCategoryClass(new CategoryClass(CategoryClass.Values.FIXED_EXPENSES))
-                .setName("Fixed Category")
-                .setParent(null);
-        product = new Product()
-                .setId(1)
-                .setName("Test Product")
-                .setQuantity(new Quantity(2))
-                .setAmount(new Amount(50));
-        variableTransaction = new VariableTransaction()
-                .setId(1)
-                .setValueDate(new ValueDate())
-                .setCategory(variableCategory)
-                .setDescription("Test Purpose")
-                .setVendor("Test Vendor")
-                .addProduct(product);
-        attachment = new Attachment()
-                .setId(1)
-                .setName("test.pdf")
-                .setTransaction(variableTransaction)
-                .setUploadDate(LocalDate.now());
+        User user = user();
+        variableCategory = variableCategory();
+        fixedCategory = fixedCategory();
+        product = product();
+        variableTransaction = variableTransaction();
+        attachment = attachment();
         product.setTransaction(variableTransaction);
-        fixedTransactionAmount = new FixedTransactionAmount()
-                .setId(1)
-                .setAmount(new Amount(50))
-                .setValueDate(new ValueDate());
-        fixedTransaction = new FixedTransaction()
-                .setId(2)
-                .setCategory(fixedCategory)
-                .setTimeRange(new TimeRange())
-                .setIsVariable(false)
-                .setAmount(new Amount(50.0))
-                .setDay(1)
-                .setDescription("Test Purpose")
-                .setVendor("Test Vendor")
-                .addFixedTransactionAmount(fixedTransactionAmount);
+        fixedTransactionAmount = fixedTransactionAmount();
+        fixedTransaction = fixedTransaction();
         fixedTransactionAmount.setFixedTransaction(fixedTransaction);
 
-        when(authenticationService.getUserId()).thenReturn(UserDomainServiceTest.user.getId());
+        when(authenticationService.getUserId()).thenReturn(user.getId());
 
         when(categoryRepository.existsById(any())).thenReturn(false);
         when(categoryRepository.existsById(1L)).thenReturn(true);
@@ -319,8 +288,7 @@ public class TransactionDomainServiceTest extends SpringTest {
                 fixedTransactionAmount.getId(), new Amount(20), valueDate);
         assertThat(transactionAmount.getFixedTransaction()).isEqualToComparingFieldByField(fixedTransaction);
         assertThat(transactionAmount.getFixedTransaction().getTransactionAmounts()).isNotEmpty().first().isEqualTo(transactionAmount);
-        fixedTransaction.setIsVariable(true);
-        assertThat(fixedTransaction.getAmount(valueDate).getAmount()).isEqualTo(20);
+        assertThat(transactionAmount.getAmount(valueDate).getAmount()).isEqualTo(20);
     }
 
     @Test

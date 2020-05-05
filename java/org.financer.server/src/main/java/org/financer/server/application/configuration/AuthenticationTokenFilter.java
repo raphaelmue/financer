@@ -30,10 +30,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-@Component
 public class AuthenticationTokenFilter extends OncePerRequestFilter {
 
-    private static final String TOKEN_PREFIX = "Bearer ";
+    public static final String TOKEN_PREFIX = "Bearer ";
     public static final String HEADER_STRING = "Authorization";
 
     public static final String REGISTERED_USER_ROLE = "REGISTERED_USER";
@@ -41,6 +40,7 @@ public class AuthenticationTokenFilter extends OncePerRequestFilter {
     private static final List<Path> paths = Arrays.asList(
             PathBuilder.Get().users().build(),
             PathBuilder.Put().users().build(),
+            PathBuilder.Get().users().userId().verificationToken().build(),
             PathBuilder.Get().apiDocumentation().any().build(),
             PathBuilder.Get().apiDocumentationUI().any().build());
 
@@ -89,7 +89,7 @@ public class AuthenticationTokenFilter extends OncePerRequestFilter {
         String errorMessage = messageSource.getMessage("exception.unauthorizedToken", new String[]{tokenString}, request.getLocale());
         logger.error(String.format("Token (%s) is invalid", tokenString));
 
-        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        response.setStatus(HttpServletResponse.SC_FORBIDDEN);
         response.setContentType("application/json");
         try (PrintWriter writer = response.getWriter()) {
             writer.write(objectMapper.writeValueAsString(new RestErrorMessage(HttpStatus.FORBIDDEN, request.getRequestURI(), errorMessage)));

@@ -9,8 +9,9 @@ public class PathBuilder implements PathCreator, PathCreator.UserParameterPath, 
         PathCreator.UserPath, PathCreator.FixedTransactionPath, PathCreator.VariableTransactionPath,
         Path {
 
-    private static final String USERS_ENDPOINT = "/user";
+    private static final String USERS_ENDPOINT = "/users";
     private static final String TOKENS_ENDPOINT = "/tokens";
+    private static final String VERIFICATION_TOKEN_ENDPOINT = "/verificationToken";
     private static final String CATEGORIES_ENDPOINT = "/categories";
     private static final String FIXED_TRANSACTIONS_ENDPOINT = "/fixedTransactions";
     private static final String TRANSACTION_AMOUNTS_ENDPOINT = "/transactionAmounts";
@@ -71,7 +72,6 @@ public class PathBuilder implements PathCreator, PathCreator.UserParameterPath, 
         if (!this.parameters.isEmpty()) {
             for (Map.Entry<String, String> entry : this.parameters.entrySet()) {
                 path = path.replace("{" + entry.getKey() + "}", entry.getValue());
-                this.parameters.remove(entry.getKey());
             }
         }
     }
@@ -125,6 +125,12 @@ public class PathBuilder implements PathCreator, PathCreator.UserParameterPath, 
     @Override
     public TokenParameterPath tokens() {
         this.path += TOKENS_ENDPOINT;
+        return this;
+    }
+
+    @Override
+    public CompletePath verificationToken() {
+        this.path += VERIFICATION_TOKEN_ENDPOINT;
         return this;
     }
 

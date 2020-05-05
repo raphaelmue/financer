@@ -42,22 +42,13 @@ public class CategoryDomainServiceTest extends SpringTest {
     private CategoryDomainService categoryDomainService;
 
     private Category category;
-
     private Category parent;
 
     @BeforeEach
     public void setUp() {
-        category = new Category()
-                .setId(1)
-                .setCategoryClass(new CategoryClass(CategoryClass.Values.VARIABLE_EXPENSES))
-                .setName("Test Category")
-                .setUser(UserDomainServiceTest.user);
+        category = variableCategory();
 
-        parent = new Category()
-                .setId(2)
-                .setCategoryClass(new CategoryClass(CategoryClass.Values.VARIABLE_EXPENSES))
-                .setName("Parent Category")
-                .setUser(UserDomainServiceTest.user);
+        parent = variableCategoryParent();
 
         when(categoryRepository.findById(1L)).thenReturn(Optional.of(category));
         when(categoryRepository.findById(2L)).thenReturn(Optional.of(parent));

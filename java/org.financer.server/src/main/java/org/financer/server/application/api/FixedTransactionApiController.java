@@ -1,6 +1,5 @@
 package org.financer.server.application.api;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.financer.server.application.api.error.NotFoundException;
 import org.financer.server.domain.model.transaction.FixedTransaction;
 import org.financer.server.domain.model.transaction.FixedTransactionAmount;
@@ -16,7 +15,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
@@ -25,21 +23,15 @@ import javax.validation.constraints.NotNull;
 @RestController
 public class FixedTransactionApiController implements FixedTransactionApi {
 
-    private final ObjectMapper objectMapper;
-    private final HttpServletRequest request;
-
     private static final Logger logger = LoggerFactory.getLogger(FixedTransactionApiController.class);
 
-    @Autowired
-    private ModelMapper modelMapper;
+    private final ModelMapper modelMapper;
+    private final TransactionDomainService transactionDomainService;
 
     @Autowired
-    private TransactionDomainService transactionDomainService;
-
-    @Autowired
-    public FixedTransactionApiController(ObjectMapper objectMapper, HttpServletRequest request) {
-        this.objectMapper = objectMapper;
-        this.request = request;
+    public FixedTransactionApiController(ModelMapper modelMapper, TransactionDomainService transactionDomainService) {
+        this.modelMapper = modelMapper;
+        this.transactionDomainService = transactionDomainService;
     }
 
     @Override
