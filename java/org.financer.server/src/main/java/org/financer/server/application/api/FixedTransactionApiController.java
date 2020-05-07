@@ -19,6 +19,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.Set;
 
 @RestController
 public class FixedTransactionApiController implements FixedTransactionApi {
@@ -38,8 +39,12 @@ public class FixedTransactionApiController implements FixedTransactionApi {
     public ResponseEntity<FixedTransactionDTO> createFixedTransaction(@NotNull @Valid CreateFixedTransactionDTO fixedTransaction) {
         FixedTransaction fixedTransactionEntity = modelMapper.map(fixedTransaction, FixedTransaction.class);
         fixedTransactionEntity.setId(-1);
-        for (FixedTransactionAmount transactionAmount : fixedTransactionEntity.getTransactionAmounts()) {
-            transactionAmount.setFixedTransaction(fixedTransactionEntity);
+        if (fixedTransactionEntity.getIsVariable() && !fixedTransaction.getTransactionAmounts().isEmpty()) {
+            Set<FixedTransactionAmount> fixedTransactionAmounts = ModelMapperUtils.mapAll(fixedTransaction.getTransactionAmounts(), FixedTransactionAmount.class);
+            for (FixedTransactionAmount transactionAmount : fixedTransactionAmounts) {
+                transactionAmount.setFixedTransaction(fixedTransactionEntity);
+            }
+            fixedTransactionEntity.setTransactionAmounts(fixedTransactionAmounts);
         }
         fixedTransactionEntity = transactionDomainService.createFixedTransaction(fixedTransactionEntity);
 
@@ -47,7 +52,7 @@ public class FixedTransactionApiController implements FixedTransactionApi {
     }
 
     @Override
-    public ResponseEntity<FixedTransactionDTO> updateFixedTransaction(@NotBlank @Min(1) Long transactionId,
+    public ResponseEntity<FixedTransactionDTO> updateFixedTransaction(@NotBlank @PathVariable("transactionId") @Min(1) Long transactionId,
                                                                       @NotNull @Valid UpdateFixedTransactionDTO fixedTransaction) {
         FixedTransaction updateFixedTransaction = transactionDomainService.updateFixedTransaction(transactionId,
                 fixedTransaction.getCategoryId(), fixedTransaction.getAmount(), fixedTransaction.getTimeRange(),
@@ -64,7 +69,7 @@ public class FixedTransactionApiController implements FixedTransactionApi {
     }
 
     @Override
-    public ResponseEntity<FixedTransactionAmountDTO> createTransactionAmount(@NotBlank @Min(1) Long transactionId,
+    public ResponseEntity<FixedTransactionAmountDTO> createTransactionAmount(@NotBlank @PathVariable("transactionId") @Min(1) Long transactionId,
                                                                              @NotNull @Valid CreateFixedTransactionAmountDTO transactionAmount) {
         FixedTransactionAmount transactionAmountEntity = modelMapper.map(transactionAmount, FixedTransactionAmount.class);
         transactionAmountEntity = this.transactionDomainService.createFixedTransactionAmount(transactionId, transactionAmountEntity);
@@ -72,8 +77,8 @@ public class FixedTransactionApiController implements FixedTransactionApi {
     }
 
     @Override
-    public ResponseEntity<FixedTransactionAmountDTO> updateTransactionAmount(@NotBlank @Min(1) Long transactionId,
-                                                                             @NotBlank @Min(1) Long transactionAmountId,
+    public ResponseEntity<FixedTransactionAmountDTO> updateTransactionAmount(@NotBlank @PathVariable("transactionId") @Min(1) Long transactionId,
+                                                                             @NotBlank @PathVariable("transactionAmountId") @Min(1) Long transactionAmountId,
                                                                              @NotNull @Valid UpdateFixedTransactionAmountDTO transactionAmount) {
         FixedTransactionAmount transactionAmountEntity = transactionDomainService.updateFixedTransactionAmount(
                 transactionId, transactionAmountId, transactionAmount.getAmount(), transactionAmount.getValueDate());
@@ -81,7 +86,8 @@ public class FixedTransactionApiController implements FixedTransactionApi {
     }
 
     @Override
-    public ResponseEntity<Void> deleteTransactionAmount(@NotBlank @Min(1) Long transactionId, @NotBlank @Min(1) Long transactionAmountId) {
+    public ResponseEntity<Void> deleteTransactionAmount(@NotBlank @PathVariable("transactionId") @Min(1) Long transactionId,
+                                                        @NotBlank @PathVariable("transactionAmountId") @Min(1) Long transactionAmountId) {
         try {
             transactionDomainService.deleteFixedTransactionAmount(transactionId, transactionAmountId);
         } catch (NotFoundException exception) {

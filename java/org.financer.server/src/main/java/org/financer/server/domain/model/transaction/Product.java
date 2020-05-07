@@ -38,6 +38,10 @@ public class Product implements DataEntity, AmountProvider, UserProperty {
         return this.amount.calculate(this.quantity);
     }
 
+    public Amount getUnitAmount() {
+        return this.getAmount();
+    }
+
     @Override
     public Amount getAmount(ValueDate valueDate) {
         if (this.transaction.getValueDate().isInSameMonth(valueDate)) {

@@ -6,6 +6,7 @@ import org.financer.shared.domain.model.value.objects.Amount;
 import org.financer.shared.domain.model.value.objects.TimeRange;
 
 import javax.validation.Valid;
+import java.util.HashSet;
 import java.util.Set;
 
 @Schema(name = "UpdateFixedTransaction", description = "Schema to update fixed transaction")
@@ -36,7 +37,7 @@ public class UpdateFixedTransactionDTO implements DataTransferObject {
     private int day;
 
     @Schema(description = "List of fixed transaction amounts")
-    private Set<@Valid FixedTransactionAmountDTO> transactionAmounts;
+    private Set<@Valid FixedTransactionAmountDTO> transactionAmounts = new HashSet<>();
 
     public long getCategoryId() {
         return categoryId;

@@ -28,6 +28,8 @@
             --add-opens org.financer.shared/org.financer.shared.model.db=ALL-UNNAMED
             --add-opens org.financer.shared/org.financer.shared.domain.model.api.category=ALL-UNNAMED
             --add-opens org.financer.shared/org.financer.shared.domain.model.api.transaction=ALL-UNNAMED
+            --add-opens org.financer.shared/org.financer.shared.domain.model.api.transaction.fixed=ALL-UNNAMED
+            --add-opens org.financer.shared/org.financer.shared.domain.model.api.transaction.variable=ALL-UNNAMED
             --add-opens org.financer.shared/org.financer.shared.domain.model.api.user=ALL-UNNAMED
             --add-opens org.financer.client.javafx/org.financer.client.javafx.main=ALL-UNNAMED
             --add-opens org.financer.server/org.financer.server=ALL-UNNAMED

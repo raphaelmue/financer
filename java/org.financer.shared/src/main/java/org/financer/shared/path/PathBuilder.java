@@ -172,7 +172,7 @@ public class PathBuilder implements PathCreator, PathCreator.UserParameterPath, 
 
     @Override
     public CompletePath transactionAmountId() {
-        this.path += TRANSACTION_AMOUNT_ID_PARAMETER;
+        this.path += toPathParameter(TRANSACTION_AMOUNT_ID_PARAMETER);
         return this;
     }
 

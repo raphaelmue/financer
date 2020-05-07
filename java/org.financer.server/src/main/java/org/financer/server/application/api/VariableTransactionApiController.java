@@ -1,6 +1,5 @@
 package org.financer.server.application.api;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.financer.server.application.api.error.NotFoundException;
 import org.financer.server.domain.model.transaction.Product;
 import org.financer.server.domain.model.transaction.VariableTransaction;
@@ -15,7 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
@@ -58,7 +56,7 @@ public class VariableTransactionApiController implements VariableTransactionApi 
     }
 
     @Override
-    public ResponseEntity<ProductDTO> createProduct(@NotBlank @Min(1) Long transactionId, @NotNull @Valid CreateProductDTO product) {
+    public ResponseEntity<ProductDTO> createProduct(@NotBlank @PathVariable("transactionId") @Min(1) Long transactionId, @NotNull @Valid CreateProductDTO product) {
         Product productEntity = modelMapper.map(product, Product.class);
         productEntity = transactionDomainService.createProduct(transactionId, productEntity);
         return new ResponseEntity<>(modelMapper.map(productEntity, ProductDTO.class), HttpStatus.OK);

@@ -10,6 +10,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Set;
 
 @NotNullConditional(
         fieldName = "isVariable",
@@ -47,7 +48,7 @@ public class CreateFixedTransactionDTO implements DataTransferObject {
     private int day;
 
     @Schema(description = "List of fixed transaction amounts", required = true)
-    private List<@Valid CreateFixedTransactionAmountDTO> transactionAmounts;
+    private Set<@Valid CreateFixedTransactionAmountDTO> transactionAmounts;
 
     public Amount getAmount() {
         return amount;
@@ -121,11 +122,11 @@ public class CreateFixedTransactionDTO implements DataTransferObject {
         return this;
     }
 
-    public List<CreateFixedTransactionAmountDTO> getTransactionAmounts() {
+    public Set<CreateFixedTransactionAmountDTO> getTransactionAmounts() {
         return transactionAmounts;
     }
 
-    public CreateFixedTransactionDTO setTransactionAmounts(List<CreateFixedTransactionAmountDTO> transactionAmounts) {
+    public CreateFixedTransactionDTO setTransactionAmounts(Set<CreateFixedTransactionAmountDTO> transactionAmounts) {
         this.transactionAmounts = transactionAmounts;
         return this;
     }
