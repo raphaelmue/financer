@@ -5,7 +5,7 @@ import java.util.Map;
 
 public class PathBuilder implements PathCreator, PathCreator.UserParameterPath, PathCreator.TokenParameterPath,
         PathCreator.VariableTransactionParameterPath, PathCreator.FixedTransactionParameterPath, PathCreator.CategoryParameterPath,
-        PathCreator.ProductParameterPath, PathCreator.TransactionAmountParameterPath,
+        PathCreator.ProductParameterPath, PathCreator.TransactionAmountParameterPath, PathCreator.AttachmentParameterPath,
         PathCreator.UserPath, PathCreator.FixedTransactionPath, PathCreator.VariableTransactionPath,
         Path {
 
@@ -15,6 +15,7 @@ public class PathBuilder implements PathCreator, PathCreator.UserParameterPath, 
     private static final String CATEGORIES_ENDPOINT = "/categories";
     private static final String FIXED_TRANSACTIONS_ENDPOINT = "/fixedTransactions";
     private static final String TRANSACTION_AMOUNTS_ENDPOINT = "/transactionAmounts";
+    private static final String ATTACHMENTS_ENDPOINT = "/attachments";
     private static final String VARIABLE_TRANSACTIONS_ENDPOINT = "/variableTransactions";
     private static final String PRODUCTS_ENDPOINT = "/products";
     private static final String PASSWORD_ENDPOINT = "/password";
@@ -27,6 +28,7 @@ public class PathBuilder implements PathCreator, PathCreator.UserParameterPath, 
     private static final String TRANSACTION_ID_PARAMETER = "transactionId";
     private static final String TRANSACTION_AMOUNT_ID_PARAMETER = "transactionAmountId";
     private static final String PRODUCT_ID_PARAMETER = "productId";
+    private static final String ATTACHMENT_ID_PARAMETER = "attachmentId";
 
     private String path = "";
     private final String httpMethod;
@@ -258,5 +260,23 @@ public class PathBuilder implements PathCreator, PathCreator.UserParameterPath, 
     public CompletePath apiDocumentationUI() {
         this.path += "/swagger-ui";
         return this;
+    }
+
+    @Override
+    public AttachmentParameterPath attachments() {
+        this.path += ATTACHMENTS_ENDPOINT;
+        return this;
+    }
+
+    @Override
+    public CompletePath attachmentId() {
+        this.path += toPathParameter(ATTACHMENT_ID_PARAMETER);
+        return this;
+    }
+
+    @Override
+    public CompletePath attachmentId(long attachmentId) {
+        this.parameters.put(ATTACHMENT_ID_PARAMETER, String.valueOf(attachmentId));
+        return attachmentId();
     }
 }

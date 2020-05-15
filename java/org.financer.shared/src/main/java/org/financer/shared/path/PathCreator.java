@@ -36,6 +36,16 @@ public interface PathCreator extends AnyPath {
         CompletePath verificationToken();
     }
 
+    interface TransactionPath extends CompletePath, AnyPath {
+        AttachmentParameterPath attachments();
+    }
+
+    interface AttachmentParameterPath extends CompletePath, AnyPath {
+        CompletePath attachmentId();
+
+        CompletePath attachmentId(long attachmentId);
+    }
+
     interface CategoryParameterPath extends CompletePath, AnyPath {
         CompletePath categoryId();
 
@@ -48,7 +58,7 @@ public interface PathCreator extends AnyPath {
         FixedTransactionPath fixedTransactionId(long fixedTransactionId);
     }
 
-    interface FixedTransactionPath extends CompletePath, AnyPath {
+    interface FixedTransactionPath extends TransactionPath, CompletePath, AnyPath {
         TransactionAmountParameterPath transactionAmounts();
     }
 
@@ -64,7 +74,7 @@ public interface PathCreator extends AnyPath {
         VariableTransactionPath variableTransactionId(long variableTransactionId);
     }
 
-    interface VariableTransactionPath extends CompletePath, AnyPath {
+    interface VariableTransactionPath extends TransactionPath, CompletePath, AnyPath {
         ProductParameterPath products();
     }
 
