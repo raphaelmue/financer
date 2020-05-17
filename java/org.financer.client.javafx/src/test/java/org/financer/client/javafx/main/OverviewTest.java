@@ -2,8 +2,10 @@ package org.financer.client.javafx.main;
 
 import javafx.scene.control.Button;
 import javafx.scene.layout.GridPane;
+import org.financer.client.domain.model.transaction.VariableTransaction;
 import org.financer.client.format.I18N;
 import org.financer.client.javafx.components.DoubleField;
+import org.financer.shared.domain.model.value.objects.ValueDate;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -22,11 +24,12 @@ public class OverviewTest extends AbstractFinancerApplicationTest {
 
     @Test
     public void testLastTransactions() {
-        register(user, password);
+        register(user(), password());
         Assertions.assertNotNull(clickOn(I18N.get("noRecentTransactions")));
-        transaction.setValueDate(LocalDate.now().withDayOfMonth(1));
-        addCategory(category);
-        addTransaction(transaction);
+        VariableTransaction transaction = variableTransaction();
+        transaction.setValueDate(new ValueDate(LocalDate.now().withDayOfMonth(1)));
+        addCategory(variableCategory());
+        addVariableTransaction(transaction);
 
         clickOn((Button) find("#overviewTabBtn"));
         sleep(SHORT_SLEEP);
@@ -37,12 +40,10 @@ public class OverviewTest extends AbstractFinancerApplicationTest {
 
     @Test
     public void testUpcomingFixedTransactions() {
-        register(user, password);
+        register(user(), password());
         Assertions.assertNotNull(clickOn(I18N.get("noUpcomingTransactions")));
-        category.getValue().setCategoryClass(BaseCategory.CategoryClass.FIXED_EXPENSES);
-        fixedTransaction.setIsVariable(true);
-        addCategory(category);
-        addFixedTransaction(fixedTransaction);
+        addCategory(fixedCategory());
+        addFixedTransaction(fixedTransaction());
 
         clickOn((Button) find("#overviewTabBtn"));
         sleep(SHORT_SLEEP);
@@ -62,6 +63,6 @@ public class OverviewTest extends AbstractFinancerApplicationTest {
         gridPane = find("#upcomingFixedTransactionGridPane");
         // 1 since placeholder label
         Assertions.assertEquals(1, gridPane.getChildren().size());
-        Assertions.assertEquals(500.0, getCategoryTree().getAmount(LocalDate.now()));
+        Assertions.assertEquals(500.0, getCategoryTree().getAmount(new ValueDate()).getAmount());
     }
 }

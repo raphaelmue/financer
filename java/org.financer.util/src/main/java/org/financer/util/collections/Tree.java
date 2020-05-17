@@ -4,6 +4,10 @@ import java.util.Set;
 
 public interface Tree {
 
+    interface Traversable<T extends Tree> {
+        void onEnter(T tree);
+    }
+
     Tree getParent();
 
     Tree setParent(Tree parent);
@@ -16,5 +20,14 @@ public interface Tree {
 
     default boolean isRoot() {
         return (getParent() == null);
+    }
+
+    default <T extends Tree >void traverse(Traversable<T> traversable) {
+        for (Tree child : this.getChildren()) {
+            traversable.onEnter((T) child);
+            if (!this.isLeaf()) {
+                child.traverse(traversable);
+            }
+        }
     }
 }

@@ -2,6 +2,7 @@ package org.financer.shared.domain.model.api.transaction;
 
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import org.financer.shared.domain.model.api.DataTransferObject;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -9,7 +10,7 @@ import javax.validation.constraints.PastOrPresent;
 import java.time.LocalDate;
 
 @Schema(name = "Attachment", description = "Schema for an attachment")
-public class AttachmentDTO {
+public class AttachmentDTO implements DataTransferObject {
 
     @NotNull
     @Min(1)

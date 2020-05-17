@@ -13,11 +13,17 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import org.financer.client.domain.api.RestApi;
+import org.financer.client.domain.api.RestApiImpl;
+import org.financer.client.domain.model.category.CategoryRoot;
+import org.financer.client.domain.model.user.User;
 import org.financer.client.format.I18N;
-import org.financer.client.javafx.connection.RetrievalServiceImpl;
 import org.financer.client.javafx.local.LocalStorageImpl;
+import org.financer.client.local.LocalStorage;
+import org.financer.shared.domain.model.value.objects.SettingPair;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
@@ -25,26 +31,27 @@ import java.util.logging.Logger;
 
 public class FinancerApplication extends Application {
 
-    private Logger logger = Logger.getLogger("FinancerApplication");
+    private final RestApi restApi = new RestApiImpl();
+    private final LocalStorage localStorage = new LocalStorageImpl();
+    private final Logger logger = Logger.getLogger("FinancerApplication");
     private BooleanProperty ready = new SimpleBooleanProperty(false);
 
     @Override
     public void init() {
-        User user = (User) LocalStorageImpl.getInstance().readObject("user");
+        User user = LocalStorageImpl.getInstance().readObject("user");
         if (user != null) {
             notifyPreloader(new Preloader.ProgressNotification(0));
-            RetrievalServiceImpl.getInstance().fetchCategories(user, result1 -> {
-                Platform.runLater(() -> notifyPreloader(new Preloader.ProgressNotification(1.0 / 3.0)));
-                RetrievalServiceImpl.getInstance().fetchTransactions(user, result2 -> {
-                    Platform.runLater(() -> notifyPreloader(new Preloader.ProgressNotification(2.0 / 3.0)));
-                    RetrievalServiceImpl.getInstance().fetchFixedTransactions(user, result3 -> {
-                        Platform.runLater(() -> notifyPreloader(new Preloader.ProgressNotification(1)));
-                        ready.setValue(Boolean.TRUE);
-                        notifyPreloader(new Preloader.StateChangeNotification(
-                                Preloader.StateChangeNotification.Type.BEFORE_START));
-                    });
-                });
-            });
+            restApi.getUsersCategories(user.getId(), categories ->
+                    restApi.getUsersVariableTransactions(user.getId(), 0, variableTransactions ->
+                            restApi.getUsersFixedTransactions(user.getId(), fixedTransactions -> {
+                                localStorage.writeObject("categories", new CategoryRoot(categories));
+                                localStorage.writeObject("variableTransactions", (Serializable) variableTransactions);
+                                localStorage.writeObject("fixedTransactions", (Serializable) fixedTransactions);
+                                Platform.runLater(() -> notifyPreloader(new Preloader.ProgressNotification(1)));
+                                ready.setValue(Boolean.TRUE);
+                                notifyPreloader(new Preloader.StateChangeNotification(
+                                        Preloader.StateChangeNotification.Type.BEFORE_START));
+                            }).execute()).execute()).execute();
         }
     }
 
@@ -52,7 +59,7 @@ public class FinancerApplication extends Application {
     public void start(Stage primaryStage) throws IOException {
         this.logger.log(Level.INFO, "Financer Application has started.");
 
-        User user = (User) LocalStorageImpl.getInstance().readObject("user");
+        User user = LocalStorageImpl.getInstance().readObject("user");
         if (user == null) {
             initLoginStage();
         } else {
@@ -99,7 +106,7 @@ public class FinancerApplication extends Application {
 
     private void initMainStage() throws IOException {
         ResourceBundle resourceBundle = ResourceBundle.getBundle("Financer",
-                ((User) LocalStorageImpl.getInstance().readObject("user")).getSettings().getLanguage());
+                (Locale) ((User) LocalStorageImpl.getInstance().readObject("user")).getValueOrDefault(SettingPair.Property.LANGUAGE));
 
         Parent root = FXMLLoader.load(getClass().getResource("views/financer.fxml"), resourceBundle);
 

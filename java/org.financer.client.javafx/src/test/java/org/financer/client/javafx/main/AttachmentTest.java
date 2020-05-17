@@ -3,6 +3,7 @@ package org.financer.client.javafx.main;
 import com.jfoenix.controls.JFXButton;
 import javafx.scene.control.Button;
 import javafx.scene.input.KeyCode;
+import org.financer.client.domain.model.transaction.Transaction;
 import org.financer.util.RandomString;
 import org.junit.jupiter.api.*;
 
@@ -49,10 +50,10 @@ public class AttachmentTest extends AbstractFinancerApplicationTest {
     }
 
     private void uploadAttachment() {
-        register(this.user, this.password);
-        addCategory(category);
-        addTransaction(transaction);
-        clickOn(transaction.getProduct());
+        register(user(), password());
+        addCategory(variableCategory());
+        addVariableTransaction(variableTransaction());
+        clickOn(formatter.format(variableTransaction().getValueDate()));
         clickOn((Button) find("#editTransactionBtn"));
         sleep(SHORT_SLEEP);
         clickOn((JFXButton) find("#uploadAttachmentBtn"));

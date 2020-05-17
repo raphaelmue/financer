@@ -25,17 +25,20 @@ import org.controlsfx.glyphfont.FontAwesome;
 import org.controlsfx.glyphfont.GlyphFont;
 import org.controlsfx.glyphfont.GlyphFontRegistry;
 import org.financer.client.connection.ServerRequest;
+import org.financer.client.domain.model.user.User;
+import org.financer.client.format.FormatterImpl;
 import org.financer.client.format.I18N;
 import org.financer.client.javafx.dialogs.FinancerExceptionDialog;
 import org.financer.client.javafx.local.LocalStorageImpl;
 import org.financer.client.local.Application;
+import org.financer.shared.domain.model.value.objects.SettingPair;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.ResourceBundle;
-import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -99,16 +102,10 @@ public class FinancerController implements Initializable, Application {
         ServerRequest.setApplication(this);
         ServerRequest.setLocalStorage(this.localStorage);
 
-        try {
-            ServerRequest.makeRequests(Executors.newCachedThreadPool());
-        } catch (IOException e) {
-            logger.log(Level.SEVERE, e.getMessage(), e);
-        }
-
-        User user = (User) this.localStorage.readObject("user");
+        User user = this.localStorage.readObject("user");
 
         // setting up language
-        this.resourceBundle = ResourceBundle.getBundle("Financer", user.getSettings().getLanguage());
+        this.resourceBundle = ResourceBundle.getBundle("Financer", (Locale) user.getValueOrDefault(SettingPair.Property.LANGUAGE));
 
         this.snackbar = new JFXSnackbar(this.rootLayout);
 
@@ -118,7 +115,7 @@ public class FinancerController implements Initializable, Application {
             logger.log(Level.SEVERE, e.getMessage(), e);
         }
 
-        this.accountMenuBtn.setText(user.getFullName());
+        this.accountMenuBtn.setText(new FormatterImpl(localStorage).format(user.getName()));
 
         GlyphFont fontAwesome = GlyphFontRegistry.font("FontAwesome");
         this.accountMenuBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.USER));

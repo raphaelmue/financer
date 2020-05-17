@@ -12,12 +12,13 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import org.financer.client.domain.model.category.Category;
+import org.financer.client.domain.model.transaction.FixedTransaction;
+import org.financer.client.domain.model.transaction.VariableTransaction;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
-import java.time.LocalDate;
 
 @SuppressWarnings("WeakerAccess")
 @Tag("integration")
@@ -30,10 +31,10 @@ public class StatisticsTest extends AbstractFinancerApplicationTest {
 
     @Test
     public void testProgressChart() {
-        register(user, password);
-        transaction.setValueDate(LocalDate.now().withDayOfMonth(1));
-        addCategory(category);
-        addTransaction(transaction);
+        final VariableTransaction transaction = variableTransaction();
+        register(user(), password());
+        addCategory(variableCategory());
+        addVariableTransaction(transaction);
 
         clickOn((Button) find("#statisticsTabBtn"));
         sleep(SHORT_SLEEP);
@@ -48,7 +49,7 @@ public class StatisticsTest extends AbstractFinancerApplicationTest {
         clickOn((JFXButton) find("#addCategoryBtn"));
         VBox categoriesContainer = find("#categoriesContainer");
         HBox dropDownHBox = (HBox) categoriesContainer.getChildren().get(1);
-        JFXComboBox<CategoryTree> categoryComboBox = (JFXComboBox<CategoryTree>) dropDownHBox.getChildren().get(0);
+        JFXComboBox<Category> categoryComboBox = (JFXComboBox<Category>) dropDownHBox.getChildren().get(0);
         clickOn(categoryComboBox);
         press(KeyCode.DOWN).release(KeyCode.DOWN);
         press(KeyCode.ENTER).release(KeyCode.ENTER);
@@ -60,10 +61,10 @@ public class StatisticsTest extends AbstractFinancerApplicationTest {
 
     @Test
     public void testFixedExpensesDistributionChart() {
-        register(user, password);
-        category.getValue().setCategoryClass(BaseCategory.CategoryClass.FIXED_EXPENSES);
-        addCategory(category);
-        addFixedTransaction(fixedTransaction);
+        final FixedTransaction transaction = fixedTransaction();
+        register(user(), password());
+        addCategory(fixedCategory());
+        addFixedTransaction(transaction);
 
         clickOn((Button) find("#statisticsTabBtn"));
         sleep(SHORT_SLEEP);
@@ -76,10 +77,10 @@ public class StatisticsTest extends AbstractFinancerApplicationTest {
         Assertions.assertFalse(find("#fixedExpensesNoDataLabel").isVisible());
 
         JFXDatePicker fromDatePicker = find("#fixedExpensesFromDatePicker");
-        fromDatePicker.setValue(fixedTransaction.getStartDate().minusMonths(5));
+        fromDatePicker.setValue(transaction.getTimeRange().getStartDate().minusMonths(5));
 
         JFXDatePicker toDatePicker = find("#fixedExpensesToDatePicker");
-        toDatePicker.setValue(fixedTransaction.getStartDate().minusMonths(4));
+        toDatePicker.setValue(transaction.getTimeRange().getStartDate().minusMonths(4));
 
         sleep(MEDIUM_SLEEP);
         Assertions.assertTrue(find("#fixedExpensesNoDataLabel").isVisible());
@@ -87,10 +88,10 @@ public class StatisticsTest extends AbstractFinancerApplicationTest {
 
     @Test
     public void testVariableExpensesDistributionChart() {
-        register(user, password);
-        transaction.setValueDate(LocalDate.now().withDayOfMonth(1));
-        addCategory(category);
-        addTransaction(transaction);
+        final VariableTransaction transaction = variableTransaction();
+        register(user(), password());
+        addCategory(variableCategory());
+        addVariableTransaction(transaction);
 
         clickOn((Button) find("#statisticsTabBtn"));
         sleep(SHORT_SLEEP);
@@ -103,10 +104,10 @@ public class StatisticsTest extends AbstractFinancerApplicationTest {
         Assertions.assertFalse(find("#variableExpensesNoDataLabel").isVisible());
 
         JFXDatePicker fromDatePicker = find("#variableExpensesFromDatePicker");
-        fromDatePicker.setValue(transaction.getValueDate().minusMonths(5));
+        fromDatePicker.setValue(transaction.getValueDate().getDate().minusMonths(5));
 
         JFXDatePicker toDatePicker = find("#variableExpensesToDatePicker");
-        toDatePicker.setValue(transaction.getValueDate().minusMonths(4));
+        toDatePicker.setValue(transaction.getValueDate().getDate().minusMonths(4));
 
         sleep(MEDIUM_SLEEP);
         Assertions.assertTrue(find("#variableExpensesNoDataLabel").isVisible());

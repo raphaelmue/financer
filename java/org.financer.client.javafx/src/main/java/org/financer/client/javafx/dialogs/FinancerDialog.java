@@ -14,8 +14,8 @@ import org.financer.client.javafx.main.FinancerController;
 import org.financer.util.collections.Action;
 
 /**
- * This class represents a Dialog, aligned with the needs of a general user interaction dialog.
- * The design is base on the JFXDialog {@link JFXDialog}.
+ * This class represents a Dialog, aligned with the needs of a general user interaction dialog. The design is base on
+ * the JFXDialog {@link JFXDialog}.
  *
  * @param <T> class type that is to be the return type of this dialog
  */

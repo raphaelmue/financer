@@ -210,15 +210,14 @@ public class UserDomainService {
      * Updates the users password. First of all, the old password is verified. Then the new password will be hashed
      * after concatenating it with a new generated salt.
      *
-     * @param oldPassword     old password of the user in order to verify this operation
-     * @param updatedPassword new plain password
+     * @param updatedPassword new hashed password
      * @return update user object
      */
-    public User updatePassword(String oldPassword, String updatedPassword) {
+    public User updatePassword(HashedPassword updatedPassword) {
         logger.info("Updating users password.");
         Optional<User> userOptional = userRepository.findById(authenticationService.getUserId());
-        if (userOptional.isPresent() && userOptional.get().getPassword().isEqualTo(oldPassword)) {
-            userOptional.get().setPassword(new HashedPassword(updatedPassword));
+        if (userOptional.isPresent()) {
+            userOptional.get().setPassword(updatedPassword);
             return userRepository.save(userOptional.get());
         }
         throw new UnauthorizedOperationException(authenticationService.getUserId());

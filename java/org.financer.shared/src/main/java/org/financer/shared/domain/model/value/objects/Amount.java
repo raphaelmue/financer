@@ -45,6 +45,10 @@ public class Amount implements Serializable, Formattable {
         return !this.isPositive();
     }
 
+    public boolean isNotNull() {
+        return this.getAmount() != 0;
+    }
+
     public Amount calculate(Quantity quantity) {
         return new Amount(this.getAmount() * quantity.getNumberOfItems());
     }
@@ -57,8 +61,35 @@ public class Amount implements Serializable, Formattable {
         return new Amount(this.amount + value.getAmount());
     }
 
+    public Amount subtract(Amount value) {
+        return new Amount(this.amount - value.getAmount());
+    }
+
+    public Amount subtract(double value) {
+        return new Amount(this.amount - value);
+    }
+
     public Amount multiply(Amount value) {
         return new Amount(this.amount * value.getAmount());
+    }
+
+    public Amount multiply(double value) {
+        return new Amount(this.amount * value);
+    }
+
+    public Amount divide(Amount divisor) {
+        if (divisor.getAmount() != 0) {
+            return new Amount(this.amount / divisor.getAmount());
+        }
+        throw new IllegalArgumentException("Divisor may not be 0.");
+    }
+
+    public Amount divide(double divisor) {
+        return this.divide(new Amount(divisor));
+    }
+
+    public Amount calcRatio(Amount ratio) {
+        return this.divide(ratio).multiply(100).subtract(100);
     }
 
     @Override

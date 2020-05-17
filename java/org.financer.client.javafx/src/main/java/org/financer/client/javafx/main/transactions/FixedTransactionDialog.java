@@ -10,7 +10,11 @@ import javafx.scene.layout.*;
 import org.controlsfx.glyphfont.FontAwesome;
 import org.controlsfx.glyphfont.GlyphFont;
 import org.controlsfx.glyphfont.GlyphFontRegistry;
+import org.financer.client.domain.model.category.Category;
+import org.financer.client.domain.model.transaction.FixedTransaction;
+import org.financer.client.domain.model.transaction.FixedTransactionAmount;
 import org.financer.client.format.Formatter;
+import org.financer.client.format.FormatterImpl;
 import org.financer.client.format.I18N;
 import org.financer.client.javafx.components.DatePicker;
 import org.financer.client.javafx.components.DoubleField;
@@ -19,6 +23,8 @@ import org.financer.client.javafx.dialogs.FinancerConfirmDialog;
 import org.financer.client.javafx.dialogs.FinancerDialog;
 import org.financer.client.javafx.format.JavaFXFormatter;
 import org.financer.client.javafx.local.LocalStorageImpl;
+import org.financer.shared.domain.model.value.objects.Amount;
+import org.financer.shared.domain.model.value.objects.TimeRange;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -27,24 +33,25 @@ import java.util.HashSet;
 
 public class FixedTransactionDialog extends FinancerDialog<FixedTransaction> {
 
-    private CategoryTree categoryTree;
+    private Category category;
     private Label categoryLabel;
     private IntegerField dayField;
     private DatePicker startDateField;
     private DatePicker endDateField;
     private JFXTextField productField;
-    private JFXTextField purposeField;
+    private JFXTextField descriptionField;
+    private JFXTextField vendorField;
     private JFXCheckBox isVariableCheckbox;
     private DoubleField amountField;
     private VBox transactionAmountContainer;
-    private JFXListView<TransactionAmount> transactionAmountListView;
+    private JFXListView<FixedTransactionAmount> transactionAmountListView;
 
     private static final Formatter formatter = new JavaFXFormatter(LocalStorageImpl.getInstance());
 
-    FixedTransactionDialog(FixedTransaction value, CategoryTree category) {
+    FixedTransactionDialog(FixedTransaction value, Category category) {
         super(value);
 
-        this.categoryTree = category;
+        this.category = category;
 
         this.prepareDialogContent();
         this.setDialogTitle(I18N.get("fixedTransactions"));
@@ -104,9 +111,9 @@ public class FixedTransactionDialog extends FinancerDialog<FixedTransaction> {
         gridPane.add(this.productField, 1, 6);
 
         gridPane.add(new Label(I18N.get("purpose")), 0, 7);
-        this.purposeField = new JFXTextField();
-        this.purposeField.setId("purposeTextField");
-        gridPane.add(this.purposeField, 1, 7);
+        this.descriptionField = new JFXTextField();
+        this.descriptionField.setId("purposeTextField");
+        gridPane.add(this.descriptionField, 1, 7);
 
         hBox.getChildren().add(gridPane);
 
@@ -130,7 +137,7 @@ public class FixedTransactionDialog extends FinancerDialog<FixedTransaction> {
             dialog.setOnConfirm(transactionAmount -> {
                 transactionAmount.setFixedTransaction(this.getValue());
                 transactionAmountListView.getItems().add(transactionAmount);
-                transactionAmountListView.getItems().sort(Comparator.comparing(TransactionAmount::getValueDate).reversed());
+                transactionAmountListView.getItems().sort(Comparator.comparing(FixedTransactionAmount::getValueDate).reversed());
             });
         });
         editTransactionAmountBtn.setOnAction(event -> {
@@ -170,7 +177,7 @@ public class FixedTransactionDialog extends FinancerDialog<FixedTransaction> {
         });
         this.transactionAmountListView.setCellFactory(param -> new ListCell<>() {
             @Override
-            protected void updateItem(TransactionAmount item, boolean empty) {
+            protected void updateItem(FixedTransactionAmount item, boolean empty) {
                 super.updateItem(item, empty);
 
                 if (item == null || empty) {
@@ -179,8 +186,8 @@ public class FixedTransactionDialog extends FinancerDialog<FixedTransaction> {
                     JavaFXFormatter formatter = new JavaFXFormatter(LocalStorageImpl.getInstance());
                     BorderPane borderPane = new BorderPane();
                     borderPane.getStyleClass().add("transactions-list-item");
-                    borderPane.setLeft(new Label(formatter.formatDate(item.getValueDate())));
-                    Label amountLabel = formatter.formatAmountLabel(item.getAmount());
+                    borderPane.setLeft(new Label(formatter.format(item.getValueDate())));
+                    Label amountLabel = formatter.format(new Label(), item.getAmount());
                     borderPane.setRight(amountLabel);
                     setGraphic(borderPane);
                 }
@@ -199,15 +206,16 @@ public class FixedTransactionDialog extends FinancerDialog<FixedTransaction> {
 
     @Override
     protected void prepareDialogContent() {
-        this.categoryLabel.setText(new JavaFXFormatter(LocalStorageImpl.getInstance()).formatCategoryName(this.categoryTree.getValue()));
+        this.categoryLabel.setText(new FormatterImpl(LocalStorageImpl.getInstance()).format(this.category));
         if (this.getValue() != null) {
             this.dayField.setValue(this.getValue().getDay());
-            this.startDateField.setValue(this.getValue().getStartDate());
-            this.endDateField.setValue(this.getValue().getEndDate());
+            this.startDateField.setValue(this.getValue().getTimeRange().getStartDate());
+            this.endDateField.setValue(this.getValue().getTimeRange().getEndDate());
             this.productField.setText(this.getValue().getProduct());
-            this.purposeField.setText(this.getValue().getPurpose());
+            this.descriptionField.setText(this.getValue().getDescription());
+            this.vendorField.setText(this.getValue().getVendor());
+            this.isVariableCheckbox.setSelected(this.getValue().getIsVariable());
             if (this.getValue().getIsVariable()) {
-                this.isVariableCheckbox.setSelected(this.getValue().getIsVariable());
                 this.toggleTransactionAmountContainer(true);
 
                 if (this.getValue().getTransactionAmounts() != null && !this.getValue().getTransactionAmounts().isEmpty()) {
@@ -216,7 +224,7 @@ public class FixedTransactionDialog extends FinancerDialog<FixedTransaction> {
                 }
                 this.amountField.setDisable(true);
             } else {
-                this.amountField.setText(Double.toString(this.getValue().getAmountValue()));
+                this.amountField.setText(Double.toString(this.getValue().getAmount().getAmount()));
                 this.toggleTransactionAmountContainer(false);
             }
         } else {
@@ -242,26 +250,27 @@ public class FixedTransactionDialog extends FinancerDialog<FixedTransaction> {
     @Override
     protected void onConfirm() {
         if (this.getValue() == null) {
-            this.setValue(new FixedTransaction(0,
-                    Double.parseDouble(this.amountField.getText()),
-                    this.categoryTree,
-                    this.startDateField.getValue(),
-                    this.endDateField.getValue(),
-                    this.productField.getText(),
-                    this.purposeField.getText(),
-                    this.isVariableCheckbox.isSelected(),
-                    this.dayField.getValue(),
-                    (this.isVariableCheckbox.isSelected() ? new HashSet<>(transactionAmountListView.getItems()) : null)));
+            this.setValue(new FixedTransaction()
+                    .setId(0)
+                    .setAmount(new Amount(Double.parseDouble(this.amountField.getText())))
+                    .setCategory(category)
+                    .setTimeRange(new TimeRange(this.startDateField.getValue(), this.endDateField.getValue()))
+                    .setDay(dayField.getValue())
+                    .setProduct(productField.getText())
+                    .setDescription(descriptionField.getText())
+                    .setVendor(vendorField.getText())
+                    .setIsVariable(this.isVariableCheckbox.isSelected())
+                    .setTransactionAmounts((this.isVariableCheckbox.isSelected() ? new HashSet<>(transactionAmountListView.getItems()) : null)));
         } else {
             this.getValue().getTransactionAmounts().clear();
             this.getValue().getTransactionAmounts().addAll(new ArrayList<>(this.transactionAmountListView.getItems()));
-            this.getValue().setStartDate(this.startDateField.getValue());
-            this.getValue().setEndDate(this.endDateField.getValue());
-            this.getValue().setProduct(this.productField.getText());
-            this.getValue().setPurpose(this.purposeField.getText());
+            this.getValue().setTimeRange(new TimeRange(this.startDateField.getValue(), this.endDateField.getValue()));
+            this.getValue().setProduct(productField.getText());
+            this.getValue().setDescription(descriptionField.getText());
+            this.getValue().setVendor(vendorField.getText());
             this.getValue().setIsVariable(this.isVariableCheckbox.isSelected());
             this.getValue().setDay(this.dayField.getValue());
-            this.getValue().setAmount(Double.parseDouble(this.amountField.getText()));
+            this.getValue().setAmount(new Amount(Double.parseDouble(this.amountField.getText())));
         }
 
         super.onConfirm();

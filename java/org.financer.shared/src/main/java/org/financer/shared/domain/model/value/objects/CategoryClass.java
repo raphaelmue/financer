@@ -8,6 +8,7 @@ import javax.persistence.Embeddable;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import java.io.Serializable;
+import java.util.List;
 import java.util.Objects;
 
 @Embeddable
@@ -68,6 +69,13 @@ public class CategoryClass implements Serializable {
 
     public boolean isRevenue() {
         return (this.categoryClass == Values.VARIABLE_REVENUE || this.categoryClass == Values.FIXED_REVENUE);
+    }
+
+    public static List<CategoryClass> getAll() {
+        return List.of(new CategoryClass(Values.FIXED_REVENUE),
+                new CategoryClass(Values.FIXED_EXPENSES),
+                new CategoryClass(Values.VARIABLE_REVENUE),
+                new CategoryClass(Values.VARIABLE_EXPENSES));
     }
 
     /*

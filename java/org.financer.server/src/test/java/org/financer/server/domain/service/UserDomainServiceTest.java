@@ -153,7 +153,7 @@ public class UserDomainServiceTest extends SpringTest {
 
     @Test
     public void testUpdatePassword() {
-        User userToAssert = userDomainService.updatePassword("password", "newPassword");
+        User userToAssert = userDomainService.updatePassword(new HashedPassword("newPassword"));
         assertThat(userToAssert.getPassword().isEqualTo("newPassword")).isTrue();
     }
 
@@ -179,6 +179,6 @@ public class UserDomainServiceTest extends SpringTest {
     public void testUpdatePasswordUnauthorizedOperation() {
         mockAnotherUserAuthenticated();
         assertThatExceptionOfType(UnauthorizedOperationException.class).isThrownBy(() ->
-                userDomainService.updatePassword("wrongPassword", "newPassword"));
+                userDomainService.updatePassword(new HashedPassword("newPassword")));
     }
 }

@@ -15,17 +15,16 @@ import org.controlsfx.glyphfont.FontAwesome;
 import org.controlsfx.glyphfont.GlyphFont;
 import org.controlsfx.glyphfont.GlyphFontRegistry;
 import org.financer.client.connection.ServerRequest;
+import org.financer.client.domain.api.RestApi;
+import org.financer.client.domain.api.RestApiImpl;
+import org.financer.client.domain.model.user.User;
 import org.financer.client.format.I18N;
 import org.financer.client.javafx.dialogs.FinancerExceptionDialog;
 import org.financer.client.javafx.local.LocalStorageImpl;
 import org.financer.client.javafx.util.ApplicationHelper;
 import org.financer.client.local.Application;
-import org.financer.util.concurrency.FinancerExecutor;
 
-import java.io.Serializable;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -51,6 +50,8 @@ public class LoginController implements Initializable, Application {
 
     private static LoginController instance = null;
 
+    private final RestApi restApi = new RestApiImpl();
+
     private Logger logger = Logger.getLogger("FinancerApplication");
     private LocalStorageImpl localStorage = (LocalStorageImpl) LocalStorageImpl.getInstance();
 
@@ -63,12 +64,6 @@ public class LoginController implements Initializable, Application {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        instance = this;
-        LocalSettings settings = (LocalSettings) this.localStorage.readObject("localSettings");
-        if (settings == null) {
-            settings = new LocalSettingsImpl();
-            this.localStorage.writeObject("localSettings", settings);
-        }
         I18N.setLocalStorage(this.localStorage);
 
         ServerRequest.setApplication(this);
@@ -103,30 +98,21 @@ public class LoginController implements Initializable, Application {
     }
 
     public void handleSignInButtonAction() {
-        Map<String, Serializable> parameters = new HashMap<>();
-        parameters.put("email", this.loginEmailTextField.getText());
-        parameters.put("password", this.loginPasswordField.getText());
         logger.log(Level.INFO, "User's credentials will be checked ...");
-        FinancerExecutor.getExecutor().execute(new ServerRequest("checkCredentials", parameters, result -> {
-            if (result.getResult() != null) {
-                Platform.runLater(() -> loginUser((User) result.getResult()));
+
+        restApi.loginUser(this.loginEmailTextField.getText(), this.loginPasswordField.getText(), result -> {
+            if (result != null) {
+                Platform.runLater(() -> loginUser(result));
             } else {
                 logger.log(Level.INFO, "User's credentials are incorrect.");
                 loginErrorLabel.setVisible(true);
             }
-        }));
+        });
     }
-
 
     public void handleOpenRegisterDialog() {
         RegisterDialog dialog = new RegisterDialog();
-        dialog.setOnConfirm(user -> {
-            Map<String, Serializable> parameters = new HashMap<>();
-            parameters.put("user", user);
-
-            FinancerExecutor.getExecutor().execute(new ServerRequest("registerUser", parameters,
-                    result -> Platform.runLater(() -> loginUser((User) result.getResult()))));
-        });
+        dialog.setOnConfirm(user -> restApi.registerUser(user, result -> Platform.runLater(() -> loginUser(result))));
     }
 
     private void loginUser(User user) {

@@ -16,22 +16,20 @@ import javafx.stage.Stage;
 import org.controlsfx.glyphfont.FontAwesome;
 import org.controlsfx.glyphfont.GlyphFont;
 import org.controlsfx.glyphfont.GlyphFontRegistry;
-import org.financer.client.connection.RestCallback;
-import org.financer.client.connection.ServerRequest;
+import org.financer.client.domain.api.RestApi;
+import org.financer.client.domain.api.RestApiImpl;
+import org.financer.client.domain.model.user.Token;
+import org.financer.client.domain.model.user.User;
 import org.financer.client.format.I18N;
 import org.financer.client.javafx.dialogs.FinancerConfirmDialog;
 import org.financer.client.javafx.local.LocalStorageImpl;
 import org.financer.client.javafx.main.FinancerController;
 import org.financer.client.javafx.util.ApplicationHelper;
 import org.financer.client.local.LocalStorage;
-import org.financer.shared.connection.ConnectionResult;
-import org.financer.util.concurrency.FinancerExecutor;
+import org.financer.shared.domain.model.value.objects.SettingPair;
 
-import java.io.Serializable;
 import java.net.URL;
 import java.util.Currency;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.ResourceBundle;
 
 public class SettingsController implements Initializable {
@@ -51,9 +49,9 @@ public class SettingsController implements Initializable {
     @FXML
     public JFXToggleButton changeAmountSignAutomaticallyCheckBox;
 
-    private LocalStorage localStorage = LocalStorageImpl.getInstance();
-    private User user = (User) localStorage.readObject("user");
-    private LocalSettings localSettings = (LocalSettings) localStorage.readObject("localSettings");
+    private final RestApi restApi = new RestApiImpl();
+    private final LocalStorage localStorage = LocalStorageImpl.getInstance();
+    private User user = localStorage.readObject("user");
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -63,45 +61,43 @@ public class SettingsController implements Initializable {
             this.logoutFromDeviceBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.SIGN_OUT));
 
             this.languageMenuComboBox.getItems().addAll(I18N.Language.getAll());
-            this.languageMenuComboBox.getSelectionModel().select(I18N.Language.getLanguageByLocale(this.user.getSettings().getLanguage()));
+            this.languageMenuComboBox.getSelectionModel().select(I18N.Language.getLanguageByLocale(this.user.getValueOrDefault(SettingPair.Property.LANGUAGE)));
             this.languageMenuComboBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-                user.getSettings().setLanguage(newValue.getLocale());
+                user.putOrUpdateSettingProperty(SettingPair.Property.LANGUAGE, newValue.getLocale());
                 updateSettings();
 
                 FinancerConfirmDialog dialog = new FinancerConfirmDialog(I18N.get("warnChangesAfterRestart"));
-                dialog.setOnConfirm(result -> {
-                    ApplicationHelper.restartApplication((Stage) languageMenuComboBox.getScene().getWindow());
-                });
+                dialog.setOnConfirm(result -> ApplicationHelper.restartApplication((Stage) languageMenuComboBox.getScene().getWindow()));
             });
 
             this.currencyComboBox.getItems().addAll(Currency.getAvailableCurrencies());
             this.currencyComboBox.getItems().sort((o1, o2) -> String.CASE_INSENSITIVE_ORDER.compare(o1.toString(), o2.toString()));
-            this.currencyComboBox.getSelectionModel().select(this.user.getSettings().getCurrency());
+            this.currencyComboBox.getSelectionModel().select(this.user.getValueOrDefault(SettingPair.Property.CURRENCY));
             this.currencyComboBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-                user.getSettings().setCurrency(newValue);
+                user.putOrUpdateSettingProperty(SettingPair.Property.CURRENCY, newValue);
                 showSignCheckbox.setDisable(false);
                 updateSettings();
             });
 
-            if (user.getSettings().getCurrency() == null) {
+            if (!user.isPropertySet(SettingPair.Property.CURRENCY)) {
                 this.showSignCheckbox.setDisable(true);
             }
-            this.showSignCheckbox.setSelected(this.user.getSettings().isShowCurrencySign());
+            this.showSignCheckbox.setSelected(this.user.getValueOrDefault(SettingPair.Property.SHOW_CURRENCY_SIGN));
             this.showSignCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
-                user.getSettings().setShowCurrencySign(newValue);
+                user.putOrUpdateSettingProperty(SettingPair.Property.SHOW_CURRENCY_SIGN, newValue);
                 updateSettings();
             });
 
             for (int i = 3; i <= 8; i++) this.maxNumberOfMonthsDisplayedComboBox.getItems().add(i);
-            this.maxNumberOfMonthsDisplayedComboBox.getSelectionModel().select((Integer) localSettings.getMaxNumberOfMonthsDisplayed());
+            this.maxNumberOfMonthsDisplayedComboBox.getSelectionModel().select((user.getValueOrDefault(SettingPair.Property.MAX_NUMBER_OF_MONTHS_DISPLAYED)));
             this.maxNumberOfMonthsDisplayedComboBox.getSelectionModel().selectedItemProperty().addListener((observableValue, oldValue, newValue) -> {
-                localSettings.setMaxNumberOfMonthsDisplayed(newValue);
-                localStorage.writeObject("localSettings", localSettings);
+                user.putOrUpdateSettingProperty(SettingPair.Property.MAX_NUMBER_OF_MONTHS_DISPLAYED, newValue);
+                updateSettings();
             });
 
-            this.changeAmountSignAutomaticallyCheckBox.setSelected(this.user.getSettings().isChangeAmountSignAutomatically());
+            this.changeAmountSignAutomaticallyCheckBox.setSelected(this.user.getValueOrDefault(SettingPair.Property.CHANGE_AMOUNT_SIGN_AUTOMATICALLY));
             this.changeAmountSignAutomaticallyCheckBox.selectedProperty().addListener((observableValue, oldValue, newValue) -> {
-                user.getSettings().setChangeAmountSignAutomatically(newValue);
+                user.putOrUpdateSettingProperty(SettingPair.Property.CHANGE_AMOUNT_SIGN_AUTOMATICALLY, newValue);
                 updateSettings();
             });
 
@@ -115,37 +111,24 @@ public class SettingsController implements Initializable {
         this.devicesListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) ->
                 logoutFromDeviceBtn.setDisable(false));
 
-        devicesListView.setItems(FXCollections.observableArrayList(user.getTokenList()));
+        devicesListView.setItems(FXCollections.observableArrayList(user.getTokens()));
         devicesListView.setCellFactory(param -> new TokenListViewImpl());
     }
 
     private void updateSettings() {
-        Map<String, Serializable> parameters = new HashMap<>();
-        parameters.put("user", user);
-        FinancerExecutor.getExecutor().execute(new ServerRequest(user, "updateUsersSettings", parameters, new RestCallback() {
-            @Override
-            public void onSuccess(ConnectionResult result) {
-                localStorage.writeObject("user", (Serializable) result.getResult());
-                user = (User) result.getResult();
-            }
-
-            @Override
-            public void onAfter() {
-                localStorage.writeObject("user", user);
-            }
-        }));
+        restApi.updateUsersSettings(user.getId(), user.getSettings(), result -> {
+            localStorage.writeObject("user", result);
+            user = result;
+        }).execute();
     }
 
     public void handleLogoutFromDevice() {
         FinancerConfirmDialog dialog = new FinancerConfirmDialog(I18N.get("confirmLogDeviceOut"));
-        dialog.setOnConfirm(result -> {
-            HashMap<String, Serializable> parameters = new HashMap<>();
-            parameters.put("tokenId", this.devicesListView.getSelectionModel().getSelectedItem().getId());
-            FinancerExecutor.getExecutor().execute(new ServerRequest(this.user, "deleteToken", parameters, result1 -> Platform.runLater(() -> devicesListView.getItems().remove(devicesListView.getSelectionModel().getSelectedItem()))));
-        });
+        dialog.setOnConfirm(result -> restApi.deleteToken(user.getId(), this.devicesListView.getSelectionModel().getSelectedItem().getId(),
+                result1 -> Platform.runLater(() -> devicesListView.getItems().remove(devicesListView.getSelectionModel().getSelectedItem()))));
     }
 
-    private final class TokenListViewImpl extends ListCell<Token> {
+    private static final class TokenListViewImpl extends ListCell<Token> {
         @Override
         protected void updateItem(Token item, boolean empty) {
             super.updateItem(item, empty);
@@ -156,16 +139,16 @@ public class SettingsController implements Initializable {
                 BorderPane borderPane = new BorderPane();
 
                 VBox left = new VBox();
-                Label systemLabel = new Label(item.getOperatingSystem());
+                Label systemLabel = new Label(item.getOperatingSystem().toString());
                 GlyphFont fontAwesome = GlyphFontRegistry.font("FontAwesome");
-                systemLabel.setGraphic(fontAwesome.create(item.getIsMobile() ? FontAwesome.Glyph.MOBILE : FontAwesome.Glyph.DESKTOP));
+                systemLabel.setGraphic(fontAwesome.create(item.getOperatingSystem().getOperatingSystem().getIsMobile() ? FontAwesome.Glyph.MOBILE : FontAwesome.Glyph.DESKTOP));
                 systemLabel.getStyleClass().add("list-cell-title");
                 left.getChildren().add(systemLabel);
-                Label ipAddressLabel = new Label(item.getIpAddress());
+                Label ipAddressLabel = new Label(item.getIpAddress().getIpAddress());
                 left.getChildren().add(ipAddressLabel);
                 borderPane.setLeft(left);
 
-                borderPane.setCenter(new Label(I18N.get("lastLogin") + " " + item.getExpireDate().minusMonths(1).toString()));
+                borderPane.setCenter(new Label(I18N.get("lastLogin") + " " + item.getExpireDate().getExpireDate().minusMonths(1).toString()));
 
                 setGraphic(borderPane);
             }

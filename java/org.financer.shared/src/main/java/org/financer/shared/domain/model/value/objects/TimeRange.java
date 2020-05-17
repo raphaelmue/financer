@@ -2,6 +2,8 @@ package org.financer.shared.domain.model.value.objects;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.v3.oas.annotations.media.Schema;
+import org.financer.shared.domain.model.Formattable;
+import org.financer.shared.domain.model.Settings;
 import org.hibernate.annotations.Immutable;
 
 import javax.persistence.Column;
@@ -9,6 +11,9 @@ import javax.persistence.Embeddable;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
+import java.util.Locale;
 import java.util.Objects;
 
 /**
@@ -18,7 +23,7 @@ import java.util.Objects;
 @Embeddable
 @Immutable
 @Schema(description = "Value object for time range")
-public class TimeRange implements Serializable {
+public class TimeRange implements Serializable, Formattable, Comparable<TimeRange> {
     private static final long serialVersionUID = 3710079875858283394L;
 
     @Column(name = "start_date", nullable = false)
@@ -114,6 +119,29 @@ public class TimeRange implements Serializable {
         return new ValueDate(this.startDate).getMonthDifference(new ValueDate(this.endDate));
     }
 
+    @Override
+    public String format(Settings settings) {
+        Locale locale = settings.getValueOrDefault(SettingPair.Property.LANGUAGE);
+        DateTimeFormatter formatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(locale);
+
+        if (this.terminates()) {
+            return this.startDate.format(formatter) + " - " + this.endDate.format(formatter);
+        }
+        return this.startDate.format(formatter);
+    }
+
+    @Override
+    public int compareTo(TimeRange timeRange) {
+        return this.startDate.compareTo(timeRange.getStartDate());
+    }
+
+    public LocalDate getEndDateOrCurrentDate() {
+        if (this.terminates()) {
+            return this.endDate;
+        }
+        return LocalDate.now();
+    }
+
     /*
      * Getters and Setters
      */
@@ -124,6 +152,15 @@ public class TimeRange implements Serializable {
 
     public LocalDate getEndDate() {
         return endDate;
+    }
+
+    /**
+     * Indicates whether this time range terminates or not (i.e. whether the end date is set or not).
+     *
+     * @return true if terminates
+     */
+    public boolean terminates() {
+        return this.endDate != null;
     }
 
     public TimeRange setEndDate(LocalDate endDate) {

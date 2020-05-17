@@ -3,17 +3,18 @@ package org.financer.client.domain.model.category;
 import org.financer.client.domain.model.transaction.Transaction;
 import org.financer.client.domain.model.user.User;
 import org.financer.shared.domain.model.AmountProvider;
+import org.financer.shared.domain.model.Formattable;
+import org.financer.shared.domain.model.Settings;
 import org.financer.shared.domain.model.value.objects.Amount;
 import org.financer.shared.domain.model.value.objects.CategoryClass;
 import org.financer.shared.domain.model.value.objects.TimeRange;
 import org.financer.shared.domain.model.value.objects.ValueDate;
 import org.financer.util.collections.Tree;
 
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.io.Serializable;
+import java.util.*;
 
-public class Category implements Tree, AmountProvider {
+public class Category implements Serializable, Tree, AmountProvider, Formattable {
     private static final long serialVersionUID = 5491420625985358596L;
 
     private long id;
@@ -23,6 +24,18 @@ public class Category implements Tree, AmountProvider {
     private String name;
     private Set<Category> children;
     private Set<Transaction> transactions = new HashSet<>();
+
+    public String getPrefix() {
+        if (this.isRoot()) {
+            return Integer.toString(categoryClass.getCategoryClass().ordinal() + 1);
+        }
+
+        List<Category> neighbors = new ArrayList<>(parent.getChildren());
+        neighbors.sort(Comparator.comparing(Category::getName));
+        final int index = neighbors.indexOf(this) + 1;
+
+        return parent.getPrefix() + "." + index;
+    }
 
     @Override
     public Amount getAmount() {
@@ -94,6 +107,15 @@ public class Category implements Tree, AmountProvider {
         }
     }
 
+    @Override
+    public String format(Settings settings) {
+        final String prefix = this.getPrefix();
+        if (!prefix.isBlank()) {
+            return this.getPrefix() + " " + this.getName();
+        }
+        return this.name;
+    }
+
     /*
      * Getters and Setters
      */
@@ -154,6 +176,10 @@ public class Category implements Tree, AmountProvider {
     public Category setChildren(Set<Category> children) {
         this.children = children;
         return this;
+    }
+
+    public Set<Transaction> getTransactions() {
+        return transactions;
     }
 
     @Override

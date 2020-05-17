@@ -1,6 +1,7 @@
 package org.financer.shared.domain.model.value.objects;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import org.financer.shared.domain.model.api.DataTransferObject;
 import org.financer.util.Hash;
 import org.financer.util.RandomString;
 import org.hibernate.annotations.Immutable;
@@ -13,7 +14,7 @@ import java.util.Objects;
 @Embeddable
 @Immutable
 @Schema(description = "Value object for hashed password")
-public final class HashedPassword implements Serializable {
+public final class HashedPassword implements Serializable, DataTransferObject {
     private static final long serialVersionUID = 158937550736458704L;
 
     private static final RandomString stringGenerator = new RandomString(32);

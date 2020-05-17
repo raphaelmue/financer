@@ -8,8 +8,12 @@ public class TreeUtil {
         super();
     }
 
+    public static boolean insertByValue(Tree root, Tree treeItem) {
+        return insertByValue(root, treeItem, (o1, o2) -> o1.equals(o2) ? 0 : 1);
+    }
+
     @SuppressWarnings("unchecked")
-    public static boolean insertByValue(Tree root, Tree treeItem, Comparator comparator) {
+    public static boolean insertByValue(Tree root, Tree treeItem, Comparator<Tree> comparator) {
         for (Tree item : root.getChildren()) {
             if (comparator.compare(treeItem, item) == 0) {
                 treeItem.setParent(root);
@@ -24,7 +28,7 @@ public class TreeUtil {
         return false;
     }
 
-    public static boolean insertByValue(List<? extends Tree> roots, Tree treeItem, Comparator comparator) {
+    public static boolean insertByValue(List<? extends Tree> roots, Tree treeItem, Comparator<Tree> comparator) {
         for (Tree root : roots) {
             if (insertByValue(root, treeItem, comparator)) {
                 return true;
@@ -33,13 +37,13 @@ public class TreeUtil {
         return false;
     }
 
-    public static boolean deleteByValue(Tree root, Tree treeItem, Comparator comparator) {
+    public static boolean deleteByValue(Tree root, Tree treeItem) {
         for (Tree item : root.getChildren()) {
-            if (comparator.compare(treeItem, item) == 0) {
+            if (treeItem.equals(item)) {
                 item.getParent().getChildren().remove(treeItem);
                 return true;
             } else {
-                if (TreeUtil.deleteByValue(item, treeItem, comparator)) {
+                if (TreeUtil.deleteByValue(item, treeItem)) {
                     return true;
                 }
             }
@@ -67,6 +71,15 @@ public class TreeUtil {
         if (!root.isLeaf()) {
             for (Tree item : root.getChildren()) {
                 TreeUtil.traverse(item, action);
+            }
+        }
+    }
+
+    public static void traverse(Iterable<? extends Tree> roots, Action<Tree> action) {
+        for (Tree root : roots) {
+            action.action(root);
+            if (!root.isLeaf()) {
+                TreeUtil.traverse(root.getChildren(), action);
             }
         }
     }

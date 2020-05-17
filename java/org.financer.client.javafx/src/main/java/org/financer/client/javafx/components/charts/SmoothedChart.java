@@ -48,9 +48,7 @@ import java.util.Locale;
 
 
 /**
- * User: hansolo
- * Date: 03.11.17
- * Time: 04:50
+ * User: hansolo Date: 03.11.17 Time: 04:50
  */
 @SuppressWarnings("all")
 public class SmoothedChart<X, Y> extends AreaChart<X, Y> {
@@ -316,8 +314,8 @@ public class SmoothedChart<X, Y> extends AreaChart<X, Y> {
     }
 
     /**
-     * Returns an array of paths where the first entry represents the fill path
-     * and the second entry represents the stroke path
+     * Returns an array of paths where the first entry represents the fill path and the second entry represents the
+     * stroke path
      *
      * @param series
      * @return an array of paths where [0] == FillPath and [1] == StrokePath

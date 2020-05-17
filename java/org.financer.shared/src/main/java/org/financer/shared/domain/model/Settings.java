@@ -43,4 +43,8 @@ public interface Settings {
      */
     <T> T getValue(SettingPair.Property property);
 
+    default boolean isPropertySet(SettingPair.Property property) {
+        return getValue(property) != null;
+    }
+
 }

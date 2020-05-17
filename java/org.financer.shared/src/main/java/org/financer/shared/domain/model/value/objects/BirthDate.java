@@ -1,18 +1,23 @@
 package org.financer.shared.domain.model.value.objects;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import org.financer.shared.domain.model.Formattable;
+import org.financer.shared.domain.model.Settings;
 import org.hibernate.annotations.Immutable;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
+import java.util.Locale;
 import java.util.Objects;
 
 @Embeddable
 @Immutable
 @Schema(description = "Value object for birth date")
-public class BirthDate implements Serializable {
+public class BirthDate implements Serializable, Formattable {
     private static final long serialVersionUID = -4072522792982525094L;
 
 
@@ -36,6 +41,13 @@ public class BirthDate implements Serializable {
 
     public LocalDate getBirthDate() {
         return birthDate;
+    }
+
+    @Override
+    public String format(Settings settings) {
+        Locale locale = settings.getValue(SettingPair.Property.LANGUAGE);
+        DateTimeFormatter formatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(locale);
+        return this.getBirthDate().format(formatter);
     }
 
     @Override

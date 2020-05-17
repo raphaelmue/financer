@@ -7,13 +7,13 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Region;
 import javafx.util.StringConverter;
+import org.financer.client.domain.model.user.User;
 import org.financer.client.format.I18N;
 import org.financer.client.javafx.components.DatePicker;
 import org.financer.client.javafx.dialogs.FinancerDialog;
 import org.financer.client.javafx.format.JavaFXFormatter;
 import org.financer.client.javafx.local.LocalStorageImpl;
-import org.financer.util.Hash;
-import org.financer.util.RandomString;
+import org.financer.shared.domain.model.value.objects.*;
 
 public class RegisterDialog extends FinancerDialog<User> {
     private JFXTextField nameField;
@@ -22,7 +22,7 @@ public class RegisterDialog extends FinancerDialog<User> {
     private JFXPasswordField passwordField;
     private JFXPasswordField passwordRepeatField;
     private DatePicker birthDatePicker;
-    private JFXComboBox<User.Gender> genderComboBox;
+    private JFXComboBox<Gender> genderComboBox;
 
     RegisterDialog() {
         super(null, ((LoginController) LoginController.getInstance()).getRootLayout());
@@ -58,16 +58,16 @@ public class RegisterDialog extends FinancerDialog<User> {
         gridPane.add(new Label(I18N.get("gender")), 0, 4);
         this.genderComboBox = new JFXComboBox<>();
         this.genderComboBox.setId("genderComboBox");
-        this.genderComboBox.getItems().addAll(User.Gender.values());
+        this.genderComboBox.getItems().addAll(Gender.getAll());
         this.genderComboBox.setConverter(new StringConverter<>() {
             @Override
-            public String toString(User.Gender gender) {
-                return gender != null ? I18N.get(gender.getName()) : "";
+            public String toString(Gender gender) {
+                return gender != null ? I18N.get(gender.getGender().getName()) : "";
             }
 
             @Override
-            public User.Gender fromString(String name) {
-                return User.Gender.getGenderByName(name);
+            public Gender fromString(String name) {
+                return new Gender(name);
             }
         });
         this.genderComboBox.setPlaceholder(new Label(I18N.get("gender")));
@@ -112,18 +112,13 @@ public class RegisterDialog extends FinancerDialog<User> {
 
     @Override
     protected void onConfirm() {
-        String salt = new RandomString(32).nextString();
-        String password = Hash.create(this.passwordField.getText(), salt);
-
-        this.setValue(new User(0,
-                this.emailField.getText(),
-                password,
-                salt,
-                this.nameField.getText(),
-                this.surnameField.getText(),
-                this.birthDatePicker.getValue(),
-                this.genderComboBox.getSelectionModel().getSelectedItem(),
-                false));
+        this.setValue(new User()
+                .setId(0)
+                .setEmail(new Email(this.emailField.getText()))
+                .setPassword(new HashedPassword(this.passwordField.getText()))
+                .setName(new Name(this.nameField.getText(), this.surnameField.getText()))
+                .setBirthDate(new BirthDate(this.birthDatePicker.getValue()))
+                .setGender(this.genderComboBox.getSelectionModel().getSelectedItem()));
 
         super.onConfirm();
     }

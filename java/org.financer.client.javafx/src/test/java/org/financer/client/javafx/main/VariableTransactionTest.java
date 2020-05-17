@@ -5,7 +5,12 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
+import org.financer.client.domain.model.category.Category;
+import org.financer.client.domain.model.category.CategoryRoot;
+import org.financer.client.domain.model.transaction.Transaction;
+import org.financer.client.domain.model.transaction.VariableTransaction;
 import org.financer.client.javafx.local.LocalStorageImpl;
+import org.financer.shared.domain.model.value.objects.Amount;
 import org.financer.util.collections.TreeUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,69 +31,72 @@ public class VariableTransactionTest extends AbstractFinancerApplicationTest {
 
     @Test
     public void testAddTransaction() {
-        register(this.user, this.password);
-        addCategory(category);
-        addTransaction(transaction);
+        final VariableTransaction transaction = variableTransaction();
+        register(user(), password());
+        addCategory(variableCategory());
+        addVariableTransaction(transaction);
         clickOn((Button) find("#refreshTransactionsBtn"));
         sleep(1000);
 
-        Assertions.assertNotNull(clickOn(formatter.formatCurrency(transaction.getAmount())));
+        Assertions.assertNotNull(clickOn(formatter.format(transaction.getAmount())));
 
-        BaseCategory baseCategory = (BaseCategory) LocalStorageImpl.getInstance().readObject("categories");
-        Set<Transaction> transactions = ((CategoryTree) TreeUtil.getByValue(baseCategory, category,
-                Comparator.comparingInt(Category::getId))).getTransactions();
+        CategoryRoot categoryRoot = LocalStorageImpl.getInstance().readObject("categories");
+        Set<Transaction> transactions = ((Category) TreeUtil.getByValue(categoryRoot, transaction.getCategory(),
+                Comparator.comparingLong(Category::getId))).getTransactions();
         Assertions.assertEquals(1, transactions.size());
-        for (Transaction transaction : transactions) {
-            Assertions.assertTrue(transaction instanceof VariableTransaction);
-            Assertions.assertTrue(transaction.getId() > 0);
+        for (Transaction _transaction : transactions) {
+            Assertions.assertTrue(_transaction instanceof VariableTransaction);
+            Assertions.assertTrue(_transaction.getId() > 0);
         }
     }
 
     @Test
     public void testEditTransaction() {
-        register(this.user, this.password);
-        addCategory(category);
-        addTransaction(transaction);
-        clickOn(transaction.getProduct());
+        final VariableTransaction transaction = variableTransaction();
+        register(user(), password());
+        addCategory(variableCategory());
+        addVariableTransaction(transaction);
+        clickOn(formatter.format(transaction.getValueDate()));
         clickOn((Button) find("#editTransactionBtn"));
-        final double amount = transaction.getAmount() / 2;
+        final Amount amount = transaction.getAmount().divide(2);
         TextField amountTextField = find("#amountTextField");
         clickOn(amountTextField);
         press(KeyCode.BACK_SPACE).release(KeyCode.BACK_SPACE);
         press(KeyCode.BACK_SPACE).release(KeyCode.BACK_SPACE);
         press(KeyCode.BACK_SPACE).release(KeyCode.BACK_SPACE);
         press(KeyCode.BACK_SPACE).release(KeyCode.BACK_SPACE);
-        write(Double.toString(amount));
+        write(Double.toString(amount.getAmount()));
         confirmDialog();
         clickOn((Button) find("#refreshTransactionsBtn"));
         sleep(MEDIUM_SLEEP);
 
-        Assertions.assertNotNull(clickOn(formatter.formatCurrency(amount)));
-        BaseCategory baseCategory = (BaseCategory) LocalStorageImpl.getInstance().readObject("categories");
-        Set<Transaction> transactions = ((CategoryTree) TreeUtil.getByValue(baseCategory, category,
-                Comparator.comparingInt(Category::getId))).getTransactions();
+        Assertions.assertNotNull(clickOn(formatter.format(amount)));
+        CategoryRoot categoryRoot = LocalStorageImpl.getInstance().readObject("categories");
+        Set<Transaction> transactions = ((Category) TreeUtil.getByValue(categoryRoot, transaction.getCategory(),
+                Comparator.comparingLong(Category::getId))).getTransactions();
         Assertions.assertEquals(1, transactions.size());
-        for (Transaction transaction : transactions) {
-            Assertions.assertTrue(transaction instanceof VariableTransaction);
-            Assertions.assertTrue(transaction.getId() > 0);
-            Assertions.assertEquals(amount, transaction.getAmount());
+        for (Transaction _transaction : transactions) {
+            Assertions.assertTrue(_transaction instanceof VariableTransaction);
+            Assertions.assertTrue(_transaction.getId() > 0);
+            Assertions.assertEquals(amount, _transaction.getAmount());
         }
     }
 
     @Test
     public void testDeleteTransaction() {
-        register(this.user, this.password);
-        addCategory(this.category);
-        addTransaction(this.transaction);
+        final VariableTransaction transaction = variableTransaction();
+        register(user(), password());
+        addCategory(variableCategory());
+        addVariableTransaction(transaction);
         clickOn((Button) find("#refreshTransactionsBtn"));
         sleep(MEDIUM_SLEEP);
-        clickOn(transaction.getProduct());
+        clickOn(formatter.format(transaction.getValueDate()));
         clickOn((JFXButton) find("#deleteTransactionBtn"));
         confirmDialog();
         sleep(MEDIUM_SLEEP);
         Assertions.assertEquals(0, ((TableView) find("#transactionsTableView")).getItems().size());
-        BaseCategory baseCategory = (BaseCategory) LocalStorageImpl.getInstance().readObject("categories");
-        Assertions.assertEquals(0, ((CategoryTree) TreeUtil.getByValue(baseCategory, transaction.getCategoryTree(),
-                Comparator.comparingInt(Category::getId))).getTransactions().size());
+        CategoryRoot categoryRoot = LocalStorageImpl.getInstance().readObject("categories");
+        Assertions.assertEquals(0, ((Category) TreeUtil.getByValue(categoryRoot, transaction.getCategory(),
+                Comparator.comparingLong(Category::getId))).getTransactions().size());
     }
 }

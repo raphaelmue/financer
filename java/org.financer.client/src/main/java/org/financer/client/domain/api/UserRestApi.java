@@ -7,10 +7,12 @@ import org.financer.client.domain.model.transaction.FixedTransaction;
 import org.financer.client.domain.model.transaction.VariableTransaction;
 import org.financer.client.domain.model.user.Setting;
 import org.financer.client.domain.model.user.User;
+import org.financer.shared.domain.model.value.objects.HashedPassword;
 import org.financer.shared.domain.model.value.objects.SettingPair;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public interface UserRestApi {
 
@@ -37,12 +39,10 @@ public interface UserRestApi {
 
     /**
      * Updates the password of the given user.
-     *
-     * @param userId      id of the user
-     * @param oldPassword old password of the user to verify
+     *  @param userId      id of the user
      * @param newPassword updated unencrypted password
      */
-    ServerRequestHandler updateUsersPassword(Long userId, String oldPassword, String newPassword, RestCallback<User> callback);
+    ServerRequestHandler updateUsersPassword(Long userId, HashedPassword newPassword, RestCallback<User> callback);
 
     /**
      * Updates the users personal information
@@ -69,9 +69,10 @@ public interface UserRestApi {
     /**
      * Fetches the users categories.
      *
-     * @param userId user id
+     * @param userId   user id
+     * @param callback
      */
-    ServerRequestHandler getUsersCategories(Long userId, RestCallback<List<Category>> callback);
+    ServerRequestHandler getUsersCategories(Long userId, RestCallback<Set<Category>> callback);
 
 
     /**

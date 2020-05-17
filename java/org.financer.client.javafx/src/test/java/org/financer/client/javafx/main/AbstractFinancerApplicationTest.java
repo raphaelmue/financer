@@ -7,12 +7,18 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
+import org.financer.client.domain.model.category.Category;
+import org.financer.client.domain.model.transaction.*;
+import org.financer.client.domain.model.user.Token;
+import org.financer.client.domain.model.user.User;
+import org.financer.client.domain.model.user.VerificationToken;
 import org.financer.client.format.I18N;
 import org.financer.client.javafx.components.DatePicker;
 import org.financer.client.javafx.components.DoubleField;
 import org.financer.client.javafx.components.IntegerField;
 import org.financer.client.javafx.format.JavaFXFormatter;
 import org.financer.client.javafx.local.LocalStorageImpl;
+import org.financer.shared.domain.model.value.objects.*;
 import org.financer.util.collections.TreeUtil;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,45 +26,17 @@ import org.testfx.api.FxToolkit;
 import org.testfx.framework.junit5.ApplicationTest;
 
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Predicate;
 
-class AbstractFinancerApplicationTest extends ApplicationTest {
+public abstract class AbstractFinancerApplicationTest extends ApplicationTest {
 
     static final int SHORT_SLEEP = 500;
     static final int MEDIUM_SLEEP = 1000;
     private static final int LONG_SLEEP = 5000;
-
-    final String password = "password";
-    final User user = new User(0,
-            "max@mustermann.com",
-            "6406b2e97a97f64910aca76370ee35a92087806da1aa878e8a9ae0f4dc3949af",
-            "I2HoOYJmqKfGboyJAdCEQwulUkxmhVH5",
-            "Max",
-            "Mustermann",
-            LocalDate.of(1989, 5, 28),
-            User.Gender.MALE,
-            false);
-    final CategoryTree category = new CategoryTreeImpl(new Category("TestCategory", BaseCategory.CategoryClass.VARIABLE_EXPENSES));
-    final VariableTransaction transaction = new VariableTransaction(0,
-            52.5,
-            LocalDate.of(2018, 5, 19),
-            category,
-            "ProductName",
-            "Purpose",
-            "Shop");
-    final FixedTransaction fixedTransaction = new FixedTransaction(0,
-            570.0,
-            category,
-            LocalDate.of(2018, 2, 5),
-            null,
-            "TestProduct",
-            "TestPurpose",
-            false,
-            3,
-            new HashSet<>());
 
     JavaFXFormatter formatter;
 
@@ -66,6 +44,113 @@ class AbstractFinancerApplicationTest extends ApplicationTest {
         System.setProperty("testfx.robot", "glass");
         System.setProperty("glass.platform", "Monocle");
         System.setProperty("monocle.platform", "Headless");
+    }
+
+    protected User user() {
+        return new User()
+                .setId(1)
+                .setEmail(new Email("test@test.com"))
+                .setName(new Name("Test", "User"))
+                .setPassword(new HashedPassword(password()))
+                .setTokens(new HashSet<>(Collections.singletonList(token())))
+                .setVerified(false);
+    }
+
+    protected String password() {
+        return "password";
+    }
+
+    protected Token token() {
+        return new Token()
+                .setId(1)
+                .setExpireDate(new ExpireDate())
+                .setIpAddress(new IPAddress("192.168.0.1"))
+                .setToken(tokenString())
+                .setOperatingSystem(new OperatingSystem(OperatingSystem.Values.LINUX));
+    }
+
+    protected VerificationToken verificationToken() {
+        return new VerificationToken()
+                .setId(1)
+                .setExpireDate(new ExpireDate(LocalDate.now().plusDays(15)))
+                .setToken(tokenString());
+    }
+
+    protected TokenString tokenString() {
+        return new TokenString("Z6XCS3tyyBlhPfsv7rMxLgfdyEOlUkv0CWSdbFYHCNX2wLlwpH97lJNP69Bny3XZ");
+    }
+
+    protected Category variableCategory() {
+        return new Category()
+                .setId(1)
+                .setUser(user())
+                .setCategoryClass(new CategoryClass(CategoryClass.Values.VARIABLE_EXPENSES))
+                .setName("Variable Category")
+                .setParent(null);
+    }
+
+    protected Category variableCategoryParent() {
+        return new Category()
+                .setId(2)
+                .setUser(user())
+                .setCategoryClass(new CategoryClass(CategoryClass.Values.VARIABLE_EXPENSES))
+                .setName("Variable Category Parent")
+                .setParent(null);
+    }
+
+    protected Category fixedCategory() {
+        return new Category()
+                .setId(2)
+                .setUser(user())
+                .setCategoryClass(new CategoryClass(CategoryClass.Values.FIXED_EXPENSES))
+                .setName("Fixed Category")
+                .setParent(null);
+    }
+
+    protected Product product() {
+        return new Product()
+                .setId(1)
+                .setName("Test Product")
+                .setQuantity(new Quantity(2))
+                .setAmount(new Amount(50));
+    }
+
+    protected VariableTransaction variableTransaction() {
+        return new VariableTransaction()
+                .setId(1)
+                .setValueDate(new ValueDate())
+                .setCategory(variableCategory())
+                .setDescription("Test Purpose")
+                .setVendor("Test Vendor")
+                .addProduct(product());
+    }
+
+    protected Attachment attachment() {
+        return new Attachment()
+                .setId(1)
+                .setName("test.pdf")
+                .setTransaction(variableTransaction())
+                .setUploadDate(LocalDate.now());
+    }
+
+    protected FixedTransactionAmount fixedTransactionAmount() {
+        return new FixedTransactionAmount()
+                .setId(1)
+                .setAmount(new Amount(50))
+                .setValueDate(new ValueDate());
+    }
+
+    protected FixedTransaction fixedTransaction() {
+        return new FixedTransaction()
+                .setId(2)
+                .setCategory(fixedCategory())
+                .setTimeRange(new TimeRange())
+                .setIsVariable(false)
+                .setAmount(new Amount(50.0))
+                .setDay(1)
+                .setDescription("Test Purpose")
+                .setVendor("Test Vendor")
+                .addFixedTransactionAmount(fixedTransactionAmount());
     }
 
     @BeforeEach
@@ -84,13 +169,13 @@ class AbstractFinancerApplicationTest extends ApplicationTest {
         clickOn((JFXButton) find("#openRegisterDialogBtn"));
 
         clickOn((JFXTextField) find("#registerNameTextField"));
-        write(user.getName());
+        write(user.getName().getFirstName());
         clickOn((JFXTextField) find("#registerSurnameTextField"));
-        write(user.getSurname());
+        write(user.getName().getSurname());
         clickOn((JFXTextField) find("#registerEmailTextField"));
-        write(user.getEmail());
+        write(user.getEmail().getEmailAddress());
         DatePicker birthDatePicker = find("#registerBirthDatePicker");
-        birthDatePicker.setValue(user.getBirthDate());
+        birthDatePicker.setValue(user.getBirthDate().getBirthDate());
         clickOn((JFXComboBox) find("#genderComboBox"));
         press(KeyCode.DOWN).release(KeyCode.DOWN);
         press(KeyCode.ENTER).release(KeyCode.ENTER);
@@ -106,18 +191,18 @@ class AbstractFinancerApplicationTest extends ApplicationTest {
 
     void login(User user, String password) {
         clickOn((TextField) find("#loginEmailTextField"));
-        write(user.getEmail());
+        write(user.getEmail().getEmailAddress());
         clickOn((TextField) find("#loginPasswordField"));
         write(password);
         clickOn((Button) find("#loginBtn"));
     }
 
     void logout() throws Exception {
-        clickOn(user.getFullName());
+        clickOn(formatter.format(user().getName()));
         clickOn("Logout");
     }
 
-    void addCategory(CategoryTree category) {
+    void addCategory(Category category) {
         clickOn((JFXButton) find("#profileTabBtn"));
         sleep(MEDIUM_SLEEP);
 
@@ -125,20 +210,20 @@ class AbstractFinancerApplicationTest extends ApplicationTest {
         press(KeyCode.RIGHT).release(KeyCode.RIGHT);
 
         Button newCategoryBtn = find("#newCategoryBtn");
-        clickOn(I18N.get(category.getValue().getCategoryClass().getName()));
+        clickOn(I18N.get(category.getCategoryClass().getCategoryClass().getName()));
         clickOn(newCategoryBtn);
 
         JFXTextField categoryNameField = find("#inputDialogTextField");
         categoryNameField.setText("");
         clickOn(categoryNameField);
-        write(category.getValue().getName());
+        write(category.getName());
 
         confirmDialog();
 
         sleep(MEDIUM_SLEEP);
     }
 
-    void addTransaction(VariableTransaction transaction) {
+    void addVariableTransaction(VariableTransaction transaction) {
         clickOn((JFXButton) find("#transactionsTabBtn"));
         sleep(MEDIUM_SLEEP);
         press(KeyCode.RIGHT).release(KeyCode.RIGHT);
@@ -148,24 +233,22 @@ class AbstractFinancerApplicationTest extends ApplicationTest {
         DoubleField amountTextField = find("#amountTextField");
         clickOn(amountTextField);
         eraseText(3);
-        write(Double.toString(transaction.getAmount()));
+        write(Double.toString(transaction.getAmount().getAmount()));
         clickOn((JFXComboBox) find("#categoryComboBox"));
         press(KeyCode.DOWN).release(KeyCode.DOWN);
         press(KeyCode.ENTER).release(KeyCode.ENTER);
-        clickOn((JFXTextField) find("#productTextField"));
-        write(transaction.getProduct());
         clickOn((JFXTextField) find("#purposeTextField"));
-        write(transaction.getPurpose());
+        write(transaction.getDescription());
         clickOn((JFXTextField) find("#shopTextField"));
-        write(transaction.getShop());
+        write(transaction.getVendor());
         DatePicker valueDatePicker = find("#valueDatePicker");
-        valueDatePicker.setValue(transaction.getValueDate());
+        valueDatePicker.setValue(transaction.getValueDate().getDate());
 
         confirmDialog();
 
         sleep(MEDIUM_SLEEP);
-        category.getValue().setId(TreeUtil.getByValue((BaseCategory) LocalStorageImpl.getInstance().readObject("categories"),
-                category, Comparator.comparing(Category::getName)).getValue().getId());
+        transaction.getCategory().setId(((Category) TreeUtil.getByValue(LocalStorageImpl.getInstance().readObject("categories"),
+                transaction.getCategory(), Comparator.comparing(Category::getName))).getId());
     }
 
     void addFixedTransaction(FixedTransaction fixedTransaction) {
@@ -175,7 +258,7 @@ class AbstractFinancerApplicationTest extends ApplicationTest {
         press(KeyCode.RIGHT).release(KeyCode.RIGHT);
         press(KeyCode.RIGHT).release(KeyCode.RIGHT);
 
-        clickOn(find((Label label) -> label.getText().contains(fixedTransaction.getCategoryTree().getValue().getName())));
+        clickOn(find((Label label) -> label.getText().contains(fixedTransaction.getCategory().getName())));
 
         clickOn((JFXButton) find("#newFixedTransactionBtn"));
         sleep(SHORT_SLEEP);
@@ -183,41 +266,39 @@ class AbstractFinancerApplicationTest extends ApplicationTest {
         eraseText(1);
         write(Integer.toString(fixedTransaction.getDay()));
         DatePicker datePicker = find("#startDateDatePicker");
-        datePicker.setValue(fixedTransaction.getStartDate());
+        datePicker.setValue(fixedTransaction.getTimeRange().getStartDate());
         if (fixedTransaction.getIsVariable()) {
             clickOn((JFXCheckBox) find("#isVariableCheckbox"));
 
             sleep(100);
 
-            for (TransactionAmount transactionAmount : fixedTransaction.getTransactionAmounts()) {
+            for (FixedTransactionAmount transactionAmount : fixedTransaction.getTransactionAmounts()) {
                 clickOn((JFXButton) find("#newTransactionAmountBtn"));
 
-                ((DatePicker) find("#transactionAmountValueDatePicker")).setValue(transactionAmount.getValueDate());
+                ((DatePicker) find("#transactionAmountValueDatePicker")).setValue(transactionAmount.getValueDate().getDate());
                 clickOn((DoubleField) find("#transactionAmountTextField"));
                 eraseText(3);
-                write(Double.toString(transactionAmount.getAmount()));
+                write(Double.toString(transactionAmount.getAmount().getAmount()));
                 press(KeyCode.TAB).release(KeyCode.TAB);
                 press(KeyCode.ENTER).release(KeyCode.ENTER);
             }
         } else {
             clickOn((DoubleField) find("#amountTextField"));
             eraseText(3);
-            write(Double.toString(fixedTransaction.getAmount()));
+            write(Double.toString(fixedTransaction.getAmount().getAmount()));
         }
         clickOn((JFXTextField) find("#productTextField"));
         write(fixedTransaction.getProduct());
         clickOn((JFXTextField) find("#purposeTextField"));
-        write(fixedTransaction.getPurpose());
+        write(fixedTransaction.getDescription());
 
         confirmDialog();
 
         sleep(SHORT_SLEEP);
     }
 
-    final CategoryTree getCategoryTree() {
-        return ((CategoryTree) TreeUtil.getByValue(((BaseCategory) LocalStorageImpl.getInstance().readObject("categories"))
-                        .getCategoryTreeByCategoryClass(fixedTransaction.getCategoryTree().getValue().getCategoryClass()),
-                fixedTransaction.getCategoryTree(), (o1, o2) -> String.CASE_INSENSITIVE_ORDER.compare(o1.getName(), o2.getName())));
+    final Category getCategoryTree() {
+        return variableCategory();
     }
 
     final void confirmDialog() {

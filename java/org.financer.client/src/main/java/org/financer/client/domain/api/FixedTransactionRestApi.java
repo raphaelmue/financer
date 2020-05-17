@@ -19,10 +19,9 @@ public interface FixedTransactionRestApi {
     /**
      * Updates a specified transaction.
      *
-     * @param transactionId    transaction id that will be updated
      * @param fixedTransaction transaction object with updated information
      */
-    ServerRequestHandler updateFixedTransaction(Long transactionId, FixedTransaction fixedTransaction, RestCallback<FixedTransaction> callback);
+    ServerRequestHandler updateFixedTransaction(FixedTransaction fixedTransaction, RestCallback<FixedTransaction> callback);
 
     /**
      * Deletes a specified transaction.

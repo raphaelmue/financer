@@ -1,5 +1,6 @@
 package org.financer.client.javafx.main;
 
+import org.financer.client.domain.model.user.User;
 import org.financer.client.javafx.local.LocalStorageImpl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,38 +18,40 @@ public class LoginApplicationTest extends AbstractFinancerApplicationTest {
 
     @Test
     public void testInvalidLogin() {
-        login(this.user, "wrong");
+        login(user(), "wrong");
         sleep(MEDIUM_SLEEP);
         Assertions.assertTrue(find("#loginErrorLabel").isVisible());
     }
 
     @Test
     public void testRegisterUser() {
-        register(this.user, password);
-        User user = (User) LocalStorageImpl.getInstance().readObject("user");
+        final User user = user();
+        register(user, password());
+        User storedUser = LocalStorageImpl.getInstance().readObject("user");
         sleep(MEDIUM_SLEEP);
-        Assertions.assertEquals(this.user.getEmail(), user.getEmail());
-        Assertions.assertEquals(this.user.getName(), user.getName());
-        Assertions.assertEquals(this.user.getSurname(), user.getSurname());
-        Assertions.assertEquals(this.user.getBirthDate(), user.getBirthDate());
+        Assertions.assertEquals(user.getEmail(), storedUser.getEmail());
+        Assertions.assertEquals(user.getName(), storedUser.getName());
+        Assertions.assertEquals(user.getBirthDate(), storedUser.getBirthDate());
         Assertions.assertTrue(user.getId() > 0);
     }
 
     @Test
     public void testLogin() throws Exception {
-        register(this.user, password);
+        final User user = user();
+        register(user, password());
         logout();
-        login(this.user, password);
+        login(user, password());
 
         sleep(SHORT_SLEEP);
-        User loggedInUser = (User) LocalStorageImpl.getInstance().readObject("user");
+        User loggedInUser = LocalStorageImpl.getInstance().readObject("user");
         Assertions.assertNotNull(loggedInUser);
-        Assertions.assertEquals(this.user.getEmail(), loggedInUser.getEmail());
+        Assertions.assertEquals(user.getEmail(), loggedInUser.getEmail());
     }
 
     @Test
     public void testLogout() throws Exception {
-        register(this.user, password);
+        final User user = user();
+        register(user, password());
         logout();
 
         for (LocalStorageImpl.LocalStorageFile file : LocalStorageImpl.LocalStorageFile.values()) {

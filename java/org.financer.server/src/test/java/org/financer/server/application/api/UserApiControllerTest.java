@@ -89,7 +89,7 @@ public class UserApiControllerTest extends ApiTest {
 
     @Test
     public void testUpdateUsersPassword() throws Exception {
-        when(userDomainService.updatePassword(eq(password()), any())).thenReturn(user);
+        when(userDomainService.updatePassword(any(HashedPassword.class))).thenReturn(user);
 
         mockMvc.perform(buildRequest(PathBuilder.Post().users().userId(1).password().build())
                 .param("oldPassword", password())
@@ -128,7 +128,7 @@ public class UserApiControllerTest extends ApiTest {
         UserDTO user = objectMapper.readValue(result.getResponse().getContentAsString(), UserDTO.class);
         assertThat(user.getName()).isEqualTo(dto.getName());
         assertThat(user.getBirthDate()).isEqualTo(dto.getBirthDate().getBirthDate());
-        assertThat(user.getGender()).isEqualTo(dto.getGender().getGender() );
+        assertThat(user.getGender()).isEqualTo(dto.getGender().getGender());
     }
 
     @Test

@@ -100,10 +100,11 @@ public class LocalStorageImpl implements LocalStorage {
         return result;
     }
 
+
     @Override
-    public synchronized Serializable readObject(String key) {
+    public <T extends Serializable> T readObject(String key) {
         return (this.readFile(Objects.requireNonNull(LocalStorageFile.getFileByKey(key))) == null) ?
-                null : Objects.requireNonNull(this.readFile(Objects.requireNonNull(LocalStorageFile.getFileByKey(key)))).get(key);
+                null : (T) Objects.requireNonNull(this.readFile(Objects.requireNonNull(LocalStorageFile.getFileByKey(key)))).get(key);
     }
 
     @Override
@@ -140,5 +141,10 @@ public class LocalStorageImpl implements LocalStorage {
         }
         logger.log(Level.INFO, "Deleted all local data successfully.");
         return true;
+    }
+
+    @Override
+    public boolean contains(String key) {
+        return readObject(key) != null;
     }
 }

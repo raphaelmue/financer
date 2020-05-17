@@ -6,6 +6,7 @@ import com.jfoenix.controls.JFXTextField;
 import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
+import org.financer.client.domain.model.user.User;
 import org.financer.client.javafx.local.LocalStorageImpl;
 import org.financer.util.Hash;
 import org.junit.jupiter.api.Assertions;
@@ -25,14 +26,14 @@ public class ProfileTest extends AbstractFinancerApplicationTest {
     @Test
     public void testChangePassword() {
         final String newPassword = "newPassword";
-        register(user, password);
+        register(user(), password());
 
         clickOn((Button) find("#profileTabBtn"));
         sleep(SHORT_SLEEP);
         clickOn((Hyperlink) find("#changePasswordLink"));
 
         clickOn((JFXPasswordField) find("#oldPasswordField"));
-        write(password);
+        write(password());
         clickOn((JFXPasswordField) find("#newPasswordField"));
         write(newPassword);
         clickOn((JFXPasswordField) find("#repeatNewPasswordField"));
@@ -42,26 +43,26 @@ public class ProfileTest extends AbstractFinancerApplicationTest {
 
         sleep(SHORT_SLEEP);
 
-        Assertions.assertEquals(Hash.create(newPassword, ((User) LocalStorageImpl.getInstance().readObject("user")).getSalt()),
-                ((User) LocalStorageImpl.getInstance().readObject("user")).getPassword());
+        Assertions.assertEquals(Hash.create(newPassword, ((User) LocalStorageImpl.getInstance().readObject("user")).getPassword().getSalt()),
+                ((User) LocalStorageImpl.getInstance().readObject("user")).getPassword().getHashedPassword());
     }
 
     @Test
     public void testChangePersonalInformation() {
         final String newName = "Peter";
-        register(user, password);
+        register(user(), password());
 
         clickOn((Button) find("#profileTabBtn"));
         sleep(SHORT_SLEEP);
         clickOn((JFXButton) find("#editPersonalInformationBtn"));
         sleep(SHORT_SLEEP);
         clickOn((JFXTextField) find("#nameField"));
-        eraseText(user.getName().length());
+        eraseText(formatter.format(user().getName()).length());
         write(newName);
         confirmDialog();
         sleep(SHORT_SLEEP);
 
-        Assertions.assertEquals(newName, ((User) LocalStorageImpl.getInstance().readObject("user")).getName());
-        Assertions.assertEquals(newName + " " + user.getSurname(), ((Label) find("#fullNameLabel")).getText());
+        Assertions.assertEquals(newName, ((User) LocalStorageImpl.getInstance().readObject("user")).getName().getFirstName());
+        Assertions.assertEquals(newName + " " + user().getName().getSurname(), ((Label) find("#fullNameLabel")).getText());
     }
 }

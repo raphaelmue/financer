@@ -1,15 +1,16 @@
 package org.financer.client.domain.api;
 
-import org.financer.client.connection.*;
+import org.financer.client.connection.RequestConfig;
+import org.financer.client.connection.RestCallback;
+import org.financer.client.connection.ServerRequest;
+import org.financer.client.connection.ServerRequestHandler;
 import org.financer.client.domain.model.category.Category;
-import org.financer.client.domain.model.transaction.FixedTransaction;
-import org.financer.client.domain.model.transaction.FixedTransactionAmount;
-import org.financer.client.domain.model.transaction.Product;
-import org.financer.client.domain.model.transaction.VariableTransaction;
+import org.financer.client.domain.model.transaction.*;
 import org.financer.client.domain.model.user.Setting;
 import org.financer.client.domain.model.user.User;
 import org.financer.shared.domain.model.api.category.CreateCategoryDTO;
 import org.financer.shared.domain.model.api.category.UpdateCategoryDTO;
+import org.financer.shared.domain.model.api.transaction.AttachmentWithContentDTO;
 import org.financer.shared.domain.model.api.transaction.fixed.CreateFixedTransactionAmountDTO;
 import org.financer.shared.domain.model.api.transaction.fixed.CreateFixedTransactionDTO;
 import org.financer.shared.domain.model.api.transaction.fixed.UpdateFixedTransactionAmountDTO;
@@ -20,6 +21,7 @@ import org.financer.shared.domain.model.api.transaction.variable.UpdateVariableT
 import org.financer.shared.domain.model.api.user.RegisterUserDTO;
 import org.financer.shared.domain.model.api.user.UpdatePersonalInformationDTO;
 import org.financer.shared.domain.model.api.user.UpdateSettingsDTO;
+import org.financer.shared.domain.model.value.objects.HashedPassword;
 import org.financer.shared.domain.model.value.objects.SettingPair;
 import org.financer.shared.path.Path;
 import org.financer.shared.path.PathBuilder;
@@ -29,6 +31,7 @@ import org.financer.util.mapping.ModelMapperUtils;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 
 public class RestApiImpl implements RestApi {
@@ -78,11 +81,11 @@ public class RestApiImpl implements RestApi {
     }
 
     @Override
-    public ServerRequestHandler updateFixedTransaction(Long transactionId, FixedTransaction fixedTransaction,
+    public ServerRequestHandler updateFixedTransaction(FixedTransaction fixedTransaction,
                                                        RestCallback<FixedTransaction> callback) {
         return new ServerRequestHandler(this.executor, new ServerRequest<>(
                 new RequestConfig(
-                        PathBuilder.Post().fixedTransactions().build(),
+                        PathBuilder.Post().fixedTransactions().fixedTransactionId(fixedTransaction.getId()).build(),
                         ModelMapperUtils.map(fixedTransaction, UpdateFixedTransactionDTO.class)),
                 callback));
     }
@@ -144,13 +147,12 @@ public class RestApiImpl implements RestApi {
     }
 
     @Override
-    public ServerRequestHandler updateUsersPassword(Long userId, String oldPassword, String newPassword,
+    public ServerRequestHandler updateUsersPassword(Long userId, HashedPassword newPassword,
                                                     RestCallback<User> callback) {
         return new ServerRequestHandler(this.executor, new ServerRequest<>(
                 new RequestConfig(
                         PathBuilder.Post().users().userId(userId).password().build(),
-                        Map.of("oldPassword", oldPassword,
-                                "newPassword", newPassword)),
+                        newPassword),
                 callback));
     }
 
@@ -177,7 +179,7 @@ public class RestApiImpl implements RestApi {
     }
 
     @Override
-    public ServerRequestHandler getUsersCategories(Long userId, RestCallback<List<Category>> callback) {
+    public ServerRequestHandler getUsersCategories(Long userId, RestCallback<Set<Category>> callback) {
         return new ServerRequestHandler(this.executor, new ServerRequest<>(
                 new RequestConfig(
                         PathBuilder.Get().users().userId(userId).categories().build()),
@@ -243,5 +245,26 @@ public class RestApiImpl implements RestApi {
     private ServerRequestHandler delete(Path path, RestCallback<Void> callback) {
         return new ServerRequestHandler(this.executor, new ServerRequest<>(
                 new RequestConfig(path), callback));
+    }
+
+    @Override
+    public ServerRequestHandler createAttachment(Long transactionId, Attachment attachment, RestCallback<Attachment> callback) {
+        return new ServerRequestHandler(this.executor, new ServerRequest<>(
+                new RequestConfig(
+                        PathBuilder.Put().variableTransactions().variableTransactionId(1).attachments().build(),
+                        ModelMapperUtils.map(attachment, AttachmentWithContentDTO.class)),
+                callback));
+    }
+
+    @Override
+    public ServerRequestHandler getAttachment(Long transactionId, Long attachmentId, RestCallback<Attachment> callback) {
+        return new ServerRequestHandler(this.executor, new ServerRequest<>(
+                new RequestConfig(PathBuilder.Put().variableTransactions().variableTransactionId(1).attachments().build()),
+                callback));
+    }
+
+    @Override
+    public ServerRequestHandler deleteAttachment(Long transactionId, Long attachmentId, RestCallback<Void> callback) {
+        return delete(PathBuilder.Delete().variableTransactions().variableTransactionId(transactionId).attachments().attachmentId(1).build(), callback);
     }
 }

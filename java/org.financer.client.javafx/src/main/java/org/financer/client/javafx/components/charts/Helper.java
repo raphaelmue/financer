@@ -20,9 +20,7 @@ import javafx.geometry.Point2D;
 
 
 /**
- * User: hansolo
- * Date: 03.11.17
- * Time: 04:45
+ * User: hansolo Date: 03.11.17 Time: 04:45
  */
 class Helper {
 

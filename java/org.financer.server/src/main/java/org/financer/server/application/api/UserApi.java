@@ -18,6 +18,7 @@ import org.financer.shared.domain.model.api.user.RegisterUserDTO;
 import org.financer.shared.domain.model.api.user.UpdatePersonalInformationDTO;
 import org.financer.shared.domain.model.api.user.UpdateSettingsDTO;
 import org.financer.shared.domain.model.api.user.UserDTO;
+import org.financer.shared.domain.model.value.objects.HashedPassword;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -116,7 +117,6 @@ public interface UserApi {
      * Updates the password of the given user.
      *
      * @param userId      id of the user
-     * @param oldPassword old password of the user to verify
      * @param newPassword updated unencrypted password
      * @return updated user object
      */
@@ -135,10 +135,11 @@ public interface UserApi {
     ResponseEntity<UserDTO> updateUsersPassword(
             @Parameter(description = "ID of the user whose password will be changed", required = true)
             @PathVariable("userId") @NotBlank @Min(1) Long userId,
-            @Parameter(description = "Old plain text password of the user", required = true)
-            @RequestParam("oldPassword") @NotNull @Valid String oldPassword,
-            @Parameter(description = "New plain text password of the user", required = true)
-            @RequestParam("newPassword") @NotNull @Valid String newPassword);
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Users password that will be updated",
+                    required = true,
+                    content = @Content(schema = @Schema(implementation = HashedPassword.class)))
+            @RequestBody @NotNull @Valid HashedPassword newPassword);
 
     /**
      * Updates the users personal information

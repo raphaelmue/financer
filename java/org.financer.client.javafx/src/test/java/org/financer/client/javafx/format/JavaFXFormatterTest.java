@@ -1,8 +1,12 @@
 package org.financer.client.javafx.format;
 
+import org.financer.client.domain.model.category.Category;
+import org.financer.client.domain.model.user.User;
 import org.financer.client.format.Formatter;
 import org.financer.client.format.I18N;
 import org.financer.client.javafx.local.LocalStorageImpl;
+import org.financer.shared.domain.model.value.objects.Amount;
+import org.financer.shared.domain.model.value.objects.SettingPair;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -24,9 +28,9 @@ public class JavaFXFormatterTest {
 
         I18N.setLocalStorage(LocalStorageImpl.getInstance());
 
-        user.getSettings().setLanguage(Locale.ENGLISH);
-        user.getSettings().setShowCurrencySign(false);
-        user.getSettings().setCurrency(Currency.getInstance("USD"));
+        user.putOrUpdateSettingProperty(SettingPair.Property.LANGUAGE, Locale.ENGLISH);
+        user.putOrUpdateSettingProperty(SettingPair.Property.CURRENCY, Currency.getInstance("USD"));
+        user.putOrUpdateSettingProperty(SettingPair.Property.SHOW_CURRENCY_SIGN, false);
 
         formatter = new JavaFXFormatter(user);
         LocalStorageImpl.getInstance().writeObject("user", user);
@@ -34,50 +38,38 @@ public class JavaFXFormatterTest {
 
     @Test
     public void testCurrencyFormat() {
-        final double amount = 5.387;
+        final Amount amount = new Amount(5.387);
 
         String currencyFormat = formatter.format(amount);
-        Assertions.assertEquals(String.format(Locale.ENGLISH, "%.2f", amount) + " " + Currency.getInstance("USD").getCurrencyCode(), currencyFormat);
+        Assertions.assertEquals(String.format(Locale.ENGLISH, "%.2f", amount.getAmount()) + " " + Currency.getInstance("USD").getCurrencyCode(), currencyFormat);
 
-        user.getSettings().setShowCurrencySign(true);
-
-        currencyFormat = formatter.format(amount);
-        Assertions.assertEquals(String.format(Locale.ENGLISH, "%.2f", amount) + " " + Currency.getInstance("USD").getSymbol(), currencyFormat);
-
-        user.getSettings().setLanguage(Locale.GERMAN);
+        user.putOrUpdateSettingProperty(SettingPair.Property.SHOW_CURRENCY_SIGN, true);
 
         currencyFormat = formatter.format(amount);
-        Assertions.assertEquals(String.format(Locale.GERMAN, "%.2f", amount).replace(".", ",") + " " +
+        Assertions.assertEquals(String.format(Locale.ENGLISH, "%.2f", amount.getAmount()) + " " + Currency.getInstance("USD").getSymbol(), currencyFormat);
+
+        user.putOrUpdateSettingProperty(SettingPair.Property.LANGUAGE, Locale.GERMAN);
+
+        currencyFormat = formatter.format(amount);
+        Assertions.assertEquals(String.format(Locale.GERMAN, "%.2f", amount.getAmount()).replace(".", ",") + " " +
                 Currency.getInstance("USD").getSymbol(), currencyFormat);
     }
 
     @Test
     public void testCategoryFormat() {
-        final Category category = new Category("testCategory");
-        category.setPrefix("testPrefix1");
+        final Category category = new Category().setName("testCategory");
 
-        String categoryFormat = formatter.formatCategoryName(category);
+        String categoryFormat = formatter.format(category);
         Assertions.assertEquals(category.getPrefix() + " " + category.getName(), categoryFormat);
-
-        category.setName("root");
-        categoryFormat = formatter.formatCategoryName(category);
-        Assertions.assertEquals(category.getPrefix() + " " + "Balance", categoryFormat);
-
-        final Category categoryClass = new Category("fixedExpenses");
-        categoryClass.setPrefix("testPrefix2");
-
-        categoryFormat = formatter.formatCategoryName(categoryClass);
-        Assertions.assertEquals(categoryClass.getPrefix() + " Fixed Expenses", categoryFormat);
-
     }
 
     @Test
     public void testDateFormat() {
         final LocalDate localDate = LocalDate.of(2019, 3, 20);
-        Assertions.assertEquals("Mar 20, 2019", formatter.formatDate(localDate));
+        Assertions.assertEquals("Mar 20, 2019", formatter.format(localDate));
 
-        user.getSettings().setLanguage(Locale.GERMAN);
+        user.putOrUpdateSettingProperty(SettingPair.Property.LANGUAGE, Locale.GERMAN);
 
-        Assertions.assertEquals("20.03.2019", formatter.formatDate(localDate));
+        Assertions.assertEquals("20.03.2019", formatter.format(localDate));
     }
 }

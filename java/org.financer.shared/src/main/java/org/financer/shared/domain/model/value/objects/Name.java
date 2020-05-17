@@ -1,6 +1,8 @@
 package org.financer.shared.domain.model.value.objects;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import org.financer.shared.domain.model.Formattable;
+import org.financer.shared.domain.model.Settings;
 import org.hibernate.annotations.Immutable;
 
 import javax.persistence.Column;
@@ -11,7 +13,7 @@ import java.util.Objects;
 @Embeddable
 @Immutable
 @Schema(description = "Value object for users name")
-public final class Name implements Serializable {
+public final class Name implements Serializable, Formattable {
     private static final long serialVersionUID = -249456135411252935L;
 
     @Column(name = "name", length = 64, nullable = false)
@@ -39,6 +41,11 @@ public final class Name implements Serializable {
     }
 
     @Override
+    public String format(Settings settings) {
+        return this.firstName + " " + this.surname;
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -54,6 +61,6 @@ public final class Name implements Serializable {
 
     @Override
     public String toString() {
-        return this.firstName + " " + this.surname;
+        return "Name [" + "firstName='" + firstName + '\'' + ", surname='" + surname + '\'' + ']';
     }
 }

@@ -13,6 +13,7 @@ import org.financer.shared.domain.model.api.user.RegisterUserDTO;
 import org.financer.shared.domain.model.api.user.UpdatePersonalInformationDTO;
 import org.financer.shared.domain.model.api.user.UpdateSettingsDTO;
 import org.financer.shared.domain.model.api.user.UserDTO;
+import org.financer.shared.domain.model.value.objects.HashedPassword;
 import org.financer.shared.domain.model.value.objects.IPAddress;
 import org.financer.shared.domain.model.value.objects.TokenString;
 import org.financer.util.mapping.ModelMapperUtils;
@@ -71,10 +72,10 @@ public class UserApiController implements UserApi {
     }
 
     @Override
-    public ResponseEntity<UserDTO> updateUsersPassword(@NotBlank @Min(1) Long userId, @NotNull @Valid String oldPassword,
-                                                       @NotNull @Valid String newPassword) {
+    public ResponseEntity<UserDTO> updateUsersPassword(@NotBlank @Min(1) Long userId,
+                                                       @NotNull @Valid HashedPassword newPassword) {
         authenticationService.getAuthenticatedUser().throwIfNotUsersProperty(userId);
-        User updateUser = userDomainService.updatePassword(oldPassword, newPassword);
+        User updateUser = userDomainService.updatePassword(newPassword);
         return new ResponseEntity<>(modelMapper.map(updateUser, UserDTO.class), HttpStatus.OK);
     }
 

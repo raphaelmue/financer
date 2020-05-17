@@ -3,10 +3,11 @@ package org.financer.client.domain.model.transaction;
 import org.financer.client.domain.model.category.Category;
 import org.financer.shared.domain.model.AmountProvider;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
-public abstract class Transaction implements AmountProvider {
+public abstract class Transaction implements AmountProvider, Serializable {
 
     private long id;
     private Category category;

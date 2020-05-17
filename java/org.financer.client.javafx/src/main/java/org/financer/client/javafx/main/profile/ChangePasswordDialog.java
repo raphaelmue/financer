@@ -4,10 +4,10 @@ import com.jfoenix.controls.JFXPasswordField;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Region;
+import org.financer.client.domain.model.user.User;
 import org.financer.client.format.I18N;
 import org.financer.client.javafx.dialogs.FinancerDialog;
-import org.financer.util.Hash;
-import org.financer.util.RandomString;
+import org.financer.shared.domain.model.value.objects.HashedPassword;
 
 class ChangePasswordDialog extends FinancerDialog<User> {
     private JFXPasswordField oldPasswordField;
@@ -22,7 +22,9 @@ class ChangePasswordDialog extends FinancerDialog<User> {
 
     @Override
     protected boolean checkConsistency() {
-        if (!Hash.create(oldPasswordField.getText(), this.getValue().getSalt()).equals(this.getValue().getPassword())) {
+        final String oldPassword = oldPasswordField.getText();
+
+        if (!getValue().getPassword().isEqualTo(oldPassword)) {
             this.setErrorMessage(I18N.get("errPasswordWrong"));
             return false;
         }
@@ -66,12 +68,7 @@ class ChangePasswordDialog extends FinancerDialog<User> {
 
     @Override
     protected void onConfirm() {
-        String salt = new RandomString(32).nextString();
-        String hashedPassword = Hash.create(this.newPasswordField.getText(), salt);
-
-        this.getValue().setPassword(hashedPassword);
-        this.getValue().setSalt(salt);
-
+        getValue().setPassword(new HashedPassword(this.newPasswordField.getText()));
         super.onConfirm();
     }
 }

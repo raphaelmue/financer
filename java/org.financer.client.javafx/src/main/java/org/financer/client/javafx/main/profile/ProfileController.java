@@ -10,28 +10,26 @@ import javafx.util.StringConverter;
 import org.controlsfx.glyphfont.FontAwesome;
 import org.controlsfx.glyphfont.GlyphFont;
 import org.controlsfx.glyphfont.GlyphFontRegistry;
-import org.financer.client.connection.RestCallback;
-import org.financer.client.connection.ServerRequest;
+import org.financer.client.domain.api.RestApi;
+import org.financer.client.domain.api.RestApiImpl;
+import org.financer.client.domain.model.category.Category;
+import org.financer.client.domain.model.category.CategoryRoot;
+import org.financer.client.domain.model.user.User;
+import org.financer.client.format.Formatter;
+import org.financer.client.format.FormatterImpl;
 import org.financer.client.format.I18N;
-import org.financer.client.javafx.connection.RetrievalServiceImpl;
 import org.financer.client.javafx.dialogs.FinancerConfirmDialog;
 import org.financer.client.javafx.dialogs.FinancerTextInputDialog;
-import org.financer.client.javafx.format.JavaFXFormatter;
 import org.financer.client.javafx.local.LocalStorageImpl;
 import org.financer.client.javafx.main.FinancerController;
 import org.financer.client.local.Application;
-import org.financer.shared.connection.AsyncCall;
-import org.financer.shared.connection.ConnectionResult;
-import org.financer.util.collections.Tree;
+import org.financer.client.local.LocalStorage;
+import org.financer.shared.domain.model.value.objects.CategoryClass;
 import org.financer.util.collections.TreeUtil;
-import org.financer.util.concurrency.FinancerExecutor;
 
-import java.io.Serializable;
 import java.net.URL;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.Set;
 import java.util.logging.Logger;
 
 public class ProfileController implements Initializable {
@@ -49,7 +47,7 @@ public class ProfileController implements Initializable {
     @FXML
     public Hyperlink changePasswordLink;
     @FXML
-    public TreeView<CategoryTree> categoriesTreeView;
+    public TreeView<Category> categoriesTreeView;
     @FXML
     public JFXButton refreshCategoriesBtn;
     @FXML
@@ -61,58 +59,34 @@ public class ProfileController implements Initializable {
     @FXML
     public JFXButton editPersonalInformationBtn;
 
+    private final RestApi restApi = new RestApiImpl();
+    private final LocalStorage localStorage = LocalStorageImpl.getInstance();
+    private final Formatter formatter = new FormatterImpl(localStorage);
+
     private User user;
     private Logger logger = Logger.getLogger("FinancerApplication");
-    private BaseCategory categories;
-    private LocalStorageImpl localStorage = (LocalStorageImpl) LocalStorageImpl.getInstance();
-    private TreeItem<CategoryTree> treeStructure;
+    private CategoryRoot categoryRoot;
+    private TreeItem<Category> treeStructure;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         FinancerController.setInitializationThread(new Thread(() -> {
             FinancerController.getInstance().showLoadingBox();
-            this.user = (User) this.localStorage.readObject("user");
+            this.user = this.localStorage.readObject("user");
             if (user != null) {
                 Platform.runLater(this::fillPersonalInformationLabels);
             }
 
             this.changePasswordLink.setOnAction(event -> {
                 ChangePasswordDialog dialog = new ChangePasswordDialog(user);
-                dialog.setOnConfirm(user -> {
-
-                    Map<String, Serializable> parameters = new HashMap<>();
-                    parameters.put("user", user);
-
-                    FinancerExecutor.getExecutor().execute(new ServerRequest(user, "changePassword", parameters,
-                            new RestCallback() {
-                                @Override
-                                public void onSuccess(ConnectionResult result) {
-                                    FinancerController.getInstance().showToast(Application.MessageType.SUCCESS, I18N.get("succChangedPassword"));
-                                }
-
-                                @Override
-                                public void onAfter() {
-                                    localStorage.writeObject("user", user);
-                                }
-                            }));
-                });
+                dialog.setOnConfirm(updatedUser -> restApi.updateUsersPassword(user.getId(), updatedUser.getPassword(), result ->
+                        FinancerController.getInstance().showToast(Application.MessageType.SUCCESS, I18N.get("succChangedPassword"))).execute());
             });
 
-            Map<String, Serializable> parameters = new HashMap<>();
-            parameters.put("user", user);
-
-            FinancerExecutor.getExecutor().execute(new ServerRequest(user, "updateUser", parameters,
-                    new RestCallback() {
-                        @Override
-                        public void onSuccess(ConnectionResult result) {
-                            FinancerController.getInstance().showToast(Application.MessageType.SUCCESS, I18N.get("succChangedPassword"));
-                        }
-
-                        @Override
-                        public void onAfter() {
-                            localStorage.writeObject("user", user);
-                        }
-                    }));
+            restApi.updateUsersPersonalInformation(user, result -> {
+                FinancerController.getInstance().showToast(Application.MessageType.SUCCESS, I18N.get("succChangedPersonalInformation"));
+                localStorage.writeObject("user", user);
+            }).execute();
 
             GlyphFont fontAwesome = GlyphFontRegistry.font("FontAwesome");
             this.refreshCategoriesBtn.setGraphic(fontAwesome.create(FontAwesome.Glyph.REFRESH));
@@ -133,20 +107,11 @@ public class ProfileController implements Initializable {
                 ChangePersonalInformationDialog dialog = new ChangePersonalInformationDialog(this.user);
                 dialog.setOnConfirm(user -> {
                     if (user != null) {
-                        parameters.clear();
-                        parameters.put("user", user);
-                        FinancerExecutor.getExecutor().execute(new ServerRequest(user, "updateUser", parameters, new RestCallback() {
-                            @Override
-                            public void onSuccess(ConnectionResult result) {
-                                FinancerController.getInstance().showToast(Application.MessageType.SUCCESS, I18N.get("succChangedPersonalInformation"));
-                            }
-
-                            @Override
-                            public void onAfter() {
-                                localStorage.writeObject("user", user);
-                                Platform.runLater(() -> fillPersonalInformationLabels());
-                            }
-                        }));
+                        restApi.updateUsersPersonalInformation(user, result -> {
+                            FinancerController.getInstance().showToast(Application.MessageType.SUCCESS, I18N.get("succChangedPersonalInformation"));
+                            localStorage.writeObject("user", user);
+                            Platform.runLater(this::fillPersonalInformationLabels);
+                        }).execute();
                     }
                 });
             });
@@ -154,7 +119,7 @@ public class ProfileController implements Initializable {
             this.editCategoryBtn.setDisable(true);
             this.deleteCategoryBtn.setDisable(true);
 
-            categories = (BaseCategory) localStorage.readObject("categories");
+            categoryRoot = localStorage.readObject("categories");
             this.loadCategoryData();
             FinancerController.getInstance().hideLoadingBox();
         }));
@@ -162,29 +127,18 @@ public class ProfileController implements Initializable {
     }
 
     private void fillPersonalInformationLabels() {
-        this.fullNameLabel.setText(user.getFullName());
-        this.emailLabel.setText(user.getEmail());
-        this.birthDateLabel.setText(new JavaFXFormatter(localStorage).formatDate(this.user.getBirthDate()));
-        this.genderLabel.setText(I18N.get(this.user.getGender().getName()));
+        this.fullNameLabel.setText(formatter.format(user.getName()));
+        this.emailLabel.setText(user.getEmail().getEmailAddress());
+        this.birthDateLabel.setText(formatter.format(user.getBirthDate()));
+        this.genderLabel.setText(I18N.get(this.user.getGender().getGender().getName()));
     }
 
     public void handleRefreshCategories() {
-        RetrievalServiceImpl.getInstance().fetchCategories(this.user, new AsyncCall<>() {
-            @Override
-            public void onSuccess(BaseCategory result) {
-                categories = result;
-            }
-
-            @Override
-            public void onFailure(Exception exception) {
-                categories = (BaseCategory) localStorage.readObject("categories");
-            }
-
-            @Override
-            public void onAfter() {
-                Platform.runLater(() -> loadCategoryData());
-            }
-        });
+        restApi.getUsersCategories(user.getId(), result -> {
+            categoryRoot = new CategoryRoot(result);
+            categoryRoot = localStorage.readObject("categories");
+            Platform.runLater(this::loadCategoryData);
+        }).execute();
     }
 
     private void loadCategoryData() {
@@ -203,114 +157,102 @@ public class ProfileController implements Initializable {
         expandTreeView(treeStructure);
         categoriesTreeView.setCellFactory(param -> getCellFactory());
         categoriesTreeView.setOnEditCommit(event -> {
-            event.getNewValue().getValue().setId(event.getOldValue().getValue().getId());
-            event.getNewValue().getValue().setParentId(event.getOldValue().getValue().getParentId());
-            event.getNewValue().getValue().setCategoryClass(event.getOldValue().getValue().getCategoryClass());
+            event.getNewValue().setId(event.getOldValue().getId());
+            event.getNewValue().setParent(event.getOldValue().getParent());
+            event.getNewValue().setCategoryClass(event.getOldValue().getCategoryClass());
             handleUpdateCategory(event.getNewValue());
         });
     }
 
     private void initializePersonalInformation() {
-        this.fullNameLabel.setText(user.getFullName());
-        this.emailLabel.setText(user.getEmail());
-        this.birthDateLabel.setText(new JavaFXFormatter(localStorage).formatDate(this.user.getBirthDate()));
-        this.genderLabel.setText(I18N.get(this.user.getGender().getName()));
+        this.fullNameLabel.setText(formatter.format(user.getName()));
+        this.emailLabel.setText(user.getEmail().getEmailAddress());
+        this.birthDateLabel.setText(formatter.format(user.getBirthDate()));
+        this.genderLabel.setText(I18N.get(this.user.getGender().getGender().getName()));
     }
 
     public void handleNewCategory() {
         this.handleNewCategory(this.categoriesTreeView.getSelectionModel().getSelectedItem());
     }
 
-    private void handleNewCategory(TreeItem<CategoryTree> currentItem) {
+    private void handleNewCategory(TreeItem<Category> currentItem) {
         if (currentItem != null) {
             FinancerTextInputDialog dialog = new FinancerTextInputDialog(I18N.get("enterCategoryName"), I18N.get("newCategory"));
             dialog.setOnConfirm(categoryName -> {
-                CategoryTree categoryTree = new CategoryTreeImpl(
-                        categoriesTreeView.getSelectionModel().getSelectedItem().getValue(),
-                        new Category(0, categoryName, currentItem.getValue().getValue().getId(), currentItem.getValue().getValue().getCategoryClass()));
+                Category newCategory = new Category()
+                        .setParent(currentItem.getValue())
+                        .setCategoryClass(currentItem.getValue().getCategoryClass())
+                        .setName(categoryName);
 
-                Map<String, Serializable> parameters = new HashMap<>();
-                categoryTree.getValue().setUser(user.toEntity());
-                parameters.put("category", categoryTree.getValue());
+                restApi.createCategory(newCategory, result -> {
+                    currentItem.getChildren().add(new TreeItem<>(result));
 
-                FinancerExecutor.getExecutor().execute(new ServerRequest(this.user, "addCategory", parameters, result -> {
-                    categoryTree.getValue().setId(((Category) result.getResult()).getId());
-                    categoryTree.getValue().setPrefix(categoryTree.getParent().getValue().getPrefix() + (categoryTree.getParent().getChildren().size() + 1) + ".");
                     if (categoriesTreeView.getSelectionModel().getSelectedItem().getValue().isRoot()) {
-                        categories.getCategoryTreeByCategoryClass(categoriesTreeView.getSelectionModel().getSelectedItem().getValue().getValue().getCategoryClass()).getChildren().add(categoryTree);
+                        categoryRoot.getCategoriesByClass(newCategory.getCategoryClass()).add(newCategory);
                     } else {
-                        TreeUtil.insertByValue(categories, categoryTree, (o1, o2) -> Integer.compare(o1.getParentId(), o2.getId()));
+                        TreeUtil.insertByValue(categoryRoot, newCategory, (o1, o2) -> Long.compare(((Category) o1).getParent().getId(), ((Category) o2).getId()));
                     }
-                    localStorage.writeObject("categories", categories);
+                    localStorage.writeObject("categories", categoryRoot);
 
                     Platform.runLater(() -> {
                         categoriesTreeView.getSelectionModel().getSelectedItem().setExpanded(true);
-                        categoriesTreeView.getSelectionModel().getSelectedItem().getChildren().add(new TreeItem<>(categoryTree));
                         categoriesTreeView.refresh();
                     });
-                }, true));
+                }).execute();
             });
         }
     }
 
     public void handleEditCategory() {
         if (this.categoriesTreeView.getSelectionModel().getSelectedItem() != null) {
-            CategoryTree category = this.categoriesTreeView.getSelectionModel().getSelectedItem().getValue();
-            FinancerTextInputDialog dialog = new FinancerTextInputDialog(I18N.get("enterCategoryName"), category.getValue().getName());
+            Category category = this.categoriesTreeView.getSelectionModel().getSelectedItem().getValue();
+            FinancerTextInputDialog dialog = new FinancerTextInputDialog(I18N.get("enterCategoryName"), category.getName());
             dialog.setOnConfirm(categoryName -> {
-                category.getValue().setName(categoryName);
+                category.setName(categoryName);
                 this.categoriesTreeView.refresh();
                 this.handleUpdateCategory(category);
             });
         }
     }
 
-    private void handleUpdateCategory(CategoryTree category) {
-        Map<String, Serializable> parameters = new HashMap<>();
-        parameters.put("category", category.getValue());
-
-        FinancerExecutor.getExecutor().execute(new ServerRequest(this.user, "updateCategory", parameters, result -> {
-            categoriesTreeView.getSelectionModel().getSelectedItem().getValue().getValue().setName(category.getValue().getName());
-            localStorage.writeObject("categories", categories);
-        }, true));
+    private void handleUpdateCategory(Category category) {
+        restApi.updateCategory(category, result -> {
+            categoriesTreeView.getSelectionModel().getSelectedItem().getValue().setName(category.getName());
+            localStorage.writeObject("categories", categoryRoot);
+        }).execute();
     }
 
     public void handleDeleteCategory() {
         this.handleDeleteCategory(this.categoriesTreeView.getSelectionModel().getSelectedItem().getValue());
     }
 
-    private void handleDeleteCategory(CategoryTree categoryTree) {
-        if (categoryTree != null && !categoryTree.isRoot()) {
+    private void handleDeleteCategory(Category category) {
+        if (category != null && !category.isRoot()) {
             FinancerConfirmDialog dialog = new FinancerConfirmDialog(I18N.get("confirmDeleteCategory"));
-            dialog.setOnConfirm(result -> {
-                Map<String, Serializable> parameters = new HashMap<>();
-                parameters.put("categoryId", this.categoriesTreeView.getSelectionModel()
-                        .getSelectedItem().getValue().getValue().getId());
-
-                FinancerExecutor.getExecutor().execute(new ServerRequest(this.user, "deleteCategory", parameters, result1 -> {
-                    TreeUtil.deleteByValue(categories,
-                            categoriesTreeView.getSelectionModel().getSelectedItem().getValue(), Comparator.comparingInt(Category::getId));
-                    localStorage.writeObject("categories", categories);
-
-                    Platform.runLater(() -> categoriesTreeView.getSelectionModel().getSelectedItem().getParent().getChildren().remove(categoriesTreeView.getSelectionModel().getSelectedItem()));
-                }, true));
-            });
+            dialog.setOnConfirm(result -> restApi.deleteCategory(category.getId(), voidResult -> {
+                TreeUtil.deleteByValue(categoryRoot, categoriesTreeView.getSelectionModel().getSelectedItem().getValue());
+                localStorage.writeObject("categories", categoryRoot);
+                Platform.runLater(() -> categoriesTreeView.getSelectionModel().getSelectedItem().getParent().getChildren().remove(categoriesTreeView.getSelectionModel().getSelectedItem()));
+            }).execute());
         }
     }
 
     private void createTreeView() {
-        this.treeStructure = new TreeItem<>(new CategoryTreeImpl(null, new Category("root")));
-        for (BaseCategory.CategoryClass categoryClass : BaseCategory.CategoryClass.values()) {
-            this.createTreeView(treeStructure, this.categories.getCategoryTreeByCategoryClass(categoryClass));
+        this.treeStructure = new TreeItem<>(new Category().setName("root"));
+        for (CategoryClass categoryClass : CategoryClass.getAll()) {
+            Set<Category> categories = this.categoryRoot.getCategoriesByClass(categoryClass);
+            for (Category category : categories) {
+                this.createTreeView(treeStructure, category);
+            }
         }
     }
 
-    private void createTreeView(TreeItem<CategoryTree> treeItem, CategoryTree root) {
-        TreeItem<CategoryTree> treeRoot = new TreeItem<>(root);
+    private void createTreeView(TreeItem<Category> treeItem, Category root) {
+        TreeItem<Category> treeRoot = new TreeItem<>(root);
         treeItem.getChildren().add(treeRoot);
         if (!root.isLeaf()) {
-            for (Tree<Category> categoryTree : root.getChildren()) {
-                createTreeView(treeRoot, (CategoryTree) categoryTree);
+            for (Category child : root.getChildren()) {
+                createTreeView(treeRoot, child);
             }
         }
     }
@@ -318,13 +260,13 @@ public class ProfileController implements Initializable {
     private TextFieldTreeCellImpl getCellFactory() {
         return new TextFieldTreeCellImpl(new StringConverter<>() {
             @Override
-            public String toString(CategoryTree object) {
-                return object.getValue().getName().equals(object.getValue().getCategoryClass().getName()) ? I18N.get(object.getValue().getName()) : object.getValue().getName();
+            public String toString(Category category) {
+                return category.getName().equals(category.getCategoryClass().getCategoryClass().getName()) ? I18N.get(category.getName()) : category.getName();
             }
 
             @Override
-            public CategoryTree fromString(String string) {
-                return new CategoryTreeImpl(null, new Category(string));
+            public Category fromString(String string) {
+                return new Category().setName(string);
             }
         });
     }
@@ -338,11 +280,11 @@ public class ProfileController implements Initializable {
         }
     }
 
-    private final class TextFieldTreeCellImpl extends TextFieldTreeCell<CategoryTree> {
-        private ContextMenu contextMenu = new ContextMenu();
-        private ContextMenu deleteContextMenu = new ContextMenu();
+    private final class TextFieldTreeCellImpl extends TextFieldTreeCell<Category> {
+        private final ContextMenu contextMenu = new ContextMenu();
+        private final ContextMenu deleteContextMenu = new ContextMenu();
 
-        TextFieldTreeCellImpl(StringConverter<CategoryTree> stringConverter) {
+        TextFieldTreeCellImpl(StringConverter<Category> stringConverter) {
             super(stringConverter);
 
             MenuItem addMenuItem = new MenuItem(I18N.get("new"));
@@ -350,7 +292,7 @@ public class ProfileController implements Initializable {
             this.contextMenu.getItems().add(addMenuItem);
 
             MenuItem addMenuItemDelete = new MenuItem(I18N.get("new"));
-            addMenuItemDelete.setOnAction(t -> getTreeItem().getChildren().add(new TreeItem<>(new CategoryTreeImpl(null, new Category("newCategory")))));
+            addMenuItemDelete.setOnAction(t -> getTreeItem().getChildren().add(new TreeItem<>(new Category().setName("newCategory"))));
             this.deleteContextMenu.getItems().add(addMenuItemDelete);
 
             MenuItem deleteMenuItem = new MenuItem(I18N.get("delete"));
@@ -359,10 +301,10 @@ public class ProfileController implements Initializable {
         }
 
         @Override
-        public void updateItem(CategoryTree item, boolean empty) {
+        public void updateItem(Category item, boolean empty) {
             super.updateItem(item, empty);
             if (item != null && !isEditing() && getParent() != null) {
-                if (item.isRoot() && !new JavaFXFormatter(localStorage).formatCategoryName(item.getValue()).equals(I18N.get("categories"))) {
+                if (item.isRoot() && !formatter.format(item).equals(I18N.get("categories"))) {
                     setContextMenu(this.contextMenu);
                 } else if (!item.isRoot()) {
                     setContextMenu(this.deleteContextMenu);

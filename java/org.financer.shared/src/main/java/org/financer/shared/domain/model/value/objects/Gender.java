@@ -9,6 +9,7 @@ import javax.persistence.Embeddable;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import java.io.Serializable;
+import java.util.List;
 import java.util.Objects;
 
 @Embeddable
@@ -61,6 +62,10 @@ public class Gender implements Serializable {
 
     public Values getGender() {
         return gender;
+    }
+
+    public static List<Gender> getAll() {
+        return List.of(new Gender(Values.MALE), new Gender(Values.FEMALE), new Gender(Values.NOT_SPECIFIED));
     }
 
     @Override

@@ -22,9 +22,7 @@ import javafx.event.EventType;
 
 
 /**
- * User: hansolo
- * Date: 03.11.17
- * Time: 04:57
+ * User: hansolo Date: 03.11.17 Time: 04:57
  */
 public class SmoothedChartEvent extends Event {
     static final EventType<SmoothedChartEvent> DATA_SELECTED = new EventType<>(ANY, "DATA_SELECTED");

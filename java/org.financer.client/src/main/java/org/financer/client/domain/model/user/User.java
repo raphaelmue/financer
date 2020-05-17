@@ -23,7 +23,7 @@ public class User implements Serializable, Settings {
     private Map<SettingPair.Property, Setting> settings;
     private Set<Token> tokens = new HashSet<>();
     private Token activeToken;
-    private boolean isVerified;
+    private boolean isVerified = false;
 
 
     @Override

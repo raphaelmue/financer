@@ -3,22 +3,25 @@ package org.financer.client.javafx.main.transactions;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Region;
+import org.financer.client.domain.model.transaction.FixedTransactionAmount;
 import org.financer.client.format.I18N;
 import org.financer.client.javafx.components.DatePicker;
 import org.financer.client.javafx.components.DoubleField;
 import org.financer.client.javafx.dialogs.FinancerDialog;
 import org.financer.client.javafx.format.JavaFXFormatter;
 import org.financer.client.javafx.local.LocalStorageImpl;
+import org.financer.shared.domain.model.value.objects.Amount;
+import org.financer.shared.domain.model.value.objects.ValueDate;
 
 import java.time.LocalDate;
 import java.util.List;
 
-public class TransactionAmountDialog extends FinancerDialog<TransactionAmount> {
+public class TransactionAmountDialog extends FinancerDialog<FixedTransactionAmount> {
     private DatePicker valueDateField;
     private DoubleField amountField;
-    private List<TransactionAmount> transactionAmounts;
+    private final List<FixedTransactionAmount> transactionAmounts;
 
-    public TransactionAmountDialog(TransactionAmount value, List<TransactionAmount> transactionAmounts) {
+    public TransactionAmountDialog(FixedTransactionAmount value, List<FixedTransactionAmount> transactionAmounts) {
         super(value);
         this.transactionAmounts = transactionAmounts;
 
@@ -49,8 +52,8 @@ public class TransactionAmountDialog extends FinancerDialog<TransactionAmount> {
     @Override
     protected void prepareDialogContent() {
         if (this.getValue() != null) {
-            this.valueDateField.setValue(this.getValue().getValueDate());
-            this.amountField.setText(Double.toString(this.getValue().getAmount()));
+            this.valueDateField.setValue(this.getValue().getValueDate().getDate());
+            this.amountField.setText(Double.toString(this.getValue().getAmount().getAmount()));
         }
     }
 
@@ -59,9 +62,8 @@ public class TransactionAmountDialog extends FinancerDialog<TransactionAmount> {
         boolean result = true;
 
         if (this.getValue() == null) {
-            for (TransactionAmount transactionAmount : this.transactionAmounts) {
-                if (transactionAmount.getValueDate().getMonth() == this.valueDateField.getValue().getMonth() &&
-                        transactionAmount.getValueDate().getYear() == this.valueDateField.getValue().getYear()) {
+            for (FixedTransactionAmount transactionAmount : this.transactionAmounts) {
+                if (transactionAmount.getValueDate().isInSameMonth(new ValueDate(valueDateField.getValue()))) {
                     this.setErrorMessage(I18N.get("errTransactionAmountExists"));
                     result = false;
                     break;
@@ -75,11 +77,13 @@ public class TransactionAmountDialog extends FinancerDialog<TransactionAmount> {
     @Override
     protected void onConfirm() {
         if (this.getValue() == null) {
-            this.setValue(new TransactionAmount(0, Double.valueOf(this.amountField.getText()),
-                    this.valueDateField.getValue()));
+            this.setValue(new FixedTransactionAmount()
+                    .setId(0)
+                    .setAmount(new Amount(Double.parseDouble(this.amountField.getText())))
+                    .setValueDate(new ValueDate(this.valueDateField.getValue())));
         } else {
-            this.getValue().setValueDate(this.valueDateField.getValue());
-            this.getValue().setAmount(Double.valueOf(this.amountField.getText()));
+            getValue().setValueDate(new ValueDate(this.valueDateField.getValue()));
+            getValue().setAmount(new Amount(Double.parseDouble(this.amountField.getText())));
         }
         super.onConfirm();
     }

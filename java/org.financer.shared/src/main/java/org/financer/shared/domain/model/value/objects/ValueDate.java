@@ -18,7 +18,7 @@ import java.util.Objects;
 @Embeddable
 @Immutable
 @Schema(description = "Value object for value date")
-public class ValueDate implements Serializable, Formattable {
+public class ValueDate implements Serializable, Formattable, Comparable<ValueDate> {
     private static final long serialVersionUID = -1612116802619061353L;
 
     @Column(name = "value_date", nullable = false)
@@ -68,6 +68,12 @@ public class ValueDate implements Serializable, Formattable {
         DateTimeFormatter formatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(locale);
         return this.getDate().format(formatter);
     }
+
+    @Override
+    public int compareTo(ValueDate valueDate) {
+        return this.date.compareTo(valueDate.getDate());
+    }
+
     /*
      * Getters and Setters
      */

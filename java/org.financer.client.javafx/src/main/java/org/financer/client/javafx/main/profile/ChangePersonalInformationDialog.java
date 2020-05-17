@@ -7,15 +7,19 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Region;
 import javafx.util.StringConverter;
+import org.financer.client.domain.model.user.User;
 import org.financer.client.format.I18N;
 import org.financer.client.javafx.dialogs.FinancerDialog;
+import org.financer.shared.domain.model.value.objects.BirthDate;
+import org.financer.shared.domain.model.value.objects.Gender;
+import org.financer.shared.domain.model.value.objects.Name;
 
 public class ChangePersonalInformationDialog extends FinancerDialog<User> {
 
     private JFXTextField nameField;
     private JFXTextField surnameField;
     private JFXDatePicker birthDatePicker;
-    private JFXComboBox<User.Gender> genderComboBox;
+    private JFXComboBox<Gender> genderComboBox;
 
     public ChangePersonalInformationDialog(User value) {
         super(value);
@@ -26,9 +30,9 @@ public class ChangePersonalInformationDialog extends FinancerDialog<User> {
 
     @Override
     protected void prepareDialogContent() {
-        this.nameField.setText(this.getValue().getName());
-        this.surnameField.setText(this.getValue().getSurname());
-        this.birthDatePicker.setValue(this.getValue().getBirthDate());
+        this.nameField.setText(this.getValue().getName().getFirstName());
+        this.surnameField.setText(this.getValue().getName().getSurname());
+        this.birthDatePicker.setValue(this.getValue().getBirthDate().getBirthDate());
         this.genderComboBox.setValue(this.getValue().getGender());
     }
 
@@ -56,16 +60,16 @@ public class ChangePersonalInformationDialog extends FinancerDialog<User> {
         gridPane.add(new Label(I18N.get("gender")), 0, 3);
         this.genderComboBox = new JFXComboBox<>();
         this.genderComboBox.setId("genderComboBox");
-        this.genderComboBox.getItems().addAll(User.Gender.values());
+        this.genderComboBox.getItems().addAll(Gender.getAll());
         this.genderComboBox.setConverter(new StringConverter<>() {
             @Override
-            public String toString(User.Gender gender) {
-                return gender != null ? I18N.get(gender.getName()) : "";
+            public String toString(Gender gender) {
+                return gender != null ? I18N.get(gender.getGender().getName()) : "";
             }
 
             @Override
-            public User.Gender fromString(String name) {
-                return User.Gender.getGenderByName(name);
+            public Gender fromString(String name) {
+                return new Gender(name);
             }
         });
         this.genderComboBox.setPlaceholder(new Label(I18N.get("gender")));
@@ -87,9 +91,8 @@ public class ChangePersonalInformationDialog extends FinancerDialog<User> {
 
     @Override
     protected void onConfirm() {
-        this.getValue().setName(this.nameField.getText());
-        this.getValue().setSurname(this.surnameField.getText());
-        this.getValue().setBirthDate(this.birthDatePicker.getValue());
+        this.getValue().setName(new Name(this.nameField.getText(), this.surnameField.getText()));
+        this.getValue().setBirthDate(new BirthDate(this.birthDatePicker.getValue()));
         this.getValue().setGender(this.genderComboBox.getValue());
 
         super.onConfirm();
