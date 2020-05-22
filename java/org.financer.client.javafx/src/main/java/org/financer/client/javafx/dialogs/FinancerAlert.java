@@ -55,7 +55,7 @@ public class FinancerAlert extends JFXDialog {
                 break;
         }
         headingLabel.setGraphic(fontAwesome.create(glyph).size(30));
-        headingLabel.setStyle("-fx-font-size: 18px; -fx-text-fill: -fx-color-" + messageType.getName());
+        headingLabel.setStyle("-fx-font-size: 18px; -fx-text-fill: -fx-color-" + messageType.getType());
         this.dialogLayout.setHeading(headingLabel);
 
         Label contentLabel = new Label(contentMessage);

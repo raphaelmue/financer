@@ -171,7 +171,7 @@ public class FinancerController implements Initializable, Application {
     @Override
     public synchronized void showToast(MessageType messageType, String message) {
         Label messageLabel = new Label(message);
-        messageLabel.getStyleClass().add(messageType.getName() + "-toast-label");
+        messageLabel.getStyleClass().add(messageType.getType() + "-toast-label");
         this.snackbar.enqueue(new JFXSnackbar.SnackbarEvent(messageLabel));
     }
 

@@ -91,9 +91,8 @@ public class UserApiControllerTest extends ApiTest {
     public void testUpdateUsersPassword() throws Exception {
         when(userDomainService.updatePassword(any(HashedPassword.class))).thenReturn(user);
 
-        mockMvc.perform(buildRequest(PathBuilder.Post().users().userId(1).password().build())
-                .param("oldPassword", password())
-                .param("newPassword", "newPassword"))
+        DataTransferObject dto = new HashedPassword("newPassword");
+        mockMvc.perform(buildRequest(PathBuilder.Post().users().userId(1).password().build(), dto))
                 .andExpect(status().isOk());
     }
 

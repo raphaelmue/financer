@@ -43,15 +43,7 @@ public class FinancerApplication extends Application {
             notifyPreloader(new Preloader.ProgressNotification(0));
             restApi.getUsersCategories(user.getId(), categories ->
                     restApi.getUsersVariableTransactions(user.getId(), 0, variableTransactions ->
-                            restApi.getUsersFixedTransactions(user.getId(), fixedTransactions -> {
-                                localStorage.writeObject("categories", new CategoryRoot(categories));
-                                localStorage.writeObject("variableTransactions", (Serializable) variableTransactions);
-                                localStorage.writeObject("fixedTransactions", (Serializable) fixedTransactions);
-                                Platform.runLater(() -> notifyPreloader(new Preloader.ProgressNotification(1)));
-                                ready.setValue(Boolean.TRUE);
-                                notifyPreloader(new Preloader.StateChangeNotification(
-                                        Preloader.StateChangeNotification.Type.BEFORE_START));
-                            }).execute()).execute()).execute();
+                            restApi.getUsersFixedTransactions(user.getId()).execute()).execute()).execute();
         }
     }
 

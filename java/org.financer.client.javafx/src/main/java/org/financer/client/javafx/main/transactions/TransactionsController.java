@@ -340,12 +340,7 @@ public class TransactionsController implements Initializable {
     }
 
     public void handleRefreshFixedTransactions() {
-        restApi.getUsersFixedTransactions(user.getId(), result -> Platform.runLater(() -> {
-            loadFixedTransactionTableData();
-            fixedTransactionsListView.getItems().clear();
-
-            loadTransactionOverviewTableData();
-        })).execute();
+        restApi.getUsersFixedTransactions(user.getId()).execute();
     }
 
     public void handleNewTransaction() {
