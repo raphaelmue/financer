@@ -141,7 +141,7 @@ class FixedTransaction : Transaction() {
         return this
     }
 
-    fun getTransactionAmounts(): Set<FixedTransactionAmount> {
+    fun getTransactionAmounts(): MutableSet<FixedTransactionAmount> {
         return (if (isVariable) HashSet() else transactionAmounts)!!
     }
 

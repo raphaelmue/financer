@@ -20,7 +20,7 @@ class User : Serializable, Settings {
         private set
     var categories: Set<Category> = HashSet()
         private set
-    var settings: MutableMap<SettingPair.Property?, Setting?>? = null
+    var settings: MutableMap<SettingPair.Property, Setting>? = null
         private set
     var tokens: Set<Token> = HashSet()
         private set
@@ -85,7 +85,7 @@ class User : Serializable, Settings {
         return this
     }
 
-    fun setSettings(settings: MutableMap<SettingPair.Property?, Setting?>?): User {
+    fun setSettings(settings: MutableMap<SettingPair.Property, Setting>?): User {
         this.settings = settings
         return this
     }

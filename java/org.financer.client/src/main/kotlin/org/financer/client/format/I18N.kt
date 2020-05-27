@@ -44,7 +44,7 @@ object I18N {
         }
 
     private val locale: Locale
-        get() = if (localStorage!!.readObject<Serializable?>("user") != null) {
+        get() = if (localStorage!!.readObject<Serializable>("user") != null) {
             (localStorage!!.readObject<Serializable>("user") as User).getValueOrDefault(SettingPair.Property.LANGUAGE)
         } else {
             SettingPair.Property.LANGUAGE.defaultValue as Locale

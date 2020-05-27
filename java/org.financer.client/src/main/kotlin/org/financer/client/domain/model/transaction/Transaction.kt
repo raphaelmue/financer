@@ -45,7 +45,7 @@ abstract class Transaction : AmountProvider, Serializable {
         return this
     }
 
-    fun getAttachments(): Set<Attachment> {
+    fun getAttachments(): MutableSet<Attachment> {
         return attachments
     }
 

@@ -10,11 +10,11 @@ import java.io.Serializable
 import java.util.stream.Collectors
 
 class CategoryRoot(val categories: Set<Category>) : Serializable, AmountProvider, Tree {
-    fun getCategoriesByClass(categoryClass: CategoryClass): Set<Category> {
+    fun getCategoriesByClass(categoryClass: CategoryClass): MutableSet<Category> {
         return this.getCategoriesByClass(categoryClass.categoryClass)
     }
 
-    fun getCategoriesByClass(categoryClass: CategoryClass.Values): Set<Category> {
+    fun getCategoriesByClass(categoryClass: CategoryClass.Values): MutableSet<Category> {
         return categories.stream()
                 .filter { category: Category -> category.categoryClass!!.categoryClass == categoryClass }
                 .collect(Collectors.toSet())

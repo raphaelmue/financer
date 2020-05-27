@@ -26,11 +26,11 @@ class Category : Serializable, Tree, AmountProvider, Formattable {
     var name: String? = null
         private set
     private var children: Set<Category>? = null
-    val transactions: Set<Transaction> = HashSet()
+    val transactions: MutableSet<Transaction> = HashSet()
     val prefix: String
         get() {
             if (this.isRoot) {
-                return Integer.toString(categoryClass!!.categoryClass.ordinal + 1)
+                return (categoryClass!!.categoryClass.ordinal + 1).toString()
             }
             val neighbors: List<Category> = ArrayList(parent!!.getChildren())
             neighbors.sortedWith(compareBy { it.name })
@@ -43,7 +43,7 @@ class Category : Serializable, Tree, AmountProvider, Formattable {
         for (amountProvider in transactions) {
             amount = amount.add(amountProvider.amount)
         }
-        if (this.isLeaf) {
+        if (!this.isLeaf) {
             for (amountProvider in children!!) {
                 amount = amount.add(amountProvider.amount)
             }
