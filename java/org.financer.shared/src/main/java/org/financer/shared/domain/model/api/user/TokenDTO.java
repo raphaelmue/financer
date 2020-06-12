@@ -2,6 +2,7 @@ package org.financer.shared.domain.model.api.user;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.financer.shared.domain.model.api.DataTransferObject;
+import org.financer.shared.domain.model.value.objects.IPAddress;
 import org.financer.shared.domain.model.value.objects.TokenString;
 
 import javax.validation.constraints.Min;
@@ -19,7 +20,7 @@ public class TokenDTO implements DataTransferObject {
     private TokenString token;
 
     @Schema(description = "IP address of the client that uses the token", required = true, example = "192.168.0.1")
-    private String ipAddress;
+    private IPAddress ipAddress;
 
     public int getId() {
         return id;
@@ -39,11 +40,11 @@ public class TokenDTO implements DataTransferObject {
         return this;
     }
 
-    public String getIpAddress() {
+    public IPAddress getIpAddress() {
         return ipAddress;
     }
 
-    public TokenDTO setIpAddress(String ipAddress) {
+    public TokenDTO setIpAddress(IPAddress ipAddress) {
         this.ipAddress = ipAddress;
         return this;
     }

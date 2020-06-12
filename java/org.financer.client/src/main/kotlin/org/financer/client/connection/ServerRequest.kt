@@ -1,7 +1,8 @@
 package org.financer.client.connection
 
-import com.fasterxml.jackson.core.JsonProcessingException
-import com.fasterxml.jackson.databind.ObjectMapper
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
+import com.google.gson.JsonDeserializer
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
@@ -9,26 +10,23 @@ import okhttp3.*
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import okhttp3.MediaType.Companion.toMediaType
 import org.financer.client.connection.error.RestException
-import org.financer.client.connection.error.ServerNotAvailableException
 import org.financer.client.connection.error.UnauthorizedOperationException
 import org.financer.client.domain.model.user.User
 import org.financer.client.local.Application
 import org.financer.client.local.LocalStorage
 import org.financer.shared.domain.model.value.objects.SettingPair
 import java.io.IOException
-import java.net.SocketException
-import java.net.UnknownHostException
+import java.time.LocalDate
 import java.util.*
 import java.util.concurrent.TimeUnit
-import java.util.logging.Level
-import java.util.logging.Logger
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
-class ServerRequest(val requestConfig: RequestConfig) {
+
+class ServerRequest(private val requestConfig: RequestConfig) {
     companion object {
-        private val DEFAULT_HOST = "https://api.financer-project.org/api/" +
-                ServerRequest::class.java.getPackage().implementationVersion
+        private const val DEFAULT_HOST = "https://api.financer-project.org/api/1.0-SNAPSHOT"
+//        private const val DEFAULT_HOST = "http://localhost:3000/api/1.0-SNAPSHOT"
 
         val client = OkHttpClient.Builder()
                 .connectTimeout(2, TimeUnit.SECONDS) // For testing purposes
@@ -36,7 +34,10 @@ class ServerRequest(val requestConfig: RequestConfig) {
                 .writeTimeout(2, TimeUnit.SECONDS)
                 .build()
 
-        val objectMapper = ObjectMapper()
+        val gson: Gson = GsonBuilder()
+                .registerTypeAdapter(LocalDate::class.java, JsonDeserializer { json, _, _ ->
+                    LocalDate.parse(json.asJsonPrimitive.asString)
+                }).create()
 
         @JvmStatic
         lateinit var application: Application
@@ -57,56 +58,33 @@ class ServerRequest(val requestConfig: RequestConfig) {
         }
     }
 
-    private val logger = Logger.getLogger("org.financer.client")
-
     suspend inline fun <reified T : Any?> execute(): T? {
-        try {
-            val response = client.newCall(buildRequest()).await()
-            val content = withContext(Dispatchers.IO) {
-                response.body!!.string()
-            }
-            return handleResponse(response.code, content)
-        } catch (e: UnknownHostException) {
-            onFailure(e)
-            throw ServerNotAvailableException(requestConfig)
-        } catch (e: SocketException) {
-            onFailure(e)
-            throw ServerNotAvailableException(requestConfig)
-        } catch (e: RestException) {
-            onFailure(e)
-            application.showToast(Application.MessageType.ERROR, e.restErrorMessage.messages)
-        } catch (e: Exception) {
-            onFailure(e)
+        val response = client.newCall(buildRequest()).await()
+        val content = withContext(Dispatchers.IO) {
+            response.body!!.string()
         }
-        return null
-    }
-
-    fun onFailure(e: Exception) {
-        logger.log(Level.SEVERE, e.message, e)
-    }
-
-    @Throws(JsonProcessingException::class)
-    suspend inline fun <reified T : Any?> handleResponse(code: Int, content: String): T {
-        when (code) {
-            200, 201 -> return withContext(Dispatchers.IO) { objectMapper.readValue(content, T::class.java) }
+        when (response.code) {
+            200, 201 -> return withContext(Dispatchers.IO) {
+                gson.fromJson(content, T::class.java)
+            }
             403 -> throw UnauthorizedOperationException()
             else -> {
-                val restErrorMessage = withContext(Dispatchers.IO) { objectMapper.readValue(content, RestErrorMessage::class.java) }
+                val restErrorMessage = withContext(Dispatchers.IO) { gson.fromJson(content, RestErrorMessage::class.java) }
                 throw RestException(restErrorMessage)
             }
         }
     }
 
     fun buildRequest(): Request {
-        val user = localStorage!!.readObject<User>("user")
         val requestBuilder = Request.Builder()
                 .url(buildUrl())
                 .addHeader(HEADER_ACCEPT, MEDIA_TYPE_JSON.toString())
                 .addHeader(HEADER_CONTENT_TYPE, MEDIA_TYPE_JSON.toString())
-        if (user?.activeToken?.token?.token != null) {
-            requestBuilder.addHeader(HEADER_AUTHORIZATION, TOKEN_PREFIX + user.activeToken!!.token!!.token)
-        }
+        val user = localStorage!!.readObject<User>("user")
         if (user != null) {
+            if (user.activeToken?.token?.token != null) {
+                requestBuilder.addHeader(HEADER_AUTHORIZATION, TOKEN_PREFIX + user.activeToken!!.token!!.token)
+            }
             requestBuilder.addHeader(HEADER_LANGUAGE, user.getValueOrDefault<Locale>(SettingPair.Property.LANGUAGE).language)
         }
         return requestConfig.httpMethod.build(requestBuilder, requestConfig.body).build()

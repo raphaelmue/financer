@@ -57,6 +57,7 @@
 
     <modules>
         <module>org.financer.client</module>
+        <module>org.financer.client.desktop</module>
         <module>org.financer.client.javafx</module>
         <module>org.financer.server</module>
         <module>org.financer.shared</module>

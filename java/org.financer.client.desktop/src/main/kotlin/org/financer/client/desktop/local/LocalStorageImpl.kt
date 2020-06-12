@@ -1,4 +1,4 @@
-package org.financer.client.javafx.local
+package org.financer.client.desktop.local
 
 import org.financer.client.local.LocalStorage
 import java.io.*
@@ -11,7 +11,7 @@ class LocalStorageImpl : LocalStorage {
 
     enum class LocalStorageFile(path: String, vararg keys: String) {
         USERDATA("/usr/usr.fnc", "user"),
-        SETTINGS("/usr/localSettings.fnc", "localSettings", "requests"),
+        SETTINGS("/usr/localSettings.fnc", "host"),
         TRANSACTIONS("/data/transactions.fnc", "transactions", "fixedTransactions"),
         CATEGORIES("/data/categories.fnc", "categories");
 
@@ -46,13 +46,8 @@ class LocalStorageImpl : LocalStorage {
     @Synchronized
     private fun readFile(file: File): Map<String, Serializable> {
         if (!file.exists()) {
-            try {
-                if (file.parentFile.mkdirs() && file.createNewFile()) {
-                    return emptyMap()
-                }
-            } catch (e: IOException) {
-                logger.log(Level.SEVERE, e.message, e)
-            }
+            writeFile(file, emptyMap())
+            return emptyMap()
         }
         var result: Map<String, Serializable>? = null
         try {
@@ -69,12 +64,8 @@ class LocalStorageImpl : LocalStorage {
     private fun writeFile(file: File, data: Map<String, Serializable>): Boolean {
         var result = false
         if (!file.exists()) {
-            try {
-                file.parentFile.mkdirs()
-                file.createNewFile()
-            } catch (e: IOException) {
-                logger.log(Level.SEVERE, e.message, e)
-            }
+            file.parentFile.mkdirs()
+            file.createNewFile()
         }
         try {
             ObjectOutputStream(FileOutputStream(file)).use { outputStream ->
@@ -88,7 +79,11 @@ class LocalStorageImpl : LocalStorage {
     }
 
     override fun <T : Serializable> readObject(key: String): T? {
-        return Objects.requireNonNull(this.readFile(Objects.requireNonNull(LocalStorageFile.getFileByKey(key))))[key] as T
+        val result = readFile(LocalStorageFile.getFileByKey(key))[key]
+        if (result != null) {
+            return result as T
+        }
+        return null
     }
 
     @Synchronized

@@ -2,14 +2,10 @@ package org.financer.shared.domain.model.api.user;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.financer.shared.domain.model.api.DataTransferObject;
-import org.financer.shared.domain.model.value.objects.Email;
-import org.financer.shared.domain.model.value.objects.Gender;
-import org.financer.shared.domain.model.value.objects.Name;
-import org.financer.shared.domain.model.value.objects.SettingPair;
+import org.financer.shared.domain.model.value.objects.*;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -30,10 +26,10 @@ public class UserDTO implements DataTransferObject {
     private Name name;
 
     @Schema(description = "Birth date of the user", required = true, example = "2020-01-01")
-    private LocalDate birthDate;
+    private BirthDate birthDate;
 
     @Schema(description = "Gender of the user", required = true, example = "FEMALE", enumAsRef = true)
-    private Gender.Values gender;
+    private Gender gender;
 
     @NotNull
     @Schema(description = "Active token of the user that is used to authorize API calls for this client",
@@ -75,20 +71,20 @@ public class UserDTO implements DataTransferObject {
         return this;
     }
 
-    public LocalDate getBirthDate() {
+    public BirthDate getBirthDate() {
         return birthDate;
     }
 
-    public UserDTO setBirthDate(LocalDate birthDate) {
+    public UserDTO setBirthDate(BirthDate birthDate) {
         this.birthDate = birthDate;
         return this;
     }
 
-    public Gender.Values getGender() {
+    public Gender getGender() {
         return gender;
     }
 
-    public UserDTO setGender(Gender.Values gender) {
+    public UserDTO setGender(Gender gender) {
         this.gender = gender;
         return this;
     }
