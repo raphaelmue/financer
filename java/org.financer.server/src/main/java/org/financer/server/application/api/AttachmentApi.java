@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.financer.shared.domain.model.api.category.CreateCategoryDTO;
 import org.financer.shared.domain.model.api.transaction.AttachmentDTO;
 import org.financer.shared.domain.model.api.transaction.AttachmentWithContentDTO;
 import org.financer.shared.domain.model.api.transaction.CreateAttachmentDTO;
@@ -43,8 +44,10 @@ public interface AttachmentApi {
     ResponseEntity<AttachmentDTO> createAttachment(
             @Parameter(description = "ID of the transaction to which the attachment is added", required = true)
             @PathVariable("transactionId") @NotBlank @Min(1) Long transactionId,
-            @Parameter(description = "Attachment to be created", required = true,
-                    schema = @Schema(implementation = CreateAttachmentDTO.class))
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Attachment to be created",
+                    required = true,
+                    content = @Content(schema = @Schema(implementation = CreateAttachmentDTO.class)))
             @RequestBody @NotNull @Valid CreateAttachmentDTO attachment);
 
     /**
