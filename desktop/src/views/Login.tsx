@@ -1,10 +1,9 @@
 import * as React from "react";
 import 'antd/dist/antd.css';
-import {Button, Checkbox, Form, Input, Layout, Space, Typography} from "antd";
+import {Button, Checkbox, Form, Input, Layout, message, Space, Typography} from "antd";
 import {Link} from "react-router-dom";
-import {FormInstance} from 'antd/lib/form';
 import {LockOutlined, UserOutlined} from '@ant-design/icons';
-import {UserApi} from "../.openapi/";
+import {UserApi} from '../.openapi'
 
 const {Content} = Layout;
 const {Title} = Typography;
@@ -15,26 +14,30 @@ interface LoginProps {
 interface LoginState {
     email: '';
     password: '';
+    errorMessage: ''
 }
 
 export default class Login extends React.Component<LoginProps, LoginState> {
-    private formRef: React.RefObject<FormInstance>;
-
-    constructor(props: object) {
-        super(props);
-
-        this.formRef = React.createRef<FormInstance>();
-    }
 
     onChange = (e: any) => {
         this.setState({[e.target.name]: e.target.value} as LoginState)
     }
 
     _handleLogin() {
-        console.log(this.state);
-
         let api = new UserApi()
-        api.loginUser(this.state.email, this.state.password)
+        api.loginUser({
+            email: this.state.email,
+            password: this.state.password
+        }).then(user => {
+            console.log("User successfully logged in.", user);
+        }).catch(error => {
+            console.log(error)
+            if (error.code == 403) {
+                message.error("Invalid credentials");
+            }
+        }).finally(() => {
+
+        });
     }
 
     render() {
@@ -78,18 +81,18 @@ export default class Login extends React.Component<LoginProps, LoginState> {
                                     <Checkbox>Remember me</Checkbox>
                                 </Form.Item>
 
-                                <a className="login-form-forgot" href="">
+                                <Link className="login-form-forgot" to={"/"}>
                                     Forgot password
-                                </a>
+                                </Link>
                             </Form.Item>
 
                             <Form.Item>
                                 <Button type="primary" htmlType="submit" className="login-form-button">
-                                    Log in
+                                    login
                                 </Button>
                             </Form.Item>
                             <Form.Item>
-                                Or <Link to={"/register"}>register now!</Link>
+                                <Link to={"/register"}>register</Link>
                             </Form.Item>
                         </Form>
                     </Space>

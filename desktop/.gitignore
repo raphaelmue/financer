@@ -60,6 +60,7 @@ typings/
 .yarn-integrity
 
 # dotenv environment variables file
+react-app-env.d.ts
 .env
 .env.test
 
