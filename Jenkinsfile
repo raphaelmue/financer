@@ -33,7 +33,7 @@ pipeline {
                         dir('frontend') {
                             sh 'npm install -g yarn'
                             sh 'yarn install'
-                            sh 'yarn build'
+                            sh 'yarn build:dev'
                         }
                     }
                     post {

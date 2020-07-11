@@ -22,28 +22,86 @@
                 </includes>
             </resource>
         </resources>
-        <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <version>2.2.5.RELEASE</version>
-                <configuration>
-                    <jvmArguments>--add-modules java.xml.bind</jvmArguments>
-                    <mainClass>org.financer.server.application.FinancerServer</mainClass>
-                    <fork>true</fork>
-                    <skip>false</skip>
-                    <finalName>financer-server</finalName>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>repackage</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>default</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.springframework.boot</groupId>
+                        <artifactId>spring-boot-maven-plugin</artifactId>
+                        <version>2.2.5.RELEASE</version>
+                        <configuration>
+                            <jvmArguments>--add-modules java.xml.bind</jvmArguments>
+                            <mainClass>org.financer.server.application.FinancerServer</mainClass>
+                            <fork>true</fork>
+                            <skip>false</skip>
+                            <finalName>financer-server</finalName>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>repackage</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>generate-openapi-specification</id>
+            <properties>
+                <spring.application.admin.enabled>true</spring.application.admin.enabled>
+            </properties>
+
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.springframework.boot</groupId>
+                        <artifactId>spring-boot-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>pre-integration-test</id>
+                                <goals>
+                                    <goal>start</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>post-integration-test</id>
+                                <goals>
+                                    <goal>stop</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.springdoc</groupId>
+                        <artifactId>springdoc-openapi-maven-plugin</artifactId>
+                        <version>1.0</version>
+                        <executions>
+                            <execution>
+                                <id>integration-test</id>
+                                <goals>
+                                    <goal>generate</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <apiDocsUrl>http://localhost:3000/api/${revision}/api-docs</apiDocsUrl>
+                            <outputFileName>financer.openapi.json</outputFileName>
+                            <outputDir>${project.build.directory}</outputDir>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
     <dependencies>
         <dependency>
