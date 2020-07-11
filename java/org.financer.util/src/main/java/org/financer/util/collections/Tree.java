@@ -1,21 +1,33 @@
 package org.financer.util.collections;
 
-import java.util.List;
+import java.util.Set;
 
-public interface Tree<T> {
-    T getValue();
+public interface Tree {
 
-    Tree<T> getParent();
+    interface Traversable<T extends Tree> {
+        void onEnter(T tree);
+    }
 
-    void setParent(Tree<T> parent);
+    Tree getParent();
 
-    List<? extends Tree<T>> getChildren();
+    Tree setParent(Tree parent);
+
+    Set<? extends Tree> getChildren();
 
     default boolean isLeaf() {
-        return getChildren().isEmpty();
+        return getChildren() == null || getChildren().isEmpty();
     }
 
     default boolean isRoot() {
         return (getParent() == null);
+    }
+
+    default <T extends Tree >void traverse(Traversable<T> traversable) {
+        for (Tree child : this.getChildren()) {
+            traversable.onEnter((T) child);
+            if (!this.isLeaf()) {
+                child.traverse(traversable);
+            }
+        }
     }
 }

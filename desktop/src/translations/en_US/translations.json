@@ -1,0 +1,16 @@
+{
+    "Profile": "Profile",
+    "categories": "Categories",
+    "dashboard": "Dashboard",
+    "email": "E-Mail Address",
+    "fixedTransactions": "Fixed Transactions",
+    "login": "Login",
+    "overview": "Overview",
+    "password": "Password",
+    "profile": "Profile",
+    "register": "Register",
+    "rememberMe": "Remember Me",
+    "settings": "Settings",
+    "transactions": "Transactions",
+    "variableTransactions": "Variable Transactions"
+}

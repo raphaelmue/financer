@@ -25,7 +25,7 @@ pipeline {
                     }
                     post {
                         always {
-                            archiveArtifacts artifacts: '**/*.msi, **/*.deb, **/*.dmg, **/*.apk', fingerprint: true
+                            archiveArtifacts artifacts: '**/financer-server.jar, **/*.msi, **/*.deb, **/*.dmg, **/*.apk', fingerprint: true
                         }
                     }
                 }

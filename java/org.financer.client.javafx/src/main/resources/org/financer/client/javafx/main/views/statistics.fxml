@@ -6,12 +6,11 @@
 <?import com.jfoenix.controls.JFXMasonryPane?>
 <?import javafx.scene.chart.CategoryAxis?>
 <?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import org.financer.client.javafx.components.charts.DonutChart?>
 <?import org.financer.client.javafx.components.charts.SmoothedChart?>
-<?import org.financer.client.javafx.components.DatePicker?>
-<?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.control.Label?>
+<?import org.financer.client.javafx.components.*?>
 <VBox fx:controller="org.financer.client.javafx.main.statistics.StatisticsController"
       xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" styleClass="content">
     <ScrollPane fx:id="statisticsScrollPane" fitToWidth="true" hbarPolicy="NEVER">

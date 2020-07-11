@@ -6,7 +6,7 @@ services:
         container_name: financer-server
         restart: always
         ports:
-            - 3500:3500
+            - 3000:3000
         links:
             - financer-db
         environment:
@@ -29,4 +29,4 @@ services:
         container_name: financer-web
         restart: always
         ports:
-            - 3000:3000 
+            - 3000:3000
