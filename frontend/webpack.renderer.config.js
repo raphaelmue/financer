@@ -13,7 +13,7 @@ module.exports = {
         rules
     },
     resolve: {
-        extensions: ['.js', '.ts', '.jsx', '.tsx', '.css']
+        extensions: ['.js', '.ts', '.jsx', '.tsx', '.css', '.html']
     },
     plugins: plugins
 };

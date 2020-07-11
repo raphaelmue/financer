@@ -66,6 +66,7 @@ public abstract class ApiTest extends SpringTest {
     protected MockHttpServletRequestBuilder buildRequestWithoutAuthorization(Path path) {
         return MockMvcRequestBuilders.request(HttpMethod.valueOf(path.getMethod()), path.getPath())
                 .servletPath(path.getPath())
-                .accept(MediaType.APPLICATION_JSON);
+                .accept(MediaType.APPLICATION_JSON)
+                .header("Origin", "http://localhost:3000");
     }
 }

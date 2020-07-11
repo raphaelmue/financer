@@ -18,12 +18,12 @@ const createWindow = () => {
         width: 800,
         height: 600,
         webPreferences: {
-            webSecurity: false
+            nodeIntegration: true
         }
     });
 
     // and load the index.html of the app.
-    mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
+    mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY)
 
     // Open the DevTools.
     mainWindow.webContents.openDevTools();

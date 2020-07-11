@@ -126,8 +126,8 @@ public class UserApiControllerTest extends ApiTest {
 
         UserDTO user = objectMapper.readValue(result.getResponse().getContentAsString(), UserDTO.class);
         assertThat(user.getName()).isEqualTo(dto.getName());
-        assertThat(user.getBirthDate()).isEqualTo(dto.getBirthDate().getBirthDate());
-        assertThat(user.getGender()).isEqualTo(dto.getGender().getGender());
+        assertThat(user.getBirthDate()).isEqualTo(dto.getBirthDate());
+        assertThat(user.getGender()).isEqualTo(dto.getGender());
     }
 
     @Test

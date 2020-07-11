@@ -56,9 +56,6 @@
     </properties>
 
     <modules>
-        <module>org.financer.client</module>
-        <module>org.financer.client.desktop</module>
-        <module>org.financer.client.javafx</module>
         <module>org.financer.server</module>
         <module>org.financer.shared</module>
         <module>org.financer.util</module>
@@ -83,42 +80,6 @@
                                 <exclude>**/module-info.java</exclude>
                             </excludes>
                         </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
-            <id>deploy</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-jmod-plugin</artifactId>
-                        <version>3.0.0-alpha-2-SNAPSHOT</version>
-                        <dependencies>
-                            <dependency>
-                                <groupId>org.ow2.asm</groupId>
-                                <artifactId>asm</artifactId>
-                                <version>7.1</version>
-                            </dependency>
-                        </dependencies>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-jlink-plugin</artifactId>
-                        <version>3.0.0-alpha-1</version>
-                        <extensions>true</extensions>
-                        <configuration>
-                            <noHeaderFiles>true</noHeaderFiles>
-                            <noManPages>true</noManPages>
-                        </configuration>
-                        <dependencies>
-                            <dependency>
-                                <groupId>org.ow2.asm</groupId>
-                                <artifactId>asm</artifactId>
-                                <version>7.1</version>
-                            </dependency>
-                        </dependencies>
                     </plugin>
                 </plugins>
             </build>

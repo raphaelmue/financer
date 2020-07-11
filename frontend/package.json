@@ -40,8 +40,8 @@
                             "config": "./webpack.renderer.config.js",
                             "entryPoints": [
                                 {
-                                    "html": "./src/index.html",
-                                    "js": "./src/app.tsx",
+                                    "html": "./public/index.html",
+                                    "js": "./src/index.tsx",
                                     "name": "main_window"
                                 }
                             ]
@@ -65,7 +65,7 @@
         "@typescript-eslint/parser": "^2.18.0",
         "cross-var": "^1.1.0",
         "css-loader": "^3.0.0",
-        "electron": "9.0.4",
+        "electron": "^9.1.0",
         "eslint": "^6.8.0",
         "eslint-plugin-import": "^2.20.0",
         "fork-ts-checker-webpack-plugin": "^5.0.4",
@@ -76,7 +76,6 @@
         "typescript": "^3.9.5"
     },
     "dependencies": {
-        "@types/antd": "^1.0.0",
         "@types/node-fetch": "^2.5.7",
         "@types/react": "^16.9.38",
         "@types/react-dom": "^16.9.8",
@@ -94,6 +93,10 @@
         "redux": "^4.0.5",
         "redux-devtools-extension": "^2.13.8",
         "redux-logger": "^3.0.6"
+    },
+    "peerDependencies": {
+        "dayjs": "^1.8.18",
+        "webpack": "^4.43.0"
     },
     "browserslist": {
         "production": [
