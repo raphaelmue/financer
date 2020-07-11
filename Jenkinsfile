@@ -16,11 +16,10 @@ pipeline {
     stages {
         stage('Build') {
             parallel {
-                stage('Java') {
+                stage('Backend') {
                     steps {
-                        dir('java') {
-                            sh 'bash prepare-build.sh'
-                            sh 'mvn clean install -DskipTests -P deploy'
+                        dir('backend') {
+                            sh 'mvn clean install -DskipTests'
                         }
                     }
                     post {
@@ -29,18 +28,12 @@ pipeline {
                         }
                     }
                 }
-                stage('Android') {
+                stage('Frontend') {
                     steps {
-                        dir('java') {
-                            sh 'mvn clean install -DskipTests -P android-dependency -pl ' +
-                                    '!org.financer.client.javafx,' +
-                                    '!org.financer.server,'
-                        }
-                        dir('android') {
-                            sh 'chmod +x gradlew'
-                            sh 'echo "sdk.dir=$JENKINS_HOME/android-sdk" >> local.properties'
-                            sh './gradlew clean assembleDebug'
-                            sh 'mv app/build/outputs/apk/debug/app-debug.apk app/build/outputs/apk/debug/financer-debug.apk'
+                        dir('frontend') {
+                            sh 'npm install -g yarn'
+                            sh 'yarn install'
+                            sh 'yarn build'
                         }
                     }
                     post {
@@ -62,27 +55,18 @@ pipeline {
 
         stage('Unit Tests') {
             parallel {
-                stage('Java') {
+                stage('Backend') {
                     steps {
-                        dir('java') {
+                        dir('backend') {
                             sh 'mvn test -P unit-tests'
                         }
                     }
                 }
-                stage('Android') {
+                stage('Frontend') {
                     steps {
-                        dir('android') {
-                            sh 'chmod +x gradlew'
-                            sh './gradlew test'
+                        dir('frontend') {
                         }
                     }
-                }
-            }
-        }
-        stage('Integration Tests') {
-            steps {
-                dir('java') {
-                    sh 'mvn test -P integration-tests'
                 }
             }
         }
@@ -92,9 +76,7 @@ pipeline {
                 scannerHome = '$JENKINS_HOME/SonarQubeScanner'
             }
             steps {
-                dir('java') {
-                    sh 'cp target/jacoco.exec org.financer.client/target/'
-                    sh 'cp target/jacoco.exec org.financer.client.javafx/target/'
+                dir('backend') {
                     sh 'cp target/jacoco.exec org.financer.server/target/'
                     sh 'cp target/jacoco.exec org.financer.shared/target/'
                     sh 'cp target/jacoco.exec org.financer.util/target/'
@@ -120,14 +102,6 @@ pipeline {
                         }
                     }
                 }
-            }
-        }
-        stage('Deploy') {
-            when {
-                branch 'deployment'
-            }
-            steps {
-                sh 'JENKINS_NODE_COOKIE=dontKillMe nohup bash ./service/start-financer-server.sh'
             }
         }
     }
