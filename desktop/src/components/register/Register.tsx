@@ -1,10 +1,10 @@
-import * as React from "react";
+import * as React                                       from 'react';
 import 'antd/dist/antd.css';
-import {Button, Form, Input, Layout, Space, Typography} from "antd";
-import {Link} from "react-router-dom";
-import {FormInstance} from 'antd/lib/form';
-import {LockOutlined, UserOutlined} from '@ant-design/icons';
-import {BirthDate, Gender, Name} from "../.openapi/";
+import {Button, Form, Input, Layout, Space, Typography} from 'antd';
+import {Link}                                           from 'react-router-dom';
+import {FormInstance}                                   from 'antd/lib/form';
+import {LockOutlined, UserOutlined}                     from '@ant-design/icons';
+import {BirthDate, Gender, Name}                        from '../../.openapi';
 
 const {Content} = Layout;
 const {Title, Text} = Typography;
@@ -41,10 +41,10 @@ export default class Register extends React.Component<RegisterProps, RegisterSta
     render() {
         return (
             <Layout className="space-align-container">
-                <Content className="space-align-block" style={{textAlign: 'center', padding: "25vh"}}>
+                <Content className="space-align-block" style={{textAlign: 'center', padding: '25vh'}}>
                     <Space>
                         <Form
-                            layout={"horizontal"}
+                            layout={'horizontal'}
                             name="normal_login"
                             className="login-form"
                             initialValues={{remember: true}}
@@ -59,7 +59,7 @@ export default class Register extends React.Component<RegisterProps, RegisterSta
                             <Form.Item
                                 rules={[{required: true, message: 'Please input your Username!'}]}>
                                 <Input prefix={<UserOutlined className="site-form-item-icon"/>}
-                                       type={"text"}
+                                       type={'text'}
                                        name="firstName"
                                        placeholder="First Name"
                                        onChange={this.onChange}
@@ -68,7 +68,7 @@ export default class Register extends React.Component<RegisterProps, RegisterSta
                             <Form.Item
                                 rules={[{required: true, message: 'Please input your email address!'}]}>
                                 <Input prefix={<UserOutlined className="site-form-item-icon"/>}
-                                       type={"text"}
+                                       type={'text'}
                                        name="surname"
                                        placeholder="Surname"
                                        onChange={this.onChange}
@@ -77,7 +77,7 @@ export default class Register extends React.Component<RegisterProps, RegisterSta
                             <Form.Item
                                 rules={[{required: true, message: 'Please input your Username!'}]}>
                                 <Input prefix={<UserOutlined className="site-form-item-icon"/>}
-                                       type={"email"}
+                                       type={'email'}
                                        name="email"
                                        placeholder="E-Mail"
                                        onChange={this.onChange}/>
@@ -117,7 +117,7 @@ export default class Register extends React.Component<RegisterProps, RegisterSta
                                 </Button>
                             </Form.Item>
                             <Form.Item>
-                                Or <Link to={"/"}>Login</Link>
+                                Or <Link to={'/'}>Login</Link>
                             </Form.Item>
                         </Form>
                     </Space>

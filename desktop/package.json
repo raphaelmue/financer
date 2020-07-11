@@ -77,15 +77,23 @@
     },
     "dependencies": {
         "@types/antd": "^1.0.0",
+        "@types/node-fetch": "^2.5.7",
         "@types/react": "^16.9.38",
         "@types/react-dom": "^16.9.8",
+        "@types/react-redux": "^7.1.9",
+        "@types/redux-logger": "^3.0.8",
+        "@types/redux-thunk": "^2.1.0",
         "antd": "^4.3.5",
         "electron-squirrel-startup": "^1.0.0",
         "i18next": "^19.5.1",
         "react": "^16.13.1",
         "react-dom": "^16.13.1",
         "react-i18next": "^11.7.0",
-        "react-scripts": "^3.4.1"
+        "react-redux": "^7.2.0",
+        "react-scripts": "^3.4.1",
+        "redux": "^4.0.5",
+        "redux-devtools-extension": "^2.13.8",
+        "redux-logger": "^3.0.6"
     },
     "browserslist": {
         "production": [
