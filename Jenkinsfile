@@ -22,7 +22,7 @@ pipeline {
             }
             post {
                 always {
-                    archiveArtifacts artifacts: '**/financer-server.jar, **/*.msi, **/*.deb, **/*.dmg, **/*.apk', fingerprint: true
+                    archiveArtifacts artifacts: '**/financer-server.jar', fingerprint: true
                 }
             }
         }
@@ -32,11 +32,6 @@ pipeline {
                     sh 'npm install -g yarn'
                     sh 'yarn install --ignore-engines'
                     sh 'yarn build:dev'
-                }
-            }
-            post {
-                always {
-                    archiveArtifacts artifacts: '**/*.apk', fingerprint: true
                 }
             }
         }
