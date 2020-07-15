@@ -31,7 +31,6 @@
             --add-opens org.financer.shared/org.financer.shared.domain.model.api.transaction.fixed=ALL-UNNAMED
             --add-opens org.financer.shared/org.financer.shared.domain.model.api.transaction.variable=ALL-UNNAMED
             --add-opens org.financer.shared/org.financer.shared.domain.model.api.user=ALL-UNNAMED
-            --add-opens org.financer.client.javafx/org.financer.client.javafx.main=ALL-UNNAMED
             --add-opens org.financer.server/org.financer.server=ALL-UNNAMED
             --add-opens org.financer.server/org.financer.server.application=ALL-UNNAMED
             --add-opens org.financer.server/org.financer.server.application.api=ALL-UNNAMED
@@ -42,15 +41,6 @@
             --add-opens org.financer.server/org.financer.server.domain.model.user=ALL-UNNAMED
             --add-opens org.financer.server/org.financer.server.domain.model.transaction=ALL-UNNAMED
             --add-opens org.financer.server/org.financer.server.domain.model.category=ALL-UNNAMED
-            --add-exports javafx.graphics/com.sun.javafx.application=ALL-UNNAMED
-            --add-exports javafx.graphics/com.sun.glass.ui=ALL-UNNAMED
-            --add-exports javafx.graphics/com.sun.javafx.css=org.controlsfx.controls
-            --add-exports javafx.graphics/com.sun.javafx.scene=com.jfoenix
-            --add-exports javafx.graphics/com.sun.javafx.stage=com.jfoenix
-            --add-exports javafx.controls/com.sun.javafx.scene.control.behavior=com.jfoenix
-            --add-exports javafx.controls/com.sun.javafx.scene.control=com.jfoenix
-            --add-exports javafx.base/com.sun.javafx.binding=com.jfoenix
-            --add-exports javafx.base/com.sun.javafx.event=com.jfoenix
         </project.testing.arguments>
         <project.testing.headless/>
     </properties>
@@ -62,28 +52,6 @@
     </modules>
 
     <profiles>
-        <profile>
-            <!-- only the modules shared, util and client can be executed with this profile -->
-            <id>android-dependency</id>
-            <properties>
-                <maven.compiler.source>1.8</maven.compiler.source>
-                <maven.compiler.target>1.8</maven.compiler.target>
-            </properties>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-compiler-plugin</artifactId>
-                        <version>3.8.1</version>
-                        <configuration>
-                            <excludes>
-                                <exclude>**/module-info.java</exclude>
-                            </excludes>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
         <profile>
             <id>unit-tests</id>
             <properties>

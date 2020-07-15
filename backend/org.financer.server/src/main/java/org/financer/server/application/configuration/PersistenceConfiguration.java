@@ -2,6 +2,7 @@ package org.financer.server.application.configuration;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
@@ -20,6 +21,27 @@ public class PersistenceConfiguration {
 
     private static final Logger logger = LoggerFactory.getLogger(PersistenceConfiguration.class);
 
+    @Value("${financer.database.dialect}")
+    private String dialect;
+
+    @Value("${financer.database.driver}")
+    private String driverClassName;
+
+    @Value("${financer.database.engine}")
+    private String engine;
+
+    @Value("${financer.database.host}")
+    private String host;
+
+    @Value("${financer.database.name}")
+    private String dbName;
+
+    @Value("${financer.database.user}")
+    private String user;
+
+    @Value("${financer.database.password}")
+    private String password;
+
     @Bean(name = "entityManagerFactory")
     public LocalSessionFactoryBean sessionFactory() {
         LocalSessionFactoryBean sessionFactory = new LocalSessionFactoryBean();
@@ -28,6 +50,7 @@ public class PersistenceConfiguration {
         Properties properties = new Properties();
         try {
             properties.load(getClass().getResourceAsStream("/hibernate.properties"));
+            properties.setProperty("hibernate.dialect", dialect);
             sessionFactory.setHibernateProperties(properties);
         } catch (IOException e) {
             logger.error("Failed to load hibernate properties for instantiating data source.", e);
@@ -38,19 +61,10 @@ public class PersistenceConfiguration {
     @Bean
     public DataSource dataSource() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
-        Properties properties = new Properties();
-        try {
-            properties.load(getClass().getResourceAsStream("/application.properties"));
-            dataSource.setDriverClassName(properties.getProperty("financer.database.driver"));
-            dataSource.setUrl("jdbc:" +
-                    properties.getProperty("financer.database.engine") + "://" +
-                    properties.getProperty("financer.database.host") + ":3306/" +
-                    properties.getProperty("financer.database.name"));
-            dataSource.setUsername(properties.getProperty("financer.database.user"));
-            dataSource.setPassword(properties.getProperty("financer.database.password"));
-        } catch (IOException e) {
-            logger.error("Failed to load database properties for instantiating data source.", e);
-        }
+        dataSource.setDriverClassName(driverClassName);
+        dataSource.setUrl("jdbc:" + engine + "://" + host + ":3306/" + dbName);
+        dataSource.setUsername(user);
+        dataSource.setPassword(password);
 
         return dataSource;
     }

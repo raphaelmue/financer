@@ -14,41 +14,37 @@ pipeline {
     }
 
     stages {
-        stage('Build') {
-            parallel {
-                stage('Backend') {
-                    steps {
-                        dir('backend') {
-                            sh 'mvn clean install -DskipTests'
-                        }
-                    }
-                    post {
-                        always {
-                            archiveArtifacts artifacts: '**/financer-server.jar, **/*.msi, **/*.deb, **/*.dmg, **/*.apk', fingerprint: true
-                        }
-                    }
+        stage('Build Backend') {
+            steps {
+                dir('backend') {
+                    sh 'mvn clean install -DskipTests -P generate-openapi-specification'
                 }
-                stage('Frontend') {
-                    steps {
-                        dir('frontend') {
-                            sh 'npm install -g yarn'
-                            sh 'yarn install'
-                            sh 'yarn build:dev'
-                        }
-                    }
-                    post {
-                        always {
-                            archiveArtifacts artifacts: '**/*.apk', fingerprint: true
-                        }
-                    }
+            }
+            post {
+                always {
+                    archiveArtifacts artifacts: '**/financer-server.jar, **/*.msi, **/*.deb, **/*.dmg, **/*.apk', fingerprint: true
                 }
-                stage('NodeJS') {
-                    steps {
-                        dir('web') {
-                            sh 'npm install -g yarn'
-                            sh 'yarn install'
-                        }
-                    }
+            }
+        }
+        stage('Build Frontend') {
+            steps {
+                dir('frontend') {
+                    sh 'npm install -g yarn'
+                    sh 'yarn install'
+                    sh 'yarn build:dev'
+                }
+            }
+            post {
+                always {
+                    archiveArtifacts artifacts: '**/*.apk', fingerprint: true
+                }
+            }
+        }
+        stage('NodeJS') {
+            steps {
+                dir('web') {
+                    sh 'npm install -g yarn'
+                    sh 'yarn install'
                 }
             }
         }
