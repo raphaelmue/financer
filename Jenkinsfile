@@ -30,7 +30,7 @@ pipeline {
             steps {
                 dir('frontend') {
                     sh 'npm install -g yarn'
-                    sh 'yarn install'
+                    sh 'yarn install --ignore-engines'
                     sh 'yarn build:dev'
                 }
             }
