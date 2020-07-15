@@ -9,6 +9,7 @@ import org.financer.server.domain.model.user.VerificationToken;
 import org.financer.server.domain.repository.*;
 import org.financer.shared.domain.model.value.objects.*;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDate;
 import java.util.Collections;
@@ -16,6 +17,7 @@ import java.util.HashSet;
 
 import static org.mockito.Mockito.when;
 
+@ActiveProfiles(profiles = "test")
 public abstract class SpringTest {
 
     @MockBean
