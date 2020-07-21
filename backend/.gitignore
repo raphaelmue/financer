@@ -2,3 +2,6 @@
 !.idea/runConfigurations/
 target/
 *.iml
+
+# Database content
+.data/

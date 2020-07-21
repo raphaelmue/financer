@@ -27,14 +27,8 @@ public class PersistenceConfiguration {
     @Value("${financer.database.driver}")
     private String driverClassName;
 
-    @Value("${financer.database.engine}")
-    private String engine;
-
-    @Value("${financer.database.host}")
-    private String host;
-
-    @Value("${financer.database.name}")
-    private String dbName;
+    @Value("${financer.database.url}")
+    private String url;
 
     @Value("${financer.database.user}")
     private String user;
@@ -62,9 +56,11 @@ public class PersistenceConfiguration {
     public DataSource dataSource() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
         dataSource.setDriverClassName(driverClassName);
-        dataSource.setUrl("jdbc:" + engine + "://" + host + ":3306/" + dbName);
+        dataSource.setUrl("jdbc:" + url);
         dataSource.setUsername(user);
         dataSource.setPassword(password);
+
+        logger.info("Connecting to database '{}' with user '{}'.", url, user);
 
         return dataSource;
     }

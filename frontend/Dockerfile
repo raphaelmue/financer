@@ -4,7 +4,7 @@ FROM node:latest
 WORKDIR /usr/src/app
 
 # Copy directory
-COPY . .
+COPY ../ .
 
 RUN yarn install
 RUN yarn build:dev

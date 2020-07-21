@@ -1,0 +1,59 @@
+{
+    "properties": [
+        {
+            "name": "financer.database.driver",
+            "type": "java.lang.String",
+            "description": "Driver of the database."
+        },
+        {
+            "name": "financer.database.engine",
+            "type": "java.lang.String",
+            "description": "Engine of the database."
+        },
+        {
+            "name": "financer.database.name",
+            "type": "java.lang.String",
+            "description": "Name of the Database."
+        },
+        {
+            "name": "financer.database.host",
+            "type": "java.lang.String",
+            "description": "Host of the Database."
+        },
+        {
+            "name": "financer.database.user",
+            "type": "java.lang.String",
+            "description": "User for the Database."
+        },
+        {
+            "name": "financer.database.password",
+            "type": "java.lang.String",
+            "description": "Password for the Database."
+        },
+        {
+            "name": "financer.server.smtp",
+            "type": "java.lang.String",
+            "description": "If true, it enables the SMTP connection to given server."
+        },
+        {
+            "name": "financer.server.smtp.host",
+            "type": "java.lang.String",
+            "description": "Host of the SMTP Server."
+        },
+        {
+            "name": "financer.server.smtp.port",
+            "type": "java.lang.String",
+            "description": "Port of the SMTP Server."
+        },
+        {
+            "name": "financer.server.smtp.email",
+            "type": "java.lang.String",
+            "description": "Email Address of the SMTP Server."
+        },
+        {
+            "name": "financer.server.smtp.password",
+            "type": "java.lang.String",
+            "description": "Password for  the SMTP Server."
+        }
+    ]
+}
