@@ -29,6 +29,9 @@ RUN java -jar /opt/openapi-generator/modules/openapi-generator-cli/target/openap
 ### 3. Step: Build Binaries ###
 FROM node:14.5.0-alpine3.12 AS builder
 
+ARG REACT_APP_SERVER_URL="https://api.financer-project.org"
+ENV REACT_APP_SERVER_URL=${REACT_APP_SERVER_URL}
+
 # Create app directory
 WORKDIR /usr/src/app
 
@@ -46,9 +49,6 @@ RUN cd frontend && yarn install && yarn build
 
 ### 4. Step: Run Binaries ###
 FROM nginx:alpine AS release
-
-ARG REACT_APP_SERVER_URL="https://api.financer-project.org"
-ENV REACT_APP_SERVER_URL=${REACT_APP_SERVER_URL}
 
 # Copy binaries into working directory
 COPY --from=builder /usr/src/app/frontend/build /usr/share/nginx/html

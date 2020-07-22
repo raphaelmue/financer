@@ -2,33 +2,20 @@ version: "3"
 
 services:
     server:
-        image: raphaelmue/financer-server:latest
+        build: backend/
         container_name: financer-server
         restart: always
         ports:
             - 3000:3000
-        links:
-            - financer-db
-        environment:
 
     client:
-        image: raphaelmue/financer-client:latest
+        build:
+            context: .
+            args:
+                REACT_APP_SERVER_URL: http://localhost:3000
         container_name: financer-client
         restart: always
         ports:
-            - 3000:3001
+            - 8080:80
         links:
-            - financer-server
-        environment:
-            BASE_PATH: https://api.financer-project.org
-
-    financer-db:
-        image: mariadb:latest
-        container_name: financer-db
-        restart: always
-        ports:
-            - 3306:3306
-        environment:
-            MYSQL_DATABASE: financer_prod
-            MYSQL_ROOT_PASSWORD: password
-            MYSQL_PASSWORD: password
+            - server
