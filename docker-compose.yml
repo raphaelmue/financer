@@ -2,7 +2,7 @@ version: "3"
 
 services:
     server:
-        build: .
+        image: raphaelmue/financer-server:latest
         container_name: financer-server
         restart: always
         ports:
@@ -10,8 +10,17 @@ services:
         links:
             - financer-db
         environment:
-            PORT: 3000
-            ENVIRONEMT: prod
+
+    client:
+        image: raphaelmue/financer-client:latest
+        container_name: financer-client
+        restart: always
+        ports:
+            - 3000:3001
+        links:
+            - financer-server
+        environment:
+            BASE_PATH: https://api.financer-project.org
 
     financer-db:
         image: mariadb:latest
@@ -23,10 +32,3 @@ services:
             MYSQL_DATABASE: financer_prod
             MYSQL_ROOT_PASSWORD: password
             MYSQL_PASSWORD: password
-
-    financer-web:
-        build: web/
-        container_name: financer-web
-        restart: always
-        ports:
-            - 3000:3000

@@ -8,6 +8,8 @@ import {composeWithDevTools}          from 'redux-devtools-extension';
 import thunkMiddleware                from 'redux-thunk';
 import logger                         from 'redux-logger';
 
+require('dotenv').config()
+
 const composeEnhancers = composeWithDevTools({
     // Specify name here, actionsBlacklist, actionsCreators and other options if needed
 });

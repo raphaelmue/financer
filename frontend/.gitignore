@@ -93,3 +93,6 @@ out/
 
 # IDE data
 .idea/
+
+# Build Output Directory
+build/

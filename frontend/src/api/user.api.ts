@@ -1,8 +1,10 @@
 import {Dispatch}                                from 'redux';
 import {loginFailed, loginRequest, loginSuccess} from '../actions/user.actions';
-import {LoginUserRequest, UserApi}               from '../.openapi/apis';
+import {LoginUserRequest, UserApi}               from '../.openapi';
+import {apiConfiguration}                        from './index';
 
-const api = new UserApi();
+const api = new UserApi(apiConfiguration);
+console.log(apiConfiguration.basePath)
 
 export const loginUser = (loginData: LoginUserRequest) => {
     return (dispatch: Dispatch) => {
