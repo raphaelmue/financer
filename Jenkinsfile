@@ -1,6 +1,5 @@
 pipeline {
     environment {
-        JPACKAGE = '/var/jenkins_home/jdk-14/bin/jpackage'
         registry = 'raphaelmue/financer'
         registryCredentials = 'dockerhub'
     }
@@ -9,7 +8,7 @@ pipeline {
 
     tools {
         maven 'Maven 3.6.2'
-        jdk 'JDK 11.0.1'
+        jdk 'JDK 14.0.2'
         nodejs 'NodeJS 13.6.0'
     }
 

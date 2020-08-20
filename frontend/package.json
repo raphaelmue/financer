@@ -55,7 +55,7 @@
         }
     },
     "devDependencies": {
-        "@electron-forge/cli": "6.0.0-beta.51",
+        "@electron-forge/cli": "^6.0.0-beta.52",
         "@electron-forge/maker-deb": "6.0.0-beta.51",
         "@electron-forge/maker-rpm": "6.0.0-beta.51",
         "@electron-forge/maker-squirrel": "6.0.0-beta.51",
@@ -93,7 +93,7 @@
         "react-dom": "^16.13.1",
         "react-i18next": "^11.7.0",
         "react-redux": "^7.2.0",
-        "react-scripts": "^3.4.1",
+        "react-scripts": "^3.4.3",
         "redux": "^4.0.5",
         "redux-devtools-extension": "^2.13.8",
         "redux-logger": "^3.0.6"
