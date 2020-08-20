@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.financer</groupId>
+    <artifactId>financer</artifactId>
+    <packaging>pom</packaging>
+    <version>${revision}</version>
+
+    <properties>
+        <revision>1.0-SNAPSHOT</revision>
+
+        <java.version>11</java.version>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
+
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <spring.version>5.2.4.RELEASE</spring.version>
+
+        <project.testing.localhost>false</project.testing.localhost>
+        <project.testing.tags>unit, integration</project.testing.tags>
+        <project.testing.arguments>
+            --add-reads org.financer.shared=org.hibernate.orm.core
+            --add-reads org.financer.shared=ALL-UNNAMED
+            --add-opens java.base/java.time=com.fasterxml.jackson.databind
+            --add-opens org.financer.shared/org.financer.shared.model.db=ALL-UNNAMED
+            --add-opens org.financer.shared/org.financer.shared.domain.model.api.category=ALL-UNNAMED
+            --add-opens org.financer.shared/org.financer.shared.domain.model.api.transaction=ALL-UNNAMED
+            --add-opens org.financer.shared/org.financer.shared.domain.model.api.transaction.fixed=ALL-UNNAMED
+            --add-opens org.financer.shared/org.financer.shared.domain.model.api.transaction.variable=ALL-UNNAMED
+            --add-opens org.financer.shared/org.financer.shared.domain.model.api.user=ALL-UNNAMED
+            --add-opens org.financer.server/org.financer.server=ALL-UNNAMED
+            --add-opens org.financer.server/org.financer.server.application=ALL-UNNAMED
+            --add-opens org.financer.server/org.financer.server.application.api=ALL-UNNAMED
+            --add-opens org.financer.server/org.financer.server.application.service=ALL-UNNAMED
+            --add-opens org.financer.server/org.financer.server.application.configuration=ALL-UNNAMED
+            --add-opens org.financer.server/org.financer.server.domain.service=ALL-UNNAMED
+            --add-opens org.financer.server/org.financer.server.domain.repository=ALL-UNNAMED
+            --add-opens org.financer.server/org.financer.server.domain.model.user=ALL-UNNAMED
+            --add-opens org.financer.server/org.financer.server.domain.model.transaction=ALL-UNNAMED
+            --add-opens org.financer.server/org.financer.server.domain.model.category=ALL-UNNAMED
+        </project.testing.arguments>
+        <project.testing.headless/>
+    </properties>
+
+    <modules>
+        <module>org.financer.server</module>
+        <module>org.financer.shared</module>
+        <module>org.financer.util</module>
+    </modules>
+
+    <profiles>
+        <profile>
+            <id>unit-tests</id>
+            <properties>
+                <project.testing.tags>unit</project.testing.tags>
+            </properties>
+        </profile>
+        <profile>
+            <id>integration-tests</id>
+            <properties>
+                <project.testing.tags>integration</project.testing.tags>
+            </properties>
+        </profile>
+        <profile>
+            <id>headless-testing</id>
+            <properties>
+                <project.testing.headless>
+                    -Dtestfx.robot=glass
+                    -Dglass.platform=Monocle
+                    -Dmonocle.platform=Headless
+                    -Dprism.order=sw
+                </project.testing.headless>
+            </properties>
+        </profile>
+    </profiles>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
+            </plugin>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.4</version>
+                <configuration>
+                    <destFile>${project.basedir}/../target/jacoco.exec</destFile>
+                    <append>true</append>
+                    <excludes>
+                        <exclude>android/**/*</exclude>
+                    </excludes>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>report</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.0.0-M4</version>
+                <configuration>
+                    <redirectTestOutputToFile>true</redirectTestOutputToFile>
+                    <excludedGroups>skip</excludedGroups>
+                    <groups>${project.testing.tags}</groups>
+                    <argLine>@{argLine} ${project.testing.headless} ${project.testing.arguments}</argLine>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.6</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                            <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>2.2.5.RELEASE</version>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>5.5.2</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>5.5.2</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <version>3.9.1</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>3.3.3</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+</project>

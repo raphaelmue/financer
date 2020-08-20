@@ -1,0 +1,117 @@
+{
+    "name": "financer",
+    "version": "1.0.0",
+    "private": true,
+    "description": "Financer is an Application that helps to manage all private expenses and revenues.",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/raphaelmue/financer.git"
+    },
+    "licenses": [
+        {
+            "type": "BSD-3-Clause",
+            "url": "https://github.com/raphaelmue/financer/blob/master/LICENSE"
+        }
+    ],
+    "author": {
+        "name": "Raphael Müßeler",
+        "email": "raphael@muesseler.de"
+    },
+    "proxy": "https://api.financer-project.org",
+    "main": ".webpack/main",
+    "scripts": {
+        "start": "electron-forge start",
+        "start:react": "react-scripts start",
+        "build": "react-scripts build",
+        "generate:openapi": "cross-var openapi-generator generate -i https://api.financer-project.org/api/$npm_package_version/api-docs -g typescript-fetch -o src/.openapi --additional-properties=typescriptThreePlus=true --skip-validate-spec",
+        "build:dev": "openapi-generator generate -i ../backend/org.financer.server/target/financer.openapi.json -g typescript-fetch -o src/.openapi --additional-properties=\"typescriptThreePlus=true,ngVersion=6.1.7\" --skip-validate-spec",
+        "build:dev:with-backend": " cd ../backend && mvn clean verify -DskipTests -P generate-openapi-specification && cd frontend/ && yarn build:dev",
+        "package": "electron-forge package",
+        "make": "electron-forge make",
+        "publish": "electron-forge publish",
+        "lint": "eslint --ext .ts ."
+    },
+    "keywords": [],
+    "config": {
+        "forge": {
+            "plugins": [
+                [
+                    "@electron-forge/plugin-webpack",
+                    {
+                        "mainConfig": "./webpack.main.config.js",
+                        "renderer": {
+                            "config": "./webpack.renderer.config.js",
+                            "entryPoints": [
+                                {
+                                    "html": "./public/index.html",
+                                    "js": "./src/index.tsx",
+                                    "name": "main_window"
+                                }
+                            ]
+                        }
+                    }
+                ]
+            ]
+        }
+    },
+    "devDependencies": {
+        "@electron-forge/cli": "^6.0.0-beta.52",
+        "@electron-forge/maker-deb": "6.0.0-beta.51",
+        "@electron-forge/maker-rpm": "6.0.0-beta.51",
+        "@electron-forge/maker-squirrel": "6.0.0-beta.51",
+        "@electron-forge/maker-zip": "6.0.0-beta.51",
+        "@electron-forge/plugin-webpack": "6.0.0-beta.51",
+        "@marshallofsound/webpack-asset-relocator-loader": "^0.5.0",
+        "@openapitools/openapi-generator-cli": "^1.0.15-5.0.0-beta",
+        "@types/react-router-dom": "^5.1.5",
+        "@typescript-eslint/eslint-plugin": "^2.18.0",
+        "@typescript-eslint/parser": "^2.18.0",
+        "cross-var": "^1.1.0",
+        "css-loader": "^3.0.0",
+        "electron": "^9.1.0",
+        "eslint": "^6.8.0",
+        "eslint-plugin-import": "^2.20.0",
+        "fork-ts-checker-webpack-plugin": "^5.0.4",
+        "node-loader": "^0.6.0",
+        "react-router-dom": "^5.2.0",
+        "style-loader": "^0.23.1",
+        "ts-loader": "^7.0.5",
+        "typescript": "^3.9.5"
+    },
+    "dependencies": {
+        "@types/node-fetch": "^2.5.7",
+        "@types/react": "^16.9.38",
+        "@types/react-dom": "^16.9.8",
+        "@types/react-redux": "^7.1.9",
+        "@types/redux-logger": "^3.0.8",
+        "@types/redux-thunk": "^2.1.0",
+        "antd": "^4.3.5",
+        "dotenv": "^8.2.0",
+        "electron-squirrel-startup": "^1.0.0",
+        "i18next": "^19.5.1",
+        "react": "^16.13.1",
+        "react-dom": "^16.13.1",
+        "react-i18next": "^11.7.0",
+        "react-redux": "^7.2.0",
+        "react-scripts": "^3.4.3",
+        "redux": "^4.0.5",
+        "redux-devtools-extension": "^2.13.8",
+        "redux-logger": "^3.0.6"
+    },
+    "peerDependencies": {
+        "dayjs": "^1.8.18",
+        "webpack": "^4.43.0"
+    },
+    "browserslist": {
+        "production": [
+            ">0.2%",
+            "not dead",
+            "not op_mini all"
+        ],
+        "development": [
+            "last 1 chrome version",
+            "last 1 firefox version",
+            "last 1 safari version"
+        ]
+    }
+}
