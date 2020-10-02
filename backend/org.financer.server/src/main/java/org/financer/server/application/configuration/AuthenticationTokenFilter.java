@@ -9,6 +9,7 @@ import org.financer.shared.path.Path;
 import org.financer.shared.path.PathBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
@@ -56,25 +57,27 @@ public class AuthenticationTokenFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
         final String header = request.getHeader(HEADER_STRING);
 
-        String tokenString = "";
-        if (header != null && header.startsWith(TOKEN_PREFIX)) {
-            tokenString = header.substring(7);
+        if (request.getMethod().equals(HttpMethod.OPTIONS.toString())) {
+            String tokenString = "";
+            if (header != null && header.startsWith(TOKEN_PREFIX)) {
+                tokenString = header.substring(7);
 
-            Optional<User> userOptional = userDomainService.checkUsersToken(new TokenString(tokenString));
-            if (userOptional.isPresent() && SecurityContextHolder.getContext().getAuthentication() == null) {
-                List<GrantedAuthority> authList = new ArrayList<>();
-                authList.add(new SimpleGrantedAuthority(REGISTERED_USER_ROLE));
+                Optional<User> userOptional = userDomainService.checkUsersToken(new TokenString(tokenString));
+                if (userOptional.isPresent() && SecurityContextHolder.getContext().getAuthentication() == null) {
+                    List<GrantedAuthority> authList = new ArrayList<>();
+                    authList.add(new SimpleGrantedAuthority(REGISTERED_USER_ROLE));
 
-                UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
-                        new UsernamePasswordAuthenticationToken(userOptional.get(), null, authList);
-                usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
+                            new UsernamePasswordAuthenticationToken(userOptional.get(), null, authList);
+                    usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
-                SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
-                chain.doFilter(request, response);
-                return;
+                    SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+                    chain.doFilter(request, response);
+                    return;
+                }
             }
+            sendErrorResponse(request, response, tokenString);
         }
-        sendErrorResponse(request, response, tokenString);
     }
 
     @Override
