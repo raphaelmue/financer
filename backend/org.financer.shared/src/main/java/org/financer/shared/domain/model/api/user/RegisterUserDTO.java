@@ -24,7 +24,7 @@ public class RegisterUserDTO implements DataTransferObject {
     @Schema(description = "Birth date of the user", example = "2020-01-01")
     private BirthDate birthDate;
 
-    @Schema(description = "Gender of the user", example = "FEMALE", enumAsRef = true)
+    @Schema(description = "Gender of the user", example = "FEMALE")
     private Gender gender;
 
     public Email getEmail() {

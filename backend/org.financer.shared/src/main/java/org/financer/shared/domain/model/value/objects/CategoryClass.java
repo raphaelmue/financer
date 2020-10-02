@@ -16,6 +16,7 @@ import java.util.Objects;
 public class CategoryClass implements Serializable {
     private static final long serialVersionUID = -8410423694511026919L;
 
+    @Schema(name = "CategoryClassEnum", description = "Values that can be applies to the category class")
     public enum Values {
         FIXED_REVENUE("fixedRevenue"),
         VARIABLE_REVENUE("variableRevenue"),

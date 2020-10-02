@@ -1,16 +1,23 @@
 {
-    "Profile": "Profile",
-    "categories": "Categories",
-    "dashboard": "Dashboard",
-    "email": "E-Mail Address",
-    "fixedTransactions": "Fixed Transactions",
-    "login": "Login",
-    "overview": "Overview",
-    "password": "Password",
-    "profile": "Profile",
-    "register": "Register",
-    "rememberMe": "Remember Me",
-    "settings": "Settings",
-    "transactions": "Transactions",
-    "variableTransactions": "Variable Transactions"
+  "Profile": "Profile",
+  "categories": "Categories",
+  "dashboard": "Dashboard",
+  "email": "E-Mail Address",
+  "fixedTransactions": "Fixed Transactions",
+  "login": "Login",
+  "overview": "Overview",
+  "password": "Password",
+  "profile": "Profile",
+  "register": "Register",
+  "rememberMe": "Remember Me",
+  "settings": "Settings",
+  "transactions": "Transactions",
+  "variableTransactions": "Variable Transactions",
+  "ErrorMessage": {
+    "UnknownError": "An unknown error occured. Please contact the support for more information.",
+    "ServerUnavailable": "Unfortunately, the server is currently not available. Please try again later or contact the support. ",
+    "UnauthorizedOperation": "You are not allowed to perform this action. If you would like to perform this action anyways, please contact the administrator in order to ask for the permission.",
+    "NotFound": "The requested resource is not available. "
+  },
+  "logout": "Logout"
 }

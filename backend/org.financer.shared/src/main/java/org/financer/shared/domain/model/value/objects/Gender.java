@@ -18,6 +18,7 @@ import java.util.Objects;
 public class Gender implements Serializable {
     private static final long serialVersionUID = -860866161803817820L;
 
+    @Schema(name = "GenderEnum", description = "Values that can be applied to the gender")
     public enum Values {
         MALE("male"),
         FEMALE("female"),

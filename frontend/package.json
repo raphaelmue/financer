@@ -62,7 +62,7 @@
         "@electron-forge/maker-zip": "6.0.0-beta.51",
         "@electron-forge/plugin-webpack": "6.0.0-beta.51",
         "@marshallofsound/webpack-asset-relocator-loader": "^0.5.0",
-        "@openapitools/openapi-generator-cli": "^1.0.15-5.0.0-beta",
+        "@openapitools/openapi-generator-cli": "^1.0.18-5.0.0-beta2",
         "@types/react-router-dom": "^5.1.5",
         "@typescript-eslint/eslint-plugin": "^2.18.0",
         "@typescript-eslint/parser": "^2.18.0",
@@ -79,6 +79,7 @@
         "typescript": "^3.9.5"
     },
     "dependencies": {
+        "@ant-design/pro-layout": "^6.5.0",
         "@types/node-fetch": "^2.5.7",
         "@types/react": "^16.9.38",
         "@types/react-dom": "^16.9.8",

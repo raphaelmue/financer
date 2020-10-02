@@ -17,7 +17,7 @@ public class CategoryDTO implements DataTransferObject {
     private int id;
 
     @NotNull
-    @Schema(description = "Category class of the category", required = true, enumAsRef = true)
+    @Schema(description = "Category class of the category", required = true)
     private CategoryClass.Values categoryClass;
 
     @NotNull

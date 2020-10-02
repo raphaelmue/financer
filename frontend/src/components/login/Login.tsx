@@ -1,15 +1,19 @@
-import * as React                                                 from 'react';
+import * as React                         from 'react';
 import 'antd/dist/antd.css';
-import {Button, Checkbox, Form, Input, Layout, Space, Typography} from 'antd';
-import {Link, Redirect}                                           from 'react-router-dom';
-import {LockOutlined, UserOutlined}                               from '@ant-design/icons';
-import * as action                                                from '../../api/user.api';
-import {connect}                                                  from 'react-redux';
-import {AppState}                                                 from '../../reducers/root.reducers';
-import {UserReducerProps}                                         from '../../reducers/user.reducers';
-import {bindActionCreators, Dispatch}                             from 'redux';
-import {LoginUserRequest}                                         from '../../.openapi/apis';
-import {WithTranslation, withTranslation}                         from 'react-i18next';
+import {
+    Button, Checkbox,
+    Form, Input, Layout,
+    Space, Typography
+}                                         from 'antd';
+import {Link, Redirect}                   from 'react-router-dom';
+import {LockOutlined, UserOutlined}       from '@ant-design/icons';
+import * as action                        from '../../store/api/user.api';
+import {connect}                          from 'react-redux';
+import {AppState}                         from '../../store/reducers/root.reducers';
+import {UserReducerProps}                 from '../../store/reducers/user.reducers';
+import {bindActionCreators, Dispatch}     from 'redux';
+import {LoginUserRequest}                 from '../../.openapi/apis';
+import {WithTranslation, withTranslation} from 'react-i18next';
 
 const {Content} = Layout;
 const {Title, Text} = Typography;
@@ -38,7 +42,8 @@ class Login extends React.Component<LoginComponentProps, LoginComponentState> {
     }
 
     render() {
-        if (this.props.user.user) {
+        if (this.props.userState.user) {
+            // redirect to main page when user is successfully logged in
             return <Redirect to={'/'}/>
         }
 
@@ -57,7 +62,7 @@ class Login extends React.Component<LoginComponentProps, LoginComponentState> {
                                 </Typography>
                             </Form.Item>
                             <Space direction={'vertical'} size={'middle'}>
-                                <Text type={'danger'}>{this.props.user.error}</Text>
+                                <Text type={'danger'}>{this.props.userState.error?.message}</Text>
                             </Space>
                             <Form.Item
                                 name="username"
@@ -86,7 +91,7 @@ class Login extends React.Component<LoginComponentProps, LoginComponentState> {
 
                             <Form.Item>
                                 <Button type="primary" htmlType="submit" className="login-form-button"
-                                        loading={this.props.user.isLoading}>
+                                        loading={this.props.userState.isLoading}>
                                     {this.props.t('login')}
                                 </Button>
                             </Form.Item>
@@ -103,7 +108,7 @@ class Login extends React.Component<LoginComponentProps, LoginComponentState> {
 
 const mapStateToProps = (state: AppState) => {
     return {
-        user: state.user
+        userState: state.user
     }
 }
 
