@@ -19,5 +19,7 @@
     "UnauthorizedOperation": "You are not allowed to perform this action. If you would like to perform this action anyways, please contact the administrator in order to ask for the permission.",
     "NotFound": "The requested resource is not available. "
   },
-  "logout": "Logout"
+  "logout": "Logout",
+  "surname": "Surname",
+  "firstName": "First name"
 }
