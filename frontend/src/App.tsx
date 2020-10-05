@@ -1,7 +1,7 @@
 import * as React                            from 'react';
 import 'antd/dist/antd.css';
 import {HashRouter as Router, Route, Switch} from 'react-router-dom';
-import Authentication                        from './components/login/Authentication';
+import Authentication                        from './components/authentication/Authentication';
 import {configureI18N}                       from './translations/translations';
 import Home                                  from './components/home/Home';
 
@@ -13,7 +13,7 @@ export default class App extends React.Component {
             <Router>
                 <Switch>
                     <Route path='/authentication' component={Authentication}/>
-                    <Route path='/' component={Home}/>
+                    <Route path='/internal' component={Home}/>
                 </Switch>
             </Router>
         )

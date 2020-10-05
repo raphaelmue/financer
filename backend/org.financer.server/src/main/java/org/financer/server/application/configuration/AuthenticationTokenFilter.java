@@ -57,7 +57,7 @@ public class AuthenticationTokenFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
         final String header = request.getHeader(HEADER_STRING);
 
-        if (request.getMethod().equals(HttpMethod.OPTIONS.toString())) {
+        if (!request.getMethod().equals(HttpMethod.OPTIONS.toString())) {
             String tokenString = "";
             if (header != null && header.startsWith(TOKEN_PREFIX)) {
                 tokenString = header.substring(7);

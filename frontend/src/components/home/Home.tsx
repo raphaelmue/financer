@@ -55,7 +55,6 @@ class Home extends React.Component<HomeProps, HomeState> {
 
     logoutUser() {
         if (this.props.userState.user?.id && this.props.userState.user?.activeToken.id) {
-
             this.props.dispatchLogout({
                 userId: this.props.userState.user?.id,
                 tokenId: this.props.userState.user?.activeToken.id
@@ -65,7 +64,7 @@ class Home extends React.Component<HomeProps, HomeState> {
 
     render() {
         if (!this.props.userState.user) {
-            return <Redirect to={'/login'}/>
+            return <Redirect to={'/authentication'}/>
         }
 
         return (

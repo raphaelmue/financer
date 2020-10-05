@@ -17,9 +17,22 @@
     "UnknownError": "An unknown error occured. Please contact the support for more information.",
     "ServerUnavailable": "Unfortunately, the server is currently not available. Please try again later or contact the support. ",
     "UnauthorizedOperation": "You are not allowed to perform this action. If you would like to perform this action anyways, please contact the administrator in order to ask for the permission.",
-    "NotFound": "The requested resource is not available. "
+    "NotFound": "The requested resource is not available. ",
+    "Form": {
+      "FieldRequired": "This field is required. "
+    }
   },
   "logout": "Logout",
   "surname": "Surname",
-  "firstName": "First name"
+  "firstName": "First name",
+  "Register": {
+    "repeatPassword": "Repeat password"
+  },
+  "birthDate": "Birth date",
+  "Gender": {
+    "male": "Male",
+    "female": "Female",
+    "notSpecified": "Not specified",
+    "gender": "Gender"
+  }
 }

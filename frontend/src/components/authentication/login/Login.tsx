@@ -56,9 +56,8 @@ class Login extends React.Component <LoginComponentProps, LoginComponentState> {
                 <Form.Item
                     name="password"
                     rules={[{required: true, message: 'Please input your Password!'}]}>
-                    <Input
+                    <Input.Password
                         prefix={<LockOutlined className="site-form-item-icon"/>}
-                        type="password"
                         name="password"
                         placeholder={this.props.t('password')}
                         onChange={this.handleChange}/>
