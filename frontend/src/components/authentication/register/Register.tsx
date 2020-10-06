@@ -1,4 +1,4 @@
-import {BirthDate, Email, Gender, HashedPassword, Name}     from '../../../.openapi/models';
+import {BirthDate, Gender, HashedPassword, Name}            from '../../../.openapi/models';
 import * as React                                           from 'react';
 import {FormInstance}                                       from 'antd/lib/form';
 import {withTranslation, WithTranslation}                   from 'react-i18next';
@@ -46,6 +46,7 @@ class Register extends React.Component<RegisterComponentProps, RegisterComponent
 
     onChange = (e: any) => {
         this.setState({[e.target.name]: e.target.value} as RegisterComponentState);
+        console.log(this.state);
     };
 
     _handleSubmit() {
@@ -55,7 +56,8 @@ class Register extends React.Component<RegisterComponentProps, RegisterComponent
                     name: this.state.name,
                     email: {emailAddress: this.state.email},
                     password: this.state.password,
-                    gender: this.state.gender
+                    gender: this.state.gender,
+                    birthDate: this.state.birthDate
                 }
             });
         }
