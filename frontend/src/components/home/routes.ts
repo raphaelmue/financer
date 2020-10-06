@@ -1,38 +1,39 @@
-import {MenuDataItem, Route} from "@ant-design/pro-layout/lib/typings";
+import {MenuDataItem, Route} from '@ant-design/pro-layout/lib/typings';
+import i18next               from 'i18next';
 
-export const routes: Route[] = [{
+export const routes = (): Route[] => [{
     path: '#/internal',
     name: 'Home',
     routes: [
         {
             path: '/dashboard',
-            name: 'Dashboard',
+            name: i18next.t('Menu.Dashboard'),
             component: './dashboard/Dashboard'
         }, {
             path: '/transactions',
-            name: 'Transactions',
+            name: i18next.t('Menu.Transactions'),
             icon: '',
             routes: [
                 {
                     path: '/variable',
-                    name: 'Variable Transactions',
+                    name: i18next.t('Menu.VariableTransactions'),
                     icon: '',
                 }, {
                     path: '/fixed',
-                    name: 'Fixed Transactions',
+                    name: i18next.t('Menu.FixedTransactions'),
                     icon: '',
                     component: './Home',
                 }, {
                     path: '/categories',
-                    name: 'Categories',
+                    name: i18next.t('Menu.Categories'),
                     icon: '',
                 }, {
                     path: '/profile',
-                    name: 'Profile',
+                    name: i18next.t('Menu.Profile'),
                     icon: '',
                 }, {
                     path: '/settings',
-                    name: 'Settings',
+                    name: i18next.t('Menu.Settings'),
                     icon: '',
                 }
             ]
@@ -40,31 +41,31 @@ export const routes: Route[] = [{
     ]
 }];
 
-export const menu: MenuDataItem[] = [
+export const menu = (): MenuDataItem[] => [
     {
         path: '/internal/dashboard',
-        name: 'Dashboard'
+        name: i18next.t('Menu.Dashboard')
     }, {
         path: '/internal/transactions',
-        name: 'Transactions',
+        name: i18next.t('Menu.Transactions'),
         children: [
             {
                 path: '/internal/transactions/variable',
-                name: 'Variable Transactions'
+                name: i18next.t('Menu.VariableTransactions')
             }, {
                 path: '/internal/transactions/fixed',
-                name: 'Fixed Transactions'
+                name: i18next.t('Menu.FixedTransactions')
             }
         ]
     }, {
-        name: "Settings",
+        name: i18next.t('Menu.Settings'),
         children: [
             {
                 path: '/internal/profile',
-                name: 'Profile'
+                name: i18next.t('Menu.Profile')
             }, {
                 path: '/internal/settings',
-                name: 'Settings'
+                name: i18next.t('Menu.Settings')
             }
         ]
     }

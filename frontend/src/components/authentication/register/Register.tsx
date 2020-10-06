@@ -46,7 +46,6 @@ class Register extends React.Component<RegisterComponentProps, RegisterComponent
 
     onChange = (e: any) => {
         this.setState({[e.target.name]: e.target.value} as RegisterComponentState);
-        console.log(this.state);
     };
 
     _handleSubmit() {

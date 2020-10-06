@@ -20,20 +20,11 @@ export const loginUser = (loginData: LoginUserRequest) => {
         });
         if (loginData && loginData.email && loginData.password) {
             let api = new UserApi(apiConfiguration());
-            api.loginUser(loginData)
+            ErrorMessage.resolveError(api.loginUser(loginData)
                 .then((user: User) => dispatch({
                     type: UserActionDefinition.LOGIN_SUCCESS,
                     payload: user
-                }))
-                .catch((reason: any) => dispatch({
-                    type: UserActionDefinition.LOGIN_FAILED,
-                    payload: ErrorMessage.createErrorMessage(reason)
-                }));
-        } else {
-            dispatch({
-                type: UserActionDefinition.LOGIN_FAILED,
-                payload: 'Error'
-            });
+                })), UserActionDefinition.REGISTER_FAILED, dispatch);
         }
     };
 };
@@ -46,20 +37,11 @@ export const registerUser = (registeringData: RegisterUserRequest) => {
         });
         if (registeringData && registeringData.registerUser) {
             let api = new UserApi(apiConfiguration());
-            api.registerUser(registeringData)
+            ErrorMessage.resolveError(api.registerUser(registeringData)
                 .then((user: User) => dispatch({
                     type: UserActionDefinition.REGISTER_SUCCESS,
                     payload: user
-                }))
-                .catch((reason: any) => dispatch({
-                    type: UserActionDefinition.REGISTER_FAILED,
-                    payload: ErrorMessage.createErrorMessage(reason)
-                }));
-        } else {
-            dispatch({
-                type: UserActionDefinition.REGISTER_FAILED,
-                payload: 'Error'
-            });
+                })), UserActionDefinition.REGISTER_FAILED, dispatch);
         }
     };
 };
@@ -72,13 +54,9 @@ export const logoutUser = (logoutUserData: DeleteTokenRequest) => {
             payload: logoutUserData
         });
         let api = new UserApi(apiConfiguration());
-        api.deleteToken(logoutUserData)
+        ErrorMessage.resolveError(api.deleteToken(logoutUserData)
             .then(() => dispatch({
                 type: UserActionDefinition.LOGOUT_SUCCESS
-            }))
-            .catch((reason: any) => dispatch({
-                type: UserActionDefinition.LOGOUT_FAILED,
-                payload: ErrorMessage.createErrorMessage(reason)
-            }));
+            })), UserActionDefinition.REGISTER_FAILED, dispatch);
     };
 };

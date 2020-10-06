@@ -1,4 +1,5 @@
-import i18next from "i18next";
+import i18next    from 'i18next';
+import {Dispatch} from 'redux';
 
 export enum MessageType {
     UNKNOWN_ERROR = 'ErrorMessage.UnknownError',
@@ -20,6 +21,13 @@ export class ErrorMessage implements ErrorMessageDefinition {
     constructor(message: String, timestamp: Date) {
         this.message = message;
         this.timestamp = timestamp;
+    }
+
+    public static resolveError(promise: Promise<any>, action: string, dispatch: Dispatch) {
+        promise.catch((reason: any) => dispatch({
+            type: action,
+            payload: ErrorMessage.createErrorMessage(reason)
+        }));
     }
 
     public static createErrorMessage(reason: any, language: string = 'en'): ErrorMessage {

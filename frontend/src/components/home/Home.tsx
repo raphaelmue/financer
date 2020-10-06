@@ -76,11 +76,11 @@ class Home extends React.Component<HomeProps, HomeState> {
                 title="F I N A N C E R"
                 loading={this.props.userState.isLoading}
                 logo={null}
-                menuDataRender={() => menu}
-                route={() => routes}
+                menuDataRender={() => menu()}
+                route={() => routes()}
                 breadcrumbRender={(routes) => [{
                     path: '#/internal/dashboard',
-                    breadcrumbName: 'Home'
+                    breadcrumbName: this.props.t('Menu.Home')
                 }, ...(routes || [])]}
                 menuItemRender={(menuItemProps, defaultDom) => {
                     if (menuItemProps.path) {

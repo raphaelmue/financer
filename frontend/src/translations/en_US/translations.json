@@ -1,18 +1,10 @@
 {
-  "Profile": "Profile",
-  "categories": "Categories",
-  "dashboard": "Dashboard",
   "email": "E-Mail Address",
-  "fixedTransactions": "Fixed Transactions",
   "login": "Login",
   "overview": "Overview",
   "password": "Password",
-  "profile": "Profile",
   "register": "Register",
   "rememberMe": "Remember Me",
-  "settings": "Settings",
-  "transactions": "Transactions",
-  "variableTransactions": "Variable Transactions",
   "ErrorMessage": {
     "UnknownError": "An unknown error occured. Please contact the support for more information.",
     "ServerUnavailable": "Unfortunately, the server is currently not available. Please try again later or contact the support. ",
@@ -34,5 +26,16 @@
     "female": "Female",
     "notSpecified": "Not specified",
     "gender": "Gender"
+  },
+  "home": "Home",
+  "Menu": {
+    "Categories": "Categories",
+    "Dashboard": "Dashboard",
+    "FixedTransactions": "Fixed Transactions",
+    "Profile": "Profile",
+    "Settings": "Settings",
+    "Transactions": "Transactions",
+    "VariableTransactions": "Variable Transactions",
+    "Home": "Home"
   }
 }
