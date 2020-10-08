@@ -111,6 +111,7 @@ public class UserDomainService {
             throw new UniqueEmailViolationException(user.getEmail());
         }
 
+        user.setId(0L);
         User result = userRepository.save(user);
         this.generateOrUpdateToken(result, ipAddress, operatingSystem);
         this.generateVerificationToken(result);
