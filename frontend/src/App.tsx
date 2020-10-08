@@ -13,9 +13,9 @@ export default class App extends React.Component {
             <Router>
                 <Switch>
                     <Route path='/authentication' component={Authentication}/>
-                    <Route path='/internal' component={Home}/>
+                    <Route path='/' component={Home}/>
                 </Switch>
             </Router>
-        )
+        );
     }
 }

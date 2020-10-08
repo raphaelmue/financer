@@ -5,7 +5,9 @@ import {connect}                          from "react-redux";
 import {WithTranslation, withTranslation} from "react-i18next";
 import React                              from "react";
 import {UserReducerState}                 from "../../../store/reducers/user.reducers";
-import Text                               from "antd/es/typography/Text";
+import {Typography}                       from 'antd';
+
+const {Text} = Typography;
 
 interface DashboardProps extends WithTranslation, UserReducerState {
 }

@@ -36,6 +36,8 @@
     "Settings": "Einstellungen",
     "Transactions": "Transaktionen",
     "VariableTransactions": "Variable Transaktionen",
-    "Home": "Home"
+    "Home": "Home",
+    "TransactionOverview": "Transaktionsüberblick",
+    "Account": "Account"
   }
 }
