@@ -94,7 +94,7 @@ class Home extends React.Component<HomeProps, HomeState> {
                     <DefaultFooter
                         links={[
                             {key: 'financer', title: 'Financer Website', href: 'https://financer-project.org/'},
-                            {key: 'antDesign   ', title: 'Ant Design', href: 'https://ant.design/'},
+                            {key: 'github   ', title: 'GitHub', href: 'https://github.com/raphaelmue/financer/'},
                         ]}
                         copyright={'Financer Project 2020'}/>
                 )}
