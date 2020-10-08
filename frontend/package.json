@@ -79,7 +79,9 @@
         "typescript": "^4.0.3"
     },
     "dependencies": {
+        "@ant-design/pro-card": "^1.2.2",
         "@ant-design/pro-layout": "^6.5.0",
+        "@ant-design/pro-table": "^2.9.1",
         "@types/react": "^16.9.51",
         "@types/react-dom": "^16.9.8",
         "@types/react-redux": "^7.1.9",

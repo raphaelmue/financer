@@ -39,5 +39,31 @@
     "Home": "Home",
     "TransactionOverview": "Transaktionsüberblick",
     "Account": "Account"
+  },
+  "Transaction": {
+    "Category": {
+      "Name": "Kategorie"
+    },
+    "Amount": "Betrag",
+    "Description": "Beschreibung",
+    "Vendor": "Verkäufer",
+    "ValueDate": "Wertstellung"
+  },
+  "Form": {
+    "Table": {
+      "FilterTable": "Tabelle filtern",
+      "FilterConfirm": "Anwenden",
+      "FilterReset": "Filter zurücksetzen",
+      "FilterEmpty": "Kein Filter",
+      "NoData": "Keine Daten",
+      "SelectAll": "Alles auswählen",
+      "SelectInvert": "Auswahl umkehren",
+      "Collapse": "Einklappe",
+      "Expand": "Ausklappen",
+      "SortTitle": "Titel sortieren"
+    },
+    "Button": {
+      "New": "Neu"
+    }
   }
 }

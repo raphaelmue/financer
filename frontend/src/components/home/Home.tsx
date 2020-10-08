@@ -7,15 +7,19 @@ import {connect}                                                     from 'react
 import {UserReducerProps}                                            from '../../store/reducers/user.reducers';
 import {HashRouter as Router, Link, Redirect, Route, Switch}         from 'react-router-dom';
 import {bindActionCreators, Dispatch}                                from 'redux';
-import * as action                                                   from '../../store/api/user.api';
+import * as api                                                      from '../../store/api/user.api';
 import BasicLayout, {BasicLayoutProps, DefaultFooter, PageContainer} from '@ant-design/pro-layout';
 import {menuData, route}                                             from './routes';
 import {DeleteTokenRequest}                                          from '../../.openapi/apis';
-import '@ant-design/pro-layout/dist/layout.css';
-import Authentication                                                from '../authentication/Authentication';
 import Dashboard                                                     from './dashboard/Dashboard';
 import Profile                                                       from './profile/Profile';
 import Settings                                                      from './settings/Settings';
+import VariableTransactionList
+                                                                     from './transactions/variable/VariableTransactionList';
+import '@ant-design/pro-layout/dist/layout.css';
+import '@ant-design/pro-table/dist/table.css';
+import '@ant-design/pro-card/dist/card.css';
+
 
 const {Text} = Typography;
 
@@ -104,6 +108,7 @@ class Home extends React.Component<HomeProps, HomeState> {
                         <Switch>
                             <Route path='/dashboard' component={Dashboard}/>
                             <Route path='/profile' component={Profile}/>
+                            <Route path={'/transactions/variable'} component={VariableTransactionList}/>
                             <Route path='/settings' component={Settings}/>
                         </Switch>
                     </Router>
@@ -120,7 +125,7 @@ const mapStateToProps = (state: AppState) => {
 };
 
 const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({
-    dispatchLogout: action.logoutUser
+    dispatchLogout: api.logoutUser
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(withTranslation()(Home));

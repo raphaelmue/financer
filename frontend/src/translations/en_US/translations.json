@@ -39,5 +39,31 @@
     "Home": "Home",
     "TransactionOverview": "Transaction Overview",
     "Account": "Account"
+  },
+  "Transaction": {
+    "Category": {
+      "Name": "Category"
+    },
+    "Amount": "Amount",
+    "Description": "Description",
+    "Vendor": "Vendor",
+    "ValueDate": "Value Date"
+  },
+  "Form": {
+    "Table": {
+      "FilterTable": "Filter table",
+      "FilterConfirm": "Apply",
+      "FilterReset": "Reset filter",
+      "FilterEmpty": "No filter",
+      "NoData": "No data",
+      "SelectAll": "Select all",
+      "SelectInvert": "Invert selection",
+      "Collapse": "Collapse",
+      "Expand": "Expand",
+      "SortTitle": "Sort title"
+    },
+    "Button": {
+      "New": "New"
+    }
   }
 }

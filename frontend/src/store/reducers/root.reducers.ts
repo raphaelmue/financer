@@ -1,8 +1,10 @@
-import {combineReducers} from 'redux';
-import userReducer       from './user.reducers';
+import {combineReducers}    from 'redux';
+import userReducer          from './user.reducers';
+import {transactionReducer} from './transaction.reducer';
 
 const rootReducer = combineReducers({
-    user: userReducer
+    user: userReducer,
+    transaction: transactionReducer
 });
 
 export type AppState = ReturnType<typeof rootReducer>
