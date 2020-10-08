@@ -5,13 +5,17 @@ import {withTranslation, WithTranslation}                            from 'react
 import {AppState}                                                    from '../../store/reducers/root.reducers';
 import {connect}                                                     from 'react-redux';
 import {UserReducerProps}                                            from '../../store/reducers/user.reducers';
-import {Link, Redirect}                                              from 'react-router-dom';
+import {HashRouter as Router, Link, Redirect, Route, Switch}         from 'react-router-dom';
 import {bindActionCreators, Dispatch}                                from 'redux';
 import * as action                                                   from '../../store/api/user.api';
 import BasicLayout, {BasicLayoutProps, DefaultFooter, PageContainer} from '@ant-design/pro-layout';
-import {menu, routes}                                                from './routes';
+import {menuData, route}                                             from './routes';
 import {DeleteTokenRequest}                                          from '../../.openapi/apis';
 import '@ant-design/pro-layout/dist/layout.css';
+import Authentication                                                from '../authentication/Authentication';
+import Dashboard                                                     from './dashboard/Dashboard';
+import Profile                                                       from './profile/Profile';
+import Settings                                                      from './settings/Settings';
 
 const {Text} = Typography;
 
@@ -64,8 +68,8 @@ class Home extends React.Component<HomeProps, HomeState> {
                 title="F I N A N C E R"
                 loading={this.props.userState.isLoading}
                 logo={null}
-                route={() => routes()}
-                menuDataRender={() => menu()}
+                route={{routes: [route()]}}
+                menuDataRender={() => menuData()}
                 menuItemRender={(menuItemProps, defaultDom) => {
                     if (menuItemProps.path) {
                         return (<Link to={menuItemProps.path}>{defaultDom}</Link>);
@@ -82,8 +86,7 @@ class Home extends React.Component<HomeProps, HomeState> {
                             <Button
                                 type="text"
                                 icon={<LogoutOutlined/>}
-                                onClick={() => this.logoutUser()}
-                            />
+                                onClick={() => this.logoutUser()}/>
                         </Tooltip>
                     </Space>
                 )}
@@ -93,11 +96,17 @@ class Home extends React.Component<HomeProps, HomeState> {
                             {key: 'financer', title: 'Financer Website', href: 'https://financer-project.org/'},
                             {key: 'antDesign   ', title: 'Ant Design', href: 'https://ant.design/'},
                         ]}
-                        copyright={'Financer Project 2020'}
-                    />
+                        copyright={'Financer Project 2020'}/>
                 )}
                 {...this.props}>
                 <PageContainer>
+                    <Router>
+                        <Switch>
+                            <Route path='/dashboard' component={Dashboard}/>
+                            <Route path='/profile' component={Profile}/>
+                            <Route path='/settings' component={Settings}/>
+                        </Switch>
+                    </Router>
                 </PageContainer>
             </BasicLayout>
         );

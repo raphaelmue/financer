@@ -1,48 +1,47 @@
-import {MenuDataItem, Route}                                                           from '@ant-design/pro-layout/lib/typings';
+import {MenuDataItem, Route}                                                           from '@ant-design/pro-layout/es/typings';
 import i18next                                                                         from 'i18next';
 import {AreaChartOutlined, DollarOutlined, SettingOutlined, TagOutlined, UserOutlined} from '@ant-design/icons';
 import React                                                                           from 'react';
 
-export const routes = (): Route => {
-    return {
-        path: '/',
-        name: i18next.t('Menu.Home'),
-        routes: [
-            {
-                path: '/dashboard',
-                component: './dashboard/Dashboard',
-                name: i18next.t('Menu.Dashboard')
-            }, {
-                path: '/transactions',
-                name: i18next.t('Menu.Transactions'),
-                routes: [
-                    {
-                        path: '/variable',
-                        name: i18next.t('Menu.VariableTransactions'),
-                    }, {
-                        path: '/fixed',
-                        name: i18next.t('Menu.FixedTransactions'),
-                    }
-                ]
-            }, {
-                path: '/categories',
-                name: i18next.t('Menu.Categories'),
-                icon: <TagOutlined/>,
-            }, {
-                path: '/profile',
-                component: './profile/Profile',
-                name: i18next.t('Menu.Profile'),
-                icon: <UserOutlined/>
-            }, {
-                path: '/settings',
-                name: i18next.t('Menu.Settings'),
-                icon: <SettingOutlined/>,
-            }
-        ]
-    };
-};
+export const route = (): Route => [{
+    path: '/',
+    name: i18next.t('Menu.Home'),
+    component: './dashboard/Dashboard',
+    routes: [
+        {
+            path: '/dashboard',
+            component: './dashboard/Dashboard',
+            name: i18next.t('Menu.Dashboard')
+        }, {
+            path: '/transactions',
+            name: i18next.t('Menu.Transactions'),
+            routes: [
+                {
+                    path: '/variable',
+                    name: i18next.t('Menu.VariableTransactions'),
+                }, {
+                    path: '/fixed',
+                    name: i18next.t('Menu.FixedTransactions'),
+                }
+            ]
+        }, {
+            path: '/categories',
+            name: i18next.t('Menu.Categories'),
+            icon: <TagOutlined/>,
+        }, {
+            path: '/profile',
+            component: './profile/Profile',
+            name: i18next.t('Menu.Profile'),
+            icon: <UserOutlined/>
+        }, {
+            path: '/settings',
+            name: i18next.t('Menu.Settings'),
+            icon: <SettingOutlined/>,
+        }
+    ]
+}];
 
-export const menu = (): MenuDataItem[] => [
+export const menuData = (): MenuDataItem[] => [
     {
         path: '/dashboard',
         name: i18next.t('Menu.Dashboard'),
