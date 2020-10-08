@@ -1,24 +1,26 @@
-import * as React                                                    from 'react';
-import {Avatar, Button, notification, Space, Tooltip, Typography}    from 'antd';
-import {LogoutOutlined, UserOutlined}                                from '@ant-design/icons';
-import {withTranslation, WithTranslation}                            from 'react-i18next';
-import {AppState}                                                    from '../../store/reducers/root.reducers';
-import {connect}                                                     from 'react-redux';
-import {UserReducerProps}                                            from '../../store/reducers/user.reducers';
-import {HashRouter as Router, Link, Redirect, Route, Switch}         from 'react-router-dom';
-import {bindActionCreators, Dispatch}                                from 'redux';
-import * as api                                                      from '../../store/api/user.api';
-import BasicLayout, {BasicLayoutProps, DefaultFooter, PageContainer} from '@ant-design/pro-layout';
-import {menuData, route}                                             from './routes';
-import {DeleteTokenRequest}                                          from '../../.openapi/apis';
-import Dashboard                                                     from './dashboard/Dashboard';
-import Profile                                                       from './profile/Profile';
-import Settings                                                      from './settings/Settings';
+import * as React                                                             from 'react';
+import {Avatar, Breadcrumb, Button, notification, Space, Tooltip, Typography} from 'antd';
+import {LogoutOutlined, UserOutlined}                                         from '@ant-design/icons';
+import {withTranslation, WithTranslation}                                     from 'react-i18next';
+import {AppState}                                                             from '../../store/reducers/root.reducers';
+import {connect}                                                              from 'react-redux';
+import {UserReducerProps}                                                     from '../../store/reducers/user.reducers';
+import {HashRouter as Router, Link, Redirect, Route, Switch}                  from 'react-router-dom';
+import {bindActionCreators, Dispatch}                                         from 'redux';
+import * as api                                                               from '../../store/api/user.api';
+import BasicLayout, {BasicLayoutProps, DefaultFooter, PageContainer}          from '@ant-design/pro-layout';
+import menuData                                                               from './menu';
+import {DeleteTokenRequest}                                                   from '../../.openapi/apis';
+import Dashboard                                                              from './dashboard/Dashboard';
+import Profile                                                                from './profile/Profile';
+import Settings                                                               from './settings/Settings';
 import VariableTransactionList
-                                                                     from './transactions/variable/VariableTransactionList';
+                                                                              from './transactions/variable/VariableTransactionList';
 import '@ant-design/pro-layout/dist/layout.css';
 import '@ant-design/pro-table/dist/table.css';
 import '@ant-design/pro-card/dist/card.css';
+import CreateVariableTransaction
+                                                                              from './transactions/variable/create/CreateVariableTransaction';
 
 
 const {Text} = Typography;
@@ -72,7 +74,6 @@ class Home extends React.Component<HomeProps, HomeState> {
                 title="F I N A N C E R"
                 loading={this.props.userState.isLoading}
                 logo={null}
-                route={{routes: [route()]}}
                 menuDataRender={() => menuData()}
                 menuItemRender={(menuItemProps, defaultDom) => {
                     if (menuItemProps.path) {
@@ -80,6 +81,13 @@ class Home extends React.Component<HomeProps, HomeState> {
                     }
                     return defaultDom;
                 }}
+                // headerContentRender={(props) => (
+                //     <PageHeaderWrapper
+                //         title={false}
+                //         pageHeaderRender={({ breadcrumb }: any) => (
+                //             <Breadcrumb itemRender={breadcrumb.itemRender} routes={breadcrumb.routes}/>
+                //         )}>
+                // )}
                 rightContentRender={() => (
                     <Space>
                         <Avatar shape="square" size="small" icon={<UserOutlined/>}/>
@@ -108,7 +116,8 @@ class Home extends React.Component<HomeProps, HomeState> {
                         <Switch>
                             <Route path='/dashboard' component={Dashboard}/>
                             <Route path='/profile' component={Profile}/>
-                            <Route path={'/transactions/variable'} component={VariableTransactionList}/>
+                            <Route path={'/transactions/variable/create'} component={CreateVariableTransaction}/>
+                            <Route path={'/transactions/variable/'} component={VariableTransactionList}/>
                             <Route path='/settings' component={Settings}/>
                         </Switch>
                     </Router>

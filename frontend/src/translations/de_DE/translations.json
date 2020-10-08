@@ -31,14 +31,17 @@
   "Menu": {
     "Categories": "Kategorien",
     "Dashboard": "Dashboard",
-    "FixedTransactions": "Feste Transaktionen",
     "Profile": "Profil",
     "Settings": "Einstellungen",
-    "Transactions": "Transaktionen",
-    "VariableTransactions": "Variable Transaktionen",
     "Home": "Home",
-    "TransactionOverview": "Transaktionsüberblick",
-    "Account": "Account"
+    "Account": "Account",
+    "Transaction": {
+      "CreateVariableTransaction": "Variable Transaction erstellen",
+      "VariableTransactions": "Variable Transaktionen",
+      "FixedTransactions": "Feste Transaktionen",
+      "Transactions": "Transaktionen",
+      "TransactionOverview": "Transaktionsüberblick"
+    }
   },
   "Transaction": {
     "Category": {
@@ -47,7 +50,12 @@
     "Amount": "Betrag",
     "Description": "Beschreibung",
     "Vendor": "Verkäufer",
-    "ValueDate": "Wertstellung"
+    "ValueDate": "Wertstellung",
+    "Product": {
+      "Name": "Produktname",
+      "Quantity": "Menge"
+    },
+    "Products": "Produkte"
   },
   "Form": {
     "Table": {
@@ -60,10 +68,14 @@
       "SelectInvert": "Auswahl umkehren",
       "Collapse": "Einklappe",
       "Expand": "Ausklappen",
-      "SortTitle": "Titel sortieren"
+      "SortTitle": "Titel sortieren",
+      "Actions": "Aktionen"
     },
     "Button": {
-      "New": "Neu"
+      "New": "Neu",
+      "Submit": "Senden",
+      "Delete": "Löschen",
+      "Add": "Hinzfügen"
     }
   }
 }

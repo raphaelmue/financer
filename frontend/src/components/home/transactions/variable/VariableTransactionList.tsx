@@ -12,6 +12,7 @@ import * as api                           from '../../../../store/api/transactio
 import {tableTranslations}                from '../../../../translations/translations';
 import {Button}                           from 'antd';
 import {PlusOutlined}                     from '@ant-design/icons';
+import {Link}                             from 'react-router-dom';
 
 
 interface VariableTransactionListComponentProps extends WithTranslation, TransactionReducerProps, UserReducerProps {
@@ -49,9 +50,14 @@ class VariableTransactionList extends React.Component<VariableTransactionListCom
                 rowKey={'id'}
                 loading={this.props.transactionState.isLoading}
                 toolBarRender={() => [
-                    <Button key="3" type="primary">
-                        <PlusOutlined/>{this.props.t('Form.Button.New')}
-                    </Button>,
+                    <Link to={'/transactions/variable/create'}>
+                        <Button
+                            key="newVariableTransactionButton"
+                            type="primary"
+                            icon={<PlusOutlined/>}>
+                            {this.props.t('Form.Button.New')}
+                        </Button>
+                    </Link>
                 ]}>
             </ProTable>
         );
