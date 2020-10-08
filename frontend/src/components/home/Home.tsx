@@ -109,7 +109,7 @@ class Home extends React.Component<HomeProps, HomeState> {
                 }, ...routers,]}
                 itemRender={(route, params, routes, paths) => {
                     return routes.indexOf(route) === 0 ? (<span>{route.breadcrumbName}</span>) : (
-                        <Link to={paths.join('/')}>{route.breadcrumbName}</Link>
+                        <Link to={route.path}>{route.breadcrumbName}</Link>
                     );
                 }}
                 {...this.props}>
