@@ -11,11 +11,13 @@ import {fieldIsRequiredRule}                 from '../../../../shared/user/form/
 import TextArea                              from 'antd/es/input/TextArea';
 import {Product}                             from '../../../../../.openapi/models';
 import ProductList                           from '../../../../shared/transaction/product/ProductList';
+import CategoryTreeSelect                    from '../../../../shared/category/CategoyTreeSelect';
 
 interface CreateVariableTransactionComponentProps extends WithTranslation, UserReducerState, TransactionReducerProps {
 }
 
 interface CreateVariableTransactionComponentState {
+    categoryId: number | undefined
     products: Product[]
 }
 
@@ -39,14 +41,7 @@ class CreateVariableTransaction extends React.Component<CreateVariableTransactio
                             label={this.props.t('Transaction.Category.Name')}
                             name="password"
                             rules={[fieldIsRequiredRule(this.props.i18n)]}>
-                            <TreeSelect
-                                showSearch
-                                dropdownStyle={{maxHeight: 400, overflow: 'auto'}}
-                                placeholder="Please select"
-                                allowClear
-                                treeData={[]}
-                                treeDefaultExpandAll>
-                            </TreeSelect>
+                            <CategoryTreeSelect onChange={categoryId => this.setState({categoryId: categoryId})}/>
                         </Form.Item>
 
                         <Form.Item

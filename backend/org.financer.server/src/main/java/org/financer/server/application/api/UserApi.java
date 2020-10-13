@@ -255,7 +255,7 @@ public interface UserApi {
     @ApiResponse(
             responseCode = "200",
             description = "Users categories were successfully fetched",
-            content = @Content(array = @ArraySchema(schema = @Schema(implementation = UserDTO.class))))
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = CategoryDTO.class))))
     @GetMapping(
             value = "/users/{userId}/categories",
             produces = {"application/json"},

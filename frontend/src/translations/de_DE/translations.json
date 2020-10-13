@@ -45,7 +45,8 @@
   },
   "Transaction": {
     "Category": {
-      "Name": "Kategorie"
+      "Name": "Kategorie",
+      "SelectCategoryPlaceholder": "Kategorie auswählen"
     },
     "Amount": "Betrag",
     "Description": "Beschreibung",

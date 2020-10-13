@@ -45,7 +45,8 @@
   },
   "Transaction": {
     "Category": {
-      "Name": "Category"
+      "Name": "Category",
+      "SelectCategoryPlaceholder": "Select category"
     },
     "Amount": "Amount",
     "Description": "Description",
