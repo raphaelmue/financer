@@ -1,9 +1,14 @@
-import {GetUsersVariableTransactionsRequest, UserApi} from '../../.openapi/apis';
-import {Dispatch}                                     from 'redux';
-import {apiConfiguration}                             from './index';
-import {ErrorMessage}                                 from '../errorMessage';
-import {VariableTransaction}                          from '../../.openapi/models';
-import {TransactionActionDefinition}                  from '../actions/transaction.actions';
+import {
+    CreateTransactionRequest,
+    GetUsersVariableTransactionsRequest,
+    UserApi,
+    VariableTransactionApi
+}                                    from '../../.openapi/apis';
+import {Dispatch}                    from 'redux';
+import {apiConfiguration}            from './index';
+import {ErrorMessage}                from '../errorMessage';
+import {VariableTransaction}         from '../../.openapi/models';
+import {TransactionActionDefinition} from '../actions/transaction.actions';
 
 export const loadVariableTransactions = (data: GetUsersVariableTransactionsRequest) => {
     return (dispatch: Dispatch) => {
@@ -20,6 +25,27 @@ export const loadVariableTransactions = (data: GetUsersVariableTransactionsReque
     };
 };
 
+export const createVariableTransaction = (data: CreateTransactionRequest, callback?: (variableTransaction: VariableTransaction) => void) => {
+    return (dispatch: Dispatch) => {
+        dispatch({
+            type: TransactionActionDefinition.CREATE_VARIABLE_TRANSACTION_REQUEST,
+            payload: data
+        });
+        let api = new VariableTransactionApi(apiConfiguration());
+        ErrorMessage.resolveError(api.createTransaction(data)
+            .then((variableTransaction: VariableTransaction) => {
+                dispatch({
+                    type: TransactionActionDefinition.CREATE_VARIABLE_TRANSACTION_SUCCESS,
+                    payload: variableTransaction
+                });
+                if (callback) {
+                    callback(variableTransaction);
+                }
+            }), TransactionActionDefinition.CREATE_VARIABLE_TRANSACTION_FAILED, dispatch);
+    };
+};
+
 export interface TransactionApi {
     dispatchLoadVariableTransactions: (data: GetUsersVariableTransactionsRequest) => void
+    dispatchCreateVariableTransaction: (data: CreateTransactionRequest, callback?: (variableTransaction: VariableTransaction) => void) => void
 }

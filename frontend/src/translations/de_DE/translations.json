@@ -49,7 +49,13 @@
   "Transaction": {
     "Category": {
       "Name": "Kategorie",
-      "SelectCategoryPlaceholder": "Kategorie auswählen"
+      "SelectCategoryPlaceholder": "Kategorie auswählen",
+      "CategoryClass": {
+        "FIXED_EXPENSES": "Feste Ausgabe",
+        "FIXED_REVENUE": "Feste Einnahmen",
+        "VARIABLE_EXPENSES": "Variable Ausgaben",
+        "VARIABLE_REVENUE": "Variable Einnahmen"
+      }
     },
     "Amount": "Betrag",
     "Description": "Beschreibung",
@@ -59,7 +65,8 @@
       "Name": "Produktname",
       "Quantity": "Menge"
     },
-    "Products": "Produkte"
+    "Products": "Produkte",
+    "VariableTransaction": "Variable Transaktion"
   },
   "Form": {
     "Table": {
@@ -81,6 +88,13 @@
       "Delete": "Löschen",
       "Add": "Hinzfügen",
       "Cancel": "Abbrechen"
+    }
+  },
+  "Message": {
+    "Transaction": {
+      "VariableTransaction": {
+        "CreatedVariableTransaction": "Variable Transaktion in der Kategorie {{category}} ({{categoryClass}}) wurde erfolgreich zum {{valueDate}} erstellt."
+      }
     }
   }
 }
