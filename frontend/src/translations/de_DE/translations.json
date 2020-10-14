@@ -40,7 +40,10 @@
       "VariableTransactions": "Variable Transaktionen",
       "FixedTransactions": "Feste Transaktionen",
       "Transactions": "Transaktionen",
-      "TransactionOverview": "Transaktionsüberblick"
+      "TransactionOverview": "Transaktionsüberblick",
+      "Product": {
+        "CreateProduct": "Produkt erstellen"
+      }
     }
   },
   "Transaction": {
@@ -76,7 +79,8 @@
       "New": "Neu",
       "Submit": "Senden",
       "Delete": "Löschen",
-      "Add": "Hinzfügen"
+      "Add": "Hinzfügen",
+      "Cancel": "Abbrechen"
     }
   }
 }

@@ -1,27 +1,43 @@
-import {bindActionCreators, Dispatch}        from 'redux';
-import {connect}                             from 'react-redux';
-import {WithTranslation, withTranslation}    from 'react-i18next';
-import React                                 from 'react';
-import {UserReducerState}                    from '../../../../../store/reducers/user.reducers';
-import {AppState}                            from '../../../../../store/reducers/root.reducers';
-import {TransactionReducerProps}             from '../../../../../store/reducers/transaction.reducer';
-import ProCard                               from '@ant-design/pro-card';
-import {DatePicker, Form, Input, TreeSelect} from 'antd';
-import {fieldIsRequiredRule}                 from '../../../../shared/user/form/rules';
-import TextArea                              from 'antd/es/input/TextArea';
-import {Product}                             from '../../../../../.openapi/models';
-import ProductList                           from '../../../../shared/transaction/product/ProductList';
-import CategoryTreeSelect                    from '../../../../shared/category/CategoyTreeSelect';
+import {bindActionCreators, Dispatch}     from 'redux';
+import {connect}                          from 'react-redux';
+import {WithTranslation, withTranslation} from 'react-i18next';
+import React                              from 'react';
+import {UserReducerState}                 from '../../../../../store/reducers/user.reducers';
+import {AppState}                         from '../../../../../store/reducers/root.reducers';
+import {TransactionReducerProps}          from '../../../../../store/reducers/transaction.reducer';
+import ProCard                            from '@ant-design/pro-card';
+import {Button, DatePicker, Form, Input}  from 'antd';
+import {fieldIsRequiredRule}              from '../../../../shared/user/form/rules';
+import TextArea                           from 'antd/es/input/TextArea';
+import {Product}                          from '../../../../../.openapi/models';
+import ProductList                        from '../../../../shared/transaction/product/ProductList';
+import CategoryTreeSelect                 from '../../../../shared/category/CategoyTreeSelect';
+import CreateProductDrawer                from '../../../../shared/transaction/product/create/CreateProductDrawer';
+import {FooterToolbar}                    from '@ant-design/pro-layout';
 
 interface CreateVariableTransactionComponentProps extends WithTranslation, UserReducerState, TransactionReducerProps {
 }
 
 interface CreateVariableTransactionComponentState {
     categoryId: number | undefined
-    products: Product[]
+    products: Product[],
+    showProductDialog: boolean
 }
 
 class CreateVariableTransaction extends React.Component<CreateVariableTransactionComponentProps, CreateVariableTransactionComponentState> {
+
+    constructor(props: CreateVariableTransactionComponentProps) {
+        super(props);
+        this.state = {
+            categoryId: undefined,
+            showProductDialog: false,
+            products: []
+        };
+    }
+
+    onSubmit() {
+    }
+
     render() {
         return (
             <div>
@@ -58,9 +74,20 @@ class CreateVariableTransaction extends React.Component<CreateVariableTransactio
                 </ProCard>
                 <ProCard bordered style={{marginTop: 8}}>
                     <ProductList
-                        products={[{id: 1, name: 'test', amount: {amount: 20}, quantity: {numberOfItems: 2}}]}
-                    />
+                        products={this.state.products}
+                        openProductDialog={() => this.setState({showProductDialog: true})}/>
+                    <CreateProductDrawer
+                        visible={this.state?.showProductDialog || false}
+                        onCancel={() => this.setState({showProductDialog: false})}
+                        onSubmit={(product: Product) => this.setState({
+                            products: this.state.products.concat(product),
+                            showProductDialog: false
+                        })}/>
                 </ProCard>
+
+                <FooterToolbar>
+                    <Button type={'primary'} onClick={this.onSubmit}>{this.props.t('Form.Button.Submit')}</Button>
+                </FooterToolbar>
             </div>
         );
     }

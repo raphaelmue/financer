@@ -11,6 +11,7 @@ import ProTable                           from '@ant-design/pro-table';
 import {columns}                          from './colums';
 
 interface ProductListComponentProps extends WithTranslation {
+    openProductDialog: () => void,
     products: Product[]
 }
 
@@ -18,10 +19,6 @@ interface ProductComponentState {
 }
 
 class ProductList extends React.Component<ProductListComponentProps, ProductComponentState> {
-
-    openCreateProductDialog() {
-
-    }
 
     render() {
         return (
@@ -41,7 +38,7 @@ class ProductList extends React.Component<ProductListComponentProps, ProductComp
                         key="newVariableTransactionButton"
                         type="primary"
                         icon={<PlusOutlined/>}
-                        onClick={this.openCreateProductDialog}>
+                        onClick={this.props.openProductDialog}>
                         {this.props.t('Form.Button.Add')}
                     </Button>
                 ]}>
