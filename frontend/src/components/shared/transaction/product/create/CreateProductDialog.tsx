@@ -7,31 +7,31 @@ import {fieldIsRequiredRule}              from '../../../user/form/rules';
 import {Product}                          from '../../../../../.openapi/models';
 import {FormInstance}                     from 'antd/lib/form';
 
-interface CreateProductDrawerComponentProps extends WithTranslation {
+interface CreateProductDialogComponentProps extends WithTranslation {
     visible: boolean
     onSubmit?: (product: Product) => void,
     onCancel?: () => void
 }
 
-interface CreateProductDrawerComponentState {
+interface CreateProductDialogComponentState {
     visible: boolean,
     productName: string,
     quantity: number,
     amount: number
 }
 
-const initialState: CreateProductDrawerComponentState = {
+const initialState: CreateProductDialogComponentState = {
     visible: false,
     productName: '',
     quantity: 1,
     amount: 0
 };
 
-class CreateProductDrawer extends React.Component<CreateProductDrawerComponentProps, CreateProductDrawerComponentState> {
+class CreateProductDialog extends React.Component<CreateProductDialogComponentProps, CreateProductDialogComponentState> {
 
     formRef: RefObject<FormInstance> = React.createRef();
 
-    constructor(props: CreateProductDrawerComponentProps) {
+    constructor(props: CreateProductDialogComponentProps) {
         super(props);
         this.state = initialState;
     };
@@ -119,4 +119,4 @@ const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({}, dispat
 
 export default connect(() => {
     return {};
-}, mapDispatchToProps)(withTranslation()(CreateProductDrawer));
+}, mapDispatchToProps)(withTranslation()(CreateProductDialog));

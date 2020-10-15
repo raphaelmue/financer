@@ -42,7 +42,10 @@
       "Transactions": "Transaktionen",
       "TransactionOverview": "Transaktionsüberblick",
       "Product": {
-        "CreateProduct": "Produkt erstellen"
+        "CreateProduct": "Produkt hinzufügen"
+      },
+      "Attachment": {
+        "CreateAttachment": "Attachment hinzufügen"
       }
     }
   },
@@ -66,7 +69,13 @@
       "Quantity": "Menge"
     },
     "Products": "Produkte",
-    "VariableTransaction": "Variable Transaktion"
+    "VariableTransaction": "Variable Transaktion",
+    "Attachment": {
+      "Name": "Dateina",
+      "Size": "Größe",
+      "UploadDate": "Upload Datum"
+    },
+    "Attachments": "Anhänge"
   },
   "Form": {
     "Table": {
@@ -87,7 +96,19 @@
       "Submit": "Senden",
       "Delete": "Löschen",
       "Add": "Hinzfügen",
-      "Cancel": "Abbrechen"
+      "Cancel": "Abbrechen",
+      "Next": "Weiter",
+      "Previous": "Zurück"
+    },
+    "Step": {
+      "CreateVariableTransaction": {
+        "TransactionData": "Transaktionsdaten",
+        "ProductData": "Produktdaten",
+        "Attachments": "Anhänge"
+      }
+    },
+    "Dragger": {
+      "DraggerText": "Klicken oder ziehe die Datei in diesen Bereich, um sie hochzuladen."
     }
   },
   "Message": {
