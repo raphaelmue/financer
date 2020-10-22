@@ -7,25 +7,22 @@ import {Attachment}                       from '../../../../../.openapi/models';
 import {FormInstance}                     from 'antd/lib/form';
 import Dragger                            from 'antd/lib/upload/Dragger';
 import {InboxOutlined}                    from '@ant-design/icons';
+import {UploadChangeParam, UploadFile}    from 'antd/lib/upload/interface';
 
 interface CreateAttachmentDialogComponentProps extends WithTranslation {
     visible: boolean
-    onSubmit?: (attachment: Attachment) => void,
+    onSubmit?: (files: UploadFile[]) => void,
     onCancel?: () => void
 }
 
 interface CreateAttachmentDialogComponentState {
     visible: boolean,
-    productName: string,
-    quantity: number,
-    amount: number
+    files: UploadFile[]
 }
 
 const initialState: CreateAttachmentDialogComponentState = {
     visible: false,
-    productName: '',
-    quantity: 1,
-    amount: 0
+    files: []
 };
 
 class CreateAttachmentDialog extends React.Component<CreateAttachmentDialogComponentProps, CreateAttachmentDialogComponentState> {
@@ -48,13 +45,15 @@ class CreateAttachmentDialog extends React.Component<CreateAttachmentDialogCompo
             this.formRef.current.resetFields();
         }
         if (this.props.onSubmit) {
-            this.props.onSubmit({
-                id: 0,
-                name: this.state.productName,
-                uploadDate: new Date()
-            });
+            this.props.onSubmit(this.state.files);
         }
         this.setState(initialState);
+    }
+
+    onChange(info: UploadChangeParam) {
+        this.setState({
+            files: info.fileList
+        });
     }
 
     render() {
@@ -71,12 +70,13 @@ class CreateAttachmentDialog extends React.Component<CreateAttachmentDialogCompo
                 <Form layout="vertical"
                       onFinish={this.onSubmit}
                       ref={this.formRef}>
-                    <Dragger>
+                    <Dragger
+                        onChange={this.onChange}>
                         <p className="ant-upload-drag-icon">
                             <InboxOutlined/>
                         </p>
                         <p className="ant-upload-text">{this.props.t('Form.Dragger.DraggerText')}</p>
-                    </Dragger>,
+                    </Dragger>
                 </Form>
             </Modal>
         );

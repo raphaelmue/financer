@@ -1,30 +1,24 @@
-import {bindActionCreators, Dispatch}                         from 'redux';
-import {connect}                                              from 'react-redux';
-import {WithTranslation, withTranslation}                     from 'react-i18next';
-import React                                                  from 'react';
-import {UserReducerState}                                     from '../../../../../store/reducers/user.reducers';
-import {AppState}                                             from '../../../../../store/reducers/root.reducers';
-import {TransactionReducerProps}                              from '../../../../../store/reducers/transaction.reducer';
-import ProCard                                                from '@ant-design/pro-card';
-import {Button, DatePicker, Form, Input, notification, Steps} from 'antd';
-import {fieldIsRequiredRule}                                  from '../../../../shared/user/form/rules';
-import TextArea                                               from 'antd/es/input/TextArea';
-import {Attachment, Product}                                  from '../../../../../.openapi/models';
-import ProductList                                            from '../../../../shared/transaction/product/ProductList';
-import CategoryTreeSelect                                     from '../../../../shared/category/CategoyTreeSelect';
-import CreateProductDrawer
-                                                              from '../../../../shared/transaction/product/create/CreateProductDialog';
-import CreateProductDialog
-                                                              from '../../../../shared/transaction/product/create/CreateProductDialog';
-import {FooterToolbar}                                        from '@ant-design/pro-layout';
-import * as api                                               from '../../../../../store/api/transaction.api';
-import {Redirect}                                             from 'react-router-dom';
-import AttachmentList
-                                                              from '../../../../shared/transaction/attachment/AttachmentList';
+import {bindActionCreators, Dispatch}          from 'redux';
+import {connect}                               from 'react-redux';
+import {WithTranslation, withTranslation}      from 'react-i18next';
+import React                                   from 'react';
+import {UserReducerState}                      from '../../../../../store/reducers/user.reducers';
+import {AppState}                              from '../../../../../store/reducers/root.reducers';
+import {TransactionReducerProps}               from '../../../../../store/reducers/transaction.reducer';
+import {DatePicker, Form, Input, notification} from 'antd';
+import {fieldIsRequiredRule}                   from '../../../../shared/user/form/rules';
+import TextArea                                from 'antd/es/input/TextArea';
+import {Attachment, Product}                   from '../../../../../.openapi/models';
+import ProductList                             from '../../../../shared/transaction/product/ProductList';
+import CategoryTreeSelect                      from '../../../../shared/category/CategoyTreeSelect';
+import CreateProductDialog                     from '../../../../shared/transaction/product/create/CreateProductDialog';
+import * as api                                from '../../../../../store/api/transaction.api';
+import {Redirect}                              from 'react-router-dom';
+import AttachmentList                          from '../../../../shared/transaction/attachment/AttachmentList';
 import CreateAttachmentDialog
-                                                              from '../../../../shared/transaction/attachment/create/CreateAttachmentDialog';
-
-const {Step} = Steps;
+                                               from '../../../../shared/transaction/attachment/create/CreateAttachmentDialog';
+import StepForm, {FormStep}                    from '../../../../shared/form/step/StepForm';
+import {UploadFile}                            from 'antd/lib/upload/interface';
 
 interface CreateVariableTransactionComponentProps extends WithTranslation, UserReducerState, TransactionReducerProps {
 }
@@ -89,65 +83,51 @@ class CreateVariableTransaction extends React.Component<CreateVariableTransactio
         this.setState({[e.target.name]: e.target.value} as CreateVariableTransactionComponentState);
     };
 
-    onPrevious() {
-        this.setState({currentStep: this.state.currentStep - 1});
-    }
+    steps: FormStep[] = [
+        {
+            title: this.props.t('Form.Step.CreateVariableTransaction.TransactionData'),
+            key: 'transactionData',
+            content: () =>
+                <Form
+                    labelCol={{span: 6}}
+                    wrapperCol={{span: 16}}
+                    name={'createVariableTransaction'}>
+                    <Form.Item
+                        label={this.props.t('Transaction.ValueDate')}
+                        name="valueDate"
+                        rules={[fieldIsRequiredRule(this.props.i18n)]}>
+                        <DatePicker
+                            onChange={(value, dateString: string) => this.setState({valueDate: new Date(dateString)})}/>
+                    </Form.Item>
 
-    onNext() {
-        this.setState({currentStep: this.state.currentStep + 1});
-    }
+                    <Form.Item
+                        label={this.props.t('Transaction.Category.Name')}
+                        name="categoryId"
+                        rules={[fieldIsRequiredRule(this.props.i18n)]}>
+                        <CategoryTreeSelect onChange={categoryId => this.setState({categoryId: categoryId})}/>
+                    </Form.Item>
 
-    render() {
-        if (this.state.redirectToTransactionList) {
-            return <Redirect to={'/transactions/variable'}/>;
-        }
-
-        return (
-            <div>
-                <Steps current={this.state.currentStep}
-                       style={{marginBottom: '24px'}}>
-                    <Step key={'transactionData'}
-                          title={this.props.t('Form.Step.CreateVariableTransaction.TransactionData')}/>
-                    <Step key={'products'} title={this.props.t('Form.Step.CreateVariableTransaction.ProductData')}/>
-                    <Step key={'attachments'} title={this.props.t('Form.Step.CreateVariableTransaction.Attachments')}/>
-                </Steps>
-                <ProCard collapsed={this.state.currentStep !== 0} bordered>
-                    <Form
-                        labelCol={{span: 6}}
-                        wrapperCol={{span: 16}}
-                        name={'createVariableTransaction'}>
-                        <Form.Item
-                            label={this.props.t('Transaction.ValueDate')}
-                            name="valueDate"
-                            rules={[fieldIsRequiredRule(this.props.i18n)]}>
-                            <DatePicker
-                                onChange={(value, dateString: string) => this.setState({valueDate: new Date(dateString)})}/>
-                        </Form.Item>
-
-                        <Form.Item
-                            label={this.props.t('Transaction.Category.Name')}
-                            name="categoryId"
-                            rules={[fieldIsRequiredRule(this.props.i18n)]}>
-                            <CategoryTreeSelect onChange={categoryId => this.setState({categoryId: categoryId})}/>
-                        </Form.Item>
-
-                        <Form.Item
-                            label={this.props.t('Transaction.Vendor')}
-                            name="vendor">
-                            <Input
-                                name={'vendor'}
-                                onChange={this.onChange}/>
-                        </Form.Item>
-                        <Form.Item
-                            label={this.props.t('Transaction.Description')}
-                            name="description">
-                            <TextArea
-                                name={'description'}
-                                onChange={this.onChange}/>
-                        </Form.Item>
-                    </Form>
-                </ProCard>
-                <ProCard collapsed={this.state.currentStep !== 1} bordered>
+                    <Form.Item
+                        label={this.props.t('Transaction.Vendor')}
+                        name="vendor">
+                        <Input
+                            name={'vendor'}
+                            onChange={this.onChange}/>
+                    </Form.Item>
+                    <Form.Item
+                        label={this.props.t('Transaction.Description')}
+                        name="description">
+                        <TextArea
+                            name={'description'}
+                            onChange={this.onChange}/>
+                    </Form.Item>
+                </Form>,
+            condition: () => (this.state.valueDate !== undefined && this.state.categoryId !== undefined)
+        }, {
+            title: this.props.t('Form.Step.CreateVariableTransaction.ProductData'),
+            key: 'productData',
+            content: () =>
+                <div>
                     <ProductList
                         products={this.state.products}
                         openProductDialog={() => this.setState({showProductDialog: true})}/>
@@ -158,39 +138,34 @@ class CreateVariableTransaction extends React.Component<CreateVariableTransactio
                             products: this.state.products.concat(product),
                             showProductDialog: false
                         })}/>
-                </ProCard>
-                <ProCard collapsed={this.state.currentStep !== 2} bordered>
+                </div>,
+            condition: () => (this.state.products.length > 0)
+        }, {
+            title: this.props.t('Form.Step.CreateVariableTransaction.Attachments'),
+            key: 'attachments',
+            content: () =>
+                <div>
                     <AttachmentList
                         attachments={this.state.attachments}
                         openAttachmentDialog={() => this.setState({showAttachmentDialog: true})}/>
                     <CreateAttachmentDialog
                         visible={this.state?.showAttachmentDialog || false}
                         onCancel={() => this.setState({showAttachmentDialog: false})}
-                        onSubmit={(attachment: Attachment) => this.setState({
-                            attachments: this.state.attachments.concat(attachment),
-                            showAttachmentDialog: false
-                        })}/>
-                </ProCard>
+                        // onSubmit={(attachment: UploadFile[]) => this.setState({
+                        //     attachments: this.state.attachments.concat(attachment),
+                        //     showAttachmentDialog: false
+                        // })}
+                    />
+                </div>
+        }];
 
-                <FooterToolbar>
-                    <Button
-                        disabled={this.state.currentStep === 0}
-                        onClick={this.onPrevious.bind(this)}>
-                        {this.props.t('Form.Button.Previous')}
-                    </Button>
-                    <Button
-                        disabled={this.state.currentStep === 2}
-                        onClick={this.onNext.bind(this)}>
-                        {this.props.t('Form.Button.Next')}
-                    </Button>
-                    <Button
-                        type={'primary'}
-                        disabled={!(this.state.valueDate !== undefined && this.state.categoryId !== undefined && this.state.products.length > 0)}
-                        onClick={this.onSubmit.bind(this)}>
-                        {this.props.t('Form.Button.Submit')}
-                    </Button>
-                </FooterToolbar>
-            </div>
+    render() {
+        if (this.state.redirectToTransactionList) {
+            return <Redirect to={'/transactions/variable'}/>;
+        }
+
+        return (
+            <StepForm steps={this.steps} onSubmit={this.onSubmit.bind(this)}/>
         );
     }
 }
