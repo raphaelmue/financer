@@ -2,7 +2,7 @@ package org.financer.shared.domain.model.api.transaction.variable;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.financer.shared.domain.model.api.DataTransferObject;
-import org.financer.shared.domain.model.api.transaction.AttachmentDTO;
+import org.financer.shared.domain.model.api.transaction.CreateAttachmentDTO;
 import org.financer.shared.domain.model.value.objects.ValueDate;
 
 import javax.validation.Valid;
@@ -29,7 +29,7 @@ public class CreateVariableTransactionDTO implements DataTransferObject {
     private String vendor;
 
     @Schema(description = "List of attachments of the variable transaction")
-    private Set<@Valid AttachmentDTO> attachments;
+    private Set<@Valid CreateAttachmentDTO> attachments;
 
     @Schema(description = "List of products of the variable transaction")
     private Set<@Valid CreateProductDTO> products;
@@ -70,11 +70,11 @@ public class CreateVariableTransactionDTO implements DataTransferObject {
         return this;
     }
 
-    public Set<AttachmentDTO> getAttachments() {
+    public Set<CreateAttachmentDTO> getAttachments() {
         return attachments;
     }
 
-    public CreateVariableTransactionDTO setAttachments(Set<AttachmentDTO> attachments) {
+    public CreateVariableTransactionDTO setAttachments(Set<CreateAttachmentDTO> attachments) {
         this.attachments = attachments;
         return this;
     }

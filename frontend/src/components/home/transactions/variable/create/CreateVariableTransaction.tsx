@@ -8,7 +8,7 @@ import {TransactionReducerProps}               from '../../../../../store/reduce
 import {DatePicker, Form, Input, notification} from 'antd';
 import {fieldIsRequiredRule}                   from '../../../../shared/user/form/rules';
 import TextArea                                from 'antd/es/input/TextArea';
-import {Attachment, Product}                   from '../../../../../.openapi/models';
+import {CreateAttachment, Product}             from '../../../../../.openapi/models';
 import ProductList                             from '../../../../shared/transaction/product/ProductList';
 import CategoryTreeSelect                      from '../../../../shared/category/CategoyTreeSelect';
 import CreateProductDialog                     from '../../../../shared/transaction/product/create/CreateProductDialog';
@@ -18,7 +18,6 @@ import AttachmentList                          from '../../../../shared/transact
 import CreateAttachmentDialog
                                                from '../../../../shared/transaction/attachment/create/CreateAttachmentDialog';
 import StepForm, {FormStep}                    from '../../../../shared/form/step/StepForm';
-import {UploadFile}                            from 'antd/lib/upload/interface';
 
 interface CreateVariableTransactionComponentProps extends WithTranslation, UserReducerState, TransactionReducerProps {
 }
@@ -29,7 +28,7 @@ interface CreateVariableTransactionComponentState {
     vendor: string | undefined,
     description: string | undefined,
     products: Product[],
-    attachments: Attachment[],
+    attachments: CreateAttachment[],
     showProductDialog: boolean,
     showAttachmentDialog: boolean,
     redirectToTransactionList: boolean,
@@ -146,7 +145,6 @@ class CreateVariableTransaction extends React.Component<CreateVariableTransactio
             content: () =>
                 <div>
                     <AttachmentList
-                        attachments={this.state.attachments}
                         openAttachmentDialog={() => this.setState({showAttachmentDialog: true})}/>
                     <CreateAttachmentDialog
                         visible={this.state?.showAttachmentDialog || false}

@@ -13,7 +13,7 @@ public class CreateAttachmentDTO implements DataTransferObject {
     private String name;
 
     @NotNull
-    @Schema(description = "Content of the attachment", required = true)
+    @Schema(description = "Content of the attachment", required = true, type = "string", format = "binary")
     private byte[] content;
 
     public String getName() {

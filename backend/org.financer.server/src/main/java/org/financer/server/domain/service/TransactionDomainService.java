@@ -55,7 +55,8 @@ public class TransactionDomainService {
      * @param variableTransactionEntity transaction to insert
      * @return inserted transaction object
      */
-    public VariableTransaction createVariableTransaction(VariableTransaction variableTransactionEntity) {
+    public VariableTransaction
+    createVariableTransaction(VariableTransaction variableTransactionEntity) {
         logger.info("Creating new variable transaction.");
         Optional<Category> categoryOptional = categoryRepository.findById(variableTransactionEntity.getCategory().getId());
         if (categoryOptional.isPresent()) {

@@ -3,7 +3,7 @@ import {withTranslation, WithTranslation} from 'react-i18next';
 import {AppState}                         from '../../../../store/reducers/root.reducers';
 import {bindActionCreators, Dispatch}     from 'redux';
 import {connect}                          from 'react-redux';
-import {Attachment}                       from '../../../../.openapi/models';
+import {Attachment, CreateAttachment}     from '../../../../.openapi/models';
 import ProTable                           from '@ant-design/pro-table';
 import {tableTranslations}                from '../../../../translations/translations';
 import {Button}                           from 'antd';
@@ -19,6 +19,11 @@ interface AttachmentListComponentState {
 }
 
 class AttachmentList extends React.Component<AttachmentListComponentProps, AttachmentListComponentState> {
+
+    constructor(props: AttachmentListComponentProps) {
+        super(props);
+    }
+
 
     render() {
         return (

@@ -3,7 +3,7 @@ import {connect}                          from 'react-redux';
 import {WithTranslation, withTranslation} from 'react-i18next';
 import React, {RefObject}                 from 'react';
 import {Form, Modal}                      from 'antd';
-import {Attachment}                       from '../../../../../.openapi/models';
+import {CreateAttachment}                 from '../../../../../.openapi/models';
 import {FormInstance}                     from 'antd/lib/form';
 import Dragger                            from 'antd/lib/upload/Dragger';
 import {InboxOutlined}                    from '@ant-design/icons';
@@ -11,7 +11,7 @@ import {UploadChangeParam, UploadFile}    from 'antd/lib/upload/interface';
 
 interface CreateAttachmentDialogComponentProps extends WithTranslation {
     visible: boolean
-    onSubmit?: (files: UploadFile[]) => void,
+    onSubmit?: (files: CreateAttachment[]) => void,
     onCancel?: () => void
 }
 
@@ -45,7 +45,15 @@ class CreateAttachmentDialog extends React.Component<CreateAttachmentDialogCompo
             this.formRef.current.resetFields();
         }
         if (this.props.onSubmit) {
-            this.props.onSubmit(this.state.files);
+            this.props.onSubmit(this.state.files.map((value: UploadFile): CreateAttachment => {
+                if (value && value.fileName && value.originFileObj) {
+                    return {
+                        name: value.fileName,
+                        content: value.originFileObj
+                    };
+                }
+                throw new Error('Cannot get property of undefined.');
+            }));
         }
         this.setState(initialState);
     }
@@ -71,7 +79,7 @@ class CreateAttachmentDialog extends React.Component<CreateAttachmentDialogCompo
                       onFinish={this.onSubmit}
                       ref={this.formRef}>
                     <Dragger
-                        onChange={this.onChange}>
+                        onChange={this.onChange.bind(this)}>
                         <p className="ant-upload-drag-icon">
                             <InboxOutlined/>
                         </p>

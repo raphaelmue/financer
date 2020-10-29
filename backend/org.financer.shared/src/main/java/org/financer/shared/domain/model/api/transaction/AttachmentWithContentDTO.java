@@ -8,7 +8,7 @@ import javax.validation.constraints.NotNull;
 public class AttachmentWithContentDTO extends AttachmentDTO {
 
     @NotNull
-    @Schema(description = "Name of the attachment", example = "file.pdf", required = true)
+    @Schema(description = "Name of the attachment", example = "file.pdf", required = true, type = "string", format = "binary")
     private byte[] content;
 
     public byte[] getContent() {
