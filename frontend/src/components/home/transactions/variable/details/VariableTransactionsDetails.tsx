@@ -1,27 +1,27 @@
-import {withTranslation, WithTranslation}                 from 'react-i18next';
-import React                                              from 'react';
-import {Link, RouteComponentProps}                        from 'react-router-dom';
-import {AppState}                                         from '../../../../../store/reducers/root.reducers';
-import {bindActionCreators, Dispatch}                     from 'redux';
-import {connect}                                          from 'react-redux';
-import * as api                                           from '../../../../../store/api/transaction.api';
-import {TransactionReducerProps}                          from '../../../../../store/reducers/transaction.reducer';
-import {CreateProduct, VariableTransaction}               from '../../../../../.openapi/models';
-import {Button, Descriptions, notification, Result}       from 'antd';
-import {PageContainer}                                    from '@ant-design/pro-layout';
-import Text                                               from 'antd/lib/typography/Text';
-import i18next                                            from 'i18next';
-import AmountStatistics, {getAmountOfVariableTransaction} from '../../../../shared/transaction/amount/amountStatistics/AmountStatistics';
-import ProductList                                        from '../../../../shared/transaction/product/ProductList';
+import {withTranslation, WithTranslation}           from 'react-i18next';
+import React                                        from 'react';
+import {Link, RouteComponentProps}                  from 'react-router-dom';
+import {AppState}                                   from '../../../../../store/reducers/root.reducers';
+import {bindActionCreators, Dispatch}               from 'redux';
+import {connect}                                    from 'react-redux';
+import * as api                                     from '../../../../../store/api/transaction.api';
+import {TransactionReducerProps}                    from '../../../../../store/reducers/transaction.reducer';
+import {CreateProduct, VariableTransaction}         from '../../../../../.openapi/models';
+import {Button, Descriptions, notification, Result} from 'antd';
+import {PageContainer}                              from '@ant-design/pro-layout';
+import Text                                         from 'antd/lib/typography/Text';
+import i18next                                      from 'i18next';
+import AmountStatistics
+                                                    from '../../../../shared/transaction/amount/amountStatistics/AmountStatistics';
+import ProductList                                  from '../../../../shared/transaction/product/ProductList';
 import ValueDateLabel
-                                                          from '../../../../shared/transaction/valueDate/valueDateLabel/ValueDateLabel';
-import ProCard                                            from '@ant-design/pro-card';
-import AttachmentList
-                                                          from '../../../../shared/transaction/attachment/AttachmentList';
+                                                    from '../../../../shared/transaction/valueDate/valueDateLabel/ValueDateLabel';
+import ProCard                                      from '@ant-design/pro-card';
+import AttachmentList                               from '../../../../shared/transaction/attachment/AttachmentList';
 import CreateProductDialog
-                                                          from '../../../../shared/transaction/product/create/CreateProductDialog';
+                                                    from '../../../../shared/transaction/product/create/CreateProductDialog';
 import CreateAttachmentDialog
-                                                          from '../../../../shared/transaction/attachment/create/CreateAttachmentDialog';
+                                                    from '../../../../shared/transaction/attachment/create/CreateAttachmentDialog';
 
 const {Item} = Descriptions;
 
@@ -119,7 +119,7 @@ class VariableTransactionsDetails extends React.Component<VariableTransactionsDe
                         extra={<Button>{this.props.t('Form.Button.Edit')}</Button>}
                         extraContent={
                             <AmountStatistics
-                                data={() => getAmountOfVariableTransaction(this.state.variableTransaction!)}/>}
+                                data={this.state.variableTransaction?.totalAmount}/>}
                         tabList={[{
                             tab: i18next.t('Transaction.Products'),
                             key: 'productsTab',

@@ -3,7 +3,7 @@ import {withTranslation, WithTranslation} from 'react-i18next';
 import {AppState}                         from '../../../../store/reducers/root.reducers';
 import {bindActionCreators, Dispatch}     from 'redux';
 import {connect}                          from 'react-redux';
-import {Attachment, CreateAttachment}     from '../../../../.openapi/models';
+import {Attachment}                       from '../../../../.openapi/models';
 import ProTable                           from '@ant-design/pro-table';
 import {tableTranslations}                from '../../../../translations/translations';
 import {Button}                           from 'antd';
@@ -52,12 +52,7 @@ class AttachmentList extends React.Component<AttachmentListComponentProps, Attac
     }
 }
 
-const mapStateToProps = (state: AppState) => {
-    return {
-    };
-};
-
 const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({
 }, dispatch);
 
-export default connect(mapStateToProps, mapDispatchToProps)(withTranslation()(AttachmentList));
+export default connect(() => {return {}}, mapDispatchToProps)(withTranslation()(AttachmentList));

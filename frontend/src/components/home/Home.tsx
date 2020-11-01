@@ -8,7 +8,7 @@ import {UserReducerProps}                                                       
 import {HashRouter as Router, Link, Redirect, Route, Switch}                    from 'react-router-dom';
 import {bindActionCreators, Dispatch}                                           from 'redux';
 import * as api                                                                 from '../../store/api/user.api';
-import BasicLayout, {BasicLayoutProps, DefaultFooter, PageContainer}            from '@ant-design/pro-layout';
+import BasicLayout, {BasicLayoutProps, DefaultFooter}                           from '@ant-design/pro-layout';
 import menuData                                                                 from './menu';
 import {DeleteTokenRequest}                                                     from '../../.openapi/apis';
 import Dashboard                                                                from './dashboard/Dashboard';

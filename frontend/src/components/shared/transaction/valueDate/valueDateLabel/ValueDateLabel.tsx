@@ -17,9 +17,9 @@ class ValueDateLabel extends React.Component<ValueDateLabelComponentProps, Value
         if (this.props.valueDate) {
             return (
                 <span>
-                {new Date(this.props.valueDate.date).toLocaleDateString(
-                    this.props.userState.user?.settings?.LANGUAGE?.value || 'en')}
-            </span>
+                    {new Date(this.props.valueDate.date).toLocaleDateString(
+                        this.props.userState.user?.settings?.LANGUAGE?.value || 'en')}
+                </span>
             );
         } else {
             return (<span/>)

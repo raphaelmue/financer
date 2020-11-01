@@ -1,6 +1,8 @@
 import {ProColumns}          from '@ant-design/pro-table';
 import {VariableTransaction} from '../../../../.openapi/models';
 import i18next               from 'i18next';
+import AmountLabel           from '../../../shared/transaction/amount/amountLabel/AmountLabel';
+import React                 from 'react';
 
 export const columns = (): ProColumns<VariableTransaction>[] => [
     {
@@ -29,5 +31,11 @@ export const columns = (): ProColumns<VariableTransaction>[] => [
         title: i18next.t('Transaction.Description'),
         dataIndex: 'description',
         valueType: 'text',
+    }, {
+        key: 'amount',
+        title: i18next.t('Transaction.Amount'),
+        dataIndex: ['totalAmount', 'amount'],
+        valueType: 'money',
+        render: (dom, entity) => (<AmountLabel amount={entity.totalAmount} />)
     }
 ];

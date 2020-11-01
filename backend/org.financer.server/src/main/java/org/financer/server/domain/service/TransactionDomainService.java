@@ -279,7 +279,7 @@ public class TransactionDomainService {
     }
 
     private boolean changeFixedTransactionAmount(FixedTransaction fixedTransaction, Amount amount) {
-        if (amount != null && amount.getAmount() != 0 && amount != fixedTransaction.getAmount()) {
+        if (amount != null && amount.getAmount() != 0 && amount != fixedTransaction.getTotalAmount()) {
             fixedTransaction.setAmount(amount);
             return true;
         }

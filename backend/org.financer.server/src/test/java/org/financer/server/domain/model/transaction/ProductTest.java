@@ -34,20 +34,20 @@ public class ProductTest {
 
     @Test
     public void testGetAmount() {
-        assertThat(product.getAmount().getAmount()).isEqualTo(50 * 5);
+        assertThat(product.getTotalAmount().getAmount()).isEqualTo(50 * 5);
     }
 
     @Test
     public void testGetAmountOfMonth() {
-        assertThat(variableTransaction.getAmount(new ValueDate(LocalDate.now())).getAmount()).isEqualTo(50 * 5);
-        assertThat(variableTransaction.getAmount(new ValueDate(LocalDate.now().minusMonths(1))).getAmount()).isEqualTo(0);
+        assertThat(variableTransaction.getTotalAmount(new ValueDate(LocalDate.now())).getAmount()).isEqualTo(50 * 5);
+        assertThat(variableTransaction.getTotalAmount(new ValueDate(LocalDate.now().minusMonths(1))).getAmount()).isEqualTo(0);
     }
 
     @Test
     public void testGetAmountWithTimeRange() {
-        assertThat(variableTransaction.getAmount(new TimeRange(LocalDate.now().minusMonths(1),
+        assertThat(variableTransaction.getTotalAmount(new TimeRange(LocalDate.now().minusMonths(1),
                 LocalDate.now().plusMonths(1))).getAmount()).isEqualTo(50 * 5);
-        assertThat(variableTransaction.getAmount(new TimeRange(LocalDate.now().minusMonths(4),
+        assertThat(variableTransaction.getTotalAmount(new TimeRange(LocalDate.now().minusMonths(4),
                 LocalDate.now().minusMonths(1))).getAmount()).isEqualTo(0);
     }
 }

@@ -21,14 +21,10 @@ interface AuthenticationComponentState {
 
 class Authentication extends React.Component<AuthenticationComponentProps, AuthenticationComponentState> {
 
-    handleChange = (e: any) => {
-        this.setState({[e.target.name]: e.target.value} as AuthenticationComponentState);
-    };
-
     render() {
         if (this.props.userState.user) {
             // redirect to main page when user is successfully logged in
-            return <Redirect to={'/internal/dashboard'}/>;
+            return <Redirect to={'/dashboard'}/>;
         }
 
         return (

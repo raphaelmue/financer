@@ -28,12 +28,10 @@ export const transactionReducer = (state: TransactionState = initialState, actio
         case TransactionActionDefinition.LOAD_VARIABLE_TRANSACTION_REQUEST:
             return {...state, isLoading: true, error: undefined};
         case TransactionActionDefinition.LOAD_VARIABLE_TRANSACTION_SUCCESS:
-            return {
-                ...state,
-                isLoading: false,
-                error: undefined,
-                variableTransactions: [...state.variableTransactions, action.payload]
-            };
+            let transactions = state.variableTransactions;
+            transactions.splice(transactions.findIndex(transaction => transaction.id === action.payload.id), 1);
+            transactions.push(action.payload);
+            return {...state, isLoading: false, error: undefined, variableTransactions: transactions};
         case TransactionActionDefinition.LOAD_VARIABLE_TRANSACTION_FAILED:
             return {...state, isLoading: false, error: action.payload};
         case TransactionActionDefinition.CREATE_VARIABLE_TRANSACTION_REQUEST:
@@ -48,9 +46,9 @@ export const transactionReducer = (state: TransactionState = initialState, actio
         case TransactionActionDefinition.CREATE_VARIABLE_TRANSACTION_FAILED:
             return {...state, isLoading: false, error: action.payload};
         case TransactionActionDefinition.CREATE_PRODUCT_REQUEST:
-            return {...state, isLoading: true, error: undefined}
+            return {...state, isLoading: true, error: undefined};
         case TransactionActionDefinition.CREATE_PRODUCT_SUCCESS:
-            return {...state, isLoading: false, error: undefined}
+            return {...state, isLoading: false, error: undefined};
         case TransactionActionDefinition.CREATE_PRODUCT_FAILED:
             return {...state, isLoading: false, error: action.payload};
         default:

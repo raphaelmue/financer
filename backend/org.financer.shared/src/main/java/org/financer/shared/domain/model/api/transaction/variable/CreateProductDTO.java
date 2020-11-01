@@ -7,7 +7,7 @@ import org.financer.shared.domain.model.value.objects.Quantity;
 
 import javax.validation.constraints.NotNull;
 
-@Schema(name = "CreateProduct", defaultValue = "Schema for creating a new product")
+@Schema(name = "CreateProduct", description = "Schema for creating a new product")
 public class CreateProductDTO implements DataTransferObject {
 
     @NotNull

@@ -1,6 +1,8 @@
 import {ProColumns} from '@ant-design/pro-table';
 import {Product}    from '../../../../.openapi/models';
 import i18next      from 'i18next';
+import AmountLabel  from '../amount/amountLabel/AmountLabel';
+import React        from 'react';
 
 export const columns = (): ProColumns<Product>[] => [
     {
@@ -24,5 +26,12 @@ export const columns = (): ProColumns<Product>[] => [
         title: i18next.t('Transaction.Amount'),
         dataIndex: ['amount', 'amount'],
         valueType: 'money',
+        render: (dom, entity) => (<AmountLabel amount={entity.amount} />)
+    }, {
+        key: 'totalAmount',
+        title: i18next.t('Transaction.TotalAmount'),
+        dataIndex: ['totalAmount', 'amount'],
+        valueType: 'money',
+        render: (dom, entity) => (<AmountLabel amount={entity.totalAmount} />)
     }
 ];

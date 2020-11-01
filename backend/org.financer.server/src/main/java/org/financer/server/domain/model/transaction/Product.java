@@ -34,16 +34,12 @@ public class Product implements DataEntity, AmountProvider, UserProperty {
     private Amount amount;
 
     @Override
-    public Amount getAmount() {
+    public Amount getTotalAmount() {
         return this.amount.calculate(this.quantity);
     }
 
-    public Amount getUnitAmount() {
-        return this.getAmount();
-    }
-
     @Override
-    public Amount getAmount(ValueDate valueDate) {
+    public Amount getTotalAmount(ValueDate valueDate) {
         if (this.transaction.getValueDate().isInSameMonth(valueDate)) {
             return this.amount.calculate(this.quantity);
         }
@@ -51,7 +47,7 @@ public class Product implements DataEntity, AmountProvider, UserProperty {
     }
 
     @Override
-    public Amount getAmount(TimeRange timeRange) {
+    public Amount getTotalAmount(TimeRange timeRange) {
         if (timeRange.includes(this.transaction.getValueDate())) {
             return this.amount.calculate(this.quantity);
         }
@@ -70,8 +66,8 @@ public class Product implements DataEntity, AmountProvider, UserProperty {
 
     @Override
     public void adjustAmountSign() {
-        if ((this.isRevenue() == this.getAmount().isNegative())) {
-            this.setAmount(this.getAmount().adjustSign());
+        if ((this.isRevenue() == this.getTotalAmount().isNegative())) {
+            this.setAmount(this.getTotalAmount().adjustSign());
         }
     }
 
@@ -119,6 +115,10 @@ public class Product implements DataEntity, AmountProvider, UserProperty {
     public Product setQuantity(Quantity quantity) {
         this.quantity = quantity;
         return this;
+    }
+
+    public Amount getAmount() {
+        return amount;
     }
 
     public Product setAmount(Amount amount) {

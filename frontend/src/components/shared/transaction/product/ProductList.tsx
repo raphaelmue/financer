@@ -3,12 +3,11 @@ import {connect}                          from 'react-redux';
 import {WithTranslation, withTranslation} from 'react-i18next';
 import React                              from 'react';
 import {Product}                          from '../../../../.openapi/models';
-import {AppState}                         from '../../../../store/reducers/root.reducers';
 import {tableTranslations}                from '../../../../translations/translations';
 import {Button}                           from 'antd';
 import {PlusOutlined}                     from '@ant-design/icons';
-import ProTable                           from '@ant-design/pro-table';
-import {columns}                          from './colums';
+import ProTable  from '@ant-design/pro-table';
+import {columns} from './columns';
 
 interface ProductListComponentProps extends WithTranslation {
     openProductDialog: () => void,
@@ -47,10 +46,6 @@ class ProductList extends React.Component<ProductListComponentProps, ProductComp
     }
 }
 
-const mapStateToProps = (state: AppState) => {
-    return {};
-};
-
 const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({}, dispatch);
 
-export default connect(mapStateToProps, mapDispatchToProps)(withTranslation()(ProductList));
+export default connect(() => {return {}}, mapDispatchToProps)(withTranslation()(ProductList));

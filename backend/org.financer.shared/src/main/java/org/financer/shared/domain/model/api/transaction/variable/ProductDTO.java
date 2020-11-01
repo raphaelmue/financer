@@ -1,6 +1,7 @@
 package org.financer.shared.domain.model.api.transaction.variable;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import org.financer.shared.domain.model.api.AmountProviderDTO;
 import org.financer.shared.domain.model.api.DataTransferObject;
 import org.financer.shared.domain.model.value.objects.Amount;
 import org.financer.shared.domain.model.value.objects.Quantity;
@@ -9,7 +10,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 @Schema(name = "Product", description = "Schema of a product")
-public class ProductDTO implements DataTransferObject {
+public class ProductDTO extends AmountProviderDTO implements DataTransferObject {
 
     @NotNull
     @Min(1)

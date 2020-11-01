@@ -224,7 +224,7 @@ public class TransactionDomainServiceTest extends SpringTest {
                 fixedCategory.getId(), amount, timeRange, product, description, vendor, isVariable, day,
                 fixedTransaction.getTransactionAmounts());
 
-        assertThat(updatedTransaction.getAmount()).isEqualTo(amount);
+        assertThat(updatedTransaction.getTotalAmount()).isEqualTo(amount);
         assertThat(updatedTransaction.getTimeRange()).isEqualTo(timeRange);
         assertThat(updatedTransaction.getProduct()).isEqualTo(product);
         assertThat(updatedTransaction.getDescription()).isEqualTo(description);
@@ -237,7 +237,7 @@ public class TransactionDomainServiceTest extends SpringTest {
     public void testUpdateFixedTransactionCategoryNotFound() {
         assertThatExceptionOfType(NotFoundException.class).isThrownBy(
                 () -> transactionDomainService.updateFixedTransaction(fixedTransaction.getId(),
-                        5, fixedTransaction.getAmount(), fixedTransaction.getTimeRange(),
+                        5, fixedTransaction.getTotalAmount(), fixedTransaction.getTimeRange(),
                         fixedTransaction.getProduct(), fixedTransaction.getDescription(), fixedTransaction.getVendor(),
                         fixedTransaction.getIsVariable(), fixedTransaction.getDay(), fixedTransaction.getTransactionAmounts()));
     }
@@ -247,7 +247,7 @@ public class TransactionDomainServiceTest extends SpringTest {
         mockAnotherUserAuthenticated();
         assertThatExceptionOfType(UnauthorizedOperationException.class).isThrownBy(
                 () -> transactionDomainService.updateFixedTransaction(fixedTransaction.getId(),
-                        fixedCategory.getId(), fixedTransaction.getAmount(), fixedTransaction.getTimeRange(),
+                        fixedCategory.getId(), fixedTransaction.getTotalAmount(), fixedTransaction.getTimeRange(),
                         fixedTransaction.getProduct(), fixedTransaction.getDescription(), fixedTransaction.getVendor(),
                         fixedTransaction.getIsVariable(), fixedTransaction.getDay(), fixedTransaction.getTransactionAmounts()));
     }
@@ -255,7 +255,7 @@ public class TransactionDomainServiceTest extends SpringTest {
     @Test
     public void testUpdateFixedTransactionWithoutChanges() {
         FixedTransaction updatedTransaction = transactionDomainService.updateFixedTransaction(fixedTransaction.getId(),
-                fixedCategory.getId(), fixedTransaction.getAmount(), fixedTransaction.getTimeRange(), fixedTransaction.getProduct(),
+                fixedCategory.getId(), fixedTransaction.getTotalAmount(), fixedTransaction.getTimeRange(), fixedTransaction.getProduct(),
                 fixedTransaction.getDescription(), fixedTransaction.getVendor(), fixedTransaction.getIsVariable(),
                 fixedTransaction.getDay(), fixedTransaction.getTransactionAmounts());
         assertThat(updatedTransaction).isEqualToComparingFieldByField(fixedTransaction);
@@ -288,13 +288,13 @@ public class TransactionDomainServiceTest extends SpringTest {
                 fixedTransactionAmount.getId(), new Amount(20), valueDate);
         assertThat(transactionAmount.getFixedTransaction()).isEqualToComparingFieldByField(fixedTransaction);
         assertThat(transactionAmount.getFixedTransaction().getTransactionAmounts()).isNotEmpty().first().isEqualTo(transactionAmount);
-        assertThat(transactionAmount.getAmount(valueDate).getAmount()).isEqualTo(20);
+        assertThat(transactionAmount.getTotalAmount(valueDate).getAmount()).isEqualTo(20);
     }
 
     @Test
     public void testUpdateFixedTransactionAmountWithoutChanges() {
         FixedTransactionAmount transactionAmount = transactionDomainService.updateFixedTransactionAmount(fixedTransaction.getId(),
-                fixedTransactionAmount.getId(), fixedTransactionAmount.getAmount(), fixedTransactionAmount.getValueDate());
+                fixedTransactionAmount.getId(), fixedTransactionAmount.getTotalAmount(), fixedTransactionAmount.getValueDate());
         assertThat(transactionAmount).isEqualToComparingFieldByField(fixedTransactionAmount);
     }
 

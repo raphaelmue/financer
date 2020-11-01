@@ -7,8 +7,7 @@ export default (): MenuDataItem[] => [
     {
         path: '/dashboard',
         name: i18next.t('Menu.Dashboard'),
-        icon: <AreaChartOutlined/>,
-        component: './dashboard/Dashboard'
+        icon: <AreaChartOutlined/>
     }, {
         path: '/transactions',
         name: i18next.t('Menu.Transaction.Transactions'),

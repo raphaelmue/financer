@@ -130,7 +130,13 @@ class CreateVariableTransaction extends React.Component<CreateVariableTransactio
                 <div>
                     <ProductList
                         products={this.state.products.map((value: CreateProduct) => {
-                            return {id: 0, quantity: value.quantity, amount: value.amount, name: value.name};
+                            return {
+                                id: 0,
+                                quantity: value.quantity,
+                                amount: value.amount,
+                                name: value.name,
+                                totalAmount: {amount: value.quantity.numberOfItems * value.amount.amount}
+                            };
                         })}
                         openProductDialog={() => this.setState({showProductDialog: true})}/>
                     <CreateProductDialog

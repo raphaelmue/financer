@@ -1,6 +1,6 @@
 import {composeWithDevTools}          from 'redux-devtools-extension';
 import {applyMiddleware, createStore} from 'redux';
-import rootReducer                    from './reducers/root.reducers';
+import appReducer                     from './reducers/root.reducers';
 import thunkMiddleware                from 'redux-thunk';
 import logger                         from 'redux-logger';
 import i18next                        from 'i18next';
@@ -12,7 +12,7 @@ const composeEnhancers = composeWithDevTools({
 const persistedState = localStorage.getItem('reduxState')
 
 const store = createStore(
-    rootReducer,
+    appReducer,
     persistedState ? JSON.parse(persistedState) : {},
     composeEnhancers(applyMiddleware(
         thunkMiddleware,

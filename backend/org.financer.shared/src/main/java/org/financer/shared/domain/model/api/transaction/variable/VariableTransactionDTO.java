@@ -1,6 +1,7 @@
 package org.financer.shared.domain.model.api.transaction.variable;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import org.financer.shared.domain.model.api.AmountProviderDTO;
 import org.financer.shared.domain.model.api.DataTransferObject;
 import org.financer.shared.domain.model.api.category.CategoryDTO;
 import org.financer.shared.domain.model.api.transaction.AttachmentDTO;
@@ -12,7 +13,7 @@ import javax.validation.constraints.NotNull;
 import java.util.Set;
 
 @Schema(name = "VariableTransaction", description = "Schema of a variable transaction")
-public class VariableTransactionDTO implements DataTransferObject {
+public class VariableTransactionDTO extends AmountProviderDTO implements DataTransferObject {
 
     @NotNull
     @Min(1)

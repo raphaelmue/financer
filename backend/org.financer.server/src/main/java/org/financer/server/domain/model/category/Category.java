@@ -51,15 +51,15 @@ public class Category implements DataEntity, Tree, AmountProvider, UserProperty 
     }
 
     @Override
-    public Amount getAmount() {
+    public Amount getTotalAmount() {
         Amount amount = new Amount();
 
         for (AmountProvider amountProvider : this.transactions) {
-            amount = amount.add(amountProvider.getAmount());
+            amount = amount.add(amountProvider.getTotalAmount());
         }
         if (this.isLeaf()) {
             for (AmountProvider amountProvider : this.children) {
-                amount = amount.add(amountProvider.getAmount());
+                amount = amount.add(amountProvider.getTotalAmount());
             }
         }
 
@@ -67,15 +67,15 @@ public class Category implements DataEntity, Tree, AmountProvider, UserProperty 
     }
 
     @Override
-    public Amount getAmount(ValueDate valueDate) {
+    public Amount getTotalAmount(ValueDate valueDate) {
         Amount amount = new Amount();
 
         for (AmountProvider amountProvider : this.transactions) {
-            amount = amount.add(amountProvider.getAmount(valueDate));
+            amount = amount.add(amountProvider.getTotalAmount(valueDate));
         }
         if (this.isLeaf()) {
             for (AmountProvider amountProvider : this.children) {
-                amount = amount.add(amountProvider.getAmount(valueDate));
+                amount = amount.add(amountProvider.getTotalAmount(valueDate));
             }
         }
 
@@ -83,15 +83,15 @@ public class Category implements DataEntity, Tree, AmountProvider, UserProperty 
     }
 
     @Override
-    public Amount getAmount(TimeRange timeRange) {
+    public Amount getTotalAmount(TimeRange timeRange) {
         Amount amount = new Amount();
 
         for (AmountProvider amountProvider : this.transactions) {
-            amount = amount.add(amountProvider.getAmount(timeRange));
+            amount = amount.add(amountProvider.getTotalAmount(timeRange));
         }
         if (!this.isLeaf()) {
             for (AmountProvider amountProvider : this.children) {
-                amount = amount.add(amountProvider.getAmount(timeRange));
+                amount = amount.add(amountProvider.getTotalAmount(timeRange));
             }
         }
 
