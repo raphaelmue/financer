@@ -8,7 +8,7 @@ import {TransactionReducerProps}               from '../../../../../store/reduce
 import {DatePicker, Form, Input, notification} from 'antd';
 import {fieldIsRequiredRule}                   from '../../../../shared/user/form/rules';
 import TextArea                                from 'antd/es/input/TextArea';
-import {CreateAttachment, Product}             from '../../../../../.openapi/models';
+import {CreateAttachment, CreateProduct}       from '../../../../../.openapi/models';
 import ProductList                             from '../../../../shared/transaction/product/ProductList';
 import CategoryTreeSelect                      from '../../../../shared/category/CategoyTreeSelect';
 import CreateProductDialog                     from '../../../../shared/transaction/product/create/CreateProductDialog';
@@ -18,6 +18,7 @@ import AttachmentList                          from '../../../../shared/transact
 import CreateAttachmentDialog
                                                from '../../../../shared/transaction/attachment/create/CreateAttachmentDialog';
 import StepForm, {FormStep}                    from '../../../../shared/form/step/StepForm';
+import {PageContainer}                         from '@ant-design/pro-layout';
 
 interface CreateVariableTransactionComponentProps extends WithTranslation, UserReducerState, TransactionReducerProps {
 }
@@ -27,7 +28,7 @@ interface CreateVariableTransactionComponentState {
     valueDate: Date | undefined,
     vendor: string | undefined,
     description: string | undefined,
-    products: Product[],
+    products: CreateProduct[],
     attachments: CreateAttachment[],
     showProductDialog: boolean,
     showAttachmentDialog: boolean,
@@ -128,12 +129,14 @@ class CreateVariableTransaction extends React.Component<CreateVariableTransactio
             content: () =>
                 <div>
                     <ProductList
-                        products={this.state.products}
+                        products={this.state.products.map((value: CreateProduct) => {
+                            return {id: 0, quantity: value.quantity, amount: value.amount, name: value.name};
+                        })}
                         openProductDialog={() => this.setState({showProductDialog: true})}/>
                     <CreateProductDialog
                         visible={this.state?.showProductDialog || false}
                         onCancel={() => this.setState({showProductDialog: false})}
-                        onSubmit={(product: Product) => this.setState({
+                        onSubmit={(product: CreateProduct) => this.setState({
                             products: this.state.products.concat(product),
                             showProductDialog: false
                         })}/>
@@ -163,7 +166,7 @@ class CreateVariableTransaction extends React.Component<CreateVariableTransactio
         }
 
         return (
-            <StepForm steps={this.steps} onSubmit={this.onSubmit.bind(this)}/>
+            <PageContainer><StepForm steps={this.steps} onSubmit={this.onSubmit.bind(this)}/></PageContainer>
         );
     }
 }

@@ -12,19 +12,24 @@ import * as api                           from '../../../../store/api/transactio
 import {tableTranslations}                from '../../../../translations/translations';
 import {Button}                           from 'antd';
 import {PlusOutlined}                     from '@ant-design/icons';
-import {Link}                             from 'react-router-dom';
+import {Link, Redirect}                   from 'react-router-dom';
+import {PageContainer}                    from '@ant-design/pro-layout';
 
 
 interface VariableTransactionListComponentProps extends WithTranslation, TransactionReducerProps, UserReducerProps {
 }
 
 interface VariableTransactionListComponentState {
+    redirectToVariableTransactionDetails: number | undefined
 }
 
 class VariableTransactionList extends React.Component<VariableTransactionListComponentProps, VariableTransactionListComponentState> {
 
     constructor(props: VariableTransactionListComponentProps) {
         super(props);
+        this.state = {
+            redirectToVariableTransactionDetails: undefined
+        };
         this.loadVariableTransactions();
     }
 
@@ -38,28 +43,42 @@ class VariableTransactionList extends React.Component<VariableTransactionListCom
     }
 
     render() {
+        if (this.state.redirectToVariableTransactionDetails !== undefined) {
+            return <Redirect to={'/transactions/variable/' + this.state.redirectToVariableTransactionDetails}/>;
+        }
+
         return (
-            <ProTable<VariableTransaction>
-                columns={columns()}
-                dataSource={this.props.transactionState.variableTransactions}
-                onLoad={() => this.loadVariableTransactions()}
-                dateFormatter={'number'}
-                locale={tableTranslations()}
-                search={false}
-                pagination={false}
-                rowKey={'id'}
-                loading={this.props.transactionState.isLoading}
-                toolBarRender={() => [
-                    <Link to={'/transactions/variable/create'}>
-                        <Button
-                            key="newVariableTransactionButton"
-                            type="primary"
-                            icon={<PlusOutlined/>}>
-                            {this.props.t('Form.Button.New')}
-                        </Button>
-                    </Link>
-                ]}>
-            </ProTable>
+            <PageContainer>
+                <ProTable<VariableTransaction>
+                    columns={columns()}
+                    dataSource={this.props.transactionState.variableTransactions}
+                    rowKey={'id'}
+                    onLoad={() => this.loadVariableTransactions()}
+                    dateFormatter={'number'}
+                    locale={tableTranslations()}
+                    search={false}
+                    pagination={false}
+                    loading={this.props.transactionState.isLoading}
+                    onRow={(data, index) => {
+                        return {
+                            onClick: () => {
+                                this.setState({redirectToVariableTransactionDetails: data.id});
+                            }
+                        };
+                    }}
+                    rowClassName={'cursor: pointer;'}
+                    toolBarRender={() => [
+                        <Link to={'/transactions/variable/create'}>
+                            <Button
+                                key="newVariableTransactionButton"
+                                type="primary"
+                                icon={<PlusOutlined/>}>
+                                {this.props.t('Form.Button.New')}
+                            </Button>
+                        </Link>
+                    ]}>
+                </ProTable>
+            </PageContainer>
         );
     }
 }

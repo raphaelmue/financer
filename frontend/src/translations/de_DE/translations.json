@@ -46,7 +46,8 @@
       },
       "Attachment": {
         "CreateAttachment": "Attachment hinzufügen"
-      }
+      },
+      "TransactionDetails": "Transaktionsdetails"
     }
   },
   "Transaction": {
@@ -75,7 +76,8 @@
       "Size": "Größe",
       "UploadDate": "Upload Datum"
     },
-    "Attachments": "Anhänge"
+    "Attachments": "Anhänge",
+    "TotalAmount": "Gesamtbetrag"
   },
   "Form": {
     "Table": {
@@ -98,7 +100,8 @@
       "Add": "Hinzfügen",
       "Cancel": "Abbrechen",
       "Next": "Weiter",
-      "Previous": "Zurück"
+      "Previous": "Zurück",
+      "Edit": "Bearbeiten"
     },
     "Step": {
       "CreateVariableTransaction": {
@@ -114,7 +117,8 @@
   "Message": {
     "Transaction": {
       "VariableTransaction": {
-        "CreatedVariableTransaction": "Variable Transaktion in der Kategorie {{category}} ({{categoryClass}}) wurde erfolgreich zum {{valueDate}} erstellt."
+        "CreatedVariableTransaction": "Variable Transaktion in der Kategorie {{category}} ({{categoryClass}}) wurde erfolgreich zum {{valueDate}} erstellt.",
+        "CreatedProduct": "Produkt wurde erfolgreich erstellt und zur Transaktion hinzugefügt. "
       }
     }
   }

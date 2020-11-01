@@ -456,7 +456,7 @@ public class TransactionDomainService {
      * @param transactionId id of transaction
      * @return transaction object
      */
-    private Transaction findTransactionById(long transactionId) {
+    public Transaction findTransactionById(long transactionId) {
         Optional<? extends Transaction> transactionOptional = fixedTransactionRepository.findById(transactionId);
         if (transactionOptional.isEmpty()) {
             transactionOptional = variableTransactionRepository.findById(transactionId);

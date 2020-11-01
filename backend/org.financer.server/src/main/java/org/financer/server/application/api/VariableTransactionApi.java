@@ -19,8 +19,9 @@ import javax.validation.constraints.NotNull;
 @Tag(name = "variable-transaction", description = "Operations with variable transactions")
 public interface VariableTransactionApi {
 
+
     /**
-     * Creates a variable transaction.
+     * Creates a new variable transaction.
      *
      * @param variableTransaction transaction to be inserted
      * @return transaction object
@@ -43,6 +44,28 @@ public interface VariableTransactionApi {
                     required = true,
                     content = @Content(schema = @Schema(implementation = CreateVariableTransactionDTO.class)))
             @RequestBody @NotNull @Valid CreateVariableTransactionDTO variableTransaction);
+
+    /**
+     * Fetches a variable transaction by id.
+     *
+     * @param transactionId transaction id to be fetched
+     * @return transaction object
+     */
+    @Operation(
+            summary = "Fetches a variable transaction by id",
+            tags = {"variable-transaction", "transaction"},
+            security = @SecurityRequirement(name = "TokenAuth"))
+    @ApiResponse(
+            responseCode = "200",
+            description = "Variable transaction was successfully fetched.",
+            content = @Content(schema = @Schema(implementation = VariableTransactionDTO.class)))
+    @GetMapping(
+            value = "/variableTransactions/{transactionId}",
+            produces = {"application/json"},
+            headers = "Accept=application/json")
+    ResponseEntity<VariableTransactionDTO> getVariableTransactionById(
+            @Parameter(description = "ID of the transaction that will be fetched")
+            @PathVariable("transactionId") @NotBlank @Min(1) Long transactionId);
 
     /**
      * Updates a specified transaction.

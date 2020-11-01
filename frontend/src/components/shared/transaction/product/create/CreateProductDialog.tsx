@@ -4,12 +4,12 @@ import {WithTranslation, withTranslation} from 'react-i18next';
 import React, {RefObject}                 from 'react';
 import {Form, Input, InputNumber, Modal}  from 'antd';
 import {fieldIsRequiredRule}              from '../../../user/form/rules';
-import {Product}                          from '../../../../../.openapi/models';
+import {CreateProduct}                    from '../../../../../.openapi/models';
 import {FormInstance}                     from 'antd/lib/form';
 
 interface CreateProductDialogComponentProps extends WithTranslation {
     visible: boolean
-    onSubmit?: (product: Product) => void,
+    onSubmit?: (product: CreateProduct) => void,
     onCancel?: () => void
 }
 
@@ -48,7 +48,6 @@ class CreateProductDialog extends React.Component<CreateProductDialogComponentPr
         }
         if (this.props.onSubmit) {
             this.props.onSubmit({
-                id: 0,
                 name: this.state.productName,
                 quantity: {numberOfItems: this.state.quantity},
                 amount: {amount: this.state.amount}

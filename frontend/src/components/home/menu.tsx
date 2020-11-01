@@ -22,6 +22,9 @@ export default (): MenuDataItem[] => [
                     {
                         path: '/transactions/variable/create',
                         name: i18next.t('Menu.Transaction.CreateVariableTransaction'),
+                    }, {
+                        path: '/transactions/variable/:variableTransactionId',
+                        name: i18next.t('Menu.Transaction.TransactionDetails')
                     }
                 ]
             }, {

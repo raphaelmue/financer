@@ -41,6 +41,12 @@ public class VariableTransactionApiController implements VariableTransactionApi 
     }
 
     @Override
+    public ResponseEntity<VariableTransactionDTO> getVariableTransactionById(@NotBlank @Min(1) Long transactionId) {
+        VariableTransaction variableTransaction = (VariableTransaction) transactionDomainService.findTransactionById(transactionId);
+        return new ResponseEntity<>(modelMapper.map(variableTransaction, VariableTransactionDTO.class), HttpStatus.OK);
+    }
+
+    @Override
     public ResponseEntity<VariableTransactionDTO> updateTransaction(@NotBlank @Min(1) Long transactionId,
                                                                     @NotNull @Valid UpdateVariableTransactionDTO variableTransaction) {
         VariableTransaction updateTransaction = transactionDomainService.updateVariableTransaction(transactionId,

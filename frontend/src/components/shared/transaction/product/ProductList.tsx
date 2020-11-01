@@ -12,7 +12,7 @@ import {columns}                          from './colums';
 
 interface ProductListComponentProps extends WithTranslation {
     openProductDialog: () => void,
-    products: Product[]
+    products?: Product[]
 }
 
 interface ProductComponentState {
@@ -26,7 +26,7 @@ class ProductList extends React.Component<ProductListComponentProps, ProductComp
                 headerTitle={this.props.t('Transaction.Products')}
                 rowSelection={{}}
                 columns={columns()}
-                dataSource={this.props.products}
+                dataSource={this.props.products || []}
                 dateFormatter={'number'}
                 locale={tableTranslations()}
                 rowKey={'id'}
