@@ -16,6 +16,7 @@ module org.financer.shared {
     requires java.persistence;
     requires commons.validator;
     requires java.validation;
+    requires spring.hateoas;
     requires com.fasterxml.jackson.annotation;
     requires com.fasterxml.jackson.databind;
     requires io.swagger.v3.oas.annotations;

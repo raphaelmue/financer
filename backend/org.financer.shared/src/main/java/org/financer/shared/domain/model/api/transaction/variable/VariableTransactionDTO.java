@@ -2,18 +2,21 @@ package org.financer.shared.domain.model.api.transaction.variable;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.financer.shared.domain.model.api.AmountProviderDTO;
-import org.financer.shared.domain.model.api.DataTransferObject;
 import org.financer.shared.domain.model.api.category.CategoryDTO;
 import org.financer.shared.domain.model.api.transaction.AttachmentDTO;
+import org.financer.shared.domain.model.value.objects.Amount;
 import org.financer.shared.domain.model.value.objects.ValueDate;
+import org.springframework.hateoas.RepresentationModel;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import java.util.Objects;
 import java.util.Set;
 
+
 @Schema(name = "VariableTransaction", description = "Schema of a variable transaction")
-public class VariableTransactionDTO extends AmountProviderDTO implements DataTransferObject {
+public class VariableTransactionDTO extends RepresentationModel<VariableTransactionDTO> implements AmountProviderDTO {
 
     @NotNull
     @Min(1)
@@ -39,6 +42,8 @@ public class VariableTransactionDTO extends AmountProviderDTO implements DataTra
 
     @Schema(description = "List of products of the variable transaction")
     private Set<@Valid ProductDTO> products;
+
+    private Amount totalAmount;
 
     public int getId() {
         return id;
@@ -101,5 +106,29 @@ public class VariableTransactionDTO extends AmountProviderDTO implements DataTra
     public VariableTransactionDTO setProducts(Set<ProductDTO> products) {
         this.products = products;
         return this;
+    }
+
+    @Override
+    public Amount getTotalAmount() {
+        return totalAmount;
+    }
+
+    @Override
+    public void setTotalAmount(Amount totalAmount) {
+        this.totalAmount = totalAmount;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        VariableTransactionDTO that = (VariableTransactionDTO) o;
+        return id == that.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), id);
     }
 }

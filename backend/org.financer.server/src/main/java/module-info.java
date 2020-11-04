@@ -31,6 +31,7 @@ module org.financer.server {
     requires spring.security.core;
     requires spring.security.config;
     requires spring.core;
+    requires spring.hateoas;
     requires slf4j.api;
     requires net.bytebuddy;
     requires com.fasterxml.classmate;
@@ -43,6 +44,8 @@ module org.financer.server {
     requires springdoc.openapi.common;
     requires springdoc.openapi.ui;
     requires springdoc.openapi.webmvc.core;
+    requires springdoc.openapi.hateoas;
+    requires io.swagger.v3.core;
     requires io.swagger.v3.oas.models;
     requires io.swagger.v3.oas.annotations;
     requires io.github.classgraph;
@@ -62,6 +65,9 @@ module org.financer.server {
     opens org.financer.server.domain.model.category to spring.core, org.hibernate.orm.core, modelmapper;
     opens org.financer.server.domain.model.transaction to spring.core, org.hibernate.orm.core, modelmapper;
 
+    opens org.financer.server.application.model to spring.core;
+    opens org.financer.server.application.model.transaction.variable to spring.core;
+
     exports org.financer.server.domain.service to spring.core, spring.beans;
     exports org.financer.server.domain.repository to spring.core, spring.beans, spring.data.commons, spring.aop;
 
@@ -74,4 +80,7 @@ module org.financer.server {
     exports org.financer.server.application.service to spring.beans, spring.aop;
     exports org.financer.server.application.api.error to com.fasterxml.jackson.databind;
     exports org.financer.server.application.configuration to spring.beans, spring.context, org.flywaydb.core;
+
+    exports org.financer.server.application.model to spring.beans;
+    exports org.financer.server.application.model.transaction.variable to spring.beans;
 }

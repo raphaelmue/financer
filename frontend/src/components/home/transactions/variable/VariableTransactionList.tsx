@@ -20,7 +20,9 @@ interface VariableTransactionListComponentProps extends WithTranslation, Transac
 }
 
 interface VariableTransactionListComponentState {
-    redirectToVariableTransactionDetails: number | undefined
+    redirectToVariableTransactionDetails: number | undefined,
+    page: number,
+    pageSize: number
 }
 
 class VariableTransactionList extends React.Component<VariableTransactionListComponentProps, VariableTransactionListComponentState> {
@@ -28,18 +30,28 @@ class VariableTransactionList extends React.Component<VariableTransactionListCom
     constructor(props: VariableTransactionListComponentProps) {
         super(props);
         this.state = {
-            redirectToVariableTransactionDetails: undefined
+            redirectToVariableTransactionDetails: undefined,
+            page: 0,
+            pageSize: 20
         };
         this.loadVariableTransactions();
     }
 
-    loadVariableTransactions(page?: number) {
+    loadVariableTransactions() {
         if (this.props.userState.user) {
             this.props.dispatchLoadVariableTransactions({
                 userId: this.props.userState.user.id,
-                page: page
+                page: this.state.page,
+                pageSize: this.state.pageSize
             });
         }
+    }
+
+    onPaginationChange(page: number, pageSize?: number) {
+        this.setState({
+            page: page - 1,
+            pageSize: pageSize || 20
+        }, () => this.loadVariableTransactions());
     }
 
     render() {
@@ -57,9 +69,15 @@ class VariableTransactionList extends React.Component<VariableTransactionListCom
                     dateFormatter={'number'}
                     locale={tableTranslations()}
                     search={false}
-                    pagination={false}
+                    pagination={{
+                        total: this.props.transactionState.pageMetadata?.totalElements || 0,
+                        locale: "en_US",
+                        current: this.state.page + 1,
+                        pageSize: this.state.pageSize,
+                        onChange: this.onPaginationChange.bind(this)
+                    }}
                     loading={this.props.transactionState.isLoading}
-                    onRow={(data, index) => {
+                    onRow={(data) => {
                         return {
                             onClick: () => {
                                 this.setState({redirectToVariableTransactionDetails: data.id});

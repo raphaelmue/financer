@@ -1,10 +1,11 @@
-import {VariableTransaction}                            from '../../.openapi/models';
-import {ReducerState}                                   from './reducers';
+import {PageMetadata, VariableTransaction} from '../../.openapi/models';
+import {ReducerState} from './reducers';
 import {TransactionAction, TransactionActionDefinition} from '../actions/transaction.actions';
-import {TransactionApi}                                 from '../api/transaction.api';
+import {TransactionApi} from '../api/transaction.api';
 
 export interface TransactionState extends ReducerState {
     variableTransactions: VariableTransaction[],
+    pageMetadata?: PageMetadata
 }
 
 export interface TransactionReducerProps extends TransactionApi {
@@ -14,7 +15,8 @@ export interface TransactionReducerProps extends TransactionApi {
 const initialState: TransactionState = {
     error: undefined,
     isLoading: false,
-    variableTransactions: []
+    variableTransactions: [],
+    pageMetadata: undefined
 };
 
 export const transactionReducer = (state: TransactionState = initialState, action: TransactionAction) => {
@@ -22,7 +24,13 @@ export const transactionReducer = (state: TransactionState = initialState, actio
         case TransactionActionDefinition.LOAD_VARIABLE_TRANSACTIONS_REQUEST:
             return {...state, isLoading: true, error: undefined};
         case TransactionActionDefinition.LOAD_VARIABLE_TRANSACTIONS_SUCCESS:
-            return {...state, isLoading: false, error: undefined, variableTransactions: action.payload};
+            return {
+                ...state,
+                isLoading: false,
+                error: undefined,
+                variableTransactions: action.payload.embedded?.variableTransactionDTOList || [],
+                pageMetadata: action.payload.page
+            };
         case TransactionActionDefinition.LOAD_VARIABLE_TRANSACTIONS_FAILED:
             return {...state, isLoading: false, error: action.payload};
         case TransactionActionDefinition.LOAD_VARIABLE_TRANSACTION_REQUEST:

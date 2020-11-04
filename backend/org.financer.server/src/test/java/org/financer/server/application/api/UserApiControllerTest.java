@@ -3,6 +3,7 @@ package org.financer.server.application.api;
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.financer.server.application.FinancerServer;
 import org.financer.server.application.configuration.WebSecurityConfiguration;
+import org.financer.server.domain.model.transaction.VariableTransaction;
 import org.financer.server.domain.model.user.Setting;
 import org.financer.server.domain.model.user.User;
 import org.financer.shared.domain.model.api.DataTransferObject;
@@ -21,6 +22,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureWebMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.test.web.servlet.MvcResult;
 
 import java.time.LocalDate;
@@ -155,7 +157,7 @@ public class UserApiControllerTest extends ApiTest {
 
     @Test
     public void testGetUsersVariableTransactions() throws Exception {
-        when(userDomainService.fetchVariableTransactions(anyInt())).thenReturn(List.of(variableTransaction()));
+        when(userDomainService.fetchVariableTransactions(anyInt(), anyInt())).thenReturn(new PageImpl<>(List.of(variableTransaction())));
 
         MvcResult result = mockMvc.perform(buildRequest(PathBuilder.Get().users().userId(1).variableTransactions().build()))
                 .andExpect(status().isOk()).andReturn();

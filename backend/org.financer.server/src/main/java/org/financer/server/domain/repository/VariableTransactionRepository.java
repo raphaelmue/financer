@@ -6,7 +6,4 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface VariableTransactionRepository extends JpaRepository<VariableTransaction, Long>, VariableTransactionRepositoryCustom {
-
-    int PAGE_SIZE = 20;
-
 }

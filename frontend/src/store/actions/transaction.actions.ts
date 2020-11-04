@@ -5,8 +5,8 @@ import {
     GetUsersVariableTransactionsRequest,
     GetVariableTransactionByIdRequest
 }                                     from '../../.openapi/apis';
-import {ErrorMessage}                 from '../errorMessage';
-import {Product, VariableTransaction} from '../../.openapi/models';
+import {ErrorMessage}                                                from '../errorMessage';
+import {PagedModelVariableTransaction, Product, VariableTransaction} from '../../.openapi/models';
 
 export enum TransactionActionDefinition {
     LOAD_VARIABLE_TRANSACTIONS_REQUEST = 'TRANSACTIONS:LOAD_VARIABLE_TRANSACTIONS_REQUEST',
@@ -44,7 +44,7 @@ interface LoadVariableTransactionsRequestAction extends Action {
 
 interface LoadVariableTransactionsSuccessAction extends Action {
     type: TransactionActionDefinition.LOAD_VARIABLE_TRANSACTIONS_SUCCESS,
-    payload: VariableTransaction[]
+    payload: PagedModelVariableTransaction
 }
 
 interface LoadVariableTransactionsFailedAction extends Action {

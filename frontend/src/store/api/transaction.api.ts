@@ -8,9 +8,9 @@ import {
 }                                     from '../../.openapi/apis';
 import {Dispatch}                     from 'redux';
 import {apiConfiguration}             from './index';
-import {ErrorMessage}                 from '../errorMessage';
-import {Product, VariableTransaction} from '../../.openapi/models';
-import {TransactionActionDefinition}  from '../actions/transaction.actions';
+import {ErrorMessage}                                                from '../errorMessage';
+import {PagedModelVariableTransaction, Product, VariableTransaction} from '../../.openapi/models';
+import {TransactionActionDefinition}                                 from '../actions/transaction.actions';
 
 export const loadVariableTransactions = (data: GetUsersVariableTransactionsRequest) => {
     return (dispatch: Dispatch) => {
@@ -20,7 +20,7 @@ export const loadVariableTransactions = (data: GetUsersVariableTransactionsReque
         });
         let api = new UserApi(apiConfiguration());
         ErrorMessage.resolveError(api.getUsersVariableTransactions(data)
-            .then((transactions: VariableTransaction[]) => dispatch({
+            .then((transactions: PagedModelVariableTransaction) => dispatch({
                 type: TransactionActionDefinition.LOAD_VARIABLE_TRANSACTIONS_SUCCESS,
                 payload: transactions
             })), TransactionActionDefinition.LOAD_VARIABLE_TRANSACTIONS_FAILED, dispatch);
