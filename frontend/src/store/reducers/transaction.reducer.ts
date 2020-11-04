@@ -28,7 +28,7 @@ export const transactionReducer = (state: TransactionState = initialState, actio
                 ...state,
                 isLoading: false,
                 error: undefined,
-                variableTransactions: action.payload.embedded?.variableTransactionDTOList || [],
+                variableTransactions: action.payload.embedded?.variableTransactionDToes || [],
                 pageMetadata: action.payload.page
             };
         case TransactionActionDefinition.LOAD_VARIABLE_TRANSACTIONS_FAILED:

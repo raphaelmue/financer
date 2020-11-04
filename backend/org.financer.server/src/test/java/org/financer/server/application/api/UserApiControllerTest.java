@@ -157,7 +157,7 @@ public class UserApiControllerTest extends ApiTest {
 
     @Test
     public void testGetUsersVariableTransactions() throws Exception {
-        when(userDomainService.fetchVariableTransactions(anyInt(), anyInt())).thenReturn(new PageImpl<>(List.of(variableTransaction())));
+        when(userDomainService.fetchVariableTransactions(any())).thenReturn(new PageImpl<>(List.of(variableTransaction())));
 
         MvcResult result = mockMvc.perform(buildRequest(PathBuilder.Get().users().userId(1).variableTransactions().build()))
                 .andExpect(status().isOk()).andReturn();

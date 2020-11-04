@@ -18,9 +18,7 @@ import org.financer.util.collections.Iterables;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -301,8 +299,7 @@ public class UserDomainService {
      * @param page page number that is fetched
      * @return list of variable transactions.
      */
-    public Page<VariableTransaction> fetchVariableTransactions(int page, int pageSize) {
-        Pageable pageable = PageRequest.of(page, pageSize, Sort.by("valueDate.date").descending());
+    public Page<VariableTransaction> fetchVariableTransactions(Pageable pageable) {
         return variableTransactionRepository.findByCategoryUserId(authenticationService.getUserId(), pageable);
     }
 

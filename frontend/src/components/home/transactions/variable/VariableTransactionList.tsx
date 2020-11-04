@@ -42,7 +42,7 @@ class VariableTransactionList extends React.Component<VariableTransactionListCom
             this.props.dispatchLoadVariableTransactions({
                 userId: this.props.userState.user.id,
                 page: this.state.page,
-                pageSize: this.state.pageSize
+                size: this.state.pageSize
             });
         }
     }
@@ -71,7 +71,7 @@ class VariableTransactionList extends React.Component<VariableTransactionListCom
                     search={false}
                     pagination={{
                         total: this.props.transactionState.pageMetadata?.totalElements || 0,
-                        locale: "en_US",
+                        locale: 'en_US',
                         current: this.state.page + 1,
                         pageSize: this.state.pageSize,
                         onChange: this.onPaginationChange.bind(this)
@@ -84,7 +84,7 @@ class VariableTransactionList extends React.Component<VariableTransactionListCom
                             }
                         };
                     }}
-                    rowClassName={'cursor: pointer;'}
+                    rowClassName={'cursor: pointer'}
                     toolBarRender={() => [
                         <Link to={'/transactions/variable/create'}>
                             <Button

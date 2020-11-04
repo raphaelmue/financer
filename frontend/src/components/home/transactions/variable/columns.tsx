@@ -15,7 +15,8 @@ export const columns = (): ProColumns<VariableTransaction>[] => [
         title: i18next.t('Transaction.ValueDate'),
         dataIndex: ['valueDate', 'date'],
         valueType: 'date',
-        sortOrder: 'descend'
+        sortDirections: ['ascend', 'descend'],
+        sorter: (a, b) => a.valueDate.date.getMilliseconds() - b.valueDate.date.getMilliseconds(),
     }, {
         key: 'category',
         title: i18next.t('Transaction.Category.Name'),
@@ -36,6 +37,6 @@ export const columns = (): ProColumns<VariableTransaction>[] => [
         title: i18next.t('Transaction.Amount'),
         dataIndex: ['totalAmount', 'amount'],
         valueType: 'money',
-        render: (dom, entity) => (<AmountLabel amount={entity.totalAmount} />)
+        render: (dom, entity) => (<AmountLabel amount={entity.totalAmount}/>)
     }
 ];

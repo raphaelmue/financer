@@ -4,7 +4,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeIn;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
-import io.swagger.v3.oas.annotations.links.Link;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -12,6 +11,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.financer.server.application.api.util.PageableParameters;
 import org.financer.shared.domain.model.api.category.CategoryDTO;
 import org.financer.shared.domain.model.api.transaction.fixed.FixedTransactionDTO;
 import org.financer.shared.domain.model.api.transaction.variable.VariableTransactionDTO;
@@ -20,12 +20,14 @@ import org.financer.shared.domain.model.api.user.UpdatePersonalInformationDTO;
 import org.financer.shared.domain.model.api.user.UpdateSettingsDTO;
 import org.financer.shared.domain.model.api.user.UserDTO;
 import org.financer.shared.domain.model.value.objects.HashedPassword;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -272,8 +274,7 @@ public interface UserApi {
      * Fetches the users variable transactions.
      *
      * @param userId   user id
-     * @param page
-     * @param pageSize
+     * @param pageable
      * @return list of transactions
      */
     @Operation(
@@ -282,8 +283,8 @@ public interface UserApi {
             security = @SecurityRequirement(name = "TokenAuth"))
     @ApiResponse(
             responseCode = "200",
-            description = "Users variable transactions were successfully fetched"
-    )
+            description = "Users variable transactions were successfully fetched")
+    @PageableParameters
     @GetMapping(
             value = "/users/{userId}/variableTransactions",
             produces = {"application/json"},
@@ -291,8 +292,6 @@ public interface UserApi {
     ResponseEntity<PagedModel<VariableTransactionDTO>> getUsersVariableTransactions(
             @Parameter(description = "ID of the user whose variable transactions will be fetched", required = true)
             @PathVariable("userId") @NotBlank @Min(1) Long userId,
-            @Parameter(description = "Number of the page (default is 0)")
-            @Valid @RequestParam(value = "page", defaultValue = "0") int page,
-            @Parameter(description = "Size of the page (page size is 20)")
-            @Valid @RequestParam(value = "pageSize", defaultValue = "20") @Max(100) int pageSize);
+            @Parameter(hidden = true) @Valid
+            @PageableDefault(size = 20, sort = "valueDate.date", direction = Sort.Direction.DESC) Pageable pageable);
 }

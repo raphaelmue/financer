@@ -52,6 +52,7 @@ public interface VariableTransactionApi {
      * @return transaction object
      */
     @Operation(
+            operationId = "getVariableTransactionById",
             summary = "Fetches a variable transaction by id",
             tags = {"variable-transaction", "transaction"},
             security = @SecurityRequirement(name = "TokenAuth"))

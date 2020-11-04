@@ -21,6 +21,7 @@ import org.financer.util.mapping.ModelMapperUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -118,9 +119,9 @@ public class UserApiController implements UserApi {
     }
 
     @Override
-    public ResponseEntity<PagedModel<VariableTransactionDTO>> getUsersVariableTransactions(@NotBlank @Min(1) Long userId, @Valid int page, @Valid int pageSize) {
+    public ResponseEntity<PagedModel<VariableTransactionDTO>> getUsersVariableTransactions(@NotBlank @Min(1) Long userId, @Valid Pageable pageable) {
         authenticationService.getAuthenticatedUser().throwIfNotUsersProperty(userId);
-        Page<VariableTransaction> variableTransactions = userDomainService.fetchVariableTransactions(page, pageSize);
+        Page<VariableTransaction> variableTransactions = userDomainService.fetchVariableTransactions(pageable);
         return new ResponseEntity<>(assemblerService.toPagedModel(variableTransactions), HttpStatus.OK);
     }
 
