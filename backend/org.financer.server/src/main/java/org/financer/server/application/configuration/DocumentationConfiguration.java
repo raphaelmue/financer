@@ -59,7 +59,7 @@ public class DocumentationConfiguration {
                                 "at the temporal progression of your expenses as well as on your revenues.")
                         .license(new License().name("BSD 3-Clause").url("https://github.com/raphaelmue/financer/blob/master/LICENSE"))
                         .contact(new Contact().name("Raphael Müßeler").email("raphael@muesseler.de").url("https://raphael-muesseler.de")))
-                .addServersItem(new Server().url("https://localhost:3001" + contextPath).description("Default Server for development."))
+                .addServersItem(new Server().url("http://localhost:3001" + contextPath).description("Default Server for development."))
                 .addServersItem(new Server().url("https://api.financer-project.org" + contextPath).description("Default Server for production."));
     }
 }

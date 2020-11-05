@@ -59,6 +59,12 @@ export const transactionReducer = (state: TransactionState = initialState, actio
             return {...state, isLoading: false, error: undefined};
         case TransactionActionDefinition.CREATE_PRODUCT_FAILED:
             return {...state, isLoading: false, error: action.payload};
+        case TransactionActionDefinition.DELETE_VARIABLE_TRANSACTION_REQUEST:
+            return {...state, isLoading: true, error: undefined};
+        case TransactionActionDefinition.DELETE_VARIABLE_TRANSACTION_SUCCESS:
+            return {...state, isLoading: false, error: undefined};
+        case TransactionActionDefinition.DELETE_VARIABLE_TRANSACTION_FAILED:
+            return {...state, isLoading: false, error: action.payload};
         default:
             return state;
     }

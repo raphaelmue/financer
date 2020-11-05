@@ -103,6 +103,7 @@ public interface VariableTransactionApi {
      * @return null
      */
     @Operation(
+            operationId = "deleteVariableTransaction",
             summary = "Deletes a variable transaction",
             tags = {"variable-transaction", "transaction"},
             security = @SecurityRequirement(name = "TokenAuth"))

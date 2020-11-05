@@ -101,7 +101,8 @@
       "Cancel": "Cancel",
       "Next": "Next",
       "Previous": "Previous",
-      "Edit": "Edit"
+      "Edit": "Edit",
+      "Ok": "Ok"
     },
     "Step": {
       "CreateVariableTransaction": {
@@ -118,7 +119,9 @@
     "Transaction": {
       "VariableTransaction": {
         "CreatedVariableTransaction": "Variable transaction in category {{category}} ({{categoryClass}}) was successfully created for {{{valueDate}}.",
-        "CreatedProduct": "Product was successfully created and added to the transaction. "
+        "CreatedProduct": "Product was successfully created and added to the transaction. ",
+        "ConfirmDeleteVariableTransaction": "Are you sure you want to delete this variable transaction?",
+        "DeletedVariableTransaction": "Variable transaction was successfully deleted."
       }
     }
   }

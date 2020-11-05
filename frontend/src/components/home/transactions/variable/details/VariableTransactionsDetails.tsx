@@ -1,27 +1,33 @@
-import {withTranslation, WithTranslation}           from 'react-i18next';
-import React                                        from 'react';
-import {Link, RouteComponentProps}                  from 'react-router-dom';
-import {AppState}                                   from '../../../../../store/reducers/root.reducers';
-import {bindActionCreators, Dispatch}               from 'redux';
-import {connect}                                    from 'react-redux';
-import * as api                                     from '../../../../../store/api/transaction.api';
-import {TransactionReducerProps}                    from '../../../../../store/reducers/transaction.reducer';
-import {CreateProduct, VariableTransaction}         from '../../../../../.openapi/models';
-import {Button, Descriptions, notification, Result} from 'antd';
-import {PageContainer}                              from '@ant-design/pro-layout';
-import Text                                         from 'antd/lib/typography/Text';
-import i18next                                      from 'i18next';
+import {withTranslation, WithTranslation}    from 'react-i18next';
+import React                                 from 'react';
+import {Link, Redirect, RouteComponentProps} from 'react-router-dom';
+import {AppState}                            from '../../../../../store/reducers/root.reducers';
+import {bindActionCreators, Dispatch}        from 'redux';
+import {connect}                             from 'react-redux';
+import * as api                              from '../../../../../store/api/transaction.api';
+import {TransactionReducerProps}             from '../../../../../store/reducers/transaction.reducer';
+import {
+    CreateProduct,
+    VariableTransaction
+}                                            from '../../../../../.openapi/models';
+import {
+    Button, Descriptions, Modal,
+    notification, Result, Space
+}                                            from 'antd';
+import {DeleteOutlined, EditOutlined}        from '@ant-design/icons';
+import {PageContainer}                       from '@ant-design/pro-layout';
+import Text                                  from 'antd/lib/typography/Text';
+import i18next                               from 'i18next';
 import AmountStatistics
-                                                    from '../../../../shared/transaction/amount/amountStatistics/AmountStatistics';
-import ProductList                                  from '../../../../shared/transaction/product/ProductList';
+                                             from '../../../../shared/transaction/amount/amountStatistics/AmountStatistics';
+import ProductList                           from '../../../../shared/transaction/product/ProductList';
 import ValueDateLabel
-                                                    from '../../../../shared/transaction/valueDate/valueDateLabel/ValueDateLabel';
-import ProCard                                      from '@ant-design/pro-card';
-import AttachmentList                               from '../../../../shared/transaction/attachment/AttachmentList';
-import CreateProductDialog
-                                                    from '../../../../shared/transaction/product/create/CreateProductDialog';
+                                             from '../../../../shared/transaction/valueDate/valueDateLabel/ValueDateLabel';
+import ProCard                               from '@ant-design/pro-card';
+import AttachmentList                        from '../../../../shared/transaction/attachment/AttachmentList';
+import CreateProductDialog                   from '../../../../shared/transaction/product/create/CreateProductDialog';
 import CreateAttachmentDialog
-                                                    from '../../../../shared/transaction/attachment/create/CreateAttachmentDialog';
+                                             from '../../../../shared/transaction/attachment/create/CreateAttachmentDialog';
 
 const {Item} = Descriptions;
 
@@ -38,6 +44,7 @@ interface VariableTransactionsDetailsComponentState {
     activeTab: string,
     showProductDialog: boolean,
     showAttachmentDialog: boolean,
+    redirectToVariableTransactionList: boolean
 }
 
 class VariableTransactionsDetails extends React.Component<VariableTransactionsDetailsComponentProps,
@@ -50,6 +57,7 @@ class VariableTransactionsDetails extends React.Component<VariableTransactionsDe
             activeTab: 'productsTab',
             showProductDialog: false,
             showAttachmentDialog: false,
+            redirectToVariableTransactionList: false
         };
     }
 
@@ -62,6 +70,24 @@ class VariableTransactionsDetails extends React.Component<VariableTransactionsDe
                     this.setState({variableTransaction: variableTransaction});
                 });
         }
+    }
+
+    onDeleteVariableTransaction() {
+        let that = this;
+        Modal.confirm({
+            title: this.props.t('Transaction.VariableTransaction'),
+            content: this.props.t('Message.Transaction.VariableTransaction.ConfirmDeleteVariableTransaction'),
+            centered: true,
+            okText: this.props.t('Form.Button.Ok'),
+            cancelText: this.props.t('Form.Button.Cancel'),
+            onOk() {
+                that.props.dispatchDeleteVariableTransaction({transactionId: that.state.variableTransaction?.id!});
+                that.setState({redirectToVariableTransactionList: true}, () => notification.success({
+                    message: that.props.t('Transaction.VariableTransaction'),
+                    description: that.props.t('Message.Transaction.VariableTransaction.DeletedVariableTransaction')
+                }));
+            },
+        });
     }
 
     private addProduct(product: CreateProduct) {
@@ -84,6 +110,10 @@ class VariableTransactionsDetails extends React.Component<VariableTransactionsDe
     }
 
     render() {
+        if (this.state.redirectToVariableTransactionList) {
+            return <Redirect to={'/transactions/variable'}/>;
+        }
+
         if (!this.props.transactionState.isLoading && this.state.variableTransaction === undefined) {
             return (
                 <Result
@@ -116,7 +146,19 @@ class VariableTransactionsDetails extends React.Component<VariableTransactionsDe
                                     {this.state.variableTransaction?.description}
                                 </Item>
                             </Descriptions>)}
-                        extra={<Button>{this.props.t('Form.Button.Edit')}</Button>}
+                        extra={
+                            <Space size={'small'}>
+                                <Button icon={<EditOutlined/>}
+                                >
+                                    {this.props.t('Form.Button.Edit')}
+                                </Button>
+                                <Button danger
+                                        type={'primary'}
+                                        icon={<DeleteOutlined/>}
+                                        onClick={this.onDeleteVariableTransaction.bind(this)}>
+                                    {this.props.t('Form.Button.Delete')}
+                                </Button>
+                            </Space>}
                         extraContent={
                             <AmountStatistics
                                 data={this.state.variableTransaction?.totalAmount}/>}
@@ -165,7 +207,8 @@ const mapStateToProps = (state: AppState) => {
 
 const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({
     dispatchLoadVariableTransaction: api.loadVariableTransaction,
-    dispatchCreateProduct: api.createProduct
+    dispatchCreateProduct: api.createProduct,
+    dispatchDeleteVariableTransaction: api.deleteVariableTransaction
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(withTranslation()(VariableTransactionsDetails));

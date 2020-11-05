@@ -1,10 +1,11 @@
-import {Action}                       from 'redux';
+import {Action}                                                      from 'redux';
 import {
     CreateProductRequest,
     CreateTransactionRequest,
+    DeleteVariableTransactionRequest,
     GetUsersVariableTransactionsRequest,
     GetVariableTransactionByIdRequest
-}                                     from '../../.openapi/apis';
+}                                                                    from '../../.openapi/apis';
 import {ErrorMessage}                                                from '../errorMessage';
 import {PagedModelVariableTransaction, Product, VariableTransaction} from '../../.openapi/models';
 
@@ -21,6 +22,9 @@ export enum TransactionActionDefinition {
     CREATE_PRODUCT_REQUEST = 'TRANSACTION:CREATE_PRODUCT_REQUEST',
     CREATE_PRODUCT_SUCCESS = 'TRANSACTION:CREATE_PRODUCT_SUCCESS',
     CREATE_PRODUCT_FAILED = 'TRANSACTION:CREATE_PRODUCT_FAILED',
+    DELETE_VARIABLE_TRANSACTION_REQUEST = 'TRANSACTION:DELETE_VARIABLE_TRANSACTION_REQUEST',
+    DELETE_VARIABLE_TRANSACTION_SUCCESS = 'TRANSACTION:DELETE_VARIABLE_TRANSACTION_SUCCESS',
+    DELETE_VARIABLE_TRANSACTION_FAILED = 'TRANSACTION:DELETE_VARIABLE_TRANSACTION_FAILED',
 
 }
 
@@ -35,7 +39,10 @@ export type TransactionAction = LoadVariableTransactionsRequestAction
     | CreateVariableTransactionFailedAction
     | CreateProductRequestAction
     | CreateProductSuccessAction
-    | CreateProductFailedAction;
+    | CreateProductFailedAction
+    | DeleteVariableTransactionRequestAction
+    | DeleteVariableTransactionSuccessAction
+    | DeleteVariableTransactionFailedAction;
 
 interface LoadVariableTransactionsRequestAction extends Action {
     type: TransactionActionDefinition.LOAD_VARIABLE_TRANSACTIONS_REQUEST,
@@ -94,5 +101,19 @@ interface CreateProductSuccessAction extends Action {
 
 interface CreateProductFailedAction extends Action {
     type: TransactionActionDefinition.CREATE_PRODUCT_FAILED,
+    payload: ErrorMessage
+}
+
+interface DeleteVariableTransactionRequestAction extends Action {
+    type: TransactionActionDefinition.DELETE_VARIABLE_TRANSACTION_REQUEST,
+    payload: DeleteVariableTransactionRequest
+}
+
+interface DeleteVariableTransactionSuccessAction extends Action {
+    type: TransactionActionDefinition.DELETE_VARIABLE_TRANSACTION_SUCCESS
+}
+
+interface DeleteVariableTransactionFailedAction extends Action {
+    type: TransactionActionDefinition.DELETE_VARIABLE_TRANSACTION_FAILED,
     payload: ErrorMessage
 }

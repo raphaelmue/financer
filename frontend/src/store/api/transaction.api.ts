@@ -1,13 +1,13 @@
 import {
     CreateProductRequest,
-    CreateTransactionRequest,
+    CreateTransactionRequest, DeleteVariableTransactionRequest,
     GetUsersVariableTransactionsRequest,
     GetVariableTransactionByIdRequest,
     UserApi,
     VariableTransactionApi
-}                                     from '../../.openapi/apis';
-import {Dispatch}                     from 'redux';
-import {apiConfiguration}             from './index';
+}                                                                    from '../../.openapi/apis';
+import {Dispatch}                                                    from 'redux';
+import {apiConfiguration}                                            from './index';
 import {ErrorMessage}                                                from '../errorMessage';
 import {PagedModelVariableTransaction, Product, VariableTransaction} from '../../.openapi/models';
 import {TransactionActionDefinition}                                 from '../actions/transaction.actions';
@@ -87,9 +87,23 @@ export const createProduct = (data: CreateProductRequest, callback?: (product: P
     };
 };
 
+export const deleteVariableTransaction = (data: DeleteVariableTransactionRequest) => {
+    return (dispatch: Dispatch) => {
+        dispatch({
+            type: TransactionActionDefinition.DELETE_VARIABLE_TRANSACTION_REQUEST,
+            payload: data
+        });
+        let api = new VariableTransactionApi(apiConfiguration());
+        ErrorMessage.resolveError(api.deleteVariableTransaction(data)
+                .then(() => dispatch({type: TransactionActionDefinition.DELETE_VARIABLE_TRANSACTION_SUCCESS})),
+            TransactionActionDefinition.DELETE_VARIABLE_TRANSACTION_FAILED, dispatch);
+    };
+};
+
 export interface TransactionApi {
     dispatchLoadVariableTransactions: (data: GetUsersVariableTransactionsRequest) => void,
     dispatchLoadVariableTransaction: (data: GetVariableTransactionByIdRequest, callback?: (variableTransaction: VariableTransaction) => void) => void,
     dispatchCreateVariableTransaction: (data: CreateTransactionRequest, callback?: (variableTransaction: VariableTransaction) => void) => void
-    dispatchCreateProduct: (data: CreateProductRequest, callback?: (product: Product) => void) => void
+    dispatchCreateProduct: (data: CreateProductRequest, callback?: (product: Product) => void) => void,
+    dispatchDeleteVariableTransaction: (data: DeleteVariableTransactionRequest) => void
 }
