@@ -3,7 +3,6 @@ package org.financer.server.application.api;
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.financer.server.application.FinancerServer;
 import org.financer.server.application.configuration.WebSecurityConfiguration;
-import org.financer.server.domain.model.transaction.VariableTransaction;
 import org.financer.server.domain.model.user.Setting;
 import org.financer.server.domain.model.user.User;
 import org.financer.shared.domain.model.api.DataTransferObject;
@@ -23,6 +22,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureWebMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.test.web.servlet.MvcResult;
 
 import java.time.LocalDate;
@@ -31,7 +31,8 @@ import java.util.Map;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -162,10 +163,11 @@ public class UserApiControllerTest extends ApiTest {
         MvcResult result = mockMvc.perform(buildRequest(PathBuilder.Get().users().userId(1).variableTransactions().build()))
                 .andExpect(status().isOk()).andReturn();
 
-        List<VariableTransactionDTO> transactions = objectMapper.readValue(result.getResponse().getContentAsString(),
+        PagedModel<VariableTransactionDTO> transactions = objectMapper.readValue(result.getResponse().getContentAsString(),
                 new TypeReference<>() {
                 });
-        assertThat(transactions).hasSize(1);
+        assertThat(transactions.getMetadata()).isNotNull();
+        assertThat(transactions.getMetadata().getTotalElements()).isEqualTo(1);
     }
 
     @Test

@@ -1,9 +1,13 @@
 package org.financer.shared.domain.model.api.transaction.variable;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Data;
+import lombok.experimental.Accessors;
 import org.financer.shared.domain.model.api.DataTransferObject;
 import org.financer.shared.domain.model.value.objects.ValueDate;
 
+@Data
+@Accessors(chain = true)
 @Schema(name = "UpdateVariableTransaction", description = "Schema for updating a variable transaction")
 public class UpdateVariableTransactionDTO implements DataTransferObject {
 
@@ -19,39 +23,4 @@ public class UpdateVariableTransactionDTO implements DataTransferObject {
     @Schema(description = "Vendor of the variable transaction", example = "Amazon")
     private String vendor;
 
-    public long getCategoryId() {
-        return categoryId;
-    }
-
-    public UpdateVariableTransactionDTO setCategoryId(long categoryId) {
-        this.categoryId = categoryId;
-        return this;
-    }
-
-    public ValueDate getValueDate() {
-        return valueDate;
-    }
-
-    public UpdateVariableTransactionDTO setValueDate(ValueDate valueDate) {
-        this.valueDate = valueDate;
-        return this;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public UpdateVariableTransactionDTO setDescription(String description) {
-        this.description = description;
-        return this;
-    }
-
-    public String getVendor() {
-        return vendor;
-    }
-
-    public UpdateVariableTransactionDTO setVendor(String vendor) {
-        this.vendor = vendor;
-        return this;
-    }
 }
