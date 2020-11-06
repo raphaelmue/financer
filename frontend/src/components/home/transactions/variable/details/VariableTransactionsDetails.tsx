@@ -28,6 +28,7 @@ import AttachmentList                        from '../../../../shared/transactio
 import CreateProductDialog                   from '../../../../shared/transaction/product/create/CreateProductDialog';
 import CreateAttachmentDialog
                                              from '../../../../shared/transaction/attachment/create/CreateAttachmentDialog';
+import {confirmDialogConfig}                 from '../../../../shared/form/modal/confirm/config';
 
 const {Item} = Descriptions;
 
@@ -73,21 +74,22 @@ class VariableTransactionsDetails extends React.Component<VariableTransactionsDe
     }
 
     onDeleteVariableTransaction() {
-        let that = this;
-        Modal.confirm({
-            title: this.props.t('Transaction.VariableTransaction'),
-            content: this.props.t('Message.Transaction.VariableTransaction.ConfirmDeleteVariableTransaction'),
-            centered: true,
-            okText: this.props.t('Form.Button.Ok'),
-            cancelText: this.props.t('Form.Button.Cancel'),
-            onOk() {
-                that.props.dispatchDeleteVariableTransaction({transactionId: that.state.variableTransaction?.id!});
-                that.setState({redirectToVariableTransactionList: true}, () => notification.success({
-                    message: that.props.t('Transaction.VariableTransaction'),
-                    description: that.props.t('Message.Transaction.VariableTransaction.DeletedVariableTransaction')
-                }));
-            },
-        });
+        Modal.confirm(confirmDialogConfig(
+            this.props.t('Transaction.VariableTransaction'),
+            this.props.t('Message.Transaction.VariableTransaction.ConfirmDeleteVariableTransaction'),
+            () => new Promise<void>(
+                resolve => this.props.dispatchDeleteVariableTransaction({transactionId: this.state.variableTransaction?.id!},
+                    () => this.setState({redirectToVariableTransactionList: true},
+                        () => {
+                            resolve();
+                            notification.success({
+                                message: this.props.t('Transaction.VariableTransaction'),
+                                description: this.props.t('Message.Transaction.VariableTransaction.DeletedVariableTransaction')
+                            });
+                        }
+                    ))
+            )
+        ));
     }
 
     private addProduct(product: CreateProduct) {
