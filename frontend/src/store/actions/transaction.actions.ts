@@ -4,7 +4,7 @@ import {
     CreateTransactionRequest,
     DeleteVariableTransactionRequest,
     GetUsersVariableTransactionsRequest,
-    GetVariableTransactionByIdRequest
+    GetVariableTransactionByIdRequest, UpdateVariableTransactionRequest,
 }                                                                    from '../../.openapi/apis';
 import {ErrorMessage}                                                from '../errorMessage';
 import {PagedModelVariableTransaction, Product, VariableTransaction} from '../../.openapi/models';
@@ -22,6 +22,9 @@ export enum TransactionActionDefinition {
     CREATE_PRODUCT_REQUEST = 'TRANSACTION:CREATE_PRODUCT_REQUEST',
     CREATE_PRODUCT_SUCCESS = 'TRANSACTION:CREATE_PRODUCT_SUCCESS',
     CREATE_PRODUCT_FAILED = 'TRANSACTION:CREATE_PRODUCT_FAILED',
+    UPDATE_VARIABLE_TRANSACTION_REQUEST = 'TRANSACTION:UPDATE_VARIABLE_TRANSACTION_REQUEST',
+    UPDATE_VARIABLE_TRANSACTION_SUCCESS = 'TRANSACTION:UPDATE_VARIABLE_TRANSACTION_SUCCESS',
+    UPDATE_VARIABLE_TRANSACTION_FAILED = 'TRANSACTION:UPDATE_VARIABLE_TRANSACTION_FAILED',
     DELETE_VARIABLE_TRANSACTION_REQUEST = 'TRANSACTION:DELETE_VARIABLE_TRANSACTION_REQUEST',
     DELETE_VARIABLE_TRANSACTION_SUCCESS = 'TRANSACTION:DELETE_VARIABLE_TRANSACTION_SUCCESS',
     DELETE_VARIABLE_TRANSACTION_FAILED = 'TRANSACTION:DELETE_VARIABLE_TRANSACTION_FAILED',
@@ -40,6 +43,9 @@ export type TransactionAction = LoadVariableTransactionsRequestAction
     | CreateProductRequestAction
     | CreateProductSuccessAction
     | CreateProductFailedAction
+    | UpdateVariableTransactionRequestAction
+    | UpdateVariableTransactionSuccessAction
+    | UpdateVariableTransactionFailedAction
     | DeleteVariableTransactionRequestAction
     | DeleteVariableTransactionSuccessAction
     | DeleteVariableTransactionFailedAction;
@@ -101,6 +107,21 @@ interface CreateProductSuccessAction extends Action {
 
 interface CreateProductFailedAction extends Action {
     type: TransactionActionDefinition.CREATE_PRODUCT_FAILED,
+    payload: ErrorMessage
+}
+
+interface UpdateVariableTransactionRequestAction extends Action {
+    type: TransactionActionDefinition.UPDATE_VARIABLE_TRANSACTION_REQUEST,
+    payload: UpdateVariableTransactionRequest
+}
+
+interface UpdateVariableTransactionSuccessAction extends Action {
+    type: TransactionActionDefinition.UPDATE_VARIABLE_TRANSACTION_SUCCESS,
+    payload: VariableTransaction
+}
+
+interface UpdateVariableTransactionFailedAction extends Action {
+    type: TransactionActionDefinition.UPDATE_VARIABLE_TRANSACTION_FAILED,
     payload: ErrorMessage
 }
 

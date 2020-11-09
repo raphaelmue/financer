@@ -11,11 +11,13 @@ import {Category}                         from '../../../.openapi/models';
 import {DataNode, LegacyDataNode}         from 'rc-tree-select/lib/interface';
 
 interface CategoryTreeSelectComponentProps extends WithTranslation, UserReducerProps, CategoryReducerProps {
-    onChange: (categoryId: number | undefined) => void
+    onChange: (categoryId: number | undefined) => void,
+    categoryId?: number
 }
 
 interface CategoryTreeSelectComponentState {
-    categoryId: number | undefined
+    categoryId: number | undefined,
+    initialValue?: Category
 }
 
 class CategoryTreeSelect extends React.Component<CategoryTreeSelectComponentProps, CategoryTreeSelectComponentState> {
@@ -24,15 +26,20 @@ class CategoryTreeSelect extends React.Component<CategoryTreeSelectComponentProp
         super(props);
 
         this.loadCategories();
+        this.state = {
+            categoryId: props.categoryId
+        };
     }
 
     private loadCategories() {
         if (this.props.userState.user) {
-            this.props.dispatchLoadCategories({userId: this.props.userState.user.id});
+            this.props.dispatchLoadCategories({userId: this.props.userState.user.id}, () => {
+                this.setState({initialValue: this.getDefaultData()});
+            });
         }
     }
 
-    private convertTreeData(root: Category | undefined = undefined): DataNode[] {
+    private convertTreeData(root?: Category | undefined): DataNode[] {
         if (this.props.categoryState.categories.length > 0) {
             if (root) {
                 let children: DataNode[] = [];
@@ -44,6 +51,7 @@ class CategoryTreeSelect extends React.Component<CategoryTreeSelectComponentProp
 
                 return [{
                     key: root.id,
+                    value: root.id,
                     title: root.name,
                     label: root.name,
                     children: children
@@ -67,18 +75,46 @@ class CategoryTreeSelect extends React.Component<CategoryTreeSelectComponentProp
         return option?.title?.toString().toLocaleLowerCase().includes(inputValue) || false;
     };
 
+    getDefaultData(root?: Category): Category | undefined {
+        if (this.props.categoryId) {
+            let result: Category | undefined;
+            if (root !== undefined) {
+                if (root.children) {
+                    for (let category of root.children) {
+                        result = this.getDefaultData(category);
+                        if (result) {
+                            return result;
+                        }
+                    }
+                }
+                if (root.id === this.props.categoryId) {
+                    return root;
+                }
+            } else {
+                for (let category of this.props.categoryState.categories) {
+                    result = this.getDefaultData(category);
+                    if (result) {
+                        return result;
+                    }
+                }
+            }
+        }
+        return undefined;
+    };
+
     render() {
         return (
-            <TreeSelect<Category>
+            <TreeSelect
                 showSearch
+                defaultValue={this.props.categoryId}
+                key={'id'}
                 allowClear
                 placeholder={this.props.t('Transaction.Category.SelectCategoryPlaceholder')}
                 treeData={this.convertTreeData()}
                 onChange={value => this.onChange(value)}
                 filterTreeNode={this.filter}
                 treeDefaultExpandAll
-                loading={this.props.categoryState.isLoading}>
-            </TreeSelect>
+                loading={this.props.categoryState.isLoading}/>
         );
     }
 }

@@ -121,7 +121,8 @@
         "CreatedVariableTransaction": "Variable transaction in category {{category}} ({{categoryClass}}) was successfully created for {{{valueDate}}.",
         "CreatedProduct": "Product was successfully created and added to the transaction. ",
         "ConfirmDeleteVariableTransaction": "Are you sure you want to delete this variable transaction?",
-        "DeletedVariableTransaction": "Variable transaction was successfully deleted."
+        "DeletedVariableTransaction": "Variable transaction was successfully deleted.",
+        "UpdatedVariableTransaction": "The transaction data of this variable transaction was successfully changed."
       }
     }
   }

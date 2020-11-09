@@ -5,7 +5,7 @@ import {apiConfiguration}                   from './index';
 import {ErrorMessage}                       from '../errorMessage';
 import {Category}                           from '../../.openapi/models';
 
-export const loadCategories = (data: GetUsersCategoriesRequest) => {
+export const loadCategories = (data: GetUsersCategoriesRequest, callback?: (categories: Category[]) => void) => {
     return (dispatch: Dispatch) => {
         dispatch({
             type: CategoryActionDefinition.LOAD_CATEGORIES_REQUEST,
@@ -13,13 +13,16 @@ export const loadCategories = (data: GetUsersCategoriesRequest) => {
         });
         let api = new UserApi(apiConfiguration());
         ErrorMessage.resolveError(api.getUsersCategories(data)
-            .then((categories: Category[]) => dispatch({
-                type: CategoryActionDefinition.LOAD_CATEGORIES_SUCCESS,
-                payload: categories
-            })), CategoryActionDefinition.LOAD_CATEGORIES_FAILED, dispatch);
+            .then((categories: Category[]) => {
+                dispatch({
+                    type: CategoryActionDefinition.LOAD_CATEGORIES_SUCCESS,
+                    payload: categories
+                });
+                if (callback) callback(categories);
+            }), CategoryActionDefinition.LOAD_CATEGORIES_FAILED, dispatch);
     };
 };
 
 export interface CategoryApi {
-    dispatchLoadCategories: (data: GetUsersCategoriesRequest) => void
+    dispatchLoadCategories: (data: GetUsersCategoriesRequest, callback?: (categories: Category[]) => void) => void
 }

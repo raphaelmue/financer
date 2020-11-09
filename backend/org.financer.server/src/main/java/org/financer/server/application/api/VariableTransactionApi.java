@@ -76,6 +76,7 @@ public interface VariableTransactionApi {
      * @return null
      */
     @Operation(
+            operationId = "updateVariableTransaction",
             summary = "Updates a variable transaction",
             tags = {"variable-transaction", "transaction"},
             security = @SecurityRequirement(name = "TokenAuth"))

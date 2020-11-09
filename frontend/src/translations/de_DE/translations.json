@@ -121,7 +121,8 @@
         "CreatedVariableTransaction": "Variable Transaktion in der Kategorie {{category}} ({{categoryClass}}) wurde erfolgreich zum {{valueDate}} erstellt.",
         "CreatedProduct": "Produkt wurde erfolgreich erstellt und zur Transaktion hinzugefügt. ",
         "ConfirmDeleteVariableTransaction": "Bist du sicher, dass du diese variable Transaktion löschen möchtest?",
-        "DeletedVariableTransaction": "Variable Transaktion wurde erfolgreich gelöscht."
+        "DeletedVariableTransaction": "Variable Transaktion wurde erfolgreich gelöscht.",
+        "UpdatedVariableTransaction": "Die Transaktionsdaten dieser variablen Transaktion wurden erfolgreich geändern."
       }
     }
   }

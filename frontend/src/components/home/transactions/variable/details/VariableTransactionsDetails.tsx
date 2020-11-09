@@ -29,6 +29,8 @@ import CreateProductDialog                   from '../../../../shared/transactio
 import CreateAttachmentDialog
                                              from '../../../../shared/transaction/attachment/create/CreateAttachmentDialog';
 import {confirmDialogConfig}                 from '../../../../shared/form/modal/confirm/config';
+import UpdateVariableTransactionDialog
+                                             from '../../../../shared/transaction/variable/update/UpdateVariableTransactionDialog';
 
 const {Item} = Descriptions;
 
@@ -45,6 +47,7 @@ interface VariableTransactionsDetailsComponentState {
     activeTab: string,
     showProductDialog: boolean,
     showAttachmentDialog: boolean,
+    showUpdateVariableTransactionDialog: boolean
     redirectToVariableTransactionList: boolean
 }
 
@@ -58,6 +61,7 @@ class VariableTransactionsDetails extends React.Component<VariableTransactionsDe
             activeTab: 'productsTab',
             showProductDialog: false,
             showAttachmentDialog: false,
+            showUpdateVariableTransactionDialog: false,
             redirectToVariableTransactionList: false
         };
     }
@@ -130,7 +134,6 @@ class VariableTransactionsDetails extends React.Component<VariableTransactionsDe
             } else {
                 return (
                     <PageContainer
-                        loading={this.props.transactionState.isLoading}
                         content={(
                             <Descriptions column={2}>
                                 <Item label={this.props.t('Transaction.ValueDate')}>
@@ -151,7 +154,7 @@ class VariableTransactionsDetails extends React.Component<VariableTransactionsDe
                         extra={
                             <Space size={'small'}>
                                 <Button icon={<EditOutlined/>}
-                                >
+                                        onClick={() => this.setState({showUpdateVariableTransactionDialog: true})}>
                                     {this.props.t('Form.Button.Edit')}
                                 </Button>
                                 <Button danger
@@ -194,6 +197,14 @@ class VariableTransactionsDetails extends React.Component<VariableTransactionsDe
                                 // })}
                             />
                         </ProCard>
+                        <UpdateVariableTransactionDialog
+                            visible={this.state.showUpdateVariableTransactionDialog}
+                            variableTransaction={this.state.variableTransaction}
+                            onSubmit={variableTransaction => this.setState({
+                                showUpdateVariableTransactionDialog: false,
+                                variableTransaction: variableTransaction
+                            })}
+                            onCancel={() => this.setState({showUpdateVariableTransactionDialog: false})}/>
                     </PageContainer>
                 );
             }

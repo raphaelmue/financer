@@ -2,7 +2,7 @@ import {
     CreateProductRequest,
     CreateTransactionRequest, DeleteVariableTransactionRequest,
     GetUsersVariableTransactionsRequest,
-    GetVariableTransactionByIdRequest,
+    GetVariableTransactionByIdRequest, UpdateVariableTransactionRequest,
     UserApi,
     VariableTransactionApi
 }                                                                    from '../../.openapi/apis';
@@ -87,6 +87,26 @@ export const createProduct = (data: CreateProductRequest, callback?: (product: P
     };
 };
 
+export const updateVariableTransaction = (data: UpdateVariableTransactionRequest, callback?: (variableTransaction: VariableTransaction) => void) => {
+    return (dispatch: Dispatch) => {
+        dispatch({
+            type: TransactionActionDefinition.UPDATE_VARIABLE_TRANSACTION_REQUEST,
+            payload: data
+        });
+        let api = new VariableTransactionApi(apiConfiguration());
+        ErrorMessage.resolveError(api.updateVariableTransaction(data)
+            .then((variableTransaction: VariableTransaction) => {
+                dispatch({
+                    type: TransactionActionDefinition.UPDATE_VARIABLE_TRANSACTION_SUCCESS,
+                    payload: variableTransaction
+                });
+                if (callback) {
+                    callback(variableTransaction);
+                }
+            }), TransactionActionDefinition.UPDATE_VARIABLE_TRANSACTION_FAILED, dispatch);
+    };
+};
+
 export const deleteVariableTransaction = (data: DeleteVariableTransactionRequest, callback?: () => void) => {
     return (dispatch: Dispatch) => {
         dispatch({
@@ -94,8 +114,7 @@ export const deleteVariableTransaction = (data: DeleteVariableTransactionRequest
             payload: data
         });
         let api = new VariableTransactionApi(apiConfiguration());
-        // ErrorMessage.resolveError(api.deleteVariableTransaction(data)
-        ErrorMessage.resolveError(new Promise(resolve => setTimeout(() => resolve(), 5000))
+        ErrorMessage.resolveError(api.deleteVariableTransaction(data)
                 .then(() => {
                     dispatch({type: TransactionActionDefinition.DELETE_VARIABLE_TRANSACTION_SUCCESS});
                     if (callback) callback();
@@ -109,5 +128,6 @@ export interface TransactionApi {
     dispatchLoadVariableTransaction: (data: GetVariableTransactionByIdRequest, callback?: (variableTransaction: VariableTransaction) => void) => void,
     dispatchCreateVariableTransaction: (data: CreateTransactionRequest, callback?: (variableTransaction: VariableTransaction) => void) => void
     dispatchCreateProduct: (data: CreateProductRequest, callback?: (product: Product) => void) => void,
+    dispatchUpdateVariableTransaction: (data: UpdateVariableTransactionRequest, callback?: (variableTransaction: VariableTransaction) => void) => void,
     dispatchDeleteVariableTransaction: (data: DeleteVariableTransactionRequest, callback?: () => void) => void
 }

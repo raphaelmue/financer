@@ -42,19 +42,21 @@ export const transactionReducer = (state: TransactionState = initialState, actio
                 variableTransactions: state.variableTransactions.concat(action.payload)
             };
         case TransactionActionDefinition.CREATE_PRODUCT_SUCCESS:
-            return {...state, isLoading: false, error: undefined};
+        case TransactionActionDefinition.UPDATE_VARIABLE_TRANSACTION_SUCCESS:
         case TransactionActionDefinition.DELETE_VARIABLE_TRANSACTION_SUCCESS:
             return {...state, isLoading: false, error: undefined};
         case TransactionActionDefinition.LOAD_VARIABLE_TRANSACTIONS_REQUEST:
         case TransactionActionDefinition.LOAD_VARIABLE_TRANSACTION_REQUEST:
         case TransactionActionDefinition.CREATE_VARIABLE_TRANSACTION_REQUEST:
         case TransactionActionDefinition.CREATE_PRODUCT_REQUEST:
+        case TransactionActionDefinition.UPDATE_VARIABLE_TRANSACTION_REQUEST:
         case TransactionActionDefinition.DELETE_VARIABLE_TRANSACTION_REQUEST:
             return {...state, isLoading: true, error: undefined};
         case TransactionActionDefinition.LOAD_VARIABLE_TRANSACTIONS_FAILED:
         case TransactionActionDefinition.LOAD_VARIABLE_TRANSACTION_FAILED:
         case TransactionActionDefinition.CREATE_VARIABLE_TRANSACTION_FAILED:
         case TransactionActionDefinition.CREATE_PRODUCT_FAILED:
+        case TransactionActionDefinition.UPDATE_VARIABLE_TRANSACTION_FAILED:
         case TransactionActionDefinition.DELETE_VARIABLE_TRANSACTION_FAILED:
             return {...state, isLoading: false, error: action.payload};
         default:
