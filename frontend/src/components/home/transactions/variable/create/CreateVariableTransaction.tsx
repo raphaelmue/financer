@@ -77,56 +77,55 @@ class CreateVariableTransaction extends React.Component<CreateVariableTransactio
         this.setState({[e.target.name]: e.target.value} as CreateVariableTransactionComponentState);
     };
 
-    steps: FormStep[] = [
-        {
-            title: this.props.t('Form.Step.CreateVariableTransaction.TransactionData'),
-            key: 'transactionData',
-            content: () =>
-                <VariableTransactionDataForm
-                    onChange={variableTransactionData => this.setState({variableTransactionData: variableTransactionData})}/>,
-            condition: () => (this.state.variableTransactionData.valueDate !== undefined && this.state.variableTransactionData.categoryId !== undefined)
-        }, {
-            title: this.props.t('Form.Step.CreateVariableTransaction.ProductData'),
-            key: 'productData',
-            content: () =>
-                <div>
-                    <ProductList
-                        products={this.state.products.map((value: CreateProduct) => {
-                            return {
-                                id: 0,
-                                quantity: value.quantity,
-                                amount: value.amount,
-                                name: value.name,
-                                totalAmount: {amount: value.quantity.numberOfItems * value.amount.amount}
-                            };
-                        })}
-                        openProductDialog={() => this.setState({showProductDialog: true})}/>
-                    <CreateProductDialog
-                        visible={this.state?.showProductDialog || false}
-                        onCancel={() => this.setState({showProductDialog: false})}
-                        onSubmit={(product: CreateProduct) => this.setState({
-                            products: this.state.products.concat(product),
-                            showProductDialog: false
-                        })}/>
-                </div>,
-            condition: () => (this.state.products.length > 0)
-        }, {
-            title: this.props.t('Form.Step.CreateVariableTransaction.Attachments'),
-            key: 'attachments',
-            content: () =>
-                <div>
-                    <AttachmentList
-                        openAttachmentDialog={() => this.setState({showAttachmentDialog: true})}/>
-                    <CreateAttachmentDialog
-                        visible={this.state?.showAttachmentDialog || false}
-                        onCancel={() => this.setState({showAttachmentDialog: false})}
-                        // onSubmit={(attachment: UploadFile[]) => this.setState({
-                        //     attachments: this.state.attachments.concat(attachment),
-                        //     showAttachmentDialog: false
-                        // })}
-                    />
-                </div>
-        }];
+    steps: FormStep[] = [{
+        title: this.props.t('Form.Step.CreateVariableTransaction.TransactionData'),
+        key: 'transactionData',
+        content: () =>
+            <VariableTransactionDataForm
+                onChange={variableTransactionData => this.setState({variableTransactionData: variableTransactionData})}/>,
+        condition: () => (this.state.variableTransactionData.valueDate !== undefined && this.state.variableTransactionData.categoryId !== undefined)
+    }, {
+        title: this.props.t('Form.Step.CreateVariableTransaction.ProductData'),
+        key: 'productData',
+        content: () =>
+            <div>
+                <ProductList
+                    products={this.state.products.map((value: CreateProduct) => {
+                        return {
+                            id: 0,
+                            quantity: value.quantity,
+                            amount: value.amount,
+                            name: value.name,
+                            totalAmount: {amount: value.quantity.numberOfItems * value.amount.amount}
+                        };
+                    })}
+                    openProductDialog={() => this.setState({showProductDialog: true})}/>
+                <CreateProductDialog
+                    visible={this.state?.showProductDialog || false}
+                    onCancel={() => this.setState({showProductDialog: false})}
+                    onSubmit={(product: CreateProduct) => this.setState({
+                        products: this.state.products.concat(product),
+                        showProductDialog: false
+                    })}/>
+            </div>,
+        condition: () => (this.state.products.length > 0)
+    }, {
+        title: this.props.t('Form.Step.CreateVariableTransaction.Attachments'),
+        key: 'attachments',
+        content: () =>
+            <div>
+                <AttachmentList
+                    openAttachmentDialog={() => this.setState({showAttachmentDialog: true})}/>
+                <CreateAttachmentDialog
+                    visible={this.state?.showAttachmentDialog || false}
+                    onCancel={() => this.setState({showAttachmentDialog: false})}
+                    // onSubmit={(attachment: UploadFile[]) => this.setState({
+                    //     attachments: this.state.attachments.concat(attachment),
+                    //     showAttachmentDialog: false
+                    // })}
+                />
+            </div>
+    }];
 
     render() {
         if (this.state.redirectToTransactionList) {

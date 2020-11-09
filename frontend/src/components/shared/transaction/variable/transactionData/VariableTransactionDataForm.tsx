@@ -33,7 +33,7 @@ class VariableTransactionDataForm extends React.Component<VariableTransactionDat
         this.state = {
             variableTransactionMetaData: {
                 categoryId: this.props.variableTransaction?.category.id,
-                valueDate: this.props.variableTransaction?.valueDate.date,
+                valueDate: this.props.variableTransaction?.valueDate.date || new Date(),
                 vendor: this.props.variableTransaction?.vendor,
                 description: this.props.variableTransaction?.description
             }

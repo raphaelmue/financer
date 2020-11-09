@@ -1,4 +1,4 @@
-import {Button, Modal, notification, Space}                       from 'antd';
+import {Modal, notification}                                      from 'antd';
 import React                                                      from 'react';
 import {Product, VariableTransaction}                             from '../../../../../.openapi/models';
 import {TransactionReducerProps}                                  from '../../../../../store/reducers/transaction.reducer';
@@ -10,7 +10,8 @@ import * as api                                                   from '../../..
 import {withTranslation, WithTranslation}                         from 'react-i18next';
 import {
     CreateProductRequest,
-    CreateTransactionRequest, DeleteVariableTransactionRequest,
+    CreateTransactionRequest,
+    DeleteVariableTransactionRequest,
     GetUsersVariableTransactionsRequest,
     GetVariableTransactionByIdRequest
 }                                                                 from '../../../../../.openapi/apis';
