@@ -18,9 +18,6 @@ interface AmountStatisticsComponentState {
 
 
 class AmountStatistics extends React.Component<AmountStatisticsComponentProps, AmountStatisticsComponentState> {
-    constructor(props: AmountStatisticsComponentProps) {
-        super(props);
-    }
 
     getAmountOfData(data: Amount): number {
         return data.amount;

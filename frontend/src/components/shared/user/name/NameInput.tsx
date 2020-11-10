@@ -30,7 +30,7 @@ class NameInput extends React.Component<NameInputComponentProps, NameInputCompon
                 style={{marginBottom: 0}}>
                 <Form.Item
                     name="name"
-                    rules={[fieldIsRequiredRule(this.props.i18n)]}
+                    rules={[fieldIsRequiredRule()]}
                     style={{display: 'inline-block', width: 'calc(50% - 6px)'}}>
                     <Input prefix={<UserOutlined className="site-form-item-icon"/>}
                            type={'text'}
@@ -42,7 +42,7 @@ class NameInput extends React.Component<NameInputComponentProps, NameInputCompon
                     </span>
                 <Form.Item
                     name="surname"
-                    rules={[fieldIsRequiredRule(this.props.i18n)]}
+                    rules={[fieldIsRequiredRule()]}
                     style={{display: 'inline-block', width: 'calc(50% - 6px)'}}>
                     <Input prefix={<UserOutlined className="site-form-item-icon"/>}
                            type={'text'}

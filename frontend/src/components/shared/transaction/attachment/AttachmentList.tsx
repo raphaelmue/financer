@@ -1,6 +1,5 @@
 import React                              from 'react';
 import {withTranslation, WithTranslation} from 'react-i18next';
-import {AppState}                         from '../../../../store/reducers/root.reducers';
 import {bindActionCreators, Dispatch}     from 'redux';
 import {connect}                          from 'react-redux';
 import {Attachment}                       from '../../../../.openapi/models';
@@ -19,11 +18,6 @@ interface AttachmentListComponentState {
 }
 
 class AttachmentList extends React.Component<AttachmentListComponentProps, AttachmentListComponentState> {
-
-    constructor(props: AttachmentListComponentProps) {
-        super(props);
-    }
-
 
     render() {
         return (

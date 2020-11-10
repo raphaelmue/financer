@@ -74,7 +74,7 @@ class CreateProductDialog extends React.Component<CreateProductDialogComponentPr
                         name="productName"
                         label={this.props.t('Transaction.Product.Name')}
                         initialValue={this.state.productName}
-                        rules={[fieldIsRequiredRule(this.props.i18n)]}>
+                        rules={[fieldIsRequiredRule()]}>
                         <Input
                             name="productName"
                             onChange={event => this.setState({productName: event.target.value})}/>
@@ -83,7 +83,7 @@ class CreateProductDialog extends React.Component<CreateProductDialogComponentPr
                         <Form.Item
                             name="quantity"
                             label={this.props.t('Transaction.Product.Quantity')}
-                            rules={[fieldIsRequiredRule(this.props.i18n)]}
+                            rules={[fieldIsRequiredRule()]}
                             initialValue={this.state.quantity}
                             style={{display: 'inline-block', width: 'calc(50% - 6px)'}}>
                             <InputNumber
@@ -97,7 +97,7 @@ class CreateProductDialog extends React.Component<CreateProductDialogComponentPr
                         <Form.Item
                             name="amount"
                             label={this.props.t('Transaction.Amount')}
-                            rules={[fieldIsRequiredRule(this.props.i18n)]}
+                            rules={[fieldIsRequiredRule()]}
                             initialValue={this.state.amount}
                             style={{display: 'inline-block', width: 'calc(50% - 6px)'}}>
                             <InputNumber

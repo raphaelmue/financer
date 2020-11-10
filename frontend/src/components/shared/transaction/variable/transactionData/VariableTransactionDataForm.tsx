@@ -56,7 +56,7 @@ class VariableTransactionDataForm extends React.Component<VariableTransactionDat
                 <Form.Item
                     label={this.props.t('Transaction.ValueDate')}
                     name="valueDate"
-                    rules={[fieldIsRequiredRule(this.props.i18n)]}
+                    rules={[fieldIsRequiredRule()]}
                     initialValue={moment(this.props.variableTransaction?.valueDate.date) || undefined}>
                     <DatePicker
                         onChange={(value, dateString: string) => this.onChange({
@@ -67,7 +67,7 @@ class VariableTransactionDataForm extends React.Component<VariableTransactionDat
                 <Form.Item
                     label={this.props.t('Transaction.Category.Name')}
                     name="categoryId"
-                    rules={[fieldIsRequiredRule(this.props.i18n)]}>
+                    rules={[fieldIsRequiredRule()]}>
                     <CategoryTreeSelect
                         categoryId={this.props.variableTransaction?.category.id}
                         onChange={(value) => this.onChange({
