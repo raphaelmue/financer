@@ -1,15 +1,19 @@
 package org.financer.shared.domain.model.api.transaction.variable;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import org.financer.shared.domain.model.api.DataTransferObject;
+import lombok.Data;
+import lombok.experimental.Accessors;
+import org.financer.shared.domain.model.api.AmountProviderDTO;
 import org.financer.shared.domain.model.value.objects.Amount;
 import org.financer.shared.domain.model.value.objects.Quantity;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
+@Data
+@Accessors(chain = true)
 @Schema(name = "Product", description = "Schema of a product")
-public class ProductDTO implements DataTransferObject {
+public class ProductDTO implements AmountProviderDTO {
 
     @NotNull
     @Min(1)
@@ -28,39 +32,15 @@ public class ProductDTO implements DataTransferObject {
     @Schema(description = "Quanity of the product", required = true, example = "2")
     private Quantity quantity;
 
-    public int getId() {
-        return id;
+    private Amount totalAmount;
+
+    @Override
+    public void setTotalAmount(Amount totalAmount) {
+        this.totalAmount = totalAmount;
     }
 
-    public ProductDTO setId(int id) {
-        this.id = id;
-        return this;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public ProductDTO setName(String name) {
-        this.name = name;
-        return this;
-    }
-
-    public Amount getAmount() {
-        return amount;
-    }
-
-    public ProductDTO setAmount(Amount amount) {
-        this.amount = amount;
-        return this;
-    }
-
-    public Quantity getQuantity() {
-        return quantity;
-    }
-
-    public ProductDTO setQuantity(Quantity quantity) {
-        this.quantity = quantity;
-        return this;
+    @Override
+    public Amount getTotalAmount() {
+        return totalAmount;
     }
 }

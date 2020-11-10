@@ -22,28 +22,28 @@ public final class VariableTransaction extends Transaction {
     private Set<Product> products = new HashSet<>();
 
     @Override
-    public Amount getAmount() {
+    public Amount getTotalAmount() {
         Amount amount = new Amount();
         for (AmountProvider amountProvider : this.products) {
-            amount = amount.add(amountProvider.getAmount());
+            amount = amount.add(amountProvider.getTotalAmount());
         }
         return amount;
     }
 
     @Override
-    public Amount getAmount(ValueDate valueDate) {
+    public Amount getTotalAmount(ValueDate valueDate) {
         Amount amount = new Amount();
         for (AmountProvider amountProvider : this.products) {
-            amount = amount.add(amountProvider.getAmount(valueDate));
+            amount = amount.add(amountProvider.getTotalAmount(valueDate));
         }
         return amount;
     }
 
     @Override
-    public Amount getAmount(TimeRange timeRange) {
+    public Amount getTotalAmount(TimeRange timeRange) {
         Amount amount = new Amount();
         for (AmountProvider amountProvider : this.products) {
-            amount = amount.add(amountProvider.getAmount(timeRange));
+            amount = amount.add(amountProvider.getTotalAmount(timeRange));
         }
         return amount;
     }

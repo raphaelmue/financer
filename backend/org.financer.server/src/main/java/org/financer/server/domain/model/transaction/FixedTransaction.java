@@ -61,17 +61,17 @@ public final class FixedTransaction extends Transaction {
     }
 
     @Override
-    public Amount getAmount(ValueDate valueDate) {
+    public Amount getTotalAmount(ValueDate valueDate) {
         Amount result = new Amount();
         if (this.timeRange.includes(valueDate)) {
             if (this.isVariable) {
                 if (this.transactionAmounts != null) {
                     for (FixedTransactionAmount transactionAmount : this.transactionAmounts) {
-                        result = result.add(transactionAmount.getAmount(valueDate));
+                        result = result.add(transactionAmount.getTotalAmount(valueDate));
                     }
                 }
             } else {
-                result = this.getAmount();
+                result = this.getTotalAmount();
             }
         }
 
@@ -79,15 +79,15 @@ public final class FixedTransaction extends Transaction {
     }
 
     @Override
-    public Amount getAmount(TimeRange timeRange) {
+    public Amount getTotalAmount(TimeRange timeRange) {
         Amount result = new Amount();
 
         if (this.isVariable) {
             for (FixedTransactionAmount transactionAmount : this.transactionAmounts) {
-                result = result.add(transactionAmount.getAmount(timeRange));
+                result = result.add(transactionAmount.getTotalAmount(timeRange));
             }
         } else {
-            result = this.getAmount();
+            result = this.getTotalAmount();
             result = result.multiply(new Amount(this.timeRange.getMonthIntersection(timeRange).getMonthDifference()));
         }
 
@@ -101,8 +101,8 @@ public final class FixedTransaction extends Transaction {
                 amountProvider.adjustAmountSign();
             }
         } else {
-            if ((this.isRevenue() == this.getAmount().isNegative())) {
-                this.setAmount(this.getAmount().adjustSign());
+            if ((this.isRevenue() == this.getTotalAmount().isNegative())) {
+                this.setAmount(this.getTotalAmount().adjustSign());
             }
         }
     }
@@ -117,7 +117,7 @@ public final class FixedTransaction extends Transaction {
      */
 
     @Override
-    public Amount getAmount() {
+    public Amount getTotalAmount() {
         return amount;
     }
 

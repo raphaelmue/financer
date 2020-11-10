@@ -18,6 +18,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MvcResult;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.*;
@@ -40,7 +41,8 @@ public class VariableTransactionApiControllerTest extends ApiTest {
                 .setCategoryId(1)
                 .setValueDate(new ValueDate(LocalDate.now()))
                 .setDescription("Test Description")
-                .setVendor("Test Vendor");
+                .setVendor("Test Vendor")
+                .setProducts(Set.of(new CreateProductDTO().setName("Test Product").setAmount(new Amount(20)).setQuantity(new Quantity(2))));
         MvcResult result = mockMvc.perform(buildRequest(PathBuilder.Put().variableTransactions().build(), dto))
                 .andExpect(status().isOk()).andReturn();
 
@@ -103,7 +105,7 @@ public class VariableTransactionApiControllerTest extends ApiTest {
 
         ProductDTO product = objectMapper.readValue(result.getResponse().getContentAsString(), ProductDTO.class);
         assertThat(product.getId()).isEqualTo(1);
-        assertThat(product.getAmount().getAmount()).isEqualTo(100);
+        assertThat(product.getTotalAmount().getAmount()).isEqualTo(100);
         assertThat(product.getQuantity()).isEqualTo(dto.getQuantity());
         assertThat(product.getName()).isEqualTo(dto.getName());
 

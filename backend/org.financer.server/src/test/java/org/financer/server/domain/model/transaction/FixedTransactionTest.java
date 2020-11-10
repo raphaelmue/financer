@@ -40,42 +40,42 @@ class FixedTransactionTest {
 
     @Test
     public void testGetAmount() {
-        Assertions.assertEquals(50.0, fixedTransaction.getAmount().getAmount());
+        Assertions.assertEquals(50.0, fixedTransaction.getTotalAmount().getAmount());
     }
 
     @Test
     public void testGetAmountOfMonth() {
         Assertions.assertEquals(50.0,
-                fixedTransaction.getAmount(new ValueDate(LocalDate.now().minusMonths(1))).getAmount());
+                fixedTransaction.getTotalAmount(new ValueDate(LocalDate.now().minusMonths(1))).getAmount());
 
         // set isVariable true
         fixedTransaction.setIsVariable(true);
         Assertions.assertEquals(2.0,
-                fixedTransaction.getAmount(new ValueDate(LocalDate.now().minusMonths(1))).getAmount());
+                fixedTransaction.getTotalAmount(new ValueDate(LocalDate.now().minusMonths(1))).getAmount());
 
         // set end date of transaction
         fixedTransaction.setTimeRange(fixedTransaction.getTimeRange().setEndDate(LocalDate.now().minusMonths(2)));
         Assertions.assertEquals(0.0,
-                fixedTransaction.getAmount(new ValueDate(LocalDate.now().minusMonths(1))).getAmount());
+                fixedTransaction.getTotalAmount(new ValueDate(LocalDate.now().minusMonths(1))).getAmount());
     }
 
     @Test
     public void testGetAmountWithTimeRange() {
         Assertions.assertEquals(6 * 50.0,
-                fixedTransaction.getAmount(new TimeRange(LocalDate.now().minusMonths(12), LocalDate.now())).getAmount());
+                fixedTransaction.getTotalAmount(new TimeRange(LocalDate.now().minusMonths(12), LocalDate.now())).getAmount());
 
         // set isVariable true
         fixedTransaction.setIsVariable(true);
         Assertions.assertEquals(Math.pow(2, 6) - 1,
-                fixedTransaction.getAmount(new TimeRange(LocalDate.now().minusMonths(12), LocalDate.now())).getAmount());
+                fixedTransaction.getTotalAmount(new TimeRange(LocalDate.now().minusMonths(12), LocalDate.now())).getAmount());
         Assertions.assertEquals(Math.pow(2, 6) - 1,
-                fixedTransaction.getAmount(new TimeRange(LocalDate.now().minusMonths(12), LocalDate.now().plusMonths(1))).getAmount());
+                fixedTransaction.getTotalAmount(new TimeRange(LocalDate.now().minusMonths(12), LocalDate.now().plusMonths(1))).getAmount());
 
         fixedTransaction.setTimeRange(fixedTransaction.getTimeRange().setEndDate(LocalDate.now().minusMonths(1)));
         Assertions.assertEquals((Math.pow(2, 6) - 1) - (Math.pow(2, 1) - 1),
-                fixedTransaction.getAmount(new TimeRange(LocalDate.now().minusMonths(12), LocalDate.now().minusMonths(1))).getAmount());
+                fixedTransaction.getTotalAmount(new TimeRange(LocalDate.now().minusMonths(12), LocalDate.now().minusMonths(1))).getAmount());
         Assertions.assertEquals(0,
-                fixedTransaction.getAmount(new TimeRange(LocalDate.now().minusMonths(24), LocalDate.now().minusMonths(12))).getAmount());
+                fixedTransaction.getTotalAmount(new TimeRange(LocalDate.now().minusMonths(24), LocalDate.now().minusMonths(12))).getAmount());
     }
 
     @Test
@@ -89,12 +89,12 @@ class FixedTransactionTest {
     @Test
     public void testAdjustAmountSign() {
         fixedTransaction.adjustAmountSign();
-        Assertions.assertTrue(fixedTransaction.getAmount().getAmount() < 0);
+        Assertions.assertTrue(fixedTransaction.getTotalAmount().getAmount() < 0);
 
         // set isVariable true
         fixedTransaction.setIsVariable(true);
         fixedTransaction.adjustAmountSign();
-        Assertions.assertTrue(fixedTransaction.getAmount().getAmount() < 0);
+        Assertions.assertTrue(fixedTransaction.getTotalAmount().getAmount() < 0);
     }
 
 }

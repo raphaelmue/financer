@@ -19,7 +19,7 @@ import java.util.Properties;
 @Service
 public class VerificationService {
 
-    private static final Logger logger = LoggerFactory.getLogger(FinancerService.class);
+    private static final Logger logger = LoggerFactory.getLogger(VerificationService.class);
 
     private String host;
     private int port;
@@ -41,7 +41,7 @@ public class VerificationService {
 
     public void sendVerificationEmail(User user, VerificationToken tokenEntity) throws EmailException {
         StringBuilder content = new StringBuilder();
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(FinancerService.class.getResourceAsStream("verification-email.html")))) {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(VerificationService.class.getResourceAsStream("verification-email.html")))) {
             for (String line; (line = reader.readLine()) != null; ) {
                 content.append(line);
             }

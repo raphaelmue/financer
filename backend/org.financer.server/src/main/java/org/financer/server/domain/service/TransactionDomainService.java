@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import javax.persistence.NoResultException;
 import java.time.LocalDate;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -55,7 +56,8 @@ public class TransactionDomainService {
      * @param variableTransactionEntity transaction to insert
      * @return inserted transaction object
      */
-    public VariableTransaction createVariableTransaction(VariableTransaction variableTransactionEntity) {
+    public VariableTransaction
+    createVariableTransaction(VariableTransaction variableTransactionEntity) {
         logger.info("Creating new variable transaction.");
         Optional<Category> categoryOptional = categoryRepository.findById(variableTransactionEntity.getCategory().getId());
         if (categoryOptional.isPresent()) {
@@ -194,6 +196,20 @@ public class TransactionDomainService {
     }
 
     /**
+     * Deletes a product by id.
+     *
+     * @param transactionId id of the transaction
+     * @param productIds    ids of the products to delete
+     * @throws NoResultException thrown when the product does not exist or the product is not assigned to the given
+     *                           transaction id
+     */
+    public void deleteProducts(long transactionId, List<Long> productIds) {
+        for (long productId : productIds) {
+            this.deleteProduct(transactionId, productId);
+        }
+    }
+
+    /**
      * Creates a new fixed transaction and inserts it to the database.
      *
      * <p> First the transaction object is validated by checking the category, isVariable state and the users
@@ -278,7 +294,7 @@ public class TransactionDomainService {
     }
 
     private boolean changeFixedTransactionAmount(FixedTransaction fixedTransaction, Amount amount) {
-        if (amount != null && amount.getAmount() != 0 && amount != fixedTransaction.getAmount()) {
+        if (amount != null && amount.getAmount() != 0 && amount != fixedTransaction.getTotalAmount()) {
             fixedTransaction.setAmount(amount);
             return true;
         }
@@ -455,7 +471,7 @@ public class TransactionDomainService {
      * @param transactionId id of transaction
      * @return transaction object
      */
-    private Transaction findTransactionById(long transactionId) {
+    public Transaction findTransactionById(long transactionId) {
         Optional<? extends Transaction> transactionOptional = fixedTransactionRepository.findById(transactionId);
         if (transactionOptional.isEmpty()) {
             transactionOptional = variableTransactionRepository.findById(transactionId);

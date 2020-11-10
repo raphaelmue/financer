@@ -34,19 +34,19 @@ public class VariableTransactionTest {
 
     @Test
     public void testGetAmount() {
-        assertEquals(50.0, variableTransaction.getAmount().getAmount());
+        assertEquals(50.0, variableTransaction.getTotalAmount().getAmount());
     }
 
     @Test
     public void testGetAmountOfMonth() {
-        assertEquals(50.0, variableTransaction.getAmount(new ValueDate(LocalDate.now())).getAmount());
-        assertEquals(0.0, variableTransaction.getAmount(new ValueDate(LocalDate.now().minusMonths(1))).getAmount());
+        assertEquals(50.0, variableTransaction.getTotalAmount(new ValueDate(LocalDate.now())).getAmount());
+        assertEquals(0.0, variableTransaction.getTotalAmount(new ValueDate(LocalDate.now().minusMonths(1))).getAmount());
     }
 
     @Test
     public void testGetAmountWithTimeRange() {
-        assertEquals(50.0, variableTransaction.getAmount(new TimeRange(LocalDate.now().minusMonths(1), LocalDate.now().plusMonths(1))).getAmount());
-        assertEquals(00.0, variableTransaction.getAmount(new TimeRange(LocalDate.now().minusMonths(4), LocalDate.now().minusMonths(1))).getAmount());
+        assertEquals(50.0, variableTransaction.getTotalAmount(new TimeRange(LocalDate.now().minusMonths(1), LocalDate.now().plusMonths(1))).getAmount());
+        assertEquals(00.0, variableTransaction.getTotalAmount(new TimeRange(LocalDate.now().minusMonths(4), LocalDate.now().minusMonths(1))).getAmount());
     }
 
 }

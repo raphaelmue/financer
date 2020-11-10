@@ -21,6 +21,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureWebMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.test.web.servlet.MvcResult;
 
 import java.time.LocalDate;
@@ -29,7 +31,8 @@ import java.util.Map;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -155,15 +158,16 @@ public class UserApiControllerTest extends ApiTest {
 
     @Test
     public void testGetUsersVariableTransactions() throws Exception {
-        when(userDomainService.fetchVariableTransactions(anyInt())).thenReturn(List.of(variableTransaction()));
+        when(userDomainService.fetchVariableTransactions(any())).thenReturn(new PageImpl<>(List.of(variableTransaction())));
 
         MvcResult result = mockMvc.perform(buildRequest(PathBuilder.Get().users().userId(1).variableTransactions().build()))
                 .andExpect(status().isOk()).andReturn();
 
-        List<VariableTransactionDTO> transactions = objectMapper.readValue(result.getResponse().getContentAsString(),
+        PagedModel<VariableTransactionDTO> transactions = objectMapper.readValue(result.getResponse().getContentAsString(),
                 new TypeReference<>() {
                 });
-        assertThat(transactions).hasSize(1);
+        assertThat(transactions.getMetadata()).isNotNull();
+        assertThat(transactions.getMetadata().getTotalElements()).isEqualTo(1);
     }
 
     @Test

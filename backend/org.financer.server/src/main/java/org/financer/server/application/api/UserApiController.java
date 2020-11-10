@@ -1,5 +1,6 @@
 package org.financer.server.application.api;
 
+import org.financer.server.application.model.AssemblerService;
 import org.financer.server.application.service.AuthenticationService;
 import org.financer.server.domain.model.category.Category;
 import org.financer.server.domain.model.transaction.FixedTransaction;
@@ -19,6 +20,9 @@ import org.financer.shared.domain.model.value.objects.TokenString;
 import org.financer.util.mapping.ModelMapperUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -42,13 +46,16 @@ public class UserApiController implements UserApi {
     private final ModelMapper modelMapper;
     private final AuthenticationService authenticationService;
     private final HttpServletRequest request;
+    private final AssemblerService assemblerService;
 
     @Autowired
-    public UserApiController(HttpServletRequest request, UserDomainService userDomainService, ModelMapper modelMapper, AuthenticationService authenticationService) {
+    public UserApiController(HttpServletRequest request, UserDomainService userDomainService, ModelMapper modelMapper,
+                             AuthenticationService authenticationService, AssemblerService assemblerService) {
         this.request = request;
         this.userDomainService = userDomainService;
         this.modelMapper = modelMapper;
         this.authenticationService = authenticationService;
+        this.assemblerService = assemblerService;
     }
 
     @Override
@@ -112,10 +119,10 @@ public class UserApiController implements UserApi {
     }
 
     @Override
-    public ResponseEntity<List<VariableTransactionDTO>> getUsersVariableTransactions(@NotBlank @Min(1) Long userId, int page) {
+    public ResponseEntity<PagedModel<VariableTransactionDTO>> getUsersVariableTransactions(@NotBlank @Min(1) Long userId, @Valid Pageable pageable) {
         authenticationService.getAuthenticatedUser().throwIfNotUsersProperty(userId);
-        List<VariableTransaction> variableTransactions = userDomainService.fetchVariableTransactions(page);
-        return new ResponseEntity<>(ModelMapperUtils.mapAll(variableTransactions, VariableTransactionDTO.class), HttpStatus.OK);
+        Page<VariableTransaction> variableTransactions = userDomainService.fetchVariableTransactions(pageable);
+        return new ResponseEntity<>(assemblerService.toPagedModel(variableTransactions), HttpStatus.OK);
     }
 
     @Override

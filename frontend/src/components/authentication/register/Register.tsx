@@ -75,7 +75,7 @@ class Register extends React.Component<RegisterComponentProps, RegisterComponent
                 <NameInput onChange={name => this.setState({name: name})}/>
                 <Form.Item
                     name="email"
-                    rules={[fieldIsRequiredRule(this.props.i18n)]}>
+                    rules={[fieldIsRequiredRule()]}>
                     <Input prefix={<UserOutlined className="site-form-item-icon"/>}
                            type={'email'}
                            name="email"

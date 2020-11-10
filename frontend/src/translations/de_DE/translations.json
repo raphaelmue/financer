@@ -31,13 +31,103 @@
   "Menu": {
     "Categories": "Kategorien",
     "Dashboard": "Dashboard",
-    "FixedTransactions": "Feste Transaktionen",
     "Profile": "Profil",
     "Settings": "Einstellungen",
-    "Transactions": "Transaktionen",
-    "VariableTransactions": "Variable Transaktionen",
     "Home": "Home",
-    "TransactionOverview": "Transaktionsüberblick",
-    "Account": "Account"
+    "Account": "Account",
+    "Transaction": {
+      "CreateVariableTransaction": "Variable Transaction erstellen",
+      "VariableTransactions": "Variable Transaktionen",
+      "FixedTransactions": "Feste Transaktionen",
+      "Transactions": "Transaktionen",
+      "TransactionOverview": "Transaktionsüberblick",
+      "Product": {
+        "CreateProduct": "Produkt hinzufügen"
+      },
+      "Attachment": {
+        "CreateAttachment": "Attachment hinzufügen"
+      },
+      "TransactionDetails": "Transaktionsdetails"
+    }
+  },
+  "Transaction": {
+    "Category": {
+      "Name": "Kategorie",
+      "SelectCategoryPlaceholder": "Kategorie auswählen",
+      "CategoryClass": {
+        "FIXED_EXPENSES": "Feste Ausgabe",
+        "FIXED_REVENUE": "Feste Einnahmen",
+        "VARIABLE_EXPENSES": "Variable Ausgaben",
+        "VARIABLE_REVENUE": "Variable Einnahmen"
+      }
+    },
+    "Amount": "Betrag",
+    "Description": "Beschreibung",
+    "Vendor": "Verkäufer",
+    "ValueDate": "Wertstellung",
+    "Product": {
+      "Name": "Produktname",
+      "Quantity": "Menge"
+    },
+    "Products": "Produkte",
+    "VariableTransaction": "Variable Transaktion",
+    "Attachment": {
+      "Name": "Dateina",
+      "Size": "Größe",
+      "UploadDate": "Upload Datum"
+    },
+    "Attachments": "Anhänge",
+    "TotalAmount": "Gesamtbetrag"
+  },
+  "Form": {
+    "Table": {
+      "FilterTable": "Tabelle filtern",
+      "FilterConfirm": "Anwenden",
+      "FilterReset": "Filter zurücksetzen",
+      "FilterEmpty": "Kein Filter",
+      "NoData": "Keine Daten",
+      "SelectAll": "Alles auswählen",
+      "SelectInvert": "Auswahl umkehren",
+      "Collapse": "Einklappe",
+      "Expand": "Ausklappen",
+      "SortTitle": "Titel sortieren",
+      "Actions": "Aktionen"
+    },
+    "Button": {
+      "New": "Neu",
+      "Submit": "Senden",
+      "Delete": "Löschen",
+      "Add": "Hinzfügen",
+      "Cancel": "Abbrechen",
+      "Next": "Weiter",
+      "Previous": "Zurück",
+      "Edit": "Bearbeiten",
+      "Ok": "Ok"
+    },
+    "Step": {
+      "CreateVariableTransaction": {
+        "TransactionData": "Transaktionsdaten",
+        "ProductData": "Produktdaten",
+        "Attachments": "Anhänge"
+      }
+    },
+    "Dragger": {
+      "DraggerText": "Klicken oder ziehe die Datei in diesen Bereich, um sie hochzuladen."
+    }
+  },
+  "Message": {
+    "Transaction": {
+      "VariableTransaction": {
+        "CreatedVariableTransaction": "Variable Transaktion in der Kategorie {{category}} ({{categoryClass}}) wurde erfolgreich zum {{valueDate}} erstellt.",
+        "CreatedProduct": "Produkt wurde erfolgreich erstellt und zur Transaktion hinzugefügt. ",
+        "ConfirmDeleteVariableTransaction": "Bist du sicher, dass du diese variable Transaktion löschen möchtest?",
+        "DeletedVariableTransaction": "Variable Transaktion wurde erfolgreich gelöscht.",
+        "UpdatedVariableTransaction": "Die Transaktionsdaten dieser variablen Transaktion wurden erfolgreich geändern.",
+        "Product": {
+          "DeletedProducts": "Die Produkte wurden erfolgreich gelöscht.",
+          "ConfirmDeleteProducts": "Bist du sicher, dass du dieses Product aus der variable Transaktion löschen möchtest?"
+        }
+      }
+    }
   }
 }

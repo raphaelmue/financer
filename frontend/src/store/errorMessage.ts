@@ -33,7 +33,7 @@ export class ErrorMessage implements ErrorMessageDefinition {
     public static createErrorMessage(reason: any, language: string = 'en'): ErrorMessage {
         let timestamp = new Date();
         let message: MessageType = MessageType.UNKNOWN_ERROR;
-        if (reason == 'TypeError: Failed to fetch') {
+        if (reason === 'TypeError: Failed to fetch') {
             message = MessageType.SERVER_UNAVAILABLE;
         } else {
             switch (reason.status) {

@@ -30,18 +30,18 @@ public class FixedTransactionAmount implements DataEntity, AmountProvider, UserP
     private Amount amount;
 
     @Override
-    public Amount getAmount(ValueDate valueDate) {
+    public Amount getTotalAmount(ValueDate valueDate) {
         if (this.getValueDate().isInSameMonth(valueDate)) {
-            return this.getAmount();
+            return this.getTotalAmount();
         } else {
             return new Amount();
         }
     }
 
     @Override
-    public Amount getAmount(TimeRange timeRange) {
+    public Amount getTotalAmount(TimeRange timeRange) {
         if (timeRange.includes(this.valueDate)) {
-            return this.getAmount();
+            return this.getTotalAmount();
         } else {
             return new Amount();
         }
@@ -59,8 +59,8 @@ public class FixedTransactionAmount implements DataEntity, AmountProvider, UserP
 
     @Override
     public void adjustAmountSign() {
-        if ((this.isRevenue() == this.getAmount().isNegative())) {
-            this.setAmount(this.getAmount().adjustSign());
+        if ((this.isRevenue() == this.getTotalAmount().isNegative())) {
+            this.setAmount(this.getTotalAmount().adjustSign());
         }
     }
 
@@ -102,7 +102,7 @@ public class FixedTransactionAmount implements DataEntity, AmountProvider, UserP
     }
 
     @Override
-    public Amount getAmount() {
+    public Amount getTotalAmount() {
         return amount;
     }
 

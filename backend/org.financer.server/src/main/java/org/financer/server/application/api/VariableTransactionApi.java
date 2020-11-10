@@ -15,12 +15,14 @@ import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 @Tag(name = "variable-transaction", description = "Operations with variable transactions")
 public interface VariableTransactionApi {
 
+
     /**
-     * Creates a variable transaction.
+     * Creates a new variable transaction.
      *
      * @param variableTransaction transaction to be inserted
      * @return transaction object
@@ -45,6 +47,29 @@ public interface VariableTransactionApi {
             @RequestBody @NotNull @Valid CreateVariableTransactionDTO variableTransaction);
 
     /**
+     * Fetches a variable transaction by id.
+     *
+     * @param transactionId transaction id to be fetched
+     * @return transaction object
+     */
+    @Operation(
+            operationId = "getVariableTransactionById",
+            summary = "Fetches a variable transaction by id",
+            tags = {"variable-transaction", "transaction"},
+            security = @SecurityRequirement(name = "TokenAuth"))
+    @ApiResponse(
+            responseCode = "200",
+            description = "Variable transaction was successfully fetched.",
+            content = @Content(schema = @Schema(implementation = VariableTransactionDTO.class)))
+    @GetMapping(
+            value = "/variableTransactions/{transactionId}",
+            produces = {"application/json"},
+            headers = "Accept=application/json")
+    ResponseEntity<VariableTransactionDTO> getVariableTransactionById(
+            @Parameter(description = "ID of the transaction that will be fetched")
+            @PathVariable("transactionId") @NotBlank @Min(1) Long transactionId);
+
+    /**
      * Updates a specified transaction.
      *
      * @param transactionId       transaction id that will be updated
@@ -52,6 +77,7 @@ public interface VariableTransactionApi {
      * @return null
      */
     @Operation(
+            operationId = "updateVariableTransaction",
             summary = "Updates a variable transaction",
             tags = {"variable-transaction", "transaction"},
             security = @SecurityRequirement(name = "TokenAuth"))
@@ -79,6 +105,7 @@ public interface VariableTransactionApi {
      * @return null
      */
     @Operation(
+            operationId = "deleteVariableTransaction",
             summary = "Deletes a variable transaction",
             tags = {"variable-transaction", "transaction"},
             security = @SecurityRequirement(name = "TokenAuth"))
@@ -144,4 +171,28 @@ public interface VariableTransactionApi {
             @PathVariable("transactionId") @NotBlank @Min(1) Long transactionId,
             @Parameter(description = "ID of the product that will be deleted")
             @PathVariable("productId") @NotBlank @Min(1) Long productId);
+
+    /**
+     * Deletes multiple products.
+     *
+     * @param transactionId transaction id to which the product is assigned to
+     * @param productIds    product ids to delete
+     * @return void
+     */
+    @Operation(
+            summary = "Deletes multiple products",
+            tags = {"variable-transaction", "transaction"},
+            security = @SecurityRequirement(name = "TokenAuth"))
+    @ApiResponse(
+            responseCode = "200",
+            description = "Product was successfully deleted.")
+    @DeleteMapping(
+            value = "/variableTransactions/{transactionId}/products/",
+            produces = {"application/json"},
+            headers = "Accept=application/json")
+    ResponseEntity<Void> deleteProducts(
+            @Parameter(description = "ID of the transaction that is assigned to the product")
+            @PathVariable("transactionId") @NotBlank @Min(1) Long transactionId,
+            @Parameter(description = "IDs of the product that will be deleted")
+            @RequestParam("productIds") @NotBlank List<Long> productIds);
 }

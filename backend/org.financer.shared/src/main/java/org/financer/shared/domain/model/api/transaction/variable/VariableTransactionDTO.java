@@ -1,22 +1,30 @@
 package org.financer.shared.domain.model.api.transaction.variable;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import org.financer.shared.domain.model.api.DataTransferObject;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.experimental.Accessors;
+import org.financer.shared.domain.model.api.AmountProviderDTO;
 import org.financer.shared.domain.model.api.category.CategoryDTO;
 import org.financer.shared.domain.model.api.transaction.AttachmentDTO;
+import org.financer.shared.domain.model.value.objects.Amount;
 import org.financer.shared.domain.model.value.objects.ValueDate;
+import org.springframework.hateoas.RepresentationModel;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.util.Set;
 
+@Data
+@Accessors(chain = true)
 @Schema(name = "VariableTransaction", description = "Schema of a variable transaction")
-public class VariableTransactionDTO implements DataTransferObject {
+public class VariableTransactionDTO extends RepresentationModel<VariableTransactionDTO> implements AmountProviderDTO {
 
     @NotNull
     @Min(1)
     @Schema(description = "Identifier of the variable transaction", required = true, example = "1")
+    @EqualsAndHashCode.Include
     private int id;
 
     @NotNull
@@ -39,66 +47,15 @@ public class VariableTransactionDTO implements DataTransferObject {
     @Schema(description = "List of products of the variable transaction")
     private Set<@Valid ProductDTO> products;
 
-    public int getId() {
-        return id;
+    private Amount totalAmount;
+
+    @Override
+    public void setTotalAmount(Amount totalAmount) {
+        this.totalAmount = totalAmount;
     }
 
-    public VariableTransactionDTO setId(int id) {
-        this.id = id;
-        return this;
-    }
-
-    public CategoryDTO getCategory() {
-        return category;
-    }
-
-    public VariableTransactionDTO setCategory(CategoryDTO category) {
-        this.category = category;
-        return this;
-    }
-
-    public ValueDate getValueDate() {
-        return valueDate;
-    }
-
-    public VariableTransactionDTO setValueDate(ValueDate valueDate) {
-        this.valueDate = valueDate;
-        return this;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public VariableTransactionDTO setDescription(String description) {
-        this.description = description;
-        return this;
-    }
-
-    public String getVendor() {
-        return vendor;
-    }
-
-    public VariableTransactionDTO setVendor(String vendor) {
-        this.vendor = vendor;
-        return this;
-    }
-
-    public Set<AttachmentDTO> getAttachments() {
-        return attachments;
-    }
-
-    public VariableTransactionDTO setAttachments(Set<AttachmentDTO> attachments) {
-        this.attachments = attachments;
-        return this;
-    }
-
-    public Set<ProductDTO> getProducts() {
-        return products;
-    }
-
-    public VariableTransactionDTO setProducts(Set<ProductDTO> products) {
-        this.products = products;
-        return this;
+    @Override
+    public Amount getTotalAmount() {
+        return totalAmount;
     }
 }

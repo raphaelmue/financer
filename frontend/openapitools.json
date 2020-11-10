@@ -2,6 +2,19 @@
     "$schema": "node_modules/@openapitools/openapi-generator-cli/config.schema.json",
     "spaces": 4,
     "generator-cli": {
-        "version": "4.3.1"
+        "version": "4.3.0",
+        "generators": {
+            "default": {
+                "generatorName": "typescript-fetch",
+                "output": "#{cwd}/src/.openapi/",
+                "glob": "../backend/org.financer.server/target/financer.openapi.json",
+                "additionalProperties": {
+                    "ngVersion": "6.1.7",
+                    "typescriptThreePlus": true,
+                    "supportsES6": true,
+                    "hateoas": true
+                }
+            }
+        }
     }
 }

@@ -37,7 +37,7 @@ public class CategoryApiController implements CategoryApi {
         Category categoryEntity = new Category()
                 .setUser(authenticationService.getAuthenticatedUser())
                 .setCategoryClass(new CategoryClass(category.getCategoryClass()))
-                .setParent(new Category().setId(category.getParentId()))
+                .setParent(category.getParentId() > 0 ? new Category().setId(category.getParentId()) : null)
                 .setName(category.getName());
         categoryEntity = categoryDomainService.createCategory(categoryEntity);
         return new ResponseEntity<>(modelMapper.map(categoryEntity, CategoryDTO.class), HttpStatus.OK);

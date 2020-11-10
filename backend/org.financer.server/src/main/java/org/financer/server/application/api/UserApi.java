@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.financer.server.application.api.util.PageableParameters;
 import org.financer.shared.domain.model.api.category.CategoryDTO;
 import org.financer.shared.domain.model.api.transaction.fixed.FixedTransactionDTO;
 import org.financer.shared.domain.model.api.transaction.variable.VariableTransactionDTO;
@@ -19,6 +20,10 @@ import org.financer.shared.domain.model.api.user.UpdatePersonalInformationDTO;
 import org.financer.shared.domain.model.api.user.UpdateSettingsDTO;
 import org.financer.shared.domain.model.api.user.UserDTO;
 import org.financer.shared.domain.model.value.objects.HashedPassword;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -255,7 +260,7 @@ public interface UserApi {
     @ApiResponse(
             responseCode = "200",
             description = "Users categories were successfully fetched",
-            content = @Content(array = @ArraySchema(schema = @Schema(implementation = UserDTO.class))))
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = CategoryDTO.class))))
     @GetMapping(
             value = "/users/{userId}/categories",
             produces = {"application/json"},
@@ -268,7 +273,8 @@ public interface UserApi {
     /**
      * Fetches the users variable transactions.
      *
-     * @param userId user id
+     * @param userId   user id
+     * @param pageable
      * @return list of transactions
      */
     @Operation(
@@ -277,15 +283,15 @@ public interface UserApi {
             security = @SecurityRequirement(name = "TokenAuth"))
     @ApiResponse(
             responseCode = "200",
-            description = "Users variable transactions were successfully fetched",
-            content = @Content(array = @ArraySchema(schema = @Schema(implementation = VariableTransactionDTO.class))))
+            description = "Users variable transactions were successfully fetched")
+    @PageableParameters
     @GetMapping(
             value = "/users/{userId}/variableTransactions",
             produces = {"application/json"},
             headers = "Accept=application/json")
-    ResponseEntity<List<VariableTransactionDTO>> getUsersVariableTransactions(
+    ResponseEntity<PagedModel<VariableTransactionDTO>> getUsersVariableTransactions(
             @Parameter(description = "ID of the user whose variable transactions will be fetched", required = true)
             @PathVariable("userId") @NotBlank @Min(1) Long userId,
-            @Parameter(description = "Number of the page (page size is 20)")
-            @Valid @RequestParam(value = "page", defaultValue = "0") int page);
+            @Parameter(hidden = true) @Valid
+            @PageableDefault(size = 20, sort = "valueDate.date", direction = Sort.Direction.DESC) Pageable pageable);
 }

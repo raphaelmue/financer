@@ -1,43 +1,22 @@
 package org.financer.shared.domain.model.api.category;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Data;
+import lombok.experimental.Accessors;
 import org.financer.shared.domain.model.api.DataTransferObject;
 import org.financer.shared.domain.model.value.objects.CategoryClass;
 
-import javax.validation.constraints.Size;
-
+@Data
+@Accessors(chain = true)
+@Schema(name = "UpdateCategory", description = "Schema for updating a category")
 public class UpdateCategoryDTO implements DataTransferObject {
 
-    @Size(min = 1, max = 64)
+    @Schema(description = "Name of the category", example = "Food")
     private String name = null;
 
+    @Schema(description = "Name of the category class", example = "FIXED_EXPENSES")
     private CategoryClass.Values categoryClass = null;
 
+    @Schema(description = "Id of the parent category", example = "3")
     private long parentId = -1;
-
-    public String getName() {
-        return name;
-    }
-
-    public UpdateCategoryDTO setName(String name) {
-        this.name = name;
-        return this;
-    }
-
-    public CategoryClass.Values getCategoryClass() {
-        return categoryClass;
-    }
-
-    public UpdateCategoryDTO setCategoryClass(CategoryClass.Values categoryClass) {
-        this.categoryClass = categoryClass;
-        return this;
-    }
-
-    public long getParentId() {
-        return parentId;
-    }
-
-    public UpdateCategoryDTO setParentId(long parentId) {
-        this.parentId = parentId;
-        return this;
-    }
 }

@@ -1,6 +1,8 @@
 package org.financer.shared.domain.model.api.transaction.fixed;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Data;
+import lombok.experimental.Accessors;
 import org.financer.shared.domain.model.api.DataTransferObject;
 import org.financer.shared.domain.model.value.objects.Amount;
 import org.financer.shared.domain.model.value.objects.TimeRange;
@@ -9,6 +11,8 @@ import javax.validation.Valid;
 import java.util.HashSet;
 import java.util.Set;
 
+@Data
+@Accessors(chain = true)
 @Schema(name = "UpdateFixedTransaction", description = "Schema to update fixed transaction")
 public class UpdateFixedTransactionDTO implements DataTransferObject {
 
@@ -31,7 +35,7 @@ public class UpdateFixedTransactionDTO implements DataTransferObject {
     private String vendor;
 
     @Schema(description = "Indicates whether this transaction is variable or not", example = "false")
-    private boolean isVariable;
+    private Boolean isVariable;
 
     @Schema(description = "Billing day of the fixed transaction")
     private int day;
@@ -39,84 +43,4 @@ public class UpdateFixedTransactionDTO implements DataTransferObject {
     @Schema(description = "List of fixed transaction amounts")
     private Set<@Valid FixedTransactionAmountDTO> transactionAmounts = new HashSet<>();
 
-    public long getCategoryId() {
-        return categoryId;
-    }
-
-    public UpdateFixedTransactionDTO setCategoryId(long categoryId) {
-        this.categoryId = categoryId;
-        return this;
-    }
-
-    public Amount getAmount() {
-        return amount;
-    }
-
-    public UpdateFixedTransactionDTO setAmount(Amount amount) {
-        this.amount = amount;
-        return this;
-    }
-
-    public TimeRange getTimeRange() {
-        return timeRange;
-    }
-
-    public UpdateFixedTransactionDTO setTimeRange(TimeRange timeRange) {
-        this.timeRange = timeRange;
-        return this;
-    }
-
-    public String getProduct() {
-        return product;
-    }
-
-    public UpdateFixedTransactionDTO setProduct(String product) {
-        this.product = product;
-        return this;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public UpdateFixedTransactionDTO setDescription(String description) {
-        this.description = description;
-        return this;
-    }
-
-    public String getVendor() {
-        return vendor;
-    }
-
-    public UpdateFixedTransactionDTO setVendor(String vendor) {
-        this.vendor = vendor;
-        return this;
-    }
-
-    public boolean getIsVariable() {
-        return isVariable;
-    }
-
-    public UpdateFixedTransactionDTO setIsVariable(boolean variable) {
-        isVariable = variable;
-        return this;
-    }
-
-    public int getDay() {
-        return day;
-    }
-
-    public UpdateFixedTransactionDTO setDay(int day) {
-        this.day = day;
-        return this;
-    }
-
-    public Set<FixedTransactionAmountDTO> getTransactionAmounts() {
-        return transactionAmounts;
-    }
-
-    public UpdateFixedTransactionDTO setTransactionAmounts(Set<FixedTransactionAmountDTO> transactionAmounts) {
-        this.transactionAmounts = transactionAmounts;
-        return this;
-    }
 }

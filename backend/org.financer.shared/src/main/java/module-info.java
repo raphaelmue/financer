@@ -10,12 +10,14 @@ module org.financer.shared {
     exports org.financer.shared.domain.model.api.transaction.fixed;
     exports org.financer.shared.domain.model.value.objects;
 
+    requires static lombok;
     requires org.financer.util;
     requires org.hibernate.orm.core;
     requires java.xml.bind;
     requires java.persistence;
     requires commons.validator;
     requires java.validation;
+    requires spring.hateoas;
     requires com.fasterxml.jackson.annotation;
     requires com.fasterxml.jackson.databind;
     requires io.swagger.v3.oas.annotations;
