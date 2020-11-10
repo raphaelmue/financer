@@ -9,11 +9,12 @@ import {FormInstance}                     from 'antd/lib/form';
 
 interface CreateProductDialogComponentProps extends WithTranslation {
     visible: boolean
-    onSubmit?: (product: CreateProduct) => void,
+    onSubmit?: (product: CreateProduct) => Promise<void>,
     onCancel?: () => void
 }
 
 interface CreateProductDialogComponentState {
+    confirmLoading: boolean,
     visible: boolean,
     productName: string,
     quantity: number,
@@ -21,6 +22,7 @@ interface CreateProductDialogComponentState {
 }
 
 const initialState: CreateProductDialogComponentState = {
+    confirmLoading: false,
     visible: false,
     productName: '',
     quantity: 1,
@@ -43,6 +45,7 @@ class CreateProductDialog extends React.Component<CreateProductDialogComponentPr
     }
 
     onSubmit() {
+        this.setState({confirmLoading: true});
         if (this.formRef.current) {
             this.formRef.current.resetFields();
         }
@@ -51,9 +54,8 @@ class CreateProductDialog extends React.Component<CreateProductDialogComponentPr
                 name: this.state.productName,
                 quantity: {numberOfItems: this.state.quantity},
                 amount: {amount: this.state.amount}
-            });
+            }).then(() => this.setState(initialState));
         }
-        this.setState(initialState);
     }
 
     render() {
@@ -66,6 +68,8 @@ class CreateProductDialog extends React.Component<CreateProductDialogComponentPr
                 onCancel={this.onCancel.bind(this)}
                 cancelText={this.props.t('Form.Button.Cancel')}
                 keyboard={true}
+                destroyOnClose={true}
+                confirmLoading={this.state.confirmLoading}
                 okText={this.props.t('Form.Button.Submit')}>
                 <Form layout="vertical"
                       onFinish={this.onSubmit}

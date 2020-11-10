@@ -73,6 +73,15 @@ class CreateVariableTransaction extends React.Component<CreateVariableTransactio
         }
     }
 
+    onDeleteProducts(productIds: number[]): Promise<void> {
+        return new Promise<void>((resolve) => {
+            let products: CreateProduct[] = this.state.products;
+            productIds.forEach(value => products.splice(value, 1));
+            this.setState({products: products});
+            resolve();
+        });
+    }
+
     onChange = (e: any) => {
         this.setState({[e.target.name]: e.target.value} as CreateVariableTransactionComponentState);
     };
@@ -90,23 +99,26 @@ class CreateVariableTransaction extends React.Component<CreateVariableTransactio
         content: () =>
             <div>
                 <ProductList
-                    products={this.state.products.map((value: CreateProduct) => {
+                    products={this.state.products.map((value: CreateProduct, index) => {
                         return {
-                            id: 0,
+                            id: index,
                             quantity: value.quantity,
                             amount: value.amount,
                             name: value.name,
                             totalAmount: {amount: value.quantity.numberOfItems * value.amount.amount}
                         };
                     })}
-                    openProductDialog={() => this.setState({showProductDialog: true})}/>
+                    openProductDialog={() => this.setState({showProductDialog: true})}
+                    onDeleteProducts={(productIds) => this.onDeleteProducts(productIds)}/>
                 <CreateProductDialog
                     visible={this.state?.showProductDialog || false}
                     onCancel={() => this.setState({showProductDialog: false})}
-                    onSubmit={(product: CreateProduct) => this.setState({
-                        products: this.state.products.concat(product),
-                        showProductDialog: false
-                    })}/>
+                    onSubmit={(product: CreateProduct) => new Promise<void>(
+                        (resolve) => this.setState({
+                            products: this.state.products.concat(product),
+                            showProductDialog: false
+                        }, () => resolve())
+                    )}/>
             </div>,
         condition: () => (this.state.products.length > 0)
     }, {

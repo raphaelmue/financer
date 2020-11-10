@@ -10,7 +10,7 @@ import * as api                                                   from '../../..
 import {withTranslation, WithTranslation}                         from 'react-i18next';
 import {
     CreateProductRequest,
-    CreateTransactionRequest,
+    CreateTransactionRequest, DeleteProductsRequest,
     DeleteVariableTransactionRequest,
     GetUsersVariableTransactionsRequest,
     GetVariableTransactionByIdRequest
@@ -45,7 +45,8 @@ class UpdateVariableTransactionDialog extends React.Component<UpdateVariableTran
     }
 
     onSubmit() {
-        if (this.state.variableTransactionData.categoryId !== undefined && this.state.variableTransactionData.valueDate !== undefined) {
+        if (this.state.variableTransactionData.categoryId !== undefined
+            && this.state.variableTransactionData.valueDate !== undefined) {
             this.setState({confirmLoading: true}, () => {
                 this.updateVariableTransaction();
             });
@@ -114,6 +115,8 @@ const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({
     dispatchCreateProduct: (data: CreateProductRequest, callback?: (product: Product) => void) => {
     },
     dispatchDeleteVariableTransaction: (data: DeleteVariableTransactionRequest, callback?: () => void) => {
+    },
+    dispatchDeleteProducts: (data: DeleteProductsRequest, callback?: () => void) => {
     }
 }, dispatch);
 

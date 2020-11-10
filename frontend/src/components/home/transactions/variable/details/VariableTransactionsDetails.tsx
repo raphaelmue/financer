@@ -1,36 +1,33 @@
-import {withTranslation, WithTranslation}    from 'react-i18next';
-import React                                 from 'react';
-import {Link, Redirect, RouteComponentProps} from 'react-router-dom';
-import {AppState}                            from '../../../../../store/reducers/root.reducers';
-import {bindActionCreators, Dispatch}        from 'redux';
-import {connect}                             from 'react-redux';
-import * as api                              from '../../../../../store/api/transaction.api';
-import {TransactionReducerProps}             from '../../../../../store/reducers/transaction.reducer';
-import {
-    CreateProduct,
-    VariableTransaction
-}                                            from '../../../../../.openapi/models';
-import {
-    Button, Descriptions, Modal,
-    notification, Result, Space
-}                                            from 'antd';
-import {DeleteOutlined, EditOutlined}        from '@ant-design/icons';
-import {PageContainer}                       from '@ant-design/pro-layout';
-import Text                                  from 'antd/lib/typography/Text';
-import i18next                               from 'i18next';
+import {withTranslation, WithTranslation}                         from 'react-i18next';
+import React                                                      from 'react';
+import {Link, Redirect, RouteComponentProps}                      from 'react-router-dom';
+import {AppState}                                                 from '../../../../../store/reducers/root.reducers';
+import {bindActionCreators, Dispatch}                             from 'redux';
+import {connect}                                                  from 'react-redux';
+import * as api                                                   from '../../../../../store/api/transaction.api';
+import {TransactionReducerProps}                                  from '../../../../../store/reducers/transaction.reducer';
+import {CreateProduct, VariableTransaction}                       from '../../../../../.openapi/models';
+import {Button, Descriptions, Modal, notification, Result, Space} from 'antd';
+import {DeleteOutlined, EditOutlined}                             from '@ant-design/icons';
+import {PageContainer}                                            from '@ant-design/pro-layout';
+import Text                                                       from 'antd/lib/typography/Text';
+import i18next                                                    from 'i18next';
 import AmountStatistics
-                                             from '../../../../shared/transaction/amount/amountStatistics/AmountStatistics';
-import ProductList                           from '../../../../shared/transaction/product/ProductList';
+                                                                  from '../../../../shared/transaction/amount/amountStatistics/AmountStatistics';
+import ProductList
+                                                                  from '../../../../shared/transaction/product/ProductList';
 import ValueDateLabel
-                                             from '../../../../shared/transaction/valueDate/valueDateLabel/ValueDateLabel';
-import ProCard                               from '@ant-design/pro-card';
-import AttachmentList                        from '../../../../shared/transaction/attachment/AttachmentList';
-import CreateProductDialog                   from '../../../../shared/transaction/product/create/CreateProductDialog';
+                                                                  from '../../../../shared/transaction/valueDate/valueDateLabel/ValueDateLabel';
+import ProCard                                                    from '@ant-design/pro-card';
+import AttachmentList
+                                                                  from '../../../../shared/transaction/attachment/AttachmentList';
+import CreateProductDialog
+                                                                  from '../../../../shared/transaction/product/create/CreateProductDialog';
 import CreateAttachmentDialog
-                                             from '../../../../shared/transaction/attachment/create/CreateAttachmentDialog';
-import {confirmDialogConfig}                 from '../../../../shared/form/modal/confirm/config';
+                                                                  from '../../../../shared/transaction/attachment/create/CreateAttachmentDialog';
+import {confirmDialogConfig}                                      from '../../../../shared/form/modal/confirm/config';
 import UpdateVariableTransactionDialog
-                                             from '../../../../shared/transaction/variable/update/UpdateVariableTransactionDialog';
+                                                                  from '../../../../shared/transaction/variable/update/UpdateVariableTransactionDialog';
 
 const {Item} = Descriptions;
 
@@ -96,21 +93,47 @@ class VariableTransactionsDetails extends React.Component<VariableTransactionsDe
         ));
     }
 
-    private addProduct(product: CreateProduct) {
-        this.props.dispatchCreateProduct({
-            transactionId: this.state.variableTransaction?.id!,
-            createProduct: product
-        }, newProduct => {
-            notification.success({
-                message: this.props.t('Transaction.VariableTransaction'),
-                description: this.props.t('Message.Transaction.VariableTransaction.CreatedProduct')
-            });
-            this.setState({
-                variableTransaction: {
-                    ...this.state.variableTransaction!,
-                    products: [...this.state.variableTransaction?.products!, newProduct]
-                },
-                showProductDialog: false
+    onDeleteProducts(productIds: number[]): Promise<void> {
+        return new Promise<void>((resolveConfirm => Modal.confirm(confirmDialogConfig(
+            this.props.t('Transaction.Products'),
+            this.props.t('Message.Transaction.VariableTransaction.Product.ConfirmDeleteProducts'),
+            () => new Promise<void>(resolveDispatch => {
+                this.props.dispatchDeleteProducts({
+                    transactionId: this.state.variableTransaction?.id!,
+                    productIds: productIds
+                }, () => {
+                    let variableTransaction: VariableTransaction = this.state.variableTransaction!;
+                    variableTransaction.products = variableTransaction.products?.filter(
+                        product => productIds.indexOf(product.id) < 0);
+                    this.setState({variableTransaction: variableTransaction});
+                    notification.success({
+                        message: this.props.t('Transaction.Products'),
+                        description: this.props.t('Message.Transaction.VariableTransaction.Product.DeletedProducts')
+                    });
+                    resolveDispatch();
+                    resolveConfirm();
+                });
+            })
+        ))));
+    }
+
+    onCreateProduct(product: CreateProduct): Promise<void> {
+        return new Promise<void>((resolve) => {
+            this.props.dispatchCreateProduct({
+                transactionId: this.state.variableTransaction?.id!,
+                createProduct: product
+            }, newProduct => {
+                notification.success({
+                    message: this.props.t('Transaction.VariableTransaction'),
+                    description: this.props.t('Message.Transaction.VariableTransaction.CreatedProduct')
+                });
+                this.setState({
+                    variableTransaction: {
+                        ...this.state.variableTransaction!,
+                        products: [...this.state.variableTransaction?.products!, newProduct]
+                    },
+                    showProductDialog: false
+                }, () => resolve());
             });
         });
     }
@@ -178,11 +201,12 @@ class VariableTransactionsDetails extends React.Component<VariableTransactionsDe
                         <ProCard collapsed={!(this.state.activeTab === 'productsTab')}>
                             <ProductList
                                 products={this.state.variableTransaction?.products}
-                                openProductDialog={() => this.setState({showProductDialog: true})}/>
+                                openProductDialog={() => this.setState({showProductDialog: true})}
+                                onDeleteProducts={products => this.onDeleteProducts(products)}/>
                             <CreateProductDialog
                                 visible={this.state.showProductDialog || false}
                                 onCancel={() => this.setState({showProductDialog: false})}
-                                onSubmit={this.addProduct.bind(this)}/>
+                                onSubmit={product => this.onCreateProduct(product)}/>
                         </ProCard>
                         <ProCard collapsed={!(this.state.activeTab === 'attachmentsTab')}>
                             <AttachmentList
@@ -221,7 +245,8 @@ const mapStateToProps = (state: AppState) => {
 const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({
     dispatchLoadVariableTransaction: api.loadVariableTransaction,
     dispatchCreateProduct: api.createProduct,
-    dispatchDeleteVariableTransaction: api.deleteVariableTransaction
+    dispatchDeleteVariableTransaction: api.deleteVariableTransaction,
+    dispatchDeleteProducts: api.deleteProducts
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(withTranslation()(VariableTransactionsDetails));

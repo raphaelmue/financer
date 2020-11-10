@@ -18,6 +18,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 @RestController
 public class VariableTransactionApiController implements VariableTransactionApi {
@@ -72,6 +73,16 @@ public class VariableTransactionApiController implements VariableTransactionApi 
     public ResponseEntity<Void> deleteProduct(@NotBlank @Min(1) Long transactionId, @NotBlank @Min(1) Long productId) {
         try {
             transactionDomainService.deleteProduct(transactionId, productId);
+        } catch (NotFoundException exception) {
+            logger.error(exception.getMessage(), exception);
+        }
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<Void> deleteProducts(@NotBlank @Min(1) Long transactionId, @NotBlank @Min(1) List<Long> productIds) {
+        try {
+            transactionDomainService.deleteProducts(transactionId, productIds);
         } catch (NotFoundException exception) {
             logger.error(exception.getMessage(), exception);
         }

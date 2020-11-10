@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import javax.persistence.NoResultException;
 import java.time.LocalDate;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -192,6 +193,20 @@ public class TransactionDomainService {
             }
         }
         throw new NotFoundException(Product.class, productId);
+    }
+
+    /**
+     * Deletes a product by id.
+     *
+     * @param transactionId id of the transaction
+     * @param productIds    ids of the products to delete
+     * @throws NoResultException thrown when the product does not exist or the product is not assigned to the given
+     *                           transaction id
+     */
+    public void deleteProducts(long transactionId, List<Long> productIds) {
+        for (long productId : productIds) {
+            this.deleteProduct(transactionId, productId);
+        }
     }
 
     /**

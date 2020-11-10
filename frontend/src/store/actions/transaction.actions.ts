@@ -1,11 +1,11 @@
 import {Action}                                                      from 'redux';
 import {
     CreateProductRequest,
-    CreateTransactionRequest,
+    CreateTransactionRequest, DeleteProductRequest,
     DeleteVariableTransactionRequest,
     GetUsersVariableTransactionsRequest,
     GetVariableTransactionByIdRequest, UpdateVariableTransactionRequest,
-}                                                                    from '../../.openapi/apis';
+} from '../../.openapi/apis';
 import {ErrorMessage}                                                from '../errorMessage';
 import {PagedModelVariableTransaction, Product, VariableTransaction} from '../../.openapi/models';
 
@@ -19,16 +19,18 @@ export enum TransactionActionDefinition {
     CREATE_VARIABLE_TRANSACTION_REQUEST = 'TRANSACTION:CREATE_VARIABLE_TRANSACTION_REQUEST',
     CREATE_VARIABLE_TRANSACTION_SUCCESS = 'TRANSACTION:CREATE_VARIABLE_TRANSACTION_SUCCESS',
     CREATE_VARIABLE_TRANSACTION_FAILED = 'TRANSACTION:CREATE_VARIABLE_TRANSACTION_FAILED',
-    CREATE_PRODUCT_REQUEST = 'TRANSACTION:CREATE_PRODUCT_REQUEST',
-    CREATE_PRODUCT_SUCCESS = 'TRANSACTION:CREATE_PRODUCT_SUCCESS',
-    CREATE_PRODUCT_FAILED = 'TRANSACTION:CREATE_PRODUCT_FAILED',
     UPDATE_VARIABLE_TRANSACTION_REQUEST = 'TRANSACTION:UPDATE_VARIABLE_TRANSACTION_REQUEST',
     UPDATE_VARIABLE_TRANSACTION_SUCCESS = 'TRANSACTION:UPDATE_VARIABLE_TRANSACTION_SUCCESS',
     UPDATE_VARIABLE_TRANSACTION_FAILED = 'TRANSACTION:UPDATE_VARIABLE_TRANSACTION_FAILED',
     DELETE_VARIABLE_TRANSACTION_REQUEST = 'TRANSACTION:DELETE_VARIABLE_TRANSACTION_REQUEST',
     DELETE_VARIABLE_TRANSACTION_SUCCESS = 'TRANSACTION:DELETE_VARIABLE_TRANSACTION_SUCCESS',
     DELETE_VARIABLE_TRANSACTION_FAILED = 'TRANSACTION:DELETE_VARIABLE_TRANSACTION_FAILED',
-
+    CREATE_PRODUCT_REQUEST = 'TRANSACTION:CREATE_PRODUCT_REQUEST',
+    CREATE_PRODUCT_SUCCESS = 'TRANSACTION:CREATE_PRODUCT_SUCCESS',
+    CREATE_PRODUCT_FAILED = 'TRANSACTION:CREATE_PRODUCT_FAILED',
+    DELETE_PRODUCTS_REQUEST = 'TRANSACTION:DELETE_PRODUCTS_REQUEST',
+    DELETE_PRODUCTS_SUCCESS = 'TRANSACTION:DELETE_PRODUCTS_SUCCESS',
+    DELETE_PRODUCTS_FAILED = 'TRANSACTION:DELETE_PRODUCTS_FAILED'
 }
 
 export type TransactionAction = LoadVariableTransactionsRequestAction
@@ -40,15 +42,18 @@ export type TransactionAction = LoadVariableTransactionsRequestAction
     | CreateVariableTransactionRequestAction
     | CreateVariableTransactionSuccessAction
     | CreateVariableTransactionFailedAction
-    | CreateProductRequestAction
-    | CreateProductSuccessAction
-    | CreateProductFailedAction
     | UpdateVariableTransactionRequestAction
     | UpdateVariableTransactionSuccessAction
     | UpdateVariableTransactionFailedAction
     | DeleteVariableTransactionRequestAction
     | DeleteVariableTransactionSuccessAction
-    | DeleteVariableTransactionFailedAction;
+    | DeleteVariableTransactionFailedAction
+    | CreateProductRequestAction
+    | CreateProductSuccessAction
+    | CreateProductFailedAction
+    | DeleteProductsRequestAction
+    | DeleteProductsSuccessAction
+    | DeleteProductsFailedAction;
 
 interface LoadVariableTransactionsRequestAction extends Action {
     type: TransactionActionDefinition.LOAD_VARIABLE_TRANSACTIONS_REQUEST,
@@ -95,21 +100,6 @@ interface CreateVariableTransactionFailedAction extends Action {
     payload: ErrorMessage
 }
 
-interface CreateProductRequestAction extends Action {
-    type: TransactionActionDefinition.CREATE_PRODUCT_REQUEST,
-    payload: CreateProductRequest
-}
-
-interface CreateProductSuccessAction extends Action {
-    type: TransactionActionDefinition.CREATE_PRODUCT_SUCCESS,
-    payload: Product
-}
-
-interface CreateProductFailedAction extends Action {
-    type: TransactionActionDefinition.CREATE_PRODUCT_FAILED,
-    payload: ErrorMessage
-}
-
 interface UpdateVariableTransactionRequestAction extends Action {
     type: TransactionActionDefinition.UPDATE_VARIABLE_TRANSACTION_REQUEST,
     payload: UpdateVariableTransactionRequest
@@ -136,5 +126,34 @@ interface DeleteVariableTransactionSuccessAction extends Action {
 
 interface DeleteVariableTransactionFailedAction extends Action {
     type: TransactionActionDefinition.DELETE_VARIABLE_TRANSACTION_FAILED,
+    payload: ErrorMessage
+}
+
+interface CreateProductRequestAction extends Action {
+    type: TransactionActionDefinition.CREATE_PRODUCT_REQUEST,
+    payload: CreateProductRequest
+}
+
+interface CreateProductSuccessAction extends Action {
+    type: TransactionActionDefinition.CREATE_PRODUCT_SUCCESS,
+    payload: Product
+}
+
+interface CreateProductFailedAction extends Action {
+    type: TransactionActionDefinition.CREATE_PRODUCT_FAILED,
+    payload: ErrorMessage
+}
+
+interface DeleteProductsRequestAction extends Action {
+    type: TransactionActionDefinition.DELETE_PRODUCTS_REQUEST,
+    payload: DeleteProductRequest
+}
+
+interface DeleteProductsSuccessAction extends  Action {
+    type: TransactionActionDefinition.DELETE_PRODUCTS_SUCCESS
+}
+
+interface DeleteProductsFailedAction extends Action{
+    type: TransactionActionDefinition.DELETE_PRODUCTS_FAILED,
     payload: ErrorMessage
 }

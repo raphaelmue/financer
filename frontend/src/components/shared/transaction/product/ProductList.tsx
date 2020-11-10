@@ -11,12 +11,12 @@ import {columns}                          from './columns';
 
 interface ProductListComponentProps extends WithTranslation {
     openProductDialog: () => void,
-    onDeleteProduct?: (products: Product[]) => void,
+    onDeleteProducts?: (productIds: number[]) => Promise<void>,
     products?: Product[]
 }
 
 interface ProductComponentState {
-    selectedProducts: Product[]
+    selectedProductIds: number[]
 }
 
 class ProductList extends React.Component<ProductListComponentProps, ProductComponentState> {
@@ -25,14 +25,21 @@ class ProductList extends React.Component<ProductListComponentProps, ProductComp
         super(props);
 
         this.state = {
-            selectedProducts: []
+            selectedProductIds: []
         };
     }
 
-    onSelectionChange(selectedRowKeys: React.ReactText[], selectedRows: Product[]) {
+    onSelectionChange(selectedRowKeys: React.ReactText[]) {
         this.setState({
-            selectedProducts: selectedRows
+            selectedProductIds: selectedRowKeys.map(value => parseInt(value.toString()))
         });
+    }
+
+    onDeleteProduct() {
+        if (this.props.onDeleteProducts) {
+            this.props.onDeleteProducts(this.state.selectedProductIds)
+                .then(() => this.setState({selectedProductIds: []}));
+        }
     }
 
     render() {
@@ -40,7 +47,8 @@ class ProductList extends React.Component<ProductListComponentProps, ProductComp
             <ProTable<Product>
                 headerTitle={this.props.t('Transaction.Products')}
                 rowSelection={{
-                    onChange: this.onSelectionChange.bind(this)
+                    onChange: this.onSelectionChange.bind(this),
+                    selectedRowKeys: this.state.selectedProductIds
                 }}
                 columns={columns()}
                 dataSource={this.props.products || []}
@@ -54,12 +62,9 @@ class ProductList extends React.Component<ProductListComponentProps, ProductComp
                     <Space size={'small'}>
                         <Button
                             key="deleteProductButton"
-                            // type="primary"
-                            style={{display: this.state.selectedProducts.length > 0 ? 'initial' : 'none'}}
+                            style={{display: this.state.selectedProductIds.length > 0 ? 'initial' : 'none'}}
                             icon={<DeleteOutlined/>}
-                            onClick={() => {
-                                if (this.props.onDeleteProduct) this.props.onDeleteProduct(this.state.selectedProducts);
-                            }}
+                            onClick={() => this.onDeleteProduct()}
                             danger>
                             {this.props.t('Form.Button.Delete')}
                         </Button>

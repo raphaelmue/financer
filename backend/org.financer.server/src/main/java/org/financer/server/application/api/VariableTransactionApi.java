@@ -15,6 +15,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 @Tag(name = "variable-transaction", description = "Operations with variable transactions")
 public interface VariableTransactionApi {
@@ -170,4 +171,28 @@ public interface VariableTransactionApi {
             @PathVariable("transactionId") @NotBlank @Min(1) Long transactionId,
             @Parameter(description = "ID of the product that will be deleted")
             @PathVariable("productId") @NotBlank @Min(1) Long productId);
+
+    /**
+     * Deletes multiple products.
+     *
+     * @param transactionId transaction id to which the product is assigned to
+     * @param productIds    product ids to delete
+     * @return void
+     */
+    @Operation(
+            summary = "Deletes multiple products",
+            tags = {"variable-transaction", "transaction"},
+            security = @SecurityRequirement(name = "TokenAuth"))
+    @ApiResponse(
+            responseCode = "200",
+            description = "Product was successfully deleted.")
+    @DeleteMapping(
+            value = "/variableTransactions/{transactionId}/products/",
+            produces = {"application/json"},
+            headers = "Accept=application/json")
+    ResponseEntity<Void> deleteProducts(
+            @Parameter(description = "ID of the transaction that is assigned to the product")
+            @PathVariable("transactionId") @NotBlank @Min(1) Long transactionId,
+            @Parameter(description = "IDs of the product that will be deleted")
+            @RequestParam("productIds") @NotBlank List<Long> productIds);
 }
