@@ -4,7 +4,6 @@ import {bindActionCreators, Dispatch}     from 'redux';
 import {connect}                          from 'react-redux';
 import {Attachment}                       from '../../../../.openapi/models';
 import ProTable                           from '@ant-design/pro-table';
-import {tableTranslations}                from '../../../../translations/translations';
 import {Button}                           from 'antd';
 import {PlusOutlined}                     from '@ant-design/icons';
 import {columns}                          from './colums';
@@ -27,7 +26,6 @@ class AttachmentList extends React.Component<AttachmentListComponentProps, Attac
                 columns={columns()}
                 dataSource={this.props.attachments}
                 dateFormatter={'number'}
-                locale={tableTranslations()}
                 rowKey={'id'}
                 search={false}
                 pagination={false}

@@ -1,8 +1,31 @@
-import i18next            from 'i18next';
-import {initReactI18next} from 'react-i18next';
-import translation_en     from './en_US/translations.json';
-import translation_de     from './de_DE/translations.json';
-import store              from '../store/store';
+import i18next                          from 'i18next';
+import {initReactI18next}               from 'react-i18next';
+import translation_en                   from './en_US/translations.json';
+import translation_de                   from './de_DE/translations.json';
+import store                            from '../store/store';
+import {Locale}                         from 'antd/lib/locale-provider';
+import enUS                             from 'antd/lib/locale/en_US';
+import deDE                             from 'antd/lib/locale/de_DE';
+import {createIntl, enUSIntl, IntlType} from '@ant-design/pro-table';
+import {deDEIntl}                       from './de_DE/intl';
+
+export function getCurrentLocale(): Locale {
+    switch (store.getState().user.user?.settings?.LANGUAGE?.value) {
+        case 'de':
+            return deDE;
+        default:
+            return enUS;
+    }
+}
+
+export function getCurrentIntlType(): IntlType {
+    switch (store.getState().user.user?.settings?.LANGUAGE?.value) {
+        case 'de':
+            return createIntl('de_DE', deDEIntl());
+        default:
+            return enUSIntl;
+    }
+}
 
 export function configureI18N() {
     i18next
@@ -20,7 +43,7 @@ export function configureI18N() {
 
 export const tableTranslations = (): any => {
     return {
-        tableFrom: {
+        tableForm: {
             search: 'Query',
             reset: 'Reset',
             submit: 'Submit',

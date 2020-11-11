@@ -9,7 +9,6 @@ import {AppState}                         from '../../../../store/reducers/root.
 import {bindActionCreators, Dispatch}     from 'redux';
 import {connect}                          from 'react-redux';
 import * as api                           from '../../../../store/api/transaction.api';
-import {tableTranslations}                from '../../../../translations/translations';
 import {Button}                           from 'antd';
 import {PlusOutlined}                     from '@ant-design/icons';
 import {Link, Redirect}                   from 'react-router-dom';
@@ -67,11 +66,10 @@ class VariableTransactionList extends React.Component<VariableTransactionListCom
                     rowKey={'id'}
                     onLoad={() => this.loadVariableTransactions()}
                     dateFormatter={'number'}
-                    locale={tableTranslations()}
                     search={false}
                     pagination={{
                         total: this.props.transactionState.pageMetadata?.totalElements || 0,
-                        locale: 'en_US',
+                        size: 'default',
                         current: this.state.page + 1,
                         pageSize: this.state.pageSize,
                         onChange: this.onPaginationChange.bind(this)

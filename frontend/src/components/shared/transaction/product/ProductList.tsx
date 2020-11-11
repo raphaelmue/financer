@@ -3,7 +3,6 @@ import {connect}                          from 'react-redux';
 import {WithTranslation, withTranslation} from 'react-i18next';
 import React                              from 'react';
 import {Product}                          from '../../../../.openapi/models';
-import {tableTranslations}                from '../../../../translations/translations';
 import {Button, Space}                    from 'antd';
 import {PlusOutlined, DeleteOutlined}     from '@ant-design/icons';
 import ProTable                           from '@ant-design/pro-table';
@@ -53,7 +52,6 @@ class ProductList extends React.Component<ProductListComponentProps, ProductComp
                 columns={columns()}
                 dataSource={this.props.products || []}
                 dateFormatter={'number'}
-                locale={tableTranslations()}
                 rowKey={'id'}
                 search={false}
                 pagination={false}
