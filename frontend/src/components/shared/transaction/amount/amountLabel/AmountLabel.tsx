@@ -6,6 +6,7 @@ import {Amount}                       from '../../../../../.openapi/models';
 import React                          from 'react';
 import {Space, Typography}            from 'antd';
 import AmountUtil                     from '../util';
+import {getCurrencySymbol}            from '../../../user/settings/settingsUtil';
 
 const {Text} = Typography;
 
@@ -22,7 +23,7 @@ class AmountLabel extends React.Component<AmountLabelComponentProps, AmountLabel
         return (
             <Space size={'small'}>
                 <Text type={AmountUtil.getTextType(this.props.amount)}>
-                    {this.props.userState.user?.settings?.CURRENCY?.value || 'USD'}
+                    {getCurrencySymbol()}
                 </Text>
                 <Text type={AmountUtil.getTextType(this.props.amount)}>
                     {this.props.amount.amount.toLocaleString(

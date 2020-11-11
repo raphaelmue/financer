@@ -6,6 +6,7 @@ import {Form, Input, InputNumber, Modal}  from 'antd';
 import {fieldIsRequiredRule}              from '../../../user/form/rules';
 import {CreateProduct}                    from '../../../../../.openapi/models';
 import {FormInstance}                     from 'antd/lib/form';
+import AmountInput                        from '../../amount/amountInput/amountInput';
 
 interface CreateProductDialogComponentProps extends WithTranslation {
     visible: boolean
@@ -104,12 +105,8 @@ class CreateProductDialog extends React.Component<CreateProductDialogComponentPr
                             rules={[fieldIsRequiredRule()]}
                             initialValue={this.state.amount}
                             style={{display: 'inline-block', width: 'calc(50% - 6px)'}}>
-                            <InputNumber
-                                name={'amount'}
-                                min={0}
-                                style={{width: '100%'}}
-                                onChange={(value) => this.setState({amount: Number(value) || 0})}
-                                formatter={value => `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}/>
+                            <AmountInput
+                                onChange={amount => this.setState({amount: amount.amount})}/>
                         </Form.Item>
                     </Form.Item>
                 </Form>
