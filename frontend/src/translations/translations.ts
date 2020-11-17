@@ -10,21 +10,24 @@ import {createIntl, enUSIntl, IntlType} from '@ant-design/pro-table';
 import {deDEIntl}                       from './de_DE/intl';
 
 export function getCurrentLocale(): Locale {
-    switch (store.getState().user.user?.settings?.LANGUAGE?.value) {
-        case 'de':
-            return deDE;
-        default:
-            return enUS;
+    if (store.getState().user.user?.settings?.LANGUAGE?.value) {
+        switch (store.getState().user.user?.settings?.LANGUAGE?.value) {
+            case 'de':
+                return deDE;
+        }
     }
+    return enUS;
+
 }
 
 export function getCurrentIntlType(): IntlType {
-    switch (store.getState().user.user?.settings?.LANGUAGE?.value) {
-        case 'de':
-            return createIntl('de_DE', deDEIntl());
-        default:
-            return enUSIntl;
+    if (store.getState().user.user?.settings?.LANGUAGE?.value) {
+        switch (store.getState().user.user?.settings?.LANGUAGE?.value) {
+            case 'de':
+                return createIntl('de_DE', deDEIntl());
+        }
     }
+    return enUSIntl;
 }
 
 export function configureI18N() {
@@ -40,39 +43,3 @@ export function configureI18N() {
             },
         });
 }
-
-export const tableTranslations = (): any => {
-    return {
-        tableForm: {
-            search: 'Query',
-            reset: 'Reset',
-            submit: 'Submit',
-            collapsed: 'Expand',
-            expand: 'Collapse',
-            inputPlaceholder: 'Please enter',
-            selectPlaceholder: 'Please select',
-        },
-        alert: {
-            clear: 'Clear',
-        },
-        tableToolBar: {
-            leftPin: 'Pin to left',
-            rightPin: 'Pin to right',
-            noPin: 'Unpinned',
-            leftFixedTitle: 'Fixed the left',
-            rightFixedTitle: 'Fixed the right',
-            noFixedTitle: 'Not Fixed',
-            reset: 'Reset',
-            columnDisplay: 'Column Display',
-            columnSetting: 'Settings',
-            fullScreen: 'Full Screen',
-            exitFullScreen: 'Exit Full Screen',
-            reload: 'Refresh',
-            density: 'Density',
-            densityDefault: 'Default',
-            densityLarger: 'Larger',
-            densityMiddle: 'Middle',
-            densitySmall: 'Compact',
-        },
-    };
-};

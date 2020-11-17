@@ -186,8 +186,8 @@
             </exclusions>
         </dependency>
         <dependency>
-        <groupId>org.springdoc</groupId>
-        <artifactId>springdoc-openapi-data-rest</artifactId>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-data-rest</artifactId>
             <version>1.4.8</version>
             <exclusions>
                 <exclusion>

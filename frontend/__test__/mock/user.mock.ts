@@ -1,16 +1,16 @@
-import {GenderEnum, User}          from '../../.openapi/models';
-import {LoginUserRequest, UserApi} from '../../.openapi/apis';
+import {GenderEnum, User}          from '../../src/.openapi/models';
+import {LoginUserRequest, UserApi} from '../../src/.openapi/apis';
+import {mocked}                    from 'ts-jest/utils';
 
-export function mockLoginUser() {
-    jest.spyOn(UserApi.prototype, 'loginUser')
-        .mockImplementation((data: LoginUserRequest): Promise<User> => new Promise<User>((resolve, reject) => {
-            if (data.email === 'test@email.com' && data.password === 'password') {
-                resolve(mockUser);
-            } else {
-                reject();
-            }
-        }));
-}
+
+jest.mock('../../src/.openapi/apis');
+mocked(UserApi.prototype.loginUser).mockImplementation((data: LoginUserRequest): Promise<User> => new Promise<User>((resolve, reject) => {
+    if (data.email === 'test@gmail.com' && data.password === 'password') {
+        resolve(mockUser);
+    } else {
+        reject();
+    }
+}));
 
 export const mockUser: User = {
     id: 1,

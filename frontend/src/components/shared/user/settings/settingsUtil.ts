@@ -1,7 +1,7 @@
 import store from '../../../../store/store';
 
 export function getCurrencySign(): string {
-    switch (store.getState().user.user?.settings?.CURRENCY.value) {
+    switch (store.getState().user.user?.settings?.CURRENCY?.value) {
         case 'EUR':
         case '€':
             return '€';
@@ -11,5 +11,5 @@ export function getCurrencySign(): string {
 }
 
 export function getCurrencySymbol(): string {
-    return store.getState().user.user?.settings?.CURRENCY.value || '$';
+    return store.getState().user.user?.settings?.CURRENCY?.value || '$';
 }

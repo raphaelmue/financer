@@ -3,7 +3,6 @@ import store            from '../../store/store';
 
 export const deDEIntl = () => {
     return {
-        moneySymbol: store.getState().user.user?.settings?.CURRENCY.value || '$',
         form: {
             lightFilter: {
                 more: 'Mehr',
