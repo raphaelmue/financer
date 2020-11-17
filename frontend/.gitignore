@@ -23,7 +23,7 @@ lib-cov
 coverage
 *.lcov
 
-# nyc test coverage
+# nyc __test__ coverage
 .nyc_output
 
 # node-waf configuration
