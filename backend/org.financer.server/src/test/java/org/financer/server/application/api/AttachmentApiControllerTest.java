@@ -1,7 +1,7 @@
 package org.financer.server.application.api;
 
 import org.financer.server.application.FinancerServer;
-import org.financer.server.application.configuration.WebSecurityConfiguration;
+import org.financer.server.application.configuration.security.WebSecurityConfiguration;
 import org.financer.server.domain.model.transaction.Attachment;
 import org.financer.shared.domain.model.api.transaction.AttachmentDTO;
 import org.financer.shared.domain.model.api.transaction.AttachmentWithContentDTO;

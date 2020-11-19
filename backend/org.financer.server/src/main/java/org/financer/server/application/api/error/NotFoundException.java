@@ -1,5 +1,6 @@
 package org.financer.server.application.api.error;
 
+import org.financer.server.domain.model.DataEntity;
 import org.springframework.http.HttpStatus;
 
 /**
@@ -18,7 +19,7 @@ public class NotFoundException extends RestException {
      * @param entityClassName class name of which the entity is not found
      * @param identifier      identifier which is not found
      */
-    public NotFoundException(Class<?> entityClassName, Long identifier) {
+    public NotFoundException(Class<? extends DataEntity> entityClassName, Long identifier) {
         super(String.format(MESSAGE, entityClassName.getName(), identifier.toString()), HttpStatus.NOT_FOUND, MESSAGE_KEY, entityClassName.getName(), identifier.toString());
     }
 }

@@ -37,6 +37,14 @@ public class User implements DataEntity, UserProperty {
     @Embedded
     private Gender gender;
 
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "users_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
+    private Set<Role> roles = new HashSet<>();
+
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private Set<Category> categories = new HashSet<>();
 
@@ -135,6 +143,15 @@ public class User implements DataEntity, UserProperty {
 
     public User setGender(Gender gender) {
         this.gender = gender;
+        return this;
+    }
+
+    public Set<Role> getRoles() {
+        return roles;
+    }
+
+    public User setRoles(Set<Role> role) {
+        this.roles = role;
         return this;
     }
 

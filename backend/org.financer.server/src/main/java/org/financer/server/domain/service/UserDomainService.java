@@ -1,6 +1,7 @@
 package org.financer.server.domain.service;
 
 import org.apache.commons.mail.EmailException;
+import org.financer.server.application.api.error.NotFoundException;
 import org.financer.server.application.api.error.UnauthorizedOperationException;
 import org.financer.server.application.api.error.UnauthorizedTokenException;
 import org.financer.server.application.api.error.UniqueEmailViolationException;
@@ -9,6 +10,7 @@ import org.financer.server.application.service.VerificationService;
 import org.financer.server.domain.model.category.Category;
 import org.financer.server.domain.model.transaction.FixedTransaction;
 import org.financer.server.domain.model.transaction.VariableTransaction;
+import org.financer.server.domain.model.user.Role;
 import org.financer.server.domain.model.user.Token;
 import org.financer.server.domain.model.user.User;
 import org.financer.server.domain.model.user.VerificationToken;
@@ -33,6 +35,7 @@ public class UserDomainService {
 
     private final AuthenticationService authenticationService;
     private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
     private final TokenRepository tokenRepository;
     private final VerificationTokenRepository verificationTokenRepository;
     private final CategoryRepository categoryRepository;
@@ -41,11 +44,13 @@ public class UserDomainService {
     private final VerificationService verificationService;
 
     public UserDomainService(AuthenticationService authenticationService, UserRepository userRepository,
-                             TokenRepository tokenRepository, VerificationTokenRepository verificationTokenRepository,
-                             CategoryRepository categoryRepository, VariableTransactionRepository variableTransactionRepository,
+                             RoleRepository roleRepository, TokenRepository tokenRepository,
+                             VerificationTokenRepository verificationTokenRepository, CategoryRepository categoryRepository,
+                             VariableTransactionRepository variableTransactionRepository,
                              FixedTransactionRepository fixedTransactionRepository, VerificationService verificationService) {
         this.authenticationService = authenticationService;
         this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
         this.tokenRepository = tokenRepository;
         this.verificationTokenRepository = verificationTokenRepository;
         this.categoryRepository = categoryRepository;
@@ -109,10 +114,19 @@ public class UserDomainService {
         }
 
         user.setId(0L);
+        user.getRoles().add(this.getRoleById(2L));
         User result = userRepository.save(user);
         this.generateOrUpdateToken(result, ipAddress, operatingSystem);
         this.generateVerificationToken(result);
         return result;
+    }
+
+    private Role getRoleById(long roleId) {
+        Optional<Role> roleOptional = roleRepository.findById(roleId);
+        if (roleOptional.isPresent()) {
+            return roleOptional.get();
+        }
+        throw new NotFoundException(Role.class, roleId);
     }
 
     /**
@@ -296,7 +310,7 @@ public class UserDomainService {
     /**
      * Returns a list of variable transactions that belong to a user.
      *
-     * @param page page number that is fetched
+     * @param pageable pageable that is fetched
      * @return list of variable transactions.
      */
     public Page<VariableTransaction> fetchVariableTransactions(Pageable pageable) {

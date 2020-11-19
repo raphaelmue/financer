@@ -60,6 +60,7 @@ module org.financer.server {
     opens org.financer.server.application.api to spring.core;
     opens org.financer.server.application.service to spring.core;
     opens org.financer.server.application.configuration to spring.core, org.flywaydb.core;
+    opens org.financer.server.application.configuration.security to spring.core;
 
     opens org.financer.server.domain.model.user to spring.core, org.hibernate.orm.core, modelmapper;
     opens org.financer.server.domain.model.category to spring.core, org.hibernate.orm.core, modelmapper;
@@ -80,6 +81,7 @@ module org.financer.server {
     exports org.financer.server.application.service to spring.beans, spring.aop;
     exports org.financer.server.application.api.error to com.fasterxml.jackson.databind;
     exports org.financer.server.application.configuration to spring.beans, spring.context, org.flywaydb.core;
+    exports org.financer.server.application.configuration.security to spring.beans, spring.context;
 
     exports org.financer.server.application.model to spring.beans;
     exports org.financer.server.application.model.transaction.variable to spring.beans;

@@ -3,7 +3,7 @@ package org.financer.server.application.api;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.financer.server.SpringTest;
-import org.financer.server.application.configuration.AuthenticationTokenFilter;
+import org.financer.server.application.configuration.security.AuthenticationTokenFilter;
 import org.financer.server.domain.service.CategoryDomainService;
 import org.financer.server.domain.service.TransactionDomainService;
 import org.financer.server.domain.service.UserDomainService;
