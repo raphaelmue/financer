@@ -3,8 +3,8 @@ package org.financer.shared.domain.model.api.user;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.experimental.Accessors;
-import org.financer.shared.domain.model.api.DataTransferObject;
 import org.financer.shared.domain.model.value.objects.*;
+import org.springframework.hateoas.RepresentationModel;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -14,7 +14,7 @@ import java.util.Map;
 @Data
 @Accessors(chain = true)
 @Schema(name = "User", description = "Schema for a user")
-public class UserDTO implements DataTransferObject {
+public class UserDTO extends RepresentationModel<UserDTO> {
 
     @NotNull
     @Min(1)

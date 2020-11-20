@@ -1,6 +1,6 @@
 package org.financer.server.application.api;
 
-import org.financer.server.application.model.AssemblerService;
+import org.financer.server.application.model.transaction.variable.VariableTransactionAssembler;
 import org.financer.server.application.service.AuthenticationService;
 import org.financer.server.domain.model.category.Category;
 import org.financer.server.domain.model.transaction.FixedTransaction;
@@ -46,16 +46,16 @@ public class UserApiController implements UserApi {
     private final ModelMapper modelMapper;
     private final AuthenticationService authenticationService;
     private final HttpServletRequest request;
-    private final AssemblerService assemblerService;
+    private final VariableTransactionAssembler variableTransactionAssembler;
 
     @Autowired
     public UserApiController(HttpServletRequest request, UserDomainService userDomainService, ModelMapper modelMapper,
-                             AuthenticationService authenticationService, AssemblerService assemblerService) {
+                             AuthenticationService authenticationService, VariableTransactionAssembler variableTransactionAssembler) {
         this.request = request;
         this.userDomainService = userDomainService;
         this.modelMapper = modelMapper;
         this.authenticationService = authenticationService;
-        this.assemblerService = assemblerService;
+        this.variableTransactionAssembler = variableTransactionAssembler;
     }
 
     @Override
@@ -122,7 +122,7 @@ public class UserApiController implements UserApi {
     public ResponseEntity<PagedModel<VariableTransactionDTO>> getUsersVariableTransactions(@NotBlank @Min(1) Long userId, @Valid Pageable pageable) {
         authenticationService.getAuthenticatedUser().throwIfNotUsersProperty(userId);
         Page<VariableTransaction> variableTransactions = userDomainService.fetchVariableTransactions(pageable);
-        return new ResponseEntity<>(assemblerService.toPagedModel(variableTransactions), HttpStatus.OK);
+        return new ResponseEntity<>(variableTransactionAssembler.toPagedModel(variableTransactions), HttpStatus.OK);
     }
 
     @Override

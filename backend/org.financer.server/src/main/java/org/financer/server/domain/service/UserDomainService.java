@@ -299,6 +299,17 @@ public class UserDomainService {
     }
 
     /**
+     * Fetches all users.
+     *
+     * @param pageable pageable that is fetched
+     * @return list of users
+     */
+    public Page<User> fetchUsers(Pageable pageable) {
+        authenticationService.throwIfUserHasNotRole(Role.ROLE_ADMIN);
+        return userRepository.findAll(pageable);
+    }
+
+    /**
      * Fetches all categories of the user and returns them as a tree.
      *
      * @return list root categories.

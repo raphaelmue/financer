@@ -29,13 +29,6 @@ public class AuthenticationTokenFilter extends OncePerRequestFilter {
     public static final String TOKEN_PREFIX = "Bearer ";
     public static final String HEADER_STRING = "Authorization";
 
-    private static final List<Path> paths = Arrays.asList(
-            PathBuilder.Get().users().build(),
-            PathBuilder.Put().users().build(),
-            PathBuilder.Get().users().userId().verificationToken().build(),
-            PathBuilder.Get().apiDocumentation().any().build(),
-            PathBuilder.Get().apiDocumentationUI().any().build());
-
     @Autowired
     private ObjectMapper objectMapper;
 
@@ -69,12 +62,5 @@ public class AuthenticationTokenFilter extends OncePerRequestFilter {
         }
 
         chain.doFilter(request, response);
-    }
-
-    @Override
-    protected boolean shouldNotFilter(HttpServletRequest request) {
-        return paths.stream().anyMatch(path ->
-                request.getMethod().equals(path.getMethod())
-                        && new AntPathMatcher().match(path.getPath(), request.getServletPath()));
     }
 }

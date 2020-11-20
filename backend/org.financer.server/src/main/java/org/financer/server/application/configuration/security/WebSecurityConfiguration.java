@@ -24,10 +24,11 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable().authorizeRequests()
-                .antMatchers(PathBuilder.Get().apiDocumentation().any().build().getPath()).permitAll()      // OpenAPI Documentation
-                .antMatchers(PathBuilder.Get().apiDocumentationUI().any().build().getPath()).permitAll()    // SpringDoc UI
-                .antMatchers(HttpMethod.GET, PathBuilder.Get().users().build().getPath()).permitAll()       // login
-                .antMatchers(HttpMethod.PUT, PathBuilder.Get().users().build().getPath()).permitAll()      // register
+                .antMatchers(PathBuilder.Get().apiDocumentation().any().build().getPath()).permitAll()                                  // OpenAPI Documentation
+                .antMatchers(PathBuilder.Get().apiDocumentationUI().any().build().getPath()).permitAll()                                // SpringDoc UI
+                .antMatchers(HttpMethod.GET, PathBuilder.Get().users().build().getPath()).permitAll()                                   // login
+                .antMatchers(HttpMethod.PUT, PathBuilder.Get().users().build().getPath()).permitAll()                                   // register
+                .antMatchers(HttpMethod.GET, PathBuilder.Get().users().userId().verificationToken().build().getPath()).permitAll()      // verify users email
                 .anyRequest().hasAuthority(Role.ROLE_USER).and()
                 .addFilterBefore(authenticationTokenFilter(), UsernamePasswordAuthenticationFilter.class);
 

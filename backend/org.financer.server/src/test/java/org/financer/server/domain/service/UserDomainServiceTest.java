@@ -16,14 +16,20 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.when;
 
 @Tag("unit")
@@ -58,10 +64,18 @@ public class UserDomainServiceTest extends SpringTest {
 
         when(authenticationService.getAuthenticatedUser()).thenReturn(user);
         when(authenticationService.getUserId()).thenReturn(user.getId());
+        doAnswer(i -> {
+            if (user.getRoles().stream().filter(role -> role.getName().equals(i.getArgument(0))).findAny().isEmpty()) {
+                throw new UnauthorizedOperationException(user.getId());
+            }
+            return null;
+        }).when(authenticationService).throwIfUserHasNotRole(anyString());
 
         when(userRepository.save(any(User.class))).thenAnswer(i -> i.getArguments()[0]);
         when(userRepository.findByEmail(user.getEmail())).thenReturn(Optional.of(user));
         when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
+        when(userRepository.findAll(any(Pageable.class))).thenReturn(new PageImpl<>(List.of(user)));
+        when(roleRepository.findById(2L)).thenReturn(Optional.of(role()));
         when(tokenRepository.save(any(Token.class))).thenAnswer(i -> i.getArguments()[0]);
         when(tokenRepository.findById(token.getId())).thenReturn(Optional.of(token));
         when(tokenRepository.getTokenByToken(tokenString)).thenReturn(Optional.of(token));
@@ -180,5 +194,14 @@ public class UserDomainServiceTest extends SpringTest {
         mockAnotherUserAuthenticated();
         assertThatExceptionOfType(UnauthorizedOperationException.class).isThrownBy(() ->
                 userDomainService.updatePassword(new HashedPassword("newPassword")));
+    }
+
+    @Test
+    public void testFetchUsers() {
+        assertThatExceptionOfType(UnauthorizedOperationException.class).isThrownBy(() ->
+                userDomainService.fetchUsers(Pageable.unpaged()));
+
+        user.setRoles(Set.of(role().setName("ADMIN")));
+        assertThat(userDomainService.fetchUsers(Pageable.unpaged()).getSize()).isEqualTo(1);
     }
 }

@@ -3,13 +3,14 @@ package org.financer.shared.path;
 import java.util.HashMap;
 import java.util.Map;
 
-public class PathBuilder implements PathCreator, PathCreator.UserParameterPath, PathCreator.TokenParameterPath,
+public class PathBuilder implements PathCreator, PathCreator.UserParameterPath, PathCreator.AdminPath, PathCreator.TokenParameterPath,
         PathCreator.VariableTransactionParameterPath, PathCreator.FixedTransactionParameterPath, PathCreator.CategoryParameterPath,
         PathCreator.ProductParameterPath, PathCreator.TransactionAmountParameterPath, PathCreator.AttachmentParameterPath,
         PathCreator.UserPath, PathCreator.FixedTransactionPath, PathCreator.VariableTransactionPath,
         Path {
 
     private static final String USERS_ENDPOINT = "/users";
+    private static final String ADMIN_ENDPOINT = "/admin";
     private static final String TOKENS_ENDPOINT = "/tokens";
     private static final String VERIFICATION_TOKEN_ENDPOINT = "/verificationToken";
     private static final String CATEGORIES_ENDPOINT = "/categories";
@@ -21,6 +22,7 @@ public class PathBuilder implements PathCreator, PathCreator.UserParameterPath, 
     private static final String PASSWORD_ENDPOINT = "/password";
     private static final String SETTINGS_ENDPOINT = "/settings";
     private static final String PERSONAL_INFORMATION_ENDPOINT = "/personalInformation";
+    private static final String CONFIGURATION_ENDPOINT = "/configuration";
 
     private static final String USER_ID_PARAMETER = "userId";
     private static final String TOKEN_ID_PARAMETER = "tokenId";
@@ -278,5 +280,17 @@ public class PathBuilder implements PathCreator, PathCreator.UserParameterPath, 
     public CompletePath attachmentId(long attachmentId) {
         this.parameters.put(ATTACHMENT_ID_PARAMETER, String.valueOf(attachmentId));
         return attachmentId();
+    }
+
+    @Override
+    public AdminPath admin() {
+        this.path += ADMIN_ENDPOINT;
+        return this;
+    }
+
+    @Override
+    public CompletePath configuration() {
+        this.path += CONFIGURATION_ENDPOINT;
+        return this;
     }
 }

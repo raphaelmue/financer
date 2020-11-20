@@ -3,6 +3,7 @@ package org.financer.server;
 import org.financer.server.application.service.AuthenticationService;
 import org.financer.server.domain.model.category.Category;
 import org.financer.server.domain.model.transaction.*;
+import org.financer.server.domain.model.user.Role;
 import org.financer.server.domain.model.user.Token;
 import org.financer.server.domain.model.user.User;
 import org.financer.server.domain.model.user.VerificationToken;
@@ -14,6 +15,7 @@ import org.springframework.test.context.ActiveProfiles;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Set;
 
 import static org.mockito.Mockito.when;
 
@@ -25,6 +27,9 @@ public abstract class SpringTest {
 
     @MockBean
     protected UserRepository userRepository;
+
+    @MockBean
+    protected RoleRepository roleRepository;
 
     @MockBean
     protected TokenRepository tokenRepository;
@@ -61,7 +66,14 @@ public abstract class SpringTest {
                 .setName(new Name("Test", "User"))
                 .setPassword(new HashedPassword(password()))
                 .setTokens(new HashSet<>(Collections.singletonList(token())))
-                .setVerificationToken(verificationToken());
+                .setVerificationToken(verificationToken())
+                .setRoles(Set.of(role()));
+    }
+
+    protected Role role() {
+        return new Role()
+                .setId(1L)
+                .setName("USER");
     }
 
     protected String password() {

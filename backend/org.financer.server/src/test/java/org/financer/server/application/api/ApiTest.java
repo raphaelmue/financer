@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.financer.server.SpringTest;
 import org.financer.server.application.configuration.security.AuthenticationTokenFilter;
+import org.financer.server.application.service.AdminConfigurationService;
 import org.financer.server.domain.service.CategoryDomainService;
 import org.financer.server.domain.service.TransactionDomainService;
 import org.financer.server.domain.service.UserDomainService;
@@ -40,6 +41,9 @@ public abstract class ApiTest extends SpringTest {
 
     @MockBean
     protected CategoryDomainService categoryDomainService;
+
+    @MockBean
+    protected AdminConfigurationService adminConfigurationService;
 
     @BeforeEach
     public void setUp() {
