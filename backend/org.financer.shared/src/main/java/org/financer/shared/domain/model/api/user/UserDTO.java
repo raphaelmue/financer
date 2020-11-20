@@ -43,6 +43,8 @@ public class UserDTO extends RepresentationModel<UserDTO> {
     @Schema(description = "List of all tokens that are assigned to the user")
     private List<TokenDTO> tokens;
 
+    private List<RoleDTO> roles;
+
     @NotNull
     private boolean verified;
 

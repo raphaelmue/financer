@@ -7,7 +7,7 @@ import org.financer.shared.domain.model.api.DataTransferObject;
 
 @Data
 @Accessors(chain = true)
-@Schema(description = "Update Admin Configuration Schema")
+@Schema(name = "UpdateAdminConfiguration", description = "Update Admin Configuration Schema")
 public class UpdateAdminConfigurationDTO implements DataTransferObject {
 
     @Schema(description = "Default language for server", example = "en", allowableValues = {"en", "de"})

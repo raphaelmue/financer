@@ -23,7 +23,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable().authorizeRequests()
+        http.cors().and().csrf().disable().authorizeRequests()
                 .antMatchers(PathBuilder.Get().apiDocumentation().any().build().getPath()).permitAll()                                  // OpenAPI Documentation
                 .antMatchers(PathBuilder.Get().apiDocumentationUI().any().build().getPath()).permitAll()                                // SpringDoc UI
                 .antMatchers(HttpMethod.GET, PathBuilder.Get().users().build().getPath()).permitAll()                                   // login

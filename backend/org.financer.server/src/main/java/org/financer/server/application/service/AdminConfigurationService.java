@@ -21,6 +21,9 @@ public class AdminConfigurationService {
     @Value("${defaultCurrency}")
     private String defaultCurrency;
 
+    @Value("${clientHost}")
+    private String clientHost;
+
     public void resetProperties() {
         this.setDefaultLanguage("en");
         this.setDefaultCurrency("USD");
@@ -51,13 +54,14 @@ public class AdminConfigurationService {
         Properties properties = new Properties();
         properties.setProperty("defaultLanguage", this.defaultLanguage);
         properties.setProperty("defaultCurrency", this.defaultCurrency);
+        properties.setProperty("clientHost", this.clientHost);
         return properties;
     }
 
     public String getDefaultLanguage() {
         return defaultLanguage;
     }
-
+    
     public AdminConfigurationService setDefaultLanguage(String defaultLanguage) {
         this.defaultLanguage = defaultLanguage;
         return this;
@@ -69,6 +73,15 @@ public class AdminConfigurationService {
 
     public AdminConfigurationService setDefaultCurrency(String defaultCurrency) {
         this.defaultCurrency = defaultCurrency;
+        return this;
+    }
+
+    public String getClientHost() {
+        return clientHost;
+    }
+
+    public AdminConfigurationService setClientHost(String clientHost) {
+        this.clientHost = clientHost;
         return this;
     }
 }

@@ -6,7 +6,7 @@ import lombok.experimental.Accessors;
 
 @Data
 @Accessors(chain = true)
-@Schema(description = "Admin Configuration schema")
+@Schema(name = "AdminConfiguration", description = "Admin Configuration schema")
 public class AdminConfigurationDTO {
 
     @Schema(description = "Default language for server", example = "en")

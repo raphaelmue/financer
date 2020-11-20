@@ -7,7 +7,7 @@ import org.financer.shared.domain.model.api.user.RegisterUserDTO;
 
 @Data
 @Accessors(chain = true)
-@Schema(description = "Initial Admin Configuration")
+@Schema(name = "InitAdminConfiguration", description = "Initial Admin Configuration")
 public class InitAdminConfigurationDTO extends UpdateAdminConfigurationDTO {
 
     @Schema(description = "Admin User that will be created")

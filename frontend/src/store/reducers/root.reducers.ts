@@ -3,11 +3,13 @@ import userReducer            from './user.reducers';
 import {transactionReducer}   from './transaction.reducer';
 import {categoryReducer}      from './category.reducer';
 import {UserActionDefinition} from '../actions/user.actions';
+import {adminReducer}         from './admin.reducer';
 
 const appReducer = combineReducers({
     user: userReducer,
     transaction: transactionReducer,
-    category: categoryReducer
+    category: categoryReducer,
+    admin: adminReducer
 });
 
 const rootReducer = (state: any, action: any) => {
