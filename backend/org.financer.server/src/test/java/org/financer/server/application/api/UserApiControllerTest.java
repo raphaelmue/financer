@@ -3,6 +3,7 @@ package org.financer.server.application.api;
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.financer.server.application.FinancerServer;
 import org.financer.server.application.configuration.security.WebSecurityConfiguration;
+import org.financer.server.application.service.AdminConfigurationService;
 import org.financer.server.domain.model.user.Setting;
 import org.financer.server.domain.model.user.User;
 import org.financer.shared.domain.model.api.DataTransferObject;
@@ -37,7 +38,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @Tag("unit")
-@SpringBootTest(classes = {FinancerServer.class, WebSecurityConfiguration.class, UserApiController.class},
+@SpringBootTest(classes = {FinancerServer.class, AdminConfigurationService.class, WebSecurityConfiguration.class, UserApiController.class},
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureWebMvc
 @AutoConfigureMockMvc

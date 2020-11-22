@@ -67,13 +67,20 @@ public abstract class SpringTest {
                 .setPassword(new HashedPassword(password()))
                 .setTokens(new HashSet<>(Collections.singletonList(token())))
                 .setVerificationToken(verificationToken())
-                .setRoles(Set.of(role()));
+                .setRoles(roles());
     }
 
-    protected Role role() {
+    protected Set<Role> roles() {
+        return Set.of(
+                new Role()
+                        .setId(1L)
+                        .setName("USER"), userRole());
+    }
+
+    protected Role userRole() {
         return new Role()
-                .setId(1L)
-                .setName("USER");
+                .setId(2L)
+                .setName("ADMIN");
     }
 
     protected String password() {

@@ -19,7 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @Tag("unit")
 @ExtendWith(SpringExtension.class)
-@SpringBootTest(classes = {FinancerServer.class, AdminConfigurationService.class},
+@SpringBootTest(classes = {FinancerServer.class, AdminConfigurationService.class, AdminConfigurationService.class},
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class AdminConfigurationServiceTest extends SpringTest {
 

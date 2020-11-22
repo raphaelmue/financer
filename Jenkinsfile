@@ -30,7 +30,8 @@ pipeline {
                 dir('frontend') {
                     sh 'npm install -g yarn'
                     sh 'yarn install --ignore-engines'
-                    sh 'yarn build:dev'
+                    sh 'yarn run generate:api'
+                    sh 'yarn build'
                 }
             }
         }

@@ -7,10 +7,7 @@ import org.financer.shared.domain.model.value.objects.*;
 
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Table(name = "users")
@@ -50,7 +47,7 @@ public class User implements DataEntity, UserProperty {
 
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @MapKey(name = "pair.property")
-    private Map<SettingPair.Property, Setting> settings;
+    private Map<SettingPair.Property, Setting> settings = new EnumMap<>(SettingPair.Property.class);
 
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
     private Set<Token> tokens = new HashSet<>();

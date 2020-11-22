@@ -29,6 +29,8 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET, PathBuilder.Get().users().build().getPath()).permitAll()                                   // login
                 .antMatchers(HttpMethod.PUT, PathBuilder.Get().users().build().getPath()).permitAll()                                   // register
                 .antMatchers(HttpMethod.GET, PathBuilder.Get().users().userId().verificationToken().build().getPath()).permitAll()      // verify users email
+                .antMatchers(PathBuilder.Get().admin().any().build().getPath()).hasAuthority(Role.ROLE_ADMIN)
+                .antMatchers(HttpMethod.GET, PathBuilder.Get().admin().configuration().build().getPath()).hasAuthority(Role.ROLE_USER)
                 .anyRequest().hasAuthority(Role.ROLE_USER).and()
                 .addFilterBefore(authenticationTokenFilter(), UsernamePasswordAuthenticationFilter.class);
 

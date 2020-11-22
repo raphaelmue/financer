@@ -5,6 +5,7 @@ import org.financer.server.application.api.error.NotFoundException;
 import org.financer.server.application.api.error.UnauthorizedOperationException;
 import org.financer.server.application.api.error.UnauthorizedTokenException;
 import org.financer.server.application.api.error.UniqueEmailViolationException;
+import org.financer.server.application.service.AdminConfigurationService;
 import org.financer.server.application.service.AuthenticationService;
 import org.financer.server.application.service.VerificationService;
 import org.financer.server.domain.model.category.Category;
@@ -42,12 +43,14 @@ public class UserDomainService {
     private final VariableTransactionRepository variableTransactionRepository;
     private final FixedTransactionRepository fixedTransactionRepository;
     private final VerificationService verificationService;
+    private final AdminConfigurationService adminConfigurationService;
 
     public UserDomainService(AuthenticationService authenticationService, UserRepository userRepository,
                              RoleRepository roleRepository, TokenRepository tokenRepository,
                              VerificationTokenRepository verificationTokenRepository, CategoryRepository categoryRepository,
                              VariableTransactionRepository variableTransactionRepository,
-                             FixedTransactionRepository fixedTransactionRepository, VerificationService verificationService) {
+                             FixedTransactionRepository fixedTransactionRepository, VerificationService verificationService,
+                             AdminConfigurationService adminConfigurationService) {
         this.authenticationService = authenticationService;
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
@@ -57,6 +60,7 @@ public class UserDomainService {
         this.variableTransactionRepository = variableTransactionRepository;
         this.fixedTransactionRepository = fixedTransactionRepository;
         this.verificationService = verificationService;
+        this.adminConfigurationService = adminConfigurationService;
     }
 
     /**
@@ -115,7 +119,9 @@ public class UserDomainService {
 
         user.setId(0L);
         user.getRoles().add(this.getRoleById(2L));
+        this.adminConfigurationService.setNewUsersDefaultSettings(user);
         User result = userRepository.save(user);
+
         this.generateOrUpdateToken(result, ipAddress, operatingSystem);
         this.generateVerificationToken(result);
         return result;

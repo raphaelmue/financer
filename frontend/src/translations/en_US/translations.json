@@ -133,12 +133,18 @@
           "ConfirmDeleteProducts": "Are you sure you want to delete this product from the variable transaction?"
         }
       }
+    },
+    "Admin": {
+      "Configuration": {
+        "UpdatedAdminConfiguration": "Server configuration was successfully updated."
+      }
     }
   },
   "Admin": {
     "Configuration": {
       "DefaultLanguage": "Default language",
       "DefaultCurrency": "Default currency"
-    }
+    },
+    "ServerConfiguration": "Server Configuration"
   }
 }

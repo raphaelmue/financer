@@ -31,6 +31,9 @@ public abstract class ApiTest extends SpringTest {
     protected ObjectMapper objectMapper;
 
     @Autowired
+    protected AdminConfigurationService adminConfigurationService;
+
+    @Autowired
     protected MockMvc mockMvc;
 
     @MockBean
@@ -41,9 +44,6 @@ public abstract class ApiTest extends SpringTest {
 
     @MockBean
     protected CategoryDomainService categoryDomainService;
-
-    @MockBean
-    protected AdminConfigurationService adminConfigurationService;
 
     @BeforeEach
     public void setUp() {

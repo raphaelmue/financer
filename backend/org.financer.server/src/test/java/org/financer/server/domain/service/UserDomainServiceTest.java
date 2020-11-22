@@ -4,6 +4,7 @@ import org.financer.server.SpringTest;
 import org.financer.server.application.FinancerServer;
 import org.financer.server.application.api.error.UnauthorizedOperationException;
 import org.financer.server.application.api.error.UniqueEmailViolationException;
+import org.financer.server.application.service.AdminConfigurationService;
 import org.financer.server.application.service.AuthenticationService;
 import org.financer.server.domain.model.user.Token;
 import org.financer.server.domain.model.user.User;
@@ -23,7 +24,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -34,7 +34,7 @@ import static org.mockito.Mockito.when;
 
 @Tag("unit")
 @ExtendWith(SpringExtension.class)
-@SpringBootTest(classes = {FinancerServer.class, UserDomainService.class, AuthenticationService.class},
+@SpringBootTest(classes = {FinancerServer.class, AdminConfigurationService.class, UserDomainService.class, AuthenticationService.class},
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class UserDomainServiceTest extends SpringTest {
 
@@ -75,7 +75,7 @@ public class UserDomainServiceTest extends SpringTest {
         when(userRepository.findByEmail(user.getEmail())).thenReturn(Optional.of(user));
         when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
         when(userRepository.findAll(any(Pageable.class))).thenReturn(new PageImpl<>(List.of(user)));
-        when(roleRepository.findById(2L)).thenReturn(Optional.of(role()));
+        when(roleRepository.findById(2L)).thenReturn(Optional.of(userRole()));
         when(tokenRepository.save(any(Token.class))).thenAnswer(i -> i.getArguments()[0]);
         when(tokenRepository.findById(token.getId())).thenReturn(Optional.of(token));
         when(tokenRepository.getTokenByToken(tokenString)).thenReturn(Optional.of(token));
@@ -198,10 +198,6 @@ public class UserDomainServiceTest extends SpringTest {
 
     @Test
     public void testFetchUsers() {
-        assertThatExceptionOfType(UnauthorizedOperationException.class).isThrownBy(() ->
-                userDomainService.fetchUsers(Pageable.unpaged()));
-
-        user.setRoles(Set.of(role().setName("ADMIN")));
         assertThat(userDomainService.fetchUsers(Pageable.unpaged()).getSize()).isEqualTo(1);
     }
 }

@@ -2,6 +2,7 @@ package org.financer.server.application.api;
 
 import org.financer.server.application.FinancerServer;
 import org.financer.server.application.configuration.security.WebSecurityConfiguration;
+import org.financer.server.application.service.AdminConfigurationService;
 import org.financer.server.domain.model.transaction.Attachment;
 import org.financer.shared.domain.model.api.transaction.AttachmentDTO;
 import org.financer.shared.domain.model.api.transaction.AttachmentWithContentDTO;
@@ -22,7 +23,7 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @Tag("unit")
-@SpringBootTest(classes = {FinancerServer.class, WebSecurityConfiguration.class, RestExceptionHandler.class, AttachmentApiController.class},
+@SpringBootTest(classes = {FinancerServer.class, AdminConfigurationService.class, WebSecurityConfiguration.class, RestExceptionHandler.class, AttachmentApiController.class},
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureWebMvc
 @AutoConfigureMockMvc

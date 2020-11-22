@@ -11,7 +11,10 @@ import org.financer.shared.domain.model.api.admin.InitAdminConfigurationDTO;
 import org.financer.shared.domain.model.api.admin.UpdateAdminConfigurationDTO;
 import org.financer.shared.domain.model.api.user.RegisterUserDTO;
 import org.financer.shared.domain.model.api.user.UserDTO;
+import org.financer.shared.domain.model.value.objects.TokenString;
 import org.financer.shared.path.PathBuilder;
+import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -23,40 +26,38 @@ import org.springframework.hateoas.PagedModel;
 import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.List;
-import java.util.Set;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @Tag("unit")
-@SpringBootTest(classes = {FinancerServer.class, WebSecurityConfiguration.class, RestExceptionHandler.class, AdminApiController.class},
+@SpringBootTest(classes = {FinancerServer.class, AdminConfigurationService.class, WebSecurityConfiguration.class, RestExceptionHandler.class, AdminApiController.class},
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureWebMvc
 @AutoConfigureMockMvc
 public class AdminApiControllerTest extends ApiTest {
 
+    @BeforeEach
+    public void setUp() {
+        super.setUp();
+        adminConfigurationService.resetProperties();
+    }
+
     @Test
     public void testGetAdminConfiguration() throws Exception {
-        when(adminConfigurationService.getDefaultLanguage()).thenReturn("de");
-        when(adminConfigurationService.getDefaultCurrency()).thenReturn("EUR");
-
         MvcResult result = mockMvc.perform(buildRequest(PathBuilder.Get().admin().configuration().build()))
                 .andExpect(status().isOk()).andReturn();
 
         AdminConfigurationDTO configuration = objectMapper.readValue(result.getResponse().getContentAsString(), AdminConfigurationDTO.class);
-        assertThat(configuration.getDefaultLanguage()).isEqualTo("de");
-        assertThat(configuration.getDefaultCurrency()).isEqualTo("EUR");
+        assertThat(configuration.getDefaultLanguage()).isEqualTo("en");
+        assertThat(configuration.getDefaultCurrency()).isEqualTo("USD");
     }
 
     @Test
     public void testUpdateAdminConfiguration() throws Exception {
-        when(adminConfigurationService.updateProperties(anyString(), anyString())).thenAnswer(i -> new AdminConfigurationService()
-                .setDefaultLanguage(i.getArgument(0))
-                .setDefaultCurrency(i.getArgument(1)));
-
         DataTransferObject dto = new UpdateAdminConfigurationDTO()
                 .setDefaultLanguage("de")
                 .setDefaultCurrency("EUR");
@@ -71,10 +72,7 @@ public class AdminApiControllerTest extends ApiTest {
 
     @Test
     public void testInitializeServerConfiguration() throws Exception {
-        when(adminConfigurationService.updateProperties(anyString(), anyString())).thenAnswer(i -> new AdminConfigurationService()
-                .setDefaultLanguage(i.getArgument(0))
-                .setDefaultCurrency(i.getArgument(1)));
-        when(userDomainService.registerUser(any(User.class), any(), any())).thenReturn(user().setRoles(Set.of(role().setName("ADMIN"))));
+        when(userDomainService.registerUser(any(User.class), any(), any())).thenReturn(user().setRoles(roles()));
 
         DataTransferObject dto = new InitAdminConfigurationDTO()
                 .setAdminUser(new RegisterUserDTO()

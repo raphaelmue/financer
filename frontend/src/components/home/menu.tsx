@@ -2,6 +2,7 @@ import {MenuDataItem}                                                           
 import i18next                                                                         from 'i18next';
 import {AreaChartOutlined, DollarOutlined, SettingOutlined, TagOutlined, UserOutlined} from '@ant-design/icons';
 import React                                                                           from 'react';
+import AdminUtils                                                                      from '../shared/admin/utils';
 import store                                                                           from '../../store/store';
 
 export default (): MenuDataItem[] => [
@@ -53,8 +54,7 @@ export default (): MenuDataItem[] => [
     }, {
         path: '/admin',
         name: i18next.t('Menu.Administration'),
-        hideInMenu: (store.getState().user.user?.roles !== undefined
-            && store.getState().user.user?.roles?.includes({id: 1, name: 'ADMIN'})),
+        hideInMenu: !AdminUtils.isUserAdmin(store.getState().user.user!),
         icon: <SettingOutlined/>,
         children: [
             {
