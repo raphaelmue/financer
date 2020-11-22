@@ -12,6 +12,12 @@ public interface PathCreator extends AnyPath {
         UserPath userId(long userId);
     }
 
+    interface AdminPath extends AnyPath {
+        CompletePath configuration();
+
+        UserParameterPath users();
+    }
+
     interface TokenParameterPath extends AnyPath {
         CompletePath tokenId();
 
@@ -85,6 +91,8 @@ public interface PathCreator extends AnyPath {
     }
 
     UserParameterPath users();
+
+    AdminPath admin();
 
     CategoryParameterPath categories();
 

@@ -17,7 +17,8 @@
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <spring.version>5.2.4.RELEASE</spring.version>
+        <spring.version>5.2.11.RELEASE</spring.version>
+        <spring.boot.version>2.3.3.RELEASE</spring.boot.version>
 
         <project.testing.localhost>false</project.testing.localhost>
         <project.testing.tags>unit, integration</project.testing.tags>
@@ -84,7 +85,6 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.8.1</version>
                 <configuration>
-                    <release>10</release>
                     <annotationProcessorPaths>
                         <path>
                             <groupId>org.projectlombok</groupId>
@@ -104,13 +104,10 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.4</version>
+                <version>0.8.6</version>
                 <configuration>
                     <destFile>${project.basedir}/../target/jacoco.exec</destFile>
                     <append>true</append>
-                    <excludes>
-                        <exclude>android/**/*</exclude>
-                    </excludes>
                 </configuration>
                 <executions>
                     <execution>
@@ -137,7 +134,7 @@
                     <forkCount>1</forkCount>
                     <reuseForks>true</reuseForks>
                     <groups>${project.testing.tags}</groups>
-                    <argLine>-Xmx1024m -XX:MaxPermSize=256m ${project.testing.headless} ${project.testing.arguments}
+                    <argLine>@{argLine} -Xmx1024m -XX:MaxPermSize=256m ${project.testing.arguments}
                     </argLine>
                 </configuration>
             </plugin>

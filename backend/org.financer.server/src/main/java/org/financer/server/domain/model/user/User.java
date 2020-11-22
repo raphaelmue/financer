@@ -7,10 +7,7 @@ import org.financer.shared.domain.model.value.objects.*;
 
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Table(name = "users")
@@ -37,12 +34,20 @@ public class User implements DataEntity, UserProperty {
     @Embedded
     private Gender gender;
 
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "users_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
+    private Set<Role> roles = new HashSet<>();
+
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private Set<Category> categories = new HashSet<>();
 
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @MapKey(name = "pair.property")
-    private Map<SettingPair.Property, Setting> settings;
+    private Map<SettingPair.Property, Setting> settings = new EnumMap<>(SettingPair.Property.class);
 
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
     private Set<Token> tokens = new HashSet<>();
@@ -135,6 +140,15 @@ public class User implements DataEntity, UserProperty {
 
     public User setGender(Gender gender) {
         this.gender = gender;
+        return this;
+    }
+
+    public Set<Role> getRoles() {
+        return roles;
+    }
+
+    public User setRoles(Set<Role> role) {
+        this.roles = role;
         return this;
     }
 

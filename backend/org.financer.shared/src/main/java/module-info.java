@@ -1,4 +1,5 @@
 module org.financer.shared {
+    exports org.financer.shared.path;
     exports org.financer.shared.connection;
     exports org.financer.shared.exceptions;
     exports org.financer.shared.domain.model;
@@ -9,6 +10,7 @@ module org.financer.shared {
     exports org.financer.shared.domain.model.api.transaction.variable;
     exports org.financer.shared.domain.model.api.transaction.fixed;
     exports org.financer.shared.domain.model.value.objects;
+    exports org.financer.shared.domain.model.api.admin;
 
     requires static lombok;
     requires org.financer.util;
@@ -32,5 +34,4 @@ module org.financer.shared {
     opens org.financer.shared.domain.model.api.transaction.variable to org.hibernate.validator;
     opens org.financer.shared.domain.model.value.objects to spring.core, org.hibernate.orm.core, com.fasterxml.jackson.databind;
 
-    exports org.financer.shared.path;
 }
