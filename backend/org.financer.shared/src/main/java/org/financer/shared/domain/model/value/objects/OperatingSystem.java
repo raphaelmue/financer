@@ -1,6 +1,9 @@
 package org.financer.shared.domain.model.value.objects;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.experimental.Accessors;
 import org.financer.shared.exceptions.EnumNotFoundException;
 
 import javax.persistence.Column;
@@ -10,6 +13,7 @@ import javax.persistence.Enumerated;
 import java.io.Serializable;
 import java.util.Objects;
 
+@Data
 @Embeddable
 @Schema(description = "Value object for the operating system")
 public class OperatingSystem implements Serializable {
@@ -48,6 +52,7 @@ public class OperatingSystem implements Serializable {
         }
     }
 
+    @EqualsAndHashCode.Include
     @Enumerated(EnumType.STRING)
     @Column(name = "system")
     @Schema(description = "Operating system", required = true, example = "MAC_OS", enumAsRef = true)
@@ -62,29 +67,5 @@ public class OperatingSystem implements Serializable {
 
     public OperatingSystem(Values operatingSystem) {
         this.operatingSystem = operatingSystem;
-    }
-
-    public Values getOperatingSystem() {
-        return operatingSystem;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        OperatingSystem that = (OperatingSystem) o;
-        return operatingSystem == that.operatingSystem;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(operatingSystem);
-    }
-
-    @Override
-    public String toString() {
-        return "OperatingSystem [" +
-                "operatingSystem=" + operatingSystem +
-                ']';
     }
 }

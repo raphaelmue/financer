@@ -1,6 +1,9 @@
 package org.financer.shared.domain.model.value.objects;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.experimental.Accessors;
 import org.financer.shared.exceptions.EnumNotFoundException;
 
 import javax.persistence.Column;
@@ -11,6 +14,7 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
 
+@Data
 @Embeddable
 @Schema(description = "Value object for category class")
 public class CategoryClass implements Serializable {
@@ -48,6 +52,7 @@ public class CategoryClass implements Serializable {
 
     }
 
+    @EqualsAndHashCode.Include
     @Enumerated(EnumType.ORDINAL)
     @Column(name = "category_class", nullable = false)
     @Schema(description = "Category class", required = true, enumAsRef = true, example = "FIXED_REVENUE")
@@ -77,33 +82,5 @@ public class CategoryClass implements Serializable {
                 new CategoryClass(Values.FIXED_EXPENSES),
                 new CategoryClass(Values.VARIABLE_REVENUE),
                 new CategoryClass(Values.VARIABLE_EXPENSES));
-    }
-
-    /*
-     * Getters and Setters
-     */
-
-    public Values getCategoryClass() {
-        return categoryClass;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        CategoryClass that = (CategoryClass) o;
-        return categoryClass == that.categoryClass;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(categoryClass);
-    }
-
-    @Override
-    public String toString() {
-        return "CategoryClass [" +
-                "categoryClass=" + categoryClass +
-                ']';
     }
 }

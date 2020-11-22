@@ -1,14 +1,16 @@
 package org.financer.shared.domain.model.value.objects;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import org.financer.util.RandomString;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import org.financer.util.security.RandomString;
 import org.hibernate.annotations.Immutable;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import java.io.Serializable;
-import java.util.Objects;
 
+@Data
 @Embeddable
 @Immutable
 public final class TokenString implements Serializable {
@@ -16,6 +18,7 @@ public final class TokenString implements Serializable {
 
     private static final RandomString stringGenerator = new RandomString(64);
 
+    @EqualsAndHashCode.Include
     @Schema(description = "Token string", required = true, maxLength = 64, minLength = 64,
             example = "UPOPBEZR7c9GqpGs0IFrKdgtRvUuZMsI8ubfOK33cDX6ArmtFiqxnP6ayHQFHsbu")
     @Column(name = "token", length = 64, nullable = false)
@@ -30,29 +33,5 @@ public final class TokenString implements Serializable {
 
     public TokenString(String token) {
         this.token = token;
-    }
-
-    public String getToken() {
-        return token;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        TokenString that = (TokenString) o;
-        return Objects.equals(token, that.token);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(token);
-    }
-
-    @Override
-    public String toString() {
-        return "TokenString [" +
-                "token='" + token + '\'' +
-                ']';
     }
 }

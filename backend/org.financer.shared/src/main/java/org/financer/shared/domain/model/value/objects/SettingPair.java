@@ -1,6 +1,9 @@
 package org.financer.shared.domain.model.value.objects;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.experimental.Accessors;
 import org.financer.shared.exceptions.EnumNotFoundException;
 import org.hibernate.annotations.Immutable;
 
@@ -11,8 +14,8 @@ import javax.persistence.Enumerated;
 import java.io.Serializable;
 import java.util.Currency;
 import java.util.Locale;
-import java.util.Objects;
 
+@Data
 @Embeddable
 @Immutable
 @Schema(description = "Value object for property value pair")
@@ -74,11 +77,13 @@ public class SettingPair implements Serializable {
         }
     }
 
+    @EqualsAndHashCode.Include
     @Enumerated(EnumType.STRING)
     @Column(name = "property", nullable = false)
     @Schema(description = "Property", required = true, example = "CURRENCY", enumAsRef = true)
     private Property property;
 
+    @EqualsAndHashCode.Include
     @Column(name = "value", nullable = false)
     @Schema(description = "Value", required = true, example = "EUR")
     private String value;
@@ -104,37 +109,7 @@ public class SettingPair implements Serializable {
         return this.property.getPropertyConverter().toObject(this.value);
     }
 
-    public Property getProperty() {
-        return property;
-    }
-
-    public String getValue() {
-        return value;
-    }
-
     public SettingPair setValue(String value) {
         return new SettingPair(this.property, value);
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        SettingPair that = (SettingPair) o;
-        return property == that.property &&
-                Objects.equals(value, that.value);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(property, value);
-    }
-
-    @Override
-    public String toString() {
-        return "SettingPair [" +
-                "property=" + property +
-                ", value='" + value + '\'' +
-                ']';
     }
 }

@@ -1,5 +1,8 @@
 package org.financer.shared.domain.model.value.objects;
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.experimental.Accessors;
 import org.hibernate.annotations.Immutable;
 
 import javax.persistence.Column;
@@ -8,12 +11,14 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Objects;
 
+@Data
 @Embeddable
 @Immutable
 public class ExpireDate implements Serializable {
     private static final long serialVersionUID = -6031939301023199834L;
 
 
+    @EqualsAndHashCode.Include
     @Column(name = "expire_date", nullable = false)
     private final LocalDate expireDate;
 
@@ -43,31 +48,4 @@ public class ExpireDate implements Serializable {
         return new ExpireDate(LocalDate.now().plusMonths(1));
     }
 
-    /*
-     * Getters and Setters
-     */
-
-    public LocalDate getExpireDate() {
-        return expireDate;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        ExpireDate that = (ExpireDate) o;
-        return Objects.equals(expireDate, that.expireDate);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(expireDate);
-    }
-
-    @Override
-    public String toString() {
-        return "ExpireDate [" +
-                "expireDate=" + expireDate +
-                ']';
-    }
 }
