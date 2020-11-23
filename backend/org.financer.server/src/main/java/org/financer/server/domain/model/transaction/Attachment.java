@@ -2,6 +2,7 @@ package org.financer.server.domain.model.transaction;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import lombok.experimental.Accessors;
 import org.financer.server.domain.model.DataEntity;
 import org.financer.server.domain.model.user.UserProperty;
@@ -24,6 +25,7 @@ public class Attachment implements DataEntity, UserProperty {
     private Long id;
 
     @ManyToOne(targetEntity = Transaction.class, optional = false)
+    @ToString.Exclude
     private Transaction transaction;
 
     @Column(name = "name", nullable = false)

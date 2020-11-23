@@ -2,6 +2,7 @@ package org.financer.server.domain.model.transaction;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import lombok.experimental.Accessors;
 import org.financer.server.domain.model.DataEntity;
 import org.financer.server.domain.model.user.UserProperty;
@@ -28,6 +29,7 @@ public class Product implements DataEntity, AmountProvider, UserProperty {
     private Long id;
 
     @ManyToOne(targetEntity = VariableTransaction.class, optional = false)
+    @ToString.Exclude
     private VariableTransaction transaction;
 
     @Column(name = "name", length = 64, nullable = false)
@@ -72,8 +74,8 @@ public class Product implements DataEntity, AmountProvider, UserProperty {
 
     @Override
     public void adjustAmountSign() {
-        if ((this.isRevenue() == this.getTotalAmount().isNegative())) {
-            this.setAmount(this.getTotalAmount().adjustSign());
+        if (this.isRevenue() == this.getAmount().isNegative()) {
+            this.setAmount(this.getAmount().adjustSign());
         }
     }
 

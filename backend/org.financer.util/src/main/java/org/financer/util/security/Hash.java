@@ -17,8 +17,7 @@ public class Hash {
             final MessageDigest digest = MessageDigest.getInstance(HASH_ALGORITHM);
             digest.reset();
             return binToHex(digest.digest(plainText.getBytes())).toLowerCase();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
+        } catch (NoSuchAlgorithmException ignored) {
         }
         return null;
     }

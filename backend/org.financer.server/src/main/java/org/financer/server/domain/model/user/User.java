@@ -10,7 +10,10 @@ import org.financer.shared.domain.model.value.objects.*;
 
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.EnumMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 @Data
 @Accessors(chain = true)

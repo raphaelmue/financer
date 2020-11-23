@@ -2,14 +2,12 @@ package org.financer.shared.domain.model.value.objects;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.experimental.Accessors;
 import org.hibernate.annotations.Immutable;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.util.Objects;
 
 @Data
 @Embeddable

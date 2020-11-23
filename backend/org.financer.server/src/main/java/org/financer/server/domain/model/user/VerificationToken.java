@@ -2,6 +2,7 @@ package org.financer.server.domain.model.user;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import lombok.experimental.Accessors;
 import org.financer.server.domain.model.DataEntity;
 import org.financer.shared.domain.model.value.objects.ExpireDate;
@@ -24,6 +25,7 @@ public class VerificationToken implements DataEntity {
     private Long id;
 
     @OneToOne(targetEntity = User.class, optional = false)
+    @ToString.Exclude
     private User user;
 
     @Embedded

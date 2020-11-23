@@ -2,6 +2,7 @@ package org.financer.server.domain.model.transaction;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import lombok.experimental.Accessors;
 import org.financer.server.domain.model.DataEntity;
 import org.financer.server.domain.model.user.UserProperty;
@@ -27,6 +28,7 @@ public class FixedTransactionAmount implements DataEntity, AmountProvider, UserP
     private Long id;
 
     @ManyToOne(targetEntity = FixedTransaction.class, fetch = FetchType.EAGER, optional = false)
+    @ToString.Exclude
     private FixedTransaction fixedTransaction;
 
     @Embedded

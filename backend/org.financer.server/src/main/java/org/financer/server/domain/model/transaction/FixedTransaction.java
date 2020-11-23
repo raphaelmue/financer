@@ -1,7 +1,6 @@
 package org.financer.server.domain.model.transaction;
 
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 import org.financer.server.domain.model.category.Category;
 import org.financer.shared.domain.model.AmountProvider;

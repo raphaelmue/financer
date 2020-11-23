@@ -2,6 +2,7 @@ package org.financer.server.domain.model.category;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import lombok.experimental.Accessors;
 import org.financer.server.application.api.error.IllegalCategoryParentStateException;
 import org.financer.server.domain.model.DataEntity;
@@ -34,12 +35,14 @@ public class Category implements DataEntity, Tree, AmountProvider, UserProperty 
     private Long id;
 
     @ManyToOne(targetEntity = User.class, optional = false)
+    @ToString.Exclude
     private User user;
 
     @Embedded
     private CategoryClass categoryClass;
 
     @ManyToOne(targetEntity = Category.class)
+    @ToString.Exclude
     private Category parent;
 
     @Column(name = "name", nullable = false)
@@ -63,7 +66,7 @@ public class Category implements DataEntity, Tree, AmountProvider, UserProperty 
         for (AmountProvider amountProvider : this.transactions) {
             amount = amount.add(amountProvider.getTotalAmount());
         }
-        if (this.isLeaf()) {
+        if (!this.isLeaf()) {
             for (AmountProvider amountProvider : this.children) {
                 amount = amount.add(amountProvider.getTotalAmount());
             }
@@ -79,7 +82,7 @@ public class Category implements DataEntity, Tree, AmountProvider, UserProperty 
         for (AmountProvider amountProvider : this.transactions) {
             amount = amount.add(amountProvider.getTotalAmount(valueDate));
         }
-        if (this.isLeaf()) {
+        if (!this.isLeaf()) {
             for (AmountProvider amountProvider : this.children) {
                 amount = amount.add(amountProvider.getTotalAmount(valueDate));
             }

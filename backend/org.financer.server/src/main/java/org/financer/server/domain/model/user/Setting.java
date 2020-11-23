@@ -2,6 +2,7 @@ package org.financer.server.domain.model.user;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import lombok.experimental.Accessors;
 import org.financer.server.domain.model.DataEntity;
 import org.financer.shared.domain.model.value.objects.SettingPair;
@@ -23,6 +24,7 @@ public class Setting implements DataEntity {
     private Long id;
 
     @ManyToOne()
+    @ToString.Exclude
     private User user;
 
     @Embedded

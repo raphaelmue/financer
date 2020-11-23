@@ -2,6 +2,7 @@ package org.financer.server.domain.model.user;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import lombok.experimental.Accessors;
 import org.financer.server.domain.model.DataEntity;
 import org.financer.shared.domain.model.value.objects.ExpireDate;
@@ -10,7 +11,6 @@ import org.financer.shared.domain.model.value.objects.OperatingSystem;
 import org.financer.shared.domain.model.value.objects.TokenString;
 
 import javax.persistence.*;
-import java.util.Objects;
 
 @Data
 @Accessors(chain = true)
@@ -27,6 +27,7 @@ public class Token implements DataEntity, UserProperty {
     private Long id;
 
     @ManyToOne(targetEntity = User.class, optional = false)
+    @ToString.Exclude
     private User user;
 
     @Embedded
