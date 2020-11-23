@@ -66,7 +66,7 @@ public class UserApiControllerTest extends ApiTest {
     @Test
     public void testRegisterUser() throws Exception {
         when(userDomainService.registerUser(any(User.class), any(IPAddress.class), any()))
-                .thenAnswer(i -> ((User) i.getArguments()[0]).setId(1));
+                .thenAnswer(i -> ((User) i.getArguments()[0]).setId(1L));
 
         DataTransferObject dto = new RegisterUserDTO()
                 .setName(user.getName())

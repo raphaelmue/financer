@@ -1,9 +1,15 @@
 package org.financer.server.domain.model.user;
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.experimental.Accessors;
 import org.financer.server.domain.model.DataEntity;
 
 import javax.persistence.*;
 
+@Data
+@Accessors(chain = true)
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
 @Table(name = "roles")
 public class Role implements DataEntity {
@@ -14,27 +20,9 @@ public class Role implements DataEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
+    @EqualsAndHashCode.Include
     private Long id;
 
     @Column(name = "name", length = 128, nullable = false)
     private String name;
-
-    @Override
-    public long getId() {
-        return id;
-    }
-
-    public Role setId(Long id) {
-        this.id = id;
-        return this;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public Role setName(String name) {
-        this.name = name;
-        return this;
-    }
 }

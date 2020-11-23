@@ -31,12 +31,12 @@ public class CategoryApiControllerTest extends ApiTest {
 
     @Test
     public void testCreateCategory() throws Exception {
-        when(categoryDomainService.createCategory(any(Category.class))).thenAnswer(i -> ((Category) i.getArguments()[0]).setId(1));
+        when(categoryDomainService.createCategory(any(Category.class))).thenAnswer(i -> ((Category) i.getArguments()[0]).setId(1L));
 
         DataTransferObject dto = new CreateCategoryDTO()
                 .setName("Test Category")
                 .setCategoryClass(CategoryClass.Values.VARIABLE_EXPENSES)
-                .setParentId(-1);
+                .setParentId(-1L);
         MvcResult result = mockMvc.perform(buildRequest(PathBuilder.Put().categories().build(), dto))
                 .andExpect(status().isOk()).andReturn();
 
@@ -49,7 +49,7 @@ public class CategoryApiControllerTest extends ApiTest {
     @Test
     public void testUpdateCategory() throws Exception {
         when(categoryDomainService.updateCategory(anyLong(), anyLong(), any(), anyString())).thenAnswer(i -> new Category()
-                .setId((Long) i.getArguments()[0])
+                .setId(1L)
                 .setParent(new Category().setId((Long) i.getArguments()[1]))
                 .setCategoryClass(new CategoryClass((CategoryClass.Values) i.getArguments()[2]))
                 .setName((String) i.getArguments()[3]));
@@ -62,7 +62,7 @@ public class CategoryApiControllerTest extends ApiTest {
                 .andExpect(status().isOk()).andReturn();
 
         CategoryDTO categoryToAssert = objectMapper.readValue(result.getResponse().getContentAsString(), CategoryDTO.class);
-        assertThat(categoryToAssert.getId()).isEqualTo(1);
+        assertThat(categoryToAssert.getId()).isEqualTo(1L);
         assertThat(categoryToAssert.getName()).isEqualTo("Test Category");
         assertThat(categoryToAssert.getCategoryClass()).isEqualTo(CategoryClass.Values.VARIABLE_EXPENSES);
     }

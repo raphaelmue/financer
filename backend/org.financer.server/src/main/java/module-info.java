@@ -51,6 +51,8 @@ module org.financer.server {
     requires io.github.classgraph;
     requires org.flywaydb.core;
 
+    requires static lombok;
+
     uses javax.persistence.spi.PersistenceProvider;
 
     opens org.financer.server.domain.service to spring.core, spring.aop;

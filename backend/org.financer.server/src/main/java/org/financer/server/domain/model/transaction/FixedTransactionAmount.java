@@ -1,5 +1,8 @@
 package org.financer.server.domain.model.transaction;
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.experimental.Accessors;
 import org.financer.server.domain.model.DataEntity;
 import org.financer.server.domain.model.user.UserProperty;
 import org.financer.shared.domain.model.AmountProvider;
@@ -8,8 +11,10 @@ import org.financer.shared.domain.model.value.objects.TimeRange;
 import org.financer.shared.domain.model.value.objects.ValueDate;
 
 import javax.persistence.*;
-import java.util.Objects;
 
+@Data
+@Accessors(chain = true)
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
 @Table(name = "fixed_transactions_amounts")
 public class FixedTransactionAmount implements DataEntity, AmountProvider, UserProperty {
@@ -18,7 +23,8 @@ public class FixedTransactionAmount implements DataEntity, AmountProvider, UserP
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private long id;
+    @EqualsAndHashCode.Include
+    private Long id;
 
     @ManyToOne(targetEntity = FixedTransaction.class, fetch = FetchType.EAGER, optional = false)
     private FixedTransaction fixedTransaction;
@@ -30,9 +36,14 @@ public class FixedTransactionAmount implements DataEntity, AmountProvider, UserP
     private Amount amount;
 
     @Override
+    public Amount getTotalAmount() {
+        return amount;
+    }
+
+    @Override
     public Amount getTotalAmount(ValueDate valueDate) {
         if (this.getValueDate().isInSameMonth(valueDate)) {
-            return this.getTotalAmount();
+            return amount;
         } else {
             return new Amount();
         }
@@ -67,69 +78,5 @@ public class FixedTransactionAmount implements DataEntity, AmountProvider, UserP
     @Override
     public boolean isPropertyOfUser(long userId) {
         return this.fixedTransaction.isPropertyOfUser(userId);
-    }
-
-    /*
-     * Getters and Setters
-     */
-
-    @Override
-    public long getId() {
-        return id;
-    }
-
-    public FixedTransactionAmount setId(long id) {
-        this.id = id;
-        return this;
-    }
-
-    public FixedTransaction getFixedTransaction() {
-        return fixedTransaction;
-    }
-
-    public FixedTransactionAmount setFixedTransaction(FixedTransaction fixedTransaction) {
-        this.fixedTransaction = fixedTransaction;
-        return this;
-    }
-
-    public ValueDate getValueDate() {
-        return valueDate;
-    }
-
-    public FixedTransactionAmount setValueDate(ValueDate valueDate) {
-        this.valueDate = valueDate;
-        return this;
-    }
-
-    @Override
-    public Amount getTotalAmount() {
-        return amount;
-    }
-
-    public FixedTransactionAmount setAmount(Amount amount) {
-        this.amount = amount;
-        return this;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        FixedTransactionAmount that = (FixedTransactionAmount) o;
-        return id == that.id;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
-    }
-
-    @Override
-    public String toString() {
-        return "FixedTransactionAmount [" +
-                "id=" + id +
-                ", valueDate=" + valueDate +
-                ", amount=" + amount +
-                ']';
     }
 }

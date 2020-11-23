@@ -23,7 +23,6 @@ import java.util.Locale;
 public class ValueDate implements Serializable, Formattable, Comparable<ValueDate> {
     private static final long serialVersionUID = -1612116802619061353L;
 
-    @EqualsAndHashCode.Include
     @Column(name = "value_date", nullable = false)
     @Schema(description = "Value date", required = true, example = "2020-01-01")
     private final LocalDate date;

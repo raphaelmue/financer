@@ -1,5 +1,8 @@
 package org.financer.server.domain.model.transaction;
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.experimental.Accessors;
 import org.financer.server.domain.model.category.Category;
 import org.financer.shared.domain.model.AmountProvider;
 import org.financer.shared.domain.model.value.objects.Amount;
@@ -11,6 +14,8 @@ import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
+@Data
+@Accessors(chain = true)
 @Entity
 @Table(name = "fixed_transactions")
 public final class FixedTransaction extends Transaction {
@@ -23,7 +28,7 @@ public final class FixedTransaction extends Transaction {
     private TimeRange timeRange;
 
     @Column(name = "is_variable", nullable = false)
-    private boolean isVariable;
+    private Boolean hasVariableAmounts;
 
     @Column(name = "day")
     private int day;
@@ -61,17 +66,22 @@ public final class FixedTransaction extends Transaction {
     }
 
     @Override
+    public Amount getTotalAmount() {
+        return this.getTotalAmount(new ValueDate());
+    }
+
+    @Override
     public Amount getTotalAmount(ValueDate valueDate) {
         Amount result = new Amount();
         if (this.timeRange.includes(valueDate)) {
-            if (this.isVariable) {
+            if (this.hasVariableAmounts) {
                 if (this.transactionAmounts != null) {
                     for (FixedTransactionAmount transactionAmount : this.transactionAmounts) {
                         result = result.add(transactionAmount.getTotalAmount(valueDate));
                     }
                 }
             } else {
-                result = this.getTotalAmount();
+                result = this.getAmount();
             }
         }
 
@@ -82,7 +92,7 @@ public final class FixedTransaction extends Transaction {
     public Amount getTotalAmount(TimeRange timeRange) {
         Amount result = new Amount();
 
-        if (this.isVariable) {
+        if (this.hasVariableAmounts) {
             for (FixedTransactionAmount transactionAmount : this.transactionAmounts) {
                 result = result.add(transactionAmount.getTotalAmount(timeRange));
             }
@@ -96,7 +106,7 @@ public final class FixedTransaction extends Transaction {
 
     @Override
     public void adjustAmountSign() {
-        if (this.isVariable) {
+        if (this.hasVariableAmounts) {
             for (AmountProvider amountProvider : this.getTransactionAmounts()) {
                 amountProvider.adjustAmountSign();
             }
@@ -112,22 +122,22 @@ public final class FixedTransaction extends Transaction {
         return category.isFixed();
     }
 
-    /*
-     * Getters and Setters
-     */
-
-    @Override
-    public Amount getTotalAmount() {
-        return amount;
-    }
-
-    public FixedTransaction setAmount(Amount amount) {
-        this.amount = amount;
+    public FixedTransaction addFixedTransactionAmount(FixedTransactionAmount fixedTransactionAmount) {
+        this.transactionAmounts.add(fixedTransactionAmount);
         return this;
     }
 
+    public FixedTransaction removeFixedTransactionAmount(FixedTransactionAmount fixedTransactionAmount) {
+        this.transactionAmounts.remove(fixedTransactionAmount);
+        return this;
+    }
+
+    /*
+     * Setters
+     */
+
     @Override
-    public FixedTransaction setId(long id) {
+    public FixedTransaction setId(Long id) {
         super.setId(id);
         return this;
     }
@@ -153,61 +163,6 @@ public final class FixedTransaction extends Transaction {
     @Override
     public FixedTransaction setAttachments(Set<Attachment> attachments) {
         super.setAttachments(attachments);
-        return this;
-    }
-
-    public TimeRange getTimeRange() {
-        return timeRange;
-    }
-
-    public FixedTransaction setTimeRange(TimeRange timeRange) {
-        this.timeRange = timeRange;
-        return this;
-    }
-
-    public boolean getIsVariable() {
-        return isVariable;
-    }
-
-    public FixedTransaction setIsVariable(boolean isVariable) {
-        this.isVariable = isVariable;
-        return this;
-    }
-
-    public int getDay() {
-        return day;
-    }
-
-    public FixedTransaction setDay(int day) {
-        this.day = day;
-        return this;
-    }
-
-    public String getProduct() {
-        return product;
-    }
-
-    public FixedTransaction setProduct(String product) {
-        this.product = product;
-        return this;
-    }
-
-    public Set<FixedTransactionAmount> getTransactionAmounts() {
-        return isVariable ? new HashSet<>() : transactionAmounts;
-    }
-
-    public FixedTransaction setTransactionAmounts(Set<FixedTransactionAmount> transactionAmounts) {
-        this.transactionAmounts = transactionAmounts;
-        return this;
-    }
-
-    public FixedTransaction addFixedTransactionAmount(FixedTransactionAmount fixedTransactionAmount) {
-        this.transactionAmounts.add(fixedTransactionAmount);
-        return this;
-    }
-
-    public FixedTransaction removeFixedTransactionAmount(FixedTransactionAmount fixedTransactionAmount) {
-        this.transactionAmounts.remove(fixedTransactionAmount);
         return this;
     }
 }

@@ -45,7 +45,7 @@ public class CreateFixedTransactionDTO implements DataTransferObject {
 
     @NotNull
     @Schema(description = "Indicates whether this transaction is variable or not", required = true, example = "false")
-    private Boolean isVariable;
+    private Boolean hasVariableAmounts;
 
     @Schema(description = "Billing day of the fixed transaction", required = true)
     private int day;

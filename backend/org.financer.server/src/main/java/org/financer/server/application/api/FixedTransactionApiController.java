@@ -38,8 +38,8 @@ public class FixedTransactionApiController implements FixedTransactionApi {
     @Override
     public ResponseEntity<FixedTransactionDTO> createFixedTransaction(@NotNull @Valid CreateFixedTransactionDTO fixedTransaction) {
         FixedTransaction fixedTransactionEntity = modelMapper.map(fixedTransaction, FixedTransaction.class);
-        fixedTransactionEntity.setId(-1);
-        if (fixedTransactionEntity.getIsVariable() && !fixedTransaction.getTransactionAmounts().isEmpty()) {
+        fixedTransactionEntity.setId(-1L);
+        if (fixedTransaction.getHasVariableAmounts() && !fixedTransaction.getTransactionAmounts().isEmpty()) {
             Set<FixedTransactionAmount> fixedTransactionAmounts = ModelMapperUtils.mapAll(fixedTransaction.getTransactionAmounts(), FixedTransactionAmount.class);
             for (FixedTransactionAmount transactionAmount : fixedTransactionAmounts) {
                 transactionAmount.setFixedTransaction(fixedTransactionEntity);
@@ -57,7 +57,7 @@ public class FixedTransactionApiController implements FixedTransactionApi {
         FixedTransaction updateFixedTransaction = transactionDomainService.updateFixedTransaction(transactionId,
                 fixedTransaction.getCategoryId(), fixedTransaction.getAmount(), fixedTransaction.getTimeRange(),
                 fixedTransaction.getProduct(), fixedTransaction.getDescription(), fixedTransaction.getVendor(),
-                fixedTransaction.getIsVariable(), fixedTransaction.getDay(),
+                fixedTransaction.getHasVariableAmounts(), fixedTransaction.getDay(),
                 ModelMapperUtils.mapAll(fixedTransaction.getTransactionAmounts(), FixedTransactionAmount.class));
         return new ResponseEntity<>(modelMapper.map(updateFixedTransaction, FixedTransactionDTO.class), HttpStatus.OK);
     }

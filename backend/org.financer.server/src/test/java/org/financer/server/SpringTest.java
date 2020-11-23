@@ -61,7 +61,7 @@ public abstract class SpringTest {
 
     protected User user() {
         return new User()
-                .setId(1)
+                .setId(1L)
                 .setEmail(new Email("test@test.com"))
                 .setName(new Name("Test", "User"))
                 .setPassword(new HashedPassword(password()))
@@ -89,7 +89,7 @@ public abstract class SpringTest {
 
     protected Token token() {
         return new Token()
-                .setId(1)
+                .setId(1L)
                 .setExpireDate(new ExpireDate())
                 .setIpAddress(new IPAddress("192.168.0.1"))
                 .setToken(tokenString())
@@ -98,7 +98,7 @@ public abstract class SpringTest {
 
     protected VerificationToken verificationToken() {
         return new VerificationToken()
-                .setId(1)
+                .setId(1L)
                 .setExpireDate(new ExpireDate(LocalDate.now().plusDays(15)))
                 .setToken(tokenString());
     }
@@ -109,7 +109,7 @@ public abstract class SpringTest {
 
     protected Category variableCategory() {
         return new Category()
-                .setId(1)
+                .setId(1L)
                 .setUser(user())
                 .setCategoryClass(new CategoryClass(CategoryClass.Values.VARIABLE_EXPENSES))
                 .setName("Variable Category")
@@ -118,7 +118,7 @@ public abstract class SpringTest {
 
     protected Category variableCategoryParent() {
         return new Category()
-                .setId(2)
+                .setId(2L)
                 .setUser(user())
                 .setCategoryClass(new CategoryClass(CategoryClass.Values.VARIABLE_EXPENSES))
                 .setName("Variable Category Parent")
@@ -127,7 +127,7 @@ public abstract class SpringTest {
 
     protected Category fixedCategory() {
         return new Category()
-                .setId(2)
+                .setId(2L)
                 .setUser(user())
                 .setCategoryClass(new CategoryClass(CategoryClass.Values.FIXED_EXPENSES))
                 .setName("Fixed Category")
@@ -136,7 +136,7 @@ public abstract class SpringTest {
 
     protected Product product() {
         return new Product()
-                .setId(1)
+                .setId(1L)
                 .setName("Test Product")
                 .setQuantity(new Quantity(2))
                 .setAmount(new Amount(50));
@@ -144,7 +144,7 @@ public abstract class SpringTest {
 
     protected VariableTransaction variableTransaction() {
         return new VariableTransaction()
-                .setId(1)
+                .setId(1L)
                 .setValueDate(new ValueDate())
                 .setCategory(variableCategory())
                 .setDescription("Test Purpose")
@@ -154,7 +154,7 @@ public abstract class SpringTest {
 
     protected Attachment attachment() {
         return new Attachment()
-                .setId(1)
+                .setId(1L)
                 .setName("test.pdf")
                 .setTransaction(variableTransaction())
                 .setUploadDate(LocalDate.now());
@@ -162,17 +162,17 @@ public abstract class SpringTest {
 
     protected FixedTransactionAmount fixedTransactionAmount() {
         return new FixedTransactionAmount()
-                .setId(1)
+                .setId(1L)
                 .setAmount(new Amount(50))
                 .setValueDate(new ValueDate());
     }
 
     protected FixedTransaction fixedTransaction() {
         return new FixedTransaction()
-                .setId(2)
+                .setId(2L)
                 .setCategory(fixedCategory())
                 .setTimeRange(new TimeRange())
-                .setIsVariable(false)
+                .setHasVariableAmounts(false)
                 .setAmount(new Amount(50.0))
                 .setDay(1)
                 .setDescription("Test Purpose")

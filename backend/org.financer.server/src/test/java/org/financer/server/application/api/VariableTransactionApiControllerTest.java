@@ -36,7 +36,7 @@ public class VariableTransactionApiControllerTest extends ApiTest {
     @Test
     public void testCreateTransaction() throws Exception {
         when(transactionDomainService.createVariableTransaction(any(VariableTransaction.class)))
-                .thenAnswer(i -> ((VariableTransaction) i.getArguments()[0]).setId(1));
+                .thenAnswer(i -> ((VariableTransaction) i.getArguments()[0]).setId(1L));
 
         CreateVariableTransactionDTO dto = new CreateVariableTransactionDTO()
                 .setCategoryId(1)
@@ -94,7 +94,7 @@ public class VariableTransactionApiControllerTest extends ApiTest {
     @Test
     public void testCreateProduct() throws Exception {
         when(transactionDomainService.createProduct(anyLong(), any(Product.class)))
-                .thenAnswer(i -> ((Product) i.getArguments()[1]).setId(1));
+                .thenAnswer(i -> ((Product) i.getArguments()[1]).setId(1L));
 
 
         CreateProductDTO dto = new CreateProductDTO()

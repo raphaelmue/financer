@@ -1,5 +1,8 @@
 package org.financer.server.domain.model.transaction;
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.experimental.Accessors;
 import org.financer.server.application.api.error.IllegalTransactionCategoryClassException;
 import org.financer.server.domain.model.DataEntity;
 import org.financer.server.domain.model.category.Category;
@@ -10,6 +13,9 @@ import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
+@Data
+@Accessors(chain = true)
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public abstract class Transaction implements DataEntity, AmountProvider, UserProperty {
@@ -17,7 +23,8 @@ public abstract class Transaction implements DataEntity, AmountProvider, UserPro
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "transaction_id_sequence")
     @Column(name = "id")
-    private long id;
+    @EqualsAndHashCode.Include
+    private Long id;
 
     @ManyToOne(targetEntity = Category.class, optional = false)
     private Category category;
@@ -58,58 +65,6 @@ public abstract class Transaction implements DataEntity, AmountProvider, UserPro
         return this.category.isRevenue();
     }
 
-
-    /*
-     * Getters and Setters
-     */
-
-    @Override
-    public long getId() {
-        return id;
-    }
-
-    public Transaction setId(long id) {
-        this.id = id;
-        return this;
-    }
-
-    public Category getCategory() {
-        return category;
-    }
-
-    public Transaction setCategory(Category category) {
-
-        this.category = category;
-        return this;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public Transaction setDescription(String purpose) {
-        this.description = purpose;
-        return this;
-    }
-
-    public String getVendor() {
-        return vendor;
-    }
-
-    public Transaction setVendor(String vendor) {
-        this.vendor = vendor;
-        return this;
-    }
-
-    public Set<Attachment> getAttachments() {
-        return attachments;
-    }
-
-    public Transaction setAttachments(Set<Attachment> attachments) {
-        this.attachments = attachments;
-        return this;
-    }
-
     public Transaction addAttachment(Attachment attachment) {
         this.attachments.add(attachment);
         return this;
@@ -118,10 +73,5 @@ public abstract class Transaction implements DataEntity, AmountProvider, UserPro
     public Transaction removeAttachment(Attachment attachment) {
         this.attachments.remove(attachment);
         return this;
-    }
-
-    @Override
-    public String toString() {
-        return "Transaction[" + "id=" + id + ", category=" + category + ", vendor='" + vendor + '\'' + ']';
     }
 }

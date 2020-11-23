@@ -121,7 +121,7 @@ public class UserDomainServiceTest extends SpringTest {
     @Test
     public void testRegisterUser() {
         User userToAssert = userDomainService.registerUser(new User()
-                        .setId(2)
+                        .setId(2L)
                         .setEmail(new Email("test2@test.com"))
                         .setName(new Name("Test", "Test"))
                         .setPassword(new HashedPassword("password")),

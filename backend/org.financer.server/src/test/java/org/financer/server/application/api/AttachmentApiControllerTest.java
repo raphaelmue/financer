@@ -33,7 +33,7 @@ public class AttachmentApiControllerTest extends ApiTest {
     public void testCreateAttachment() throws Exception {
         when(transactionDomainService.createAttachment(anyLong(), any(Attachment.class)))
                 .thenAnswer(i -> ((Attachment) i.getArguments()[1])
-                        .setId(1)
+                        .setId(1L)
                         .setUploadDate(LocalDate.now()));
 
         CreateAttachmentDTO dto = new CreateAttachmentDTO()
@@ -54,7 +54,7 @@ public class AttachmentApiControllerTest extends ApiTest {
     public void testGetAttachment() throws Exception {
         when(transactionDomainService.getAttachmentById(anyLong(), anyLong()))
                 .thenAnswer(i -> new Attachment()
-                        .setId(1)
+                        .setId(1L)
                         .setContent(new byte[16])
                         .setName("Test Attachment")
                         .setUploadDate(LocalDate.now()));

@@ -27,11 +27,11 @@ class FixedTransactionTest {
                         .setCategoryClass(new CategoryClass(CategoryClass.Values.FIXED_EXPENSES)))
                 .setDescription("Test Purpose")
                 .setDay(1)
-                .setIsVariable(false);
+                .setHasVariableAmounts(false);
 
         for (int i = 0; i < 6; i++) {
             fixedTransaction.addFixedTransactionAmount(new FixedTransactionAmount()
-                    .setId(i + 1)
+                    .setId(i + 1L)
                     .setFixedTransaction(fixedTransaction)
                     .setAmount(new Amount(Math.pow(2, i)))
                     .setValueDate(new ValueDate(LocalDate.now().minusMonths(i))));
@@ -49,7 +49,7 @@ class FixedTransactionTest {
                 fixedTransaction.getTotalAmount(new ValueDate(LocalDate.now().minusMonths(1))).getAmount());
 
         // set isVariable true
-        fixedTransaction.setIsVariable(true);
+        fixedTransaction.setHasVariableAmounts(true);
         Assertions.assertEquals(2.0,
                 fixedTransaction.getTotalAmount(new ValueDate(LocalDate.now().minusMonths(1))).getAmount());
 
@@ -65,7 +65,7 @@ class FixedTransactionTest {
                 fixedTransaction.getTotalAmount(new TimeRange(LocalDate.now().minusMonths(12), LocalDate.now())).getAmount());
 
         // set isVariable true
-        fixedTransaction.setIsVariable(true);
+        fixedTransaction.setHasVariableAmounts(true);
         Assertions.assertEquals(Math.pow(2, 6) - 1,
                 fixedTransaction.getTotalAmount(new TimeRange(LocalDate.now().minusMonths(12), LocalDate.now())).getAmount());
         Assertions.assertEquals(Math.pow(2, 6) - 1,
@@ -92,7 +92,7 @@ class FixedTransactionTest {
         Assertions.assertTrue(fixedTransaction.getTotalAmount().getAmount() < 0);
 
         // set isVariable true
-        fixedTransaction.setIsVariable(true);
+        fixedTransaction.setHasVariableAmounts(true);
         fixedTransaction.adjustAmountSign();
         Assertions.assertTrue(fixedTransaction.getTotalAmount().getAmount() < 0);
     }

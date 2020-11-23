@@ -1,11 +1,17 @@
 package org.financer.server.domain.model.transaction;
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.experimental.Accessors;
 import org.financer.server.domain.model.DataEntity;
 import org.financer.server.domain.model.user.UserProperty;
 
 import javax.persistence.*;
 import java.time.LocalDate;
 
+@Data
+@Accessors(chain = true)
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
 @Table(name = "attachments")
 public class Attachment implements DataEntity, UserProperty {
@@ -14,7 +20,8 @@ public class Attachment implements DataEntity, UserProperty {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private long id;
+    @EqualsAndHashCode.Include
+    private Long id;
 
     @ManyToOne(targetEntity = Transaction.class, optional = false)
     private Transaction transaction;
@@ -32,55 +39,5 @@ public class Attachment implements DataEntity, UserProperty {
     @Override
     public boolean isPropertyOfUser(long userId) {
         return this.getTransaction().isPropertyOfUser(userId);
-    }
-
-    /*
-     * Getters and Setters
-     */
-
-    @Override
-    public long getId() {
-        return id;
-    }
-
-    public Attachment setId(long id) {
-        this.id = id;
-        return this;
-    }
-
-    public Transaction getTransaction() {
-        return transaction;
-    }
-
-    public Attachment setTransaction(Transaction transaction) {
-        this.transaction = transaction;
-        return this;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public Attachment setName(String name) {
-        this.name = name;
-        return this;
-    }
-
-    public LocalDate getUploadDate() {
-        return uploadDate;
-    }
-
-    public Attachment setUploadDate(LocalDate uploadDate) {
-        this.uploadDate = uploadDate;
-        return this;
-    }
-
-    public byte[] getContent() {
-        return content;
-    }
-
-    public Attachment setContent(byte[] content) {
-        this.content = content;
-        return this;
     }
 }

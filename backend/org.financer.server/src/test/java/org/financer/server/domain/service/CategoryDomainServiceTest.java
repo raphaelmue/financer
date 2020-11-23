@@ -63,7 +63,7 @@ public class CategoryDomainServiceTest extends SpringTest {
 
     @Test
     public void testCreateCategoryParentNotFound() {
-        category.setParent(new Category().setId(3));
+        category.setParent(new Category().setId(3L));
         assertThatExceptionOfType(NotFoundException.class).isThrownBy(() ->
                 categoryDomainService.createCategory(category));
     }
