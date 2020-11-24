@@ -1,14 +1,12 @@
 package org.financer.server.domain.service;
 
-import org.financer.server.SpringTest;
-import org.financer.server.application.FinancerServer;
 import org.financer.server.application.api.error.IllegalTransactionCategoryClassException;
 import org.financer.server.application.api.error.NotFoundException;
 import org.financer.server.application.api.error.UnauthorizedOperationException;
-import org.financer.server.application.service.AdminConfigurationService;
 import org.financer.server.domain.model.category.Category;
 import org.financer.server.domain.model.transaction.*;
 import org.financer.server.domain.model.user.User;
+import org.financer.server.utils.ServiceTest;
 import org.financer.shared.domain.model.value.objects.Amount;
 import org.financer.shared.domain.model.value.objects.Quantity;
 import org.financer.shared.domain.model.value.objects.TimeRange;
@@ -23,6 +21,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -32,9 +31,8 @@ import static org.mockito.Mockito.when;
 
 @Tag("unit")
 @ExtendWith(SpringExtension.class)
-@SpringBootTest(classes = {FinancerServer.class, AdminConfigurationService.class, TransactionDomainService.class, CategoryDomainService.class},
-        webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class TransactionDomainServiceTest extends SpringTest {
+@SpringBootTest(classes = {TransactionDomainService.class, CategoryDomainService.class})
+public class TransactionDomainServiceTest extends ServiceTest {
 
     @MockBean
     private UserDomainService userDomainService;
@@ -87,6 +85,7 @@ public class TransactionDomainServiceTest extends SpringTest {
         when(fixedTransactionRepository.findById(2L)).thenReturn(Optional.of(fixedTransaction));
         when(fixedTransactionRepository.findActiveTransactionByCategory(any(Category.class))).thenReturn(Optional.empty());
         when(fixedTransactionRepository.save(any(FixedTransaction.class))).thenAnswer(i -> i.getArguments()[0]);
+        when(fixedTransactionRepository.findActiveTransactionByCategory(fixedCategory)).thenReturn(Optional.of(fixedTransaction));
         when(fixedTransactionAmountRepository.findById(any())).thenReturn(Optional.empty());
         when(fixedTransactionAmountRepository.findById(1L)).thenReturn(Optional.of(fixedTransactionAmount));
         when(fixedTransactionAmountRepository.save(any(FixedTransactionAmount.class))).thenAnswer(i -> i.getArguments()[0]);
@@ -159,7 +158,7 @@ public class TransactionDomainServiceTest extends SpringTest {
     @Test
     public void testCreateProduct() {
         Product product = transactionDomainService.createProduct(variableTransaction.getId(), new Product()
-                .setId(2).setAmount(new Amount(50)).setQuantity(new Quantity(5))
+                .setId(2L).setAmount(new Amount(50)).setQuantity(new Quantity(5))
                 .setName("Test Product"));
         assertThat(product.getTransaction()).isEqualToComparingFieldByField(variableTransaction);
     }
@@ -169,12 +168,18 @@ public class TransactionDomainServiceTest extends SpringTest {
         mockAnotherUserAuthenticated();
         assertThatExceptionOfType(UnauthorizedOperationException.class).isThrownBy(
                 () -> transactionDomainService.createProduct(variableTransaction.getId(), new Product()
-                        .setId(2).setAmount(new Amount(50)).setQuantity(new Quantity(5))));
+                        .setId(2L).setAmount(new Amount(50)).setQuantity(new Quantity(5))));
     }
 
     @Test
     public void testDeleteProduct() {
         transactionDomainService.deleteProduct(variableTransaction.getId(), product.getId());
+        assertThat(variableTransaction.getProducts()).isEmpty();
+    }
+
+    @Test
+    public void testDeleteProducts() {
+        transactionDomainService.deleteProducts(variableTransaction.getId(), List.of(product.getId()));
         assertThat(variableTransaction.getProducts()).isEmpty();
     }
 
@@ -190,12 +195,17 @@ public class TransactionDomainServiceTest extends SpringTest {
     public void testCreateProductNotFound() {
         assertThatExceptionOfType(NotFoundException.class).isThrownBy(
                 () -> transactionDomainService.createProduct(-1, new Product()
-                        .setId(1).setAmount(new Amount(50)).setQuantity(new Quantity(5))));
+                        .setId(1L).setAmount(new Amount(50)).setQuantity(new Quantity(5))));
     }
 
     @Test
     public void testCreateFixedTransaction() {
+        fixedTransaction.setTimeRange(new TimeRange(LocalDate.now().minusMonths(2)));
         assertThat(transactionDomainService.createFixedTransaction(fixedTransaction)).isNotNull();
+
+        FixedTransaction newFixedTransaction = fixedTransaction().setId(3L);
+        assertThat(transactionDomainService.createFixedTransaction(newFixedTransaction).isActive()).isTrue();
+        assertThat(fixedTransaction.isActive()).isFalse();
     }
 
     @Test
@@ -219,19 +229,20 @@ public class TransactionDomainServiceTest extends SpringTest {
         final String product = "New Product";
         final String description = "New Description";
         final String vendor = "New Vendor";
-        final boolean isVariable = true;
+        final boolean hasVariableAmounts = true;
         final int day = 3;
         FixedTransaction updatedTransaction = transactionDomainService.updateFixedTransaction(fixedTransaction.getId(),
-                fixedCategory.getId(), amount, timeRange, product, description, vendor, isVariable, day,
+                fixedCategory.getId(), amount, timeRange, product, description, vendor, hasVariableAmounts, day,
                 fixedTransaction.getTransactionAmounts());
 
-        assertThat(updatedTransaction.getTotalAmount()).isEqualTo(amount);
+        assertThat(updatedTransaction.getAmount()).isEqualTo(amount);
+        assertThat(updatedTransaction.getTotalAmount()).isEqualTo(new Amount(50));
         assertThat(updatedTransaction.getTimeRange()).isEqualTo(timeRange);
         assertThat(updatedTransaction.getProduct()).isEqualTo(product);
         assertThat(updatedTransaction.getDescription()).isEqualTo(description);
         assertThat(updatedTransaction.getVendor()).isEqualTo(vendor);
         assertThat(updatedTransaction.getDay()).isEqualTo(day);
-        assertThat(updatedTransaction.getIsVariable()).isEqualTo(isVariable);
+        assertThat(updatedTransaction.getHasVariableAmounts()).isEqualTo(hasVariableAmounts);
     }
 
     @Test
@@ -277,7 +288,7 @@ public class TransactionDomainServiceTest extends SpringTest {
     @Test
     public void testCreateFixedTransactionAmount() {
         FixedTransactionAmount transactionAmount = transactionDomainService.createFixedTransactionAmount(fixedTransaction.getId(),
-                new FixedTransactionAmount().setId(1).setAmount(new Amount(50)).setValueDate(new ValueDate()));
+                new FixedTransactionAmount().setId(1L).setAmount(new Amount(50)).setValueDate(new ValueDate()));
         assertThat(transactionAmount.getFixedTransaction()).isEqualToComparingFieldByField(fixedTransaction);
         assertThat(transactionAmount.getFixedTransaction().getTransactionAmounts()).isNotEmpty();
     }

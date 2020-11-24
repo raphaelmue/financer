@@ -2,6 +2,8 @@ package org.financer.shared.domain.model.value.objects;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.financer.shared.domain.model.Formattable;
 import org.financer.shared.domain.model.Settings;
 import org.hibernate.annotations.Immutable;
@@ -11,14 +13,15 @@ import javax.persistence.Embeddable;
 import java.io.Serializable;
 import java.util.Currency;
 import java.util.Locale;
-import java.util.Objects;
 
+@Data
 @Embeddable
 @Immutable
 @Schema(description = "Value object for amount")
 public class Amount implements Serializable, Formattable {
     private static final long serialVersionUID = 8647653287643900256L;
 
+    @EqualsAndHashCode.Include
     @Column(name = "amount", nullable = false)
     @Schema(description = "Amount property", required = true, example = "50.0")
     private final double amount;
@@ -89,7 +92,7 @@ public class Amount implements Serializable, Formattable {
     }
 
     public Amount calcRatio(Amount ratio) {
-        return this.divide(ratio).multiply(100).subtract(100);
+        return this.divide(ratio).multiply(100);
     }
 
     @Override
@@ -104,33 +107,4 @@ public class Amount implements Serializable, Formattable {
         }
         return result.toString();
     }
-
-    /*
-     * Getters and Setters
-     */
-
-    public double getAmount() {
-        return amount;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Amount amount1 = (Amount) o;
-        return Double.compare(amount1.amount, amount) == 0;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(amount);
-    }
-
-    @Override
-    public String toString() {
-        return "Amount [" +
-                "amount=" + amount +
-                ']';
-    }
-
 }

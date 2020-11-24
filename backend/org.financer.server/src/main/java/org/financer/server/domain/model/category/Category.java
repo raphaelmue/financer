@@ -1,5 +1,9 @@
 package org.financer.server.domain.model.category;
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
+import lombok.experimental.Accessors;
 import org.financer.server.application.api.error.IllegalCategoryParentStateException;
 import org.financer.server.domain.model.DataEntity;
 import org.financer.server.domain.model.transaction.Transaction;
@@ -14,9 +18,11 @@ import org.financer.util.collections.Tree;
 
 import javax.persistence.*;
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
 
+@Data
+@Accessors(chain = true)
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
 @Table(name = "categories")
 public class Category implements DataEntity, Tree, AmountProvider, UserProperty {
@@ -25,15 +31,18 @@ public class Category implements DataEntity, Tree, AmountProvider, UserProperty 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private long id;
+    @EqualsAndHashCode.Include
+    private Long id;
 
     @ManyToOne(targetEntity = User.class, optional = false)
+    @ToString.Exclude
     private User user;
 
     @Embedded
     private CategoryClass categoryClass;
 
     @ManyToOne(targetEntity = Category.class)
+    @ToString.Exclude
     private Category parent;
 
     @Column(name = "name", nullable = false)
@@ -57,7 +66,7 @@ public class Category implements DataEntity, Tree, AmountProvider, UserProperty 
         for (AmountProvider amountProvider : this.transactions) {
             amount = amount.add(amountProvider.getTotalAmount());
         }
-        if (this.isLeaf()) {
+        if (!this.isLeaf()) {
             for (AmountProvider amountProvider : this.children) {
                 amount = amount.add(amountProvider.getTotalAmount());
             }
@@ -73,7 +82,7 @@ public class Category implements DataEntity, Tree, AmountProvider, UserProperty 
         for (AmountProvider amountProvider : this.transactions) {
             amount = amount.add(amountProvider.getTotalAmount(valueDate));
         }
-        if (this.isLeaf()) {
+        if (!this.isLeaf()) {
             for (AmountProvider amountProvider : this.children) {
                 amount = amount.add(amountProvider.getTotalAmount(valueDate));
             }
@@ -126,87 +135,9 @@ public class Category implements DataEntity, Tree, AmountProvider, UserProperty 
         }
     }
 
-    /*
-     * Getters and Setters
-     */
-
-    @Override
-    public long getId() {
-        return id;
-    }
-
-    public Category setId(long id) {
-        this.id = id;
-        return this;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public Category setUser(User user) {
-        this.user = user;
-        return this;
-    }
-
-    public CategoryClass getCategoryClass() {
-        return categoryClass;
-    }
-
-    public Category setCategoryClass(CategoryClass categoryClass) {
-        this.categoryClass = categoryClass;
-        return this;
-    }
-
-    @Override
-    public Category getParent() {
-        return parent;
-    }
-
-    public Category setParent(Category parent) {
-        this.parent = parent;
-        return this;
-    }
-
     @Override
     public Category setParent(Tree parent) {
-        return this.setParent((Category) parent);
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public Category setName(String name) {
-        this.name = name;
+        this.parent = (Category) parent;
         return this;
-    }
-
-    @Override
-    public Set<Category> getChildren() {
-        return children;
-    }
-
-    public Category setChildren(Set<Category> children) {
-        this.children = children;
-        return this;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Category category = (Category) o;
-        return id == category.id;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
-    }
-
-    @Override
-    public String toString() {
-        return "Category[" + "id=" + id + ", categoryClass=" + categoryClass + ", name='" + name + '\'' + ']';
     }
 }

@@ -1,7 +1,9 @@
 package org.financer.server.application.api;
 
-import org.financer.server.application.FinancerServer;
+import org.financer.server.application.configuration.ModelMapperConfiguration;
 import org.financer.server.application.configuration.security.WebSecurityConfiguration;
+import org.financer.server.application.model.transaction.variable.VariableTransactionAssembler;
+import org.financer.server.application.model.user.UserAssembler;
 import org.financer.server.application.service.AdminConfigurationService;
 import org.financer.server.domain.model.transaction.Attachment;
 import org.financer.shared.domain.model.api.transaction.AttachmentDTO;
@@ -10,8 +12,6 @@ import org.financer.shared.domain.model.api.transaction.CreateAttachmentDTO;
 import org.financer.shared.path.PathBuilder;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureWebMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MvcResult;
 
@@ -23,17 +23,15 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @Tag("unit")
-@SpringBootTest(classes = {FinancerServer.class, AdminConfigurationService.class, WebSecurityConfiguration.class, RestExceptionHandler.class, AttachmentApiController.class},
-        webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@AutoConfigureWebMvc
-@AutoConfigureMockMvc
+@SpringBootTest(classes = {AttachmentApiController.class, WebSecurityConfiguration.class, ModelMapperConfiguration.class, VariableTransactionAssembler.class, UserAssembler.class, AdminConfigurationService.class})
+
 public class AttachmentApiControllerTest extends ApiTest {
 
     @Test
     public void testCreateAttachment() throws Exception {
         when(transactionDomainService.createAttachment(anyLong(), any(Attachment.class)))
                 .thenAnswer(i -> ((Attachment) i.getArguments()[1])
-                        .setId(1)
+                        .setId(1L)
                         .setUploadDate(LocalDate.now()));
 
         CreateAttachmentDTO dto = new CreateAttachmentDTO()
@@ -54,7 +52,7 @@ public class AttachmentApiControllerTest extends ApiTest {
     public void testGetAttachment() throws Exception {
         when(transactionDomainService.getAttachmentById(anyLong(), anyLong()))
                 .thenAnswer(i -> new Attachment()
-                        .setId(1)
+                        .setId(1L)
                         .setContent(new byte[16])
                         .setName("Test Attachment")
                         .setUploadDate(LocalDate.now()));

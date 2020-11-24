@@ -1,6 +1,8 @@
 package org.financer.shared.domain.model.value.objects;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.financer.shared.domain.model.Formattable;
 import org.financer.shared.domain.model.Settings;
 import org.hibernate.annotations.Immutable;
@@ -12,15 +14,15 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.Locale;
-import java.util.Objects;
 
+@Data
 @Embeddable
 @Immutable
 @Schema(description = "Value object for birth date")
 public class BirthDate implements Serializable, Formattable {
     private static final long serialVersionUID = -4072522792982525094L;
 
-
+    @EqualsAndHashCode.Include
     @Column(name = "birth_date")
     @Schema(description = "Birth date", required = true, example = "1980-01-01")
     private LocalDate birthDate;
@@ -39,36 +41,10 @@ public class BirthDate implements Serializable, Formattable {
         this.birthDate = birthDate;
     }
 
-    public LocalDate getBirthDate() {
-        return birthDate;
-    }
-
     @Override
     public String format(Settings settings) {
         Locale locale = settings.getValue(SettingPair.Property.LANGUAGE);
         DateTimeFormatter formatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(locale);
         return this.getBirthDate().format(formatter);
     }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        BirthDate birthDate1 = (BirthDate) o;
-        return Objects.equals(birthDate, birthDate1.birthDate);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(birthDate);
-    }
-
-    @Override
-    public String toString() {
-        return "BirthDate [" +
-                "birthDate=" + birthDate +
-                ']';
-    }
-
-
 }

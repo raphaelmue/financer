@@ -1,7 +1,9 @@
 package org.financer.server.application.api;
 
-import org.financer.server.application.FinancerServer;
+import org.financer.server.application.configuration.ModelMapperConfiguration;
 import org.financer.server.application.configuration.security.WebSecurityConfiguration;
+import org.financer.server.application.model.transaction.variable.VariableTransactionAssembler;
+import org.financer.server.application.model.user.UserAssembler;
 import org.financer.server.application.service.AdminConfigurationService;
 import org.financer.server.domain.model.category.Category;
 import org.financer.server.domain.model.transaction.FixedTransaction;
@@ -13,8 +15,6 @@ import org.financer.shared.domain.model.value.objects.ValueDate;
 import org.financer.shared.path.PathBuilder;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureWebMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MvcResult;
 
@@ -26,20 +26,17 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @Tag("unit")
-@SpringBootTest(classes = {FinancerServer.class, AdminConfigurationService.class, WebSecurityConfiguration.class, RestExceptionHandler.class, FixedTransactionApiController.class},
-        webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@AutoConfigureWebMvc
-@AutoConfigureMockMvc
+@SpringBootTest(classes = {FixedTransactionApiController.class, WebSecurityConfiguration.class, ModelMapperConfiguration.class, VariableTransactionAssembler.class, UserAssembler.class, AdminConfigurationService.class})
 public class FixedTransactionApiControllerTest extends ApiTest {
 
     @Test
     public void testCreateFixedTransaction() throws Exception {
         when(transactionDomainService.createFixedTransaction(any(FixedTransaction.class)))
-                .thenAnswer(i -> ((FixedTransaction) i.getArguments()[0]).setId(1));
+                .thenAnswer(i -> ((FixedTransaction) i.getArguments()[0]).setId(1L));
 
         CreateFixedTransactionDTO dto = new CreateFixedTransactionDTO()
                 .setCategoryId(1)
-                .setIsVariable(true)
+                .setHasVariableAmounts(true)
                 .setAmount(new Amount(50.0))
                 .setTimeRange(new TimeRange())
                 .setDescription("Test Description")
@@ -50,7 +47,7 @@ public class FixedTransactionApiControllerTest extends ApiTest {
 
         FixedTransactionDTO transaction = objectMapper.readValue(result.getResponse().getContentAsString(), FixedTransactionDTO.class);
         assertThat(transaction.getId()).isEqualTo(1);
-        assertThat(transaction.getIsVariable()).isEqualTo(dto.getIsVariable());
+        assertThat(transaction.getHasVariableAmounts()).isEqualTo(dto.getHasVariableAmounts());
         assertThat(transaction.getAmount()).isEqualTo(dto.getAmount());
         assertThat(transaction.getTimeRange()).isEqualTo(dto.getTimeRange());
         assertThat(transaction.getDescription()).isEqualTo(dto.getDescription());
@@ -63,18 +60,18 @@ public class FixedTransactionApiControllerTest extends ApiTest {
     public void testUpdateFixedTransaction() throws Exception {
         when(transactionDomainService.updateFixedTransaction(anyLong(), anyLong(), any(Amount.class), any(TimeRange.class),
                 anyString(), anyString(), anyString(), anyBoolean(), anyInt(), anySet())).thenAnswer(i -> new FixedTransaction()
-                .setId((Long) i.getArguments()[0])
-                .setCategory(new Category().setId((Long) i.getArguments()[1]))
-                .setAmount((Amount) i.getArguments()[2])
-                .setTimeRange((TimeRange) i.getArguments()[3])
-                .setProduct((String) i.getArguments()[4])
-                .setDescription((String) i.getArguments()[5])
-                .setVendor((String) i.getArguments()[6])
-                .setIsVariable((Boolean) i.getArguments()[7]));
+                .setId(i.getArgument(0))
+                .setCategory(new Category().setId(i.getArgument(1)))
+                .setAmount(i.getArgument(2))
+                .setTimeRange(i.getArgument(3))
+                .setProduct(i.getArgument(4))
+                .setDescription(i.getArgument(5))
+                .setVendor(i.getArgument(6))
+                .setHasVariableAmounts(i.getArgument(7)));
 
         UpdateFixedTransactionDTO dto = new UpdateFixedTransactionDTO()
                 .setCategoryId(1)
-                .setIsVariable(false)
+                .setHasVariableAmounts(false)
                 .setAmount(new Amount(50.0))
                 .setTimeRange(new TimeRange())
                 .setProduct("Test Product")
@@ -85,8 +82,8 @@ public class FixedTransactionApiControllerTest extends ApiTest {
                 .andExpect(status().isOk()).andReturn();
 
         FixedTransactionDTO transaction = objectMapper.readValue(result.getResponse().getContentAsString(), FixedTransactionDTO.class);
-        assertThat(transaction.getId()).isEqualTo(1);
-        assertThat(transaction.getIsVariable()).isEqualTo(dto.getIsVariable());
+        assertThat(transaction.getId()).isEqualTo(1L);
+        assertThat(transaction.getHasVariableAmounts()).isEqualTo(dto.getHasVariableAmounts());
         assertThat(transaction.getAmount()).isEqualTo(dto.getAmount());
         assertThat(transaction.getTimeRange()).isEqualTo(dto.getTimeRange());
         assertThat(transaction.getProduct()).isEqualTo(dto.getProduct());
@@ -108,7 +105,7 @@ public class FixedTransactionApiControllerTest extends ApiTest {
     @Test
     public void testCreateTransactionAmount() throws Exception {
         when(transactionDomainService.createFixedTransactionAmount(anyLong(), any(FixedTransactionAmount.class)))
-                .thenAnswer(i -> ((FixedTransactionAmount) i.getArguments()[1]).setId(1));
+                .thenAnswer(i -> ((FixedTransactionAmount) i.getArguments()[1]).setId(1L));
 
         CreateFixedTransactionAmountDTO dto = new CreateFixedTransactionAmountDTO()
                 .setAmount(new Amount(50.0))

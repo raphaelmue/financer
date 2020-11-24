@@ -1,5 +1,6 @@
 package org.financer.util;
 
+import org.financer.util.security.Hash;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;

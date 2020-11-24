@@ -1,5 +1,6 @@
 package org.financer.util;
 
+import org.financer.util.security.RandomString;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;

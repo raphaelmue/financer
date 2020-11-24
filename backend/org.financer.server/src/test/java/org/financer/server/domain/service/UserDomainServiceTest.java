@@ -1,14 +1,12 @@
 package org.financer.server.domain.service;
 
-import org.financer.server.SpringTest;
-import org.financer.server.application.FinancerServer;
 import org.financer.server.application.api.error.UnauthorizedOperationException;
 import org.financer.server.application.api.error.UniqueEmailViolationException;
 import org.financer.server.application.service.AdminConfigurationService;
-import org.financer.server.application.service.AuthenticationService;
 import org.financer.server.domain.model.user.Token;
 import org.financer.server.domain.model.user.User;
 import org.financer.server.domain.model.user.VerificationToken;
+import org.financer.server.utils.ServiceTest;
 import org.financer.shared.domain.model.value.objects.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -22,21 +20,18 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.when;
 
 @Tag("unit")
 @ExtendWith(SpringExtension.class)
-@SpringBootTest(classes = {FinancerServer.class, AdminConfigurationService.class, UserDomainService.class, AuthenticationService.class},
-        webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class UserDomainServiceTest extends SpringTest {
+@SpringBootTest(classes = {AdminConfigurationService.class, UserDomainService.class})
+public class UserDomainServiceTest extends ServiceTest {
 
     @MockBean
     private CategoryDomainService categoryDomainService;
@@ -75,13 +70,16 @@ public class UserDomainServiceTest extends SpringTest {
         when(userRepository.findByEmail(user.getEmail())).thenReturn(Optional.of(user));
         when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
         when(userRepository.findAll(any(Pageable.class))).thenReturn(new PageImpl<>(List.of(user)));
-        when(roleRepository.findById(2L)).thenReturn(Optional.of(userRole()));
+        when(roleRepository.findById(2L)).thenReturn(Optional.of(adminRole()));
         when(tokenRepository.save(any(Token.class))).thenAnswer(i -> i.getArguments()[0]);
         when(tokenRepository.findById(token.getId())).thenReturn(Optional.of(token));
         when(tokenRepository.getTokenByToken(tokenString)).thenReturn(Optional.of(token));
         when(tokenRepository.getTokenByIPAddress(user.getId(), token.getIpAddress())).thenReturn(Optional.of(token));
         when(verificationTokenRepository.save(any(VerificationToken.class))).thenAnswer(i -> i.getArguments()[0]);
         when(verificationTokenRepository.findByToken(tokenString)).thenReturn(Optional.of(verificationToken));
+        when(categoryRepository.findAllByUserId(anyLong())).thenReturn(List.of(variableCategory()));
+        when(variableTransactionRepository.findByCategoryUserId(anyLong(), any(Pageable.class))).thenReturn(new PageImpl<>(List.of(variableTransaction())));
+        when(fixedTransactionRepository.findAllActiveTransactionsByUserId(anyLong())).thenReturn(List.of(fixedTransaction()));
     }
 
     @Test
@@ -121,7 +119,7 @@ public class UserDomainServiceTest extends SpringTest {
     @Test
     public void testRegisterUser() {
         User userToAssert = userDomainService.registerUser(new User()
-                        .setId(2)
+                        .setId(2L)
                         .setEmail(new Email("test2@test.com"))
                         .setName(new Name("Test", "Test"))
                         .setPassword(new HashedPassword("password")),
@@ -184,6 +182,15 @@ public class UserDomainServiceTest extends SpringTest {
     }
 
     @Test
+    public void testUpdateUsersSettings() {
+        User userToAssert = userDomainService.updateUsersSettings(Map.of(
+                SettingPair.Property.LANGUAGE, "de",
+                SettingPair.Property.CURRENCY, "EUR"));
+        assertThat(userToAssert.getSettings().get(SettingPair.Property.LANGUAGE).getPair().getValueObject()).isEqualTo(Locale.GERMAN);
+        assertThat(userToAssert.getSettings().get(SettingPair.Property.CURRENCY).getPair().getValueObject()).isEqualTo(Currency.getInstance("EUR"));
+    }
+
+    @Test
     public void testUpdatePersonalInformationWithoutChanges() {
         User userToAssert = userDomainService.updatePersonalInformation(user.getName(), user.getBirthDate(), user.getGender());
         assertThat(userToAssert).isEqualToComparingFieldByField(user);
@@ -199,5 +206,20 @@ public class UserDomainServiceTest extends SpringTest {
     @Test
     public void testFetchUsers() {
         assertThat(userDomainService.fetchUsers(Pageable.unpaged()).getSize()).isEqualTo(1);
+    }
+
+    @Test
+    public void testFetchCategories() {
+        assertThat(userDomainService.fetchCategories()).hasSize(1);
+    }
+
+    @Test
+    public void testFetchVariableTransactions() {
+        assertThat(userDomainService.fetchVariableTransactions(Pageable.unpaged()).getSize()).isEqualTo(1);
+    }
+
+    @Test
+    public void testFetchFixedTransactions() {
+        assertThat(userDomainService.fetchFixedTransactions()).hasSize(1);
     }
 }

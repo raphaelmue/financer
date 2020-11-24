@@ -1,10 +1,8 @@
 package org.financer.server.application.service;
 
-import org.apache.commons.mail.EmailException;
 import org.financer.server.application.configuration.PersistenceConfiguration;
 import org.financer.server.application.configuration.ServiceConfiguration;
 import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;

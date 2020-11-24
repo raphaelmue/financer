@@ -25,5 +25,5 @@ public class CreateCategoryDTO implements DataTransferObject {
     private CategoryClass.Values categoryClass;
 
     @Schema(description = "Id of the parent category")
-    private long parentId;
+    private Long parentId;
 }

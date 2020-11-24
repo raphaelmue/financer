@@ -1,6 +1,7 @@
 package org.financer.server.application.api.error;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Data;
 import org.financer.shared.domain.model.api.DataTransferObject;
 import org.springframework.http.HttpStatus;
 
@@ -11,6 +12,7 @@ import java.util.List;
 /**
  * Message that is displayed when an exception is thrown.
  */
+@Data
 public class RestErrorMessage implements DataTransferObject {
 
     @JsonProperty("timestamp")
@@ -41,51 +43,6 @@ public class RestErrorMessage implements DataTransferObject {
 
     public RestErrorMessage(RestException exception, String path, String message) {
         this(exception.getHttpStatus(), path, Collections.singletonList(message));
-    }
-
-    public String getPath() {
-        return path;
-    }
-
-    public RestErrorMessage setPath(String path) {
-        this.path = path;
-        return this;
-    }
-
-    public int getStatusCode() {
-        return statusCode;
-    }
-
-    public RestErrorMessage setStatusCode(int statusCode) {
-        this.statusCode = statusCode;
-        return this;
-    }
-
-    public String getError() {
-        return error;
-    }
-
-    public RestErrorMessage setError(String error) {
-        this.error = error;
-        return this;
-    }
-
-    public List<String> getMessages() {
-        return messages;
-    }
-
-    public RestErrorMessage setMessages(List<String> messages) {
-        this.messages = messages;
-        return this;
-    }
-
-    public LocalDateTime getTimestamp() {
-        return timestamp;
-    }
-
-    public RestErrorMessage setTimestamp(LocalDateTime timestamp) {
-        this.timestamp = timestamp;
-        return this;
     }
 }
 

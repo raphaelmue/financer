@@ -3,6 +3,7 @@ package org.financer.server.application.api;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.financer.server.application.api.error.RestErrorMessage;
 import org.financer.server.application.api.error.RestException;
+import org.financer.server.application.api.error.UnauthorizedOperationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +47,7 @@ public class RestExceptionHandler {
         return new ResponseEntity<>(new RestErrorMessage(HttpStatus.BAD_REQUEST, request.getRequestURI(), errorMessages), HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(AccessDeniedException.class)
+    @ExceptionHandler({AccessDeniedException.class, UnauthorizedOperationException.class})
     public ResponseEntity<RestErrorMessage> handleAccessDeniedException(AccessDeniedException exception, Locale locale) {
         String errorMessage = messageSource.getMessage("exception.unauthorizedToken", null, locale);
         logger.error(exception.getMessage(), exception);

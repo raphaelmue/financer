@@ -1,7 +1,10 @@
 package org.financer.server.application.api;
 
-import org.financer.server.application.FinancerServer;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.financer.server.application.configuration.ModelMapperConfiguration;
 import org.financer.server.application.configuration.security.WebSecurityConfiguration;
+import org.financer.server.application.model.transaction.variable.VariableTransactionAssembler;
+import org.financer.server.application.model.user.UserAssembler;
 import org.financer.server.application.service.AdminConfigurationService;
 import org.financer.server.domain.model.category.Category;
 import org.financer.server.domain.model.transaction.Product;
@@ -13,8 +16,7 @@ import org.financer.shared.domain.model.value.objects.ValueDate;
 import org.financer.shared.path.PathBuilder;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureWebMvc;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MvcResult;
 
@@ -27,16 +29,16 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @Tag("unit")
-@SpringBootTest(classes = {FinancerServer.class, AdminConfigurationService.class, WebSecurityConfiguration.class, RestExceptionHandler.class, VariableTransactionApiController.class},
-        webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@AutoConfigureWebMvc
-@AutoConfigureMockMvc
+@SpringBootTest(classes = {VariableTransactionApiController.class, WebSecurityConfiguration.class, ModelMapperConfiguration.class, VariableTransactionAssembler.class, UserAssembler.class, AdminConfigurationService.class})
 public class VariableTransactionApiControllerTest extends ApiTest {
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @Test
     public void testCreateTransaction() throws Exception {
         when(transactionDomainService.createVariableTransaction(any(VariableTransaction.class)))
-                .thenAnswer(i -> ((VariableTransaction) i.getArguments()[0]).setId(1));
+                .thenAnswer(i -> ((VariableTransaction) i.getArguments()[0]).setId(1L));
 
         CreateVariableTransactionDTO dto = new CreateVariableTransactionDTO()
                 .setCategoryId(1)
@@ -94,7 +96,7 @@ public class VariableTransactionApiControllerTest extends ApiTest {
     @Test
     public void testCreateProduct() throws Exception {
         when(transactionDomainService.createProduct(anyLong(), any(Product.class)))
-                .thenAnswer(i -> ((Product) i.getArguments()[1]).setId(1));
+                .thenAnswer(i -> ((Product) i.getArguments()[1]).setId(1L));
 
 
         CreateProductDTO dto = new CreateProductDTO()

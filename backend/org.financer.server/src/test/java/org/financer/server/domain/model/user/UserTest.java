@@ -19,12 +19,12 @@ public class UserTest {
     @BeforeEach
     private void setUp() {
         verificationToken = new VerificationToken()
-                .setId(1)
+                .setId(1L)
                 .setToken(new TokenString())
                 .setExpireDate(new ExpireDate());
 
         user = new User()
-                .setId(1)
+                .setId(1L)
                 .setEmail(new Email("test@test.de"))
                 .setName(new Name("First Name", "Surname"))
                 .setVerificationToken(verificationToken)
@@ -55,7 +55,7 @@ public class UserTest {
         user.putOrUpdateSettingProperty(SettingPair.Property.CURRENCY, "EUR");
         assertThat(user.getSettings().get(SettingPair.Property.CURRENCY).getPair().getValue()).isNotEmpty().isEqualTo("EUR");
 
-        user.getSettings().get(SettingPair.Property.CURRENCY).setId(1);
+        user.getSettings().get(SettingPair.Property.CURRENCY).setId(1L);
         user.putOrUpdateSettingProperty(SettingPair.Property.CURRENCY, "USD");
         assertThat(user.getSettings().get(SettingPair.Property.CURRENCY).getPair().getValue()).isNotEmpty().isEqualTo("USD");
         assertThat(user.getSettings().get(SettingPair.Property.CURRENCY).getId()).isPositive().isEqualTo(1);
