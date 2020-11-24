@@ -2,6 +2,8 @@ package org.financer.server.application.service;
 
 import org.financer.server.application.FinancerServer;
 import org.financer.server.application.api.error.UnauthorizedOperationException;
+import org.financer.server.application.configuration.MigrationConfiguration;
+import org.financer.server.application.configuration.PersistenceConfiguration;
 import org.financer.server.application.configuration.security.AuthenticationUser;
 import org.financer.server.domain.model.user.User;
 import org.financer.server.domain.service.UserDomainService;
@@ -27,7 +29,7 @@ import static org.mockito.Mockito.when;
 
 @Tag("unit")
 @ExtendWith(SpringExtension.class)
-@SpringBootTest(classes = {FinancerServer.class, AuthenticationService.class},
+@SpringBootTest(classes = {FinancerServer.class, AuthenticationService.class, PersistenceConfiguration.class, MigrationConfiguration.class},
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class AuthenticationServiceTest extends SpringTest {
 

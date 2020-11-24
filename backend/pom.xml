@@ -32,6 +32,7 @@
             --add-opens org.financer.shared/org.financer.shared.domain.model.api.transaction.fixed=ALL-UNNAMED
             --add-opens org.financer.shared/org.financer.shared.domain.model.api.transaction.variable=ALL-UNNAMED
             --add-opens org.financer.shared/org.financer.shared.domain.model.api.user=ALL-UNNAMED
+            --add-opens org.financer.shared/org.financer.shared.domain.model.value.objects=ALL-UNNAMED
             --add-opens org.financer.server/org.financer.server=ALL-UNNAMED
             --add-opens org.financer.server/org.financer.server.application=ALL-UNNAMED
             --add-opens org.financer.server/org.financer.server.application.api=ALL-UNNAMED

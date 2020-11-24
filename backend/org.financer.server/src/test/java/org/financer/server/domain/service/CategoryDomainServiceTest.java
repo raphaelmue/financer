@@ -1,11 +1,9 @@
 package org.financer.server.domain.service;
 
-import org.financer.server.application.FinancerServer;
 import org.financer.server.application.api.error.IllegalCategoryParentStateException;
 import org.financer.server.application.api.error.IllegalUpdateCategoryClassException;
 import org.financer.server.application.api.error.NotFoundException;
 import org.financer.server.application.api.error.UnauthorizedOperationException;
-import org.financer.server.application.service.AdminConfigurationService;
 import org.financer.server.domain.model.category.Category;
 import org.financer.server.utils.ServiceTest;
 import org.financer.shared.domain.model.value.objects.CategoryClass;
@@ -29,8 +27,7 @@ import static org.mockito.Mockito.when;
 
 @Tag("unit")
 @ExtendWith(SpringExtension.class)
-@SpringBootTest(classes = {FinancerServer.class, AdminConfigurationService.class, CategoryDomainService.class},
-        webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(classes = {CategoryDomainService.class})
 public class CategoryDomainServiceTest extends ServiceTest {
 
     @MockBean

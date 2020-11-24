@@ -1,10 +1,8 @@
 package org.financer.server.domain.service;
 
-import org.financer.server.application.FinancerServer;
 import org.financer.server.application.api.error.UnauthorizedOperationException;
 import org.financer.server.application.api.error.UniqueEmailViolationException;
 import org.financer.server.application.service.AdminConfigurationService;
-import org.financer.server.application.service.AuthenticationService;
 import org.financer.server.domain.model.user.Token;
 import org.financer.server.domain.model.user.User;
 import org.financer.server.domain.model.user.VerificationToken;
@@ -32,8 +30,7 @@ import static org.mockito.Mockito.when;
 
 @Tag("unit")
 @ExtendWith(SpringExtension.class)
-@SpringBootTest(classes = {FinancerServer.class, AdminConfigurationService.class, UserDomainService.class, AuthenticationService.class},
-        webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(classes = {AdminConfigurationService.class, UserDomainService.class})
 public class UserDomainServiceTest extends ServiceTest {
 
     @MockBean

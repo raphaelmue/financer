@@ -16,7 +16,6 @@ import java.time.LocalDate;
 public class ExpireDate implements Serializable, Expireable {
     private static final long serialVersionUID = -6031939301023199834L;
 
-
     @EqualsAndHashCode.Include
     @Column(name = "expire_date", nullable = false)
     private final LocalDate expireDate;

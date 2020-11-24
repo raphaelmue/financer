@@ -2,7 +2,11 @@ package org.financer.server.application.api;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.financer.server.application.FinancerServer;
+import org.financer.server.application.configuration.MigrationConfiguration;
+import org.financer.server.application.configuration.PersistenceConfiguration;
 import org.financer.server.application.configuration.security.AuthenticationTokenFilter;
+import org.financer.server.application.configuration.security.WebSecurityConfiguration;
 import org.financer.server.application.service.AdminConfigurationService;
 import org.financer.server.domain.service.CategoryDomainService;
 import org.financer.server.domain.service.TransactionDomainService;
@@ -13,6 +17,9 @@ import org.financer.shared.domain.model.value.objects.TokenString;
 import org.financer.shared.path.Path;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureWebMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
@@ -25,6 +32,12 @@ import java.util.Optional;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+@SpringBootTest(
+        classes = {FinancerServer.class, PersistenceConfiguration.class, MigrationConfiguration.class,
+                WebSecurityConfiguration.class, RestExceptionHandler.class},
+        webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@AutoConfigureWebMvc
+@AutoConfigureMockMvc
 public abstract class ApiTest extends ServiceTest {
 
     @Autowired

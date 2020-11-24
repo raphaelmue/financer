@@ -92,7 +92,7 @@ public class Amount implements Serializable, Formattable {
     }
 
     public Amount calcRatio(Amount ratio) {
-        return this.divide(ratio).multiply(100).subtract(100);
+        return this.divide(ratio).multiply(100);
     }
 
     @Override

@@ -1,8 +1,10 @@
 package org.financer.server.application.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.financer.server.application.FinancerServer;
+import org.financer.server.application.configuration.ModelMapperConfiguration;
 import org.financer.server.application.configuration.security.WebSecurityConfiguration;
+import org.financer.server.application.model.transaction.variable.VariableTransactionAssembler;
+import org.financer.server.application.model.user.UserAssembler;
 import org.financer.server.application.service.AdminConfigurationService;
 import org.financer.server.domain.model.category.Category;
 import org.financer.server.domain.model.transaction.Product;
@@ -15,8 +17,6 @@ import org.financer.shared.path.PathBuilder;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureWebMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MvcResult;
 
@@ -29,10 +29,7 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @Tag("unit")
-@SpringBootTest(classes = {FinancerServer.class, AdminConfigurationService.class, WebSecurityConfiguration.class, RestExceptionHandler.class, VariableTransactionApiController.class},
-        webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@AutoConfigureWebMvc
-@AutoConfigureMockMvc
+@SpringBootTest(classes = {VariableTransactionApiController.class, WebSecurityConfiguration.class, ModelMapperConfiguration.class, VariableTransactionAssembler.class, UserAssembler.class, AdminConfigurationService.class})
 public class VariableTransactionApiControllerTest extends ApiTest {
 
     @Autowired
