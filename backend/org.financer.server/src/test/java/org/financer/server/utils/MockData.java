@@ -22,6 +22,7 @@ public abstract class MockData {
                 .setName(new Name("Test", "User"))
                 .setPassword(new HashedPassword(password()))
                 .setTokens(new HashSet<>(Collections.singletonList(token())))
+                .setActiveToken(token())
                 .setVerificationToken(verificationToken())
                 .setRoles(roles());
     }

@@ -5,6 +5,7 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 import org.financer.server.domain.model.DataEntity;
+import org.financer.shared.domain.model.Expireable;
 import org.financer.shared.domain.model.value.objects.ExpireDate;
 import org.financer.shared.domain.model.value.objects.IPAddress;
 import org.financer.shared.domain.model.value.objects.OperatingSystem;
@@ -17,7 +18,7 @@ import javax.persistence.*;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
 @Table(name = "tokens", uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "token"}))
-public class Token implements DataEntity, UserProperty {
+public class Token implements DataEntity, UserProperty, Expireable {
     private static final long serialVersionUID = 8834445127500149942L;
 
     @Id
@@ -45,5 +46,10 @@ public class Token implements DataEntity, UserProperty {
     @Override
     public boolean isPropertyOfUser(long userId) {
         return this.getUser().getId() == userId;
+    }
+
+    @Override
+    public boolean isValid() {
+        return this.expireDate.isValid();
     }
 }

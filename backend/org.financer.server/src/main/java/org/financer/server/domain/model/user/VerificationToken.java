@@ -5,6 +5,7 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 import org.financer.server.domain.model.DataEntity;
+import org.financer.shared.domain.model.Expireable;
 import org.financer.shared.domain.model.value.objects.ExpireDate;
 import org.financer.shared.domain.model.value.objects.TokenString;
 
@@ -16,7 +17,7 @@ import java.time.LocalDate;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
 @Table(name = "verification_tokens", uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "token"}))
-public class VerificationToken implements DataEntity {
+public class VerificationToken implements DataEntity, Expireable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,4 +37,9 @@ public class VerificationToken implements DataEntity {
 
     @Column(name = "verifying_date")
     private LocalDate verifyingDate;
+
+    @Override
+    public boolean isValid() {
+        return this.expireDate.isValid();
+    }
 }

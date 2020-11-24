@@ -2,6 +2,7 @@ package org.financer.shared.domain.model.value.objects;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.financer.shared.domain.model.Expireable;
 import org.hibernate.annotations.Immutable;
 
 import javax.persistence.Column;
@@ -12,7 +13,7 @@ import java.time.LocalDate;
 @Data
 @Embeddable
 @Immutable
-public class ExpireDate implements Serializable {
+public class ExpireDate implements Serializable, Expireable {
     private static final long serialVersionUID = -6031939301023199834L;
 
 
@@ -33,6 +34,7 @@ public class ExpireDate implements Serializable {
      *
      * @return true if valid, false otherwise
      */
+    @Override
     public boolean isValid() {
         return !this.expireDate.isBefore(LocalDate.now());
     }

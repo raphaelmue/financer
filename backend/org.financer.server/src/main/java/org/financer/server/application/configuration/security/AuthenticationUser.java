@@ -56,7 +56,10 @@ public class AuthenticationUser implements UserDetails {
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return true;
+        if (user.getActiveToken() != null) {
+            return user.getActiveToken().isValid();
+        }
+        return false;
     }
 
     @Override
