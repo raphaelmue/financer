@@ -1,63 +1,19 @@
-package org.financer.server;
+package org.financer.server.utils;
 
-import org.financer.server.application.service.AuthenticationService;
 import org.financer.server.domain.model.category.Category;
 import org.financer.server.domain.model.transaction.*;
 import org.financer.server.domain.model.user.Role;
 import org.financer.server.domain.model.user.Token;
 import org.financer.server.domain.model.user.User;
 import org.financer.server.domain.model.user.VerificationToken;
-import org.financer.server.domain.repository.*;
 import org.financer.shared.domain.model.value.objects.*;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import static org.mockito.Mockito.when;
-
-@ActiveProfiles(profiles = "test")
-public abstract class SpringTest {
-
-    @MockBean
-    protected AuthenticationService authenticationService;
-
-    @MockBean
-    protected UserRepository userRepository;
-
-    @MockBean
-    protected RoleRepository roleRepository;
-
-    @MockBean
-    protected TokenRepository tokenRepository;
-
-    @MockBean
-    protected VerificationTokenRepository verificationTokenRepository;
-
-    @MockBean
-    protected CategoryRepository categoryRepository;
-
-    @MockBean
-    protected VariableTransactionRepository variableTransactionRepository;
-
-    @MockBean
-    protected FixedTransactionRepository fixedTransactionRepository;
-
-    @MockBean
-    protected FixedTransactionAmountRepository fixedTransactionAmountRepository;
-
-    @MockBean
-    protected AttachmentRepository attachmentRepository;
-
-    @MockBean
-    protected ProductRepository productRepository;
-
-    protected void mockAnotherUserAuthenticated() {
-        when(authenticationService.getUserId()).thenReturn(-1L);
-    }
+public abstract class MockData {
 
     protected User user() {
         return new User()
@@ -71,13 +27,16 @@ public abstract class SpringTest {
     }
 
     protected Set<Role> roles() {
-        return Set.of(
-                new Role()
-                        .setId(1L)
-                        .setName("USER"), userRole());
+        return Set.of(userRole(), adminRole());
     }
 
     protected Role userRole() {
+        return new Role()
+                .setId(1L)
+                .setName("USER");
+    }
+
+    protected Role adminRole() {
         return new Role()
                 .setId(2L)
                 .setName("ADMIN");

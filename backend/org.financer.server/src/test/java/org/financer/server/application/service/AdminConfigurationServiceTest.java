@@ -1,8 +1,8 @@
 package org.financer.server.application.service;
 
-import org.financer.server.SpringTest;
 import org.financer.server.application.FinancerServer;
 import org.financer.server.domain.service.UserDomainService;
+import org.financer.server.utils.SpringTest;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,7 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @Tag("unit")
 @ExtendWith(SpringExtension.class)
-@SpringBootTest(classes = {FinancerServer.class, AdminConfigurationService.class, AdminConfigurationService.class},
+@SpringBootTest(classes = {FinancerServer.class, AdminConfigurationService.class},
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class AdminConfigurationServiceTest extends SpringTest {
 

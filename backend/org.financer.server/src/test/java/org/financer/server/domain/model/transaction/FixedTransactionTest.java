@@ -12,6 +12,8 @@ import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 @Tag("unit")
 class FixedTransactionTest {
 
@@ -76,6 +78,17 @@ class FixedTransactionTest {
                 fixedTransaction.getTotalAmount(new TimeRange(LocalDate.now().minusMonths(12), LocalDate.now().minusMonths(1))).getAmount());
         Assertions.assertEquals(0,
                 fixedTransaction.getTotalAmount(new TimeRange(LocalDate.now().minusMonths(24), LocalDate.now().minusMonths(12))).getAmount());
+    }
+
+    @Test
+    public void testCancel() {
+        assertThat(fixedTransaction.isActive()).isTrue();
+
+        fixedTransaction.cancel();
+        assertThat(fixedTransaction.getTimeRange().terminates()).isTrue();
+
+        fixedTransaction.cancel(LocalDate.now().minusMonths(1));
+        assertThat(fixedTransaction.isActive()).isFalse();
     }
 
     @Test

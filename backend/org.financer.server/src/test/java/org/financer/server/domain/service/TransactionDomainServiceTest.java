@@ -1,6 +1,5 @@
 package org.financer.server.domain.service;
 
-import org.financer.server.SpringTest;
 import org.financer.server.application.FinancerServer;
 import org.financer.server.application.api.error.IllegalTransactionCategoryClassException;
 import org.financer.server.application.api.error.NotFoundException;
@@ -9,6 +8,7 @@ import org.financer.server.application.service.AdminConfigurationService;
 import org.financer.server.domain.model.category.Category;
 import org.financer.server.domain.model.transaction.*;
 import org.financer.server.domain.model.user.User;
+import org.financer.server.utils.ServiceTest;
 import org.financer.shared.domain.model.value.objects.Amount;
 import org.financer.shared.domain.model.value.objects.Quantity;
 import org.financer.shared.domain.model.value.objects.TimeRange;
@@ -23,6 +23,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -34,7 +35,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = {FinancerServer.class, AdminConfigurationService.class, TransactionDomainService.class, CategoryDomainService.class},
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class TransactionDomainServiceTest extends SpringTest {
+public class TransactionDomainServiceTest extends ServiceTest {
 
     @MockBean
     private UserDomainService userDomainService;
@@ -87,6 +88,7 @@ public class TransactionDomainServiceTest extends SpringTest {
         when(fixedTransactionRepository.findById(2L)).thenReturn(Optional.of(fixedTransaction));
         when(fixedTransactionRepository.findActiveTransactionByCategory(any(Category.class))).thenReturn(Optional.empty());
         when(fixedTransactionRepository.save(any(FixedTransaction.class))).thenAnswer(i -> i.getArguments()[0]);
+        when(fixedTransactionRepository.findActiveTransactionByCategory(fixedCategory)).thenReturn(Optional.of(fixedTransaction));
         when(fixedTransactionAmountRepository.findById(any())).thenReturn(Optional.empty());
         when(fixedTransactionAmountRepository.findById(1L)).thenReturn(Optional.of(fixedTransactionAmount));
         when(fixedTransactionAmountRepository.save(any(FixedTransactionAmount.class))).thenAnswer(i -> i.getArguments()[0]);
@@ -179,6 +181,12 @@ public class TransactionDomainServiceTest extends SpringTest {
     }
 
     @Test
+    public void testDeleteProducts() {
+        transactionDomainService.deleteProducts(variableTransaction.getId(), List.of(product.getId()));
+        assertThat(variableTransaction.getProducts()).isEmpty();
+    }
+
+    @Test
     public void testDeleteProductNotFound() {
         assertThatExceptionOfType(NotFoundException.class).isThrownBy(
                 () -> transactionDomainService.deleteProduct(variableTransaction.getId(), 2));
@@ -195,7 +203,12 @@ public class TransactionDomainServiceTest extends SpringTest {
 
     @Test
     public void testCreateFixedTransaction() {
+        fixedTransaction.setTimeRange(new TimeRange(LocalDate.now().minusMonths(2)));
         assertThat(transactionDomainService.createFixedTransaction(fixedTransaction)).isNotNull();
+
+        FixedTransaction newFixedTransaction = fixedTransaction().setId(3L);
+        assertThat(transactionDomainService.createFixedTransaction(newFixedTransaction).isActive()).isTrue();
+        assertThat(fixedTransaction.isActive()).isFalse();
     }
 
     @Test

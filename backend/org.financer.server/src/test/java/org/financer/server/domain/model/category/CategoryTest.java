@@ -1,11 +1,12 @@
 package org.financer.server.domain.model.category;
 
-import org.financer.server.SpringTest;
 import org.financer.server.application.api.error.IllegalCategoryParentStateException;
 import org.financer.server.domain.model.transaction.Product;
 import org.financer.server.domain.model.transaction.VariableTransaction;
+import org.financer.server.utils.SpringTest;
 import org.financer.shared.domain.model.value.objects.Amount;
 import org.financer.shared.domain.model.value.objects.CategoryClass;
+import org.financer.shared.domain.model.value.objects.TimeRange;
 import org.financer.shared.domain.model.value.objects.ValueDate;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -65,6 +66,13 @@ public class CategoryTest extends SpringTest {
     public void testGetTotalAmountByValueDate() {
         assertThat(category.getTotalAmount(new ValueDate())).isEqualTo(new Amount(100));
         assertThat(category.getTotalAmount(new ValueDate(LocalDate.now().minusMonths(1)))).isEqualTo(new Amount(0));
+    }
+
+    @Test
+    public void testGetTotalAmountByTimeRange() {
+        assertThat(category.getTotalAmount(new TimeRange(LocalDate.now().minusMonths(1)))).isEqualTo(new Amount(100));
+        assertThat(category.getTotalAmount(new TimeRange(LocalDate.now().plusMonths(1)))).isEqualTo(new Amount(0));
+        assertThat(category.getTotalAmount(new TimeRange(LocalDate.now().minusMonths(2), LocalDate.now().minusMonths(1)))).isEqualTo(new Amount(0));
     }
 
     @Test

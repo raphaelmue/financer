@@ -2,12 +2,12 @@ package org.financer.server.application.api;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.financer.server.SpringTest;
 import org.financer.server.application.configuration.security.AuthenticationTokenFilter;
 import org.financer.server.application.service.AdminConfigurationService;
 import org.financer.server.domain.service.CategoryDomainService;
 import org.financer.server.domain.service.TransactionDomainService;
 import org.financer.server.domain.service.UserDomainService;
+import org.financer.server.utils.ServiceTest;
 import org.financer.shared.domain.model.api.DataTransferObject;
 import org.financer.shared.domain.model.value.objects.TokenString;
 import org.financer.shared.path.Path;
@@ -25,7 +25,7 @@ import java.util.Optional;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-public abstract class ApiTest extends SpringTest {
+public abstract class ApiTest extends ServiceTest {
 
     @Autowired
     protected ObjectMapper objectMapper;

@@ -42,6 +42,7 @@
             --add-opens org.financer.server/org.financer.server.domain.model.user=ALL-UNNAMED
             --add-opens org.financer.server/org.financer.server.domain.model.transaction=ALL-UNNAMED
             --add-opens org.financer.server/org.financer.server.domain.model.category=ALL-UNNAMED
+            --add-opens org.financer.server/org.financer.server.utils=ALL-UNNAMED
         </project.testing.arguments>
         <project.testing.headless/>
     </properties>
