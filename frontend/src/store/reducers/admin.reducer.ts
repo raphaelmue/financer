@@ -3,7 +3,7 @@ import {
     AdminConfiguration,
     AdminConfigurationDefaultCurrencyEnum,
     AdminConfigurationDefaultLanguageEnum
-}                     from '../../.openapi/models';
+}                     from '../../.openapi';
 import {AdminApi}     from '../api/admin.api';
 import {
     AdminAction,
@@ -23,7 +23,7 @@ const initialState: AdminState = {
     error: undefined,
     configuration: {
         defaultLanguage: AdminConfigurationDefaultLanguageEnum.En,
-        defaultCurrency: AdminConfigurationDefaultCurrencyEnum.USD,
+        defaultCurrency: AdminConfigurationDefaultCurrencyEnum.Usd,
     }
 };
 

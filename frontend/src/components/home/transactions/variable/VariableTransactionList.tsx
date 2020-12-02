@@ -2,7 +2,7 @@ import {withTranslation, WithTranslation} from 'react-i18next';
 import React                              from 'react';
 import {TransactionReducerProps}          from '../../../../store/reducers/transaction.reducer';
 import {UserReducerProps}                 from '../../../../store/reducers/user.reducers';
-import {VariableTransaction}              from '../../../../.openapi/models';
+import {VariableTransaction}              from '../../../../.openapi';
 import ProTable                           from '@ant-design/pro-table';
 import {columns}                          from './columns';
 import {AppState}                         from '../../../../store/reducers/root.reducers';

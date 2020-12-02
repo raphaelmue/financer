@@ -11,23 +11,23 @@ export default class CategoryUtil {
                 id: -index - 1,
                 name: i18next.t('Transaction.Category.CategoryClass.' + value as CategoryCategoryClassEnum),
                 categoryClass: value as CategoryCategoryClassEnum,
-                children: []
+                children: new Set()
             });
         });
 
         categories.forEach(value => {
             switch (value.categoryClass) {
-                case CategoryCategoryClassEnum.FIXEDREVENUE:
-                    rootCategories[0].children!.push(value);
+                case CategoryCategoryClassEnum.FixedRevenue:
+                    rootCategories[0].children!.add(value);
                     break;
-                case CategoryCategoryClassEnum.VARIABLEREVENUE:
-                    rootCategories[1].children!.push(value);
+                case CategoryCategoryClassEnum.VariableRevenue:
+                    rootCategories[1].children!.add(value);
                     break;
-                case CategoryCategoryClassEnum.FIXEDEXPENSES:
-                    rootCategories[2].children!.push(value);
+                case CategoryCategoryClassEnum.FixedExpenses:
+                    rootCategories[2].children!.add(value);
                     break;
-                case CategoryCategoryClassEnum.VARIABLEEXPENSES:
-                    rootCategories[3].children!.push(value);
+                case CategoryCategoryClassEnum.VariableExpenses:
+                    rootCategories[3].children!.add(value);
                     break;
             }
         });
@@ -37,14 +37,14 @@ export default class CategoryUtil {
 
     static filterFixed(categories: Category[]): Category[] {
         return categories.filter(value =>
-            value.categoryClass.valueOf() === 'FIXEDEXPENSES' ||
-            value.categoryClass.valueOf() === 'FIXEDREVENUE');
+            value.categoryClass.valueOf() === 'FixedExpenses' ||
+            value.categoryClass.valueOf() === 'FixedRevenue');
     }
 
     static filterVariable(categories: Category[]): Category[] {
         return categories.filter(value =>
-            value.categoryClass.valueOf() === 'VARIABLEEXPENSES' ||
-            value.categoryClass.valueOf() === 'VARIABLEREVENUE');
+            value.categoryClass.valueOf() === 'VariableExpenses' ||
+            value.categoryClass.valueOf() === 'VariableRevenue');
     }
 
     static convertCategoriesToDataNode(categories: Category[], query?: string, root?: Category): DataNode[] {
@@ -59,17 +59,19 @@ export default class CategoryUtil {
 
                 // root is shown, if any child is shown
                 // otherwise, root is hidden
-                let isShown: boolean = children.length > 0 && children.filter(value => value.style?.display !== 'none').length > 0;
+                let isShown: boolean = (children.length > 0 && children.filter(value => value.style?.display !== 'none').length > 0)
+                    || ((query && root.name.toLowerCase().includes(query.toLowerCase())) || !query);
 
                 return [{
                     key: root.id,
                     title: root.name,
                     children: children,
+                    // root categories cannot be selected
                     selectable: (root.id > 0),
                     icon: false,
                     isLeaf: children.length === 0,
                     // node is shown, if child is shown or root matches query
-                    style: {display: isShown || ((query && root.name.toLowerCase().includes(query.toLowerCase())) || !query) ? 'inherit' : 'none'}
+                    style: {display: isShown ? 'inherit' : 'none'}
                 }];
             } else {
                 let nodes: DataNode[] = [];

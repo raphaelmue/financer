@@ -228,7 +228,10 @@ public interface UserApi {
     /**
      * Fetches the users fixed transactions.
      *
-     * @param userId user id
+     * @param userId     user id
+     * @param pageable
+     * @param onlyActive
+     * @param categoryId
      * @return list of transactions
      */
     @Operation(
@@ -237,15 +240,21 @@ public interface UserApi {
             security = @SecurityRequirement(name = "TokenAuth"))
     @ApiResponse(
             responseCode = "200",
-            description = "Users fixed transactions were successfully fetched",
-            content = @Content(array = @ArraySchema(schema = @Schema(implementation = FixedTransactionDTO.class))))
+            description = "Users fixed transactions were successfully fetched")
+    @PageableParameters
     @GetMapping(
             value = "/users/{userId}/fixedTransactions",
             produces = {"application/json"},
             headers = "Accept=application/json")
-    ResponseEntity<List<FixedTransactionDTO>> getUsersFixedTransactions(
+    ResponseEntity<PagedModel<FixedTransactionDTO>> getUsersFixedTransactions(
             @Parameter(description = "ID of the user whose fixed transactions will be fetched", required = true)
-            @PathVariable("userId") @NotBlank @Min(1) Long userId);
+            @PathVariable("userId") @NotBlank @Min(1) Long userId,
+            @Parameter(hidden = true) @Valid
+            @PageableDefault(size = 20, sort = "timeRange.startDate", direction = Sort.Direction.DESC) Pageable pageable,
+            @Parameter(description = "Indicates whether to return only active fixed transactions")
+            @RequestParam(value = "onlyActive", required = false, defaultValue = "true") Boolean onlyActive,
+            @Parameter(description = "ID of the category")
+            @RequestParam(value = "categoryId", required = false) @Min(1) Long categoryId);
 
     /**
      * Fetches the users categories.

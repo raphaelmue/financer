@@ -79,7 +79,6 @@ public class UserDomainServiceTest extends ServiceTest {
         when(verificationTokenRepository.findByToken(tokenString)).thenReturn(Optional.of(verificationToken));
         when(categoryRepository.findAllByUserId(anyLong())).thenReturn(List.of(variableCategory()));
         when(variableTransactionRepository.findByCategoryUserId(anyLong(), any(Pageable.class))).thenReturn(new PageImpl<>(List.of(variableTransaction())));
-        when(fixedTransactionRepository.findAllActiveTransactionsByUserId(anyLong())).thenReturn(List.of(fixedTransaction()));
     }
 
     @Test
@@ -216,10 +215,5 @@ public class UserDomainServiceTest extends ServiceTest {
     @Test
     public void testFetchVariableTransactions() {
         assertThat(userDomainService.fetchVariableTransactions(Pageable.unpaged()).getSize()).isEqualTo(1);
-    }
-
-    @Test
-    public void testFetchFixedTransactions() {
-        assertThat(userDomainService.fetchFixedTransactions()).hasSize(1);
     }
 }

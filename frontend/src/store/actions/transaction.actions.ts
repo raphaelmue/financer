@@ -1,13 +1,19 @@
-import {Action}                                                      from 'redux';
+import {Action}       from 'redux';
 import {
     CreateProductRequest,
-    CreateTransactionRequest, DeleteProductRequest,
+    CreateTransactionRequest,
+    DeleteProductRequest,
     DeleteVariableTransactionRequest,
+    GetUsersFixedTransactionsRequest,
     GetUsersVariableTransactionsRequest,
-    GetVariableTransactionByIdRequest, UpdateVariableTransactionRequest,
-} from '../../.openapi/apis';
-import {ErrorMessage}                                                from '../errorMessage';
-import {PagedModelVariableTransaction, Product, VariableTransaction} from '../../.openapi/models';
+    GetVariableTransactionByIdRequest,
+    PagedModelFixedTransaction,
+    PagedModelVariableTransaction,
+    Product,
+    UpdateVariableTransactionRequest,
+    VariableTransaction,
+}                     from '../../.openapi';
+import {ErrorMessage} from '../errorMessage';
 
 export enum TransactionActionDefinition {
     LOAD_VARIABLE_TRANSACTIONS_REQUEST = 'TRANSACTIONS:LOAD_VARIABLE_TRANSACTIONS_REQUEST',
@@ -30,7 +36,10 @@ export enum TransactionActionDefinition {
     CREATE_PRODUCT_FAILED = 'TRANSACTION:CREATE_PRODUCT_FAILED',
     DELETE_PRODUCTS_REQUEST = 'TRANSACTION:DELETE_PRODUCTS_REQUEST',
     DELETE_PRODUCTS_SUCCESS = 'TRANSACTION:DELETE_PRODUCTS_SUCCESS',
-    DELETE_PRODUCTS_FAILED = 'TRANSACTION:DELETE_PRODUCTS_FAILED'
+    DELETE_PRODUCTS_FAILED = 'TRANSACTION:DELETE_PRODUCTS_FAILED',
+    LOAD_FIXED_TRANSACTIONS_REQUEST = 'TRANSACTION:LOAD_FIXED_TRANSACTIONS_REQUEST',
+    LOAD_FIXED_TRANSACTIONS_SUCCESS = 'TRANSACTION:LOAD_FIXED_TRANSACTIONS_SUCCESS',
+    LOAD_FIXED_TRANSACTIONS_FAILED = 'TRANSACTION:LOAD_FIXED_TRANSACTIONS_FAILED',
 }
 
 export type TransactionAction = LoadVariableTransactionsRequestAction
@@ -53,7 +62,10 @@ export type TransactionAction = LoadVariableTransactionsRequestAction
     | CreateProductFailedAction
     | DeleteProductsRequestAction
     | DeleteProductsSuccessAction
-    | DeleteProductsFailedAction;
+    | DeleteProductsFailedAction
+    | LoadFixedTransactionRequestAction
+    | LoadFixedTransactionSuccessAction
+    | LoadFixedTransactionFailedAction;
 
 interface LoadVariableTransactionsRequestAction extends Action {
     type: TransactionActionDefinition.LOAD_VARIABLE_TRANSACTIONS_REQUEST,
@@ -149,11 +161,26 @@ interface DeleteProductsRequestAction extends Action {
     payload: DeleteProductRequest
 }
 
-interface DeleteProductsSuccessAction extends  Action {
+interface DeleteProductsSuccessAction extends Action {
     type: TransactionActionDefinition.DELETE_PRODUCTS_SUCCESS
 }
 
-interface DeleteProductsFailedAction extends Action{
+interface DeleteProductsFailedAction extends Action {
     type: TransactionActionDefinition.DELETE_PRODUCTS_FAILED,
+    payload: ErrorMessage
+}
+
+interface LoadFixedTransactionRequestAction extends Action {
+    type: TransactionActionDefinition.LOAD_FIXED_TRANSACTIONS_REQUEST,
+    payload: GetUsersFixedTransactionsRequest
+}
+
+interface LoadFixedTransactionSuccessAction extends Action {
+    type: TransactionActionDefinition.LOAD_FIXED_TRANSACTIONS_SUCCESS,
+    payload: PagedModelFixedTransaction
+}
+
+interface LoadFixedTransactionFailedAction extends Action {
+    type: TransactionActionDefinition.LOAD_FIXED_TRANSACTIONS_FAILED,
     payload: ErrorMessage
 }

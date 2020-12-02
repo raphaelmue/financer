@@ -1,6 +1,6 @@
 import {Modal, notification}                                      from 'antd';
 import React                                                      from 'react';
-import {Product, VariableTransaction}                             from '../../../../../.openapi/models';
+import {FixedTransaction, Product, VariableTransaction}           from '../../../../../.openapi/models';
 import {TransactionReducerProps}                                  from '../../../../../store/reducers/transaction.reducer';
 import {AppState}                                                 from '../../../../../store/reducers/root.reducers';
 import {bindActionCreators, Dispatch}                             from 'redux';
@@ -10,8 +10,10 @@ import * as api                                                   from '../../..
 import {withTranslation, WithTranslation}                         from 'react-i18next';
 import {
     CreateProductRequest,
-    CreateTransactionRequest, DeleteProductsRequest,
+    CreateTransactionRequest,
+    DeleteProductsRequest,
     DeleteVariableTransactionRequest,
+    GetUsersFixedTransactionsRequest,
     GetUsersVariableTransactionsRequest,
     GetVariableTransactionByIdRequest
 }                                                                 from '../../../../../.openapi/apis';
@@ -117,6 +119,8 @@ const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({
     dispatchDeleteVariableTransaction: (data: DeleteVariableTransactionRequest, callback?: () => void) => {
     },
     dispatchDeleteProducts: (data: DeleteProductsRequest, callback?: () => void) => {
+    },
+    dispatchLoadFixedTransactions: (data: GetUsersFixedTransactionsRequest, callback?: (fixedTransactions: FixedTransaction[]) => void) => {
     }
 }, dispatch);
 

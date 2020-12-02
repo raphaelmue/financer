@@ -5,7 +5,7 @@ import React                                                      from 'react';
 import {AppState}                                                 from '../../../../../store/reducers/root.reducers';
 import {TransactionReducerProps}                                  from '../../../../../store/reducers/transaction.reducer';
 import {notification}                                             from 'antd';
-import {CreateAttachment, CreateProduct}                          from '../../../../../.openapi/models';
+import {CreateAttachment, CreateProduct}                          from '../../../../../.openapi';
 import ProductList
                                                                   from '../../../../shared/transaction/product/ProductList';
 import CreateProductDialog
@@ -56,8 +56,8 @@ class CreateVariableTransaction extends React.Component<CreateVariableTransactio
                     categoryId: this.state.variableTransactionData.categoryId,
                     vendor: this.state.variableTransactionData.vendor,
                     description: this.state.variableTransactionData.description,
-                    products: this.state.products,
-                    attachments: this.state.attachments
+                    products: new Set(this.state.products),
+                    attachments: new Set(this.state.attachments)
                 }
             }, variableTransaction => {
                 notification.success({

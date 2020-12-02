@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 import org.financer.shared.domain.model.value.objects.Amount;
 import org.financer.shared.domain.model.value.objects.TimeRange;
+import org.springframework.hateoas.RepresentationModel;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
@@ -14,7 +15,7 @@ import java.util.List;
 @Data
 @Accessors(chain = true)
 @Schema(name = "FixedTransaction", description = "Schema for a fixed transaction")
-public class FixedTransactionDTO {
+public class FixedTransactionDTO extends RepresentationModel<FixedTransactionDTO> {
 
     @NotNull
     @Min(1)
@@ -47,4 +48,7 @@ public class FixedTransactionDTO {
 
     @Schema(description = "List of fixed transaction amounts", required = true, example = "Amazon")
     private List<@Valid FixedTransactionAmountDTO> transactionAmounts;
+
+    @Schema(description = "Indicates wether this transaction is active")
+    private boolean isActive;
 }

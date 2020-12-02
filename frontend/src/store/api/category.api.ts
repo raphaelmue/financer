@@ -1,9 +1,8 @@
-import {GetUsersCategoriesRequest, UserApi} from '../../.openapi/apis';
-import {Dispatch}                           from 'redux';
-import {CategoryActionDefinition}           from '../actions/category.actions';
-import {apiConfiguration}                   from './index';
-import {ErrorMessage}                       from '../errorMessage';
-import {Category}                           from '../../.openapi/models';
+import {Category, GetUsersCategoriesRequest, UserApi} from '../../.openapi';
+import {Dispatch}                                     from 'redux';
+import {CategoryActionDefinition}                     from '../actions/category.actions';
+import {apiConfiguration}                             from './index';
+import {ErrorMessage}                                 from '../errorMessage';
 
 export const loadCategories = (data: GetUsersCategoriesRequest, callback?: (categories: Category[]) => void) => {
     return (dispatch: Dispatch) => {

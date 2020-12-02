@@ -1,9 +1,10 @@
-import {PageMetadata, VariableTransaction}              from '../../.openapi/models';
-import {ReducerState}                                   from './reducers';
-import {TransactionAction, TransactionActionDefinition} from '../actions/transaction.actions';
-import {TransactionApi}                                 from '../api/transaction.api';
+import {FixedTransaction, PageMetadata, VariableTransaction} from '../../.openapi';
+import {ReducerState}                                        from './reducers';
+import {TransactionAction, TransactionActionDefinition}      from '../actions/transaction.actions';
+import {TransactionApi}                                      from '../api/transaction.api';
 
 export interface TransactionState extends ReducerState {
+    fixedTransactions: FixedTransaction[],
     variableTransactions: VariableTransaction[],
     pageMetadata?: PageMetadata
 }
@@ -15,6 +16,7 @@ export interface TransactionReducerProps extends TransactionApi {
 const initialState: TransactionState = {
     error: undefined,
     isLoading: false,
+    fixedTransactions: [],
     variableTransactions: [],
     pageMetadata: undefined
 };
@@ -45,12 +47,20 @@ export const transactionReducer = (state: TransactionState = initialState, actio
         case TransactionActionDefinition.UPDATE_VARIABLE_TRANSACTION_SUCCESS:
         case TransactionActionDefinition.DELETE_VARIABLE_TRANSACTION_SUCCESS:
             return {...state, isLoading: false, error: undefined};
+        case TransactionActionDefinition.LOAD_FIXED_TRANSACTIONS_SUCCESS:
+            return {
+                ...state,
+                isLoading: false,
+                error: undefined,
+                fixedTransactions: action.payload.embedded?.fixedTransactionDToes
+            };
         case TransactionActionDefinition.LOAD_VARIABLE_TRANSACTIONS_REQUEST:
         case TransactionActionDefinition.LOAD_VARIABLE_TRANSACTION_REQUEST:
         case TransactionActionDefinition.CREATE_VARIABLE_TRANSACTION_REQUEST:
         case TransactionActionDefinition.CREATE_PRODUCT_REQUEST:
         case TransactionActionDefinition.UPDATE_VARIABLE_TRANSACTION_REQUEST:
         case TransactionActionDefinition.DELETE_VARIABLE_TRANSACTION_REQUEST:
+        case TransactionActionDefinition.LOAD_FIXED_TRANSACTIONS_REQUEST:
             return {...state, isLoading: true, error: undefined};
         case TransactionActionDefinition.LOAD_VARIABLE_TRANSACTIONS_FAILED:
         case TransactionActionDefinition.LOAD_VARIABLE_TRANSACTION_FAILED:
@@ -58,6 +68,7 @@ export const transactionReducer = (state: TransactionState = initialState, actio
         case TransactionActionDefinition.CREATE_PRODUCT_FAILED:
         case TransactionActionDefinition.UPDATE_VARIABLE_TRANSACTION_FAILED:
         case TransactionActionDefinition.DELETE_VARIABLE_TRANSACTION_FAILED:
+        case TransactionActionDefinition.LOAD_FIXED_TRANSACTIONS_FAILED:
             return {...state, isLoading: false, error: action.payload};
         default:
             return state;

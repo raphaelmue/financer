@@ -32,14 +32,14 @@ class AdminConfiguration extends React.Component<AdminConfigurationComponentProp
 
         this.state = {
             defaultLanguage: this.props.adminState.configuration.defaultLanguage as AdminConfigurationDefaultLanguageEnum || AdminConfigurationDefaultLanguageEnum.En,
-            defaultCurrency: this.props.adminState.configuration.defaultCurrency as AdminConfigurationDefaultCurrencyEnum || AdminConfigurationDefaultCurrencyEnum.USD,
+            defaultCurrency: this.props.adminState.configuration.defaultCurrency as AdminConfigurationDefaultCurrencyEnum || AdminConfigurationDefaultCurrencyEnum.Usd,
         };
 
         this.props.dispatchLoadAdminConfiguration({}, (adminConfiguration) => {
-            this.state = {
+            this.setState({
                 defaultLanguage: adminConfiguration.defaultLanguage,
                 defaultCurrency: adminConfiguration.defaultCurrency,
-            };
+            });
         });
     }
 

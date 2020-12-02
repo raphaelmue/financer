@@ -1,11 +1,13 @@
 package org.financer.server.application.api;
 
+import org.financer.server.application.model.transaction.fixed.FixedTransactionAssembler;
 import org.financer.server.application.model.transaction.variable.VariableTransactionAssembler;
 import org.financer.server.application.service.AuthenticationService;
 import org.financer.server.domain.model.category.Category;
 import org.financer.server.domain.model.transaction.FixedTransaction;
 import org.financer.server.domain.model.transaction.VariableTransaction;
 import org.financer.server.domain.model.user.User;
+import org.financer.server.domain.service.TransactionDomainService;
 import org.financer.server.domain.service.UserDomainService;
 import org.financer.shared.domain.model.api.category.CategoryDTO;
 import org.financer.shared.domain.model.api.transaction.fixed.FixedTransactionDTO;
@@ -43,19 +45,24 @@ import java.util.Optional;
 public class UserApiController implements UserApi {
 
     private final UserDomainService userDomainService;
+    private final TransactionDomainService transactionDomainService;
     private final ModelMapper modelMapper;
     private final AuthenticationService authenticationService;
     private final HttpServletRequest request;
     private final VariableTransactionAssembler variableTransactionAssembler;
+    private final FixedTransactionAssembler fixedTransactionAssembler;
 
     @Autowired
-    public UserApiController(HttpServletRequest request, UserDomainService userDomainService, ModelMapper modelMapper,
-                             AuthenticationService authenticationService, VariableTransactionAssembler variableTransactionAssembler) {
+    public UserApiController(HttpServletRequest request, UserDomainService userDomainService, TransactionDomainService transactionDomainService,
+                             ModelMapper modelMapper, AuthenticationService authenticationService,
+                             VariableTransactionAssembler variableTransactionAssembler, FixedTransactionAssembler fixedTransactionAssembler) {
         this.request = request;
         this.userDomainService = userDomainService;
+        this.transactionDomainService = transactionDomainService;
         this.modelMapper = modelMapper;
         this.authenticationService = authenticationService;
         this.variableTransactionAssembler = variableTransactionAssembler;
+        this.fixedTransactionAssembler = fixedTransactionAssembler;
     }
 
     @Override
@@ -126,9 +133,9 @@ public class UserApiController implements UserApi {
     }
 
     @Override
-    public ResponseEntity<List<FixedTransactionDTO>> getUsersFixedTransactions(@NotBlank @Min(1) Long userId) {
+    public ResponseEntity<PagedModel<FixedTransactionDTO>> getUsersFixedTransactions(@NotBlank @Min(1) Long userId, @Valid Pageable pageable, Boolean onlyActive, @Min(1) Long categoryId) {
         authenticationService.getAuthenticatedUser().throwIfNotUsersProperty(userId);
-        List<FixedTransaction> fixedTransactions = userDomainService.fetchFixedTransactions();
-        return new ResponseEntity<>(ModelMapperUtils.mapAll(fixedTransactions, FixedTransactionDTO.class), HttpStatus.OK);
+        Page<FixedTransaction> fixedTransactions = transactionDomainService.fetchFixedTransactions(userId, onlyActive, categoryId, pageable);
+        return new ResponseEntity<>(fixedTransactionAssembler.toPagedModel(fixedTransactions), HttpStatus.OK);
     }
 }

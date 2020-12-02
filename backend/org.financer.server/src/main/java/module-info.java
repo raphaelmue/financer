@@ -89,4 +89,5 @@ module org.financer.server {
     exports org.financer.server.application.model to spring.beans;
     exports org.financer.server.application.model.user to spring.beans;
     exports org.financer.server.application.model.transaction.variable to spring.beans;
+    exports org.financer.server.application.model.transaction.fixed to spring.beans;
 }

@@ -60,10 +60,10 @@
       "Name": "Category",
       "SelectCategoryPlaceholder": "Select category",
       "CategoryClass": {
-        "FIXEDEXPENSES": "Fixed expenses",
-        "FIXEDREVENUE": "Fixed revenue",
-        "VARIABLEEXPENSES": "Variable Expenses",
-        "VARIABLEREVENUE": "Variable Revenue"
+        "FixedExpenses": "Fixed expenses",
+        "FixedRevenue": "Fixed revenue",
+        "VariableExpenses": "Variable Expenses",
+        "VariableRevenue": "Variable Revenue"
       }
     },
     "Amount": "Amount",
@@ -82,7 +82,15 @@
       "UploadDate": "Upload date"
     },
     "Attachments": "Attachments",
-    "TotalAmount": "Total Amount"
+    "TotalAmount": "Total Amount",
+    "FixedTransaction": {
+      "Active": "Active",
+      "Inactive": "Inactive",
+      "Now": "Now",
+      "HasVariableAmounts": "Variable",
+      "HasFixedAmounts": "Fixed",
+      "Day": "Day"
+    }
   },
   "Form": {
     "Table": {

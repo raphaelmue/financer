@@ -60,10 +60,10 @@
       "Name": "Kategorie",
       "SelectCategoryPlaceholder": "Kategorie auswählen",
       "CategoryClass": {
-        "FIXEDEXPENSES": "Feste Ausgabe",
-        "FIXEDREVENUE": "Feste Einnahmen",
-        "VARIABLEEXPENSES": "Variable Ausgaben",
-        "VARIABLEREVENUE": "Variable Einnahmen"
+        "FixedExpenses": "Feste Ausgabe",
+        "FixedRevenue": "Feste Einnahmen",
+        "VariableExpenses": "Variable Ausgaben",
+        "VariableRevenue": "Variable Einnahmen"
       }
     },
     "Amount": "Betrag",
@@ -82,7 +82,15 @@
       "UploadDate": "Upload Datum"
     },
     "Attachments": "Anhänge",
-    "TotalAmount": "Gesamtbetrag"
+    "TotalAmount": "Gesamtbetrag",
+    "FixedTransaction": {
+      "Active": "Aktiv",
+      "Inactive": "Inaktiv",
+      "Now": "Jetzt",
+      "HasVariableAmounts": "Variable",
+      "HasFixedAmounts": "Fixiert",
+      "Day": "Tag"
+    }
   },
   "Form": {
     "Table": {

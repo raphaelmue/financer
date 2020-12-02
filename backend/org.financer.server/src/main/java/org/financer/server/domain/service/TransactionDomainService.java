@@ -11,14 +11,14 @@ import org.financer.shared.domain.model.value.objects.ValueDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.NoResultException;
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class TransactionDomainService {
@@ -50,14 +50,39 @@ public class TransactionDomainService {
         this.attachmentRepository = attachmentRepository;
     }
 
+
+    /**
+     * Returns a list of all fixed transactions that belong to a user.
+     *
+     * @return list of fixed transactions
+     */
+    public Page<FixedTransaction> fetchFixedTransactions(Long userId, boolean onlyActive, Long categoryId, Pageable pageable) {
+        authenticationService.getAuthenticatedUser().throwIfNotUsersProperty(userId);
+        if (onlyActive) {
+            if (categoryId == null) {
+                return fixedTransactionRepository.findAllActiveByUserId(userId, pageable);
+            } else {
+                Optional<FixedTransaction> optionalFixedTransaction = fixedTransactionRepository.findActiveByCategoryId(categoryId);
+                return optionalFixedTransaction.
+                        <Page<FixedTransaction>>map(fixedTransaction -> new PageImpl<>(List.of(fixedTransaction)))
+                        .orElseGet(() -> new PageImpl<>(Collections.emptyList()));
+            }
+        } else {
+            if (categoryId == null) {
+                return fixedTransactionRepository.findAllByUserId(userId, pageable);
+            } else {
+                return fixedTransactionRepository.findAllByCategoryId(categoryId, pageable);
+            }
+        }
+    }
+
     /**
      * Inserts the given transaction into the database.
      *
      * @param variableTransactionEntity transaction to insert
      * @return inserted transaction object
      */
-    public VariableTransaction
-    createVariableTransaction(VariableTransaction variableTransactionEntity) {
+    public VariableTransaction createVariableTransaction(VariableTransaction variableTransactionEntity) {
         logger.info("Creating new variable transaction.");
         Optional<Category> categoryOptional = categoryRepository.findById(variableTransactionEntity.getCategory().getId());
         if (categoryOptional.isPresent()) {
@@ -237,8 +262,8 @@ public class TransactionDomainService {
                 fixedTransaction.setTransactionAmounts(new HashSet<>());
             }
 
-            Optional<FixedTransaction> activeTransactionOptional = fixedTransactionRepository.findActiveTransactionByCategory(
-                    fixedTransaction.getCategory());
+            Optional<FixedTransaction> activeTransactionOptional = fixedTransactionRepository.findActiveByCategoryId(
+                    fixedTransaction.getCategory().getId());
 
             // cancels the current fixed transaction if exists to the start date of the current transaction.
             if (activeTransactionOptional.isPresent()) {

@@ -3,17 +3,18 @@ import {
     CreateTransactionRequest,
     DeleteProductsRequest,
     DeleteVariableTransactionRequest,
+    GetUsersFixedTransactionsRequest,
     GetUsersVariableTransactionsRequest,
     GetVariableTransactionByIdRequest,
     UpdateVariableTransactionRequest,
     UserApi,
     VariableTransactionApi
-}                                                                    from '../../.openapi/apis';
-import {Dispatch}                                                    from 'redux';
-import {apiConfiguration}                                            from './index';
-import {ErrorMessage}                                                from '../errorMessage';
-import {PagedModelVariableTransaction, Product, VariableTransaction} from '../../.openapi/models';
-import {TransactionActionDefinition}                                 from '../actions/transaction.actions';
+}                                                                                      from '../../.openapi';
+import {Dispatch}                                                                      from 'redux';
+import {apiConfiguration}                                                              from './index';
+import {ErrorMessage}                                                                  from '../errorMessage';
+import {FixedTransaction, PagedModelVariableTransaction, Product, VariableTransaction} from '../../.openapi';
+import {TransactionActionDefinition}                                                   from '../actions/transaction.actions';
 
 export const loadVariableTransactions = (data: GetUsersVariableTransactionsRequest) => {
     return (dispatch: Dispatch) => {
@@ -142,6 +143,24 @@ export const deleteProducts = (data: DeleteProductsRequest, callback?: () => voi
     };
 };
 
+export const loadFixedTransactions = (data: GetUsersFixedTransactionsRequest, callback?: (fixedTransactions: FixedTransaction[]) => void) => {
+    return (dispatch: Dispatch) => {
+        dispatch({
+            type: TransactionActionDefinition.LOAD_FIXED_TRANSACTIONS_REQUEST,
+            payload: data
+        });
+        let api = new UserApi(apiConfiguration());
+        ErrorMessage.resolveError(api.getUsersFixedTransactions(data)
+            .then((transactions) => {
+                dispatch({
+                    type: TransactionActionDefinition.LOAD_FIXED_TRANSACTIONS_SUCCESS,
+                    payload: transactions
+                });
+                if (callback) callback(transactions.embedded?.fixedTransactionDToes!);
+            }), TransactionActionDefinition.LOAD_FIXED_TRANSACTIONS_FAILED, dispatch);
+    };
+};
+
 export interface TransactionApi {
     dispatchLoadVariableTransactions: (data: GetUsersVariableTransactionsRequest) => void,
     dispatchLoadVariableTransaction: (data: GetVariableTransactionByIdRequest, callback?: (variableTransaction: VariableTransaction) => void) => void,
@@ -149,5 +168,6 @@ export interface TransactionApi {
     dispatchUpdateVariableTransaction: (data: UpdateVariableTransactionRequest, callback?: (variableTransaction: VariableTransaction) => void) => void,
     dispatchDeleteVariableTransaction: (data: DeleteVariableTransactionRequest, callback?: () => void) => void
     dispatchCreateProduct: (data: CreateProductRequest, callback?: (product: Product) => void) => void,
-    dispatchDeleteProducts: (data: DeleteProductsRequest, callback?: () => void) => void
+    dispatchDeleteProducts: (data: DeleteProductsRequest, callback?: () => void) => void,
+    dispatchLoadFixedTransactions: (data: GetUsersFixedTransactionsRequest, callback?: (fixedTransactions: FixedTransaction[]) => void) => void
 }

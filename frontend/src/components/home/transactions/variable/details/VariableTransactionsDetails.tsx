@@ -6,7 +6,7 @@ import {bindActionCreators, Dispatch}                             from 'redux';
 import {connect}                                                  from 'react-redux';
 import * as api                                                   from '../../../../../store/api/transaction.api';
 import {TransactionReducerProps}                                  from '../../../../../store/reducers/transaction.reducer';
-import {CreateProduct, VariableTransaction}                       from '../../../../../.openapi/models';
+import {CreateProduct, VariableTransaction}                       from '../../../../../.openapi';
 import {Button, Descriptions, Modal, notification, Result, Space} from 'antd';
 import {DeleteOutlined, EditOutlined}                             from '@ant-design/icons';
 import {PageContainer}                                            from '@ant-design/pro-layout';
@@ -103,8 +103,8 @@ class VariableTransactionsDetails extends React.Component<VariableTransactionsDe
                     productIds: productIds
                 }, () => {
                     let variableTransaction: VariableTransaction = this.state.variableTransaction!;
-                    variableTransaction.products = variableTransaction.products?.filter(
-                        product => productIds.indexOf(product.id) < 0);
+                    variableTransaction.products = new Set([...variableTransaction.products!].filter(
+                        (product) => productIds.indexOf(product.id) < 0));
                     this.setState({variableTransaction: variableTransaction});
                     notification.success({
                         message: this.props.t('Transaction.Products'),
@@ -130,7 +130,7 @@ class VariableTransactionsDetails extends React.Component<VariableTransactionsDe
                 this.setState({
                     variableTransaction: {
                         ...this.state.variableTransaction!,
-                        products: [...this.state.variableTransaction?.products!, newProduct]
+                        products: new Set([...this.state.variableTransaction?.products!, newProduct])
                     },
                     showProductDialog: false
                 }, () => resolve());
@@ -200,7 +200,7 @@ class VariableTransactionsDetails extends React.Component<VariableTransactionsDe
                         onTabChange={activeKey => (this.setState({activeTab: activeKey}))}>
                         <ProCard collapsed={!(this.state.activeTab === 'productsTab')}>
                             <ProductList
-                                products={this.state.variableTransaction?.products}
+                                products={[...this.state.variableTransaction?.products!]}
                                 openProductDialog={() => this.setState({showProductDialog: true})}
                                 onDeleteProducts={products => this.onDeleteProducts(products)}/>
                             <CreateProductDialog
@@ -210,7 +210,7 @@ class VariableTransactionsDetails extends React.Component<VariableTransactionsDe
                         </ProCard>
                         <ProCard collapsed={!(this.state.activeTab === 'attachmentsTab')}>
                             <AttachmentList
-                                attachments={this.state.variableTransaction?.attachments}
+                                attachments={[...this.state.variableTransaction?.attachments!]}
                                 openAttachmentDialog={() => this.setState({showAttachmentDialog: true})}/>
                             <CreateAttachmentDialog
                                 visible={this.state?.showAttachmentDialog || false}

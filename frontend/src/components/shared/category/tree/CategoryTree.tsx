@@ -61,7 +61,6 @@ class CategoryTree extends React.Component<CategoryTreeComponentProps, CategoryT
                         placeholder={this.props.t('Form.Input.Search')}
                         onChange={event => this.setState({searchQuery: event.target.value})}/>
                 <Tree
-                    // loadData={() => this.$loadCategories}
                     showLine
                     onSelect={this.onSelect.bind(this)}
                     defaultExpandAll
@@ -70,7 +69,6 @@ class CategoryTree extends React.Component<CategoryTreeComponentProps, CategoryT
             </div>
         );
     }
-
 }
 
 const mapStateToProps = (state: AppState) => {
