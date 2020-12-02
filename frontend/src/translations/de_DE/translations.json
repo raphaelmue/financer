@@ -60,10 +60,10 @@
       "Name": "Kategorie",
       "SelectCategoryPlaceholder": "Kategorie auswählen",
       "CategoryClass": {
-        "FIXED_EXPENSES": "Feste Ausgabe",
-        "FIXED_REVENUE": "Feste Einnahmen",
-        "VARIABLE_EXPENSES": "Variable Ausgaben",
-        "VARIABLE_REVENUE": "Variable Einnahmen"
+        "FIXEDEXPENSES": "Feste Ausgabe",
+        "FIXEDREVENUE": "Feste Einnahmen",
+        "VARIABLEEXPENSES": "Variable Ausgaben",
+        "VARIABLEREVENUE": "Variable Einnahmen"
       }
     },
     "Amount": "Betrag",
@@ -118,6 +118,9 @@
     },
     "Dragger": {
       "DraggerText": "Klicken oder ziehe die Datei in diesen Bereich, um sie hochzuladen."
+    },
+    "Input": {
+      "Search": "Suchen"
     }
   },
   "Message": {

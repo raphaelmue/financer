@@ -33,6 +33,7 @@ import '@ant-design/pro-layout/dist/layout.css';
 import '@ant-design/pro-table/dist/table.css';
 import '@ant-design/pro-card/dist/card.css';
 import AdminConfiguration                 from './admin/configuration/AdminConfiguration';
+import FixedTransactionOverview           from './transactions/fixed/FixedTransactionOverview';
 
 const {Text} = Typography;
 
@@ -128,6 +129,7 @@ class Home extends React.Component<HomeProps, HomeState> {
                         <Route path={'/transactions/variable/:variableTransactionId'}
                                component={VariableTransactionsDetails}/>
                         <Route path={'/transactions/variable/'} component={VariableTransactionList}/>
+                        <Route path={'/transactions/fixed/'} component={FixedTransactionOverview}/>F
                         <Route path='/settings' component={Settings}/>
                         <Route path={'/admin/configuration'} component={AdminConfiguration}/>
                     </Switch>

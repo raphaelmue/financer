@@ -60,10 +60,10 @@
       "Name": "Category",
       "SelectCategoryPlaceholder": "Select category",
       "CategoryClass": {
-        "FIXED_EXPENSES": "Fixed expenses",
-        "FIXED_REVENUE": "Fixed revenue",
-        "VARIABLE_EXPENSES": "Variable Expenses",
-        "VARIABLE_REVENUE": "Variable Revenue"
+        "FIXEDEXPENSES": "Fixed expenses",
+        "FIXEDREVENUE": "Fixed revenue",
+        "VARIABLEEXPENSES": "Variable Expenses",
+        "VARIABLEREVENUE": "Variable Revenue"
       }
     },
     "Amount": "Amount",
@@ -118,6 +118,9 @@
     },
     "Dragger": {
       "DraggerText": "Click or drag file to this area to upload."
+    },
+    "Input": {
+      "Search": "Search"
     }
   },
   "Message": {

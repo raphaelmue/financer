@@ -4,9 +4,9 @@ import React                              from 'react';
 import {DatePicker, Form, Input}          from 'antd';
 import {bindActionCreators, Dispatch}     from 'redux';
 import {connect}                          from 'react-redux';
-import {fieldIsRequiredRule}              from '../../../user/form/rules';
-import CategoryTreeSelect                 from '../../../category/CategoyTreeSelect';
-import TextArea                           from 'antd/es/input/TextArea';
+import {fieldIsRequiredRule} from '../../../user/form/rules';
+import CategoryTreeSelect    from '../../../category/select/CategoyTreeSelect';
+import TextArea              from 'antd/es/input/TextArea';
 import moment                             from 'moment';
 
 export interface VariableTransactionMetaData {
