@@ -92,11 +92,12 @@ public class TransactionDomainService {
             variableTransactionEntity.throwIfNotUsersProperty(authenticationService.getUserId());
 
             for (Product product : variableTransactionEntity.getProducts()) {
-                product.setTransaction(variableTransactionEntity);
+                product.setVariableTransaction(variableTransactionEntity);
             }
 
             for (Attachment attachment : variableTransactionEntity.getAttachments()) {
                 attachment.setTransaction(variableTransactionEntity);
+                attachment.setUploadDate(LocalDate.now());
             }
 
             return variableTransactionRepository.save(variableTransactionEntity);
@@ -198,7 +199,7 @@ public class TransactionDomainService {
     public Product createProduct(long transactionId, Product product) {
         logger.info("Creating new product for variable transaction with {}", transactionId);
         VariableTransaction variableTransaction = getVariableTransactionById(transactionId);
-        product.setTransaction(variableTransaction);
+        product.setVariableTransaction(variableTransaction);
         product.throwIfNotUsersProperty(authenticationService.getUserId());
         return productRepository.save(product);
     }
@@ -216,9 +217,9 @@ public class TransactionDomainService {
         Optional<Product> productOptional = productRepository.findById(productId);
         if (productOptional.isPresent()) {
             productOptional.get().throwIfNotUsersProperty(authenticationService.getUserId());
-            if (productOptional.get().getTransaction().getId() == transactionId) {
-                productOptional.get().getTransaction().getProducts().remove(productOptional.get());
-                variableTransactionRepository.save(productOptional.get().getTransaction());
+            if (productOptional.get().getVariableTransaction().getId() == transactionId) {
+                productOptional.get().getVariableTransaction().getProducts().remove(productOptional.get());
+                variableTransactionRepository.save(productOptional.get().getVariableTransaction());
                 return;
             }
         }

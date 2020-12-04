@@ -2,7 +2,7 @@ import {Action}       from 'redux';
 import {
     CreateFixedTransactionRequest,
     CreateProductRequest,
-    CreateTransactionRequest,
+    CreateVariableTransactionRequest,
     DeleteProductRequest,
     DeleteVariableTransactionRequest,
     FixedTransaction,
@@ -107,7 +107,7 @@ interface LoadVariableTransactionFailedAction extends Action {
 
 interface CreateVariableTransactionRequestAction extends Action {
     type: TransactionActionDefinition.CREATE_VARIABLE_TRANSACTION_REQUEST,
-    payload: CreateTransactionRequest
+    payload: CreateVariableTransactionRequest
 }
 
 interface CreateVariableTransactionSuccessAction extends Action {

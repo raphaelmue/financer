@@ -1,7 +1,7 @@
 import {
     CreateFixedTransactionRequest,
     CreateProductRequest,
-    CreateTransactionRequest,
+    CreateVariableTransactionRequest,
     DeleteProductsRequest,
     DeleteVariableTransactionRequest,
     FixedTransaction,
@@ -56,14 +56,14 @@ const loadVariableTransaction = (data: GetVariableTransactionByIdRequest, callba
     };
 };
 
-const createVariableTransaction = (data: CreateTransactionRequest, callback?: (variableTransaction: VariableTransaction) => void) => {
+const createVariableTransaction = (data: CreateVariableTransactionRequest, callback?: (variableTransaction: VariableTransaction) => void) => {
     return (dispatch: Dispatch) => {
         dispatch({
             type: TransactionActionDefinition.CREATE_VARIABLE_TRANSACTION_REQUEST,
             payload: data
         });
         let api = new VariableTransactionApi(apiConfiguration());
-        ErrorMessage.resolveError(api.createTransaction(data)
+        ErrorMessage.resolveError(api.createVariableTransaction(data)
             .then((variableTransaction: VariableTransaction) => {
                 dispatch({
                     type: TransactionActionDefinition.CREATE_VARIABLE_TRANSACTION_SUCCESS,
@@ -187,7 +187,7 @@ const createFixedTransaction = (data: CreateFixedTransactionRequest, callback?: 
 export interface TransactionApi {
     dispatchLoadVariableTransactions: (data: GetUsersVariableTransactionsRequest) => void,
     dispatchLoadVariableTransaction: (data: GetVariableTransactionByIdRequest, callback?: (variableTransaction: VariableTransaction) => void) => void,
-    dispatchCreateVariableTransaction: (data: CreateTransactionRequest, callback?: (variableTransaction: VariableTransaction) => void) => void
+    dispatchCreateVariableTransaction: (data: CreateVariableTransactionRequest, callback?: (variableTransaction: VariableTransaction) => void) => void
     dispatchUpdateVariableTransaction: (data: UpdateVariableTransactionRequest, callback?: (variableTransaction: VariableTransaction) => void) => void,
     dispatchDeleteVariableTransaction: (data: DeleteVariableTransactionRequest, callback?: () => void) => void
     dispatchCreateProduct: (data: CreateProductRequest, callback?: (product: Product) => void) => void,
