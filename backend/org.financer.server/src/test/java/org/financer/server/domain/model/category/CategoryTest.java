@@ -28,7 +28,7 @@ public class CategoryTest extends SpringTest {
     @BeforeEach
     public void setup() {
         variableTransaction = variableTransaction();
-        product = product().setTransaction(variableTransaction);
+        product = product().setVariableTransaction(variableTransaction);
         variableTransaction.setProducts(Set.of(product));
 
         category = new Category()

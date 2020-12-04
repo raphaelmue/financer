@@ -62,7 +62,7 @@ public class TransactionDomainServiceTest extends ServiceTest {
         product = product();
         variableTransaction = variableTransaction();
         attachment = attachment();
-        product.setTransaction(variableTransaction);
+        product.setVariableTransaction(variableTransaction);
         fixedTransactionAmount = fixedTransactionAmount();
         fixedTransaction = fixedTransaction();
         fixedTransactionAmount.setFixedTransaction(fixedTransaction);
@@ -175,7 +175,7 @@ public class TransactionDomainServiceTest extends ServiceTest {
         Product product = transactionDomainService.createProduct(variableTransaction.getId(), new Product()
                 .setId(2L).setAmount(new Amount(50)).setQuantity(new Quantity(5))
                 .setName("Test Product"));
-        assertThat(product.getTransaction()).isEqualToComparingFieldByField(variableTransaction);
+        assertThat(product.getVariableTransaction()).isEqualToComparingFieldByField(variableTransaction);
     }
 
     @Test

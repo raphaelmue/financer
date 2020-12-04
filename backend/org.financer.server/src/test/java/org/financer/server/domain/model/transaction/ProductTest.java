@@ -22,7 +22,7 @@ public class ProductTest extends SpringTest {
     public void setUp() {
         variableTransaction = variableTransaction();
         product = product();
-        product.setTransaction(variableTransaction);
+        product.setVariableTransaction(variableTransaction);
     }
 
     @Test
@@ -46,13 +46,13 @@ public class ProductTest extends SpringTest {
 
     @Test
     public void testIsFixed() {
-        assertThat(product.isFixed()).isEqualTo(product.getTransaction().getCategory().getCategoryClass().isFixed());
+        assertThat(product.isFixed()).isEqualTo(product.getVariableTransaction().getCategory().getCategoryClass().isFixed());
         assertThat(product.isFixed()).isFalse();
     }
 
     @Test
     public void testIsRevenue() {
-        assertThat(product.isRevenue()).isEqualTo(product.getTransaction().getCategory().getCategoryClass().isRevenue());
+        assertThat(product.isRevenue()).isEqualTo(product.getVariableTransaction().getCategory().getCategoryClass().isRevenue());
         assertThat(product.isRevenue()).isFalse();
     }
 
