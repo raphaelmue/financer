@@ -48,7 +48,7 @@ public class FixedTransactionApiController implements FixedTransactionApi {
         }
         fixedTransactionEntity = transactionDomainService.createFixedTransaction(fixedTransactionEntity);
 
-        return new ResponseEntity<>(modelMapper.map(fixedTransactionEntity, FixedTransactionDTO.class), HttpStatus.OK);
+        return new ResponseEntity<>(modelMapper.map(fixedTransactionEntity, FixedTransactionDTO.class), HttpStatus.CREATED);
     }
 
     @Override

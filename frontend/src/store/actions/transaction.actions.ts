@@ -1,9 +1,11 @@
 import {Action}       from 'redux';
 import {
+    CreateFixedTransactionRequest,
     CreateProductRequest,
     CreateTransactionRequest,
     DeleteProductRequest,
     DeleteVariableTransactionRequest,
+    FixedTransaction,
     GetUsersFixedTransactionsRequest,
     GetUsersVariableTransactionsRequest,
     GetVariableTransactionByIdRequest,
@@ -40,6 +42,9 @@ export enum TransactionActionDefinition {
     LOAD_FIXED_TRANSACTIONS_REQUEST = 'TRANSACTION:LOAD_FIXED_TRANSACTIONS_REQUEST',
     LOAD_FIXED_TRANSACTIONS_SUCCESS = 'TRANSACTION:LOAD_FIXED_TRANSACTIONS_SUCCESS',
     LOAD_FIXED_TRANSACTIONS_FAILED = 'TRANSACTION:LOAD_FIXED_TRANSACTIONS_FAILED',
+    CREATE_FIXED_TRANSACTION_REQUEST = 'TRANSACTION:CREATE_FIXED_TRANSACTION_REQUEST',
+    CREATE_FIXED_TRANSACTION_SUCCESS = 'TRANSACTION:CREATE_FIXED_TRANSACTION_SUCCESS',
+    CREATE_FIXED_TRANSACTION_FAILED = 'TRANSACTION:CREATE_FIXED_TRANSACTION_FAILED',
 }
 
 export type TransactionAction = LoadVariableTransactionsRequestAction
@@ -65,7 +70,10 @@ export type TransactionAction = LoadVariableTransactionsRequestAction
     | DeleteProductsFailedAction
     | LoadFixedTransactionRequestAction
     | LoadFixedTransactionSuccessAction
-    | LoadFixedTransactionFailedAction;
+    | LoadFixedTransactionFailedAction
+    | CreateFixedTransactionRequestAction
+    | CreateFixedTransactionSuccessAction
+    | CreateFixedTransactionFailedAction;
 
 interface LoadVariableTransactionsRequestAction extends Action {
     type: TransactionActionDefinition.LOAD_VARIABLE_TRANSACTIONS_REQUEST,
@@ -182,5 +190,20 @@ interface LoadFixedTransactionSuccessAction extends Action {
 
 interface LoadFixedTransactionFailedAction extends Action {
     type: TransactionActionDefinition.LOAD_FIXED_TRANSACTIONS_FAILED,
+    payload: ErrorMessage
+}
+
+interface CreateFixedTransactionRequestAction extends Action {
+    type: TransactionActionDefinition.CREATE_FIXED_TRANSACTION_REQUEST,
+    payload: CreateFixedTransactionRequest
+}
+
+interface CreateFixedTransactionSuccessAction extends Action {
+    type: TransactionActionDefinition.CREATE_FIXED_TRANSACTION_SUCCESS,
+    payload: FixedTransaction
+}
+
+interface CreateFixedTransactionFailedAction extends Action {
+    type: TransactionActionDefinition.CREATE_FIXED_TRANSACTION_FAILED,
     payload: ErrorMessage
 }

@@ -1,7 +1,7 @@
 import {DeleteTokenRequest, LoginUserRequest, RegisterUserRequest} from '../../.openapi/apis';
 import {User}                                                      from '../../.openapi/models';
-import {Action}                                                    from "redux";
-import {ErrorMessage}                                              from "../errorMessage";
+import {Action}                                                    from 'redux';
+import {ErrorMessage}                                              from '../errorMessage';
 
 export enum UserActionDefinition {
     LOGIN_REQUEST = 'AUTHENTICATION:LOGIN_REQUEST',

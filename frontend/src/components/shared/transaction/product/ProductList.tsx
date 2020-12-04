@@ -5,7 +5,7 @@ import React                              from 'react';
 import {Product}                          from '../../../../.openapi/models';
 import {tableTranslations}                from '../../../../translations/translations';
 import {Button, Space}                    from 'antd';
-import {PlusOutlined, DeleteOutlined}     from '@ant-design/icons';
+import {DeleteOutlined, PlusOutlined}     from '@ant-design/icons';
 import ProTable                           from '@ant-design/pro-table';
 import {columns}                          from './columns';
 

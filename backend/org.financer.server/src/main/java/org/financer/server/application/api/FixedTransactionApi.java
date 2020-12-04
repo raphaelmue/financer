@@ -17,6 +17,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 @Tag(name = "fixed-transaction", description = "Operations with fixed transactions")
+@RequestMapping("/fixedTransactions")
 public interface FixedTransactionApi {
 
     /**
@@ -31,10 +32,8 @@ public interface FixedTransactionApi {
             security = @SecurityRequirement(name = "TokenAuth"))
     @ApiResponse(
             responseCode = "201",
-            description = "Fixed transaction was successfully created.",
-            content = @Content(schema = @Schema(implementation = FixedTransactionDTO.class)))
+            description = "Fixed transaction was successfully created.")
     @PutMapping(
-            value = "/fixedTransactions",
             produces = {"application/json"},
             headers = "Accept=application/json")
     ResponseEntity<FixedTransactionDTO> createFixedTransaction(
@@ -64,7 +63,7 @@ public interface FixedTransactionApi {
             responseCode = "400",
             description = "Fixed transaction ID was not found.")
     @PostMapping(
-            value = "/fixedTransactions/{transactionId}",
+            value = "/{transactionId}",
             produces = {"application/json"},
             headers = "Accept=application/json")
     ResponseEntity<FixedTransactionDTO> updateFixedTransaction(
@@ -90,7 +89,7 @@ public interface FixedTransactionApi {
             responseCode = "200",
             description = "Fixed transaction was successfully deleted.")
     @DeleteMapping(
-            value = "/fixedTransactions/{transactionId}",
+            value = "/{transactionId}",
             produces = {"application/json"},
             headers = "Accept=application/json")
     ResponseEntity<Void> deleteFixedTransaction(
@@ -113,7 +112,7 @@ public interface FixedTransactionApi {
             description = "Fixed transaction amount was successfully created.",
             content = @Content(schema = @Schema(implementation = FixedTransactionAmountDTO.class)))
     @PutMapping(
-            value = "/fixedTransactions/{transactionId}/transactionAmounts",
+            value = "/{transactionId}/transactionAmounts",
             produces = {"application/json"},
             headers = "Accept=application/json")
     ResponseEntity<FixedTransactionAmountDTO> createTransactionAmount(
@@ -142,7 +141,7 @@ public interface FixedTransactionApi {
             description = "Fixed transaction amount was successfully updated.",
             content = @Content(schema = @Schema(implementation = FixedTransactionAmountDTO.class)))
     @PostMapping(
-            value = "/fixedTransactions/{transactionId}/transactionAmounts/{transactionAmountId}",
+            value = "/{transactionId}/transactionAmounts/{transactionAmountId}",
             produces = {"application/json"},
             headers = "Accept=application/json")
     ResponseEntity<FixedTransactionAmountDTO> updateTransactionAmount(
@@ -171,7 +170,7 @@ public interface FixedTransactionApi {
             responseCode = "200",
             description = "Fixed transaction amount was successfully deleted.")
     @DeleteMapping(
-            value = "/fixedTransactions/{transactionId}/transactionAmounts/{transactionAmountId}",
+            value = "/{transactionId}/transactionAmounts/{transactionAmountId}",
             produces = {"application/json"},
             headers = "Accept=application/json")
     ResponseEntity<Void> deleteTransactionAmount(

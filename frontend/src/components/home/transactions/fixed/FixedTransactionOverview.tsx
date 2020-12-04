@@ -1,19 +1,20 @@
 import React                              from 'react';
 import {AppState}                         from '../../../../store/reducers/root.reducers';
-import {bindActionCreators, Dispatch}     from 'redux';
 import {connect}                          from 'react-redux';
 import {WithTranslation, withTranslation} from 'react-i18next';
 import {PageContainer}                    from '@ant-design/pro-layout';
 import CategoryTree                       from '../../../shared/category/tree/CategoryTree';
 import ProCard                            from '@ant-design/pro-card';
-import {Row}                              from 'antd';
+import {Button, Row}                      from 'antd';
 import ProList                            from '@ant-design/pro-list';
 import {FixedTransaction}                 from '../../../../.openapi';
-import * as api                           from '../../../../store/api/transaction.api';
+import {transactionDispatchMap}           from '../../../../store/api/transaction.api';
 import {UserReducerProps}                 from '../../../../store/reducers/user.reducers';
 import {TransactionReducerProps}          from '../../../../store/reducers/transaction.reducer';
 import {RequestData}                      from '@ant-design/pro-table';
 import {metas}                            from './metas';
+import {PlusOutlined}                     from '@ant-design/icons';
+import {Link}                             from 'react-router-dom';
 
 interface FixedTransactionOverviewComponentProps extends WithTranslation, UserReducerProps, TransactionReducerProps {
 }
@@ -80,6 +81,15 @@ class FixedTransactionOverview extends React.Component<FixedTransactionOverviewC
                                 current: this.state.page + 1,
                                 pageSize: this.state.pageSize,
                             }}
+                            toolBarRender={() => [
+                                <Link to={'/transactions/fixed/create'}>
+                                    <Button
+                                        key="newFixedTransactionButton"
+                                        type="primary"
+                                        icon={<PlusOutlined/>}>
+                                        {this.props.t('Form.Button.New')}
+                                    </Button>
+                                </Link>]}
                             metas={metas()}
                             request={(params, sort, filter) =>
                                 this.loadFixedTransactions(params.current, params.pageSize)}/>
@@ -97,8 +107,4 @@ const mapStateToProps = (state: AppState) => {
     };
 };
 
-const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({
-    dispatchLoadFixedTransactions: api.loadFixedTransactions
-}, dispatch);
-
-export default connect(mapStateToProps, mapDispatchToProps)(withTranslation()(FixedTransactionOverview));
+export default connect(mapStateToProps, transactionDispatchMap)(withTranslation()(FixedTransactionOverview));

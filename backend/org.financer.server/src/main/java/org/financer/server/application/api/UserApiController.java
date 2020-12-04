@@ -82,7 +82,7 @@ public class UserApiController implements UserApi {
     public ResponseEntity<UserDTO> registerUser(@NotNull @Valid RegisterUserDTO registerUserDTO) {
         User user = userDomainService.registerUser(modelMapper.map(registerUserDTO, User.class),
                 new IPAddress(request.getRemoteAddr()), null);
-        return new ResponseEntity<>(modelMapper.map(user, UserDTO.class), HttpStatus.OK);
+        return new ResponseEntity<>(modelMapper.map(user, UserDTO.class), HttpStatus.CREATED);
     }
 
     @Override

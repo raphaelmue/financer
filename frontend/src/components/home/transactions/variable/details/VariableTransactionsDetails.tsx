@@ -2,9 +2,8 @@ import {withTranslation, WithTranslation}                         from 'react-i1
 import React                                                      from 'react';
 import {Link, Redirect, RouteComponentProps}                      from 'react-router-dom';
 import {AppState}                                                 from '../../../../../store/reducers/root.reducers';
-import {bindActionCreators, Dispatch}                             from 'redux';
 import {connect}                                                  from 'react-redux';
-import * as api                                                   from '../../../../../store/api/transaction.api';
+import {transactionDispatchMap}                                   from '../../../../../store/api/transaction.api';
 import {TransactionReducerProps}                                  from '../../../../../store/reducers/transaction.reducer';
 import {CreateProduct, VariableTransaction}                       from '../../../../../.openapi';
 import {Button, Descriptions, Modal, notification, Result, Space} from 'antd';
@@ -242,11 +241,4 @@ const mapStateToProps = (state: AppState) => {
     };
 };
 
-const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({
-    dispatchLoadVariableTransaction: api.loadVariableTransaction,
-    dispatchCreateProduct: api.createProduct,
-    dispatchDeleteVariableTransaction: api.deleteVariableTransaction,
-    dispatchDeleteProducts: api.deleteProducts
-}, dispatch);
-
-export default connect(mapStateToProps, mapDispatchToProps)(withTranslation()(VariableTransactionsDetails));
+export default connect(mapStateToProps, transactionDispatchMap)(withTranslation()(VariableTransactionsDetails));

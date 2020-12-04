@@ -13,7 +13,9 @@ import {DataNode}                         from 'antd/lib/tree';
 
 interface CategoryTreeSelectComponentProps extends WithTranslation, UserReducerProps, CategoryReducerProps {
     onChange: (categoryId: number | undefined) => void,
-    categoryId?: number
+    categoryId?: number,
+    filterFixed?: boolean,
+    filterVariable?: boolean
 }
 
 interface CategoryTreeSelectComponentState {
@@ -46,8 +48,14 @@ class CategoryTreeSelect extends React.Component<CategoryTreeSelectComponentProp
     };
 
     getTreeData(): DataNode[] {
-        return CategoryUtil.convertCategoriesToDataNode(CategoryUtil.filterVariable(
-            CategoryUtil.addRootCategories(this.props.categoryState.categories)));
+        let categories = CategoryUtil.addRootCategories(this.props.categoryState.categories);
+        if (this.props.filterFixed) {
+            categories = CategoryUtil.filterFixed(categories);
+        }
+        if (this.props.filterVariable) {
+            categories = CategoryUtil.filterVariable(categories);
+        }
+        return CategoryUtil.convertCategoriesToDataNode(categories);
     }
 
     render() {

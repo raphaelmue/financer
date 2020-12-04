@@ -82,6 +82,7 @@ public class TimeRange implements Serializable, Formattable, Comparable<TimeRang
      * @param timeRange time range to calculate intersection with
      * @return intersection of months
      */
+    @JsonIgnore
     public TimeRange getMonthIntersection(TimeRange timeRange) {
         // if both time ranges are disjoint, return 0
         if (this.getStartDate().isAfter(timeRange.getEndDate()) && this.getEndDate().isBefore(timeRange.getStartDate())) {
@@ -139,6 +140,7 @@ public class TimeRange implements Serializable, Formattable, Comparable<TimeRang
         return this.startDate.compareTo(timeRange.getStartDate());
     }
 
+    @JsonIgnore
     public LocalDate getEndDateOrCurrentDate() {
         if (this.terminates()) {
             return this.endDate;

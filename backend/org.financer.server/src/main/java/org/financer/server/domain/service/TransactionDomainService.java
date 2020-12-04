@@ -86,12 +86,17 @@ public class TransactionDomainService {
         logger.info("Creating new variable transaction.");
         Optional<Category> categoryOptional = categoryRepository.findById(variableTransactionEntity.getCategory().getId());
         if (categoryOptional.isPresent()) {
+            variableTransactionEntity.setId(0L);
             variableTransactionEntity.setCategory(categoryOptional.get());
             variableTransactionEntity.throwIfInvalidCategoryClass();
             variableTransactionEntity.throwIfNotUsersProperty(authenticationService.getUserId());
 
             for (Product product : variableTransactionEntity.getProducts()) {
                 product.setTransaction(variableTransactionEntity);
+            }
+
+            for (Attachment attachment : variableTransactionEntity.getAttachments()) {
+                attachment.setTransaction(variableTransactionEntity);
             }
 
             return variableTransactionRepository.save(variableTransactionEntity);

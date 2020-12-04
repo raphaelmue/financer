@@ -1,4 +1,3 @@
-import {bindActionCreators, Dispatch}                             from 'redux';
 import {connect}                                                  from 'react-redux';
 import {WithTranslation, withTranslation}                         from 'react-i18next';
 import React                                                      from 'react';
@@ -10,7 +9,7 @@ import ProductList
                                                                   from '../../../../shared/transaction/product/ProductList';
 import CreateProductDialog
                                                                   from '../../../../shared/transaction/product/create/CreateProductDialog';
-import * as api                                                   from '../../../../../store/api/transaction.api';
+import {transactionDispatchMap}                                   from '../../../../../store/api/transaction.api';
 import {Redirect}                                                 from 'react-router-dom';
 import AttachmentList
                                                                   from '../../../../shared/transaction/attachment/AttachmentList';
@@ -156,8 +155,4 @@ const mapStateToProps = (state: AppState) => {
     };
 };
 
-const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({
-    dispatchCreateVariableTransaction: api.createVariableTransaction
-}, dispatch);
-
-export default connect(mapStateToProps, mapDispatchToProps)(withTranslation()(CreateVariableTransaction));
+export default connect(mapStateToProps, transactionDispatchMap)(withTranslation()(CreateVariableTransaction));

@@ -35,10 +35,10 @@ public class VariableTransactionApiController implements VariableTransactionApi 
     }
 
     @Override
-    public ResponseEntity<VariableTransactionDTO> createTransaction(@NotNull @Valid CreateVariableTransactionDTO variableTransaction) {
+    public ResponseEntity<VariableTransactionDTO> createVariableTransaction(@NotNull @Valid CreateVariableTransactionDTO variableTransaction) {
         VariableTransaction variableTransactionEntity = modelMapper.map(variableTransaction, VariableTransaction.class);
         variableTransactionEntity = transactionDomainService.createVariableTransaction(variableTransactionEntity);
-        return new ResponseEntity<>(modelMapper.map(variableTransactionEntity, VariableTransactionDTO.class), HttpStatus.OK);
+        return new ResponseEntity<>(modelMapper.map(variableTransactionEntity, VariableTransactionDTO.class), HttpStatus.CREATED);
     }
 
     @Override

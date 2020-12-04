@@ -6,9 +6,8 @@ import {VariableTransaction}              from '../../../../.openapi';
 import ProTable                           from '@ant-design/pro-table';
 import {columns}                          from './columns';
 import {AppState}                         from '../../../../store/reducers/root.reducers';
-import {bindActionCreators, Dispatch}     from 'redux';
 import {connect}                          from 'react-redux';
-import * as api                           from '../../../../store/api/transaction.api';
+import {transactionDispatchMap}           from '../../../../store/api/transaction.api';
 import {tableTranslations}                from '../../../../translations/translations';
 import {Button}                           from 'antd';
 import {PlusOutlined}                     from '@ant-design/icons';
@@ -108,8 +107,4 @@ const mapStateToProps = (state: AppState) => {
     };
 };
 
-const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({
-    dispatchLoadVariableTransactions: api.loadVariableTransactions
-}, dispatch);
-
-export default connect(mapStateToProps, mapDispatchToProps)(withTranslation()(VariableTransactionList));
+export default connect(mapStateToProps, transactionDispatchMap)(withTranslation()(VariableTransactionList));

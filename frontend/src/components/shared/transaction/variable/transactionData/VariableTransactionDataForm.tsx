@@ -69,6 +69,7 @@ class VariableTransactionDataForm extends React.Component<VariableTransactionDat
                     name="categoryId"
                     rules={[fieldIsRequiredRule()]}>
                     <CategoryTreeSelect
+                        filterVariable
                         categoryId={this.props.variableTransaction?.category.id}
                         onChange={(value) => this.onChange({
                             ...this.state.variableTransactionMetaData,

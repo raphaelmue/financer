@@ -54,6 +54,13 @@ export const transactionReducer = (state: TransactionState = initialState, actio
                 error: undefined,
                 fixedTransactions: action.payload.embedded?.fixedTransactionDToes
             };
+        case TransactionActionDefinition.CREATE_FIXED_TRANSACTION_SUCCESS:
+            return {
+                ...state,
+                isLoading: false,
+                error: undefined,
+                fixedTransactions: [...state.fixedTransactions, action.payload]
+            };
         case TransactionActionDefinition.LOAD_VARIABLE_TRANSACTIONS_REQUEST:
         case TransactionActionDefinition.LOAD_VARIABLE_TRANSACTION_REQUEST:
         case TransactionActionDefinition.CREATE_VARIABLE_TRANSACTION_REQUEST:
@@ -61,6 +68,7 @@ export const transactionReducer = (state: TransactionState = initialState, actio
         case TransactionActionDefinition.UPDATE_VARIABLE_TRANSACTION_REQUEST:
         case TransactionActionDefinition.DELETE_VARIABLE_TRANSACTION_REQUEST:
         case TransactionActionDefinition.LOAD_FIXED_TRANSACTIONS_REQUEST:
+        case TransactionActionDefinition.CREATE_FIXED_TRANSACTION_REQUEST:
             return {...state, isLoading: true, error: undefined};
         case TransactionActionDefinition.LOAD_VARIABLE_TRANSACTIONS_FAILED:
         case TransactionActionDefinition.LOAD_VARIABLE_TRANSACTION_FAILED:
@@ -69,6 +77,7 @@ export const transactionReducer = (state: TransactionState = initialState, actio
         case TransactionActionDefinition.UPDATE_VARIABLE_TRANSACTION_FAILED:
         case TransactionActionDefinition.DELETE_VARIABLE_TRANSACTION_FAILED:
         case TransactionActionDefinition.LOAD_FIXED_TRANSACTIONS_FAILED:
+        case TransactionActionDefinition.CREATE_FIXED_TRANSACTION_FAILED:
             return {...state, isLoading: false, error: action.payload};
         default:
             return state;

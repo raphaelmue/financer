@@ -47,7 +47,8 @@
       "Attachment": {
         "CreateAttachment": "Attachment hinzufügen"
       },
-      "TransactionDetails": "Transaktionsdetails"
+      "TransactionDetails": "Transaktionsdetails",
+      "CreateFixedTransaction": "Feste Transaktion erstellen"
     },
     "Administration": "Administration",
     "Admin": {
@@ -89,8 +90,10 @@
       "Now": "Jetzt",
       "HasVariableAmounts": "Variable",
       "HasFixedAmounts": "Fixiert",
-      "Day": "Tag"
-    }
+      "Day": "Wertstellungstag",
+      "Product": "Produktname"
+    },
+    "FixedTransactionAmounts": "Feste Transaktionsbeträge"
   },
   "Form": {
     "Table": {
@@ -122,6 +125,11 @@
         "TransactionData": "Transaktionsdaten",
         "ProductData": "Produktdaten",
         "Attachments": "Anhänge"
+      },
+      "CreateFixedTransaction": {
+        "TransactionData": "Transaktionsdaten",
+        "Attachments": "Anhänge",
+        "AmountData": "Betragsdaten"
       }
     },
     "Dragger": {
@@ -143,6 +151,9 @@
           "DeletedProducts": "Die Produkte wurden erfolgreich gelöscht.",
           "ConfirmDeleteProducts": "Bist du sicher, dass du dieses Product aus der variable Transaktion löschen möchtest?"
         }
+      },
+      "FixedTransaction": {
+        "CreatedFixedTransaction": "Feste Transaktion wurde erfolgreich erstellt."
       }
     },
     "Admin": {

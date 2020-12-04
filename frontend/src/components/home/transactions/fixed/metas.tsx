@@ -28,7 +28,7 @@ export const metas = (): ProListMetas<FixedTransaction> => {
         description: {
             render: (dom, entity) => (
                 <Space>
-                    {i18next.t('Transaction.FixedTransaction.Day') + ' ' + entity.day}
+                    {entity.day}
                     <Divider type={'vertical'}/>
                     {entity.vendor}
                     <Divider type={'vertical'}/>
