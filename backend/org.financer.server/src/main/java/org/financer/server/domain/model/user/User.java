@@ -1,17 +1,23 @@
 package org.financer.server.domain.model.user;
 
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.experimental.Accessors;
 import org.financer.server.domain.model.DataEntity;
 import org.financer.server.domain.model.category.Category;
 import org.financer.shared.domain.model.value.objects.*;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.EnumMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 
+@Data
+@Accessors(chain = true)
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
 @Table(name = "users")
 public class User implements DataEntity, UserProperty {
@@ -20,6 +26,7 @@ public class User implements DataEntity, UserProperty {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
+    @EqualsAndHashCode.Include
     private Long id;
 
     @Embedded
@@ -37,12 +44,20 @@ public class User implements DataEntity, UserProperty {
     @Embedded
     private Gender gender;
 
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "users_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
+    private Set<Role> roles = new HashSet<>();
+
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private Set<Category> categories = new HashSet<>();
 
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @MapKey(name = "pair.property")
-    private Map<SettingPair.Property, Setting> settings;
+    private Map<SettingPair.Property, Setting> settings = new EnumMap<>(SettingPair.Property.class);
 
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
     private Set<Token> tokens = new HashSet<>();
@@ -77,127 +92,5 @@ public class User implements DataEntity, UserProperty {
                     .setUser(this)
                     .setPair(new SettingPair(property, value)));
         }
-    }
-
-    /*
-     * Getters and Setters
-     */
-
-    @Override
-    public long getId() {
-        return id;
-    }
-
-    public User setId(long id) {
-        this.id = id;
-        return this;
-    }
-
-    public Email getEmail() {
-        return email;
-    }
-
-    public User setEmail(Email email) {
-        this.email = email;
-        return this;
-    }
-
-    public HashedPassword getPassword() {
-        return password;
-    }
-
-    public User setPassword(HashedPassword password) {
-        this.password = password;
-        return this;
-    }
-
-    public Name getName() {
-        return name;
-    }
-
-    public User setName(Name name) {
-        this.name = name;
-        return this;
-    }
-
-    public BirthDate getBirthDate() {
-        return birthDate;
-    }
-
-    public User setBirthDate(BirthDate birthDate) {
-        this.birthDate = birthDate;
-        return this;
-    }
-
-    public Gender getGender() {
-        return gender;
-    }
-
-    public User setGender(Gender gender) {
-        this.gender = gender;
-        return this;
-    }
-
-    public Set<Category> getCategories() {
-        return categories;
-    }
-
-    public User setCategories(Set<Category> categories) {
-        this.categories = categories;
-        return this;
-    }
-
-    public Map<SettingPair.Property, Setting> getSettings() {
-        return settings;
-    }
-
-    public User setSettings(Map<SettingPair.Property, Setting> settings) {
-        this.settings = settings;
-        return this;
-    }
-
-    public Set<Token> getTokens() {
-        return tokens;
-    }
-
-    public User setTokens(Set<Token> tokens) {
-        this.tokens = tokens;
-        return this;
-    }
-
-    /**
-     * Returns the active token for the current session.
-     *
-     * @return
-     */
-    public Token getActiveToken() {
-        return activeToken;
-    }
-
-    public User setActiveToken(Token activeToken) {
-        this.activeToken = activeToken;
-        return this;
-    }
-
-    public VerificationToken getVerificationToken() {
-        return verificationToken;
-    }
-
-    public User setVerificationToken(VerificationToken verificationToken) {
-        this.verificationToken = verificationToken;
-        return this;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        User user = (User) o;
-        return Objects.equals(id, user.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
     }
 }

@@ -17,7 +17,8 @@
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <spring.version>5.2.4.RELEASE</spring.version>
+        <spring.version>5.2.11.RELEASE</spring.version>
+        <spring.boot.version>2.3.3.RELEASE</spring.boot.version>
 
         <project.testing.localhost>false</project.testing.localhost>
         <project.testing.tags>unit, integration</project.testing.tags>
@@ -31,6 +32,7 @@
             --add-opens org.financer.shared/org.financer.shared.domain.model.api.transaction.fixed=ALL-UNNAMED
             --add-opens org.financer.shared/org.financer.shared.domain.model.api.transaction.variable=ALL-UNNAMED
             --add-opens org.financer.shared/org.financer.shared.domain.model.api.user=ALL-UNNAMED
+            --add-opens org.financer.shared/org.financer.shared.domain.model.value.objects=ALL-UNNAMED
             --add-opens org.financer.server/org.financer.server=ALL-UNNAMED
             --add-opens org.financer.server/org.financer.server.application=ALL-UNNAMED
             --add-opens org.financer.server/org.financer.server.application.api=ALL-UNNAMED
@@ -41,6 +43,7 @@
             --add-opens org.financer.server/org.financer.server.domain.model.user=ALL-UNNAMED
             --add-opens org.financer.server/org.financer.server.domain.model.transaction=ALL-UNNAMED
             --add-opens org.financer.server/org.financer.server.domain.model.category=ALL-UNNAMED
+            --add-opens org.financer.server/org.financer.server.utils=ALL-UNNAMED
         </project.testing.arguments>
         <project.testing.headless/>
     </properties>
@@ -103,13 +106,10 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.4</version>
+                <version>0.8.6</version>
                 <configuration>
                     <destFile>${project.basedir}/../target/jacoco.exec</destFile>
                     <append>true</append>
-                    <excludes>
-                        <exclude>android/**/*</exclude>
-                    </excludes>
                 </configuration>
                 <executions>
                     <execution>
@@ -136,7 +136,7 @@
                     <forkCount>1</forkCount>
                     <reuseForks>true</reuseForks>
                     <groups>${project.testing.tags}</groups>
-                    <argLine>-Xmx1024m -XX:MaxPermSize=256m ${project.testing.headless} ${project.testing.arguments}
+                    <argLine>@{argLine} -Xmx1024m -XX:MaxPermSize=256m ${project.testing.arguments}
                     </argLine>
                 </configuration>
             </plugin>
@@ -165,6 +165,12 @@
     </build>
 
     <dependencies>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.16</version>
+            <scope>provided</scope>
+        </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>

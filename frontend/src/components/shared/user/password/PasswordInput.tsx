@@ -35,7 +35,7 @@ class PasswordInput extends React.Component<PasswordInputComponentProps, Passwor
             if (this.state.password && this.state.repeatedPassword && this.state.password === this.state.repeatedPassword) {
                 this.props.onChange({
                     salt: this.state.salt,
-                    hashedPassword: hash.sha224(this.state.password)
+                    hashedPassword: hash.sha256(this.state.password)
                 });
             }
         });

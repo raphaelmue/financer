@@ -1,6 +1,8 @@
 package org.financer.shared.domain.model.value.objects;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.financer.shared.exceptions.EnumNotFoundException;
 import org.hibernate.annotations.Immutable;
 
@@ -10,8 +12,8 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import java.io.Serializable;
 import java.util.List;
-import java.util.Objects;
 
+@Data
 @Embeddable
 @Immutable
 @Schema(description = "Value object for gender")
@@ -45,6 +47,7 @@ public class Gender implements Serializable {
 
     }
 
+    @EqualsAndHashCode.Include
     @Enumerated(EnumType.STRING)
     @Column(name = "gender")
     @Schema(description = "Gender", required = true, enumAsRef = true, example = "FEMALE")
@@ -61,33 +64,8 @@ public class Gender implements Serializable {
         this.gender = Values.getGenderByName(genderName);
     }
 
-    public Values getGender() {
-        return gender;
-    }
-
     public static List<Gender> getAll() {
         return List.of(new Gender(Values.MALE), new Gender(Values.FEMALE), new Gender(Values.NOT_SPECIFIED));
     }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Gender gender1 = (Gender) o;
-        return gender == gender1.gender;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(gender);
-    }
-
-    @Override
-    public String toString() {
-        return "Gender [" +
-                "gender=" + gender +
-                ']';
-    }
-
 
 }

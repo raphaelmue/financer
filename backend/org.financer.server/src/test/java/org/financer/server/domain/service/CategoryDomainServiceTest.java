@@ -1,12 +1,11 @@
 package org.financer.server.domain.service;
 
-import org.financer.server.SpringTest;
-import org.financer.server.application.FinancerServer;
 import org.financer.server.application.api.error.IllegalCategoryParentStateException;
 import org.financer.server.application.api.error.IllegalUpdateCategoryClassException;
 import org.financer.server.application.api.error.NotFoundException;
 import org.financer.server.application.api.error.UnauthorizedOperationException;
 import org.financer.server.domain.model.category.Category;
+import org.financer.server.utils.ServiceTest;
 import org.financer.shared.domain.model.value.objects.CategoryClass;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -28,9 +27,8 @@ import static org.mockito.Mockito.when;
 
 @Tag("unit")
 @ExtendWith(SpringExtension.class)
-@SpringBootTest(classes = {FinancerServer.class, CategoryDomainService.class},
-        webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class CategoryDomainServiceTest extends SpringTest {
+@SpringBootTest(classes = {CategoryDomainService.class})
+public class CategoryDomainServiceTest extends ServiceTest {
 
     @MockBean
     private UserDomainService userDomainService;
@@ -57,12 +55,17 @@ public class CategoryDomainServiceTest extends SpringTest {
 
     @Test
     public void testCreateCategory() {
-        assertThat(categoryDomainService.createCategory(category)).isNotNull();
+        assertThat(categoryDomainService.createCategory(category)).isEqualTo(category);
+
+        category.setCategoryClass(new CategoryClass(CategoryClass.Values.FIXED_REVENUE));
+        category.setParent(parent);
+        assertThatExceptionOfType(IllegalCategoryParentStateException.class).isThrownBy(
+                () -> categoryDomainService.createCategory(category));
     }
 
     @Test
     public void testCreateCategoryParentNotFound() {
-        category.setParent(new Category().setId(3));
+        category.setParent(new Category().setId(3L));
         assertThatExceptionOfType(NotFoundException.class).isThrownBy(() ->
                 categoryDomainService.createCategory(category));
     }

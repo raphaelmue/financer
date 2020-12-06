@@ -25,10 +25,10 @@ public class RegisterUserDTO implements DataTransferObject {
     @Schema(description = "Hashed password of the user", required = true)
     private HashedPassword password;
 
-    @Schema(description = "Birth date of the user", example = "2020-01-01")
+    @Schema(description = "Birth date of the user")
     private BirthDate birthDate;
 
-    @Schema(description = "Gender of the user", example = "FEMALE")
+    @Schema(description = "Gender of the user")
     private Gender gender;
 
 }

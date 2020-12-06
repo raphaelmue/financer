@@ -283,7 +283,7 @@ public class TransactionDomainService {
                 | changeFixedTransactionProduct(fixedTransaction, product)
                 | changeTransactionDescription(fixedTransaction, description)
                 | changeTransactionVendor(fixedTransaction, vendor)
-                | changeFixedTransactionIsVariable(fixedTransaction, isVariable)
+                | changeFixedTransactionHasVariableAmounts(fixedTransaction, isVariable)
                 | changeFixedTransactionDay(fixedTransaction, day)
                 | changeFixedTransactionTransactionAmounts(fixedTransaction, transactionAmounts);
 
@@ -317,9 +317,9 @@ public class TransactionDomainService {
         return false;
     }
 
-    private boolean changeFixedTransactionIsVariable(FixedTransaction fixedTransaction, boolean isVariable) {
-        if (isVariable != fixedTransaction.getIsVariable()) {
-            fixedTransaction.setIsVariable(isVariable);
+    private boolean changeFixedTransactionHasVariableAmounts(FixedTransaction fixedTransaction, boolean hasVariableAmounts) {
+        if (hasVariableAmounts != fixedTransaction.getIsVariable()) {
+            fixedTransaction.setHasVariableAmounts(hasVariableAmounts);
             return true;
         }
         return false;

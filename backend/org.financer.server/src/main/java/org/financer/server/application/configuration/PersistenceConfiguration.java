@@ -1,6 +1,5 @@
 package org.financer.server.application.configuration;
 
-import org.flywaydb.core.Flyway;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;

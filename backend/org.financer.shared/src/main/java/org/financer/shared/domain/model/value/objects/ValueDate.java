@@ -1,6 +1,7 @@
 package org.financer.shared.domain.model.value.objects;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Data;
 import org.financer.shared.domain.model.Formattable;
 import org.financer.shared.domain.model.Settings;
 import org.hibernate.annotations.Immutable;
@@ -13,8 +14,8 @@ import java.time.Period;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.Locale;
-import java.util.Objects;
 
+@Data
 @Embeddable
 @Immutable
 @Schema(description = "Value object for value date")
@@ -72,32 +73,5 @@ public class ValueDate implements Serializable, Formattable, Comparable<ValueDat
     @Override
     public int compareTo(ValueDate valueDate) {
         return this.date.compareTo(valueDate.getDate());
-    }
-
-    /*
-     * Getters and Setters
-     */
-
-    public LocalDate getDate() {
-        return date;
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        if (this == object) return true;
-        if (object == null || getClass() != object.getClass()) return false;
-        return date.equals(((ValueDate) object).date);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(date);
-    }
-
-    @Override
-    public String toString() {
-        return "ValueDate [" +
-                "date=" + date +
-                ']';
     }
 }

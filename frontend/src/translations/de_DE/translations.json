@@ -48,6 +48,11 @@
         "CreateAttachment": "Attachment hinzufügen"
       },
       "TransactionDetails": "Transaktionsdetails"
+    },
+    "Administration": "Administration",
+    "Admin": {
+      "Configuration": "Server Konfiguration",
+      "UserManagement": "Benutzerverwaltung"
     }
   },
   "Transaction": {
@@ -129,6 +134,18 @@
           "ConfirmDeleteProducts": "Bist du sicher, dass du dieses Product aus der variable Transaktion löschen möchtest?"
         }
       }
+    },
+    "Admin": {
+      "Configuration": {
+        "UpdatedAdminConfiguration": "Server Konfiguration wurde erfolgreich aktualisiert. "
+      }
     }
+  },
+  "Admin": {
+    "Configuration": {
+      "DefaultLanguage": "Standardsprache",
+      "DefaultCurrency": "Standardwährung"
+    },
+    "ServerConfiguration": "Server Konfiguration"
   }
 }

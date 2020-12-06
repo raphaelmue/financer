@@ -1,10 +1,17 @@
 package org.financer.server.domain.model.user;
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
+import lombok.experimental.Accessors;
 import org.financer.server.domain.model.DataEntity;
 import org.financer.shared.domain.model.value.objects.SettingPair;
 
 import javax.persistence.*;
 
+@Data
+@Accessors(chain = true)
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
 @Table(name = "settings", uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "property"}))
 public class Setting implements DataEntity {
@@ -13,9 +20,11 @@ public class Setting implements DataEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private long id;
+    @EqualsAndHashCode.Include
+    private Long id;
 
     @ManyToOne()
+    @ToString.Exclude
     private User user;
 
     @Embedded
@@ -23,38 +32,6 @@ public class Setting implements DataEntity {
 
     public Setting setValue(String value) {
         this.setPair(this.getPair().setValue(value));
-        return this;
-    }
-
-    /*
-     * Getters and Setters
-     */
-
-    @Override
-    public long getId() {
-        return id;
-    }
-
-    public Setting setId(long id) {
-        this.id = id;
-        return this;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public Setting setUser(User user) {
-        this.user = user;
-        return this;
-    }
-
-    public SettingPair getPair() {
-        return pair;
-    }
-
-    public Setting setPair(SettingPair pair) {
-        this.pair = pair;
         return this;
     }
 }

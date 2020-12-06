@@ -6,7 +6,7 @@ import org.apache.commons.mail.EmailException;
 import org.apache.commons.mail.HtmlEmail;
 import org.financer.server.domain.model.user.User;
 import org.financer.server.domain.model.user.VerificationToken;
-import org.financer.util.RandomString;
+import org.financer.util.security.RandomString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;

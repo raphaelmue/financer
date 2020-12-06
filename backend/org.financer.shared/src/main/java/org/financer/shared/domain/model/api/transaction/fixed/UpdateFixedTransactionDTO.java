@@ -35,7 +35,7 @@ public class UpdateFixedTransactionDTO implements DataTransferObject {
     private String vendor;
 
     @Schema(description = "Indicates whether this transaction is variable or not", example = "false")
-    private Boolean isVariable;
+    private Boolean hasVariableAmounts;
 
     @Schema(description = "Billing day of the fixed transaction")
     private int day;

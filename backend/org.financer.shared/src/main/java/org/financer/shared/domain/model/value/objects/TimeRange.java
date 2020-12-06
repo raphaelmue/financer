@@ -2,6 +2,8 @@ package org.financer.shared.domain.model.value.objects;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.financer.shared.domain.model.Formattable;
 import org.financer.shared.domain.model.Settings;
 import org.hibernate.annotations.Immutable;
@@ -14,23 +16,25 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.Locale;
-import java.util.Objects;
 
 /**
  * Class that specifies a time range with a start and an end date. This time range can also be open by setting the end
  * date to null.
  */
+@Data
 @Embeddable
 @Immutable
 @Schema(description = "Value object for time range")
 public class TimeRange implements Serializable, Formattable, Comparable<TimeRange> {
     private static final long serialVersionUID = 3710079875858283394L;
 
+    @EqualsAndHashCode.Include
     @Column(name = "start_date", nullable = false)
     @NotNull
     @Schema(description = "Start date", required = true, example = "2020-01-01")
     private final LocalDate startDate;
 
+    @EqualsAndHashCode.Include
     @Column(name = "end_date")
     @Schema(description = "End date", example = "2030-01-01")
     private final LocalDate endDate;
@@ -142,18 +146,6 @@ public class TimeRange implements Serializable, Formattable, Comparable<TimeRang
         return LocalDate.now();
     }
 
-    /*
-     * Getters and Setters
-     */
-
-    public LocalDate getStartDate() {
-        return startDate;
-    }
-
-    public LocalDate getEndDate() {
-        return endDate;
-    }
-
     /**
      * Indicates whether this time range terminates or not (i.e. whether the end date is set or not).
      *
@@ -165,27 +157,5 @@ public class TimeRange implements Serializable, Formattable, Comparable<TimeRang
 
     public TimeRange setEndDate(LocalDate endDate) {
         return new TimeRange(this.startDate, endDate);
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        TimeRange timeRange = (TimeRange) o;
-        return Objects.equals(startDate, timeRange.startDate) &&
-                Objects.equals(endDate, timeRange.endDate);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(startDate, endDate);
-    }
-
-    @Override
-    public String toString() {
-        return "TimeRange [" +
-                "startDate=" + startDate +
-                ", endDate=" + endDate +
-                ']';
     }
 }

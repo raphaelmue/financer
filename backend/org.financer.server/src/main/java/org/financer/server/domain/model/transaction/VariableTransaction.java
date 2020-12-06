@@ -1,5 +1,7 @@
 package org.financer.server.domain.model.transaction;
 
+import lombok.Data;
+import lombok.experimental.Accessors;
 import org.financer.server.domain.model.category.Category;
 import org.financer.shared.domain.model.AmountProvider;
 import org.financer.shared.domain.model.value.objects.Amount;
@@ -10,6 +12,8 @@ import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
+@Data
+@Accessors(chain = true)
 @Entity
 @Table(name = "variable_transactions")
 public final class VariableTransaction extends Transaction {
@@ -60,35 +64,17 @@ public final class VariableTransaction extends Transaction {
         return category.getIsVariable();
     }
 
-    /*
-     * Getters and Setters
-     */
-
-    public ValueDate getValueDate() {
-        return valueDate;
-    }
-
-    public VariableTransaction setValueDate(ValueDate valueDate) {
-        this.valueDate = valueDate;
-        return this;
-    }
-
-    public Set<Product> getProducts() {
-        return products;
-    }
-
-    public VariableTransaction setProducts(Set<Product> products) {
-        this.products = products;
-        return this;
-    }
-
     public VariableTransaction addProduct(Product product) {
         this.products.add(product);
         return this;
     }
 
+    /*
+     * Setters
+     */
+
     @Override
-    public VariableTransaction setId(long id) {
+    public VariableTransaction setId(Long id) {
         super.setId(id);
         return this;
     }
@@ -116,4 +102,5 @@ public final class VariableTransaction extends Transaction {
         super.setAttachments(attachments);
         return this;
     }
+
 }
