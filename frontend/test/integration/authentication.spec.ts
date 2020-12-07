@@ -1,9 +1,11 @@
+import TestUtil from './util';
+
 describe('Authentication Component Test', () => {
     it('should login correctly with email and password', () => {
 
         cy.intercept({
             method: 'GET',
-            url: 'http://localhost:3001/api/1.0-SNAPSHOT/users',
+            url: TestUtil.getServerBaseUrl() + '/users',
             query: {
                 email: 'test@gmail.com',
                 password: 'password'

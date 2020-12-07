@@ -27,7 +27,7 @@
         "generate:api": "openapi-generator-cli generate",
         "generate:api:dev": "cross-var openapi-generator-cli generate -i http://localhost:3001/api/$npm_package_version/api-docs -g typescript-fetch -o src/.openapi --additional-properties=\"typescriptThreePlus=true,supportsES6=true,hateoas=true\"",
         "generate:api:prod": "cross-var openapi-generator-cli generate -i https://api.financer-project.org/api/$npm_package_version/api-docs -g typescript-fetch -o src/.openapi --additional-properties=\"typescriptThreePlus=true,supportsES6=true,hateoas=true\"",
-        "generate:api:with-backend": " cd ../backend && mvn clean verify -DskipTests -P generate-openapi-specification && cd frontend/ && yarn build:dev",
+        "generate:api:with-backend": " cd ../backend && mvn clean verify -DskipTests -P generate-openapi-specification && cd ../frontend/ && yarn run generate:api",
         "test": "start-server-and-test test:start 3000 test:integration:headless",
         "test:headed": "start-server-and-test test:start 3000 test:integration",
         "test:start": "yarn run start:react",
