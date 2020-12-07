@@ -38,14 +38,14 @@ class Login extends React.Component <LoginComponentProps, LoginComponentState> {
         return (
             <Form
                 layout={'horizontal'}
-                name="normal_login"
+                name="login"
                 className="login-form"
                 onFinish={this._handleSubmit.bind(this)}>
                 <Space direction={'vertical'} size={'middle'}>
                     <Text type={'danger'}>{this.props.userState.error?.message}</Text>
                 </Space>
                 <Form.Item
-                    name="username"
+                    name="email"
                     rules={[{required: true, message: 'Please input your Username!'}]}>
                     <Input prefix={<UserOutlined className="site-form-item-icon"/>}
                            type={'email'}

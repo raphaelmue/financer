@@ -1,0 +1,9 @@
+{
+    "fileServerFolder": ".",
+    "integrationFolder": "test/integration",
+    "fixturesFolder": "test/fixtures",
+    "pluginsFile": "test/plugins/index.js",
+    "supportFile": "test/support/index.js",
+    "baseUrl": "http://localhost:3000",
+    "chromeWebSecurity": false
+}
