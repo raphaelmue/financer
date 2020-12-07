@@ -56,6 +56,7 @@ pipeline {
                 stage('Frontend') {
                     steps {
                         dir('frontend') {
+                            sh 'yarn test'
                         }
                     }
                 }
@@ -100,6 +101,7 @@ pipeline {
         always {
             junit '**/target/surefire-reports/TEST-*.xml'
             step([$class: 'JacocoPublisher'])
+            step([$class: 'CoberturaPublisher', coberturaReportFile: '**/cobertura-coverage.xml', sourceEncoding: 'UTF-8'])
         }
     }
 }

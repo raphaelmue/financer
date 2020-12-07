@@ -1,6 +1,6 @@
 {
     "name": "financer",
-    "version": "1.0-SNAPSHOT",
+    "version": "1.0.0",
     "private": true,
     "description": "Financer is an Application that helps to manage all private expenses and revenues.",
     "repository": {
@@ -21,15 +21,19 @@
     "main": ".webpack/main",
     "scripts": {
         "start": "electron-forge start",
-        "start:react": "react-scripts start",
-        "start:react:prod": "serve -s build",
+        "start:react": "react-scripts -r @cypress/instrument-cra start",
         "build": "react-scripts build",
+        "serve": "serve -s build",
         "generate:api": "openapi-generator-cli generate",
         "generate:api:dev": "cross-var openapi-generator-cli generate -i http://localhost:3001/api/$npm_package_version/api-docs -g typescript-fetch -o src/.openapi --additional-properties=\"typescriptThreePlus=true,supportsES6=true,hateoas=true\"",
         "generate:api:prod": "cross-var openapi-generator-cli generate -i https://api.financer-project.org/api/$npm_package_version/api-docs -g typescript-fetch -o src/.openapi --additional-properties=\"typescriptThreePlus=true,supportsES6=true,hateoas=true\"",
         "generate:api:with-backend": " cd ../backend && mvn clean verify -DskipTests -P generate-openapi-specification && cd frontend/ && yarn build:dev",
-        "test": "cypress run --headless",
-        "cypress:open": "cypress open",
+        "test": "start-server-and-test test:start 3000 test:integration:headless",
+        "test:headed": "start-server-and-test test:start 3000 test:integration",
+        "test:start": "yarn run start:react",
+        "test:integration": "cypress run",
+        "test:integration:headless": "cypress run --headless ",
+        "test:cypress": "cypress open",
         "package": "electron-forge package",
         "make": "electron-forge make",
         "publish": "electron-forge publish",
@@ -60,6 +64,7 @@
     },
     "devDependencies": {
         "@cypress/code-coverage": "^3.8.5",
+        "@cypress/instrument-cra": "^1.4.0",
         "@electron-forge/cli": "^6.0.0-beta.53",
         "@electron-forge/maker-deb": "6.0.0-beta.53",
         "@electron-forge/maker-rpm": "6.0.0-beta.53",
@@ -80,10 +85,11 @@
         "eslint": "^6.6.0",
         "eslint-plugin-import": "^2.22.1",
         "fork-ts-checker-webpack-plugin": "^5.0.4",
-        "jest-puppeteer": "^4.4.0",
         "node-loader": "^1.0.1",
+        "nyc": "^15.1.0",
         "puppeteer": "^5.4.1",
         "react-router-dom": "^5.2.0",
+        "start-server-and-test": "^1.11.6",
         "style-loader": "^1.3.0",
         "ts-jest": "^26.4.4",
         "ts-loader": "^8.0.4",
@@ -128,6 +134,23 @@
             "last 1 chrome version",
             "last 1 firefox version",
             "last 1 safari version"
+        ]
+    },
+    "nyc": {
+        "report-dir": ".test/.coverage/",
+        "reporter": [
+            "text",
+            "json",
+            "lcov",
+            "cobertura"
+        ],
+        "include": [
+            "src/**/*.tsx",
+            "src/**/*.ts"
+        ],
+        "exclude": [
+            "**/*.spec.ts",
+            "**/.openapi/**"
         ]
     }
 }

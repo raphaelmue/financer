@@ -4,6 +4,10 @@
     "fixturesFolder": "test/fixtures",
     "pluginsFile": "test/plugins/index.js",
     "supportFile": "test/support/index.js",
+    "screenshotsFolder": ".test/.screenshots",
+    "videosFolder": ".test/.videos",
     "baseUrl": "http://localhost:3000",
+    "video": false,
+    "screenshotOnRunFailure": true,
     "chromeWebSecurity": false
 }
