@@ -1,4 +1,5 @@
 {
+    "projectId": "ridaia",
     "fileServerFolder": ".",
     "integrationFolder": "test/integration",
     "fixturesFolder": "test/fixtures",

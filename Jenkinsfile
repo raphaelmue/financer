@@ -60,6 +60,9 @@ pipeline {
                     }
                 }
                 stage('Frontend') {
+                    environment {
+                        CYPRESS_RECORD_KEY = credentials('cypress-token')
+                    }
                     steps {
                         dir('frontend') {
                             sh 'yarn test'
