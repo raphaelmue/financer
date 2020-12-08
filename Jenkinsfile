@@ -52,11 +52,23 @@ pipeline {
                             sh 'mvn test -P unit-tests'
                         }
                     }
+                    post {
+                        always {
+                            junit '**/target/surefire-reports/TEST-*.xml'
+                            step([$class: 'JacocoPublisher'])
+                        }
+                    }
                 }
                 stage('Frontend') {
                     steps {
                         dir('frontend') {
                             sh 'yarn test'
+                        }
+                    }
+                    post {
+                        always {
+                            junit '**/.test/.report/*.xml'
+                            step([$class: 'CoberturaPublisher', coberturaReportFile: '**/cobertura-coverage.xml', sourceEncoding: 'UTF-8'])
                         }
                     }
                 }
@@ -95,13 +107,6 @@ pipeline {
                     }
                 }
             }
-        }
-    }
-    post {
-        always {
-            junit '**/target/surefire-reports/TEST-*.xml'
-            step([$class: 'JacocoPublisher'])
-            step([$class: 'CoberturaPublisher', coberturaReportFile: '**/cobertura-coverage.xml', sourceEncoding: 'UTF-8'])
         }
     }
 }
