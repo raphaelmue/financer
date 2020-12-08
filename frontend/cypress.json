@@ -6,6 +6,11 @@
     "supportFile": "test/support/index.js",
     "screenshotsFolder": ".test/.screenshots",
     "videosFolder": ".test/.videos",
+    "reporter": "junit",
+    "reporterOptions": {
+        "mochaFile": ".test/.report/cypress-report.xml",
+        "toConsole": false
+    },
     "baseUrl": "http://localhost:3000",
     "video": false,
     "screenshotOnRunFailure": true,
