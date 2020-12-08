@@ -37,6 +37,8 @@ export function configureI18N() {
             interpolation: {escapeValue: false},  // React already does escaping
             lng: store.getState().user.user?.settings?.LANGUAGE?.value || 'en',
             fallbackLng: 'en',
+            ns: ['default'],
+            defaultNS: 'default',
             resources: {
                 en: {translation: translation_en},
                 de: {translation: translation_de},

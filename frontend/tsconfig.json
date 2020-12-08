@@ -17,11 +17,16 @@
         "resolveJsonModule": true,
         "isolatedModules": true,
         "noEmit": true,
-        "jsx": "react",
+        "jsx": "react-jsx",
         "baseUrl": ".",
-        "types": ["cypress"]
+        "types": ["cypress"],
+        "noFallthroughCasesInSwitch": true
     },
     "include": [
-        "src/",
+        "src/"
+    ],
+    "exclude": [
+        "src/.openapi",
+        "test/"
     ]
 }

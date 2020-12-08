@@ -3,13 +3,13 @@ import {connect}                          from 'react-redux';
 import {WithTranslation, withTranslation} from 'react-i18next';
 import React, {RefObject}                 from 'react';
 import {Form, Modal}                      from 'antd';
-import {CreateAttachment}                 from '../../../../../.openapi/models';
+import {CreateAttachment}                 from '../../../../../.openapi';
 import {FormInstance}                     from 'antd/lib/form';
 import Dragger                            from 'antd/lib/upload/Dragger';
 import {InboxOutlined}                    from '@ant-design/icons';
 import {UploadChangeParam, UploadFile}    from 'antd/lib/upload/interface';
 
-interface CreateAttachmentDialogComponentProps extends WithTranslation {
+interface CreateAttachmentDialogComponentProps extends WithTranslation<'default'> {
     visible: boolean
     onSubmit?: (files: CreateAttachment[]) => void,
     onCancel?: () => void
@@ -32,7 +32,7 @@ class CreateAttachmentDialog extends React.Component<CreateAttachmentDialogCompo
     constructor(props: CreateAttachmentDialogComponentProps) {
         super(props);
         this.state = initialState;
-    };
+    }
 
     onCancel() {
         if (this.props.onCancel) {
@@ -95,4 +95,4 @@ const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({}, dispat
 
 export default connect(() => {
     return {};
-}, mapDispatchToProps)(withTranslation()(CreateAttachmentDialog));
+}, mapDispatchToProps)(withTranslation<'default'>()(CreateAttachmentDialog));

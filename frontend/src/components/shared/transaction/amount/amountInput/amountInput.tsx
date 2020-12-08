@@ -25,7 +25,7 @@ class AmountInput extends React.Component<AmountInputComponentProps, AmountInput
 
 
     formatter = (value: (string | number | undefined)): string => {
-        let currency: string = getCurrencySign();
+        const currency: string = getCurrencySign();
         return `${currency} ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
     };
 

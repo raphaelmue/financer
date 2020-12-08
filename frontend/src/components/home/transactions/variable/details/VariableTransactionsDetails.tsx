@@ -6,7 +6,7 @@ import {bindActionCreators, Dispatch}                             from 'redux';
 import {connect}                                                  from 'react-redux';
 import * as api                                                   from '../../../../../store/api/transaction.api';
 import {TransactionReducerProps}                                  from '../../../../../store/reducers/transaction.reducer';
-import {CreateProduct, VariableTransaction}                       from '../../../../../.openapi/models';
+import {CreateProduct, VariableTransaction}                       from '../../../../../.openapi';
 import {Button, Descriptions, Modal, notification, Result, Space} from 'antd';
 import {DeleteOutlined, EditOutlined}                             from '@ant-design/icons';
 import {PageContainer}                                            from '@ant-design/pro-layout';
@@ -36,7 +36,7 @@ interface RouteProps {
 }
 
 interface VariableTransactionsDetailsComponentProps extends RouteComponentProps<RouteProps>,
-    WithTranslation, TransactionReducerProps {
+    WithTranslation<'default'>, TransactionReducerProps {
 }
 
 interface VariableTransactionsDetailsComponentState {
@@ -44,7 +44,7 @@ interface VariableTransactionsDetailsComponentState {
     activeTab: string,
     showProductDialog: boolean,
     showAttachmentDialog: boolean,
-    showUpdateVariableTransactionDialog: boolean
+    showUpdateVariableTransactionDialog: boolean,
     redirectToVariableTransactionList: boolean
 }
 
@@ -79,16 +79,20 @@ class VariableTransactionsDetails extends React.Component<VariableTransactionsDe
             this.props.t('Transaction.VariableTransaction'),
             this.props.t('Message.Transaction.VariableTransaction.ConfirmDeleteVariableTransaction'),
             () => new Promise<void>(
-                resolve => this.props.dispatchDeleteVariableTransaction({transactionId: this.state.variableTransaction?.id!},
-                    () => this.setState({redirectToVariableTransactionList: true},
-                        () => {
-                            resolve();
-                            notification.success({
-                                message: this.props.t('Transaction.VariableTransaction'),
-                                description: this.props.t('Message.Transaction.VariableTransaction.DeletedVariableTransaction')
-                            });
-                        }
-                    ))
+                resolve => {
+                    if (this.state.variableTransaction?.id) {
+                        this.props.dispatchDeleteVariableTransaction({transactionId: this.state.variableTransaction.id},
+                            () => this.setState({redirectToVariableTransactionList: true},
+                                () => {
+                                    resolve();
+                                    notification.success({
+                                        message: this.props.t('Transaction.VariableTransaction'),
+                                        description: this.props.t('Message.Transaction.VariableTransaction.DeletedVariableTransaction')
+                                    });
+                                }
+                            ));
+                    }
+                }
             )
         ));
     }
@@ -98,43 +102,49 @@ class VariableTransactionsDetails extends React.Component<VariableTransactionsDe
             this.props.t('Transaction.Products'),
             this.props.t('Message.Transaction.VariableTransaction.Product.ConfirmDeleteProducts'),
             () => new Promise<void>(resolveDispatch => {
-                this.props.dispatchDeleteProducts({
-                    transactionId: this.state.variableTransaction?.id!,
-                    productIds: productIds
-                }, () => {
-                    let variableTransaction: VariableTransaction = this.state.variableTransaction!;
-                    variableTransaction.products = variableTransaction.products?.filter(
-                        product => productIds.indexOf(product.id) < 0);
-                    this.setState({variableTransaction: variableTransaction});
-                    notification.success({
-                        message: this.props.t('Transaction.Products'),
-                        description: this.props.t('Message.Transaction.VariableTransaction.Product.DeletedProducts')
+                if (this.state.variableTransaction?.id) {
+                    this.props.dispatchDeleteProducts({
+                        transactionId: this.state.variableTransaction.id,
+                        productIds: productIds
+                    }, () => {
+                        const variableTransaction: VariableTransaction = this.state.variableTransaction!;
+                        variableTransaction.products = variableTransaction.products?.filter(
+                            product => productIds.indexOf(product.id) < 0);
+                        this.setState({variableTransaction: variableTransaction});
+                        notification.success({
+                            message: this.props.t('Transaction.Products'),
+                            description: this.props.t('Message.Transaction.VariableTransaction.Product.DeletedProducts')
+                        });
+                        resolveDispatch();
+                        resolveConfirm();
                     });
-                    resolveDispatch();
-                    resolveConfirm();
-                });
+                }
             })
         ))));
     }
 
     onCreateProduct(product: CreateProduct): Promise<void> {
         return new Promise<void>((resolve) => {
-            this.props.dispatchCreateProduct({
-                transactionId: this.state.variableTransaction?.id!,
-                createProduct: product
-            }, newProduct => {
-                notification.success({
-                    message: this.props.t('Transaction.VariableTransaction'),
-                    description: this.props.t('Message.Transaction.VariableTransaction.CreatedProduct')
+            if (this.state.variableTransaction?.id) {
+                this.props.dispatchCreateProduct({
+                    transactionId: this.state.variableTransaction.id,
+                    createProduct: product
+                }, newProduct => {
+                    notification.success({
+                        message: this.props.t('Transaction.VariableTransaction'),
+                        description: this.props.t('Message.Transaction.VariableTransaction.CreatedProduct')
+                    });
+                    if (this.state.variableTransaction?.products) {
+                        this.setState({
+                            variableTransaction: {
+                                ...this.state.variableTransaction,
+                                products: [...this.state.variableTransaction.products, newProduct]
+                            },
+                            showProductDialog: false
+                        }, () => resolve());
+                    }
                 });
-                this.setState({
-                    variableTransaction: {
-                        ...this.state.variableTransaction!,
-                        products: [...this.state.variableTransaction?.products!, newProduct]
-                    },
-                    showProductDialog: false
-                }, () => resolve());
-            });
+            }
         });
     }
 
@@ -249,4 +259,4 @@ const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({
     dispatchDeleteProducts: api.deleteProducts
 }, dispatch);
 
-export default connect(mapStateToProps, mapDispatchToProps)(withTranslation()(VariableTransactionsDetails));
+export default connect(mapStateToProps, mapDispatchToProps)(withTranslation<'default'>()(VariableTransactionsDetails));

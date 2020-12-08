@@ -1,12 +1,12 @@
-import React                              from 'react';
-import {StepProps}                        from 'antd/lib/steps';
-import {Button, Steps}                    from 'antd';
+import React                          from 'react';
+import {StepProps}                    from 'antd/lib/steps';
+import {Button, Steps}                from 'antd';
 import {FooterToolbar}                    from '@ant-design/pro-layout';
-import {withTranslation, WithTranslation} from 'react-i18next';
+import {WithTranslation, withTranslation} from 'react-i18next';
 import {AppState}                         from '../../../../store/reducers/root.reducers';
-import {bindActionCreators, Dispatch}     from 'redux';
-import {connect}                          from 'react-redux';
-import {StepFormContent}                  from './StepFormContent';
+import {bindActionCreators, Dispatch} from 'redux';
+import {connect}                      from 'react-redux';
+import {StepFormContent}              from './StepFormContent';
 
 const {Step} = Steps;
 
@@ -16,7 +16,7 @@ export interface FormStep extends StepProps {
     condition?: () => boolean
 }
 
-interface StepFormComponentProps extends WithTranslation {
+interface StepFormComponentProps extends WithTranslation<'default'> {
     steps: FormStep[],
     onSubmit?: () => void,
 }
@@ -69,6 +69,7 @@ class StepForm extends React.Component<StepFormComponentProps, StepFormComponent
     }
 
     renderSteps(): React.ReactNode[] {
+        // eslint-disable-next-line react/jsx-key
         return this.props.steps.map((step) => <Step {...step}/>);
     }
 
@@ -120,4 +121,4 @@ const mapStateToProps = (state: AppState) => {
 
 const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({}, dispatch);
 
-export default connect(mapStateToProps, mapDispatchToProps)(withTranslation()(StepForm));
+export default connect(mapStateToProps, mapDispatchToProps)(withTranslation<"default">()(StepForm));

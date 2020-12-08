@@ -1,11 +1,11 @@
-import {AppState}                         from '../../../store/reducers/root.reducers';
-import {bindActionCreators, Dispatch}     from 'redux';
+import {AppState}                     from '../../../store/reducers/root.reducers';
+import {bindActionCreators, Dispatch} from 'redux';
 import {connect}                          from 'react-redux';
 import {WithTranslation, withTranslation} from 'react-i18next';
 import React                              from 'react';
-import {UserReducerState}                 from '../../../store/reducers/user.reducers';
+import {UserReducerState}             from '../../../store/reducers/user.reducers';
 
-interface SettingsComponentProps extends WithTranslation, UserReducerState {
+interface SettingsComponentProps extends WithTranslation<'default'>, UserReducerState {
 }
 
 interface SettingsComponentState {
@@ -27,4 +27,4 @@ const mapStateToProps = (state: AppState) => {
 
 const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({}, dispatch);
 
-export default connect(mapStateToProps, mapDispatchToProps)(withTranslation()(Settings));
+export default connect(mapStateToProps, mapDispatchToProps)(withTranslation<"default">()(Settings));

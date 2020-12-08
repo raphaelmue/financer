@@ -1,21 +1,21 @@
-import {withTranslation, WithTranslation} from 'react-i18next';
+import {WithTranslation, withTranslation} from 'react-i18next';
 import React                              from 'react';
-import {TransactionReducerProps}          from '../../../../store/reducers/transaction.reducer';
-import {UserReducerProps}                 from '../../../../store/reducers/user.reducers';
-import {VariableTransaction}              from '../../../../.openapi/models';
-import ProTable                           from '@ant-design/pro-table';
-import {columns}                          from './columns';
-import {AppState}                         from '../../../../store/reducers/root.reducers';
-import {bindActionCreators, Dispatch}     from 'redux';
-import {connect}                          from 'react-redux';
-import * as api                           from '../../../../store/api/transaction.api';
-import {Button}                           from 'antd';
-import {PlusOutlined}                     from '@ant-design/icons';
-import {Link, Redirect}                   from 'react-router-dom';
-import {PageContainer}                    from '@ant-design/pro-layout';
+import {TransactionReducerProps}      from '../../../../store/reducers/transaction.reducer';
+import {UserReducerProps}             from '../../../../store/reducers/user.reducers';
+import {VariableTransaction}          from '../../../../.openapi/models';
+import ProTable                       from '@ant-design/pro-table';
+import {columns}                      from './columns';
+import {AppState}                     from '../../../../store/reducers/root.reducers';
+import {bindActionCreators, Dispatch} from 'redux';
+import {connect}                      from 'react-redux';
+import * as api                       from '../../../../store/api/transaction.api';
+import {Button}                       from 'antd';
+import {PlusOutlined}                 from '@ant-design/icons';
+import {Link, Redirect}               from 'react-router-dom';
+import {PageContainer}                from '@ant-design/pro-layout';
 
 
-interface VariableTransactionListComponentProps extends WithTranslation, TransactionReducerProps, UserReducerProps {
+interface VariableTransactionListComponentProps extends WithTranslation<'default'>, TransactionReducerProps, UserReducerProps {
 }
 
 interface VariableTransactionListComponentState {
@@ -84,7 +84,8 @@ class VariableTransactionList extends React.Component<VariableTransactionListCom
                     }}
                     rowClassName={'cursor: pointer'}
                     toolBarRender={() => [
-                        <Link to={'/transactions/variable/create'}>
+                        <Link key={"linkToCreateVariableTransaction"}
+                              to={'/transactions/variable/create'}>
                             <Button
                                 key="newVariableTransactionButton"
                                 type="primary"
@@ -110,4 +111,4 @@ const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({
     dispatchLoadVariableTransactions: api.loadVariableTransactions
 }, dispatch);
 
-export default connect(mapStateToProps, mapDispatchToProps)(withTranslation()(VariableTransactionList));
+export default connect(mapStateToProps, mapDispatchToProps)(withTranslation<"default">()(VariableTransactionList));

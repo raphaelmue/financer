@@ -2,13 +2,13 @@ import {bindActionCreators, Dispatch}     from 'redux';
 import {connect}                          from 'react-redux';
 import {WithTranslation, withTranslation} from 'react-i18next';
 import React                              from 'react';
-import {Product}                          from '../../../../.openapi/models';
+import {Product}                          from '../../../../.openapi';
 import {Button, Space}                    from 'antd';
-import {PlusOutlined, DeleteOutlined}     from '@ant-design/icons';
+import {DeleteOutlined, PlusOutlined}     from '@ant-design/icons';
 import ProTable                           from '@ant-design/pro-table';
 import {columns}                          from './columns';
 
-interface ProductListComponentProps extends WithTranslation {
+interface ProductListComponentProps extends WithTranslation<'default'> {
     openProductDialog: () => void,
     onDeleteProducts?: (productIds: number[]) => Promise<void>,
     products?: Product[]
@@ -57,23 +57,21 @@ class ProductList extends React.Component<ProductListComponentProps, ProductComp
                 pagination={false}
                 loading={false}
                 toolBarRender={() => [
-                    <Space size={'small'}>
-                        <Button
-                            key="deleteProductButton"
-                            style={{display: this.state.selectedProductIds.length > 0 ? 'initial' : 'none'}}
-                            icon={<DeleteOutlined/>}
-                            onClick={() => this.onDeleteProduct()}
-                            danger>
-                            {this.props.t('Form.Button.Delete')}
-                        </Button>
-                        <Button
-                            key="newVariableTransactionButton"
-                            type="primary"
-                            icon={<PlusOutlined/>}
-                            onClick={this.props.openProductDialog}>
-                            {this.props.t('Form.Button.Add')}
-                        </Button>
-                    </Space>
+                    <Button
+                        key="deleteProductButton"
+                        style={{display: this.state.selectedProductIds.length > 0 ? 'initial' : 'none'}}
+                        icon={<DeleteOutlined/>}
+                        onClick={() => this.onDeleteProduct()}
+                        danger>
+                        {this.props.t('Form.Button.Delete')}
+                    </Button>,
+                    <Button
+                        key="newVariableTransactionButton"
+                        type="primary"
+                        icon={<PlusOutlined/>}
+                        onClick={this.props.openProductDialog}>
+                        {this.props.t('Form.Button.Add')}
+                    </Button>
                 ]}>
             </ProTable>
         );
@@ -84,4 +82,4 @@ const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({}, dispat
 
 export default connect(() => {
     return {};
-}, mapDispatchToProps)(withTranslation()(ProductList));
+}, mapDispatchToProps)(withTranslation<'default'>()(ProductList));

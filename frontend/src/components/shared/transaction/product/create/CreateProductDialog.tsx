@@ -1,15 +1,15 @@
-import {bindActionCreators, Dispatch}     from 'redux';
+import {bindActionCreators, Dispatch}    from 'redux';
 import {connect}                          from 'react-redux';
 import {WithTranslation, withTranslation} from 'react-i18next';
 import React, {RefObject}                 from 'react';
-import {Form, Input, InputNumber, Modal}  from 'antd';
-import {fieldIsRequiredRule}              from '../../../user/form/rules';
-import {CreateProduct}                    from '../../../../../.openapi/models';
-import {FormInstance}                     from 'antd/lib/form';
-import AmountInput                        from '../../amount/amountInput/amountInput';
+import {Form, Input, InputNumber, Modal} from 'antd';
+import {fieldIsRequiredRule}             from '../../../user/form/rules';
+import {CreateProduct}                   from '../../../../../.openapi/models';
+import {FormInstance}                    from 'antd/lib/form';
+import AmountInput                       from '../../amount/amountInput/amountInput';
 
-interface CreateProductDialogComponentProps extends WithTranslation {
-    visible: boolean
+interface CreateProductDialogComponentProps extends WithTranslation<'default'> {
+    visible: boolean,
     onSubmit?: (product: CreateProduct) => Promise<void>,
     onCancel?: () => void
 }
@@ -37,7 +37,7 @@ class CreateProductDialog extends React.Component<CreateProductDialogComponentPr
     constructor(props: CreateProductDialogComponentProps) {
         super(props);
         this.state = initialState;
-    };
+    }
 
     onCancel() {
         if (this.props.onCancel) {
@@ -119,4 +119,4 @@ const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({}, dispat
 
 export default connect(() => {
     return {};
-}, mapDispatchToProps)(withTranslation()(CreateProductDialog));
+}, mapDispatchToProps)(withTranslation<"default">()(CreateProductDialog));

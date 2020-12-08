@@ -1,12 +1,12 @@
-import {Form, Input}                      from 'antd';
-import {UserOutlined}                     from '@ant-design/icons';
+import {Form, Input}         from 'antd';
+import {UserOutlined}        from '@ant-design/icons';
 import * as React                         from 'react';
-import {withTranslation, WithTranslation} from 'react-i18next';
-import {Name}                             from '../../../../.openapi/models';
+import {WithTranslation, withTranslation} from 'react-i18next';
+import {Name}                             from '../../../../.openapi';
 import {connect}                          from 'react-redux';
-import {fieldIsRequiredRule}              from '../form/rules';
+import {fieldIsRequiredRule} from '../form/rules';
 
-interface NameInputComponentProps extends WithTranslation {
+interface NameInputComponentProps extends WithTranslation<'default'> {
     onChange: (name: Name) => void
 }
 
@@ -55,4 +55,4 @@ class NameInput extends React.Component<NameInputComponentProps, NameInputCompon
     }
 }
 
-export default connect()(withTranslation()(NameInput));
+export default connect()(withTranslation<"default">()(NameInput));

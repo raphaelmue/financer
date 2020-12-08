@@ -1,5 +1,5 @@
 import {ProColumns}          from '@ant-design/pro-table';
-import {VariableTransaction} from '../../../../.openapi/models';
+import {VariableTransaction} from '../../../../.openapi';
 import i18next               from 'i18next';
 import AmountLabel           from '../../../shared/transaction/amount/amountLabel/AmountLabel';
 import React                 from 'react';
@@ -37,6 +37,7 @@ export const columns = (): ProColumns<VariableTransaction>[] => [
         title: i18next.t('Transaction.Amount'),
         dataIndex: ['totalAmount', 'amount'],
         valueType: 'money',
-        render: (dom, entity) => (<AmountLabel amount={entity.totalAmount}/>)
+        // eslint-disable-next-line react/display-name
+        render: (dom, entity): JSX.Element => (<AmountLabel amount={entity.totalAmount}/>)
     }
 ];

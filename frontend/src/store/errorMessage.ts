@@ -9,29 +9,29 @@ export enum MessageType {
 }
 
 interface ErrorMessageDefinition {
-    message: String;
+    message: string;
     timestamp: Date;
 }
 
 export class ErrorMessage implements ErrorMessageDefinition {
 
-    message: String;
+    message: string;
     timestamp: Date;
 
-    constructor(message: String, timestamp: Date) {
+    constructor(message: string, timestamp: Date) {
         this.message = message;
         this.timestamp = timestamp;
     }
 
-    public static resolveError(promise: Promise<any>, action: string, dispatch: Dispatch) {
+    static resolveError(promise: Promise<any>, action: string, dispatch: Dispatch): void {
         promise.catch((reason: any) => dispatch({
             type: action,
             payload: ErrorMessage.createErrorMessage(reason)
         }));
     }
 
-    public static createErrorMessage(reason: any, language: string = 'en'): ErrorMessage {
-        let timestamp = new Date();
+    static createErrorMessage(reason: any, language = 'en'): ErrorMessage {
+        const timestamp = new Date();
         let message: MessageType = MessageType.UNKNOWN_ERROR;
         if (reason === 'TypeError: Failed to fetch') {
             message = MessageType.SERVER_UNAVAILABLE;

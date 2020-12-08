@@ -6,8 +6,9 @@ import store              from './store/store';
 import {ConfigProvider}                       from 'antd';
 import {getCurrentIntlType, getCurrentLocale} from './translations/translations';
 import {IntlProvider}                         from '@ant-design/pro-table';
+import * as dotenv from 'dotenv';
 
-require('dotenv').config();
+dotenv.config();
 
 ReactDOM.render(
     <Provider store={store}>

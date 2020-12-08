@@ -1,4 +1,4 @@
-import {PageMetadata, VariableTransaction}              from '../../.openapi/models';
+import {PageMetadata, VariableTransaction}              from '../../.openapi';
 import {ReducerState}                                   from './reducers';
 import {TransactionAction, TransactionActionDefinition} from '../actions/transaction.actions';
 import {TransactionApi}                                 from '../api/transaction.api';
@@ -29,11 +29,12 @@ export const transactionReducer = (state: TransactionState = initialState, actio
                 variableTransactions: action.payload.embedded?.variableTransactionDToes || [],
                 pageMetadata: action.payload.page
             };
-        case TransactionActionDefinition.LOAD_VARIABLE_TRANSACTION_SUCCESS:
-            let transactions = state.variableTransactions;
+        case TransactionActionDefinition.LOAD_VARIABLE_TRANSACTION_SUCCESS: {
+            const transactions = state.variableTransactions;
             transactions.splice(transactions.findIndex(transaction => transaction.id === action.payload.id), 1);
             transactions.push(action.payload);
             return {...state, isLoading: false, error: undefined, variableTransactions: transactions};
+        }
         case TransactionActionDefinition.CREATE_VARIABLE_TRANSACTION_SUCCESS:
             return {
                 ...state,

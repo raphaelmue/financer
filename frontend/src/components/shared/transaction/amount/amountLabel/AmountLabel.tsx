@@ -2,7 +2,7 @@ import {UserReducerProps}             from '../../../../../store/reducers/user.r
 import {AppState}                     from '../../../../../store/reducers/root.reducers';
 import {bindActionCreators, Dispatch} from 'redux';
 import {connect}                      from 'react-redux';
-import {Amount}                       from '../../../../../.openapi/models';
+import {Amount}                       from '../../../../../.openapi';
 import React                          from 'react';
 import {Space, Typography}            from 'antd';
 import AmountUtil                     from '../util';

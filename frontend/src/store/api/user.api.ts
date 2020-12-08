@@ -19,7 +19,7 @@ export const loginUser = (loginData: LoginUserRequest) => {
             payload: loginData
         });
         if (loginData && loginData.email && loginData.password) {
-            let api = new UserApi(apiConfiguration());
+            const api = new UserApi(apiConfiguration());
             ErrorMessage.resolveError(api.loginUser(loginData)
                 .then((user: User) => dispatch({
                     type: UserActionDefinition.LOGIN_SUCCESS,
@@ -36,7 +36,7 @@ export const registerUser = (registeringData: RegisterUserRequest) => {
             payload: registeringData
         });
         if (registeringData && registeringData.registerUser) {
-            let api = new UserApi(apiConfiguration());
+            const api = new UserApi(apiConfiguration());
             ErrorMessage.resolveError(api.registerUser(registeringData)
                 .then((user: User) => dispatch({
                     type: UserActionDefinition.REGISTER_SUCCESS,
@@ -53,7 +53,7 @@ export const logoutUser = (logoutUserData: DeleteTokenRequest) => {
             type: UserActionDefinition.LOGOUT_REQUEST,
             payload: logoutUserData
         });
-        let api = new UserApi(apiConfiguration());
+        const api = new UserApi(apiConfiguration());
         ErrorMessage.resolveError(api.deleteToken(logoutUserData)
             .then(() => dispatch({
                 type: UserActionDefinition.LOGOUT_SUCCESS

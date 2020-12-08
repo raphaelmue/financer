@@ -1,14 +1,14 @@
 import React                              from 'react';
-import {withTranslation, WithTranslation} from 'react-i18next';
+import {WithTranslation, withTranslation} from 'react-i18next';
 import {bindActionCreators, Dispatch}     from 'redux';
 import {connect}                          from 'react-redux';
-import {Attachment}                       from '../../../../.openapi/models';
+import {Attachment}                       from '../../../../.openapi';
 import ProTable                           from '@ant-design/pro-table';
 import {Button}                           from 'antd';
 import {PlusOutlined}                     from '@ant-design/icons';
 import {columns}                          from './colums';
 
-interface AttachmentListComponentProps extends WithTranslation{
+interface AttachmentListComponentProps extends WithTranslation<'default'>{
     attachments?: Attachment[],
     openAttachmentDialog: () => void
 }
@@ -47,4 +47,4 @@ class AttachmentList extends React.Component<AttachmentListComponentProps, Attac
 const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({
 }, dispatch);
 
-export default connect(() => {return {}}, mapDispatchToProps)(withTranslation()(AttachmentList));
+export default connect(() => {return {}}, mapDispatchToProps)(withTranslation<"default">()(AttachmentList));

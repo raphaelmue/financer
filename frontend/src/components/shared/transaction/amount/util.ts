@@ -1,16 +1,16 @@
-import {Amount}   from '../../../../.openapi/models';
+import {Amount}   from '../../../../.openapi';
 import {BaseType} from 'antd/lib/typography/Base';
 
-const positiveColor: string = '#3f8600';
-const negativeColor: string = '#cf1322';
+const positiveColor = '#3f8600';
+const negativeColor = '#cf1322';
 
 export default class AmountUtil {
 
-    public static getColor(amount: Amount): string {
+    static getColor(amount: Amount): string {
         return amount.amount < 0 ? negativeColor : positiveColor;
     }
 
-    public static getTextType(amount: Amount): BaseType {
+    static getTextType(amount: Amount): BaseType {
         return amount.amount < 0 ? 'danger' : 'success';
     }
 

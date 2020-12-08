@@ -1,12 +1,12 @@
 import * as React                         from 'react';
 import {Form, Input}                      from 'antd';
-import {withTranslation, WithTranslation} from 'react-i18next';
+import {WithTranslation, withTranslation} from 'react-i18next';
 import {connect}                          from 'react-redux';
 import {LockOutlined}                     from '@ant-design/icons';
 import hash                               from 'js-sha256';
-import {HashedPassword}                   from '../../../../.openapi/models';
+import {HashedPassword}                   from '../../../../.openapi';
 
-interface PasswordInputComponentProps extends WithTranslation {
+interface PasswordInputComponentProps extends WithTranslation<'default'> {
     onChange: (password: HashedPassword) => void;
 }
 
@@ -67,9 +67,9 @@ class PasswordInput extends React.Component<PasswordInputComponentProps, Passwor
             </div>);
     }
 
-    private generateSalt(length: number = 32) {
+    private generateSalt(length = 32) {
         let result = '';
-        let charactersLength = characters.length;
+        const charactersLength = characters.length;
         for (let i = 0; i < length; i++) {
             result += characters.charAt(Math.floor(Math.random() * charactersLength));
         }
@@ -77,4 +77,4 @@ class PasswordInput extends React.Component<PasswordInputComponentProps, Passwor
     }
 }
 
-export default connect()(withTranslation()(PasswordInput));
+export default connect()(withTranslation<'default'>()(PasswordInput));
