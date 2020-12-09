@@ -3,7 +3,7 @@ import {
     AdminConfiguration,
     AdminConfigurationDefaultCurrencyEnum,
     AdminConfigurationDefaultLanguageEnum
-}                     from '../../.openapi/models';
+}                     from '../../.openapi';
 import {AdminApi}     from '../api/admin.api';
 import {
     AdminAction,
