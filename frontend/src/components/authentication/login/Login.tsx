@@ -1,5 +1,5 @@
-import {WithTranslation, withTranslation} from 'react-i18next';
-import {UserReducerProps}                 from '../../../store/reducers/user.reducers';
+import {WithTranslation, withTranslation}       from 'react-i18next';
+import {UserReducerProps}                       from '../../../store/reducers/user.reducers';
 import {LoginUserRequest}                       from '../../../.openapi';
 import * as React                               from 'react';
 import {Button, Form, Input, Space, Typography} from 'antd';

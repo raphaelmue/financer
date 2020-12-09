@@ -112,4 +112,12 @@ pipeline {
             }
         }
     }
+
+    post {
+        always {
+            dir('frontend') {
+                sh 'yarn run clean:modules'
+            }
+        }
+    }
 }

@@ -1,4 +1,4 @@
-import TestUtil from './util';
+import TestUtil from '../util/util';
 
 describe('Authentication Component Test', () => {
     it('should login correctly with email and password', () => {

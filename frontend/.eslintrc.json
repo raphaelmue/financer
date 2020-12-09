@@ -27,15 +27,21 @@
         "@typescript-eslint/explicit-function-return-type": "off"
     },
     "ignorePatterns": [
-        ".test/**.*",
-        "build/**.*",
-        "test/**.*",
-        "src/.openapi/**.*"
+        ".test/",
+        "build/",
+        "test/",
+        "src/.openapi"
     ],
     "overrides": [
         {
             "files": [
-                "**/*.ts?(x)"
+                "src/**/*.ts?(x)"
+            ],
+            "excludedFiles": [
+                ".test/**",
+                "build/**",
+                "test/**",
+                "src/.openapi/**",
             ]
         }
     ]

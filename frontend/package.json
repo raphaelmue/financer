@@ -21,6 +21,7 @@
     "main": ".webpack/main",
     "scripts": {
         "clean": "rimraf node_modules/ build/ .test/ src/.openapi .nyc_output/",
+        "clean:modules": "rimraf node_modules/",
         "start": "electron-forge start",
         "start:react": "react-scripts -r @cypress/instrument-cra start",
         "build": "react-scripts build",
