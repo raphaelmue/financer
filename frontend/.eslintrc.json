@@ -41,7 +41,7 @@
                 ".test/**",
                 "build/**",
                 "test/**",
-                "src/.openapi/**",
+                "src/.openapi/**"
             ]
         }
     ]
