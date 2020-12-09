@@ -35,14 +35,6 @@ pipeline {
                 }
             }
         }
-        stage('NodeJS') {
-            steps {
-                dir('web') {
-                    sh 'npm install -g yarn'
-                    sh 'yarn install'
-                }
-            }
-        }
 
         stage('Unit Tests') {
             parallel {
