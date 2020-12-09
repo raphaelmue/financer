@@ -65,7 +65,7 @@ pipeline {
                     }
                     steps {
                         dir('frontend') {
-                            sh 'yarn test'
+                            sh 'yarn test:docker'
                         }
                     }
                     post {

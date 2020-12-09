@@ -1,0 +1,15 @@
+version: '3.2'
+services:
+    
+    cypress:
+        image: cypress/included:6.1.0
+        container_name: financer-integration-tests
+        volumes:
+            - ./:/e2e
+        working_dir: /e2e
+        entrypoint: yarn test
+        environment:
+            CYPRESS_RECORD_KEY: ${CYPRESS_RECORD_KEY}
+#            CYPRESS_baseUrl: http://financer-ingration-tests:3000
+        
+        
