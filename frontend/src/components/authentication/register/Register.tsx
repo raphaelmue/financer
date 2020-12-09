@@ -78,7 +78,7 @@ class Register extends React.Component<RegisterComponentProps, RegisterComponent
                     <Input prefix={<UserOutlined className="site-form-item-icon"/>}
                            type={'email'}
                            name="email"
-                           placeholder={this.props.t('email')}
+                           placeholder={this.props.t('email')?.toString()}
                            onChange={this.onChange}/>
                 </Form.Item>
                 <Form.Item
@@ -89,7 +89,7 @@ class Register extends React.Component<RegisterComponentProps, RegisterComponent
                         style={{display: 'inline-block', width: 'calc(50% - 6px)'}}>
                         <DatePicker
                             style={{width: '100%'}}
-                            placeholder={this.props.t('birthDate')}
+                            placeholder={this.props.t('birthDate')?.toString()}
                             onChange={(value, dateString: string) => this.setState({birthDate: {birthDate: new Date(dateString)}})}/>
                     </Form.Item>
                     <span style={{display: 'inline-block', width: '12px', lineHeight: '32px', textAlign: 'center'}}>

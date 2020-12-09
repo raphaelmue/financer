@@ -51,7 +51,7 @@ class PasswordInput extends React.Component<PasswordInputComponentProps, Passwor
                         prefix={<LockOutlined className="site-form-item-icon"/>}
                         type="password"
                         name="password"
-                        placeholder={this.props.t('password')}
+                        placeholder={this.props.t('password')?.toString()}
                         onChange={this.onChange}/>
                 </Form.Item>
                 <Form.Item
@@ -61,7 +61,7 @@ class PasswordInput extends React.Component<PasswordInputComponentProps, Passwor
                         prefix={<LockOutlined className="site-form-item-icon"/>}
                         type="password"
                         name="repeatedPassword"
-                        placeholder={this.props.t('Register.repeatPassword')}
+                        placeholder={this.props.t('Register.repeatPassword')?.toString()}
                         onChange={this.onChange}/>
                 </Form.Item>
             </div>);

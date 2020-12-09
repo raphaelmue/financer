@@ -76,8 +76,8 @@ class VariableTransactionsDetails extends React.Component<VariableTransactionsDe
 
     onDeleteVariableTransaction() {
         Modal.confirm(confirmDialogConfig(
-            this.props.t('Transaction.VariableTransaction'),
-            this.props.t('Message.Transaction.VariableTransaction.ConfirmDeleteVariableTransaction'),
+            this.props.t('Transaction.VariableTransaction')?.toString() || '',
+            this.props.t('Message.Transaction.VariableTransaction.ConfirmDeleteVariableTransaction')?.toString() || '',
             () => new Promise<void>(
                 resolve => {
                     if (this.state.variableTransaction?.id) {
@@ -99,8 +99,8 @@ class VariableTransactionsDetails extends React.Component<VariableTransactionsDe
 
     onDeleteProducts(productIds: number[]): Promise<void> {
         return new Promise<void>((resolveConfirm => Modal.confirm(confirmDialogConfig(
-            this.props.t('Transaction.Products'),
-            this.props.t('Message.Transaction.VariableTransaction.Product.ConfirmDeleteProducts'),
+            this.props.t('Transaction.Products')?.toString() || '',
+            this.props.t('Message.Transaction.VariableTransaction.Product.ConfirmDeleteProducts')?.toString() || '',
             () => new Promise<void>(resolveDispatch => {
                 if (this.state.variableTransaction?.id) {
                     this.props.dispatchDeleteProducts({

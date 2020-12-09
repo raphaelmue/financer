@@ -100,7 +100,7 @@ class Home extends React.Component<HomeProps, HomeState> {
                 )}
                 breadcrumbRender={(routers = []) => [{
                     path: '/',
-                    breadcrumbName: this.props.t('Menu.Home')
+                    breadcrumbName: this.props.t('Menu.Home')?.toString() || ''
                 }, ...routers,]}
                 itemRender={(route, params, routes) => {
                     return routes.indexOf(route) === 0 ? (<span>{route.breadcrumbName}</span>) : (
