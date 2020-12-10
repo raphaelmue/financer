@@ -35,7 +35,7 @@ class NameInput extends React.Component<NameInputComponentProps, NameInputCompon
                     <Input prefix={<UserOutlined className="site-form-item-icon"/>}
                            type={'text'}
                            name="firstName"
-                           placeholder={this.props.t('firstName')}
+                           placeholder={this.props.t('firstName')?.toString()}
                            onChange={this.onChange}/>
                 </Form.Item>
                 <span style={{display: 'inline-block', width: '12px', lineHeight: '32px', textAlign: 'center'}}>
@@ -47,7 +47,7 @@ class NameInput extends React.Component<NameInputComponentProps, NameInputCompon
                     <Input prefix={<UserOutlined className="site-form-item-icon"/>}
                            type={'text'}
                            name="surname"
-                           placeholder={this.props.t('surname')}
+                           placeholder={this.props.t('surname')?.toString()}
                            onChange={this.onChange}/>
                 </Form.Item>
             </div>

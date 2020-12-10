@@ -50,7 +50,7 @@ class Login extends React.Component <LoginComponentProps, LoginComponentState> {
                     <Input prefix={<UserOutlined className="site-form-item-icon"/>}
                            type={'email'}
                            name="email"
-                           placeholder={this.props.t('email')}
+                           placeholder={this.props.t('email')?.toString()}
                            onChange={this.handleChange}/>
                 </Form.Item>
                 <Form.Item
@@ -59,7 +59,7 @@ class Login extends React.Component <LoginComponentProps, LoginComponentState> {
                     <Input.Password
                         prefix={<LockOutlined className="site-form-item-icon"/>}
                         name="password"
-                        placeholder={this.props.t('password')}
+                        placeholder={this.props.t('password')?.toString()}
                         onChange={this.handleChange}/>
                 </Form.Item>
 
