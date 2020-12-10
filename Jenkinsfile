@@ -65,7 +65,14 @@ pipeline {
                     }
                     steps {
                         dir('frontend') {
-                            sh 'yarn test:docker'
+                            sh 'docker run -i --rm \
+                                --volumes-from jenkins \
+                                --workdir ${PWD}/frontend \
+                                --name financer-integration-tests \
+                                --entrypoint yarn \
+                                --env CYPRESS_RECORD_KEY \
+                                cypress/included:6.1.0 \
+                                test'
                         }
                     }
                     post {
