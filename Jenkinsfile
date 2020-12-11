@@ -88,37 +88,72 @@ pipeline {
         }
 
         stage('SonarQube Analysis') {
-            environment {
-                scannerHome = '$JENKINS_HOME/SonarQubeScanner'
-            }
-            steps {
-                dir('backend') {
-                    sh 'cp target/jacoco.exec org.financer.server/target/'
-                    sh 'cp target/jacoco.exec org.financer.shared/target/'
-                    sh 'cp target/jacoco.exec org.financer.util/target/'
-                    sh 'mvn dependency:copy-dependencies'
-                    withSonarQubeEnv('SonarQubeServer') {
-                        script {
-                            if (env.CHANGE_ID) {
-                                sh "${scannerHome}/bin/sonar-scanner " +
-                                        "-Dsonar.pullrequest.base=master " +
-                                        "-Dsonar.pullrequest.key=${env.CHANGE_ID} " +
-                                        "-Dsonar.pullrequest.branch=${env.BRANCH_NAME} " +
-                                        "-Dsonar.pullrequest.provider=github " +
-                                        "-Dsonar.pullrequest.github.repository=raphaelmue/financer"
-                            } else {
-                                if (env.BRANCH_NAME != 'master') {
-                                    sh "${scannerHome}/bin/sonar-scanner " +
-                                            "-Dsonar.branch.name=${env.BRANCH_NAME} " +
-                                            "-Dsonar.branch.target=master"
-                                } else {
-                                    sh "${scannerHome}/bin/sonar-scanner"
+            parallel {
+                stage('Backend') {
+                    environment {
+                        scannerHome = '$JENKINS_HOME/SonarQubeScanner'
+                    }
+                    steps {
+                        dir('backend') {
+                            sh 'cp target/jacoco.exec org.financer.server/target/'
+                            sh 'cp target/jacoco.exec org.financer.shared/target/'
+                            sh 'cp target/jacoco.exec org.financer.util/target/'
+                            sh 'mvn dependency:copy-dependencies'
+                            withSonarQubeEnv('SonarQubeServer') {
+                                script {
+                                    if (env.CHANGE_ID) {
+                                        sh "${scannerHome}/bin/sonar-scanner " +
+                                                "-Dsonar.pullrequest.base=master " +
+                                                "-Dsonar.pullrequest.key=${env.CHANGE_ID} " +
+                                                "-Dsonar.pullrequest.branch=${env.BRANCH_NAME} " +
+                                                "-Dsonar.pullrequest.provider=github " +
+                                                "-Dsonar.pullrequest.github.repository=raphaelmue/financer"
+                                    } else {
+                                        if (env.BRANCH_NAME != 'master') {
+                                            sh "${scannerHome}/bin/sonar-scanner " +
+                                                    "-Dsonar.branch.name=${env.BRANCH_NAME} " +
+                                                    "-Dsonar.branch.target=master"
+                                        } else {
+                                            sh "${scannerHome}/bin/sonar-scanner"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                stage('Frontend') {
+                    environment {
+                        scannerHome = '$JENKINS_HOME/SonarQubeScanner'
+                    }
+                    steps {
+                        dir('frontend') {
+                            withSonarQubeEnv('SonarQubeServer') {
+                                script {
+                                    if (env.CHANGE_ID) {
+                                        sh "${scannerHome}/bin/sonar-scanner " +
+                                                "-Dsonar.pullrequest.base=master " +
+                                                "-Dsonar.pullrequest.key=${env.CHANGE_ID} " +
+                                                "-Dsonar.pullrequest.branch=${env.BRANCH_NAME} " +
+                                                "-Dsonar.pullrequest.provider=github " +
+                                                "-Dsonar.pullrequest.github.repository=raphaelmue/financer"
+                                    } else {
+                                        if (env.BRANCH_NAME != 'master') {
+                                            sh "${scannerHome}/bin/sonar-scanner " +
+                                                    "-Dsonar.branch.name=${env.BRANCH_NAME} " +
+                                                    "-Dsonar.branch.target=master"
+                                        } else {
+                                            sh "${scannerHome}/bin/sonar-scanner"
+                                        }
+                                    }
                                 }
                             }
                         }
                     }
                 }
             }
+
         }
     }
 
