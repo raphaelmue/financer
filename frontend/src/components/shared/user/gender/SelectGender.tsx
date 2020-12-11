@@ -23,7 +23,8 @@ class SelectGender extends React.Component<SelectGenderComponentProps, SelectGen
 
     render() {
         return (
-            <Select placeholder={this.props.t('Gender.gender')}
+            <Select key={'selectGender'}
+                    placeholder={this.props.t('Gender.gender')}
                     onChange={(value: string) => this.onChange(value)}>
                 <Option value={GenderEnum.MALE}>{this.props.t('Gender.male')}</Option>
                 <Option value={GenderEnum.FEMALE}>{this.props.t('Gender.female')}</Option>

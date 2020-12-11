@@ -1,5 +1,4 @@
-import * as translation from './translations.json';
-import store            from '../../store/store';
+import translation from './translations.json';
 
 export const deDEIntl = () => {
     return {

@@ -30,7 +30,7 @@ export function getCurrentIntlType(): IntlType {
     return enUSIntl;
 }
 
-export function configureI18N() {
+export function configureI18N(): void {
     i18next
         .use(initReactI18next) //
         .init({
@@ -40,8 +40,8 @@ export function configureI18N() {
             ns: ['default'],
             defaultNS: 'default',
             resources: {
-                en: {translation: translation_en},
-                de: {translation: translation_de},
+                en: {default: translation_en},
+                de: {default: translation_de},
             },
         });
 }

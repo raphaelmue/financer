@@ -34,11 +34,11 @@ class Authentication extends React.Component<AuthenticationComponentProps, Authe
                         <Typography>
                             <Title>Financer</Title>
                         </Typography>
-                        <Tabs defaultActiveKey="1">
-                            <TabPane tab={this.props.t('login')} key="1">
+                        <Tabs defaultActiveKey="loginTab">
+                            <TabPane tab={this.props.t('login')} key="loginTab">
                                 <Login/>
                             </TabPane>
-                            <TabPane tab={this.props.t('register')} key="2">
+                            <TabPane tab={this.props.t('register')} key="registerTab">
                                 <Register/>
                             </TabPane>
                         </Tabs>

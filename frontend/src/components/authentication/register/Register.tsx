@@ -65,7 +65,7 @@ class Register extends React.Component<RegisterComponentProps, RegisterComponent
         return (
             <Form
                 layout={'horizontal'}
-                name="normal_login"
+                name="register"
                 className="login-form"
                 onFinish={this._handleSubmit.bind(this)}>
                 <Space direction={'vertical'} size={'middle'}>
