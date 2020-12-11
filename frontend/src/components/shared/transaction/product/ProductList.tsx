@@ -58,7 +58,8 @@ class ProductList extends React.Component<ProductListComponentProps, ProductComp
                 loading={false}
                 toolBarRender={() => [
                     <Button
-                        key="deleteProductButton"
+                        key={"deleteProductButton"}
+                        id={"deleteProductButton"}
                         style={{display: this.state.selectedProductIds.length > 0 ? 'initial' : 'none'}}
                         icon={<DeleteOutlined/>}
                         onClick={() => this.onDeleteProduct()}
@@ -66,7 +67,8 @@ class ProductList extends React.Component<ProductListComponentProps, ProductComp
                         {this.props.t('Form.Button.Delete')}
                     </Button>,
                     <Button
-                        key="newVariableTransactionButton"
+                        key={"createProductButton"}
+                        id={"createProductButton"}
                         type="primary"
                         icon={<PlusOutlined/>}
                         onClick={this.props.openProductDialog}>

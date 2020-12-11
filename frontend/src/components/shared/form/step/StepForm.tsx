@@ -1,12 +1,12 @@
-import React                          from 'react';
-import {StepProps}                    from 'antd/lib/steps';
-import {Button, Steps}                from 'antd';
+import React                              from 'react';
+import {StepProps}                        from 'antd/lib/steps';
+import {Button, Steps}                    from 'antd';
 import {FooterToolbar}                    from '@ant-design/pro-layout';
 import {WithTranslation, withTranslation} from 'react-i18next';
 import {AppState}                         from '../../../../store/reducers/root.reducers';
-import {bindActionCreators, Dispatch} from 'redux';
-import {connect}                      from 'react-redux';
-import {StepFormContent}              from './StepFormContent';
+import {bindActionCreators, Dispatch}     from 'redux';
+import {connect}                          from 'react-redux';
+import {StepFormContent}                  from './StepFormContent';
 
 const {Step} = Steps;
 
@@ -94,16 +94,19 @@ class StepForm extends React.Component<StepFormComponentProps, StepFormComponent
                 </div>
                 <FooterToolbar>
                     <Button
+                        id={'previousStepButton'}
                         disabled={this.state.currentStepIndex === 0}
                         onClick={this.onPrevious.bind(this)}>
                         {this.props.t('Form.Button.Previous')}
                     </Button>
                     <Button
+                        id={'nextStepButton'}
                         disabled={this.state.currentStepIndex === this.props.steps.length - 1}
                         onClick={this.onNext.bind(this)}>
                         {this.props.t('Form.Button.Next')}
                     </Button>
                     <Button
+                        id={'submitStepsButton'}
                         type={'primary'}
                         disabled={!this.validateSteps()}
                         onClick={this.onSubmit.bind(this)}>
@@ -121,4 +124,4 @@ const mapStateToProps = (state: AppState) => {
 
 const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({}, dispatch);
 
-export default connect(mapStateToProps, mapDispatchToProps)(withTranslation<"default">()(StepForm));
+export default connect(mapStateToProps, mapDispatchToProps)(withTranslation<'default'>()(StepForm));

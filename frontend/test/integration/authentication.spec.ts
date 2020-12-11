@@ -1,6 +1,6 @@
 import TestUtil from '../util/util';
 
-describe('Authentication Component Test', () => {
+describe('Authentication Test', () => {
     it('should login correctly with email and password', () => {
         cy.intercept({
             method: 'GET',

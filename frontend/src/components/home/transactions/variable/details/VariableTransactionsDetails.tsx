@@ -186,11 +186,13 @@ class VariableTransactionsDetails extends React.Component<VariableTransactionsDe
                             </Descriptions>)}
                         extra={
                             <Space size={'small'}>
-                                <Button icon={<EditOutlined/>}
+                                <Button id={'editVariableTransaction'}
+                                        icon={<EditOutlined/>}
                                         onClick={() => this.setState({showUpdateVariableTransactionDialog: true})}>
                                     {this.props.t('Form.Button.Edit')}
                                 </Button>
-                                <Button danger
+                                <Button id={'deleteVariableTransaction'}
+                                        danger
                                         type={'primary'}
                                         icon={<DeleteOutlined/>}
                                         onClick={this.onDeleteVariableTransaction.bind(this)}>

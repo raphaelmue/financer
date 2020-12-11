@@ -3,10 +3,11 @@
     "fileServerFolder": ".",
     "integrationFolder": "test/integration",
     "fixturesFolder": "test/fixtures",
-    "pluginsFile": "test/plugins/index.js",
-    "supportFile": "test/support/index.js",
+    "pluginsFile": "test/plugins/index.ts",
+    "supportFile": "test/support/index.ts",
     "screenshotsFolder": ".test/.screenshots",
     "videosFolder": ".test/.videos",
+
     "reporter": "junit",
     "reporterOptions": {
         "mochaFile": ".test/.report/cypress-report.xml",

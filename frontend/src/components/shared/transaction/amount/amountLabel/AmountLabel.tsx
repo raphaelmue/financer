@@ -27,7 +27,7 @@ class AmountLabel extends React.Component<AmountLabelComponentProps, AmountLabel
                 </Text>
                 <Text type={AmountUtil.getTextType(this.props.amount)}>
                     {this.props.amount.amount.toLocaleString(
-                        this.props.userState.user?.settings?.LANGUAGE?.value || 'en',
+                            this.props.userState.user?.settings?.LANGUAGE?.value || 'en',
                         {minimumFractionDigits: 2})}
                 </Text>
             </Space>
