@@ -69,8 +69,18 @@ pipeline {
                     }
                     post {
                         always {
-                            junit '**/.test/.report/*.xml'
-                            step([$class: 'CoberturaPublisher', coberturaReportFile: '**/cobertura-coverage.xml', sourceEncoding: 'UTF-8'])
+                            junit '**/.test/.report/cypress-report.xml'
+                            step([$class: 'CoberturaPublisher',
+                                coberturaReportFile: 'frontend/.test/.coverage/cobertura-coverage.xml',
+                                autoUpdateHealth: false,
+                                autoUpdateStability: false,
+                                failUnhealthy: false,
+                                failUnstable: false,
+                                maxNumberOfBuilds: 0,
+                                onlyStable: false,
+                                sourceEncoding: 'ASCII',
+                                zoomCoverageChart: false
+                            ])
                         }
                     }
                 }
