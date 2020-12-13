@@ -1,22 +1,22 @@
 import {withTranslation, WithTranslation} from 'react-i18next';
-import {VariableTransaction}              from '../../../../../.openapi/models';
+import {VariableTransaction}              from '../../../../../.openapi';
 import React                              from 'react';
 import {DatePicker, Form, Input}          from 'antd';
 import {bindActionCreators, Dispatch}     from 'redux';
 import {connect}                          from 'react-redux';
-import {fieldIsRequiredRule} from '../../../user/form/rules';
-import CategoryTreeSelect    from '../../../category/select/CategoyTreeSelect';
-import TextArea              from 'antd/es/input/TextArea';
+import {fieldIsRequiredRule}              from '../../../user/form/rules';
+import CategoryTreeSelect                 from '../../../category/select/CategoyTreeSelect';
+import TextArea                           from 'antd/es/input/TextArea';
 import moment                             from 'moment';
 
 export interface VariableTransactionMetaData {
-    categoryId?: number
+    categoryId?: number,
     valueDate?: Date,
     vendor?: string,
     description?: string,
 }
 
-interface VariableTransactionDataFormComponentProps extends WithTranslation {
+interface VariableTransactionDataFormComponentProps extends WithTranslation<'default'> {
     variableTransaction?: VariableTransaction
     onChange?: (variableTransactionData: VariableTransactionMetaData) => void
 }
@@ -69,7 +69,6 @@ class VariableTransactionDataForm extends React.Component<VariableTransactionDat
                     name="categoryId"
                     rules={[fieldIsRequiredRule()]}>
                     <CategoryTreeSelect
-                        filterVariable
                         categoryId={this.props.variableTransaction?.category.id}
                         onChange={(value) => this.onChange({
                             ...this.state.variableTransactionMetaData,
@@ -110,4 +109,4 @@ const mapStateToProps = () => {
 
 const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({}, dispatch);
 
-export default connect(mapStateToProps, mapDispatchToProps)(withTranslation()(VariableTransactionDataForm));
+export default connect(mapStateToProps, mapDispatchToProps)(withTranslation<"default">()(VariableTransactionDataForm));

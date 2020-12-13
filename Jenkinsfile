@@ -35,14 +35,6 @@ pipeline {
                 }
             }
         }
-        stage('NodeJS') {
-            steps {
-                dir('web') {
-                    sh 'npm install -g yarn'
-                    sh 'yarn install'
-                }
-            }
-        }
 
         stage('Unit Tests') {
             parallel {
@@ -52,10 +44,43 @@ pipeline {
                             sh 'mvn test -P unit-tests'
                         }
                     }
+                    post {
+                        always {
+                            junit '**/target/surefire-reports/TEST-*.xml'
+                            step([$class: 'JacocoPublisher'])
+                        }
+                    }
                 }
                 stage('Frontend') {
+                    environment {
+                        CYPRESS_RECORD_KEY = credentials('cypress-token')
+                    }
                     steps {
                         dir('frontend') {
+                            sh 'docker run -i --rm \
+                                --volumes-from jenkins \
+                                --workdir ${PWD}/frontend \
+                                --name financer-integration-tests \
+                                --entrypoint yarn \
+                                --env CYPRESS_RECORD_KEY \
+                                cypress/included:6.1.0 \
+                                test'
+                        }
+                    }
+                    post {
+                        always {
+                            junit '**/.test/.report/cypress-report.xml'
+                            step([$class: 'CoberturaPublisher',
+                                coberturaReportFile: 'frontend/.test/.coverage/cobertura-coverage.xml',
+                                autoUpdateHealth: false,
+                                autoUpdateStability: false,
+                                failUnhealthy: false,
+                                failUnstable: false,
+                                maxNumberOfBuilds: 0,
+                                onlyStable: false,
+                                sourceEncoding: 'ASCII',
+                                zoomCoverageChart: false
+                            ])
                         }
                     }
                 }
@@ -63,43 +88,80 @@ pipeline {
         }
 
         stage('SonarQube Analysis') {
-            environment {
-                scannerHome = '$JENKINS_HOME/SonarQubeScanner'
-            }
-            steps {
-                dir('backend') {
-                    sh 'cp target/jacoco.exec org.financer.server/target/'
-                    sh 'cp target/jacoco.exec org.financer.shared/target/'
-                    sh 'cp target/jacoco.exec org.financer.util/target/'
-                    sh 'mvn dependency:copy-dependencies'
-                    withSonarQubeEnv('SonarQubeServer') {
-                        script {
-                            if (env.CHANGE_ID) {
-                                sh "${scannerHome}/bin/sonar-scanner " +
-                                        "-Dsonar.pullrequest.base=master " +
-                                        "-Dsonar.pullrequest.key=${env.CHANGE_ID} " +
-                                        "-Dsonar.pullrequest.branch=${env.BRANCH_NAME} " +
-                                        "-Dsonar.pullrequest.provider=github " +
-                                        "-Dsonar.pullrequest.github.repository=raphaelmue/financer"
-                            } else {
-                                if (env.BRANCH_NAME != 'master') {
-                                    sh "${scannerHome}/bin/sonar-scanner " +
-                                            "-Dsonar.branch.name=${env.BRANCH_NAME} " +
-                                            "-Dsonar.branch.target=master"
-                                } else {
-                                    sh "${scannerHome}/bin/sonar-scanner"
+            parallel {
+                stage('Backend') {
+                    environment {
+                        scannerHome = '$JENKINS_HOME/SonarQubeScanner'
+                    }
+                    steps {
+                        dir('backend') {
+                            sh 'cp target/jacoco.exec org.financer.server/target/'
+                            sh 'cp target/jacoco.exec org.financer.shared/target/'
+                            sh 'cp target/jacoco.exec org.financer.util/target/'
+                            sh 'mvn dependency:copy-dependencies'
+                            withSonarQubeEnv('SonarQubeServer') {
+                                script {
+                                    if (env.CHANGE_ID) {
+                                        sh "${scannerHome}/bin/sonar-scanner " +
+                                                "-Dsonar.pullrequest.base=master " +
+                                                "-Dsonar.pullrequest.key=${env.CHANGE_ID} " +
+                                                "-Dsonar.pullrequest.branch=${env.BRANCH_NAME} " +
+                                                "-Dsonar.pullrequest.provider=github " +
+                                                "-Dsonar.pullrequest.github.repository=raphaelmue/financer"
+                                    } else {
+                                        if (env.BRANCH_NAME != 'master') {
+                                            sh "${scannerHome}/bin/sonar-scanner " +
+                                                    "-Dsonar.branch.name=${env.BRANCH_NAME} " +
+                                                    "-Dsonar.branch.target=master"
+                                        } else {
+                                            sh "${scannerHome}/bin/sonar-scanner"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                stage('Frontend') {
+                    environment {
+                        scannerHome = '$JENKINS_HOME/SonarQubeScanner'
+                    }
+                    steps {
+                        dir('frontend') {
+                            withSonarQubeEnv('SonarQubeServer') {
+                                script {
+                                    if (env.CHANGE_ID) {
+                                        sh "${scannerHome}/bin/sonar-scanner " +
+                                                "-Dsonar.pullrequest.base=master " +
+                                                "-Dsonar.pullrequest.key=${env.CHANGE_ID} " +
+                                                "-Dsonar.pullrequest.branch=${env.BRANCH_NAME} " +
+                                                "-Dsonar.pullrequest.provider=github " +
+                                                "-Dsonar.pullrequest.github.repository=raphaelmue/financer"
+                                    } else {
+                                        if (env.BRANCH_NAME != 'master') {
+                                            sh "${scannerHome}/bin/sonar-scanner " +
+                                                    "-Dsonar.branch.name=${env.BRANCH_NAME} " +
+                                                    "-Dsonar.branch.target=master"
+                                        } else {
+                                            sh "${scannerHome}/bin/sonar-scanner"
+                                        }
+                                    }
                                 }
                             }
                         }
                     }
                 }
             }
+
         }
     }
+
     post {
         always {
-            junit '**/target/surefire-reports/TEST-*.xml'
-            step([$class: 'JacocoPublisher'])
+            dir('frontend') {
+                sh 'yarn run clean:modules'
+            }
         }
     }
 }

@@ -64,7 +64,7 @@ export default (): MenuDataItem[] => [
     }, {
         path: '/admin',
         name: i18next.t('Menu.Administration'),
-        hideInMenu: !AdminUtils.isUserAdmin(store.getState().user.user!),
+        hideInMenu: !AdminUtils.isUserAdmin(store.getState().user.user),
         icon: <SettingOutlined/>,
         children: [
             {

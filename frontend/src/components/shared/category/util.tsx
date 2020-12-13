@@ -5,7 +5,7 @@ import i18next                               from 'i18next';
 export default class CategoryUtil {
 
     static addRootCategories(categories: Category[]): Category[] {
-        let rootCategories: Category[] = [];
+        const rootCategories: Category[] = [];
         Object.keys(CategoryCategoryClassEnum).forEach((value, index) => {
             rootCategories.push({
                 id: -index - 1,
@@ -50,7 +50,7 @@ export default class CategoryUtil {
     static convertCategoriesToDataNode(categories: Category[], query?: string, root?: Category): DataNode[] {
         if (categories.length > 0) {
             if (root) {
-                let children: DataNode[] = [];
+                const children: DataNode[] = [];
                 if (root.children) {
                     root.children.forEach(value => {
                         children.push(...CategoryUtil.convertCategoriesToDataNode(categories, query, value));
@@ -59,7 +59,7 @@ export default class CategoryUtil {
 
                 // root is shown, if any child is shown
                 // otherwise, root is hidden
-                let isShown: boolean = (children.length > 0 && children.filter(value => value.style?.display !== 'none').length > 0)
+                const isShown: boolean = (children.length > 0 && children.filter(value => value.style?.display !== 'none').length > 0)
                     || ((query && root.name.toLowerCase().includes(query.toLowerCase())) || !query);
 
                 return [{
@@ -74,7 +74,7 @@ export default class CategoryUtil {
                     style: {display: isShown ? 'inherit' : 'none'}
                 }];
             } else {
-                let nodes: DataNode[] = [];
+                const nodes: DataNode[] = [];
                 categories.forEach(value => {
                     nodes.push(...CategoryUtil.convertCategoriesToDataNode(categories, query, value));
                 });

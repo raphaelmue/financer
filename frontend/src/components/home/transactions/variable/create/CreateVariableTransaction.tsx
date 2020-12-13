@@ -1,3 +1,4 @@
+import {bindActionCreators, Dispatch}                             from 'redux';
 import {connect}                                                  from 'react-redux';
 import {WithTranslation, withTranslation}                         from 'react-i18next';
 import React                                                      from 'react';
@@ -19,11 +20,11 @@ import StepForm, {FormStep}                                       from '../../..
 import {PageContainer}                                            from '@ant-design/pro-layout';
 import VariableTransactionDataForm, {VariableTransactionMetaData} from '../../../../shared/transaction/variable/transactionData/VariableTransactionDataForm';
 
-interface CreateVariableTransactionComponentProps extends WithTranslation, TransactionReducerProps {
+interface CreateVariableTransactionComponentProps extends WithTranslation<'default'>, TransactionReducerProps {
 }
 
 interface CreateVariableTransactionComponentState {
-    variableTransactionData: VariableTransactionMetaData
+    variableTransactionData: VariableTransactionMetaData,
     products: CreateProduct[],
     attachments: CreateAttachment[],
     showProductDialog: boolean,
@@ -74,7 +75,7 @@ class CreateVariableTransaction extends React.Component<CreateVariableTransactio
 
     onDeleteProducts(productIds: number[]): Promise<void> {
         return new Promise<void>((resolve) => {
-            let products: CreateProduct[] = this.state.products;
+            const products: CreateProduct[] = this.state.products;
             productIds.forEach(value => products.splice(value, 1));
             this.setState({products: products});
             resolve();
@@ -155,4 +156,4 @@ const mapStateToProps = (state: AppState) => {
     };
 };
 
-export default connect(mapStateToProps, transactionDispatchMap)(withTranslation()(CreateVariableTransaction));
+export default connect(mapStateToProps, transactionDispatchMap)(withTranslation<'default'>()(CreateVariableTransaction));

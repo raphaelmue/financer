@@ -8,14 +8,13 @@ import {columns}                          from './columns';
 import {AppState}                         from '../../../../store/reducers/root.reducers';
 import {connect}                          from 'react-redux';
 import {transactionDispatchMap}           from '../../../../store/api/transaction.api';
-import {tableTranslations}                from '../../../../translations/translations';
 import {Button}                           from 'antd';
 import {PlusOutlined}                     from '@ant-design/icons';
 import {Link, Redirect}                   from 'react-router-dom';
 import {PageContainer}                    from '@ant-design/pro-layout';
 
 
-interface VariableTransactionListComponentProps extends WithTranslation, TransactionReducerProps, UserReducerProps {
+interface VariableTransactionListComponentProps extends WithTranslation<'default'>, TransactionReducerProps, UserReducerProps {
 }
 
 interface VariableTransactionListComponentState {
@@ -66,11 +65,10 @@ class VariableTransactionList extends React.Component<VariableTransactionListCom
                     rowKey={'id'}
                     onLoad={() => this.loadVariableTransactions()}
                     dateFormatter={'number'}
-                    locale={tableTranslations()}
                     search={false}
                     pagination={{
                         total: this.props.transactionState.pageMetadata?.totalElements || 0,
-                        locale: 'en_US',
+                        size: 'default',
                         current: this.state.page + 1,
                         pageSize: this.state.pageSize,
                         onChange: this.onPaginationChange.bind(this)
@@ -85,9 +83,11 @@ class VariableTransactionList extends React.Component<VariableTransactionListCom
                     }}
                     rowClassName={'cursor: pointer'}
                     toolBarRender={() => [
-                        <Link to={'/transactions/variable/create'}>
+                        <Link key={'linkToCreateVariableTransaction'}
+                              to={'/transactions/variable/create'}>
                             <Button
-                                key="newVariableTransactionButton"
+                                id={'createVariableTransactionButton'}
+                                key={'createVariableTransactionButton'}
                                 type="primary"
                                 icon={<PlusOutlined/>}>
                                 {this.props.t('Form.Button.New')}
@@ -107,4 +107,4 @@ const mapStateToProps = (state: AppState) => {
     };
 };
 
-export default connect(mapStateToProps, transactionDispatchMap)(withTranslation()(VariableTransactionList));
+export default connect(mapStateToProps, transactionDispatchMap)(withTranslation<'default'>()(VariableTransactionList));

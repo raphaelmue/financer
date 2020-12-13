@@ -2,8 +2,7 @@ import React                              from 'react';
 import {FixedTransactionAmount}           from '../../../../../.openapi';
 import ProTable                           from '@ant-design/pro-table';
 import {columns}                          from './columns';
-import {tableTranslations}                from '../../../../../translations/translations';
-import {Button, Space}                    from 'antd';
+import {Button}                           from 'antd';
 import {DeleteOutlined, PlusOutlined}     from '@ant-design/icons';
 import {bindActionCreators, Dispatch}     from 'redux';
 import {connect}                          from 'react-redux';
@@ -52,29 +51,26 @@ class FixedTransactionAmountList extends React.Component<FixedTransactionAmountL
                 columns={columns()}
                 dataSource={this.props.fixedTransactionAmounts || []}
                 dateFormatter={'number'}
-                locale={tableTranslations()}
                 rowKey={'id'}
                 search={false}
                 pagination={false}
                 loading={false}
                 toolBarRender={() => [
-                    <Space size={'small'}>
-                        <Button
-                            key="deleteProductButton"
-                            style={{display: this.state.selectedFixedTransactionAmountIds.length > 0 ? 'initial' : 'none'}}
-                            icon={<DeleteOutlined/>}
-                            onClick={() => this.onDeleteProduct()}
-                            danger>
-                            {this.props.t('Form.Button.Delete')}
-                        </Button>
-                        <Button
-                            key="newVariableTransactionButton"
-                            type="primary"
-                            icon={<PlusOutlined/>}
-                            onClick={this.props.openFixedTransactionAmountDialog}>
-                            {this.props.t('Form.Button.Add')}
-                        </Button>
-                    </Space>
+                    <Button
+                        key="deleteProductButton"
+                        style={{display: this.state.selectedFixedTransactionAmountIds.length > 0 ? 'initial' : 'none'}}
+                        icon={<DeleteOutlined/>}
+                        onClick={() => this.onDeleteProduct()}
+                        danger>
+                        {this.props.t('Form.Button.Delete')}
+                    </Button>,
+                    <Button
+                        key="newVariableTransactionButton"
+                        type="primary"
+                        icon={<PlusOutlined/>}
+                        onClick={this.props.openFixedTransactionAmountDialog}>
+                        {this.props.t('Form.Button.Add')}
+                    </Button>
                 ]}>
             </ProTable>
         );

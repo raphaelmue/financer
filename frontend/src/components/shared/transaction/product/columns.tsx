@@ -26,12 +26,14 @@ export const columns = (): ProColumns<Product>[] => [
         title: i18next.t('Transaction.Amount'),
         dataIndex: ['amount', 'amount'],
         valueType: 'money',
-        render: (dom, entity) => (<AmountLabel amount={entity.amount} />)
+        // eslint-disable-next-line react/display-name
+        render: (dom: React.ReactNode, entity) => (<AmountLabel amount={entity.amount} />)
     }, {
         key: 'totalAmount',
         title: i18next.t('Transaction.TotalAmount'),
         dataIndex: ['totalAmount', 'amount'],
         valueType: 'money',
-        render: (dom, entity) => (<AmountLabel amount={entity.totalAmount} />)
+        // eslint-disable-next-line react/display-name
+        render: (dom: React.ReactNode, entity) => (<AmountLabel amount={entity.totalAmount} />)
     }
 ];

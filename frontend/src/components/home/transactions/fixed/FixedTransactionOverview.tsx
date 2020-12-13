@@ -38,11 +38,11 @@ class FixedTransactionOverview extends React.Component<FixedTransactionOverviewC
         };
     }
 
-    loadFixedTransactions(page: number = 0, pageSize: number = 20): Promise<RequestData<FixedTransaction>> {
+    loadFixedTransactions(page = 0, pageSize = 20): Promise<RequestData<FixedTransaction>> {
         return new Promise<RequestData<FixedTransaction>>(resolve => {
-            if (this.state.selectedCategoryId) {
+            if (this.state.selectedCategoryId && this.props.userState.user?.id) {
                 this.props.dispatchLoadFixedTransactions({
-                    userId: this.props.userState.user?.id!,
+                    userId: this.props.userState.user.id,
                     categoryId: this.state.selectedCategoryId,
                     onlyActive: false,
                 }, (fixedTransactions) => {
@@ -82,17 +82,18 @@ class FixedTransactionOverview extends React.Component<FixedTransactionOverviewC
                                 pageSize: this.state.pageSize,
                             }}
                             toolBarRender={() => [
-                                <Link to={'/transactions/fixed/create'}>
+                                <Link key={'createFixedTransactionLink'}
+                                      to={'/transactions/fixed/create'}>
                                     <Button
-                                        key="newFixedTransactionButton"
+                                        id={'newFixedTransactionButton'}
+                                        key={'newFixedTransactionButton'}
                                         type="primary"
                                         icon={<PlusOutlined/>}>
                                         {this.props.t('Form.Button.New')}
                                     </Button>
                                 </Link>]}
                             metas={metas()}
-                            request={(params, sort, filter) =>
-                                this.loadFixedTransactions(params.current, params.pageSize)}/>
+                            request={(params) => this.loadFixedTransactions(params.current, params.pageSize)}/>
                     </ProCard>
                 </Row>
             </PageContainer>

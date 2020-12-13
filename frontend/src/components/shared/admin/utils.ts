@@ -2,11 +2,13 @@ import {User} from '../../../.openapi';
 
 export default class AdminUtils {
 
-    public static isUserAdmin(user: User): boolean {
-        if (user.roles !== undefined) {
-            for (let role of user.roles) {
-                if (role.name === 'ADMIN') {
-                    return true;
+    static isUserAdmin(user: User | undefined): boolean {
+        if (user) {
+            if (user.roles != undefined) {
+                for (const role of user.roles) {
+                    if (role.name === 'ADMIN') {
+                        return true;
+                    }
                 }
             }
         }

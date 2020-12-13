@@ -10,7 +10,7 @@ export const loadCategories = (data: GetUsersCategoriesRequest, callback?: (cate
             type: CategoryActionDefinition.LOAD_CATEGORIES_REQUEST,
             payload: data
         });
-        let api = new UserApi(apiConfiguration());
+        const api = new UserApi(apiConfiguration());
         ErrorMessage.resolveError(api.getUsersCategories(data)
             .then((categories: Category[]) => {
                 dispatch({

@@ -23,7 +23,9 @@ interface CategoryTreeComponentState {
 class CategoryTree extends React.Component<CategoryTreeComponentProps, CategoryTreeComponentState> {
 
     private $loadCategories = new Promise<void>(resolve => {
-        this.props.dispatchLoadCategories({userId: this.props.userState.user?.id!}, () => resolve());
+        if (this.props.userState.user?.id) {
+            this.props.dispatchLoadCategories({userId: this.props.userState.user.id}, () => resolve());
+        }
     });
 
     constructor(props: CategoryTreeComponentProps) {
@@ -58,7 +60,7 @@ class CategoryTree extends React.Component<CategoryTreeComponentProps, CategoryT
         return (
             <div>
                 <Search style={{marginBottom: 8}}
-                        placeholder={this.props.t('Form.Input.Search')}
+                        placeholder={this.props.t('Form.Input.Search')?.toString()}
                         onChange={event => this.setState({searchQuery: event.target.value})}/>
                 <Tree
                     showLine

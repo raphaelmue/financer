@@ -1,8 +1,15 @@
 # Financer
 
-[![Build Status](https://jenkins.raphael-muesseler.de/job/financer/job/master/badge/icon)](https://jenkins.raphael-muesseler.de/job/financer/job/master/)
-[![Quality Gate Status](https://sonarqube.raphael-muesseler.de/api/project_badges/measure?project=financer&metric=alert_status)](https://sonarqube.raphael-muesseler.de/dashboard?id=financer)
-[![Coverage](https://sonarqube.raphael-muesseler.de/api/project_badges/measure?project=financer&metric=coverage)](https://sonarqube.raphael-muesseler.de/dashboard?id=financer)
+CI / CD
+
+| Component | Code Quality | Tests | Statistics |
+| --------- | ------------ | ----- | ---------- |
+| All       | [![Build Status](https://jenkins.raphael-muesseler.de/job/financer/job/master/badge/icon)](https://jenkins.raphael-muesseler.de/job/financer/job/master/) | | | |
+| Backend   | [![Quality Gate Status](https://sonarqube.raphael-muesseler.de/api/project_badges/measure?project=financer&metric=alert_status)](https://sonarqube.raphael-muesseler.de/dashboard?id=financer) <br /> [![Code Smells](https://sonarqube.raphael-muesseler.de/api/project_badges/measure?project=financer&metric=code_smells)](https://sonarqube.raphael-muesseler.de/dashboard?id=financer) <br /> [![Duplicated Lines (%)](https://sonarqube.raphael-muesseler.de/api/project_badges/measure?project=financer&metric=duplicated_lines_density)](https://sonarqube.raphael-muesseler.de/dashboard?id=financer) | [![Coverage](https://sonarqube.raphael-muesseler.de/api/project_badges/measure?project=financer&metric=coverage)](https://sonarqube.raphael-muesseler.de/dashboard?id=financer) | [![Lines of Code](https://sonarqube.raphael-muesseler.de/api/project_badges/measure?project=financer&metric=ncloc)](https://sonarqube.raphael-muesseler.de/dashboard?id=financer) |
+| Frontend  | [![Quality Gate Status](https://sonarqube.raphael-muesseler.de/api/project_badges/measure?project=financer-frontend&metric=alert_status)](https://sonarqube.raphael-muesseler.de/dashboard?id=financer-frontend) <br /> [![Code Smells](https://sonarqube.raphael-muesseler.de/api/project_badges/measure?project=financer-frontend&metric=code_smells)](https://sonarqube.raphael-muesseler.de/dashboard?id=financer-frontend) <br /> [![Duplicated Lines (%)](https://sonarqube.raphael-muesseler.de/api/project_badges/measure?project=financer-frontend&metric=duplicated_lines_density)](https://sonarqube.raphael-muesseler.de/dashboard?id=financer-frontend) | [![Coverage](https://sonarqube.raphael-muesseler.de/api/project_badges/measure?project=financer-frontend&metric=coverage)](https://sonarqube.raphael-muesseler.de/dashboard?id=financer-frontend) <br /> [![Financer](https://img.shields.io/endpoint?url=https://dashboard.cypress.io/badge/detailed/ridaia/master&style=flat&logo=cypress)](https://dashboard.cypress.io/projects/ridaia/runs) | [![Lines of Code](https://sonarqube.raphael-muesseler.de/api/project_badges/measure?project=financer-frontend&metric=ncloc)](https://sonarqube.raphael-muesseler.de/dashboard?id=financer-frontend) | 
+
+
+
 
 ## Content
 

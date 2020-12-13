@@ -1,14 +1,14 @@
 import React                              from 'react';
-import {Amount}                           from '../../../../../.openapi/models';
+import {Amount}                           from '../../../../../.openapi';
 import {Statistic}                        from 'antd';
-import {withTranslation, WithTranslation} from 'react-i18next';
+import {WithTranslation, withTranslation} from 'react-i18next';
 import {UserReducerProps}                 from '../../../../../store/reducers/user.reducers';
 import {AppState}                         from '../../../../../store/reducers/root.reducers';
 import {bindActionCreators, Dispatch}     from 'redux';
 import {connect}                          from 'react-redux';
 import AmountUtil                         from '../util';
 
-interface AmountStatisticsComponentProps extends WithTranslation, UserReducerProps {
+interface AmountStatisticsComponentProps extends WithTranslation<'default'>, UserReducerProps {
     data: Amount
 }
 
@@ -43,4 +43,4 @@ const mapStateToProps = (state: AppState) => {
 
 const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({}, dispatch);
 
-export default connect(mapStateToProps, mapDispatchToProps)(withTranslation()(AmountStatistics));
+export default connect(mapStateToProps, mapDispatchToProps)(withTranslation<'default'>()(AmountStatistics));

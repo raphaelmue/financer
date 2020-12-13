@@ -27,7 +27,7 @@ const loadVariableTransactions = (data: GetUsersVariableTransactionsRequest) => 
             type: TransactionActionDefinition.LOAD_VARIABLE_TRANSACTIONS_REQUEST,
             payload: data
         });
-        let api = new UserApi(apiConfiguration());
+        const api = new UserApi(apiConfiguration());
         ErrorMessage.resolveError(api.getUsersVariableTransactions(data)
             .then((transactions: PagedModelVariableTransaction) => dispatch({
                 type: TransactionActionDefinition.LOAD_VARIABLE_TRANSACTIONS_SUCCESS,
@@ -42,7 +42,7 @@ const loadVariableTransaction = (data: GetVariableTransactionByIdRequest, callba
             type: TransactionActionDefinition.LOAD_VARIABLE_TRANSACTION_REQUEST,
             payload: data
         });
-        let api = new VariableTransactionApi(apiConfiguration());
+        const api = new VariableTransactionApi(apiConfiguration());
         ErrorMessage.resolveError(api.getVariableTransactionById(data)
             .then((transaction: VariableTransaction) => {
                 dispatch({
@@ -62,7 +62,7 @@ const createVariableTransaction = (data: CreateVariableTransactionRequest, callb
             type: TransactionActionDefinition.CREATE_VARIABLE_TRANSACTION_REQUEST,
             payload: data
         });
-        let api = new VariableTransactionApi(apiConfiguration());
+        const api = new VariableTransactionApi(apiConfiguration());
         ErrorMessage.resolveError(api.createVariableTransaction(data)
             .then((variableTransaction: VariableTransaction) => {
                 dispatch({
@@ -82,7 +82,7 @@ const updateVariableTransaction = (data: UpdateVariableTransactionRequest, callb
             type: TransactionActionDefinition.UPDATE_VARIABLE_TRANSACTION_REQUEST,
             payload: data
         });
-        let api = new VariableTransactionApi(apiConfiguration());
+        const api = new VariableTransactionApi(apiConfiguration());
         ErrorMessage.resolveError(api.updateVariableTransaction(data)
             .then((variableTransaction: VariableTransaction) => {
                 dispatch({
@@ -102,7 +102,7 @@ const deleteVariableTransaction = (data: DeleteVariableTransactionRequest, callb
             type: TransactionActionDefinition.DELETE_VARIABLE_TRANSACTION_REQUEST,
             payload: data
         });
-        let api = new VariableTransactionApi(apiConfiguration());
+        const api = new VariableTransactionApi(apiConfiguration());
         ErrorMessage.resolveError(api.deleteVariableTransaction(data)
                 .then(() => {
                     dispatch({type: TransactionActionDefinition.DELETE_VARIABLE_TRANSACTION_SUCCESS});
@@ -118,7 +118,7 @@ const createProduct = (data: CreateProductRequest, callback?: (product: Product)
             type: TransactionActionDefinition.CREATE_PRODUCT_REQUEST,
             payload: data
         });
-        let api = new VariableTransactionApi(apiConfiguration());
+        const api = new VariableTransactionApi(apiConfiguration());
         ErrorMessage.resolveError(api.createProduct(data)
             .then((product: Product) => {
                 dispatch({
@@ -138,7 +138,7 @@ const deleteProducts = (data: DeleteProductsRequest, callback?: () => void) => {
             type: TransactionActionDefinition.DELETE_PRODUCTS_REQUEST,
             payload: data
         });
-        let api = new VariableTransactionApi(apiConfiguration());
+        const api = new VariableTransactionApi(apiConfiguration());
         ErrorMessage.resolveError(api.deleteProducts(data)
                 .then(() => {
                     dispatch({type: TransactionActionDefinition.DELETE_PRODUCTS_SUCCESS});
@@ -154,14 +154,20 @@ const loadFixedTransactions = (data: GetUsersFixedTransactionsRequest, callback?
             type: TransactionActionDefinition.LOAD_FIXED_TRANSACTIONS_REQUEST,
             payload: data
         });
-        let api = new UserApi(apiConfiguration());
+        const api = new UserApi(apiConfiguration());
         ErrorMessage.resolveError(api.getUsersFixedTransactions(data)
             .then((transactions) => {
                 dispatch({
                     type: TransactionActionDefinition.LOAD_FIXED_TRANSACTIONS_SUCCESS,
                     payload: transactions
                 });
-                if (callback) callback(transactions.embedded?.fixedTransactionDToes!);
+                if (callback) {
+                    if (transactions.embedded?.fixedTransactionDToes) {
+                        callback(transactions.embedded.fixedTransactionDToes);
+                    } else {
+                        callback([]);
+                    }
+                }
             }), TransactionActionDefinition.LOAD_FIXED_TRANSACTIONS_FAILED, dispatch);
     };
 };
@@ -172,7 +178,7 @@ const createFixedTransaction = (data: CreateFixedTransactionRequest, callback?: 
             type: TransactionActionDefinition.CREATE_FIXED_TRANSACTION_REQUEST,
             payload: data
         });
-        let api = new FixedTransactionApi(apiConfiguration());
+        const api = new FixedTransactionApi(apiConfiguration());
         ErrorMessage.resolveError(api.createFixedTransaction(data)
             .then((fixedTransaction) => {
                 dispatch({

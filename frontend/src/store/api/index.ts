@@ -1,7 +1,8 @@
 import {BASE_PATH, Configuration, FetchParams, Middleware, RequestContext} from '../../.openapi';
 import store                                                               from '../store';
+import * as dotenv from 'dotenv';
 
-require('dotenv').config();
+dotenv.config()
 
 const middleware: Middleware = {
     pre(context: RequestContext): Promise<FetchParams | void> {

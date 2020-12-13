@@ -2,10 +2,11 @@ import {UserReducerProps}             from '../../../../../store/reducers/user.r
 import {AppState}                     from '../../../../../store/reducers/root.reducers';
 import {bindActionCreators, Dispatch} from 'redux';
 import {connect}                      from 'react-redux';
-import {Amount}                       from '../../../../../.openapi/models';
+import {Amount}                       from '../../../../../.openapi';
 import React                          from 'react';
 import {Space, Typography}            from 'antd';
 import AmountUtil                     from '../util';
+import {getCurrencySymbol}            from '../../../user/settings/settingsUtil';
 
 const {Text} = Typography;
 
@@ -22,11 +23,11 @@ class AmountLabel extends React.Component<AmountLabelComponentProps, AmountLabel
         return (
             <Space size={'small'}>
                 <Text type={AmountUtil.getTextType(this.props.amount)}>
-                    {this.props.userState.user?.settings?.CURRENCY?.value || 'USD'}
+                    {getCurrencySymbol()}
                 </Text>
                 <Text type={AmountUtil.getTextType(this.props.amount)}>
                     {this.props.amount.amount.toLocaleString(
-                        this.props.userState.user?.settings?.LANGUAGE?.value || 'en',
+                            this.props.userState.user?.settings?.LANGUAGE?.value || 'en',
                         {minimumFractionDigits: 2})}
                 </Text>
             </Space>

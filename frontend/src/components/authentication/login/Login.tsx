@@ -1,17 +1,17 @@
-import {withTranslation, WithTranslation} from 'react-i18next';
-import {UserReducerProps}                 from '../../../store/reducers/user.reducers';
-import {LoginUserRequest}                 from '../../../.openapi/apis';
+import {WithTranslation, withTranslation}       from 'react-i18next';
+import {UserReducerProps}                       from '../../../store/reducers/user.reducers';
+import {LoginUserRequest}                       from '../../../.openapi';
 import * as React                               from 'react';
 import {Button, Form, Input, Space, Typography} from 'antd';
 import {LockOutlined, UserOutlined}             from '@ant-design/icons';
-import {AppState}                         from '../../../store/reducers/root.reducers';
-import {bindActionCreators, Dispatch}     from 'redux';
-import * as action                        from '../../../store/api/user.api';
-import {connect}                          from 'react-redux';
+import {AppState}                               from '../../../store/reducers/root.reducers';
+import {bindActionCreators, Dispatch}           from 'redux';
+import * as action                              from '../../../store/api/user.api';
+import {connect}                                from 'react-redux';
 
 const {Text} = Typography;
 
-interface LoginComponentProps extends WithTranslation, UserReducerProps {
+interface LoginComponentProps extends WithTranslation<'default'>, UserReducerProps {
     login: (loginData: LoginUserRequest) => void
 }
 
@@ -38,19 +38,19 @@ class Login extends React.Component <LoginComponentProps, LoginComponentState> {
         return (
             <Form
                 layout={'horizontal'}
-                name="normal_login"
+                name="login"
                 className="login-form"
                 onFinish={this._handleSubmit.bind(this)}>
                 <Space direction={'vertical'} size={'middle'}>
                     <Text type={'danger'}>{this.props.userState.error?.message}</Text>
                 </Space>
                 <Form.Item
-                    name="username"
+                    name="email"
                     rules={[{required: true, message: 'Please input your Username!'}]}>
                     <Input prefix={<UserOutlined className="site-form-item-icon"/>}
                            type={'email'}
                            name="email"
-                           placeholder={this.props.t('email')}
+                           placeholder={this.props.t('email')?.toString()}
                            onChange={this.handleChange}/>
                 </Form.Item>
                 <Form.Item
@@ -59,7 +59,7 @@ class Login extends React.Component <LoginComponentProps, LoginComponentState> {
                     <Input.Password
                         prefix={<LockOutlined className="site-form-item-icon"/>}
                         name="password"
-                        placeholder={this.props.t('password')}
+                        placeholder={this.props.t('password')?.toString()}
                         onChange={this.handleChange}/>
                 </Form.Item>
 
@@ -84,4 +84,4 @@ const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({
     login: action.loginUser
 }, dispatch);
 
-export default connect(mapStateToProps, mapDispatchToProps)(withTranslation()(Login));
+export default connect(mapStateToProps, mapDispatchToProps)(withTranslation<"default">()(Login));

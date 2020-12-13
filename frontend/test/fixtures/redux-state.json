@@ -1,0 +1,23 @@
+{
+    "transaction": {
+        "isLoading": false,
+        "variableTransactions": [],
+        "pageMetadata": {
+            "size": 20,
+            "totalElements": 0,
+            "totalPages": 0,
+            "number": 0
+        }
+    },
+    "category": {
+        "isLoading": false,
+        "categories": []
+    },
+    "admin": {
+        "isLoading": false,
+        "configuration": {
+            "defaultLanguage": "en",
+            "defaultCurrency": "USD"
+        }
+    }
+}

@@ -2,7 +2,7 @@ import React   from 'react';
 import ProCard from '@ant-design/pro-card';
 
 interface StepFormContentComponentProps {
-    key: string
+    key: string,
     visible: boolean
 }
 

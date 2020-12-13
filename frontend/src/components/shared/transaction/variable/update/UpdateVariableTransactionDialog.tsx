@@ -8,9 +8,9 @@ import VariableTransactionDataForm, {VariableTransactionMetaData} from '../trans
 import {transactionDispatchMap}                                   from '../../../../../store/api/transaction.api';
 import {withTranslation, WithTranslation}                         from 'react-i18next';
 
-interface UpdateVariableTransactionDialogComponentProps extends WithTranslation, TransactionReducerProps {
+interface UpdateVariableTransactionDialogComponentProps extends WithTranslation<'default'>, TransactionReducerProps {
     visible: boolean,
-    variableTransaction: VariableTransaction
+    variableTransaction: VariableTransaction,
     onSubmit?: (variableTransaction: VariableTransaction) => void,
     onCancel?: () => void
 }
@@ -96,4 +96,4 @@ const mapStateToProps = (state: AppState) => {
     };
 };
 
-export default connect(mapStateToProps, transactionDispatchMap)(withTranslation()(UpdateVariableTransactionDialog));
+export default connect(mapStateToProps, transactionDispatchMap)(withTranslation<'default'>()(UpdateVariableTransactionDialog));

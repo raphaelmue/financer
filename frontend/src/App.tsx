@@ -8,7 +8,7 @@ import Home                                  from './components/home/Home';
 configureI18N();
 
 export default class App extends React.Component {
-    render() {
+    render(): JSX.Element {
         return (
             <Router>
                 <Switch>

@@ -13,7 +13,7 @@ import Register                           from './register/Register';
 const {Title} = Typography;
 const {TabPane} = Tabs;
 
-interface AuthenticationComponentProps extends WithTranslation, UserReducerProps {
+interface AuthenticationComponentProps extends WithTranslation<'default'>, UserReducerProps {
 }
 
 interface AuthenticationComponentState {
@@ -34,11 +34,11 @@ class Authentication extends React.Component<AuthenticationComponentProps, Authe
                         <Typography>
                             <Title>Financer</Title>
                         </Typography>
-                        <Tabs defaultActiveKey="1">
-                            <TabPane tab={this.props.t('login')} key="1">
+                        <Tabs defaultActiveKey="loginTab">
+                            <TabPane tab={this.props.t('login')} key="loginTab">
                                 <Login/>
                             </TabPane>
-                            <TabPane tab={this.props.t('register')} key="2">
+                            <TabPane tab={this.props.t('register')} key="registerTab">
                                 <Register/>
                             </TabPane>
                         </Tabs>
@@ -57,4 +57,4 @@ const mapStateToProps = (state: AppState) => {
 
 const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({}, dispatch);
 
-export default connect(mapStateToProps, mapDispatchToProps)(withTranslation()(Authentication));
+export default connect(mapStateToProps, mapDispatchToProps)(withTranslation<"default">()(Authentication));

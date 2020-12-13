@@ -11,7 +11,7 @@ export const loadAdminConfiguration = (data: GetConfigurationRequest = {}, callb
             type: AdminActionDefinition.LOAD_ADMIN_CONFIGURATION_REQUEST,
             payload: data
         });
-        let api = new Api(apiConfiguration());
+        const api = new Api(apiConfiguration());
         ErrorMessage.resolveError(api.getConfiguration(data)
             .then((configuration) => {
                 dispatch({
@@ -29,7 +29,7 @@ export const updateAdminConfiguration = (data: UpdateConfigurationRequest, callb
             type: AdminActionDefinition.UPDATE_ADMIN_CONFIGURATION_REQUEST,
             payload: data
         });
-        let api = new Api(apiConfiguration());
+        const api = new Api(apiConfiguration());
         ErrorMessage.resolveError(api.updateConfiguration(data)
             .then((configuration) => {
                 dispatch({
@@ -42,6 +42,6 @@ export const updateAdminConfiguration = (data: UpdateConfigurationRequest, callb
 };
 
 export interface AdminApi {
-    dispatchLoadAdminConfiguration: (data: GetConfigurationRequest, callback?: (adminConfiguration: AdminConfiguration) => void) => void
+    dispatchLoadAdminConfiguration: (data: GetConfigurationRequest, callback?: (adminConfiguration: AdminConfiguration) => void) => void,
     dispatchUpdateAdminConfiguration: (data: UpdateConfigurationRequest, callback?: (adminConfiguration: AdminConfiguration) => void) => void
 }

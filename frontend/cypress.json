@@ -1,0 +1,21 @@
+{
+    "projectId": "ridaia",
+    "fileServerFolder": ".",
+    "integrationFolder": "test/integration",
+    "fixturesFolder": "test/fixtures",
+    "pluginsFile": "test/plugins/index.ts",
+    "supportFile": "test/support/index.ts",
+    "screenshotsFolder": ".test/.screenshots",
+    "videosFolder": ".test/.videos",
+
+    "reporter": "junit",
+    "reporterOptions": {
+        "mochaFile": ".test/.report/cypress-report.xml",
+        "toConsole": false
+    },
+    "baseUrl": "http://localhost:3000",
+    "video": false,
+    "screenshotOnRunFailure": true,
+    "chromeWebSecurity": false,
+    "watchForFileChanges": false
+}

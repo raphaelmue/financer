@@ -1,13 +1,13 @@
 import React                              from 'react';
 import {Select}                           from 'antd';
 import {withTranslation, WithTranslation} from 'react-i18next';
-import {Gender, GenderEnum}               from '../../../../.openapi';
+import {Gender, GenderEnum}               from '../../../../.openapi/models';
 import {connect}                          from 'react-redux';
 
 const {Option} = Select;
 
 
-interface SelectGenderComponentProps extends WithTranslation {
+interface SelectGenderComponentProps extends WithTranslation<'default'> {
     onChange: (gender: Gender | undefined) => void
 }
 
@@ -23,7 +23,8 @@ class SelectGender extends React.Component<SelectGenderComponentProps, SelectGen
 
     render() {
         return (
-            <Select placeholder={this.props.t('Gender.gender')}
+            <Select key={'selectGender'}
+                    placeholder={this.props.t('Gender.gender')}
                     onChange={(value: string) => this.onChange(value)}>
                 <Option value={GenderEnum.Male}>{this.props.t('Gender.male')}</Option>
                 <Option value={GenderEnum.Female}>{this.props.t('Gender.female')}</Option>
@@ -33,5 +34,5 @@ class SelectGender extends React.Component<SelectGenderComponentProps, SelectGen
     }
 }
 
-export default connect()(withTranslation()(SelectGender));
+export default connect()(withTranslation<"default">()(SelectGender));
 

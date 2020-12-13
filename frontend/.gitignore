@@ -20,10 +20,10 @@ pids
 lib-cov
 
 # Coverage directory used by tools like istanbul
-coverage
+.coverage
 *.lcov
 
-# nyc test coverage
+# nyc __test__ .coverage
 .nyc_output
 
 # node-waf configuration
@@ -96,3 +96,6 @@ out/
 
 # Build Output Directory
 build/
+
+# Test
+.test/
