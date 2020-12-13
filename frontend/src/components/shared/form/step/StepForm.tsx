@@ -3,7 +3,6 @@ import {StepProps}                        from 'antd/lib/steps';
 import {Button, Steps}                    from 'antd';
 import {FooterToolbar}                    from '@ant-design/pro-layout';
 import {WithTranslation, withTranslation} from 'react-i18next';
-import {AppState}                         from '../../../../store/reducers/root.reducers';
 import {bindActionCreators, Dispatch}     from 'redux';
 import {connect}                          from 'react-redux';
 import {StepFormContent}                  from './StepFormContent';
@@ -118,7 +117,7 @@ class StepForm extends React.Component<StepFormComponentProps, StepFormComponent
     }
 }
 
-const mapStateToProps = (state: AppState) => {
+const mapStateToProps = () => {
     return {};
 };
 

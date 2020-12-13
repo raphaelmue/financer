@@ -11,6 +11,7 @@ export const metas = (): ProListMetas<FixedTransaction> => {
             dataIndex: 'product',
         },
         subTitle: {
+            // eslint-disable-next-line react/display-name
             render: (dom, entity) => {
                 return (
                     <Space>
@@ -26,6 +27,7 @@ export const metas = (): ProListMetas<FixedTransaction> => {
             },
         },
         description: {
+            // eslint-disable-next-line react/display-name
             render: (dom, entity) => (
                 <Space>
                     {entity.day}
@@ -37,6 +39,7 @@ export const metas = (): ProListMetas<FixedTransaction> => {
             )
         },
         content: {
+            // eslint-disable-next-line react/display-name
             render: (dom, entity) => (
                 <Space>
                     {entity.timeRange.startDate.toLocaleDateString()}
@@ -46,6 +49,7 @@ export const metas = (): ProListMetas<FixedTransaction> => {
             )
         },
         extra: {
+            // eslint-disable-next-line react/display-name
             render: ((dom, entity) => {
                 if (entity.hasVariableAmounts) {
                     if (entity.transactionAmounts.length > 0) {

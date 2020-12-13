@@ -20,6 +20,7 @@ import javax.validation.constraints.NotNull;
 @RequestMapping("/fixedTransactions")
 public interface FixedTransactionApi {
 
+
     /**
      * Creates a fixed transaction.
      *
@@ -31,7 +32,7 @@ public interface FixedTransactionApi {
             tags = {"fixed-transaction", "transaction"},
             security = @SecurityRequirement(name = "TokenAuth"))
     @ApiResponse(
-            responseCode = "201",
+            responseCode = "200",
             description = "Fixed transaction was successfully created.")
     @PutMapping(
             produces = {"application/json"},
@@ -42,7 +43,6 @@ public interface FixedTransactionApi {
                     required = true,
                     content = @Content(schema = @Schema(implementation = CreateFixedTransactionDTO.class)))
             @RequestBody @Valid CreateFixedTransactionDTO fixedTransaction);
-
 
     /**
      * Updates a specified transaction.
@@ -108,7 +108,7 @@ public interface FixedTransactionApi {
             tags = {"fixed-transaction", "transaction"},
             security = @SecurityRequirement(name = "TokenAuth"))
     @ApiResponse(
-            responseCode = "201",
+            responseCode = "200",
             description = "Fixed transaction amount was successfully created.",
             content = @Content(schema = @Schema(implementation = FixedTransactionAmountDTO.class)))
     @PutMapping(

@@ -1,4 +1,3 @@
-import {bindActionCreators, Dispatch}                             from 'redux';
 import {connect}                                                  from 'react-redux';
 import {WithTranslation, withTranslation}                         from 'react-i18next';
 import React                                                      from 'react';
@@ -56,19 +55,18 @@ class CreateVariableTransaction extends React.Component<CreateVariableTransactio
                     categoryId: this.state.variableTransactionData.categoryId,
                     vendor: this.state.variableTransactionData.vendor,
                     description: this.state.variableTransactionData.description,
-                    products: new Set(this.state.products),
-                    attachments: new Set(this.state.attachments)
+                    products: this.state.products,
+                    attachments: this.state.attachments
                 }
-            }, variableTransaction => {
-                notification.success({
+            }, (variableTransaction) => {
+                this.setState({redirectToTransactionList: true}, () => notification.success({
                     message: this.props.t('Transaction.VariableTransaction'),
                     description: this.props.t('Message.Transaction.VariableTransaction.CreatedVariableTransaction', {
                         category: variableTransaction.category.name,
-                        categoryClass: this.props.t('Transaction.Category.CategoryClass.' + variableTransaction.category.categoryClass),
+                        categoryClass: this.props.t('Transaction.Category.CategoryClass.' + variableTransaction.category.categoryClass.valueOf()),
                         valueDate: variableTransaction.valueDate.date.toDateString()
                     })
-                });
-                this.setState({redirectToTransactionList: true});
+                }));
             });
         }
     }

@@ -20,6 +20,7 @@ export const columns = (): ProColumns<FixedTransactionAmount>[] => [
         title: i18next.t('Transaction.Amount'),
         dataIndex: ['amount', 'amount'],
         valueType: 'money',
+        // eslint-disable-next-line react/display-name
         render: (dom, entity) => (<AmountLabel amount={entity.amount}/>)
     }
 ];

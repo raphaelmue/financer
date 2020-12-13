@@ -61,10 +61,10 @@
       "Name": "Kategorie",
       "SelectCategoryPlaceholder": "Kategorie auswählen",
       "CategoryClass": {
-        "FixedExpenses": "Feste Ausgabe",
-        "FixedRevenue": "Feste Einnahmen",
-        "VariableExpenses": "Variable Ausgaben",
-        "VariableRevenue": "Variable Einnahmen"
+        "FIXEDEXPENSES": "Feste Ausgabe",
+        "FIXEDREVENUE": "Feste Einnahmen",
+        "VARIABLEEXPENSES": "Variable Ausgaben",
+        "VARIABLEREVENUE": "Variable Einnahmen"
       }
     },
     "Amount": "Betrag",

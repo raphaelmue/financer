@@ -33,7 +33,7 @@ public interface VariableTransactionApi {
             tags = {"variable-transaction", "transaction"},
             security = @SecurityRequirement(name = "TokenAuth"))
     @ApiResponse(
-            responseCode = "201",
+            responseCode = "200",
             description = "Variable transaction was successfully created.")
     @PutMapping(
             produces = {"application/json"},
@@ -131,7 +131,7 @@ public interface VariableTransactionApi {
             tags = {"variable-transaction", "transaction"},
             security = @SecurityRequirement(name = "TokenAuth"))
     @ApiResponse(
-            responseCode = "201",
+            responseCode = "200",
             description = "Product was successfully created.",
             content = @Content(schema = @Schema(implementation = ProductDTO.class)))
     @PutMapping(

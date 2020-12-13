@@ -23,7 +23,7 @@ const initialState: AdminState = {
     error: undefined,
     configuration: {
         defaultLanguage: AdminConfigurationDefaultLanguageEnum.En,
-        defaultCurrency: AdminConfigurationDefaultCurrencyEnum.Usd,
+        defaultCurrency: AdminConfigurationDefaultCurrencyEnum.USD,
     }
 };
 

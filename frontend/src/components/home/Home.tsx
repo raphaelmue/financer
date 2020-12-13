@@ -1,38 +1,33 @@
-import * as React                         from 'react';
-import {
-    Avatar, Button,
-    notification, Space,
-    Tooltip, Typography
-}                                         from 'antd';
-import {LogoutOutlined, UserOutlined}     from '@ant-design/icons';
-import {withTranslation, WithTranslation} from 'react-i18next';
-import {AppState}                         from '../../store/reducers/root.reducers';
-import {connect}                          from 'react-redux';
-import {UserReducerProps}                 from '../../store/reducers/user.reducers';
-import {
-    HashRouter as Router,
-    Link, Redirect,
-    Route, Switch
-}                                         from 'react-router-dom';
-import {bindActionCreators, Dispatch}     from 'redux';
-import * as api                           from '../../store/api/user.api';
-import BasicLayout, {
-    BasicLayoutProps,
-    DefaultFooter
-}                                         from '@ant-design/pro-layout';
-import menuData                           from './menu';
-import {DeleteTokenRequest}               from '../../.openapi/apis';
-import Dashboard                          from './dashboard/Dashboard';
-import Profile                            from './profile/Profile';
-import Settings                           from './settings/Settings';
-import VariableTransactionList            from './transactions/variable/VariableTransactionList';
-import CreateVariableTransaction          from './transactions/variable/create/CreateVariableTransaction';
-import VariableTransactionsDetails        from './transactions/variable/details/VariableTransactionsDetails';
+import * as React                                                 from 'react';
+import {Avatar, Button, notification, Space, Tooltip, Typography} from 'antd';
+import {LogoutOutlined, UserOutlined}                             from '@ant-design/icons';
+import {withTranslation, WithTranslation}                         from 'react-i18next';
+import {AppState}                                                 from '../../store/reducers/root.reducers';
+import {connect}                                                  from 'react-redux';
+import {UserReducerProps}                                         from '../../store/reducers/user.reducers';
+import {HashRouter as Router, Link, Redirect, Route, Switch}      from 'react-router-dom';
+import {bindActionCreators, Dispatch}                             from 'redux';
+import * as api                                                   from '../../store/api/user.api';
+import BasicLayout, {BasicLayoutProps, DefaultFooter}             from '@ant-design/pro-layout';
+import menuData                                                   from './menu';
+import {DeleteTokenRequest}                                       from '../../.openapi';
+import Dashboard                                                  from './dashboard/Dashboard';
+import Profile                                                    from './profile/Profile';
+import Settings                                                   from './settings/Settings';
+import VariableTransactionList
+                                                                  from './transactions/variable/VariableTransactionList';
+import CreateVariableTransaction
+                                                                  from './transactions/variable/create/CreateVariableTransaction';
+import VariableTransactionsDetails
+                                                                  from './transactions/variable/details/VariableTransactionsDetails';
 
 import '@ant-design/pro-layout/dist/layout.css';
 import '@ant-design/pro-table/dist/table.css';
 import '@ant-design/pro-card/dist/card.css';
-import AdminConfiguration                 from './admin/configuration/AdminConfiguration';
+import AdminConfiguration                                         from './admin/configuration/AdminConfiguration';
+import FixedTransactionOverview                                   from './transactions/fixed/FixedTransactionOverview';
+import CreateFixedTransaction
+                                                                  from './transactions/fixed/create/CreateFixedTransaction';
 
 const {Text} = Typography;
 
@@ -124,6 +119,8 @@ class Home extends React.Component<HomeProps, HomeState> {
                         <Route path={'/transactions/variable/:variableTransactionId'}
                                component={VariableTransactionsDetails}/>
                         <Route path={'/transactions/variable/'} component={VariableTransactionList}/>
+                        <Route path={'/transactions/fixed/create'} component={CreateFixedTransaction}/>
+                        <Route path={'/transactions/fixed/'} component={FixedTransactionOverview}/>
                         <Route path='/settings' component={Settings}/>
                         <Route path={'/admin/configuration'} component={AdminConfiguration}/>
                     </Switch>

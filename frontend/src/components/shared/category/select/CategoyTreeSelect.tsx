@@ -10,6 +10,7 @@ import {UserReducerProps}                 from '../../../../store/reducers/user.
 import {LegacyDataNode}                   from 'rc-tree-select/lib/interface';
 import CategoryUtil                       from '../util';
 import {DataNode}                         from 'antd/lib/tree';
+import {Category}                         from '../../../../.openapi';
 
 interface CategoryTreeSelectComponentProps extends WithTranslation, UserReducerProps, CategoryReducerProps {
     onChange: (categoryId: number | undefined) => void,
@@ -62,10 +63,10 @@ class CategoryTreeSelect extends React.Component<CategoryTreeSelectComponentProp
         return (
             <TreeSelect
                 showSearch
-                defaultValue={this.props.categoryId}
+                value={this.props.categoryId}
                 key={'id'}
                 allowClear
-                placeholder={this.props.t('Transaction.Category.SelectCategoryPlaceholder')}
+                placeholder={this.props.t('Transaction.Category.SelectCategoryPlaceholder')?.toString()}
                 treeData={this.getTreeData()}
                 onChange={value => this.onChange(value)}
                 filterTreeNode={this.filter}

@@ -26,9 +26,9 @@ class SelectGender extends React.Component<SelectGenderComponentProps, SelectGen
             <Select key={'selectGender'}
                     placeholder={this.props.t('Gender.gender')}
                     onChange={(value: string) => this.onChange(value)}>
-                <Option value={GenderEnum.Male}>{this.props.t('Gender.male')}</Option>
-                <Option value={GenderEnum.Female}>{this.props.t('Gender.female')}</Option>
-                <Option value={GenderEnum.NotSpecified}>{this.props.t('Gender.notSpecified')}</Option>
+                <Option value={GenderEnum.MALE}>{this.props.t('Gender.male')}</Option>
+                <Option value={GenderEnum.FEMALE}>{this.props.t('Gender.female')}</Option>
+                <Option value={GenderEnum.NOTSPECIFIED}>{this.props.t('Gender.notSpecified')}</Option>
             </Select>
         );
     }

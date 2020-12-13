@@ -21,7 +21,7 @@ interface CreateFixedTransactionComponentProps extends WithTranslation, Transact
 
 interface CreateFixedTransactionComponentState {
     fixedTransactionData: FixedTransactionMetaData,
-    transactionAmounts: Set<FixedTransactionAmount>
+    transactionAmounts: FixedTransactionAmount[]
     redirectToOverview: boolean,
     showFixedTransactionAmountDialog: boolean
     showAttachmentDialog: boolean
@@ -34,7 +34,7 @@ class CreateFixedTransaction extends React.Component<CreateFixedTransactionCompo
 
         this.state = {
             fixedTransactionData: {},
-            transactionAmounts: new Set(),
+            transactionAmounts: [],
             redirectToOverview: false,
             showFixedTransactionAmountDialog: false,
             showAttachmentDialog: false

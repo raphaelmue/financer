@@ -11,23 +11,23 @@ export default class CategoryUtil {
                 id: -index - 1,
                 name: i18next.t('Transaction.Category.CategoryClass.' + value as CategoryCategoryClassEnum),
                 categoryClass: value as CategoryCategoryClassEnum,
-                children: new Set()
+                children: []
             });
         });
 
         categories.forEach(value => {
             switch (value.categoryClass) {
-                case CategoryCategoryClassEnum.FixedRevenue:
-                    rootCategories[0].children!.add(value);
+                case CategoryCategoryClassEnum.FIXEDREVENUE:
+                    rootCategories[0].children!.push(value);
                     break;
-                case CategoryCategoryClassEnum.VariableRevenue:
-                    rootCategories[1].children!.add(value);
+                case CategoryCategoryClassEnum.VARIABLEREVENUE:
+                    rootCategories[1].children!.push(value);
                     break;
-                case CategoryCategoryClassEnum.FixedExpenses:
-                    rootCategories[2].children!.add(value);
+                case CategoryCategoryClassEnum.FIXEDEXPENSES:
+                    rootCategories[2].children!.push(value);
                     break;
-                case CategoryCategoryClassEnum.VariableExpenses:
-                    rootCategories[3].children!.add(value);
+                case CategoryCategoryClassEnum.VARIABLEEXPENSES:
+                    rootCategories[3].children!.push(value);
                     break;
             }
         });
@@ -37,14 +37,14 @@ export default class CategoryUtil {
 
     static filterFixed(categories: Category[]): Category[] {
         return categories.filter(value =>
-            value.categoryClass.valueOf() === 'FixedExpenses' ||
-            value.categoryClass.valueOf() === 'FixedRevenue');
+            value.categoryClass.valueOf() === 'FIXEDEXPENSES' ||
+            value.categoryClass.valueOf() === 'FIXEDREVENUE');
     }
 
     static filterVariable(categories: Category[]): Category[] {
         return categories.filter(value =>
-            value.categoryClass.valueOf() === 'VariableExpenses' ||
-            value.categoryClass.valueOf() === 'VariableRevenue');
+            value.categoryClass.valueOf() === 'VARIABLEEXPENSES' ||
+            value.categoryClass.valueOf() === 'VARIABLEREVENUE');
     }
 
     static convertCategoriesToDataNode(categories: Category[], query?: string, root?: Category): DataNode[] {

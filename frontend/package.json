@@ -96,10 +96,10 @@
         "wait-on": "^5.2.0"
     },
     "dependencies": {
-        "@ant-design/pro-card": "^1.6.2",
-        "@ant-design/pro-layout": "^6.5.18",
+        "@ant-design/pro-card": "^1.7.0",
+        "@ant-design/pro-layout": "^6.6.1",
         "@ant-design/pro-list": "^1.1.9",
-        "@ant-design/pro-table": "^2.13.3",
+        "@ant-design/pro-table": "^2.15.1",
         "@types/react": "^17.0.0",
         "@types/react-dom": "^17.0.0",
         "@types/react-redux": "^7.1.11",
@@ -131,6 +131,23 @@
             "last 1 chrome version",
             "last 1 firefox version",
             "last 1 safari version"
+        ]
+    },
+    "nyc": {
+        "report-dir": ".test/.coverage/",
+        "reporter": [
+            "text",
+            "json",
+            "lcov",
+            "cobertura"
+        ],
+        "include": [
+            "src/**/*.tsx",
+            "src/**/*.ts"
+        ],
+        "exclude": [
+            "**/*.spec.ts",
+            "**/.openapi/**"
         ]
     }
 }

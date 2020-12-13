@@ -104,7 +104,7 @@ public interface UserApi {
             summary = "Registers a new user",
             tags = {"user"})
     @ApiResponse(
-            responseCode = "201",
+            responseCode = "200",
             description = "User was successfully registered",
             content = @Content(schema = @Schema(implementation = UserDTO.class)))
     @PutMapping(

@@ -61,10 +61,10 @@
       "Name": "Category",
       "SelectCategoryPlaceholder": "Select category",
       "CategoryClass": {
-        "FixedExpenses": "Fixed expenses",
-        "FixedRevenue": "Fixed revenue",
-        "VariableExpenses": "Variable Expenses",
-        "VariableRevenue": "Variable Revenue"
+        "FIXEDEXPENSES": "Fixed expenses",
+        "FIXEDREVENUE": "Fixed revenue",
+        "VARIABLEEXPENSES": "Variable Expenses",
+        "VARIABLEREVENUE": "Variable Revenue"
       }
     },
     "Amount": "Amount",
