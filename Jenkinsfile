@@ -130,7 +130,7 @@ pipeline {
                                     if (env.CHANGE_ID) {
                                         sh "${scannerHome}/bin/sonar-scanner " +
                                                 "-Dsonar.pullrequest.key=${env.CHANGE_ID} " +
-                                                "-Dsonar.pullrequest.branch=${env.BRANCH_NAME} " +
+                                                "-Dsonar.pullrequest.branch=${env.BRANCH_NAME} "
                                     } else {
                                         if (env.BRANCH_NAME != 'master') {
                                             sh "${scannerHome}/bin/sonar-scanner " +
