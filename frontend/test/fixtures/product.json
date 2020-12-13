@@ -1,0 +1,13 @@
+{
+    "id": 2,
+    "name": "Test Product 2",
+    "amount": {
+        "amount": 20
+    },
+    "quantity": {
+        "numberOfItems": 10
+    },
+    "totalAmount": {
+        "amount": 200
+    }
+}

@@ -2,7 +2,7 @@ import React                              from 'react';
 import {StepProps}                        from 'antd/lib/steps';
 import {Button, Steps}                    from 'antd';
 import {FooterToolbar}                    from '@ant-design/pro-layout';
-import {withTranslation, WithTranslation} from 'react-i18next';
+import {WithTranslation, withTranslation} from 'react-i18next';
 import {AppState}                         from '../../../../store/reducers/root.reducers';
 import {bindActionCreators, Dispatch}     from 'redux';
 import {connect}                          from 'react-redux';
@@ -16,7 +16,7 @@ export interface FormStep extends StepProps {
     condition?: () => boolean
 }
 
-interface StepFormComponentProps extends WithTranslation {
+interface StepFormComponentProps extends WithTranslation<'default'> {
     steps: FormStep[],
     onSubmit?: () => void,
 }
@@ -69,6 +69,7 @@ class StepForm extends React.Component<StepFormComponentProps, StepFormComponent
     }
 
     renderSteps(): React.ReactNode[] {
+        // eslint-disable-next-line react/jsx-key
         return this.props.steps.map((step) => <Step {...step}/>);
     }
 
@@ -93,16 +94,19 @@ class StepForm extends React.Component<StepFormComponentProps, StepFormComponent
                 </div>
                 <FooterToolbar>
                     <Button
+                        id={'previousStepButton'}
                         disabled={this.state.currentStepIndex === 0}
                         onClick={this.onPrevious.bind(this)}>
                         {this.props.t('Form.Button.Previous')}
                     </Button>
                     <Button
+                        id={'nextStepButton'}
                         disabled={this.state.currentStepIndex === this.props.steps.length - 1}
                         onClick={this.onNext.bind(this)}>
                         {this.props.t('Form.Button.Next')}
                     </Button>
                     <Button
+                        id={'submitStepsButton'}
                         type={'primary'}
                         disabled={!this.validateSteps()}
                         onClick={this.onSubmit.bind(this)}>
@@ -120,4 +124,4 @@ const mapStateToProps = (state: AppState) => {
 
 const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({}, dispatch);
 
-export default connect(mapStateToProps, mapDispatchToProps)(withTranslation()(StepForm));
+export default connect(mapStateToProps, mapDispatchToProps)(withTranslation<'default'>()(StepForm));

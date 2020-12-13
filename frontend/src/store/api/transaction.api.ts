@@ -5,15 +5,17 @@ import {
     DeleteVariableTransactionRequest,
     GetUsersVariableTransactionsRequest,
     GetVariableTransactionByIdRequest,
+    PagedModelVariableTransaction,
+    Product,
     UpdateVariableTransactionRequest,
     UserApi,
+    VariableTransaction,
     VariableTransactionApi
-}                                                                    from '../../.openapi/apis';
-import {Dispatch}                                                    from 'redux';
-import {apiConfiguration}                                            from './index';
-import {ErrorMessage}                                                from '../errorMessage';
-import {PagedModelVariableTransaction, Product, VariableTransaction} from '../../.openapi/models';
-import {TransactionActionDefinition}                                 from '../actions/transaction.actions';
+}                                    from '../../.openapi';
+import {Dispatch}                    from 'redux';
+import {apiConfiguration}            from './index';
+import {ErrorMessage}                from '../errorMessage';
+import {TransactionActionDefinition} from '../actions/transaction.actions';
 
 export const loadVariableTransactions = (data: GetUsersVariableTransactionsRequest) => {
     return (dispatch: Dispatch) => {
@@ -21,7 +23,7 @@ export const loadVariableTransactions = (data: GetUsersVariableTransactionsReque
             type: TransactionActionDefinition.LOAD_VARIABLE_TRANSACTIONS_REQUEST,
             payload: data
         });
-        let api = new UserApi(apiConfiguration());
+        const api = new UserApi(apiConfiguration());
         ErrorMessage.resolveError(api.getUsersVariableTransactions(data)
             .then((transactions: PagedModelVariableTransaction) => dispatch({
                 type: TransactionActionDefinition.LOAD_VARIABLE_TRANSACTIONS_SUCCESS,
@@ -36,7 +38,7 @@ export const loadVariableTransaction = (data: GetVariableTransactionByIdRequest,
             type: TransactionActionDefinition.LOAD_VARIABLE_TRANSACTION_REQUEST,
             payload: data
         });
-        let api = new VariableTransactionApi(apiConfiguration());
+        const api = new VariableTransactionApi(apiConfiguration());
         ErrorMessage.resolveError(api.getVariableTransactionById(data)
             .then((transaction: VariableTransaction) => {
                 dispatch({
@@ -56,7 +58,7 @@ export const createVariableTransaction = (data: CreateTransactionRequest, callba
             type: TransactionActionDefinition.CREATE_VARIABLE_TRANSACTION_REQUEST,
             payload: data
         });
-        let api = new VariableTransactionApi(apiConfiguration());
+        const api = new VariableTransactionApi(apiConfiguration());
         ErrorMessage.resolveError(api.createTransaction(data)
             .then((variableTransaction: VariableTransaction) => {
                 dispatch({
@@ -76,7 +78,7 @@ export const updateVariableTransaction = (data: UpdateVariableTransactionRequest
             type: TransactionActionDefinition.UPDATE_VARIABLE_TRANSACTION_REQUEST,
             payload: data
         });
-        let api = new VariableTransactionApi(apiConfiguration());
+        const api = new VariableTransactionApi(apiConfiguration());
         ErrorMessage.resolveError(api.updateVariableTransaction(data)
             .then((variableTransaction: VariableTransaction) => {
                 dispatch({
@@ -96,7 +98,7 @@ export const deleteVariableTransaction = (data: DeleteVariableTransactionRequest
             type: TransactionActionDefinition.DELETE_VARIABLE_TRANSACTION_REQUEST,
             payload: data
         });
-        let api = new VariableTransactionApi(apiConfiguration());
+        const api = new VariableTransactionApi(apiConfiguration());
         ErrorMessage.resolveError(api.deleteVariableTransaction(data)
                 .then(() => {
                     dispatch({type: TransactionActionDefinition.DELETE_VARIABLE_TRANSACTION_SUCCESS});
@@ -112,7 +114,7 @@ export const createProduct = (data: CreateProductRequest, callback?: (product: P
             type: TransactionActionDefinition.CREATE_PRODUCT_REQUEST,
             payload: data
         });
-        let api = new VariableTransactionApi(apiConfiguration());
+        const api = new VariableTransactionApi(apiConfiguration());
         ErrorMessage.resolveError(api.createProduct(data)
             .then((product: Product) => {
                 dispatch({
@@ -132,7 +134,7 @@ export const deleteProducts = (data: DeleteProductsRequest, callback?: () => voi
             type: TransactionActionDefinition.DELETE_PRODUCTS_REQUEST,
             payload: data
         });
-        let api = new VariableTransactionApi(apiConfiguration());
+        const api = new VariableTransactionApi(apiConfiguration());
         ErrorMessage.resolveError(api.deleteProducts(data)
                 .then(() => {
                     dispatch({type: TransactionActionDefinition.DELETE_PRODUCTS_SUCCESS});
@@ -145,9 +147,9 @@ export const deleteProducts = (data: DeleteProductsRequest, callback?: () => voi
 export interface TransactionApi {
     dispatchLoadVariableTransactions: (data: GetUsersVariableTransactionsRequest) => void,
     dispatchLoadVariableTransaction: (data: GetVariableTransactionByIdRequest, callback?: (variableTransaction: VariableTransaction) => void) => void,
-    dispatchCreateVariableTransaction: (data: CreateTransactionRequest, callback?: (variableTransaction: VariableTransaction) => void) => void
+    dispatchCreateVariableTransaction: (data: CreateTransactionRequest, callback?: (variableTransaction: VariableTransaction) => void) => void,
     dispatchUpdateVariableTransaction: (data: UpdateVariableTransactionRequest, callback?: (variableTransaction: VariableTransaction) => void) => void,
-    dispatchDeleteVariableTransaction: (data: DeleteVariableTransactionRequest, callback?: () => void) => void
+    dispatchDeleteVariableTransaction: (data: DeleteVariableTransactionRequest, callback?: () => void) => void,
     dispatchCreateProduct: (data: CreateProductRequest, callback?: (product: Product) => void) => void,
     dispatchDeleteProducts: (data: DeleteProductsRequest, callback?: () => void) => void
 }

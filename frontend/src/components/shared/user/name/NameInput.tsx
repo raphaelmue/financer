@@ -1,12 +1,12 @@
-import {Form, Input}                      from 'antd';
-import {UserOutlined}                     from '@ant-design/icons';
+import {Form, Input}         from 'antd';
+import {UserOutlined}        from '@ant-design/icons';
 import * as React                         from 'react';
-import {withTranslation, WithTranslation} from 'react-i18next';
-import {Name}                             from '../../../../.openapi/models';
+import {WithTranslation, withTranslation} from 'react-i18next';
+import {Name}                             from '../../../../.openapi';
 import {connect}                          from 'react-redux';
-import {fieldIsRequiredRule}              from '../form/rules';
+import {fieldIsRequiredRule} from '../form/rules';
 
-interface NameInputComponentProps extends WithTranslation {
+interface NameInputComponentProps extends WithTranslation<'default'> {
     onChange: (name: Name) => void
 }
 
@@ -35,7 +35,7 @@ class NameInput extends React.Component<NameInputComponentProps, NameInputCompon
                     <Input prefix={<UserOutlined className="site-form-item-icon"/>}
                            type={'text'}
                            name="firstName"
-                           placeholder={this.props.t('firstName')}
+                           placeholder={this.props.t('firstName')?.toString()}
                            onChange={this.onChange}/>
                 </Form.Item>
                 <span style={{display: 'inline-block', width: '12px', lineHeight: '32px', textAlign: 'center'}}>
@@ -47,7 +47,7 @@ class NameInput extends React.Component<NameInputComponentProps, NameInputCompon
                     <Input prefix={<UserOutlined className="site-form-item-icon"/>}
                            type={'text'}
                            name="surname"
-                           placeholder={this.props.t('surname')}
+                           placeholder={this.props.t('surname')?.toString()}
                            onChange={this.onChange}/>
                 </Form.Item>
             </div>
@@ -55,4 +55,4 @@ class NameInput extends React.Component<NameInputComponentProps, NameInputCompon
     }
 }
 
-export default connect()(withTranslation()(NameInput));
+export default connect()(withTranslation<"default">()(NameInput));

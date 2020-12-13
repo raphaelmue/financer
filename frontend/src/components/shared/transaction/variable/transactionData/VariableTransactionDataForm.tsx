@@ -1,22 +1,22 @@
-import {withTranslation, WithTranslation} from 'react-i18next';
+import {WithTranslation, withTranslation} from 'react-i18next';
 import {VariableTransaction}              from '../../../../../.openapi/models';
-import React                              from 'react';
-import {DatePicker, Form, Input}          from 'antd';
-import {bindActionCreators, Dispatch}     from 'redux';
-import {connect}                          from 'react-redux';
-import {fieldIsRequiredRule}              from '../../../user/form/rules';
-import CategoryTreeSelect                 from '../../../category/CategoyTreeSelect';
-import TextArea                           from 'antd/es/input/TextArea';
-import moment                             from 'moment';
+import React                          from 'react';
+import {DatePicker, Form, Input}      from 'antd';
+import {bindActionCreators, Dispatch} from 'redux';
+import {connect}                      from 'react-redux';
+import {fieldIsRequiredRule}          from '../../../user/form/rules';
+import CategoryTreeSelect             from '../../../category/CategoyTreeSelect';
+import TextArea                       from 'antd/es/input/TextArea';
+import moment                         from 'moment';
 
 export interface VariableTransactionMetaData {
-    categoryId?: number
+    categoryId?: number,
     valueDate?: Date,
     vendor?: string,
     description?: string,
 }
 
-interface VariableTransactionDataFormComponentProps extends WithTranslation {
+interface VariableTransactionDataFormComponentProps extends WithTranslation<'default'> {
     variableTransaction?: VariableTransaction
     onChange?: (variableTransactionData: VariableTransactionMetaData) => void
 }
@@ -109,4 +109,4 @@ const mapStateToProps = () => {
 
 const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({}, dispatch);
 
-export default connect(mapStateToProps, mapDispatchToProps)(withTranslation()(VariableTransactionDataForm));
+export default connect(mapStateToProps, mapDispatchToProps)(withTranslation<"default">()(VariableTransactionDataForm));

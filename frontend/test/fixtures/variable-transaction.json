@@ -1,0 +1,32 @@
+{
+    "id": 1,
+    "category": {
+        "id": 1,
+        "categoryClass": "VARIABLE_EXPENSES",
+        "name": "Test Category",
+        "children": []
+    },
+    "valueDate": {
+        "date": "2020-01-01"
+    },
+    "description": "Test Description",
+    "vendor": "Test Vendor",
+    "products": [
+        {
+            "id": 1,
+            "name": "Test Product",
+            "quantity": {
+                "numberOfItems": 5
+            },
+            "amount": {
+                "amount": 10
+            },
+            "totalAmount": {
+                "amount": 50
+            }
+        }
+    ],
+    "totalAmount": {
+        "amount": 50
+    }
+}

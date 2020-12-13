@@ -1,0 +1,48 @@
+{
+    "extends": [
+        "eslint:recommended",
+        "plugin:react/recommended",
+        "plugin:@typescript-eslint/eslint-recommended",
+        "plugin:@typescript-eslint/recommended"
+    ],
+    "parser": "@typescript-eslint/parser",
+    "parserOptions": {
+        "sourceType": "module",
+        "ecmaFeatures": {
+            "jsx": true
+        }
+    },
+    "plugins": [
+        "@typescript-eslint"
+    ],
+    "settings": {
+        "react": {
+            "pragma": "React",
+            "version": "detect",
+            "flowVersion": "0.53"
+        }
+    },
+    "rules": {
+        "@typescript-eslint/no-empty-interface": 0,
+        "@typescript-eslint/explicit-function-return-type": "off"
+    },
+    "ignorePatterns": [
+        ".test/",
+        "build/",
+        "test/",
+        "src/.openapi"
+    ],
+    "overrides": [
+        {
+            "files": [
+                "src/**/*.ts?(x)"
+            ],
+            "excludedFiles": [
+                ".test/**",
+                "build/**",
+                "test/**",
+                "src/.openapi/**"
+            ]
+        }
+    ]
+}

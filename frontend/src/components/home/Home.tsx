@@ -1,42 +1,34 @@
-import * as React                         from 'react';
-import {
-    Avatar, Button,
-    notification, Space,
-    Tooltip, Typography
-}                                         from 'antd';
-import {LogoutOutlined, UserOutlined}     from '@ant-design/icons';
-import {withTranslation, WithTranslation} from 'react-i18next';
-import {AppState}                         from '../../store/reducers/root.reducers';
-import {connect}                          from 'react-redux';
-import {UserReducerProps}                 from '../../store/reducers/user.reducers';
-import {
-    HashRouter as Router,
-    Link, Redirect,
-    Route, Switch
-}                                         from 'react-router-dom';
-import {bindActionCreators, Dispatch}     from 'redux';
-import * as api                           from '../../store/api/user.api';
-import BasicLayout, {
-    BasicLayoutProps,
-    DefaultFooter
-}                                         from '@ant-design/pro-layout';
-import menuData                           from './menu';
-import {DeleteTokenRequest}               from '../../.openapi/apis';
-import Dashboard                          from './dashboard/Dashboard';
-import Profile                            from './profile/Profile';
-import Settings                           from './settings/Settings';
-import VariableTransactionList            from './transactions/variable/VariableTransactionList';
-import CreateVariableTransaction          from './transactions/variable/create/CreateVariableTransaction';
-import VariableTransactionsDetails        from './transactions/variable/details/VariableTransactionsDetails';
+import * as React                                                 from 'react';
+import {Avatar, Button, notification, Space, Tooltip, Typography} from 'antd';
+import {LogoutOutlined, UserOutlined}                             from '@ant-design/icons';
+import {withTranslation, WithTranslation}                         from 'react-i18next';
+import {AppState}                                                 from '../../store/reducers/root.reducers';
+import {connect}                                                  from 'react-redux';
+import {UserReducerProps}                                         from '../../store/reducers/user.reducers';
+import {HashRouter as Router, Link, Redirect, Route, Switch}      from 'react-router-dom';
+import {bindActionCreators, Dispatch}                             from 'redux';
+import * as api                                                   from '../../store/api/user.api';
+import BasicLayout, {BasicLayoutProps, DefaultFooter}             from '@ant-design/pro-layout';
+import menuData                                                   from './menu';
+import {DeleteTokenRequest}                                       from '../../.openapi';
+import Dashboard                                                  from './dashboard/Dashboard';
+import Profile                                                    from './profile/Profile';
+import Settings                                                   from './settings/Settings';
+import VariableTransactionList
+                                                                  from './transactions/variable/VariableTransactionList';
+import CreateVariableTransaction
+                                                                  from './transactions/variable/create/CreateVariableTransaction';
+import VariableTransactionsDetails
+                                                                  from './transactions/variable/details/VariableTransactionsDetails';
 
 import '@ant-design/pro-layout/dist/layout.css';
 import '@ant-design/pro-table/dist/table.css';
 import '@ant-design/pro-card/dist/card.css';
-import AdminConfiguration                 from './admin/configuration/AdminConfiguration';
+import AdminConfiguration                                         from './admin/configuration/AdminConfiguration';
 
 const {Text} = Typography;
 
-interface HomeProps extends WithTranslation, UserReducerProps, BasicLayoutProps {
+interface HomeProps extends WithTranslation<'default'>, UserReducerProps, BasicLayoutProps {
     dispatchLogout: (logoutData: DeleteTokenRequest) => void
 }
 
@@ -45,11 +37,7 @@ interface HomeState {
 
 class Home extends React.Component<HomeProps, HomeState> {
 
-    onChange = (e: any) => {
-        this.setState({[e.target.name]: e.target.value} as HomeState);
-    };
-
-    componentDidUpdate(prevProps: Readonly<HomeProps>, prevState: Readonly<HomeState>, snapshot?: any) {
+    componentDidUpdate(prevProps: Readonly<HomeProps>) {
         if (prevProps.userState.error?.message !== this.props.userState.error?.message) {
             notification.error({
                 message: 'An error occurred',
@@ -112,9 +100,9 @@ class Home extends React.Component<HomeProps, HomeState> {
                 )}
                 breadcrumbRender={(routers = []) => [{
                     path: '/',
-                    breadcrumbName: this.props.t('Menu.Home')
+                    breadcrumbName: this.props.t('Menu.Home')?.toString() || ''
                 }, ...routers,]}
-                itemRender={(route, params, routes, paths) => {
+                itemRender={(route, params, routes) => {
                     return routes.indexOf(route) === 0 ? (<span>{route.breadcrumbName}</span>) : (
                         <Link to={route.path}>{route.breadcrumbName}</Link>
                     );
@@ -147,4 +135,4 @@ const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({
     dispatchLogout: api.logoutUser
 }, dispatch);
 
-export default connect(mapStateToProps, mapDispatchToProps)(withTranslation()(Home));
+export default connect(mapStateToProps, mapDispatchToProps)(withTranslation<'default'>()(Home));

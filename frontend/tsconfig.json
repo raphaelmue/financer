@@ -1,6 +1,6 @@
 {
     "compilerOptions": {
-        "target": "es6",
+        "target": "ES6",
         "lib": [
             "dom",
             "dom.iterable",
@@ -17,10 +17,16 @@
         "resolveJsonModule": true,
         "isolatedModules": true,
         "noEmit": true,
-        "jsx": "react"
+        "jsx": "react-jsx",
+        "baseUrl": ".",
+        "types": ["cypress"],
+        "noFallthroughCasesInSwitch": true
     },
     "include": [
-        "src/",
-        "src/components/"
+        "src/"
+    ],
+    "exclude": [
+        "src/.openapi",
+        "test/"
     ]
 }

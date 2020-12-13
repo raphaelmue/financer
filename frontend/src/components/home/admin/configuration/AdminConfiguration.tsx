@@ -19,7 +19,7 @@ import {
 const {Option} = Select;
 
 
-interface AdminConfigurationComponentProps extends WithTranslation, AdminReducerProps {
+interface AdminConfigurationComponentProps extends WithTranslation<"default">, AdminReducerProps {
 }
 
 interface AdminConfigurationComponentState extends AdminConfigurationData {
@@ -36,10 +36,10 @@ class AdminConfiguration extends React.Component<AdminConfigurationComponentProp
         };
 
         this.props.dispatchLoadAdminConfiguration({}, (adminConfiguration) => {
-            this.state = {
+            this.setState({
                 defaultLanguage: adminConfiguration.defaultLanguage,
                 defaultCurrency: adminConfiguration.defaultCurrency,
-            };
+            });
         });
     }
 
@@ -123,4 +123,4 @@ const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({
     dispatchUpdateAdminConfiguration: api.updateAdminConfiguration
 }, dispatch);
 
-export default connect(mapStateToProps, mapDispatchToProps)(withTranslation()(AdminConfiguration));
+export default connect(mapStateToProps, mapDispatchToProps)(withTranslation<"default">()(AdminConfiguration));

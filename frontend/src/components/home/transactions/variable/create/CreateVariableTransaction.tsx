@@ -5,7 +5,7 @@ import React                                                      from 'react';
 import {AppState}                                                 from '../../../../../store/reducers/root.reducers';
 import {TransactionReducerProps}                                  from '../../../../../store/reducers/transaction.reducer';
 import {notification}                                             from 'antd';
-import {CreateAttachment, CreateProduct}                          from '../../../../../.openapi/models';
+import {CreateAttachment, CreateProduct}                          from '../../../../../.openapi';
 import ProductList
                                                                   from '../../../../shared/transaction/product/ProductList';
 import CreateProductDialog
@@ -20,11 +20,11 @@ import StepForm, {FormStep}                                       from '../../..
 import {PageContainer}                                            from '@ant-design/pro-layout';
 import VariableTransactionDataForm, {VariableTransactionMetaData} from '../../../../shared/transaction/variable/transactionData/VariableTransactionDataForm';
 
-interface CreateVariableTransactionComponentProps extends WithTranslation, TransactionReducerProps {
+interface CreateVariableTransactionComponentProps extends WithTranslation<'default'>, TransactionReducerProps {
 }
 
 interface CreateVariableTransactionComponentState {
-    variableTransactionData: VariableTransactionMetaData
+    variableTransactionData: VariableTransactionMetaData,
     products: CreateProduct[],
     attachments: CreateAttachment[],
     showProductDialog: boolean,
@@ -75,7 +75,7 @@ class CreateVariableTransaction extends React.Component<CreateVariableTransactio
 
     onDeleteProducts(productIds: number[]): Promise<void> {
         return new Promise<void>((resolve) => {
-            let products: CreateProduct[] = this.state.products;
+            const products: CreateProduct[] = this.state.products;
             productIds.forEach(value => products.splice(value, 1));
             this.setState({products: products});
             resolve();
@@ -160,4 +160,4 @@ const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({
     dispatchCreateVariableTransaction: api.createVariableTransaction
 }, dispatch);
 
-export default connect(mapStateToProps, mapDispatchToProps)(withTranslation()(CreateVariableTransaction));
+export default connect(mapStateToProps, mapDispatchToProps)(withTranslation<"default">()(CreateVariableTransaction));

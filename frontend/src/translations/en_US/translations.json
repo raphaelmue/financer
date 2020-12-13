@@ -107,7 +107,8 @@
       "Next": "Next",
       "Previous": "Previous",
       "Edit": "Edit",
-      "Ok": "Ok"
+      "Ok": "Ok",
+      "Refresh": "Refresh"
     },
     "Step": {
       "CreateVariableTransaction": {
