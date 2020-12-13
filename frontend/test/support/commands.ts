@@ -24,6 +24,7 @@
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
 
+// @ts-ignore
 Cypress.Commands.add('login', () => {
     cy.fixture('redux-state.json').then((state) => {
         cy.fixture('user.json').then((user) => {

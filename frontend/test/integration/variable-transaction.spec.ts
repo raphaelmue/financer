@@ -13,7 +13,7 @@ describe('Variable Transaction Test', () => {
             query: {
                 page: '0',
                 size: '20'
-            }
+            },
         }, {fixture: 'variable-transactions.json'}).as('getVariableTransactions');
 
         // get single transaction
@@ -52,7 +52,7 @@ describe('Variable Transaction Test', () => {
         cy.intercept({
             method: 'PUT',
             url: TestUtil.getServerBaseUrl() + '/variableTransactions',
-        }, {fixture: 'variable-transaction.json'}).as('createVariableTransaction');
+        }, {fixture: 'variable-transaction.json', delayMs: 100}).as('createVariableTransaction');
 
         cy.visit('/#/transactions/variable');
         cy.wait('@getVariableTransactions');
@@ -81,7 +81,7 @@ describe('Variable Transaction Test', () => {
         cy.intercept({
             method: 'POST',
             url: TestUtil.getServerBaseUrl() + '/variableTransactions/1',
-        }, {fixture: 'variable-transaction.json'}).as('updateVariableTransaction');
+        }, {fixture: 'variable-transaction.json', delayMs: 100}).as('updateVariableTransaction');
 
         cy.visit('/#/transactions/variable/1');
         cy.wait('@getVariableTransaction');
@@ -97,7 +97,7 @@ describe('Variable Transaction Test', () => {
         cy.intercept({
             method: 'DELETE',
             url: TestUtil.getServerBaseUrl() + '/variableTransactions/1',
-        }, []).as('deleteVariableTransaction');
+        }, {delayMs: 100}).as('deleteVariableTransaction');
 
         cy.visit('/#/transactions/variable/1');
         cy.wait('@getVariableTransaction');
@@ -117,7 +117,7 @@ describe('Variable Transaction Test', () => {
         cy.intercept({
             method: 'PUT',
             url: TestUtil.getServerBaseUrl() + '/variableTransactions/1/products',
-        }, {fixture: 'product.json'}).as('createProduct');
+        }, {fixture: 'product.json', delayMs: 100}).as('createProduct');
 
         cy.visit('/#/transactions/variable/1');
         cy.wait('@getVariableTransaction');
@@ -140,7 +140,7 @@ describe('Variable Transaction Test', () => {
             query: {
                 productIds: '1'
             }
-        }, []).as('deleteProduct');
+        }, {delayMs: 100}).as('deleteProduct');
 
         cy.visit('/#/transactions/variable/1');
         cy.wait('@getVariableTransaction');
