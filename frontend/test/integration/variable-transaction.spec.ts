@@ -66,7 +66,7 @@ describe('Variable Transaction Test', () => {
 
         cy.shouldDisplayDialog()
             .fillProductData()
-            .submitDialogWithoutLoading()
+            .submitDialog()
             .shouldNotDisplayDialog();
 
         cy.get('#submitStepsButton').should('not.be.disabled');

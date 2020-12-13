@@ -72,16 +72,10 @@ Cypress.Commands.add('shouldDisplayNotification', () => {
 
 Cypress.Commands.add('submitDialog', () => {
     cy.get('.ant-modal-footer .ant-btn-primary').click();
-    cy.get('.ant-modal-footer .ant-btn-primary .ant-btn-loading-icon').should('be.visible');
-});
-
-Cypress.Commands.add('submitDialogWithoutLoading', () => {
-    cy.get('.ant-modal-footer .ant-btn-primary').click();
 });
 
 Cypress.Commands.add('submitConfirmDialog', () => {
     cy.get('.ant-modal-confirm-btns .ant-btn-primary').click();
-    cy.get('.ant-modal-confirm-btns .ant-btn-primary .ant-btn-loading-icon').should('be.visible');
 });
 
 declare namespace Cypress {
@@ -101,8 +95,6 @@ declare namespace Cypress {
         shouldDisplayNotification(): Chainable<Element>,
 
         submitDialog(): Chainable<Element>,
-
-        submitDialogWithoutLoading(): Chainable<Element>,
 
         submitConfirmDialog(): Chainable<Element>
     }
