@@ -10,9 +10,8 @@ import {UserReducerProps}                 from '../../../../store/reducers/user.
 import {LegacyDataNode}                   from 'rc-tree-select/lib/interface';
 import CategoryUtil                       from '../util';
 import {DataNode}                         from 'antd/lib/tree';
-import {Category}                         from '../../../../.openapi';
 
-interface CategoryTreeSelectComponentProps extends WithTranslation, UserReducerProps, CategoryReducerProps {
+interface CategoryTreeSelectComponentProps extends WithTranslation<'default'>, UserReducerProps, CategoryReducerProps {
     onChange: (categoryId: number | undefined) => void,
     categoryId?: number,
     filterFixed?: boolean,
@@ -87,4 +86,4 @@ const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({
     dispatchLoadCategories: api.loadCategories
 }, dispatch);
 
-export default connect(mapStateToProps, mapDispatchToProps)(withTranslation()(CategoryTreeSelect));
+export default connect(mapStateToProps, mapDispatchToProps)(withTranslation<'default'>()(CategoryTreeSelect));

@@ -8,7 +8,7 @@ import {bindActionCreators, Dispatch}     from 'redux';
 import {connect}                          from 'react-redux';
 import {WithTranslation, withTranslation} from 'react-i18next';
 
-interface FixedTransactionAmountListComponentProps extends WithTranslation {
+interface FixedTransactionAmountListComponentProps extends WithTranslation<'default'> {
     openFixedTransactionAmountDialog: () => void,
     onDeleteFixedTransactionAmounts?: (productIds: number[]) => Promise<void>,
     fixedTransactionAmounts?: FixedTransactionAmount[]
@@ -81,4 +81,4 @@ const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({}, dispat
 
 export default connect(() => {
     return {};
-}, mapDispatchToProps)(withTranslation()(FixedTransactionAmountList));
+}, mapDispatchToProps)(withTranslation<'default'>()(FixedTransactionAmountList));

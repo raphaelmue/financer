@@ -16,7 +16,7 @@ import FixedTransactionAmountList
                                                                                      from '../../../../shared/transaction/fixed/transactionAmounts/FixedTransactionAmountList';
 import {notification}                                                                from 'antd';
 
-interface CreateFixedTransactionComponentProps extends WithTranslation, TransactionReducerProps {
+interface CreateFixedTransactionComponentProps extends WithTranslation<'default'>, TransactionReducerProps {
 }
 
 interface CreateFixedTransactionComponentState {
@@ -108,4 +108,4 @@ class CreateFixedTransaction extends React.Component<CreateFixedTransactionCompo
 
 export default connect(() => {
     return {};
-}, transactionDispatchMap)(withTranslation()(CreateFixedTransaction));
+}, transactionDispatchMap)(withTranslation<'default'>()(CreateFixedTransaction));

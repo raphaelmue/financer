@@ -23,7 +23,7 @@ export interface FixedTransactionMetaData {
     day?: number;
 }
 
-interface FixedTransactionDataFormComponentProps extends WithTranslation {
+interface FixedTransactionDataFormComponentProps extends WithTranslation<'default'> {
     categoryId?: number,
     fixedTransaction?: FixedTransaction
     onChange?: (fixedTransactionData: FixedTransactionMetaData) => void
@@ -63,7 +63,7 @@ class FixedTransactionDataForm extends React.Component<FixedTransactionDataFormC
             <Form
                 labelCol={{span: 6}}
                 wrapperCol={{span: 16}}
-                name={'variableTransactionDataForm'}>
+                name={'fixedTransactionDataForm'}>
                 <Form.Item
                     label={this.props.t('Transaction.ValueDate')}
                     name="valueDate"
@@ -177,4 +177,4 @@ const mapStateToProps = (state: AppState) => {
 
 const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({}, dispatch);
 
-export default connect(mapStateToProps, mapDispatchToProps)(withTranslation()(FixedTransactionDataForm));
+export default connect(mapStateToProps, mapDispatchToProps)(withTranslation<'default'>()(FixedTransactionDataForm));

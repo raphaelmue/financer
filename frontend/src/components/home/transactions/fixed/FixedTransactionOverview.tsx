@@ -16,7 +16,7 @@ import {metas}                            from './metas';
 import {PlusOutlined}                     from '@ant-design/icons';
 import {Link}                             from 'react-router-dom';
 
-interface FixedTransactionOverviewComponentProps extends WithTranslation, UserReducerProps, TransactionReducerProps {
+interface FixedTransactionOverviewComponentProps extends WithTranslation<'default'>, UserReducerProps, TransactionReducerProps {
 }
 
 interface FixedTransactionOverviewComponentState {
@@ -44,7 +44,7 @@ class FixedTransactionOverview extends React.Component<FixedTransactionOverviewC
                 this.props.dispatchLoadFixedTransactions({
                     userId: this.props.userState.user.id,
                     categoryId: this.state.selectedCategoryId,
-                    onlyActive: false,
+                    onlyActive: false
                 }, (fixedTransactions) => {
                     console.log(fixedTransactions);
                     this.setState({fixedTransactions: fixedTransactions});
@@ -108,4 +108,4 @@ const mapStateToProps = (state: AppState) => {
     };
 };
 
-export default connect(mapStateToProps, transactionDispatchMap)(withTranslation()(FixedTransactionOverview));
+export default connect(mapStateToProps, transactionDispatchMap)(withTranslation<'default'>()(FixedTransactionOverview));

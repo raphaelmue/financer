@@ -1,0 +1,22 @@
+{
+    "_embedded": {
+        "fixedTransactionDToes": [
+            {
+                "id": 51,
+                "amount": {
+                    "amount": -500
+                },
+                "timeRange": {
+                    "startDate": "2020-01-01"
+                },
+                "product": "Test Product",
+                "description": "Test Description",
+                "vendor": "Test Vendor",
+                "hasVariableAmounts": false,
+                "day": 1,
+                "isActive": true,
+                "transactionAmounts": []
+            }
+        ]
+    }
+}

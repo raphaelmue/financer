@@ -12,7 +12,7 @@ import {DataNode, EventDataNode}          from 'antd/lib/tree';
 
 const {Search} = Input;
 
-interface CategoryTreeComponentProps extends WithTranslation, UserReducerProps, CategoryReducerProps {
+interface CategoryTreeComponentProps extends WithTranslation<'default'>, UserReducerProps, CategoryReducerProps {
     onSelect?: (categoryId?: number) => void
 }
 
@@ -84,4 +84,4 @@ const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({
     dispatchLoadCategories: api.loadCategories
 }, dispatch);
 
-export default connect(mapStateToProps, mapDispatchToProps)(withTranslation()(CategoryTree));
+export default connect(mapStateToProps, mapDispatchToProps)(withTranslation<'default'>()(CategoryTree));

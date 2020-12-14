@@ -24,7 +24,6 @@
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
 
-// @ts-ignore
 Cypress.Commands.add('login', () => {
     cy.fixture('redux-state.json').then((state) => {
         cy.fixture('user.json').then((user) => {
@@ -58,6 +57,28 @@ Cypress.Commands.add('fillProductData', () => {
     cy.get('input[name=amount]').type('{selectall}{backspace}20');
 });
 
+Cypress.Commands.add('fillFixedTransactionData', () => {
+    cy.fixture('fixed-transaction.json').then((fixedTransaction) => {
+        cy.get('.ant-picker-clear').click();
+        cy.get('#fixedTransactionDataForm_valueDate').type(fixedTransaction.timeRange.startDate);
+
+        cy.get('.ant-tree-select').click();
+        cy.wait('@getCategories');
+        cy.get('.ant-select-tree-node-content-wrapper[title="Test Category"]').click();
+
+        cy.get('#fixedTransactionDataForm').type(fixedTransaction.product);
+
+        cy.get('#fixedTransactionDataForm_amount').should('be.enabled');
+        cy.get('#fixedTransactionDataForm_amount').should('be.enabled');
+        cy.get('#fixedTransactionDataForm_hasVariableAmounts').click();
+        cy.get('#fixedTransactionDataForm_amount').should('be.disabled');
+        cy.get('#fixedTransactionDataForm_amount').should('be.disabled');
+
+        cy.get('#fixedTransactionDataForm_vendor').type(fixedTransaction.vendor);
+        cy.get('#fixedTransactionDataForm_description').type(fixedTransaction.description);
+    });
+});
+
 Cypress.Commands.add('shouldDisplayDialog', () => {
     cy.get('.ant-modal-content').should('exist').and('be.visible');
 });
@@ -87,6 +108,8 @@ declare namespace Cypress {
         fillVariableTransactionData(): Chainable<Element>,
 
         fillProductData(): Chainable<Element>
+
+        fillFixedTransactionData(): Chainable<Element>,
 
         shouldDisplayDialog(): Chainable<Element>,
 
