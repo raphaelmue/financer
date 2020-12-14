@@ -15,6 +15,7 @@ import {CreateFixedTransaction as CreateFixedTransactionDTO, FixedTransactionAmo
 import FixedTransactionAmountList
                                                                                      from '../../../../shared/transaction/fixed/transactionAmounts/FixedTransactionAmountList';
 import {notification}                                                                from 'antd';
+import {AppState}                                                                    from '../../../../../store/reducers/root.reducers';
 
 interface CreateFixedTransactionComponentProps extends WithTranslation<'default'>, TransactionReducerProps {
 }
@@ -48,11 +49,10 @@ class CreateFixedTransaction extends React.Component<CreateFixedTransactionCompo
                 transactionAmounts: this.state.transactionAmounts
             }
         }, () => {
-            notification.success({
-                message: this.props.t('Transaction.FixedTransactions'),
-                description: this.props.t('Message.Transaction.FixedTransaction.CreatedFixedTransaction')
-            });
-            this.setState({redirectToOverview: true})
+            this.setState({redirectToOverview: true}, () => notification.success({
+                message: this.props.t('Transaction.FixedTransactions')?.toString(),
+                description: this.props.t('Message.Transaction.FixedTransaction.CreatedFixedTransaction')?.toString()
+            }));
         });
     }
 
@@ -80,7 +80,7 @@ class CreateFixedTransaction extends React.Component<CreateFixedTransactionCompo
     }, {
         title: this.props.t('Form.Step.CreateFixedTransaction.Attachments'),
         key: 'attachments',
-        content: () =>
+        content: () => (
             <div>
                 <AttachmentList
                     openAttachmentDialog={() => this.setState({showAttachmentDialog: true})}/>
@@ -92,7 +92,7 @@ class CreateFixedTransaction extends React.Component<CreateFixedTransactionCompo
                     //     showAttachmentDialog: false
                     // })}
                 />
-            </div>
+            </div>)
     }];
 
     render() {
@@ -101,11 +101,17 @@ class CreateFixedTransaction extends React.Component<CreateFixedTransactionCompo
         }
 
         return (
-            <PageContainer><StepForm steps={this.steps} onSubmit={this.onSubmit.bind(this)}/></PageContainer>
+            <PageContainer>
+                <StepForm steps={this.steps}
+                          loading={this.props.transactionState.isLoading}
+                          onSubmit={this.onSubmit.bind(this)}/>
+            </PageContainer>
         );
     }
 }
 
-export default connect(() => {
-    return {};
+export default connect((state: AppState) => {
+    return {
+        transactionState: state.transaction
+    };
 }, transactionDispatchMap)(withTranslation<'default'>()(CreateFixedTransaction));

@@ -61,10 +61,10 @@
       "Name": "Kategorie",
       "SelectCategoryPlaceholder": "Kategorie auswählen",
       "CategoryClass": {
-        "FIXEDEXPENSES": "Feste Ausgabe",
-        "FIXEDREVENUE": "Feste Einnahmen",
-        "VARIABLEEXPENSES": "Variable Ausgaben",
-        "VARIABLEREVENUE": "Variable Einnahmen"
+        "FIXED_EXPENSES": "Feste Ausgabe",
+        "FIXED_REVENUE": "Feste Einnahmen",
+        "VARIABLE_EXPENSES": "Variable Ausgaben",
+        "VARIABLE_REVENUE": "Variable Einnahmen"
       }
     },
     "Amount": "Betrag",
@@ -93,7 +93,8 @@
       "Day": "Wertstellungstag",
       "Product": "Produktname"
     },
-    "FixedTransactionAmounts": "Feste Transaktionsbeträge"
+    "FixedTransactionAmounts": "Feste Transaktionsbeträge",
+    "FixedTransactions": "Feste Transaktionen"
   },
   "Form": {
     "Table": {

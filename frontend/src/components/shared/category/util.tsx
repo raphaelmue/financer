@@ -6,10 +6,10 @@ export default class CategoryUtil {
 
     static addRootCategories(categories: Category[]): Category[] {
         const rootCategories: Category[] = [];
-        Object.keys(CategoryCategoryClassEnum).forEach((value, index) => {
+        Object.values(CategoryCategoryClassEnum).forEach((value, index) => {
             rootCategories.push({
                 id: -index - 1,
-                name: i18next.t('Transaction.Category.CategoryClass.' + value as CategoryCategoryClassEnum),
+                name: i18next.t('Transaction.Category.CategoryClass.' + value.valueOf() as CategoryCategoryClassEnum)?.toString(),
                 categoryClass: value as CategoryCategoryClassEnum,
                 children: []
             });
@@ -37,14 +37,14 @@ export default class CategoryUtil {
 
     static filterFixed(categories: Category[]): Category[] {
         return categories.filter(value =>
-            value.categoryClass.valueOf() === 'FIXEDEXPENSES' ||
-            value.categoryClass.valueOf() === 'FIXEDREVENUE');
+            value.categoryClass === CategoryCategoryClassEnum.FIXEDEXPENSES ||
+            value.categoryClass === CategoryCategoryClassEnum.FIXEDREVENUE);
     }
 
     static filterVariable(categories: Category[]): Category[] {
         return categories.filter(value =>
-            value.categoryClass.valueOf() === 'VARIABLEEXPENSES' ||
-            value.categoryClass.valueOf() === 'VARIABLEREVENUE');
+            value.categoryClass === CategoryCategoryClassEnum.VARIABLEEXPENSES ||
+            value.categoryClass === CategoryCategoryClassEnum.VARIABLEREVENUE);
     }
 
     static convertCategoriesToDataNode(categories: Category[], query?: string, root?: Category): DataNode[] {

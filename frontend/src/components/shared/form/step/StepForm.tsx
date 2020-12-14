@@ -17,6 +17,7 @@ export interface FormStep extends StepProps {
 
 interface StepFormComponentProps extends WithTranslation<'default'> {
     steps: FormStep[],
+    loading?: boolean,
     onSubmit?: () => void,
 }
 
@@ -75,6 +76,7 @@ class StepForm extends React.Component<StepFormComponentProps, StepFormComponent
     renderStepContent(): React.ReactNode[] {
         return this.props.steps.map(step =>
             <StepFormContent
+                loading={this.props.loading}
                 key={step.key}
                 visible={step.key === this.state.currentStepKey}>
                 {step.content()}
@@ -107,6 +109,7 @@ class StepForm extends React.Component<StepFormComponentProps, StepFormComponent
                     <Button
                         id={'submitStepsButton'}
                         type={'primary'}
+                        loading={this.props.loading}
                         disabled={!this.validateSteps()}
                         onClick={this.onSubmit.bind(this)}>
                         {this.props.t('Form.Button.Submit')}

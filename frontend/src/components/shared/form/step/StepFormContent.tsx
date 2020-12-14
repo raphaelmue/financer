@@ -3,7 +3,8 @@ import ProCard from '@ant-design/pro-card';
 
 interface StepFormContentComponentProps {
     key: string,
-    visible: boolean
+    visible: boolean,
+    loading?: boolean
 }
 
 interface StepFormContentComponentState {
@@ -12,7 +13,9 @@ interface StepFormContentComponentState {
 export class StepFormContent extends React.Component<StepFormContentComponentProps, StepFormContentComponentState> {
     render() {
         return (
-            <ProCard collapsed={!this.props.visible} bordered>
+            <ProCard bordered
+                     collapsed={!this.props.visible}
+                     loading={this.props.loading}>
                 {this.props.children}
             </ProCard>
         );

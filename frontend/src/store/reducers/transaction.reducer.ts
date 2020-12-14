@@ -21,7 +21,7 @@ const initialState: TransactionState = {
     pageMetadata: undefined
 };
 
-export const transactionReducer = (state: TransactionState = initialState, action: TransactionAction) => {
+export const transactionReducer = (state: TransactionState = initialState, action: TransactionAction): TransactionState => {
     switch (action.type) {
         case TransactionActionDefinition.LOAD_VARIABLE_TRANSACTIONS_SUCCESS:
             return {
@@ -53,15 +53,18 @@ export const transactionReducer = (state: TransactionState = initialState, actio
                 ...state,
                 isLoading: false,
                 error: undefined,
-                fixedTransactions: action.payload.embedded?.fixedTransactionDToes
+                fixedTransactions: action.payload.embedded?.fixedTransactionDToes || []
             };
-        case TransactionActionDefinition.CREATE_FIXED_TRANSACTION_SUCCESS:
+        case TransactionActionDefinition.CREATE_FIXED_TRANSACTION_SUCCESS: {
+            const transactions = state.fixedTransactions;
+            transactions.push(action.payload);
             return {
                 ...state,
                 isLoading: false,
                 error: undefined,
-                fixedTransactions: [...state.fixedTransactions, action.payload]
+                fixedTransactions: transactions
             };
+        }
         case TransactionActionDefinition.LOAD_VARIABLE_TRANSACTIONS_REQUEST:
         case TransactionActionDefinition.LOAD_VARIABLE_TRANSACTION_REQUEST:
         case TransactionActionDefinition.CREATE_VARIABLE_TRANSACTION_REQUEST:

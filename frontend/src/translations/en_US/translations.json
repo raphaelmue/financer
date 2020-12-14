@@ -61,10 +61,10 @@
       "Name": "Category",
       "SelectCategoryPlaceholder": "Select category",
       "CategoryClass": {
-        "FIXEDEXPENSES": "Fixed expenses",
-        "FIXEDREVENUE": "Fixed revenue",
-        "VARIABLEEXPENSES": "Variable Expenses",
-        "VARIABLEREVENUE": "Variable Revenue"
+        "FIXED_EXPENSES": "Fixed expenses",
+        "FIXED_REVENUE": "Fixed revenue",
+        "VARIABLE_EXPENSES": "Variable Expenses",
+        "VARIABLE_REVENUE": "Variable Revenue"
       }
     },
     "Amount": "Amount",
@@ -93,7 +93,8 @@
       "Day": "Value day",
       "Product": "Product name"
     },
-    "FixedTransactionAmounts": "Fixed transaction amounts"
+    "FixedTransactionAmounts": "Fixed transaction amounts",
+    "FixedTransactions": "Fixed Transactions"
   },
   "Form": {
     "Table": {

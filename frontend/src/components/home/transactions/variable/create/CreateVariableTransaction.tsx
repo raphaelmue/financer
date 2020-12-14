@@ -60,12 +60,12 @@ class CreateVariableTransaction extends React.Component<CreateVariableTransactio
                 }
             }, (variableTransaction) => {
                 this.setState({redirectToTransactionList: true}, () => notification.success({
-                    message: this.props.t('Transaction.VariableTransaction'),
+                    message: this.props.t('Transaction.VariableTransaction')?.toString(),
                     description: this.props.t('Message.Transaction.VariableTransaction.CreatedVariableTransaction', {
                         category: variableTransaction.category.name,
-                        categoryClass: this.props.t('Transaction.Category.CategoryClass.' + variableTransaction.category.categoryClass.valueOf()),
+                        categoryClass: this.props.t('Transaction.Category.CategoryClass.' + variableTransaction.category.categoryClass.valueOf())?.toString(),
                         valueDate: variableTransaction.valueDate.date.toDateString()
-                    })
+                    })?.toString()
                 }));
             });
         }

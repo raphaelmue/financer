@@ -44,7 +44,9 @@ class FixedTransactionOverview extends React.Component<FixedTransactionOverviewC
                 this.props.dispatchLoadFixedTransactions({
                     userId: this.props.userState.user.id,
                     categoryId: this.state.selectedCategoryId,
-                    onlyActive: false
+                    onlyActive: false,
+                    page: page,
+                    size: pageSize
                 }, (fixedTransactions) => {
                     console.log(fixedTransactions);
                     this.setState({fixedTransactions: fixedTransactions});
@@ -73,7 +75,7 @@ class FixedTransactionOverview extends React.Component<FixedTransactionOverviewC
                     </ProCard>
                     <ProCard colSpan={16} bordered>
                         <ProList<FixedTransaction>
-                            headerTitle={this.props.t('Menu.Transaction.FixedTransactions')}
+                            headerTitle={this.props.t('Transaction.FixedTransactions')}
                             dataSource={this.state.fixedTransactions}
                             loading={this.props.transactionState.isLoading}
                             rowKey={'id'}
