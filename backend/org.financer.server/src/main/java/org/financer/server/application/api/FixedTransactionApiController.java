@@ -19,7 +19,6 @@ import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.util.Set;
 
 @RestController
 public class FixedTransactionApiController implements FixedTransactionApi {
@@ -38,16 +37,19 @@ public class FixedTransactionApiController implements FixedTransactionApi {
     @Override
     public ResponseEntity<FixedTransactionDTO> createFixedTransaction(@NotNull @Valid CreateFixedTransactionDTO fixedTransaction) {
         FixedTransaction fixedTransactionEntity = modelMapper.map(fixedTransaction, FixedTransaction.class);
-        fixedTransactionEntity.setId(-1L);
         if (fixedTransaction.getHasVariableAmounts() && !fixedTransaction.getTransactionAmounts().isEmpty()) {
-            Set<FixedTransactionAmount> fixedTransactionAmounts = ModelMapperUtils.mapAll(fixedTransaction.getTransactionAmounts(), FixedTransactionAmount.class);
-            for (FixedTransactionAmount transactionAmount : fixedTransactionAmounts) {
-                transactionAmount.setFixedTransaction(fixedTransactionEntity);
+            fixedTransactionEntity.getTransactionAmounts().clear();
+            long id = -1;
+            for (CreateFixedTransactionAmountDTO fixedTransactionAmount : fixedTransaction.getTransactionAmounts()) {
+                fixedTransactionEntity.addFixedTransactionAmount(new FixedTransactionAmount()
+                        .setId(id)
+                        .setValueDate(fixedTransactionAmount.getValueDate())
+                        .setAmount(fixedTransactionAmount.getAmount())
+                        .setFixedTransaction(fixedTransactionEntity));
+                id--;
             }
-            fixedTransactionEntity.setTransactionAmounts(fixedTransactionAmounts);
         }
         fixedTransactionEntity = transactionDomainService.createFixedTransaction(fixedTransactionEntity);
-
         return new ResponseEntity<>(modelMapper.map(fixedTransactionEntity, FixedTransactionDTO.class), HttpStatus.OK);
     }
 

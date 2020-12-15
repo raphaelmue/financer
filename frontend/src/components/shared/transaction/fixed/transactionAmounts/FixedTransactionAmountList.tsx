@@ -12,6 +12,7 @@ interface FixedTransactionAmountListComponentProps extends WithTranslation<'defa
     openFixedTransactionAmountDialog: () => void,
     onDeleteFixedTransactionAmounts?: (productIds: number[]) => Promise<void>,
     fixedTransactionAmounts?: FixedTransactionAmount[]
+    disabled?: boolean,
 }
 
 interface FixedTransactionAmountListComponentState {
@@ -57,7 +58,8 @@ class FixedTransactionAmountList extends React.Component<FixedTransactionAmountL
                 loading={false}
                 toolBarRender={() => [
                     <Button
-                        key="deleteProductButton"
+                        id={'deleteProductButton'}
+                        key={'deleteProductButton'}
                         style={{display: this.state.selectedFixedTransactionAmountIds.length > 0 ? 'initial' : 'none'}}
                         icon={<DeleteOutlined/>}
                         onClick={() => this.onDeleteProduct()}
@@ -65,7 +67,9 @@ class FixedTransactionAmountList extends React.Component<FixedTransactionAmountL
                         {this.props.t('Form.Button.Delete')}
                     </Button>,
                     <Button
-                        key="newVariableTransactionButton"
+                        id={'newVariableTransactionButton'}
+                        key={'newVariableTransactionButton'}
+                        disabled={this.props.disabled}
                         type="primary"
                         icon={<PlusOutlined/>}
                         onClick={this.props.openFixedTransactionAmountDialog}>

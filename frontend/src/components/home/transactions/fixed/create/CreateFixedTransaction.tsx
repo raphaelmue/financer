@@ -1,21 +1,27 @@
-import React                                                                         from 'react';
-import {transactionDispatchMap}                                                      from '../../../../../store/api/transaction.api';
-import {connect}                                                                     from 'react-redux';
-import {WithTranslation, withTranslation}                                            from 'react-i18next';
-import {TransactionReducerProps}                                                     from '../../../../../store/reducers/transaction.reducer';
-import {Redirect}                                                                    from 'react-router-dom';
-import {PageContainer}                                                               from '@ant-design/pro-layout';
-import StepForm, {FormStep}                                                          from '../../../../shared/form/step/StepForm';
-import FixedTransactionDataForm, {FixedTransactionMetaData}                          from '../../../../shared/transaction/fixed/transactionData/FixedTransactionDataForm';
+import React                                                from 'react';
+import {transactionDispatchMap}                             from '../../../../../store/api/transaction.api';
+import {connect}                                            from 'react-redux';
+import {WithTranslation, withTranslation}                   from 'react-i18next';
+import {TransactionReducerProps}                            from '../../../../../store/reducers/transaction.reducer';
+import {Redirect}                                           from 'react-router-dom';
+import {PageContainer}                                      from '@ant-design/pro-layout';
+import StepForm, {FormStep}                                 from '../../../../shared/form/step/StepForm';
+import FixedTransactionDataForm, {FixedTransactionMetaData} from '../../../../shared/transaction/fixed/transactionData/FixedTransactionDataForm';
 import AttachmentList
-                                                                                     from '../../../../shared/transaction/attachment/AttachmentList';
+                                                            from '../../../../shared/transaction/attachment/AttachmentList';
 import CreateAttachmentDialog
-                                                                                     from '../../../../shared/transaction/attachment/create/CreateAttachmentDialog';
-import {CreateFixedTransaction as CreateFixedTransactionDTO, FixedTransactionAmount} from '../../../../../.openapi';
+                                                            from '../../../../shared/transaction/attachment/create/CreateAttachmentDialog';
+import {
+    CreateFixedTransaction as CreateFixedTransactionDTO,
+    CreateFixedTransactionAmount,
+    FixedTransactionAmount
+}                                                           from '../../../../../.openapi';
 import FixedTransactionAmountList
-                                                                                     from '../../../../shared/transaction/fixed/transactionAmounts/FixedTransactionAmountList';
-import {notification}                                                                from 'antd';
-import {AppState}                                                                    from '../../../../../store/reducers/root.reducers';
+                                                            from '../../../../shared/transaction/fixed/transactionAmounts/FixedTransactionAmountList';
+import {notification}                                       from 'antd';
+import {AppState}                                           from '../../../../../store/reducers/root.reducers';
+import CreateFixedTransactionAmountDialog
+                                                            from '../../../../shared/transaction/fixed/transactionAmounts/create/CreateFixedTransactionAmountDialog';
 
 interface CreateFixedTransactionComponentProps extends WithTranslation<'default'>, TransactionReducerProps {
 }
@@ -29,6 +35,7 @@ interface CreateFixedTransactionComponentState {
 }
 
 class CreateFixedTransaction extends React.Component<CreateFixedTransactionComponentProps, CreateFixedTransactionComponentState> {
+
 
     constructor(props: CreateFixedTransactionComponentProps) {
         super(props);
@@ -56,6 +63,17 @@ class CreateFixedTransaction extends React.Component<CreateFixedTransactionCompo
         });
     }
 
+    onCreateFixedTransaction = (fixedTransactionAmount: FixedTransactionAmount): Promise<void> => {
+        return new Promise<void>(resolve => {
+            fixedTransactionAmount.id = -this.state.transactionAmounts.length - 1;
+            this.setState({
+                transactionAmounts: [...this.state.transactionAmounts, fixedTransactionAmount],
+                showFixedTransactionAmountDialog: false
+            });
+            resolve();
+        });
+    };
+
     transactionDataCondition = (): boolean => (
         this.state.fixedTransactionData.categoryId !== undefined
         && this.state.fixedTransactionData.timeRange !== undefined
@@ -75,7 +93,13 @@ class CreateFixedTransaction extends React.Component<CreateFixedTransactionCompo
         content: () => (
             <div>
                 <FixedTransactionAmountList
+                    disabled={!this.state.fixedTransactionData.hasVariableAmounts}
+                    fixedTransactionAmounts={this.state.transactionAmounts}
                     openFixedTransactionAmountDialog={() => this.setState({showFixedTransactionAmountDialog: true})}/>
+                <CreateFixedTransactionAmountDialog
+                    visible={this.state.showFixedTransactionAmountDialog}
+                    onSubmit={this.onCreateFixedTransaction}
+                    onCancel={() => this.setState({showFixedTransactionAmountDialog: false})}/>
             </div>)
     }, {
         title: this.props.t('Form.Step.CreateFixedTransaction.Attachments'),

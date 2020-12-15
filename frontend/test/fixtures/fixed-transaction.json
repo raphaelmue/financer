@@ -1,11 +1,12 @@
 {
     "id": 52,
     "amount": {
-        "amount": 0
+        "amount": -500
     },
     "timeRange": {
         "startDate": "2020-01-01"
     },
+    "day": 3,
     "product": "Test Product",
     "description": "Test Description",
     "vendor": "Test Vendor",
