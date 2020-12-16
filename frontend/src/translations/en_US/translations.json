@@ -91,7 +91,8 @@
       "HasVariableAmounts": "Variable",
       "HasFixedAmounts": "Fixed",
       "Day": "Value day",
-      "Product": "Product name"
+      "Product": "Product name",
+      "Status": "Status"
     },
     "FixedTransactionAmounts": "Fixed transaction amounts",
     "FixedTransactions": "Fixed Transactions"

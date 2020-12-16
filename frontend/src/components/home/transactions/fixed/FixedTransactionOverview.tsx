@@ -22,6 +22,7 @@ interface FixedTransactionOverviewComponentProps extends WithTranslation<'defaul
 interface FixedTransactionOverviewComponentState {
     selectedCategoryId: number | undefined,
     fixedTransactions: FixedTransaction[],
+    query?: string,
     page: number,
     pageSize: number
 }
@@ -33,22 +34,22 @@ class FixedTransactionOverview extends React.Component<FixedTransactionOverviewC
         this.state = {
             selectedCategoryId: undefined,
             fixedTransactions: [],
+            query: undefined,
             page: 0,
             pageSize: 20
         };
     }
 
-    loadFixedTransactions(page = 0, pageSize = 20): Promise<RequestData<FixedTransaction>> {
+    loadFixedTransactions(page = 1, pageSize = 20): Promise<RequestData<FixedTransaction>> {
         return new Promise<RequestData<FixedTransaction>>(resolve => {
             if (this.state.selectedCategoryId && this.props.userState.user?.id) {
                 this.props.dispatchLoadFixedTransactions({
                     userId: this.props.userState.user.id,
                     categoryId: this.state.selectedCategoryId,
                     onlyActive: false,
-                    page: page,
+                    page: page - 1,
                     size: pageSize
                 }, (fixedTransactions) => {
-                    console.log(fixedTransactions);
                     this.setState({fixedTransactions: fixedTransactions});
                     resolve({
                         data: fixedTransactions,
@@ -65,6 +66,14 @@ class FixedTransactionOverview extends React.Component<FixedTransactionOverviewC
         }
     }
 
+    getFixedTransactions() {
+        return this.state.fixedTransactions.filter(value =>
+            this.state.query === undefined
+            || value.product?.toLowerCase().includes(this.state.query.toLowerCase())
+            || value.vendor?.toLowerCase().includes(this.state.query.toLowerCase())
+            || value.description?.toLowerCase().includes(this.state.query.toLowerCase()));
+    }
+
     render() {
         return (
             <PageContainer>
@@ -76,12 +85,24 @@ class FixedTransactionOverview extends React.Component<FixedTransactionOverviewC
                     <ProCard colSpan={16} bordered>
                         <ProList<FixedTransaction>
                             headerTitle={this.props.t('Transaction.FixedTransactions')}
-                            dataSource={this.state.fixedTransactions}
+                            dataSource={this.getFixedTransactions()}
                             loading={this.props.transactionState.isLoading}
                             rowKey={'id'}
                             pagination={{
                                 current: this.state.page + 1,
                                 pageSize: this.state.pageSize,
+                                defaultPageSize: 20,
+                                pageSizeOptions: ['5', '10', '20', '50']
+                            }}
+                            options={{
+                                search: {
+                                    allowClear: true,
+                                    onSearch: value => this.setState({query: value})
+                                },
+                                reload: true,
+                                fullScreen: true,
+                                density: false,
+                                setting: false
                             }}
                             toolBarRender={() => [
                                 <Link key={'createFixedTransactionLink'}

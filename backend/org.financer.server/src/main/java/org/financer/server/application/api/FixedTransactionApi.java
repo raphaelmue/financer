@@ -45,6 +45,29 @@ public interface FixedTransactionApi {
             @RequestBody @Valid CreateFixedTransactionDTO fixedTransaction);
 
     /**
+     * Fetches a fixed transaction by id.
+     *
+     * @param transactionId transaction id to be fetched
+     * @return transaction object
+     */
+    @Operation(
+            operationId = "getFixedTransactionById",
+            summary = "Fetches a fixed transaction by id",
+            tags = {"fixed-transaction", "transaction"},
+            security = @SecurityRequirement(name = "TokenAuth"))
+    @ApiResponse(
+            responseCode = "200",
+            description = "Fixed transaction was successfully fetched.",
+            content = @Content(schema = @Schema(implementation = FixedTransactionDTO.class)))
+    @GetMapping(
+            value = "/{transactionId}",
+            produces = {"application/json"},
+            headers = "Accept=application/json")
+    ResponseEntity<FixedTransactionDTO> getFixedTransactionById(
+            @Parameter(description = "ID of the transaction that will be fetched")
+            @PathVariable("transactionId") @NotBlank @Min(1) Long transactionId);
+
+    /**
      * Updates a specified transaction.
      *
      * @param transactionId    transaction id that will be updated

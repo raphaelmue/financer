@@ -10,7 +10,7 @@ export default class CategoryUtil {
             rootCategories.push({
                 id: -index - 1,
                 name: i18next.t('Transaction.Category.CategoryClass.' + value.valueOf() as CategoryCategoryClassEnum)?.toString(),
-                categoryClass: value as CategoryCategoryClassEnum,
+                categoryClass: value,
                 children: []
             });
         });

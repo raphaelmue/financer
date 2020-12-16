@@ -19,16 +19,17 @@ import VariableTransactionList
 import CreateVariableTransaction
                                                                   from './transactions/variable/create/CreateVariableTransaction';
 import VariableTransactionsDetails
-                                                                  from './transactions/variable/details/VariableTransactionsDetails';
+                                from './transactions/variable/details/VariableTransactionsDetails';
 
 import '@ant-design/pro-layout/dist/layout.css';
 import '@ant-design/pro-table/dist/table.css';
 import '@ant-design/pro-list/dist/list.css';
 import '@ant-design/pro-card/dist/card.css';
-import AdminConfiguration                                         from './admin/configuration/AdminConfiguration';
-import FixedTransactionOverview                                   from './transactions/fixed/FixedTransactionOverview';
+import AdminConfiguration       from './admin/configuration/AdminConfiguration';
+import FixedTransactionOverview from './transactions/fixed/FixedTransactionOverview';
 import CreateFixedTransaction
-                                                                  from './transactions/fixed/create/CreateFixedTransaction';
+                                from './transactions/fixed/create/CreateFixedTransaction';
+import FixedTransactionDetails  from './transactions/fixed/details/FixedTransactionDetails';
 
 const {Text} = Typography;
 
@@ -121,6 +122,8 @@ class Home extends React.Component<HomeProps, HomeState> {
                                component={VariableTransactionsDetails}/>
                         <Route path={'/transactions/variable/'} component={VariableTransactionList}/>
                         <Route path={'/transactions/fixed/create'} component={CreateFixedTransaction}/>
+                        <Route path={'/transactions/fixed/:fixedTransactionId'}
+                               component={FixedTransactionDetails}/>
                         <Route path={'/transactions/fixed/'} component={FixedTransactionOverview}/>
                         <Route path='/settings' component={Settings}/>
                         <Route path={'/admin/configuration'} component={AdminConfiguration}/>

@@ -54,6 +54,12 @@ public class FixedTransactionApiController implements FixedTransactionApi {
     }
 
     @Override
+    public ResponseEntity<FixedTransactionDTO> getFixedTransactionById(@NotBlank @Min(1) Long transactionId) {
+        FixedTransaction fixedTransaction = (FixedTransaction) transactionDomainService.findTransactionById(transactionId);
+        return new ResponseEntity<>(modelMapper.map(fixedTransaction, FixedTransactionDTO.class), HttpStatus.OK);
+    }
+
+    @Override
     public ResponseEntity<FixedTransactionDTO> updateFixedTransaction(@NotBlank @PathVariable("transactionId") @Min(1) Long transactionId,
                                                                       @NotNull @Valid UpdateFixedTransactionDTO fixedTransaction) {
         FixedTransaction updateFixedTransaction = transactionDomainService.updateFixedTransaction(transactionId,

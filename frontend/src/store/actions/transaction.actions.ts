@@ -5,7 +5,7 @@ import {
     CreateVariableTransactionRequest,
     DeleteProductRequest,
     DeleteVariableTransactionRequest,
-    FixedTransaction,
+    FixedTransaction, GetFixedTransactionByIdRequest,
     GetUsersFixedTransactionsRequest,
     GetUsersVariableTransactionsRequest,
     GetVariableTransactionByIdRequest,
@@ -42,6 +42,9 @@ export enum TransactionActionDefinition {
     LOAD_FIXED_TRANSACTIONS_REQUEST = 'TRANSACTION:LOAD_FIXED_TRANSACTIONS_REQUEST',
     LOAD_FIXED_TRANSACTIONS_SUCCESS = 'TRANSACTION:LOAD_FIXED_TRANSACTIONS_SUCCESS',
     LOAD_FIXED_TRANSACTIONS_FAILED = 'TRANSACTION:LOAD_FIXED_TRANSACTIONS_FAILED',
+    LOAD_FIXED_TRANSACTION_REQUEST = 'TRANSACTION:LOAD_FIXED_TRANSACTION_REQUEST',
+    LOAD_FIXED_TRANSACTION_SUCCESS = 'TRANSACTION:LOAD_FIXED_TRANSACTION_SUCCESS',
+    LOAD_FIXED_TRANSACTION_FAILED = 'TRANSACTION:LOAD_FIXED_TRANSACTION_FAILED',
     CREATE_FIXED_TRANSACTION_REQUEST = 'TRANSACTION:CREATE_FIXED_TRANSACTION_REQUEST',
     CREATE_FIXED_TRANSACTION_SUCCESS = 'TRANSACTION:CREATE_FIXED_TRANSACTION_SUCCESS',
     CREATE_FIXED_TRANSACTION_FAILED = 'TRANSACTION:CREATE_FIXED_TRANSACTION_FAILED',
@@ -68,6 +71,9 @@ export type TransactionAction = LoadVariableTransactionsRequestAction
     | DeleteProductsRequestAction
     | DeleteProductsSuccessAction
     | DeleteProductsFailedAction
+    | LoadFixedTransactionsRequestAction
+    | LoadFixedTransactionsSuccessAction
+    | LoadFixedTransactionsFailedAction
     | LoadFixedTransactionRequestAction
     | LoadFixedTransactionSuccessAction
     | LoadFixedTransactionFailedAction
@@ -178,18 +184,33 @@ interface DeleteProductsFailedAction extends Action {
     payload: ErrorMessage
 }
 
-interface LoadFixedTransactionRequestAction extends Action {
+interface LoadFixedTransactionsRequestAction extends Action {
     type: TransactionActionDefinition.LOAD_FIXED_TRANSACTIONS_REQUEST,
     payload: GetUsersFixedTransactionsRequest
 }
 
-interface LoadFixedTransactionSuccessAction extends Action {
+interface LoadFixedTransactionsSuccessAction extends Action {
     type: TransactionActionDefinition.LOAD_FIXED_TRANSACTIONS_SUCCESS,
     payload: PagedModelFixedTransaction
 }
 
-interface LoadFixedTransactionFailedAction extends Action {
+interface LoadFixedTransactionsFailedAction extends Action {
     type: TransactionActionDefinition.LOAD_FIXED_TRANSACTIONS_FAILED,
+    payload: ErrorMessage
+}
+
+interface LoadFixedTransactionRequestAction extends Action {
+    type: TransactionActionDefinition.LOAD_FIXED_TRANSACTION_REQUEST,
+    payload: GetFixedTransactionByIdRequest
+}
+
+interface LoadFixedTransactionSuccessAction extends Action {
+    type: TransactionActionDefinition.LOAD_FIXED_TRANSACTION_SUCCESS,
+    payload: FixedTransaction
+}
+
+interface LoadFixedTransactionFailedAction extends Action {
+    type: TransactionActionDefinition.LOAD_FIXED_TRANSACTION_FAILED,
     payload: ErrorMessage
 }
 

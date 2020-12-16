@@ -3,6 +3,8 @@ package org.financer.shared.domain.model.api.transaction.fixed;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.experimental.Accessors;
+import org.financer.shared.domain.model.api.category.CategoryDTO;
+import org.financer.shared.domain.model.api.transaction.AttachmentDTO;
 import org.financer.shared.domain.model.value.objects.Amount;
 import org.financer.shared.domain.model.value.objects.TimeRange;
 import org.springframework.hateoas.RepresentationModel;
@@ -11,6 +13,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Set;
 
 @Data
 @Accessors(chain = true)
@@ -21,6 +24,10 @@ public class FixedTransactionDTO extends RepresentationModel<FixedTransactionDTO
     @Min(1)
     @Schema(description = "Identifier of the fixed transaction", required = true, example = "1")
     private int id;
+
+    @NotNull
+    @Schema(description = "Category object of the variable transaction", required = true)
+    private CategoryDTO category;
 
     @NotNull
     @Schema(description = "Amount of the fixed transaction", required = true)
@@ -45,6 +52,9 @@ public class FixedTransactionDTO extends RepresentationModel<FixedTransactionDTO
 
     @Schema(description = "Billing day of the fixed transaction", required = true, example = "Amazon")
     private int day;
+
+    @Schema(description = "List of attachments of the variable transaction")
+    private Set<AttachmentDTO> attachments;
 
     @Schema(description = "List of fixed transaction amounts", required = true, example = "Amazon")
     private List<@Valid FixedTransactionAmountDTO> transactionAmounts;

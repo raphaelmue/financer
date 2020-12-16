@@ -168,16 +168,16 @@ class VariableTransactionsDetails extends React.Component<VariableTransactionsDe
                     <PageContainer
                         content={(
                             <Descriptions column={2}>
-                                <Item label={this.props.t('Transaction.ValueDate')}>
-                                    <Text strong={true}>
-                                        <ValueDateLabel valueDate={this.state.variableTransaction?.valueDate}/>
-                                    </Text>
+                                <Item label={this.props.t('Transaction.Category.Name')}>
+                                    <Text strong={true}>{this.state.variableTransaction?.category.name}</Text>
                                 </Item>
                                 <Item label={this.props.t('Transaction.Vendor')}>
                                     {this.state.variableTransaction?.vendor}
                                 </Item>
-                                <Item label={this.props.t('Transaction.Category.Name')}>
-                                    <Text strong={true}>{this.state.variableTransaction?.category.name}</Text>
+                                <Item label={this.props.t('Transaction.ValueDate')}>
+                                    <Text strong={true}>
+                                        <ValueDateLabel valueDate={this.state.variableTransaction?.valueDate}/>
+                                    </Text>
                                 </Item>
                                 <Item label={this.props.t('Transaction.Description')}>
                                     {this.state.variableTransaction?.description}

@@ -1,9 +1,11 @@
-import {ProListMetas}        from '@ant-design/pro-list';
-import {FixedTransaction}    from '../../../../.openapi';
-import {Divider, Space, Tag} from 'antd';
-import AmountLabel           from '../../../shared/transaction/amount/amountLabel/AmountLabel';
-import React                 from 'react';
-import i18next               from 'i18next';
+import {ProListMetas}            from '@ant-design/pro-list';
+import {FixedTransaction}        from '../../../../.openapi';
+import {Divider, Space, Tag}     from 'antd';
+import AmountLabel               from '../../../shared/transaction/amount/amountLabel/AmountLabel';
+import React                     from 'react';
+import i18next                   from 'i18next';
+import TimeRangeLabel            from '../../../shared/transaction/timeRange/TimeRangeLabel';
+import FixedTransactionStatusTag from '../../../shared/transaction/fixed/status/FixedTransactionStatusTag';
 
 export const metas = (): ProListMetas<FixedTransaction> => {
     return {
@@ -14,16 +16,9 @@ export const metas = (): ProListMetas<FixedTransaction> => {
             // eslint-disable-next-line react/display-name
             render: (dom, entity) => {
                 return (
-                    <Space>
-                        <Tag color={entity.active ? 'success' : 'default'}>
-                            {entity.active ? i18next.t('Transaction.FixedTransaction.Active')
-                                : i18next.t('Transaction.FixedTransaction.Inactive')}
-                        </Tag>
-                        <Tag color={'processing'}>
-                            {entity.hasVariableAmounts ? i18next.t('Transaction.FixedTransaction.HasVariableAmounts')
-                                : i18next.t('Transaction.FixedTransaction.HasFixedAmounts')}
-                        </Tag>
-                    </Space>);
+                    <FixedTransactionStatusTag
+                        isActive={entity.active}
+                        hasVariableAmounts={entity.hasVariableAmounts}/>);
             },
         },
         description: {
@@ -41,11 +36,7 @@ export const metas = (): ProListMetas<FixedTransaction> => {
         content: {
             // eslint-disable-next-line react/display-name
             render: (dom, entity) => (
-                <Space>
-                    {entity.timeRange.startDate.toLocaleDateString()}
-                    -
-                    {entity.timeRange.endDate ? entity.timeRange.endDate.toLocaleDateString() : i18next.t('Transaction.FixedTransaction.Now')}
-                </Space>
+                <TimeRangeLabel timeRange={entity.timeRange}/>
             )
         },
         extra: {
