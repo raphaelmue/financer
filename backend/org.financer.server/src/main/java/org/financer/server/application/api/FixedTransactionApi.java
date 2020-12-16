@@ -138,7 +138,7 @@ public interface FixedTransactionApi {
             value = "/{transactionId}/transactionAmounts",
             produces = {"application/json"},
             headers = "Accept=application/json")
-    ResponseEntity<FixedTransactionAmountDTO> createTransactionAmount(
+    ResponseEntity<FixedTransactionAmountDTO> createFixedTransactionAmount(
             @Parameter(description = "ID of the transaction that is assigned to the transaction amoutn", required = true)
             @PathVariable("transactionId") @NotBlank @Min(1) Long transactionId,
             @io.swagger.v3.oas.annotations.parameters.RequestBody(

@@ -1,12 +1,12 @@
-import React                          from 'react';
-import {AppState}                     from '../../../../../store/reducers/root.reducers';
-import {bindActionCreators, Dispatch} from 'redux';
-import {connect}                      from 'react-redux';
-import {withTranslation}              from 'react-i18next';
-import {Space, Tag}                   from 'antd';
-import i18next                        from 'i18next';
+import React                              from 'react';
+import {AppState}                         from '../../../../../store/reducers/root.reducers';
+import {bindActionCreators, Dispatch}     from 'redux';
+import {connect}                          from 'react-redux';
+import {WithTranslation, withTranslation} from 'react-i18next';
+import {Space, Tag}                       from 'antd';
+import i18next                            from 'i18next';
 
-interface FixedTransactionStatusTagComponentProps {
+interface FixedTransactionStatusTagComponentProps extends WithTranslation<'default'> {
     isActive?: boolean,
     hasVariableAmounts?: boolean
 }

@@ -156,7 +156,8 @@
         }
       },
       "FixedTransaction": {
-        "CreatedFixedTransaction": "Fixed transaction was successfully created."
+        "CreatedFixedTransaction": "Fixed transaction was successfully created.",
+        "CreatedFixedTransactionAmount": "The transaction amount was successfully added to the fixed transaction."
       }
     },
     "Admin": {

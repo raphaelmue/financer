@@ -1,29 +1,31 @@
-import React                                      from 'react';
-import {withTranslation, WithTranslation}         from 'react-i18next';
-import {AppState}                                 from '../../../../../store/reducers/root.reducers';
-import {connect}                                  from 'react-redux';
-import {transactionDispatchMap}                   from '../../../../../store/api/transaction.api';
-import {Button, Descriptions, Result, Space}      from 'antd';
-import Text                                       from 'antd/lib/typography/Text';
-import {PageContainer}                            from '@ant-design/pro-layout';
-import {FixedTransaction, FixedTransactionAmount} from '../../../../../.openapi';
-import {Link, Redirect, RouteComponentProps}      from 'react-router-dom';
-import {TransactionReducerProps}                  from '../../../../../store/reducers/transaction.reducer';
-import TimeRangeLabel                             from '../../../../shared/transaction/timeRange/TimeRangeLabel';
-import {DeleteOutlined, EditOutlined}             from '@ant-design/icons';
+import React                                               from 'react';
+import {withTranslation, WithTranslation}                  from 'react-i18next';
+import {AppState}                                          from '../../../../../store/reducers/root.reducers';
+import {connect}                                           from 'react-redux';
+import {transactionDispatchMap}                            from '../../../../../store/api/transaction.api';
+import {Button, Descriptions, notification, Result, Space} from 'antd';
+import Text                                                from 'antd/lib/typography/Text';
+import {PageContainer}                                     from '@ant-design/pro-layout';
+import {FixedTransaction, FixedTransactionAmount}          from '../../../../../.openapi';
+import {Link, Redirect, RouteComponentProps}               from 'react-router-dom';
+import {TransactionReducerProps}                           from '../../../../../store/reducers/transaction.reducer';
+import TimeRangeLabel
+                                                           from '../../../../shared/transaction/timeRange/TimeRangeLabel';
+import {DeleteOutlined, EditOutlined}                      from '@ant-design/icons';
 import FixedTransactionStatusTag
-                                                  from '../../../../shared/transaction/fixed/status/FixedTransactionStatusTag';
+                                                           from '../../../../shared/transaction/fixed/status/FixedTransactionStatusTag';
 import AmountStatistics
-                                                  from '../../../../shared/transaction/amount/amountStatistics/AmountStatistics';
-import i18next                                    from 'i18next';
-import ProCard                                    from '@ant-design/pro-card';
+                                                           from '../../../../shared/transaction/amount/amountStatistics/AmountStatistics';
+import i18next                                             from 'i18next';
+import ProCard                                             from '@ant-design/pro-card';
 import FixedTransactionAmountList
-                                                  from '../../../../shared/transaction/fixed/transactionAmounts/FixedTransactionAmountList';
+                                                           from '../../../../shared/transaction/fixed/transactionAmounts/FixedTransactionAmountList';
 import CreateFixedTransactionAmountDialog
-                                                  from '../../../../shared/transaction/fixed/transactionAmounts/create/CreateFixedTransactionAmountDialog';
-import AttachmentList                             from '../../../../shared/transaction/attachment/AttachmentList';
+                                                           from '../../../../shared/transaction/fixed/transactionAmounts/create/CreateFixedTransactionAmountDialog';
+import AttachmentList
+                                                           from '../../../../shared/transaction/attachment/AttachmentList';
 import CreateAttachmentDialog
-                                                  from '../../../../shared/transaction/attachment/create/CreateAttachmentDialog';
+                                                           from '../../../../shared/transaction/attachment/create/CreateAttachmentDialog';
 
 const {Item} = Descriptions;
 
@@ -72,7 +74,27 @@ class FixedTransactionDetails extends React.Component<FixedTransactionDetailsCom
     }
 
     onCreateFixedTransactionAmount = (fixedTransactionAmount: FixedTransactionAmount) => new Promise<void>(resolve => {
-        resolve();
+        if (this.state.fixedTransaction !== undefined)
+            this.props.dispatchCreateFixedTransactionAmount({
+                transactionId: this.state.fixedTransaction.id,
+                createFixedTransactionAmount: fixedTransactionAmount
+            }, (fixedTransactionAmount) => {
+                if (this.state.fixedTransaction !== undefined) {
+                    this.setState({
+                        fixedTransaction: {
+                            ...this.state.fixedTransaction,
+                            transactionAmounts: [...this.state.fixedTransaction.transactionAmounts, fixedTransactionAmount]
+                        }, showFixedTransactionAmountDialog: false
+                    }, () => {
+                        notification.success({
+                            message: i18next.t('Transaction.FixedTransactionAmounts'),
+                            description: i18next.t('Message.Transaction.FixedTransaction.CreatedFixedTransactionAmount')
+                        });
+                        resolve();
+                    });
+                }
+            });
+
     });
 
     render() {

@@ -20,6 +20,11 @@ describe('Fixed Transaction Test', () => {
         }, {fixture: 'fixed-transactions.json', delayMs: 100}).as('getFixedTransactions');
 
         cy.intercept({
+            method: 'GET',
+            url: TestUtil.getServerBaseUrl() + '/fixedTransactions/52'
+        }, {fixture: 'fixed-transaction.json'}).as('getFixedTransaction');
+
+        cy.intercept({
             method: 'PUT',
             url: TestUtil.getServerBaseUrl() + '/fixedTransactions'
         }, {fixture: 'fixed-transaction.json'}).as('createFixedTransaction');
@@ -34,6 +39,13 @@ describe('Fixed Transaction Test', () => {
 
         cy.get('.ant-list-item').should('exist');
     });
+
+    it('should display fixed transaction details', () => {
+        cy.visit('/#/transactions/fixed/52');
+        cy.wait('@getFixedTransaction');
+
+        cy.get('tr[data-row-key=2]').should('exist');
+    })
 
     it('should create new fixed transaction', () => {
         cy.visit('/#/transactions/fixed/create');

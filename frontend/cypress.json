@@ -12,6 +12,7 @@
         "mochaFile": ".test/.report/cypress-report.xml",
         "toConsole": false
     },
+    "viewportWidth": 1200,
     "baseUrl": "http://localhost:3000",
     "video": false,
     "screenshotOnRunFailure": true,

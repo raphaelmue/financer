@@ -3,18 +3,24 @@
         "fixedTransactionDToes": [
             {
                 "id": 51,
+                "category": {
+                    "id": 2,
+                    "categoryClass": "FIXED_EXPENSES",
+                    "name": "Test Category",
+                    "children": []
+                },
                 "amount": {
                     "amount": -500
                 },
                 "timeRange": {
                     "startDate": "2020-01-01"
                 },
-                "product": "Test Product",
+                "product": "Product",
                 "description": "Test Description",
                 "vendor": "Test Vendor",
                 "hasVariableAmounts": false,
                 "day": 1,
-                "isActive": true,
+                "active": true,
                 "transactionAmounts": []
             }
         ]

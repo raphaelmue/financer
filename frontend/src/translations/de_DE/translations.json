@@ -156,7 +156,8 @@
         }
       },
       "FixedTransaction": {
-        "CreatedFixedTransaction": "Feste Transaktion wurde erfolgreich erstellt."
+        "CreatedFixedTransaction": "Feste Transaktion wurde erfolgreich erstellt.",
+        "CreatedFixedTransactionAmount": "Der Transaktionsbetrag wurde erfolgreich zur festen Transaktion hinzugefügt."
       }
     },
     "Admin": {

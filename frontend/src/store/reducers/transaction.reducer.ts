@@ -56,10 +56,14 @@ export const transactionReducer = (state: TransactionState = initialState, actio
                 fixedTransactions: action.payload.embedded?.fixedTransactionDToes || []
             };
         case TransactionActionDefinition.LOAD_FIXED_TRANSACTION_SUCCESS: {
-            const transactions = state.fixedTransactions;
-            transactions.splice(transactions.findIndex(transaction => transaction.id === action.payload.id), 1);
-            transactions.push(action.payload);
-            return {...state, isLoading: false, error: undefined, fixedTransactions: transactions};
+            if (state.fixedTransactions !== undefined && state.fixedTransactions.length > 0) {
+                const transactions = state.fixedTransactions;
+                transactions.splice(transactions.findIndex(transaction => transaction.id === action.payload.id), 1);
+                transactions.push(action.payload);
+                return {...state, isLoading: false, error: undefined, fixedTransactions: transactions};
+            } else {
+                return {...state, isLoading: false, error: undefined, fixedTransactions: [action.payload]};
+            }
         }
         case TransactionActionDefinition.CREATE_FIXED_TRANSACTION_SUCCESS: {
             const transactions = state.fixedTransactions;
@@ -81,6 +85,7 @@ export const transactionReducer = (state: TransactionState = initialState, actio
         case TransactionActionDefinition.LOAD_FIXED_TRANSACTIONS_REQUEST:
         case TransactionActionDefinition.LOAD_FIXED_TRANSACTION_REQUEST:
         case TransactionActionDefinition.CREATE_FIXED_TRANSACTION_REQUEST:
+        case TransactionActionDefinition.CREATE_FIXED_TRANSACTION_AMOUNT_REQUEST:
             return {...state, isLoading: true, error: undefined};
         case TransactionActionDefinition.LOAD_VARIABLE_TRANSACTIONS_FAILED:
         case TransactionActionDefinition.LOAD_VARIABLE_TRANSACTION_FAILED:
@@ -92,6 +97,7 @@ export const transactionReducer = (state: TransactionState = initialState, actio
         case TransactionActionDefinition.LOAD_FIXED_TRANSACTIONS_FAILED:
         case TransactionActionDefinition.LOAD_FIXED_TRANSACTION_FAILED:
         case TransactionActionDefinition.CREATE_FIXED_TRANSACTION_FAILED:
+        case TransactionActionDefinition.CREATE_FIXED_TRANSACTION_AMOUNT_FAILED:
             return {...state, isLoading: false, error: action.payload};
         default:
             return state;

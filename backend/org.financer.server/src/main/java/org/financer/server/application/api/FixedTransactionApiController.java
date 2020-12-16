@@ -77,8 +77,8 @@ public class FixedTransactionApiController implements FixedTransactionApi {
     }
 
     @Override
-    public ResponseEntity<FixedTransactionAmountDTO> createTransactionAmount(@NotBlank @PathVariable("transactionId") @Min(1) Long transactionId,
-                                                                             @NotNull @Valid CreateFixedTransactionAmountDTO transactionAmount) {
+    public ResponseEntity<FixedTransactionAmountDTO> createFixedTransactionAmount(@NotBlank @PathVariable("transactionId") @Min(1) Long transactionId,
+                                                                                  @NotNull @Valid CreateFixedTransactionAmountDTO transactionAmount) {
         FixedTransactionAmount transactionAmountEntity = modelMapper.map(transactionAmount, FixedTransactionAmount.class);
         transactionAmountEntity = this.transactionDomainService.createFixedTransactionAmount(transactionId, transactionAmountEntity);
         return new ResponseEntity<>(modelMapper.map(transactionAmountEntity, FixedTransactionAmountDTO.class), HttpStatus.OK);

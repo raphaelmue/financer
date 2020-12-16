@@ -98,7 +98,7 @@
     "dependencies": {
         "@ant-design/pro-card": "^1.7.0",
         "@ant-design/pro-layout": "^6.6.1",
-        "@ant-design/pro-list": "^1.1.9",
+        "@ant-design/pro-list": "^1.1.11",
         "@ant-design/pro-table": "^2.15.1",
         "@types/react": "^17.0.0",
         "@types/react-dom": "^17.0.0",

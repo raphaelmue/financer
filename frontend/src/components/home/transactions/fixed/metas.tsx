@@ -1,25 +1,25 @@
 import {ProListMetas}            from '@ant-design/pro-list';
 import {FixedTransaction}        from '../../../../.openapi';
-import {Divider, Space, Tag}     from 'antd';
+import {Divider, Space}          from 'antd';
 import AmountLabel               from '../../../shared/transaction/amount/amountLabel/AmountLabel';
 import React                     from 'react';
-import i18next                   from 'i18next';
 import TimeRangeLabel            from '../../../shared/transaction/timeRange/TimeRangeLabel';
 import FixedTransactionStatusTag from '../../../shared/transaction/fixed/status/FixedTransactionStatusTag';
+import {Link}                    from 'react-router-dom';
 
 export const metas = (): ProListMetas<FixedTransaction> => {
     return {
         title: {
             dataIndex: 'product',
+            // eslint-disable-next-line react/display-name
+            render: (dom, entity) => <Link to={'/transactions/fixed/' + entity.id}>{entity.product}</Link>
         },
         subTitle: {
             // eslint-disable-next-line react/display-name
-            render: (dom, entity) => {
-                return (
-                    <FixedTransactionStatusTag
-                        isActive={entity.active}
-                        hasVariableAmounts={entity.hasVariableAmounts}/>);
-            },
+            render: (dom, entity) =>
+                <FixedTransactionStatusTag
+                    isActive={entity.active}
+                    hasVariableAmounts={entity.hasVariableAmounts}/>,
         },
         description: {
             // eslint-disable-next-line react/display-name

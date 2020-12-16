@@ -1,11 +1,13 @@
 import {Action}       from 'redux';
 import {
+    CreateFixedTransactionAmountRequest,
     CreateFixedTransactionRequest,
     CreateProductRequest,
     CreateVariableTransactionRequest,
     DeleteProductRequest,
     DeleteVariableTransactionRequest,
-    FixedTransaction, GetFixedTransactionByIdRequest,
+    FixedTransaction, FixedTransactionAmount,
+    GetFixedTransactionByIdRequest,
     GetUsersFixedTransactionsRequest,
     GetUsersVariableTransactionsRequest,
     GetVariableTransactionByIdRequest,
@@ -14,7 +16,7 @@ import {
     Product,
     UpdateVariableTransactionRequest,
     VariableTransaction,
-}                     from '../../.openapi';
+} from '../../.openapi';
 import {ErrorMessage} from '../errorMessage';
 
 export enum TransactionActionDefinition {
@@ -48,6 +50,9 @@ export enum TransactionActionDefinition {
     CREATE_FIXED_TRANSACTION_REQUEST = 'TRANSACTION:CREATE_FIXED_TRANSACTION_REQUEST',
     CREATE_FIXED_TRANSACTION_SUCCESS = 'TRANSACTION:CREATE_FIXED_TRANSACTION_SUCCESS',
     CREATE_FIXED_TRANSACTION_FAILED = 'TRANSACTION:CREATE_FIXED_TRANSACTION_FAILED',
+    CREATE_FIXED_TRANSACTION_AMOUNT_REQUEST = 'TRANSACTION:CREATE_FIXED_TRANSACTION_AMOUNT_REQUEST',
+    CREATE_FIXED_TRANSACTION_AMOUNT_SUCCESS = 'TRANSACTION:CREATE_FIXED_TRANSACTION_AMOUNT_SUCCESS',
+    CREATE_FIXED_TRANSACTION_AMOUNT_FAILED = 'TRANSACTION:CREATE_FIXED_TRANSACTION_AMOUNT_FAILED',
 }
 
 export type TransactionAction = LoadVariableTransactionsRequestAction
@@ -79,7 +84,10 @@ export type TransactionAction = LoadVariableTransactionsRequestAction
     | LoadFixedTransactionFailedAction
     | CreateFixedTransactionRequestAction
     | CreateFixedTransactionSuccessAction
-    | CreateFixedTransactionFailedAction;
+    | CreateFixedTransactionFailedAction
+    | CreateFixedTransactionAmountRequestAction
+    | CreateFixedTransactionAmountSuccessAction
+    | CreateFixedTransactionAmountFailedAction;
 
 interface LoadVariableTransactionsRequestAction extends Action {
     type: TransactionActionDefinition.LOAD_VARIABLE_TRANSACTIONS_REQUEST,
@@ -226,5 +234,20 @@ interface CreateFixedTransactionSuccessAction extends Action {
 
 interface CreateFixedTransactionFailedAction extends Action {
     type: TransactionActionDefinition.CREATE_FIXED_TRANSACTION_FAILED,
+    payload: ErrorMessage
+}
+
+interface CreateFixedTransactionAmountRequestAction extends Action {
+    type: TransactionActionDefinition.CREATE_FIXED_TRANSACTION_AMOUNT_REQUEST,
+    payload: CreateFixedTransactionAmountRequest
+}
+
+interface CreateFixedTransactionAmountSuccessAction extends Action {
+    type: TransactionActionDefinition.CREATE_FIXED_TRANSACTION_AMOUNT_SUCCESS,
+    payload: FixedTransactionAmount
+}
+
+interface CreateFixedTransactionAmountFailedAction extends Action {
+    type: TransactionActionDefinition.CREATE_FIXED_TRANSACTION_AMOUNT_FAILED,
     payload: ErrorMessage
 }
