@@ -58,7 +58,7 @@ class FixedTransactionAmountList extends React.Component<FixedTransactionAmountL
                 loading={false}
                 toolBarRender={() => [
                     <Button
-                        id={'deleteProductButton'}
+                        id={'deleteFixedTransactionAmountButton'}
                         key={'deleteProductButton'}
                         style={{display: this.state.selectedFixedTransactionAmountIds.length > 0 ? 'initial' : 'none'}}
                         icon={<DeleteOutlined/>}
@@ -67,7 +67,7 @@ class FixedTransactionAmountList extends React.Component<FixedTransactionAmountL
                         {this.props.t('Form.Button.Delete')}
                     </Button>,
                     <Button
-                        id={'newVariableTransactionButton'}
+                        id={'newFixedTransactionAmountButton'}
                         key={'newVariableTransactionButton'}
                         disabled={this.props.disabled}
                         type="primary"

@@ -23,11 +23,6 @@ describe('Fixed Transaction Test', () => {
             method: 'GET',
             url: TestUtil.getServerBaseUrl() + '/fixedTransactions/52'
         }, {fixture: 'fixed-transaction.json'}).as('getFixedTransaction');
-
-        cy.intercept({
-            method: 'PUT',
-            url: TestUtil.getServerBaseUrl() + '/fixedTransactions'
-        }, {fixture: 'fixed-transaction.json'}).as('createFixedTransaction');
     });
 
     it('should display categories and their fixed transactions', () => {
@@ -45,9 +40,14 @@ describe('Fixed Transaction Test', () => {
         cy.wait('@getFixedTransaction');
 
         cy.get('tr[data-row-key=2]').should('exist');
-    })
+    });
 
     it('should create new fixed transaction', () => {
+        cy.intercept({
+            method: 'PUT',
+            url: TestUtil.getServerBaseUrl() + '/fixedTransactions'
+        }, {fixture: 'fixed-transaction.json'}).as('createFixedTransaction');
+
         cy.visit('/#/transactions/fixed/create');
 
         cy.get('#submitStepsButton').should('be.disabled');
@@ -62,6 +62,11 @@ describe('Fixed Transaction Test', () => {
     });
 
     it('should create new fixed transaction with variable amounts', () => {
+        cy.intercept({
+            method: 'PUT',
+            url: TestUtil.getServerBaseUrl() + '/fixedTransactions'
+        }, {fixture: 'fixed-transaction.json'}).as('createFixedTransaction');
+
         cy.visit('/#/transactions/fixed/create');
 
         cy.get('#submitStepsButton').should('be.disabled');
@@ -71,7 +76,7 @@ describe('Fixed Transaction Test', () => {
         cy.get('#submitStepsButton').should('not.be.disabled');
         cy.get('#newVariableTransactionButton').should('not.be.disabled');
 
-        cy.get('#newVariableTransactionButton').click();
+        cy.get('#newFixedTransactionAmountButton').click();
         cy.shouldDisplayDialog()
             .fillFixedTransactionAmountData()
             .submitDialog();
@@ -80,6 +85,44 @@ describe('Fixed Transaction Test', () => {
 
         cy.get('#submitStepsButton').click();
         cy.wait('@createFixedTransaction');
+    });
+
+    it('should delete fixed transaction', () => {
+        cy.intercept({
+            method: 'DELETE',
+            url: TestUtil.getServerBaseUrl() + '/fixedTransaction/52'
+        }, []).as('deleteFixedTransaction');
+
+        cy.visit('/#/transactions/fixed/52');
+        cy.wait('@getFixedTransaction');
+
+        cy.get('#deleteFixedTransaction').click();
+        cy.shouldDisplayDialog()
+            .submitConfirmDialog()
+            .wait('deleteFixedTransaction');
+
+        cy.location('href').should('contain', '/transactions/fixed');
+        cy.location('href').should('not.contain', '/52');
+    });
+
+    it('should add fixed transaction amount to fixed transaction', () => {
+        cy.intercept({
+            method: 'PUT',
+            url: TestUtil.getServerBaseUrl() + '/fixedTransactions/52/transactionAmounts'
+        }, {fixture: 'fixed-transaction-amount.json', delayMs: 100}).as('createFixedTransactionAmount');
+
+        cy.visit('/#/transactions/fixed/52');
+        cy.wait('@getFixedTransaction');
+
+        cy.get('#newFixedTransactionAmountButton').click();
+        cy.shouldDisplayDialog()
+            .fillFixedTransactionAmountData()
+            .submitDialog()
+            .wait('@createFixedTransactionAmount')
+            .shouldNotDisplayDialog()
+            .shouldDisplayNotification();
+
+        cy.get('tr[data-row-key=50]').should('exist');
     });
 });
 

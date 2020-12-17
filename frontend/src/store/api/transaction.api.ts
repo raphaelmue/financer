@@ -2,7 +2,7 @@ import {
     CreateFixedTransactionAmountRequest,
     CreateFixedTransactionRequest,
     CreateProductRequest,
-    CreateVariableTransactionRequest,
+    CreateVariableTransactionRequest, DeleteFixedTransactionRequest,
     DeleteProductsRequest,
     DeleteVariableTransactionRequest,
     FixedTransaction,
@@ -231,6 +231,22 @@ const createFixedTransactionAmount = (data: CreateFixedTransactionAmountRequest,
     };
 };
 
+const deleteFixedTransaction = (data: DeleteFixedTransactionRequest, callback?: () => void) => {
+    return (dispatch: Dispatch) => {
+        dispatch({
+            type: TransactionActionDefinition.DELETE_FIXED_TRANSACTION_REQUEST,
+            payload: data
+        });
+        const api = new FixedTransactionApi(apiConfiguration());
+        ErrorMessage.resolveError(api.deleteFixedTransaction(data)
+                .then(() => {
+                    dispatch({type: TransactionActionDefinition.DELETE_FIXED_TRANSACTION_SUCCESS});
+                    if (callback) callback();
+                }),
+            TransactionActionDefinition.DELETE_FIXED_TRANSACTION_FAILED, dispatch);
+    };
+};
+
 export interface TransactionApi {
     dispatchLoadVariableTransactions: (data: GetUsersVariableTransactionsRequest) => void,
     dispatchLoadVariableTransaction: (data: GetVariableTransactionByIdRequest, callback?: (variableTransaction: VariableTransaction) => void) => void,
@@ -242,7 +258,8 @@ export interface TransactionApi {
     dispatchLoadFixedTransactions: (data: GetUsersFixedTransactionsRequest, callback?: (fixedTransactions: FixedTransaction[]) => void) => void,
     dispatchLoadFixedTransaction: (data: GetFixedTransactionByIdRequest, callback?: (fixedTransaction: FixedTransaction) => void) => void,
     dispatchCreateFixedTransaction: (data: CreateFixedTransactionRequest, callback?: (fixedTransaction: FixedTransaction) => void) => void,
-    dispatchCreateFixedTransactionAmount: (data: CreateFixedTransactionAmountRequest, callback?: (fixedTransactionAmount: FixedTransactionAmount) => void) => void
+    dispatchCreateFixedTransactionAmount: (data: CreateFixedTransactionAmountRequest, callback?: (fixedTransactionAmount: FixedTransactionAmount) => void) => void,
+    dispatchDeleteFixedTransaction: (data: DeleteFixedTransactionRequest, callback?: () => void) => void
 }
 
 export const transactionDispatchMap = (dispatch: Dispatch) => bindActionCreators({
@@ -256,5 +273,6 @@ export const transactionDispatchMap = (dispatch: Dispatch) => bindActionCreators
     dispatchLoadFixedTransactions: loadFixedTransactions,
     dispatchLoadFixedTransaction: loadFixedTransaction,
     dispatchCreateFixedTransaction: createFixedTransaction,
-    dispatchCreateFixedTransactionAmount: createFixedTransactionAmount
+    dispatchCreateFixedTransactionAmount: createFixedTransactionAmount,
+    dispatchDeleteFixedTransaction: deleteFixedTransaction
 }, dispatch);

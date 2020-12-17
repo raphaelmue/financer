@@ -3,7 +3,7 @@ import {
     CreateFixedTransactionAmountRequest,
     CreateFixedTransactionRequest,
     CreateProductRequest,
-    CreateVariableTransactionRequest,
+    CreateVariableTransactionRequest, DeleteFixedTransactionRequest,
     DeleteProductRequest,
     DeleteVariableTransactionRequest,
     FixedTransaction, FixedTransactionAmount,
@@ -16,7 +16,7 @@ import {
     Product,
     UpdateVariableTransactionRequest,
     VariableTransaction,
-} from '../../.openapi';
+}                     from '../../.openapi';
 import {ErrorMessage} from '../errorMessage';
 
 export enum TransactionActionDefinition {
@@ -53,6 +53,9 @@ export enum TransactionActionDefinition {
     CREATE_FIXED_TRANSACTION_AMOUNT_REQUEST = 'TRANSACTION:CREATE_FIXED_TRANSACTION_AMOUNT_REQUEST',
     CREATE_FIXED_TRANSACTION_AMOUNT_SUCCESS = 'TRANSACTION:CREATE_FIXED_TRANSACTION_AMOUNT_SUCCESS',
     CREATE_FIXED_TRANSACTION_AMOUNT_FAILED = 'TRANSACTION:CREATE_FIXED_TRANSACTION_AMOUNT_FAILED',
+    DELETE_FIXED_TRANSACTION_REQUEST = 'TRANSACTION:DELETE_FIXED_TRANSACTION_REQUEST',
+    DELETE_FIXED_TRANSACTION_SUCCESS = 'TRANSACTION:DELETE_FIXED_TRANSACTION_SUCCESS',
+    DELETE_FIXED_TRANSACTION_FAILED = 'TRANSACTION:DELETE_FIXED_TRANSACTION_FAILED',
 }
 
 export type TransactionAction = LoadVariableTransactionsRequestAction
@@ -87,7 +90,10 @@ export type TransactionAction = LoadVariableTransactionsRequestAction
     | CreateFixedTransactionFailedAction
     | CreateFixedTransactionAmountRequestAction
     | CreateFixedTransactionAmountSuccessAction
-    | CreateFixedTransactionAmountFailedAction;
+    | CreateFixedTransactionAmountFailedAction
+    | DeleteFixedTransactionRequestAction
+    | DeleteFixedTransactionSuccessAction
+    | DeleteFixedTransactionFailedAction;
 
 interface LoadVariableTransactionsRequestAction extends Action {
     type: TransactionActionDefinition.LOAD_VARIABLE_TRANSACTIONS_REQUEST,
@@ -249,5 +255,19 @@ interface CreateFixedTransactionAmountSuccessAction extends Action {
 
 interface CreateFixedTransactionAmountFailedAction extends Action {
     type: TransactionActionDefinition.CREATE_FIXED_TRANSACTION_AMOUNT_FAILED,
+    payload: ErrorMessage
+}
+
+interface DeleteFixedTransactionRequestAction extends Action {
+    type: TransactionActionDefinition.DELETE_FIXED_TRANSACTION_REQUEST,
+    payload: DeleteFixedTransactionRequest
+}
+
+interface DeleteFixedTransactionSuccessAction extends Action {
+    type: TransactionActionDefinition.DELETE_FIXED_TRANSACTION_SUCCESS
+}
+
+interface DeleteFixedTransactionFailedAction extends Action {
+    type: TransactionActionDefinition.DELETE_FIXED_TRANSACTION_FAILED,
     payload: ErrorMessage
 }
