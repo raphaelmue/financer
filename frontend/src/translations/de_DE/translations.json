@@ -161,7 +161,8 @@
         "FixedTransactionAmount": {
           "DeletedFixedTransactionAmounts": "Die ausgewählten Transaktionsbeträge der festen Transaktion wurden erfolgreich gelöscht.",
           "ConfirmDeleteFixedTransactionAmounts": "Bist du sicher, dass du diese Transaktionsbeträge von dieser festen Transaktion löschen möchtest?"
-        }
+        },
+        "UpdatedFixedTransaction": "Feste Transaktion wurde erfolgreich aktualisiert."
       }
     },
     "Admin": {

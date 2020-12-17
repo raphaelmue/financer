@@ -23,7 +23,7 @@ interface CreateVariableTransactionComponentProps extends WithTranslation<'defau
 }
 
 interface CreateVariableTransactionComponentState {
-    variableTransactionData: VariableTransactionMetaData,
+    fixedTransactionData: VariableTransactionMetaData,
     products: CreateProduct[],
     attachments: CreateAttachment[],
     showProductDialog: boolean,
@@ -37,7 +37,7 @@ class CreateVariableTransaction extends React.Component<CreateVariableTransactio
     constructor(props: CreateVariableTransactionComponentProps) {
         super(props);
         this.state = {
-            variableTransactionData: {},
+            fixedTransactionData: {},
             products: [],
             attachments: [],
             showProductDialog: false,
@@ -48,13 +48,13 @@ class CreateVariableTransaction extends React.Component<CreateVariableTransactio
     }
 
     onSubmit() {
-        if (this.state.variableTransactionData.valueDate && this.state.variableTransactionData.categoryId) {
+        if (this.state.fixedTransactionData.valueDate && this.state.fixedTransactionData.categoryId) {
             this.props.dispatchCreateVariableTransaction({
                 createVariableTransaction: {
-                    valueDate: {date: this.state.variableTransactionData.valueDate},
-                    categoryId: this.state.variableTransactionData.categoryId,
-                    vendor: this.state.variableTransactionData.vendor,
-                    description: this.state.variableTransactionData.description,
+                    valueDate: {date: this.state.fixedTransactionData.valueDate},
+                    categoryId: this.state.fixedTransactionData.categoryId,
+                    vendor: this.state.fixedTransactionData.vendor,
+                    description: this.state.fixedTransactionData.description,
                     products: this.state.products,
                     attachments: this.state.attachments
                 }
@@ -89,8 +89,8 @@ class CreateVariableTransaction extends React.Component<CreateVariableTransactio
         key: 'transactionData',
         content: () =>
             <VariableTransactionDataForm
-                onChange={variableTransactionData => this.setState({variableTransactionData: variableTransactionData})}/>,
-        condition: () => (this.state.variableTransactionData.valueDate !== undefined && this.state.variableTransactionData.categoryId !== undefined)
+                onChange={variableTransactionData => this.setState({fixedTransactionData: variableTransactionData})}/>,
+        condition: () => (this.state.fixedTransactionData.valueDate !== undefined && this.state.fixedTransactionData.categoryId !== undefined)
     }, {
         title: this.props.t('Form.Step.CreateVariableTransaction.ProductData'),
         key: 'productData',

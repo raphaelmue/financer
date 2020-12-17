@@ -161,7 +161,8 @@
         "FixedTransactionAmount": {
           "DeletedFixedTransactionAmounts": "The selected transaction amounts of the fixed transaction were successfully deleted.",
           "ConfirmDeleteFixedTransactionAmounts": "Are you sure you want to delete these transaction amounts from this fixed transaction?"
-        }
+        },
+        "UpdatedFixedTransaction": "Fixed transaction was successfully updated."
       }
     },
     "Admin": {

@@ -234,7 +234,7 @@ class VariableTransactionDetails extends React.Component<VariableTransactionDeta
                         </ProCard>
                         <UpdateVariableTransactionDialog
                             visible={this.state.showUpdateVariableTransactionDialog}
-                            variableTransaction={this.state.variableTransaction}
+                            data={this.state.variableTransaction}
                             onSubmit={variableTransaction => this.setState({
                                 showUpdateVariableTransactionDialog: false,
                                 variableTransaction: variableTransaction

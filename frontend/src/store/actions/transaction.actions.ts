@@ -16,7 +16,7 @@ import {
     Product,
     UpdateVariableTransactionRequest,
     VariableTransaction,
-} from '../../.openapi';
+}                     from '../../.openapi';
 import {ErrorMessage} from '../errorMessage';
 
 export enum TransactionActionDefinition {
@@ -50,6 +50,9 @@ export enum TransactionActionDefinition {
     CREATE_FIXED_TRANSACTION_REQUEST = 'TRANSACTION:CREATE_FIXED_TRANSACTION_REQUEST',
     CREATE_FIXED_TRANSACTION_SUCCESS = 'TRANSACTION:CREATE_FIXED_TRANSACTION_SUCCESS',
     CREATE_FIXED_TRANSACTION_FAILED = 'TRANSACTION:CREATE_FIXED_TRANSACTION_FAILED',
+    UPDATE_FIXED_TRANSACTION_REQUEST = 'TRANSACTION:UPDATE_FIXED_TRANSACTION_REQUEST',
+    UPDATE_FIXED_TRANSACTION_SUCCESS = 'TRANSACTION:UPDATE_FIXED_TRANSACTION_SUCCESS',
+    UPDATE_FIXED_TRANSACTION_FAILED = 'TRANSACTION:UPDATE_FIXED_TRANSACTION_FAILED',
     DELETE_FIXED_TRANSACTION_REQUEST = 'TRANSACTION:DELETE_FIXED_TRANSACTION_REQUEST',
     DELETE_FIXED_TRANSACTION_SUCCESS = 'TRANSACTION:DELETE_FIXED_TRANSACTION_SUCCESS',
     DELETE_FIXED_TRANSACTION_FAILED = 'TRANSACTION:DELETE_FIXED_TRANSACTION_FAILED',
@@ -91,6 +94,9 @@ export type TransactionAction = LoadVariableTransactionsRequestAction
     | CreateFixedTransactionRequestAction
     | CreateFixedTransactionSuccessAction
     | CreateFixedTransactionFailedAction
+    | UpdateFixedTransactionRequestAction
+    | UpdateFixedTransactionSuccessAction
+    | UpdateFixedTransactionFailedAction
     | DeleteFixedTransactionRequestAction
     | DeleteFixedTransactionSuccessAction
     | DeleteFixedTransactionFailedAction
@@ -262,6 +268,21 @@ interface CreateFixedTransactionAmountSuccessAction extends Action {
 
 interface CreateFixedTransactionAmountFailedAction extends Action {
     type: TransactionActionDefinition.CREATE_FIXED_TRANSACTION_AMOUNT_FAILED,
+    payload: ErrorMessage
+}
+
+interface UpdateFixedTransactionRequestAction extends Action {
+    type: TransactionActionDefinition.UPDATE_FIXED_TRANSACTION_REQUEST,
+    payload: UpdateVariableTransactionRequest
+}
+
+interface UpdateFixedTransactionSuccessAction extends Action {
+    type: TransactionActionDefinition.UPDATE_FIXED_TRANSACTION_SUCCESS,
+    payload: FixedTransaction
+}
+
+interface UpdateFixedTransactionFailedAction extends Action {
+    type: TransactionActionDefinition.UPDATE_FIXED_TRANSACTION_FAILED,
     payload: ErrorMessage
 }
 

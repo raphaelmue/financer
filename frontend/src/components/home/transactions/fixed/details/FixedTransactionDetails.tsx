@@ -27,6 +27,8 @@ import AttachmentList
 import CreateAttachmentDialog
                                                                   from '../../../../shared/transaction/attachment/create/CreateAttachmentDialog';
 import {confirmDialogConfig}                                      from '../../../../shared/form/modal/confirm/config';
+import UpdateFixedTransactionDialog
+                                                                  from '../../../../shared/transaction/fixed/update/UpdateFixedTransactionDialog';
 
 const {Item} = Descriptions;
 
@@ -42,6 +44,7 @@ interface FixedTransactionDetailsComponentState {
     activeTab: string,
     showFixedTransactionAmountDialog: boolean,
     showAttachmentDialog: boolean,
+    showUpdateFixedTransactionDialog: boolean,
     redirectToFixedTransactionOverview: boolean
 }
 
@@ -55,6 +58,7 @@ class FixedTransactionDetails extends React.Component<FixedTransactionDetailsCom
             activeTab: 'fixedTransactionAmountsTab',
             showFixedTransactionAmountDialog: false,
             showAttachmentDialog: false,
+            showUpdateFixedTransactionDialog: false,
             redirectToFixedTransactionOverview: false
         };
     }
@@ -254,6 +258,11 @@ class FixedTransactionDetails extends React.Component<FixedTransactionDetailsCom
                                 // })}
                             />
                         </ProCard>
+
+                        <UpdateFixedTransactionDialog
+                            visible={this.state.showUpdateFixedTransactionDialog}
+                            data={this.state.fixedTransaction}
+                        />
 
                     </PageContainer>
                 );
