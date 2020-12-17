@@ -90,7 +90,7 @@ describe('Fixed Transaction Test', () => {
     it('should delete fixed transaction', () => {
         cy.intercept({
             method: 'DELETE',
-            url: TestUtil.getServerBaseUrl() + '/fixedTransaction/52'
+            url: TestUtil.getServerBaseUrl() + '/fixedTransactions/52'
         }, []).as('deleteFixedTransaction');
 
         cy.visit('/#/transactions/fixed/52');
@@ -99,7 +99,7 @@ describe('Fixed Transaction Test', () => {
         cy.get('#deleteFixedTransaction').click();
         cy.shouldDisplayDialog()
             .submitConfirmDialog()
-            .wait('deleteFixedTransaction');
+            .wait('@deleteFixedTransaction');
 
         cy.location('href').should('contain', '/transactions/fixed');
         cy.location('href').should('not.contain', '/52');
