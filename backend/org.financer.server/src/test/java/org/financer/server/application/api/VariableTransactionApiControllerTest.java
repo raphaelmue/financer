@@ -21,6 +21,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MvcResult;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -120,5 +121,14 @@ public class VariableTransactionApiControllerTest extends ApiTest {
         mockMvc.perform(buildRequest(PathBuilder.Delete().variableTransactions().variableTransactionId(1).products().productId(1).build()))
                 .andExpect(status().isOk());
         verify(transactionDomainService, times(1)).deleteProduct(eq(1L), eq(1L));
+    }
+
+    @Test
+    public void testDeleteProducts() throws Exception {
+        mockMvc.perform(buildRequest(PathBuilder.Delete().variableTransactions().variableTransactionId(1).products().build())
+                .param("productIds", "1"))
+                .andExpect(status().isOk());
+
+        verify(transactionDomainService, times(1)).deleteProducts(eq(1L), eq(List.of(1L)));
     }
 }

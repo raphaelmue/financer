@@ -475,6 +475,17 @@ public class TransactionDomainService {
         fixedTransactionRepository.save(fixedTransaction);
     }
 
+    public void deleteFixedTransactionAmounts(long fixedTransactionId, List<Long> fixedTransactionAmountIds) {
+        logger.info("Deleting fixed transaction amount {} of transaction {}", fixedTransactionAmountIds, fixedTransactionId);
+        FixedTransaction fixedTransaction = getFixedTransactionById(fixedTransactionId);
+        for (long fixedTransactionAmountId : fixedTransactionAmountIds) {
+            FixedTransactionAmount fixedTransactionAmount = getFixedTransactionAmountById(fixedTransactionId, fixedTransactionAmountId);
+            fixedTransactionAmount.throwIfNotUsersProperty(authenticationService.getUserId());
+            fixedTransaction.removeFixedTransactionAmount(fixedTransactionAmount);
+        }
+        fixedTransactionRepository.save(fixedTransaction);
+    }
+
     private FixedTransactionAmount getFixedTransactionAmountById(long fixedTransactionId, long fixedTransactionAmountId) {
         Optional<FixedTransactionAmount> fixedTransactionAmountOptional = fixedTransactionAmountRepository.findById(fixedTransactionAmountId);
         if (fixedTransactionAmountOptional.isPresent() && fixedTransactionAmountOptional.get().getFixedTransaction().getId() == fixedTransactionId) {

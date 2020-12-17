@@ -15,6 +15,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 @Tag(name = "fixed-transaction", description = "Operations with fixed transactions")
 @RequestMapping("/fixedTransactions")
@@ -181,8 +182,8 @@ public interface FixedTransactionApi {
     /**
      * Deletes a transaction amount.
      *
-     * @param transactionId       transaction id
-     * @param transactionAmountId transaction amount id to be deleted
+     * @param transactionId            transaction id
+     * @param fixedTransactionAmountId transaction amount id to be deleted
      * @return void
      */
     @Operation(
@@ -193,12 +194,37 @@ public interface FixedTransactionApi {
             responseCode = "200",
             description = "Fixed transaction amount was successfully deleted.")
     @DeleteMapping(
-            value = "/{transactionId}/transactionAmounts/{transactionAmountId}",
+            value = "/{transactionId}/transactionAmounts/{fixedTransactionAmountId}",
             produces = {"application/json"},
             headers = "Accept=application/json")
-    ResponseEntity<Void> deleteTransactionAmount(
+    ResponseEntity<Void> deleteFixedTransactionAmount(
             @Parameter(description = "ID of the transaction that is assigned to the transaction amount", required = true)
             @PathVariable("transactionId") @NotBlank @Min(1) Long transactionId,
             @Parameter(description = "ID of the transaction amount to be deleted")
-            @PathVariable("transactionAmountId") @NotBlank @Min(1) Long transactionAmountId);
+            @PathVariable("fixedTransactionAmountId") @NotBlank @Min(1) Long fixedTransactionAmountId);
+
+
+    /**
+     * Deletes multiple transaction amount.
+     *
+     * @param transactionId             transaction id
+     * @param fixedTransactionAmountIds list of transaction amount ids to be deleted
+     * @return void
+     */
+    @Operation(
+            summary = "Deletes a fixed transaction amount",
+            tags = {"fixed-transaction", "transaction"},
+            security = @SecurityRequirement(name = "TokenAuth"))
+    @ApiResponse(
+            responseCode = "200",
+            description = "Fixed transaction amount was successfully deleted.")
+    @DeleteMapping(
+            value = "/{transactionId}/transactionAmounts",
+            produces = {"application/json"},
+            headers = "Accept=application/json")
+    ResponseEntity<Void> deleteFixedTransactionAmounts(
+            @Parameter(description = "ID of the transaction that is assigned to the transaction amount", required = true)
+            @PathVariable("transactionId") @NotBlank @Min(1) Long transactionId,
+            @Parameter(description = "IDs of the transaction amounts that will be deleted")
+            @RequestParam("fixedTransactionAmountIds") @NotBlank List<Long> fixedTransactionAmountIds);
 }

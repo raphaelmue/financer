@@ -186,7 +186,7 @@ public interface VariableTransactionApi {
             responseCode = "200",
             description = "Product was successfully deleted.")
     @DeleteMapping(
-            value = "/{transactionId}/products/",
+            value = "/{transactionId}/products",
             produces = {"application/json"},
             headers = "Accept=application/json")
     ResponseEntity<Void> deleteProducts(

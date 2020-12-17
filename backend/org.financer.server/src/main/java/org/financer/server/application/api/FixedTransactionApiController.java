@@ -19,6 +19,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 @RestController
 public class FixedTransactionApiController implements FixedTransactionApi {
@@ -94,10 +95,21 @@ public class FixedTransactionApiController implements FixedTransactionApi {
     }
 
     @Override
-    public ResponseEntity<Void> deleteTransactionAmount(@NotBlank @PathVariable("transactionId") @Min(1) Long transactionId,
-                                                        @NotBlank @PathVariable("transactionAmountId") @Min(1) Long transactionAmountId) {
+    public ResponseEntity<Void> deleteFixedTransactionAmount(@NotBlank @PathVariable("transactionId") @Min(1) Long transactionId,
+                                                             @NotBlank @PathVariable("fixedTransactionAmountId") @Min(1) Long fixedTransactionAmountId) {
         try {
-            transactionDomainService.deleteFixedTransactionAmount(transactionId, transactionAmountId);
+            transactionDomainService.deleteFixedTransactionAmount(transactionId, fixedTransactionAmountId);
+        } catch (NotFoundException exception) {
+            logger.info(exception.getMessage(), exception);
+        }
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<Void> deleteFixedTransactionAmounts(@NotBlank @PathVariable("transactionId") @Min(1) Long transactionId,
+                                                              @NotBlank List<Long> transactionAmountIds) {
+        try {
+            transactionDomainService.deleteFixedTransactionAmounts(transactionId, transactionAmountIds);
         } catch (NotFoundException exception) {
             logger.info(exception.getMessage(), exception);
         }

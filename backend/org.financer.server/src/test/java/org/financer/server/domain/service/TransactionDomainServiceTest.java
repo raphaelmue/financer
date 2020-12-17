@@ -332,6 +332,12 @@ public class TransactionDomainServiceTest extends ServiceTest {
     }
 
     @Test
+    public void testDeleteFixedTransactionAmounts() {
+        transactionDomainService.deleteFixedTransactionAmounts(fixedTransaction.getId(), List.of(fixedTransactionAmount.getId()));
+        assertThat(fixedTransaction.getTransactionAmounts()).isEmpty();
+    }
+
+    @Test
     public void testDeleteFixedTransactionAmountNotFound() {
         assertThatExceptionOfType(NotFoundException.class).isThrownBy(() ->
                 transactionDomainService.deleteFixedTransactionAmount(fixedTransaction.getId(), -1));
