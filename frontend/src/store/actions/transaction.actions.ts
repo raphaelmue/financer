@@ -3,7 +3,7 @@ import {
     CreateFixedTransactionAmountRequest,
     CreateFixedTransactionRequest,
     CreateProductRequest,
-    CreateVariableTransactionRequest, DeleteFixedTransactionRequest,
+    CreateVariableTransactionRequest, DeleteFixedTransactionAmountsRequest, DeleteFixedTransactionRequest,
     DeleteProductRequest,
     DeleteVariableTransactionRequest,
     FixedTransaction, FixedTransactionAmount,
@@ -16,7 +16,7 @@ import {
     Product,
     UpdateVariableTransactionRequest,
     VariableTransaction,
-}                     from '../../.openapi';
+} from '../../.openapi';
 import {ErrorMessage} from '../errorMessage';
 
 export enum TransactionActionDefinition {
@@ -50,12 +50,15 @@ export enum TransactionActionDefinition {
     CREATE_FIXED_TRANSACTION_REQUEST = 'TRANSACTION:CREATE_FIXED_TRANSACTION_REQUEST',
     CREATE_FIXED_TRANSACTION_SUCCESS = 'TRANSACTION:CREATE_FIXED_TRANSACTION_SUCCESS',
     CREATE_FIXED_TRANSACTION_FAILED = 'TRANSACTION:CREATE_FIXED_TRANSACTION_FAILED',
-    CREATE_FIXED_TRANSACTION_AMOUNT_REQUEST = 'TRANSACTION:CREATE_FIXED_TRANSACTION_AMOUNT_REQUEST',
-    CREATE_FIXED_TRANSACTION_AMOUNT_SUCCESS = 'TRANSACTION:CREATE_FIXED_TRANSACTION_AMOUNT_SUCCESS',
-    CREATE_FIXED_TRANSACTION_AMOUNT_FAILED = 'TRANSACTION:CREATE_FIXED_TRANSACTION_AMOUNT_FAILED',
     DELETE_FIXED_TRANSACTION_REQUEST = 'TRANSACTION:DELETE_FIXED_TRANSACTION_REQUEST',
     DELETE_FIXED_TRANSACTION_SUCCESS = 'TRANSACTION:DELETE_FIXED_TRANSACTION_SUCCESS',
     DELETE_FIXED_TRANSACTION_FAILED = 'TRANSACTION:DELETE_FIXED_TRANSACTION_FAILED',
+    CREATE_FIXED_TRANSACTION_AMOUNT_REQUEST = 'TRANSACTION:CREATE_FIXED_TRANSACTION_AMOUNT_REQUEST',
+    CREATE_FIXED_TRANSACTION_AMOUNT_SUCCESS = 'TRANSACTION:CREATE_FIXED_TRANSACTION_AMOUNT_SUCCESS',
+    CREATE_FIXED_TRANSACTION_AMOUNT_FAILED = 'TRANSACTION:CREATE_FIXED_TRANSACTION_AMOUNT_FAILED',
+    DELETE_FIXED_TRANSACTION_AMOUNTS_REQUEST = 'TRANSACTION:DELETE_FIXED_TRANSACTION_AMOUNTS_REQUEST',
+    DELETE_FIXED_TRANSACTION_AMOUNTS_SUCCESS = 'TRANSACTION:DELETE_FIXED_TRANSACTION_AMOUNTS_SUCCESS',
+    DELETE_FIXED_TRANSACTION_AMOUNTS_FAILED = 'TRANSACTION:DELETE_FIXED_TRANSACTION_AMOUNTS_FAILED',
 }
 
 export type TransactionAction = LoadVariableTransactionsRequestAction
@@ -88,12 +91,16 @@ export type TransactionAction = LoadVariableTransactionsRequestAction
     | CreateFixedTransactionRequestAction
     | CreateFixedTransactionSuccessAction
     | CreateFixedTransactionFailedAction
+    | DeleteFixedTransactionRequestAction
+    | DeleteFixedTransactionSuccessAction
+    | DeleteFixedTransactionFailedAction
     | CreateFixedTransactionAmountRequestAction
     | CreateFixedTransactionAmountSuccessAction
     | CreateFixedTransactionAmountFailedAction
-    | DeleteFixedTransactionRequestAction
-    | DeleteFixedTransactionSuccessAction
-    | DeleteFixedTransactionFailedAction;
+    | DeleteFixedTransactionAmountsRequestAction
+    | DeleteFixedTransactionAmountsSuccessAction
+    | DeleteFixedTransactionAmountsFailedAction
+    ;
 
 interface LoadVariableTransactionsRequestAction extends Action {
     type: TransactionActionDefinition.LOAD_VARIABLE_TRANSACTIONS_REQUEST,
@@ -269,5 +276,19 @@ interface DeleteFixedTransactionSuccessAction extends Action {
 
 interface DeleteFixedTransactionFailedAction extends Action {
     type: TransactionActionDefinition.DELETE_FIXED_TRANSACTION_FAILED,
+    payload: ErrorMessage
+}
+
+interface DeleteFixedTransactionAmountsRequestAction extends Action {
+    type: TransactionActionDefinition.DELETE_FIXED_TRANSACTION_AMOUNTS_REQUEST,
+    payload: DeleteFixedTransactionAmountsRequest
+}
+
+interface DeleteFixedTransactionAmountsSuccessAction extends Action {
+    type: TransactionActionDefinition.DELETE_FIXED_TRANSACTION_AMOUNTS_SUCCESS
+}
+
+interface DeleteFixedTransactionAmountsFailedAction extends Action {
+    type: TransactionActionDefinition.DELETE_FIXED_TRANSACTION_AMOUNTS_FAILED,
     payload: ErrorMessage
 }

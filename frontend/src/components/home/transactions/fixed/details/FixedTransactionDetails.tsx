@@ -6,7 +6,7 @@ import {transactionDispatchMap}                                   from '../../..
 import {Button, Descriptions, Modal, notification, Result, Space} from 'antd';
 import Text                                                       from 'antd/lib/typography/Text';
 import {PageContainer}                                            from '@ant-design/pro-layout';
-import {FixedTransaction, FixedTransactionAmount}                 from '../../../../../.openapi';
+import {Amount, FixedTransaction, FixedTransactionAmount}         from '../../../../../.openapi';
 import {Link, Redirect, RouteComponentProps}                      from 'react-router-dom';
 import {TransactionReducerProps}                                  from '../../../../../store/reducers/transaction.reducer';
 import TimeRangeLabel
@@ -118,6 +118,46 @@ class FixedTransactionDetails extends React.Component<FixedTransactionDetailsCom
 
     });
 
+    onDeleteFixedTransactionAmounts = (fixedTransactionAmountIds: number[]) => new Promise<void>((resolveConfirm => Modal.confirm(confirmDialogConfig(
+        this.props.t('Transaction.FixedTransactionAmounts')?.toString() || '',
+        this.props.t('Message.Transaction.FixedTransaction.FixedTransactionAmount.ConfirmDeleteFixedTransactionAmounts')?.toString() || '',
+        () => new Promise<void>(resolveDispatch => {
+            if (this.state.fixedTransaction?.id) {
+                this.props.dispatchDeleteFixedTransactionAmounts({
+                    transactionId: this.state.fixedTransaction.id,
+                    fixedTransactionAmountIds: fixedTransactionAmountIds
+                }, () => {
+                    const fixedTransaction = this.state.fixedTransaction;
+                    if (fixedTransaction) {
+                        fixedTransaction.transactionAmounts = fixedTransaction.transactionAmounts.filter(
+                            (fixedTransactionAmount) => fixedTransactionAmountIds.filter(id => id === fixedTransactionAmount.id).length <= 0);
+                        this.setState({fixedTransaction: fixedTransaction});
+                        notification.success({
+                            message: this.props.t('Transaction.FixedTransactionAmounts'),
+                            description: this.props.t('Message.Transaction.FixedTransaction.FixedTransactionAmount.DeletedFixedTransactionAmounts')
+                        });
+                        resolveDispatch();
+                        resolveConfirm();
+                    }
+                });
+            }
+        })
+    ))));
+
+    getAmount(): Amount {
+        if (this.state.fixedTransaction) {
+            if (this.state.fixedTransaction.hasVariableAmounts) {
+                if (this.state.fixedTransaction.transactionAmounts.length > 0) {
+                    return this.state.fixedTransaction.transactionAmounts[this.state.fixedTransaction.transactionAmounts.length - 1].amount;
+                }
+            } else {
+                return this.state.fixedTransaction.amount;
+            }
+        }
+        return {amount: 0};
+
+    }
+
     render() {
         if (this.state.redirectToFixedTransactionOverview) {
             return <Redirect to={'/transactions/fixed'}/>;
@@ -125,11 +165,13 @@ class FixedTransactionDetails extends React.Component<FixedTransactionDetailsCom
 
         if (!this.props.transactionState.isLoading && this.state.fixedTransaction === undefined) {
             return (
-                <Result
-                    status="404"
-                    title="Not found"
-                    subTitle="Sorry, the page you visited does not exist."
-                    extra={<Link to={'/'}><Button type="primary">Back Home</Button></Link>}/>);
+                <PageContainer>
+                    <Result
+                        status="404"
+                        title="Not found"
+                        subTitle="Sorry, the page you visited does not exist."
+                        extra={<Link to={'/'}><Button type="primary">Back Home</Button></Link>}/>)
+                </PageContainer>);
         } else {
             if (this.state.fixedTransaction === undefined) {
                 return <PageContainer loading/>;
@@ -176,10 +218,7 @@ class FixedTransactionDetails extends React.Component<FixedTransactionDetailsCom
                                 </Button>
                             </Space>}
                         extraContent={
-                            <AmountStatistics
-                                data={this.state.fixedTransaction.hasVariableAmounts ?
-                                    this.state.fixedTransaction.transactionAmounts[this.state.fixedTransaction.transactionAmounts.length - 1].amount :
-                                    this.state.fixedTransaction.amount}/>}
+                            <AmountStatistics data={this.getAmount()}/>}
                         tabList={[{
                             tab: i18next.t('Transaction.FixedTransactionAmounts'),
                             disabled: !this.state.fixedTransaction.hasVariableAmounts,
@@ -194,7 +233,8 @@ class FixedTransactionDetails extends React.Component<FixedTransactionDetailsCom
                         <ProCard collapsed={!(this.state.activeTab === 'fixedTransactionAmountsTab')}>
                             <FixedTransactionAmountList
                                 fixedTransactionAmounts={this.state.fixedTransaction?.transactionAmounts || []}
-                                openFixedTransactionAmountDialog={() => this.setState({showFixedTransactionAmountDialog: true})}/>
+                                openFixedTransactionAmountDialog={() => this.setState({showFixedTransactionAmountDialog: true})}
+                                onDeleteFixedTransactionAmounts={this.onDeleteFixedTransactionAmounts}/>
                             <CreateFixedTransactionAmountDialog
                                 visible={this.state.showFixedTransactionAmountDialog}
                                 onSubmit={this.onCreateFixedTransactionAmount}

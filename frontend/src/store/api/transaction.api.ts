@@ -2,7 +2,7 @@ import {
     CreateFixedTransactionAmountRequest,
     CreateFixedTransactionRequest,
     CreateProductRequest,
-    CreateVariableTransactionRequest, DeleteFixedTransactionRequest,
+    CreateVariableTransactionRequest, DeleteFixedTransactionAmountsRequest, DeleteFixedTransactionRequest,
     DeleteProductsRequest,
     DeleteVariableTransactionRequest,
     FixedTransaction,
@@ -213,6 +213,22 @@ const createFixedTransaction = (data: CreateFixedTransactionRequest, callback?: 
     };
 };
 
+const deleteFixedTransaction = (data: DeleteFixedTransactionRequest, callback?: () => void) => {
+    return (dispatch: Dispatch) => {
+        dispatch({
+            type: TransactionActionDefinition.DELETE_FIXED_TRANSACTION_REQUEST,
+            payload: data
+        });
+        const api = new FixedTransactionApi(apiConfiguration());
+        ErrorMessage.resolveError(api.deleteFixedTransaction(data)
+                .then(() => {
+                    dispatch({type: TransactionActionDefinition.DELETE_FIXED_TRANSACTION_SUCCESS});
+                    if (callback) callback();
+                }),
+            TransactionActionDefinition.DELETE_FIXED_TRANSACTION_FAILED, dispatch);
+    };
+};
+
 const createFixedTransactionAmount = (data: CreateFixedTransactionAmountRequest, callback?: (fixedTransactionAmount: FixedTransactionAmount) => void) => {
     return (dispatch: Dispatch) => {
         dispatch({
@@ -231,19 +247,19 @@ const createFixedTransactionAmount = (data: CreateFixedTransactionAmountRequest,
     };
 };
 
-const deleteFixedTransaction = (data: DeleteFixedTransactionRequest, callback?: () => void) => {
+const deleteFixedTransactionAmounts = (data: DeleteFixedTransactionAmountsRequest, callback?: () => void) => {
     return (dispatch: Dispatch) => {
         dispatch({
-            type: TransactionActionDefinition.DELETE_FIXED_TRANSACTION_REQUEST,
+            type: TransactionActionDefinition.DELETE_FIXED_TRANSACTION_AMOUNTS_REQUEST,
             payload: data
         });
         const api = new FixedTransactionApi(apiConfiguration());
-        ErrorMessage.resolveError(api.deleteFixedTransaction(data)
+        ErrorMessage.resolveError(api.deleteFixedTransactionAmounts(data)
                 .then(() => {
-                    dispatch({type: TransactionActionDefinition.DELETE_FIXED_TRANSACTION_SUCCESS});
+                    dispatch({type: TransactionActionDefinition.DELETE_FIXED_TRANSACTION_AMOUNTS_SUCCESS});
                     if (callback) callback();
                 }),
-            TransactionActionDefinition.DELETE_FIXED_TRANSACTION_FAILED, dispatch);
+            TransactionActionDefinition.DELETE_FIXED_TRANSACTION_AMOUNTS_FAILED, dispatch);
     };
 };
 
@@ -258,8 +274,9 @@ export interface TransactionApi {
     dispatchLoadFixedTransactions: (data: GetUsersFixedTransactionsRequest, callback?: (fixedTransactions: FixedTransaction[]) => void) => void,
     dispatchLoadFixedTransaction: (data: GetFixedTransactionByIdRequest, callback?: (fixedTransaction: FixedTransaction) => void) => void,
     dispatchCreateFixedTransaction: (data: CreateFixedTransactionRequest, callback?: (fixedTransaction: FixedTransaction) => void) => void,
-    dispatchCreateFixedTransactionAmount: (data: CreateFixedTransactionAmountRequest, callback?: (fixedTransactionAmount: FixedTransactionAmount) => void) => void,
     dispatchDeleteFixedTransaction: (data: DeleteFixedTransactionRequest, callback?: () => void) => void
+    dispatchCreateFixedTransactionAmount: (data: CreateFixedTransactionAmountRequest, callback?: (fixedTransactionAmount: FixedTransactionAmount) => void) => void,
+    dispatchDeleteFixedTransactionAmounts: (data: DeleteFixedTransactionAmountsRequest, callback?: () => void) => void
 }
 
 export const transactionDispatchMap = (dispatch: Dispatch) => bindActionCreators({
@@ -273,6 +290,7 @@ export const transactionDispatchMap = (dispatch: Dispatch) => bindActionCreators
     dispatchLoadFixedTransactions: loadFixedTransactions,
     dispatchLoadFixedTransaction: loadFixedTransaction,
     dispatchCreateFixedTransaction: createFixedTransaction,
+    dispatchDeleteFixedTransaction: deleteFixedTransaction,
     dispatchCreateFixedTransactionAmount: createFixedTransactionAmount,
-    dispatchDeleteFixedTransaction: deleteFixedTransaction
+    dispatchDeleteFixedTransactionAmounts: deleteFixedTransactionAmounts
 }, dispatch);

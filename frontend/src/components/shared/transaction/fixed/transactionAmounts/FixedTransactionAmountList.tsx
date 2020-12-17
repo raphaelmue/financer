@@ -10,7 +10,7 @@ import {WithTranslation, withTranslation} from 'react-i18next';
 
 interface FixedTransactionAmountListComponentProps extends WithTranslation<'default'> {
     openFixedTransactionAmountDialog: () => void,
-    onDeleteFixedTransactionAmounts?: (productIds: number[]) => Promise<void>,
+    onDeleteFixedTransactionAmounts?: (fixedTransactionAmountIds: number[]) => Promise<void>,
     fixedTransactionAmounts?: FixedTransactionAmount[]
     disabled?: boolean,
 }

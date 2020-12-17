@@ -157,7 +157,11 @@
       },
       "FixedTransaction": {
         "CreatedFixedTransaction": "Feste Transaktion wurde erfolgreich erstellt.",
-        "CreatedFixedTransactionAmount": "Der Transaktionsbetrag wurde erfolgreich zur festen Transaktion hinzugefügt."
+        "CreatedFixedTransactionAmount": "Der Transaktionsbetrag wurde erfolgreich zur festen Transaktion hinzugefügt.",
+        "FixedTransactionAmount": {
+          "DeletedFixedTransactionAmounts": "Die ausgewählten Transaktionsbeträge der festen Transaktion wurden erfolgreich gelöscht.",
+          "ConfirmDeleteFixedTransactionAmounts": "Bist du sicher, dass du diese Transaktionsbeträge von dieser festen Transaktion löschen möchtest?"
+        }
       }
     },
     "Admin": {

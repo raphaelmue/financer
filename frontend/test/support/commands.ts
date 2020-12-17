@@ -110,7 +110,7 @@ Cypress.Commands.add('submitDialog', () => {
 });
 
 Cypress.Commands.add('submitConfirmDialog', () => {
-    cy.get('.ant-modal-confirm-btns .ant-btn-primary').click();
+    cy.get('.ant-modal-confirm-btns .ant-btn-primary span').click();
 });
 
 declare namespace Cypress {

@@ -55,7 +55,7 @@ describe('Fixed Transaction Test', () => {
         cy.fillFixedTransactionData(false);
         cy.get('#nextStepButton').click();
         cy.get('#submitStepsButton').should('not.be.disabled');
-        cy.get('#newVariableTransactionButton').should('be.disabled');
+        cy.get('#newFixedTransactionAmountButton').should('be.disabled');
 
         cy.get('#submitStepsButton').click();
         cy.wait('@createFixedTransaction');
@@ -74,7 +74,7 @@ describe('Fixed Transaction Test', () => {
         cy.fillFixedTransactionData(true);
         cy.get('#nextStepButton').click();
         cy.get('#submitStepsButton').should('not.be.disabled');
-        cy.get('#newVariableTransactionButton').should('not.be.disabled');
+        cy.get('#newFixedTransactionAmountButton').should('not.be.disabled');
 
         cy.get('#newFixedTransactionAmountButton').click();
         cy.shouldDisplayDialog()
@@ -123,6 +123,32 @@ describe('Fixed Transaction Test', () => {
             .shouldDisplayNotification();
 
         cy.get('tr[data-row-key=50]').should('exist');
+    });
+
+    it('should delete fixed transaction amount from fixed transaction', () => {
+        cy.intercept({
+            method: 'DELETE',
+            url: TestUtil.getServerBaseUrl() + '/fixedTransactions/52/transactionAmounts',
+            query: {
+                fixedTransactionAmountIds: '2'
+            }
+        }, []).as('deleteFixedTransactionAmounts');
+
+        cy.visit('/#/transactions/fixed/52');
+        cy.wait('@getFixedTransaction');
+
+        cy.get('#deleteFixedTransactionAmountButton').should('not.be.visible');
+        cy.get('tr[data-row-key=2] input[type=checkbox]').should('exist').click();
+        cy.get('#deleteFixedTransactionAmountButton').should('be.visible').click();
+
+        cy.wait(100);
+        cy.shouldDisplayDialog()
+            .submitConfirmDialog()
+            // .wait('@deleteFixedTransactionAmounts')
+            .shouldNotDisplayDialog()
+            .shouldDisplayNotification();
+
+        cy.get('tr[data-row-key=2]').should('not.exist');
     });
 });
 

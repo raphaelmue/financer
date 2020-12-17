@@ -34,11 +34,11 @@ interface RouteProps {
     variableTransactionId?: string
 }
 
-interface VariableTransactionsDetailsComponentProps extends RouteComponentProps<RouteProps>,
+interface VariableTransactionDetailsComponentProps extends RouteComponentProps<RouteProps>,
     WithTranslation<'default'>, TransactionReducerProps {
 }
 
-interface VariableTransactionsDetailsComponentState {
+interface VariableTransactionDetailsComponentState {
     variableTransaction: VariableTransaction | undefined,
     activeTab: string,
     showProductDialog: boolean,
@@ -47,10 +47,10 @@ interface VariableTransactionsDetailsComponentState {
     redirectToVariableTransactionList: boolean
 }
 
-class VariableTransactionsDetails extends React.Component<VariableTransactionsDetailsComponentProps,
-    VariableTransactionsDetailsComponentState> {
+class VariableTransactionDetails extends React.Component<VariableTransactionDetailsComponentProps,
+    VariableTransactionDetailsComponentState> {
 
-    constructor(props: VariableTransactionsDetailsComponentProps) {
+    constructor(props: VariableTransactionDetailsComponentProps) {
         super(props);
         this.state = {
             variableTransaction: undefined,
@@ -108,7 +108,7 @@ class VariableTransactionsDetails extends React.Component<VariableTransactionsDe
                     }, () => {
                         const variableTransaction: VariableTransaction = this.state.variableTransaction!;
                         variableTransaction.products = [...variableTransaction.products!].filter(
-                            (product) => productIds.indexOf(product.id) < 0);
+                            (product) => productIds.filter(id => id === product.id).length <= 0);
                         this.setState({variableTransaction: variableTransaction});
                         notification.success({
                             message: this.props.t('Transaction.Products'),
@@ -253,4 +253,4 @@ const mapStateToProps = (state: AppState) => {
     };
 };
 
-export default connect(mapStateToProps, transactionDispatchMap)(withTranslation<'default'>()(VariableTransactionsDetails));
+export default connect(mapStateToProps, transactionDispatchMap)(withTranslation<'default'>()(VariableTransactionDetails));
