@@ -24,7 +24,6 @@ export interface FixedTransactionMetaData {
 }
 
 interface FixedTransactionDataFormComponentProps extends WithTranslation<'default'> {
-    categoryId?: number,
     fixedTransaction?: FixedTransaction
     onChange?: (fixedTransactionData: FixedTransactionMetaData) => void
 }
@@ -40,7 +39,7 @@ class FixedTransactionDataForm extends React.Component<FixedTransactionDataFormC
 
         this.state = {
             fixedTransactionMetaData: {
-                categoryId: this.props.categoryId,
+                categoryId: this.props.fixedTransaction?.category.id,
                 amount: this.props.fixedTransaction?.amount,
                 timeRange: this.props.fixedTransaction?.timeRange,
                 vendor: this.props.fixedTransaction?.vendor,
@@ -86,7 +85,7 @@ class FixedTransactionDataForm extends React.Component<FixedTransactionDataFormC
                     rules={[fieldIsRequiredRule()]}>
                     <CategoryTreeSelect
                         filterFixed
-                        categoryId={this.props.categoryId}
+                        categoryId={this.state.fixedTransactionMetaData.categoryId}
                         onChange={(value) => this.onChange({
                             ...this.state.fixedTransactionMetaData,
                             categoryId: value
@@ -95,7 +94,7 @@ class FixedTransactionDataForm extends React.Component<FixedTransactionDataFormC
                 <Form.Item
                     label={this.props.t('Transaction.FixedTransaction.Product')}
                     name="product"
-                    initialValue={this.state.fixedTransactionMetaData.vendor}>
+                    initialValue={this.state.fixedTransactionMetaData.product}>
                     <Input
                         name={'product'}
                         onChange={(event) => this.onChange({
@@ -117,7 +116,7 @@ class FixedTransactionDataForm extends React.Component<FixedTransactionDataFormC
                     name="amount"
                     label={this.props.t('Transaction.Amount')}
                     rules={[fieldIsRequiredRule()]}
-                    initialValue={this.state.fixedTransactionMetaData.amount}>
+                    initialValue={this.state.fixedTransactionMetaData.amount?.amount}>
                     <InputNumber
                         disabled={this.state.fixedTransactionMetaData.hasVariableAmounts}
                         name={'amount'}
@@ -132,7 +131,7 @@ class FixedTransactionDataForm extends React.Component<FixedTransactionDataFormC
                     name="day"
                     label={this.props.t('Transaction.FixedTransaction.Day')}
                     rules={[fieldIsRequiredRule()]}
-                    initialValue={this.state.fixedTransactionMetaData.amount}>
+                    initialValue={this.state.fixedTransactionMetaData.day}>
                     <InputNumber
                         disabled={this.state.fixedTransactionMetaData.hasVariableAmounts}
                         name={'day'}
@@ -171,7 +170,7 @@ class FixedTransactionDataForm extends React.Component<FixedTransactionDataFormC
     }
 }
 
-const mapStateToProps = (state: AppState) => {
+const mapStateToProps = () => {
     return {};
 };
 

@@ -87,6 +87,22 @@ describe('Fixed Transaction Test', () => {
         cy.wait('@createFixedTransaction');
     });
 
+    it('should update fixed transaction', () => {
+        cy.intercept({
+            method: 'POST',
+            url: TestUtil.getServerBaseUrl() + '/fixedTransactions/52'
+        }, {fixture: 'fixed-transaction.json'}).as('updateFixedTransaction');
+
+        cy.visit('/#/transactions/fixed/52');
+        cy.wait('@getFixedTransaction');
+
+        cy.get('#editFixedTransaction').click();
+        cy.shouldDisplayDialog()
+            .submitDialog()
+            .wait('@updateFixedTransaction')
+            .shouldDisplayNotification();
+    });
+
     it('should delete fixed transaction', () => {
         cy.intercept({
             method: 'DELETE',

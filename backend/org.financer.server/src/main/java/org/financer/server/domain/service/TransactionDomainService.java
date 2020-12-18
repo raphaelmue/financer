@@ -349,7 +349,7 @@ public class TransactionDomainService {
     }
 
     private boolean changeFixedTransactionHasVariableAmounts(FixedTransaction fixedTransaction, boolean hasVariableAmounts) {
-        if (hasVariableAmounts != fixedTransaction.getIsVariable()) {
+        if (hasVariableAmounts != fixedTransaction.getHasVariableAmounts()) {
             fixedTransaction.setHasVariableAmounts(hasVariableAmounts);
             return true;
         }

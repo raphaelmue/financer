@@ -210,7 +210,8 @@ class FixedTransactionDetails extends React.Component<FixedTransactionDetailsCom
                         extra={
                             <Space size={'small'}>
                                 <Button id={'editFixedTransaction'}
-                                        icon={<EditOutlined/>}>
+                                        icon={<EditOutlined/>}
+                                        onClick={() => this.setState({showUpdateFixedTransactionDialog: true})}>
                                     {this.props.t('Form.Button.Edit')}
                                 </Button>
                                 <Button id={'deleteFixedTransaction'}
@@ -261,8 +262,12 @@ class FixedTransactionDetails extends React.Component<FixedTransactionDetailsCom
 
                         <UpdateFixedTransactionDialog
                             visible={this.state.showUpdateFixedTransactionDialog}
-                            data={this.state.fixedTransaction}
-                        />
+                            onSubmit={data => this.setState({
+                                showUpdateFixedTransactionDialog: false,
+                                fixedTransaction: data
+                            })}
+                            onCancel={() => this.setState({showUpdateFixedTransactionDialog: false})}
+                            data={this.state.fixedTransaction}/>
 
                     </PageContainer>
                 );

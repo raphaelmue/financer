@@ -3,8 +3,6 @@ import {connect}                                            from 'react-redux';
 import {transactionDispatchMap}                             from '../../../../../store/api/transaction.api';
 import {WithTranslation, withTranslation}                   from 'react-i18next';
 import {Modal, notification}                                from 'antd';
-import VariableTransactionDataForm
-                                                            from '../../variable/transactionData/VariableTransactionDataForm';
 import React                                                from 'react';
 import {DataDialog}                                         from '../../../form/modal/data/types';
 import {FixedTransaction}                                   from '../../../../../.openapi';
