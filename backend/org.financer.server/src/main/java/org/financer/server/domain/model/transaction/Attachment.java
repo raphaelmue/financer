@@ -24,7 +24,8 @@ public class Attachment implements DataEntity, UserProperty {
     @EqualsAndHashCode.Include
     private Long id;
 
-    @ManyToOne(targetEntity = Transaction.class, optional = false)
+    @ManyToOne(targetEntity = Transaction.class)
+    @JoinColumn(name = "transaction_id")
     @ToString.Exclude
     private Transaction transaction;
 

@@ -1,0 +1,32 @@
+{
+    "id": 52,
+    "category": {
+        "id": 2,
+        "categoryClass": "FIXED_EXPENSES",
+        "name": "Test Category",
+        "children": []
+    },
+    "amount": {
+        "amount": -500
+    },
+    "timeRange": {
+        "startDate": "2020-01-01"
+    },
+    "day": 3,
+    "product": "Product",
+    "description": "Test Description",
+    "vendor": "Test Vendor",
+    "hasVariableAmounts": true,
+    "active": true,
+    "transactionAmounts": [
+        {
+            "id": 2,
+            "valueDate": {
+                "date": "2020-01-01"
+            },
+            "amount": {
+                "amount": -500
+            }
+        }
+    ]
+}

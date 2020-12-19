@@ -18,6 +18,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MvcResult;
 
+import java.util.List;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -150,5 +151,14 @@ public class FixedTransactionApiControllerTest extends ApiTest {
                 .andExpect(status().isOk());
 
         verify(transactionDomainService, times(1)).deleteFixedTransactionAmount(eq(1L), eq(1L));
+    }
+
+    @Test
+    public void testDeleteTransactionAmounts() throws Exception {
+        mockMvc.perform(buildRequest(PathBuilder.Delete().fixedTransactions().fixedTransactionId(1).transactionAmounts().build())
+                .param("fixedTransactionAmountIds", "1"))
+                .andExpect(status().isOk());
+
+        verify(transactionDomainService, times(1)).deleteFixedTransactionAmounts(eq(1L), eq(List.of(1L)));
     }
 }

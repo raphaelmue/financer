@@ -3,7 +3,6 @@ import {StepProps}                        from 'antd/lib/steps';
 import {Button, Steps}                    from 'antd';
 import {FooterToolbar}                    from '@ant-design/pro-layout';
 import {WithTranslation, withTranslation} from 'react-i18next';
-import {AppState}                         from '../../../../store/reducers/root.reducers';
 import {bindActionCreators, Dispatch}     from 'redux';
 import {connect}                          from 'react-redux';
 import {StepFormContent}                  from './StepFormContent';
@@ -18,6 +17,7 @@ export interface FormStep extends StepProps {
 
 interface StepFormComponentProps extends WithTranslation<'default'> {
     steps: FormStep[],
+    loading?: boolean,
     onSubmit?: () => void,
 }
 
@@ -76,6 +76,7 @@ class StepForm extends React.Component<StepFormComponentProps, StepFormComponent
     renderStepContent(): React.ReactNode[] {
         return this.props.steps.map(step =>
             <StepFormContent
+                loading={this.props.loading}
                 key={step.key}
                 visible={step.key === this.state.currentStepKey}>
                 {step.content()}
@@ -108,6 +109,7 @@ class StepForm extends React.Component<StepFormComponentProps, StepFormComponent
                     <Button
                         id={'submitStepsButton'}
                         type={'primary'}
+                        loading={this.props.loading}
                         disabled={!this.validateSteps()}
                         onClick={this.onSubmit.bind(this)}>
                         {this.props.t('Form.Button.Submit')}
@@ -118,7 +120,7 @@ class StepForm extends React.Component<StepFormComponentProps, StepFormComponent
     }
 }
 
-const mapStateToProps = (state: AppState) => {
+const mapStateToProps = () => {
     return {};
 };
 

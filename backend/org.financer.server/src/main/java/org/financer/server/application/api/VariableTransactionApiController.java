@@ -35,7 +35,7 @@ public class VariableTransactionApiController implements VariableTransactionApi 
     }
 
     @Override
-    public ResponseEntity<VariableTransactionDTO> createTransaction(@NotNull @Valid CreateVariableTransactionDTO variableTransaction) {
+    public ResponseEntity<VariableTransactionDTO> createVariableTransaction(@NotNull @Valid CreateVariableTransactionDTO variableTransaction) {
         VariableTransaction variableTransactionEntity = modelMapper.map(variableTransaction, VariableTransaction.class);
         variableTransactionEntity = transactionDomainService.createVariableTransaction(variableTransactionEntity);
         return new ResponseEntity<>(modelMapper.map(variableTransactionEntity, VariableTransactionDTO.class), HttpStatus.OK);
@@ -70,7 +70,7 @@ public class VariableTransactionApiController implements VariableTransactionApi 
     }
 
     @Override
-    public ResponseEntity<Void> deleteProduct(@NotBlank @Min(1) Long transactionId, @NotBlank @Min(1) Long productId) {
+    public ResponseEntity<Void> deleteProduct(@NotBlank @PathVariable("transactionId") @Min(1) Long transactionId, @NotBlank @PathVariable("productId") @Min(1) Long productId) {
         try {
             transactionDomainService.deleteProduct(transactionId, productId);
         } catch (NotFoundException exception) {
@@ -80,7 +80,7 @@ public class VariableTransactionApiController implements VariableTransactionApi 
     }
 
     @Override
-    public ResponseEntity<Void> deleteProducts(@NotBlank @Min(1) Long transactionId, @NotBlank @Min(1) List<Long> productIds) {
+    public ResponseEntity<Void> deleteProducts(@NotBlank @PathVariable("transactionId") @Min(1) Long transactionId, @NotBlank @Min(1) List<Long> productIds) {
         try {
             transactionDomainService.deleteProducts(transactionId, productIds);
         } catch (NotFoundException exception) {

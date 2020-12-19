@@ -29,8 +29,9 @@ public class Product implements DataEntity, AmountProvider, UserProperty {
     private Long id;
 
     @ManyToOne(targetEntity = VariableTransaction.class, optional = false)
+    @JoinColumn(name = "variable_transaction_id")
     @ToString.Exclude
-    private VariableTransaction transaction;
+    private VariableTransaction variableTransaction;
 
     @Column(name = "name", length = 64, nullable = false)
     private String name;
@@ -48,7 +49,7 @@ public class Product implements DataEntity, AmountProvider, UserProperty {
 
     @Override
     public Amount getTotalAmount(ValueDate valueDate) {
-        if (this.transaction.getValueDate().isInSameMonth(valueDate)) {
+        if (this.variableTransaction.getValueDate().isInSameMonth(valueDate)) {
             return this.amount.calculate(this.quantity);
         }
         return new Amount();
@@ -56,7 +57,7 @@ public class Product implements DataEntity, AmountProvider, UserProperty {
 
     @Override
     public Amount getTotalAmount(TimeRange timeRange) {
-        if (timeRange.includes(this.transaction.getValueDate())) {
+        if (timeRange.includes(this.variableTransaction.getValueDate())) {
             return this.amount.calculate(this.quantity);
         }
         return new Amount();
@@ -64,12 +65,12 @@ public class Product implements DataEntity, AmountProvider, UserProperty {
 
     @Override
     public boolean isFixed() {
-        return this.transaction.isFixed();
+        return this.variableTransaction.isFixed();
     }
 
     @Override
     public boolean isRevenue() {
-        return this.transaction.isRevenue();
+        return this.variableTransaction.isRevenue();
     }
 
     @Override
@@ -81,6 +82,6 @@ public class Product implements DataEntity, AmountProvider, UserProperty {
 
     @Override
     public boolean isPropertyOfUser(long userId) {
-        return this.transaction.isPropertyOfUser(userId);
+        return this.variableTransaction.isPropertyOfUser(userId);
     }
 }

@@ -11,14 +11,14 @@ import org.financer.shared.domain.model.value.objects.ValueDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.NoResultException;
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class TransactionDomainService {
@@ -50,23 +50,54 @@ public class TransactionDomainService {
         this.attachmentRepository = attachmentRepository;
     }
 
+
+    /**
+     * Returns a list of all fixed transactions that belong to a user.
+     *
+     * @return list of fixed transactions
+     */
+    public Page<FixedTransaction> fetchFixedTransactions(Long userId, boolean onlyActive, Long categoryId, Pageable pageable) {
+        authenticationService.getAuthenticatedUser().throwIfNotUsersProperty(userId);
+        if (onlyActive) {
+            if (categoryId == null) {
+                return fixedTransactionRepository.findAllActiveByUserId(userId, pageable);
+            } else {
+                Optional<FixedTransaction> optionalFixedTransaction = fixedTransactionRepository.findActiveByCategoryId(categoryId);
+                return optionalFixedTransaction.
+                        <Page<FixedTransaction>>map(fixedTransaction -> new PageImpl<>(List.of(fixedTransaction)))
+                        .orElseGet(() -> new PageImpl<>(Collections.emptyList()));
+            }
+        } else {
+            if (categoryId == null) {
+                return fixedTransactionRepository.findAllByUserId(userId, pageable);
+            } else {
+                return fixedTransactionRepository.findAllByCategoryId(categoryId, pageable);
+            }
+        }
+    }
+
     /**
      * Inserts the given transaction into the database.
      *
      * @param variableTransactionEntity transaction to insert
      * @return inserted transaction object
      */
-    public VariableTransaction
-    createVariableTransaction(VariableTransaction variableTransactionEntity) {
+    public VariableTransaction createVariableTransaction(VariableTransaction variableTransactionEntity) {
         logger.info("Creating new variable transaction.");
         Optional<Category> categoryOptional = categoryRepository.findById(variableTransactionEntity.getCategory().getId());
         if (categoryOptional.isPresent()) {
+            variableTransactionEntity.setId(0L);
             variableTransactionEntity.setCategory(categoryOptional.get());
             variableTransactionEntity.throwIfInvalidCategoryClass();
             variableTransactionEntity.throwIfNotUsersProperty(authenticationService.getUserId());
 
             for (Product product : variableTransactionEntity.getProducts()) {
-                product.setTransaction(variableTransactionEntity);
+                product.setVariableTransaction(variableTransactionEntity);
+            }
+
+            for (Attachment attachment : variableTransactionEntity.getAttachments()) {
+                attachment.setTransaction(variableTransactionEntity);
+                attachment.setUploadDate(LocalDate.now());
             }
 
             return variableTransactionRepository.save(variableTransactionEntity);
@@ -168,7 +199,7 @@ public class TransactionDomainService {
     public Product createProduct(long transactionId, Product product) {
         logger.info("Creating new product for variable transaction with {}", transactionId);
         VariableTransaction variableTransaction = getVariableTransactionById(transactionId);
-        product.setTransaction(variableTransaction);
+        product.setVariableTransaction(variableTransaction);
         product.throwIfNotUsersProperty(authenticationService.getUserId());
         return productRepository.save(product);
     }
@@ -186,9 +217,9 @@ public class TransactionDomainService {
         Optional<Product> productOptional = productRepository.findById(productId);
         if (productOptional.isPresent()) {
             productOptional.get().throwIfNotUsersProperty(authenticationService.getUserId());
-            if (productOptional.get().getTransaction().getId() == transactionId) {
-                productOptional.get().getTransaction().getProducts().remove(productOptional.get());
-                variableTransactionRepository.save(productOptional.get().getTransaction());
+            if (productOptional.get().getVariableTransaction().getId() == transactionId) {
+                productOptional.get().getVariableTransaction().getProducts().remove(productOptional.get());
+                variableTransactionRepository.save(productOptional.get().getVariableTransaction());
                 return;
             }
         }
@@ -231,14 +262,14 @@ public class TransactionDomainService {
             fixedTransaction.throwIfNotUsersProperty(authenticationService.getUserId());
 
             // delete transaction amounts if transaction is not variable
-            if (fixedTransaction.getIsVariable()) {
+            if (fixedTransaction.getHasVariableAmounts()) {
                 fixedTransaction.setAmount(new Amount());
             } else {
                 fixedTransaction.setTransactionAmounts(new HashSet<>());
             }
 
-            Optional<FixedTransaction> activeTransactionOptional = fixedTransactionRepository.findActiveTransactionByCategory(
-                    fixedTransaction.getCategory());
+            Optional<FixedTransaction> activeTransactionOptional = fixedTransactionRepository.findActiveByCategoryId(
+                    fixedTransaction.getCategory().getId());
 
             // cancels the current fixed transaction if exists to the start date of the current transaction.
             if (activeTransactionOptional.isPresent()) {
@@ -318,7 +349,7 @@ public class TransactionDomainService {
     }
 
     private boolean changeFixedTransactionHasVariableAmounts(FixedTransaction fixedTransaction, boolean hasVariableAmounts) {
-        if (hasVariableAmounts != fixedTransaction.getIsVariable()) {
+        if (hasVariableAmounts != fixedTransaction.getHasVariableAmounts()) {
             fixedTransaction.setHasVariableAmounts(hasVariableAmounts);
             return true;
         }
@@ -441,6 +472,17 @@ public class TransactionDomainService {
         fixedTransactionAmount.throwIfNotUsersProperty(authenticationService.getUserId());
         FixedTransaction fixedTransaction = fixedTransactionAmount.getFixedTransaction();
         fixedTransaction.removeFixedTransactionAmount(fixedTransactionAmount);
+        fixedTransactionRepository.save(fixedTransaction);
+    }
+
+    public void deleteFixedTransactionAmounts(long fixedTransactionId, List<Long> fixedTransactionAmountIds) {
+        logger.info("Deleting fixed transaction amount {} of transaction {}", fixedTransactionAmountIds, fixedTransactionId);
+        FixedTransaction fixedTransaction = getFixedTransactionById(fixedTransactionId);
+        for (long fixedTransactionAmountId : fixedTransactionAmountIds) {
+            FixedTransactionAmount fixedTransactionAmount = getFixedTransactionAmountById(fixedTransactionId, fixedTransactionAmountId);
+            fixedTransactionAmount.throwIfNotUsersProperty(authenticationService.getUserId());
+            fixedTransaction.removeFixedTransactionAmount(fixedTransactionAmount);
+        }
         fixedTransactionRepository.save(fixedTransaction);
     }
 

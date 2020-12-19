@@ -1,11 +1,9 @@
 package org.financer.server.application.configuration.security;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.financer.server.domain.model.user.User;
 import org.financer.server.domain.service.UserDomainService;
 import org.financer.shared.domain.model.value.objects.TokenString;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -23,12 +21,6 @@ public class AuthenticationTokenFilter extends OncePerRequestFilter {
 
     public static final String TOKEN_PREFIX = "Bearer ";
     public static final String HEADER_STRING = "Authorization";
-
-    @Autowired
-    private ObjectMapper objectMapper;
-
-    @Autowired
-    private MessageSource messageSource;
 
     @Autowired
     private UserDomainService userDomainService;

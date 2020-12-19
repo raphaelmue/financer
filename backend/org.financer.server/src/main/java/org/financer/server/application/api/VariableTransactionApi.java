@@ -18,6 +18,7 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Tag(name = "variable-transaction", description = "Operations with variable transactions")
+@RequestMapping("/variableTransactions")
 public interface VariableTransactionApi {
 
 
@@ -32,14 +33,12 @@ public interface VariableTransactionApi {
             tags = {"variable-transaction", "transaction"},
             security = @SecurityRequirement(name = "TokenAuth"))
     @ApiResponse(
-            responseCode = "201",
-            description = "Variable transaction was successfully created.",
-            content = @Content(schema = @Schema(implementation = VariableTransactionDTO.class)))
+            responseCode = "200",
+            description = "Variable transaction was successfully created.")
     @PutMapping(
-            value = "/variableTransactions",
             produces = {"application/json"},
             headers = "Accept=application/json")
-    ResponseEntity<VariableTransactionDTO> createTransaction(
+    ResponseEntity<VariableTransactionDTO> createVariableTransaction(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     description = "Variable transaction that will be created",
                     required = true,
@@ -62,7 +61,7 @@ public interface VariableTransactionApi {
             description = "Variable transaction was successfully fetched.",
             content = @Content(schema = @Schema(implementation = VariableTransactionDTO.class)))
     @GetMapping(
-            value = "/variableTransactions/{transactionId}",
+            value = "/{transactionId}",
             produces = {"application/json"},
             headers = "Accept=application/json")
     ResponseEntity<VariableTransactionDTO> getVariableTransactionById(
@@ -86,7 +85,7 @@ public interface VariableTransactionApi {
             description = "Variable transaction was successfully updated.",
             content = @Content(schema = @Schema(implementation = VariableTransactionDTO.class)))
     @PostMapping(
-            value = "/variableTransactions/{transactionId}",
+            value = "/{transactionId}",
             produces = {"application/json"},
             headers = "Accept=application/json")
     ResponseEntity<VariableTransactionDTO> updateTransaction(
@@ -113,7 +112,7 @@ public interface VariableTransactionApi {
             responseCode = "200",
             description = "Variable transaction was successfully deleted.")
     @DeleteMapping(
-            value = "/variableTransactions/{transactionId}",
+            value = "/{transactionId}",
             produces = {"application/json"},
             headers = "Accept=application/json")
     ResponseEntity<Void> deleteTransaction(
@@ -132,11 +131,11 @@ public interface VariableTransactionApi {
             tags = {"variable-transaction", "transaction"},
             security = @SecurityRequirement(name = "TokenAuth"))
     @ApiResponse(
-            responseCode = "201",
+            responseCode = "200",
             description = "Product was successfully created.",
             content = @Content(schema = @Schema(implementation = ProductDTO.class)))
     @PutMapping(
-            value = "/variableTransactions/{transactionId}/products",
+            value = "/{transactionId}/products",
             produces = {"application/json"},
             headers = "Accept=application/json")
     ResponseEntity<ProductDTO> createProduct(
@@ -163,7 +162,7 @@ public interface VariableTransactionApi {
             responseCode = "200",
             description = "Product was successfully deleted.")
     @DeleteMapping(
-            value = "/variableTransactions/{transactionId}/products/{productId}",
+            value = "/{transactionId}/products/{productId}",
             produces = {"application/json"},
             headers = "Accept=application/json")
     ResponseEntity<Void> deleteProduct(
@@ -187,7 +186,7 @@ public interface VariableTransactionApi {
             responseCode = "200",
             description = "Product was successfully deleted.")
     @DeleteMapping(
-            value = "/variableTransactions/{transactionId}/products/",
+            value = "/{transactionId}/products",
             produces = {"application/json"},
             headers = "Accept=application/json")
     ResponseEntity<Void> deleteProducts(

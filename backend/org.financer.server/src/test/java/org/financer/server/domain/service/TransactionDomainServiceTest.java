@@ -18,6 +18,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.LocalDate;
@@ -27,6 +29,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 
 @Tag("unit")
@@ -59,12 +62,13 @@ public class TransactionDomainServiceTest extends ServiceTest {
         product = product();
         variableTransaction = variableTransaction();
         attachment = attachment();
-        product.setTransaction(variableTransaction);
+        product.setVariableTransaction(variableTransaction);
         fixedTransactionAmount = fixedTransactionAmount();
         fixedTransaction = fixedTransaction();
         fixedTransactionAmount.setFixedTransaction(fixedTransaction);
 
         when(authenticationService.getUserId()).thenReturn(user.getId());
+        when(authenticationService.getAuthenticatedUser()).thenReturn(user);
 
         when(categoryRepository.existsById(any())).thenReturn(false);
         when(categoryRepository.existsById(1L)).thenReturn(true);
@@ -83,12 +87,23 @@ public class TransactionDomainServiceTest extends ServiceTest {
         when(attachmentRepository.findById(1L)).thenReturn(Optional.of(attachment));
         when(fixedTransactionRepository.findById(any())).thenReturn(Optional.empty());
         when(fixedTransactionRepository.findById(2L)).thenReturn(Optional.of(fixedTransaction));
-        when(fixedTransactionRepository.findActiveTransactionByCategory(any(Category.class))).thenReturn(Optional.empty());
         when(fixedTransactionRepository.save(any(FixedTransaction.class))).thenAnswer(i -> i.getArguments()[0]);
-        when(fixedTransactionRepository.findActiveTransactionByCategory(fixedCategory)).thenReturn(Optional.of(fixedTransaction));
+        when(fixedTransactionRepository.findAllByUserId(anyLong(), any(Pageable.class))).thenReturn(new PageImpl<>(List.of(fixedTransaction)));
+        when(fixedTransactionRepository.findAllActiveByUserId(anyLong(), any(Pageable.class))).thenReturn(new PageImpl<>(List.of(fixedTransaction)));
+        when(fixedTransactionRepository.findAllByCategoryId(anyLong(), any(Pageable.class))).thenReturn(new PageImpl<>(List.of(fixedTransaction)));
+        when(fixedTransactionRepository.findActiveByCategoryId(anyLong())).thenReturn(Optional.empty());
+        when(fixedTransactionRepository.findActiveByCategoryId(fixedCategory.getId())).thenReturn(Optional.of(fixedTransaction));
         when(fixedTransactionAmountRepository.findById(any())).thenReturn(Optional.empty());
         when(fixedTransactionAmountRepository.findById(1L)).thenReturn(Optional.of(fixedTransactionAmount));
         when(fixedTransactionAmountRepository.save(any(FixedTransactionAmount.class))).thenAnswer(i -> i.getArguments()[0]);
+    }
+
+    @Test
+    public void testFetchFixedTransactions() {
+        assertThat(transactionDomainService.fetchFixedTransactions(user().getId(), false, null, Pageable.unpaged())).hasSize(1);
+        assertThat(transactionDomainService.fetchFixedTransactions(user().getId(), true, null, Pageable.unpaged())).hasSize(1);
+        assertThat(transactionDomainService.fetchFixedTransactions(user().getId(), false, fixedCategory.getId(), Pageable.unpaged())).hasSize(1);
+        assertThat(transactionDomainService.fetchFixedTransactions(user().getId(), true, fixedCategory.getId(), Pageable.unpaged())).hasSize(1);
     }
 
     @Test
@@ -160,7 +175,7 @@ public class TransactionDomainServiceTest extends ServiceTest {
         Product product = transactionDomainService.createProduct(variableTransaction.getId(), new Product()
                 .setId(2L).setAmount(new Amount(50)).setQuantity(new Quantity(5))
                 .setName("Test Product"));
-        assertThat(product.getTransaction()).isEqualToComparingFieldByField(variableTransaction);
+        assertThat(product.getVariableTransaction()).isEqualToComparingFieldByField(variableTransaction);
     }
 
     @Test
@@ -313,6 +328,12 @@ public class TransactionDomainServiceTest extends ServiceTest {
     @Test
     public void testDeleteFixedTransactionAmount() {
         transactionDomainService.deleteFixedTransactionAmount(fixedTransaction.getId(), fixedTransactionAmount.getId());
+        assertThat(fixedTransaction.getTransactionAmounts()).isEmpty();
+    }
+
+    @Test
+    public void testDeleteFixedTransactionAmounts() {
+        transactionDomainService.deleteFixedTransactionAmounts(fixedTransaction.getId(), List.of(fixedTransactionAmount.getId()));
         assertThat(fixedTransaction.getTransactionAmounts()).isEmpty();
     }
 

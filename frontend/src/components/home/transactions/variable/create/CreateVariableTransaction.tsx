@@ -1,4 +1,3 @@
-import {bindActionCreators, Dispatch}                             from 'redux';
 import {connect}                                                  from 'react-redux';
 import {WithTranslation, withTranslation}                         from 'react-i18next';
 import React                                                      from 'react';
@@ -10,7 +9,7 @@ import ProductList
                                                                   from '../../../../shared/transaction/product/ProductList';
 import CreateProductDialog
                                                                   from '../../../../shared/transaction/product/create/CreateProductDialog';
-import * as api                                                   from '../../../../../store/api/transaction.api';
+import {transactionDispatchMap}                                   from '../../../../../store/api/transaction.api';
 import {Redirect}                                                 from 'react-router-dom';
 import AttachmentList
                                                                   from '../../../../shared/transaction/attachment/AttachmentList';
@@ -24,7 +23,7 @@ interface CreateVariableTransactionComponentProps extends WithTranslation<'defau
 }
 
 interface CreateVariableTransactionComponentState {
-    variableTransactionData: VariableTransactionMetaData,
+    fixedTransactionData: VariableTransactionMetaData,
     products: CreateProduct[],
     attachments: CreateAttachment[],
     showProductDialog: boolean,
@@ -38,7 +37,7 @@ class CreateVariableTransaction extends React.Component<CreateVariableTransactio
     constructor(props: CreateVariableTransactionComponentProps) {
         super(props);
         this.state = {
-            variableTransactionData: {},
+            fixedTransactionData: {},
             products: [],
             attachments: [],
             showProductDialog: false,
@@ -49,26 +48,25 @@ class CreateVariableTransaction extends React.Component<CreateVariableTransactio
     }
 
     onSubmit() {
-        if (this.state.variableTransactionData.valueDate && this.state.variableTransactionData.categoryId) {
+        if (this.state.fixedTransactionData.valueDate && this.state.fixedTransactionData.categoryId) {
             this.props.dispatchCreateVariableTransaction({
                 createVariableTransaction: {
-                    valueDate: {date: this.state.variableTransactionData.valueDate},
-                    categoryId: this.state.variableTransactionData.categoryId,
-                    vendor: this.state.variableTransactionData.vendor,
-                    description: this.state.variableTransactionData.description,
+                    valueDate: {date: this.state.fixedTransactionData.valueDate},
+                    categoryId: this.state.fixedTransactionData.categoryId,
+                    vendor: this.state.fixedTransactionData.vendor,
+                    description: this.state.fixedTransactionData.description,
                     products: this.state.products,
                     attachments: this.state.attachments
                 }
-            }, variableTransaction => {
-                notification.success({
-                    message: this.props.t('Transaction.VariableTransaction'),
+            }, (variableTransaction) => {
+                this.setState({redirectToTransactionList: true}, () => notification.success({
+                    message: this.props.t('Transaction.VariableTransaction')?.toString(),
                     description: this.props.t('Message.Transaction.VariableTransaction.CreatedVariableTransaction', {
                         category: variableTransaction.category.name,
-                        categoryClass: this.props.t('Transaction.Category.CategoryClass.' + variableTransaction.category.categoryClass),
+                        categoryClass: this.props.t('Transaction.Category.CategoryClass.' + variableTransaction.category.categoryClass.valueOf())?.toString(),
                         valueDate: variableTransaction.valueDate.date.toDateString()
-                    })
-                });
-                this.setState({redirectToTransactionList: true});
+                    })?.toString()
+                }));
             });
         }
     }
@@ -91,8 +89,8 @@ class CreateVariableTransaction extends React.Component<CreateVariableTransactio
         key: 'transactionData',
         content: () =>
             <VariableTransactionDataForm
-                onChange={variableTransactionData => this.setState({variableTransactionData: variableTransactionData})}/>,
-        condition: () => (this.state.variableTransactionData.valueDate !== undefined && this.state.variableTransactionData.categoryId !== undefined)
+                onChange={variableTransactionData => this.setState({fixedTransactionData: variableTransactionData})}/>,
+        condition: () => (this.state.fixedTransactionData.valueDate !== undefined && this.state.fixedTransactionData.categoryId !== undefined)
     }, {
         title: this.props.t('Form.Step.CreateVariableTransaction.ProductData'),
         key: 'productData',
@@ -156,8 +154,4 @@ const mapStateToProps = (state: AppState) => {
     };
 };
 
-const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({
-    dispatchCreateVariableTransaction: api.createVariableTransaction
-}, dispatch);
-
-export default connect(mapStateToProps, mapDispatchToProps)(withTranslation<"default">()(CreateVariableTransaction));
+export default connect(mapStateToProps, transactionDispatchMap)(withTranslation<'default'>()(CreateVariableTransaction));

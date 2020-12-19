@@ -1,0 +1,28 @@
+{
+    "_embedded": {
+        "fixedTransactionDToes": [
+            {
+                "id": 51,
+                "category": {
+                    "id": 2,
+                    "categoryClass": "FIXED_EXPENSES",
+                    "name": "Test Category",
+                    "children": []
+                },
+                "amount": {
+                    "amount": -500
+                },
+                "timeRange": {
+                    "startDate": "2020-01-01"
+                },
+                "product": "Product",
+                "description": "Test Description",
+                "vendor": "Test Vendor",
+                "hasVariableAmounts": false,
+                "day": 1,
+                "active": true,
+                "transactionAmounts": []
+            }
+        ]
+    }
+}

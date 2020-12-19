@@ -1,7 +1,7 @@
-import React                from 'react';
+import React                              from 'react';
 import {Select}                           from 'antd';
-import {WithTranslation, withTranslation} from 'react-i18next';
-import {Gender, GenderEnum}               from '../../../../.openapi';
+import {withTranslation, WithTranslation} from 'react-i18next';
+import {Gender, GenderEnum}               from '../../../../.openapi/models';
 import {connect}                          from 'react-redux';
 
 const {Option} = Select;

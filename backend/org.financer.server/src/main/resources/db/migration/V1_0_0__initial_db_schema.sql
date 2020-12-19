@@ -58,7 +58,7 @@ CREATE TABLE fixed_transactions_amounts
     id                  bigint(20) NOT NULL,
     amount              double     NOT NULL,
     value_date          date       NOT NULL,
-    fixedTransaction_id bigint(20) NOT NULL
+    fixed_transaction_id bigint(20) NOT NULL
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;
 
@@ -214,50 +214,51 @@ CREATE TABLE verification_tokens
 -- Indexes for table attachments
 --
 ALTER TABLE attachments
-    ADD PRIMARY KEY (id);
+    ADD PRIMARY KEY (id),
+    ADD KEY FK_ATTACHMENT_TRANSACTION (transaction_id);
 
 --
 -- Indexes for table categories
 --
 ALTER TABLE categories
     ADD PRIMARY KEY (id),
-    ADD KEY FKsaok720gsu4u2wrgbk10b5n8d (parent_id),
-    ADD KEY FKghuylkwuedgl2qahxjt8g41kb (user_id);
+    ADD KEY FK_CATEGORIES_USER (parent_id),
+    ADD KEY FK_CATEGORIES_PARENT (user_id);
 
 --
 -- Indexes for table fixed_transactions
 --
 ALTER TABLE fixed_transactions
     ADD PRIMARY KEY (id),
-    ADD KEY FK_1rhn3uamvuyn4r27yt55mqtmn (category_id);
+    ADD KEY FK_FIXED_TRANSACTION_CATEGORY (category_id);
 
 --
 -- Indexes for table fixed_transactions_amounts
 --
 ALTER TABLE fixed_transactions_amounts
     ADD PRIMARY KEY (id),
-    ADD KEY FKsnf2wqrwf9xw95mwy761hjb4o (fixedTransaction_id);
+    ADD KEY FK_AMOUNT_FIXED_TRANSACTION (fixed_transaction_id);
 
 --
 -- Indexes for table products
 --
 ALTER TABLE products
     ADD PRIMARY KEY (id),
-    ADD KEY FK9vm5xxoumt4ce37r2n1okehf3 (variable_transaction_id);
+    ADD KEY FK_PRODUCT_VARIABLE_TRANSACTION (variable_transaction_id);
 
 --
 -- Indexes for table settings
 --
 ALTER TABLE settings
     ADD PRIMARY KEY (id),
-    ADD UNIQUE KEY UKmk883ffd5trjmcrxy77vxcyw6 (user_id, property);
+    ADD UNIQUE KEY UK_USER_PROPERTY (user_id, property);
 
 --
 -- Indexes for table tokens
 --
 ALTER TABLE tokens
     ADD PRIMARY KEY (id),
-    ADD UNIQUE KEY UKo2tqsmy69vta1pod3a3u8fmlw (user_id, token);
+    ADD UNIQUE KEY UK_USER_TOKEN (user_id, token);
 
 --
 -- Indexes for table users
@@ -281,15 +282,16 @@ ALTER TABLE users_roles
 -- Indexes for table variable_transactions
 --
 ALTER TABLE variable_transactions
-    ADD PRIMARY KEY (id);
+    ADD PRIMARY KEY (id),
+    ADD KEY FK_VARIABLE_TRANSACTION_CATEGORY (category_id);
 
 --
 -- Indexes for table verification_tokens
 --
 ALTER TABLE verification_tokens
     ADD PRIMARY KEY (id),
-    ADD UNIQUE KEY UK_dqp95ggn6gvm865km5muba2o5 (user_id),
-    ADD UNIQUE KEY UKpnrfi6owpku606078l9ealbmf (user_id, token);
+    ADD UNIQUE KEY UK_VERIFICATION_USER (user_id),
+    ADD UNIQUE KEY UK_VERIFICATION_TOKEN_USER (user_id, token);
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -369,7 +371,7 @@ ALTER TABLE fixed_transactions
 -- Constraints for table fixed_transactions_amounts
 --
 ALTER TABLE fixed_transactions_amounts
-    ADD CONSTRAINT FK_AMOUNT_FIXED_TRANSACTION FOREIGN KEY (fixedTransaction_id) REFERENCES fixed_transactions (id);
+    ADD CONSTRAINT FK_AMOUNT_FIXED_TRANSACTION FOREIGN KEY (fixed_transaction_id) REFERENCES fixed_transactions (id);
 
 --
 -- Constraints for table products

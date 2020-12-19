@@ -4,5 +4,11 @@
         "categoryClass": "VARIABLE_EXPENSES",
         "name": "Test Category",
         "children": []
+    },
+    {
+        "id": 2,
+        "categoryClass": "FIXED_EXPENSES",
+        "name": "Test Category",
+        "children": []
     }
 ]

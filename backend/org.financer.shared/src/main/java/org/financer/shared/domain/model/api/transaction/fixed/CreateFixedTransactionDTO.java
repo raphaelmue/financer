@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import org.financer.shared.domain.model.api.DataTransferObject;
+import org.financer.shared.domain.model.api.transaction.CreateAttachmentDTO;
 import org.financer.shared.domain.model.value.objects.Amount;
 import org.financer.shared.domain.model.value.objects.TimeRange;
 import org.financer.util.validation.NotNullConditional;
@@ -11,6 +12,7 @@ import org.financer.util.validation.NotNullConditional;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import java.util.HashSet;
 import java.util.Set;
 
 @Data
@@ -37,20 +39,22 @@ public class CreateFixedTransactionDTO implements DataTransferObject {
     @Schema(description = "Product of the fixed transaction", required = true, example = "Product")
     private String product;
 
-    @Schema(description = "Description of the fixed transaction", required = true, example = "This is a description.")
+    @Schema(description = "Description of the fixed transaction", example = "This is a description.")
     private String description;
 
-    @Schema(description = "Vendor of the fixed transaction", required = true, example = "Amazon")
+    @Schema(description = "Vendor of the fixed transaction", example = "Amazon")
     private String vendor;
 
     @NotNull
     @Schema(description = "Indicates whether this transaction is variable or not", required = true, example = "false")
     private Boolean hasVariableAmounts;
 
-    @Schema(description = "Billing day of the fixed transaction", required = true)
+    @Schema(description = "Billing day of the fixed transaction")
     private int day;
 
-    @Schema(description = "List of fixed transaction amounts", required = true)
+    @Schema(description = "List of fixed transaction amounts")
     private Set<@Valid CreateFixedTransactionAmountDTO> transactionAmounts;
 
+    @Schema(description = "List of attachments of the variable transaction")
+    private Set<@Valid CreateAttachmentDTO> attachments = new HashSet<>();
 }

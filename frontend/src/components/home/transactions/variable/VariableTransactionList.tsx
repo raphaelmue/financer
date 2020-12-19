@@ -1,14 +1,13 @@
-import {WithTranslation, withTranslation} from 'react-i18next';
+import {withTranslation, WithTranslation} from 'react-i18next';
 import React                              from 'react';
 import {TransactionReducerProps}          from '../../../../store/reducers/transaction.reducer';
 import {UserReducerProps}                 from '../../../../store/reducers/user.reducers';
-import {VariableTransaction}              from '../../../../.openapi/models';
+import {VariableTransaction}              from '../../../../.openapi';
 import ProTable                           from '@ant-design/pro-table';
 import {columns}                          from './columns';
 import {AppState}                         from '../../../../store/reducers/root.reducers';
-import {bindActionCreators, Dispatch}     from 'redux';
 import {connect}                          from 'react-redux';
-import * as api                           from '../../../../store/api/transaction.api';
+import {transactionDispatchMap}           from '../../../../store/api/transaction.api';
 import {Button}                           from 'antd';
 import {PlusOutlined}                     from '@ant-design/icons';
 import {Link, Redirect}                   from 'react-router-dom';
@@ -108,8 +107,4 @@ const mapStateToProps = (state: AppState) => {
     };
 };
 
-const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({
-    dispatchLoadVariableTransactions: api.loadVariableTransactions
-}, dispatch);
-
-export default connect(mapStateToProps, mapDispatchToProps)(withTranslation<'default'>()(VariableTransactionList));
+export default connect(mapStateToProps, transactionDispatchMap)(withTranslation<'default'>()(VariableTransactionList));

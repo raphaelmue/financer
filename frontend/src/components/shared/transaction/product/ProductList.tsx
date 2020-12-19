@@ -3,7 +3,7 @@ import {connect}                          from 'react-redux';
 import {WithTranslation, withTranslation} from 'react-i18next';
 import React                              from 'react';
 import {Product}                          from '../../../../.openapi';
-import {Button, Space}                    from 'antd';
+import {Button}                           from 'antd';
 import {DeleteOutlined, PlusOutlined}     from '@ant-design/icons';
 import ProTable                           from '@ant-design/pro-table';
 import {columns}                          from './columns';
@@ -58,8 +58,8 @@ class ProductList extends React.Component<ProductListComponentProps, ProductComp
                 loading={false}
                 toolBarRender={() => [
                     <Button
-                        key={"deleteProductButton"}
-                        id={"deleteProductButton"}
+                        key={'deleteProductButton'}
+                        id={'deleteProductButton'}
                         style={{display: this.state.selectedProductIds.length > 0 ? 'initial' : 'none'}}
                         icon={<DeleteOutlined/>}
                         onClick={() => this.onDeleteProduct()}
@@ -67,8 +67,8 @@ class ProductList extends React.Component<ProductListComponentProps, ProductComp
                         {this.props.t('Form.Button.Delete')}
                     </Button>,
                     <Button
-                        key={"createProductButton"}
-                        id={"createProductButton"}
+                        key={'createProductButton'}
+                        id={'createProductButton'}
                         type="primary"
                         icon={<PlusOutlined/>}
                         onClick={this.props.openProductDialog}>

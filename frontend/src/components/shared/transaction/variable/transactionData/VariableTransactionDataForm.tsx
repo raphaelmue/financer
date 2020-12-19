@@ -1,13 +1,13 @@
-import {WithTranslation, withTranslation} from 'react-i18next';
-import {VariableTransaction}              from '../../../../../.openapi/models';
-import React                          from 'react';
-import {DatePicker, Form, Input}      from 'antd';
-import {bindActionCreators, Dispatch} from 'redux';
-import {connect}                      from 'react-redux';
-import {fieldIsRequiredRule}          from '../../../user/form/rules';
-import CategoryTreeSelect             from '../../../category/CategoyTreeSelect';
-import TextArea                       from 'antd/es/input/TextArea';
-import moment                         from 'moment';
+import {withTranslation, WithTranslation} from 'react-i18next';
+import {VariableTransaction}              from '../../../../../.openapi';
+import React                              from 'react';
+import {DatePicker, Form, Input}          from 'antd';
+import {bindActionCreators, Dispatch}     from 'redux';
+import {connect}                          from 'react-redux';
+import {fieldIsRequiredRule}              from '../../../user/form/rules';
+import CategoryTreeSelect                 from '../../../category/select/CategoyTreeSelect';
+import TextArea                           from 'antd/es/input/TextArea';
+import moment                             from 'moment';
 
 export interface VariableTransactionMetaData {
     categoryId?: number,
@@ -69,6 +69,7 @@ class VariableTransactionDataForm extends React.Component<VariableTransactionDat
                     name="categoryId"
                     rules={[fieldIsRequiredRule()]}>
                     <CategoryTreeSelect
+                        filterVariable
                         categoryId={this.props.variableTransaction?.category.id}
                         onChange={(value) => this.onChange({
                             ...this.state.variableTransactionMetaData,

@@ -1,6 +1,6 @@
 {
     "name": "financer",
-    "version": "1.0.0",
+    "version": "1.0-SNAPSHOT",
     "private": true,
     "description": "Financer is an Application that helps to manage all private expenses and revenues.",
     "repository": {
@@ -96,16 +96,18 @@
         "wait-on": "^5.2.0"
     },
     "dependencies": {
-        "@ant-design/pro-card": "^1.6.2",
-        "@ant-design/pro-layout": "^6.5.18",
-        "@ant-design/pro-table": "^2.13.3",
+        "@ant-design/charts": "^1.0.12",
+        "@ant-design/pro-card": "^1.7.0",
+        "@ant-design/pro-layout": "^6.6.1",
+        "@ant-design/pro-list": "^1.1.11",
+        "@ant-design/pro-table": "^2.15.1",
         "@types/react": "^17.0.0",
         "@types/react-dom": "^17.0.0",
         "@types/react-redux": "^7.1.11",
         "@types/redux-logger": "^3.0.8",
         "@types/redux-thunk": "^2.1.0",
         "ant-design-pro": "^2.3.2",
-        "antd": "^4.9.2",
+        "antd": "^4.9.3",
         "dotenv": "^8.2.0",
         "electron-squirrel-startup": "^1.0.0",
         "i18next": "^19.8.4",

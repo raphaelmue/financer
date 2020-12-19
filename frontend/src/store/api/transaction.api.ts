@@ -1,23 +1,30 @@
 import {
+    CreateFixedTransactionAmountRequest,
+    CreateFixedTransactionRequest,
     CreateProductRequest,
-    CreateTransactionRequest,
+    CreateVariableTransactionRequest, DeleteFixedTransactionAmountsRequest, DeleteFixedTransactionRequest,
     DeleteProductsRequest,
     DeleteVariableTransactionRequest,
+    FixedTransaction,
+    FixedTransactionAmount,
+    FixedTransactionApi,
+    GetFixedTransactionByIdRequest,
+    GetUsersFixedTransactionsRequest,
     GetUsersVariableTransactionsRequest,
     GetVariableTransactionByIdRequest,
     PagedModelVariableTransaction,
-    Product,
+    Product, UpdateFixedTransactionRequest,
     UpdateVariableTransactionRequest,
     UserApi,
     VariableTransaction,
     VariableTransactionApi
-}                                    from '../../.openapi';
-import {Dispatch}                    from 'redux';
-import {apiConfiguration}            from './index';
-import {ErrorMessage}                from '../errorMessage';
-import {TransactionActionDefinition} from '../actions/transaction.actions';
+}                                     from '../../.openapi';
+import {bindActionCreators, Dispatch} from 'redux';
+import {apiConfiguration}             from './index';
+import {ErrorMessage}                 from '../errorMessage';
+import {TransactionActionDefinition}  from '../actions/transaction.actions';
 
-export const loadVariableTransactions = (data: GetUsersVariableTransactionsRequest) => {
+const loadVariableTransactions = (data: GetUsersVariableTransactionsRequest) => {
     return (dispatch: Dispatch) => {
         dispatch({
             type: TransactionActionDefinition.LOAD_VARIABLE_TRANSACTIONS_REQUEST,
@@ -32,7 +39,7 @@ export const loadVariableTransactions = (data: GetUsersVariableTransactionsReque
     };
 };
 
-export const loadVariableTransaction = (data: GetVariableTransactionByIdRequest, callback?: (variableTransaction: VariableTransaction) => void) => {
+const loadVariableTransaction = (data: GetVariableTransactionByIdRequest, callback?: (variableTransaction: VariableTransaction) => void) => {
     return (dispatch: Dispatch) => {
         dispatch({
             type: TransactionActionDefinition.LOAD_VARIABLE_TRANSACTION_REQUEST,
@@ -52,14 +59,14 @@ export const loadVariableTransaction = (data: GetVariableTransactionByIdRequest,
     };
 };
 
-export const createVariableTransaction = (data: CreateTransactionRequest, callback?: (variableTransaction: VariableTransaction) => void) => {
+const createVariableTransaction = (data: CreateVariableTransactionRequest, callback?: (variableTransaction: VariableTransaction) => void) => {
     return (dispatch: Dispatch) => {
         dispatch({
             type: TransactionActionDefinition.CREATE_VARIABLE_TRANSACTION_REQUEST,
             payload: data
         });
         const api = new VariableTransactionApi(apiConfiguration());
-        ErrorMessage.resolveError(api.createTransaction(data)
+        ErrorMessage.resolveError(api.createVariableTransaction(data)
             .then((variableTransaction: VariableTransaction) => {
                 dispatch({
                     type: TransactionActionDefinition.CREATE_VARIABLE_TRANSACTION_SUCCESS,
@@ -72,7 +79,7 @@ export const createVariableTransaction = (data: CreateTransactionRequest, callba
     };
 };
 
-export const updateVariableTransaction = (data: UpdateVariableTransactionRequest, callback?: (variableTransaction: VariableTransaction) => void) => {
+const updateVariableTransaction = (data: UpdateVariableTransactionRequest, callback?: (variableTransaction: VariableTransaction) => void) => {
     return (dispatch: Dispatch) => {
         dispatch({
             type: TransactionActionDefinition.UPDATE_VARIABLE_TRANSACTION_REQUEST,
@@ -92,7 +99,7 @@ export const updateVariableTransaction = (data: UpdateVariableTransactionRequest
     };
 };
 
-export const deleteVariableTransaction = (data: DeleteVariableTransactionRequest, callback?: () => void) => {
+const deleteVariableTransaction = (data: DeleteVariableTransactionRequest, callback?: () => void) => {
     return (dispatch: Dispatch) => {
         dispatch({
             type: TransactionActionDefinition.DELETE_VARIABLE_TRANSACTION_REQUEST,
@@ -108,7 +115,7 @@ export const deleteVariableTransaction = (data: DeleteVariableTransactionRequest
     };
 };
 
-export const createProduct = (data: CreateProductRequest, callback?: (product: Product) => void) => {
+const createProduct = (data: CreateProductRequest, callback?: (product: Product) => void) => {
     return (dispatch: Dispatch) => {
         dispatch({
             type: TransactionActionDefinition.CREATE_PRODUCT_REQUEST,
@@ -128,7 +135,7 @@ export const createProduct = (data: CreateProductRequest, callback?: (product: P
     };
 };
 
-export const deleteProducts = (data: DeleteProductsRequest, callback?: () => void) => {
+const deleteProducts = (data: DeleteProductsRequest, callback?: () => void) => {
     return (dispatch: Dispatch) => {
         dispatch({
             type: TransactionActionDefinition.DELETE_PRODUCTS_REQUEST,
@@ -144,12 +151,166 @@ export const deleteProducts = (data: DeleteProductsRequest, callback?: () => voi
     };
 };
 
+const loadFixedTransactions = (data: GetUsersFixedTransactionsRequest, callback?: (fixedTransactions: FixedTransaction[]) => void) => {
+    return (dispatch: Dispatch) => {
+        dispatch({
+            type: TransactionActionDefinition.LOAD_FIXED_TRANSACTIONS_REQUEST,
+            payload: data
+        });
+        const api = new UserApi(apiConfiguration());
+        ErrorMessage.resolveError(api.getUsersFixedTransactions(data)
+            .then((transactions) => {
+                dispatch({
+                    type: TransactionActionDefinition.LOAD_FIXED_TRANSACTIONS_SUCCESS,
+                    payload: transactions
+                });
+                if (callback) {
+                    if (transactions.embedded?.fixedTransactionDToes) {
+                        callback(transactions.embedded.fixedTransactionDToes);
+                    } else {
+                        callback([]);
+                    }
+                }
+            }), TransactionActionDefinition.LOAD_FIXED_TRANSACTIONS_FAILED, dispatch);
+    };
+};
+
+const loadFixedTransaction = (data: GetFixedTransactionByIdRequest, callback?: (fixedTransaction: FixedTransaction) => void) => {
+    return (dispatch: Dispatch) => {
+        dispatch({
+            type: TransactionActionDefinition.LOAD_FIXED_TRANSACTION_REQUEST,
+            payload: data
+        });
+        const api = new FixedTransactionApi(apiConfiguration());
+        ErrorMessage.resolveError(api.getFixedTransactionById(data)
+            .then((transaction) => {
+                dispatch({
+                    type: TransactionActionDefinition.LOAD_FIXED_TRANSACTION_SUCCESS,
+                    payload: transaction
+                });
+                if (callback && transaction) {
+                    callback(transaction);
+                }
+            }), TransactionActionDefinition.LOAD_FIXED_TRANSACTIONS_FAILED, dispatch);
+    };
+};
+
+const createFixedTransaction = (data: CreateFixedTransactionRequest, callback?: (fixedTransaction: FixedTransaction) => void) => {
+    return (dispatch: Dispatch) => {
+        dispatch({
+            type: TransactionActionDefinition.CREATE_FIXED_TRANSACTION_REQUEST,
+            payload: data
+        });
+        const api = new FixedTransactionApi(apiConfiguration());
+        ErrorMessage.resolveError(api.createFixedTransaction(data)
+            .then((fixedTransaction) => {
+                dispatch({
+                    type: TransactionActionDefinition.CREATE_FIXED_TRANSACTION_SUCCESS,
+                    payload: fixedTransaction
+                });
+                if (callback) callback(fixedTransaction);
+            }), TransactionActionDefinition.CREATE_FIXED_TRANSACTION_FAILED, dispatch);
+    };
+};
+
+const updateFixedTransaction = (data: UpdateFixedTransactionRequest, callback?: (fixedTransaction: FixedTransaction) => void) => {
+    return (dispatch: Dispatch) => {
+        dispatch({
+            type: TransactionActionDefinition.UPDATE_FIXED_TRANSACTION_REQUEST,
+            payload: data
+        });
+        const api = new FixedTransactionApi(apiConfiguration());
+        ErrorMessage.resolveError(api.updateFixedTransaction(data)
+            .then((fixedTransaction) => {
+                dispatch({
+                    type: TransactionActionDefinition.UPDATE_FIXED_TRANSACTION_SUCCESS,
+                    payload: fixedTransaction
+                });
+                if (callback) callback(fixedTransaction);
+            }), TransactionActionDefinition.UPDATE_FIXED_TRANSACTION_FAILED, dispatch);
+    };
+};
+
+const deleteFixedTransaction = (data: DeleteFixedTransactionRequest, callback?: () => void) => {
+    return (dispatch: Dispatch) => {
+        dispatch({
+            type: TransactionActionDefinition.DELETE_FIXED_TRANSACTION_REQUEST,
+            payload: data
+        });
+        const api = new FixedTransactionApi(apiConfiguration());
+        ErrorMessage.resolveError(api.deleteFixedTransaction(data)
+                .then(() => {
+                    dispatch({type: TransactionActionDefinition.DELETE_FIXED_TRANSACTION_SUCCESS});
+                    if (callback) callback();
+                }),
+            TransactionActionDefinition.DELETE_FIXED_TRANSACTION_FAILED, dispatch);
+    };
+};
+
+const createFixedTransactionAmount = (data: CreateFixedTransactionAmountRequest, callback?: (fixedTransactionAmount: FixedTransactionAmount) => void) => {
+    return (dispatch: Dispatch) => {
+        dispatch({
+            type: TransactionActionDefinition.CREATE_FIXED_TRANSACTION_AMOUNT_REQUEST,
+            payload: data
+        });
+        const api = new FixedTransactionApi(apiConfiguration());
+        ErrorMessage.resolveError(api.createFixedTransactionAmount(data)
+            .then((fixedTransactionAmount) => {
+                dispatch({
+                    type: TransactionActionDefinition.CREATE_FIXED_TRANSACTION_AMOUNT_SUCCESS,
+                    payload: fixedTransactionAmount
+                });
+                if (callback) callback(fixedTransactionAmount);
+            }), TransactionActionDefinition.CREATE_FIXED_TRANSACTION_AMOUNT_FAILED, dispatch);
+    };
+};
+
+const deleteFixedTransactionAmounts = (data: DeleteFixedTransactionAmountsRequest, callback?: () => void) => {
+    return (dispatch: Dispatch) => {
+        dispatch({
+            type: TransactionActionDefinition.DELETE_FIXED_TRANSACTION_AMOUNTS_REQUEST,
+            payload: data
+        });
+        const api = new FixedTransactionApi(apiConfiguration());
+        ErrorMessage.resolveError(api.deleteFixedTransactionAmounts(data)
+                .then(() => {
+                    dispatch({type: TransactionActionDefinition.DELETE_FIXED_TRANSACTION_AMOUNTS_SUCCESS});
+                    if (callback) callback();
+                }),
+            TransactionActionDefinition.DELETE_FIXED_TRANSACTION_AMOUNTS_FAILED, dispatch);
+    };
+};
+
 export interface TransactionApi {
     dispatchLoadVariableTransactions: (data: GetUsersVariableTransactionsRequest) => void,
     dispatchLoadVariableTransaction: (data: GetVariableTransactionByIdRequest, callback?: (variableTransaction: VariableTransaction) => void) => void,
-    dispatchCreateVariableTransaction: (data: CreateTransactionRequest, callback?: (variableTransaction: VariableTransaction) => void) => void,
+    dispatchCreateVariableTransaction: (data: CreateVariableTransactionRequest, callback?: (variableTransaction: VariableTransaction) => void) => void,
     dispatchUpdateVariableTransaction: (data: UpdateVariableTransactionRequest, callback?: (variableTransaction: VariableTransaction) => void) => void,
     dispatchDeleteVariableTransaction: (data: DeleteVariableTransactionRequest, callback?: () => void) => void,
     dispatchCreateProduct: (data: CreateProductRequest, callback?: (product: Product) => void) => void,
-    dispatchDeleteProducts: (data: DeleteProductsRequest, callback?: () => void) => void
+    dispatchDeleteProducts: (data: DeleteProductsRequest, callback?: () => void) => void,
+    dispatchLoadFixedTransactions: (data: GetUsersFixedTransactionsRequest, callback?: (fixedTransactions: FixedTransaction[]) => void) => void,
+    dispatchLoadFixedTransaction: (data: GetFixedTransactionByIdRequest, callback?: (fixedTransaction: FixedTransaction) => void) => void,
+    dispatchCreateFixedTransaction: (data: CreateFixedTransactionRequest, callback?: (fixedTransaction: FixedTransaction) => void) => void,
+    dispatchUpdateFixedTransaction: (data: UpdateFixedTransactionRequest, callback?: (fixedTransaction: FixedTransaction) => void) => void,
+    dispatchDeleteFixedTransaction: (data: DeleteFixedTransactionRequest, callback?: () => void) => void
+    dispatchCreateFixedTransactionAmount: (data: CreateFixedTransactionAmountRequest, callback?: (fixedTransactionAmount: FixedTransactionAmount) => void) => void,
+    dispatchDeleteFixedTransactionAmounts: (data: DeleteFixedTransactionAmountsRequest, callback?: () => void) => void
 }
+
+export const transactionDispatchMap = (dispatch: Dispatch) => bindActionCreators({
+    dispatchLoadVariableTransactions: loadVariableTransactions,
+    dispatchLoadVariableTransaction: loadVariableTransaction,
+    dispatchCreateVariableTransaction: createVariableTransaction,
+    dispatchUpdateVariableTransaction: updateVariableTransaction,
+    dispatchDeleteVariableTransaction: deleteVariableTransaction,
+    dispatchCreateProduct: createProduct,
+    dispatchDeleteProducts: deleteProducts,
+    dispatchLoadFixedTransactions: loadFixedTransactions,
+    dispatchLoadFixedTransaction: loadFixedTransaction,
+    dispatchCreateFixedTransaction: createFixedTransaction,
+    dispatchUpdateFixedTransaction: updateFixedTransaction,
+    dispatchDeleteFixedTransaction: deleteFixedTransaction,
+    dispatchCreateFixedTransactionAmount: createFixedTransactionAmount,
+    dispatchDeleteFixedTransactionAmounts: deleteFixedTransactionAmounts
+}, dispatch);

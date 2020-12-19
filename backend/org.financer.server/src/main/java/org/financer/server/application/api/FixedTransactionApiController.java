@@ -19,7 +19,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.util.Set;
+import java.util.List;
 
 @RestController
 public class FixedTransactionApiController implements FixedTransactionApi {
@@ -38,17 +38,26 @@ public class FixedTransactionApiController implements FixedTransactionApi {
     @Override
     public ResponseEntity<FixedTransactionDTO> createFixedTransaction(@NotNull @Valid CreateFixedTransactionDTO fixedTransaction) {
         FixedTransaction fixedTransactionEntity = modelMapper.map(fixedTransaction, FixedTransaction.class);
-        fixedTransactionEntity.setId(-1L);
         if (fixedTransaction.getHasVariableAmounts() && !fixedTransaction.getTransactionAmounts().isEmpty()) {
-            Set<FixedTransactionAmount> fixedTransactionAmounts = ModelMapperUtils.mapAll(fixedTransaction.getTransactionAmounts(), FixedTransactionAmount.class);
-            for (FixedTransactionAmount transactionAmount : fixedTransactionAmounts) {
-                transactionAmount.setFixedTransaction(fixedTransactionEntity);
+            fixedTransactionEntity.getTransactionAmounts().clear();
+            long id = -1;
+            for (CreateFixedTransactionAmountDTO fixedTransactionAmount : fixedTransaction.getTransactionAmounts()) {
+                fixedTransactionEntity.addFixedTransactionAmount(new FixedTransactionAmount()
+                        .setId(id)
+                        .setValueDate(fixedTransactionAmount.getValueDate())
+                        .setAmount(fixedTransactionAmount.getAmount())
+                        .setFixedTransaction(fixedTransactionEntity));
+                id--;
             }
-            fixedTransactionEntity.setTransactionAmounts(fixedTransactionAmounts);
         }
         fixedTransactionEntity = transactionDomainService.createFixedTransaction(fixedTransactionEntity);
-
         return new ResponseEntity<>(modelMapper.map(fixedTransactionEntity, FixedTransactionDTO.class), HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<FixedTransactionDTO> getFixedTransactionById(@NotBlank @Min(1) Long transactionId) {
+        FixedTransaction fixedTransaction = (FixedTransaction) transactionDomainService.findTransactionById(transactionId);
+        return new ResponseEntity<>(modelMapper.map(fixedTransaction, FixedTransactionDTO.class), HttpStatus.OK);
     }
 
     @Override
@@ -69,8 +78,8 @@ public class FixedTransactionApiController implements FixedTransactionApi {
     }
 
     @Override
-    public ResponseEntity<FixedTransactionAmountDTO> createTransactionAmount(@NotBlank @PathVariable("transactionId") @Min(1) Long transactionId,
-                                                                             @NotNull @Valid CreateFixedTransactionAmountDTO transactionAmount) {
+    public ResponseEntity<FixedTransactionAmountDTO> createFixedTransactionAmount(@NotBlank @PathVariable("transactionId") @Min(1) Long transactionId,
+                                                                                  @NotNull @Valid CreateFixedTransactionAmountDTO transactionAmount) {
         FixedTransactionAmount transactionAmountEntity = modelMapper.map(transactionAmount, FixedTransactionAmount.class);
         transactionAmountEntity = this.transactionDomainService.createFixedTransactionAmount(transactionId, transactionAmountEntity);
         return new ResponseEntity<>(modelMapper.map(transactionAmountEntity, FixedTransactionAmountDTO.class), HttpStatus.OK);
@@ -86,10 +95,21 @@ public class FixedTransactionApiController implements FixedTransactionApi {
     }
 
     @Override
-    public ResponseEntity<Void> deleteTransactionAmount(@NotBlank @PathVariable("transactionId") @Min(1) Long transactionId,
-                                                        @NotBlank @PathVariable("transactionAmountId") @Min(1) Long transactionAmountId) {
+    public ResponseEntity<Void> deleteFixedTransactionAmount(@NotBlank @PathVariable("transactionId") @Min(1) Long transactionId,
+                                                             @NotBlank @PathVariable("fixedTransactionAmountId") @Min(1) Long fixedTransactionAmountId) {
         try {
-            transactionDomainService.deleteFixedTransactionAmount(transactionId, transactionAmountId);
+            transactionDomainService.deleteFixedTransactionAmount(transactionId, fixedTransactionAmountId);
+        } catch (NotFoundException exception) {
+            logger.info(exception.getMessage(), exception);
+        }
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<Void> deleteFixedTransactionAmounts(@NotBlank @PathVariable("transactionId") @Min(1) Long transactionId,
+                                                              @NotBlank List<Long> transactionAmountIds) {
+        try {
+            transactionDomainService.deleteFixedTransactionAmounts(transactionId, transactionAmountIds);
         } catch (NotFoundException exception) {
             logger.info(exception.getMessage(), exception);
         }

@@ -30,7 +30,17 @@ export default (): MenuDataItem[] => [
                 ]
             }, {
                 path: '/transactions/fixed',
-                name: i18next.t('Menu.Transaction.FixedTransactions')
+                name: i18next.t('Menu.Transaction.FixedTransactions'),
+                hideChildrenInMenu: true,
+                children: [
+                    {
+                        path: '/transactions/fixed/create',
+                        name: i18next.t('Menu.Transaction.CreateFixedTransaction'),
+                    }, {
+                        path: '/transactions/fixed/:fixedTransactionId',
+                        name: i18next.t('Menu.Transaction.TransactionDetails')
+                    }
+                ]
             }
         ]
     }, {

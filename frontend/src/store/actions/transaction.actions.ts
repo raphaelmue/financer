@@ -1,13 +1,23 @@
-import {Action}                                                      from 'redux';
+import {Action}       from 'redux';
 import {
+    CreateFixedTransactionAmountRequest,
+    CreateFixedTransactionRequest,
     CreateProductRequest,
-    CreateTransactionRequest, DeleteProductRequest,
+    CreateVariableTransactionRequest, DeleteFixedTransactionAmountsRequest, DeleteFixedTransactionRequest,
+    DeleteProductRequest,
     DeleteVariableTransactionRequest,
+    FixedTransaction, FixedTransactionAmount,
+    GetFixedTransactionByIdRequest,
+    GetUsersFixedTransactionsRequest,
     GetUsersVariableTransactionsRequest,
-    GetVariableTransactionByIdRequest, UpdateVariableTransactionRequest,
-} from '../../.openapi/apis';
-import {ErrorMessage}                                                from '../errorMessage';
-import {PagedModelVariableTransaction, Product, VariableTransaction} from '../../.openapi/models';
+    GetVariableTransactionByIdRequest,
+    PagedModelFixedTransaction,
+    PagedModelVariableTransaction,
+    Product,
+    UpdateVariableTransactionRequest,
+    VariableTransaction,
+}                     from '../../.openapi';
+import {ErrorMessage} from '../errorMessage';
 
 export enum TransactionActionDefinition {
     LOAD_VARIABLE_TRANSACTIONS_REQUEST = 'TRANSACTIONS:LOAD_VARIABLE_TRANSACTIONS_REQUEST',
@@ -30,7 +40,28 @@ export enum TransactionActionDefinition {
     CREATE_PRODUCT_FAILED = 'TRANSACTION:CREATE_PRODUCT_FAILED',
     DELETE_PRODUCTS_REQUEST = 'TRANSACTION:DELETE_PRODUCTS_REQUEST',
     DELETE_PRODUCTS_SUCCESS = 'TRANSACTION:DELETE_PRODUCTS_SUCCESS',
-    DELETE_PRODUCTS_FAILED = 'TRANSACTION:DELETE_PRODUCTS_FAILED'
+    DELETE_PRODUCTS_FAILED = 'TRANSACTION:DELETE_PRODUCTS_FAILED',
+    LOAD_FIXED_TRANSACTIONS_REQUEST = 'TRANSACTION:LOAD_FIXED_TRANSACTIONS_REQUEST',
+    LOAD_FIXED_TRANSACTIONS_SUCCESS = 'TRANSACTION:LOAD_FIXED_TRANSACTIONS_SUCCESS',
+    LOAD_FIXED_TRANSACTIONS_FAILED = 'TRANSACTION:LOAD_FIXED_TRANSACTIONS_FAILED',
+    LOAD_FIXED_TRANSACTION_REQUEST = 'TRANSACTION:LOAD_FIXED_TRANSACTION_REQUEST',
+    LOAD_FIXED_TRANSACTION_SUCCESS = 'TRANSACTION:LOAD_FIXED_TRANSACTION_SUCCESS',
+    LOAD_FIXED_TRANSACTION_FAILED = 'TRANSACTION:LOAD_FIXED_TRANSACTION_FAILED',
+    CREATE_FIXED_TRANSACTION_REQUEST = 'TRANSACTION:CREATE_FIXED_TRANSACTION_REQUEST',
+    CREATE_FIXED_TRANSACTION_SUCCESS = 'TRANSACTION:CREATE_FIXED_TRANSACTION_SUCCESS',
+    CREATE_FIXED_TRANSACTION_FAILED = 'TRANSACTION:CREATE_FIXED_TRANSACTION_FAILED',
+    UPDATE_FIXED_TRANSACTION_REQUEST = 'TRANSACTION:UPDATE_FIXED_TRANSACTION_REQUEST',
+    UPDATE_FIXED_TRANSACTION_SUCCESS = 'TRANSACTION:UPDATE_FIXED_TRANSACTION_SUCCESS',
+    UPDATE_FIXED_TRANSACTION_FAILED = 'TRANSACTION:UPDATE_FIXED_TRANSACTION_FAILED',
+    DELETE_FIXED_TRANSACTION_REQUEST = 'TRANSACTION:DELETE_FIXED_TRANSACTION_REQUEST',
+    DELETE_FIXED_TRANSACTION_SUCCESS = 'TRANSACTION:DELETE_FIXED_TRANSACTION_SUCCESS',
+    DELETE_FIXED_TRANSACTION_FAILED = 'TRANSACTION:DELETE_FIXED_TRANSACTION_FAILED',
+    CREATE_FIXED_TRANSACTION_AMOUNT_REQUEST = 'TRANSACTION:CREATE_FIXED_TRANSACTION_AMOUNT_REQUEST',
+    CREATE_FIXED_TRANSACTION_AMOUNT_SUCCESS = 'TRANSACTION:CREATE_FIXED_TRANSACTION_AMOUNT_SUCCESS',
+    CREATE_FIXED_TRANSACTION_AMOUNT_FAILED = 'TRANSACTION:CREATE_FIXED_TRANSACTION_AMOUNT_FAILED',
+    DELETE_FIXED_TRANSACTION_AMOUNTS_REQUEST = 'TRANSACTION:DELETE_FIXED_TRANSACTION_AMOUNTS_REQUEST',
+    DELETE_FIXED_TRANSACTION_AMOUNTS_SUCCESS = 'TRANSACTION:DELETE_FIXED_TRANSACTION_AMOUNTS_SUCCESS',
+    DELETE_FIXED_TRANSACTION_AMOUNTS_FAILED = 'TRANSACTION:DELETE_FIXED_TRANSACTION_AMOUNTS_FAILED',
 }
 
 export type TransactionAction = LoadVariableTransactionsRequestAction
@@ -53,7 +84,29 @@ export type TransactionAction = LoadVariableTransactionsRequestAction
     | CreateProductFailedAction
     | DeleteProductsRequestAction
     | DeleteProductsSuccessAction
-    | DeleteProductsFailedAction;
+    | DeleteProductsFailedAction
+    | LoadFixedTransactionsRequestAction
+    | LoadFixedTransactionsSuccessAction
+    | LoadFixedTransactionsFailedAction
+    | LoadFixedTransactionRequestAction
+    | LoadFixedTransactionSuccessAction
+    | LoadFixedTransactionFailedAction
+    | CreateFixedTransactionRequestAction
+    | CreateFixedTransactionSuccessAction
+    | CreateFixedTransactionFailedAction
+    | UpdateFixedTransactionRequestAction
+    | UpdateFixedTransactionSuccessAction
+    | UpdateFixedTransactionFailedAction
+    | DeleteFixedTransactionRequestAction
+    | DeleteFixedTransactionSuccessAction
+    | DeleteFixedTransactionFailedAction
+    | CreateFixedTransactionAmountRequestAction
+    | CreateFixedTransactionAmountSuccessAction
+    | CreateFixedTransactionAmountFailedAction
+    | DeleteFixedTransactionAmountsRequestAction
+    | DeleteFixedTransactionAmountsSuccessAction
+    | DeleteFixedTransactionAmountsFailedAction
+    ;
 
 interface LoadVariableTransactionsRequestAction extends Action {
     type: TransactionActionDefinition.LOAD_VARIABLE_TRANSACTIONS_REQUEST,
@@ -87,7 +140,7 @@ interface LoadVariableTransactionFailedAction extends Action {
 
 interface CreateVariableTransactionRequestAction extends Action {
     type: TransactionActionDefinition.CREATE_VARIABLE_TRANSACTION_REQUEST,
-    payload: CreateTransactionRequest
+    payload: CreateVariableTransactionRequest
 }
 
 interface CreateVariableTransactionSuccessAction extends Action {
@@ -149,11 +202,114 @@ interface DeleteProductsRequestAction extends Action {
     payload: DeleteProductRequest
 }
 
-interface DeleteProductsSuccessAction extends  Action {
+interface DeleteProductsSuccessAction extends Action {
     type: TransactionActionDefinition.DELETE_PRODUCTS_SUCCESS
 }
 
-interface DeleteProductsFailedAction extends Action{
+interface DeleteProductsFailedAction extends Action {
     type: TransactionActionDefinition.DELETE_PRODUCTS_FAILED,
+    payload: ErrorMessage
+}
+
+interface LoadFixedTransactionsRequestAction extends Action {
+    type: TransactionActionDefinition.LOAD_FIXED_TRANSACTIONS_REQUEST,
+    payload: GetUsersFixedTransactionsRequest
+}
+
+interface LoadFixedTransactionsSuccessAction extends Action {
+    type: TransactionActionDefinition.LOAD_FIXED_TRANSACTIONS_SUCCESS,
+    payload: PagedModelFixedTransaction
+}
+
+interface LoadFixedTransactionsFailedAction extends Action {
+    type: TransactionActionDefinition.LOAD_FIXED_TRANSACTIONS_FAILED,
+    payload: ErrorMessage
+}
+
+interface LoadFixedTransactionRequestAction extends Action {
+    type: TransactionActionDefinition.LOAD_FIXED_TRANSACTION_REQUEST,
+    payload: GetFixedTransactionByIdRequest
+}
+
+interface LoadFixedTransactionSuccessAction extends Action {
+    type: TransactionActionDefinition.LOAD_FIXED_TRANSACTION_SUCCESS,
+    payload: FixedTransaction
+}
+
+interface LoadFixedTransactionFailedAction extends Action {
+    type: TransactionActionDefinition.LOAD_FIXED_TRANSACTION_FAILED,
+    payload: ErrorMessage
+}
+
+interface CreateFixedTransactionRequestAction extends Action {
+    type: TransactionActionDefinition.CREATE_FIXED_TRANSACTION_REQUEST,
+    payload: CreateFixedTransactionRequest
+}
+
+interface CreateFixedTransactionSuccessAction extends Action {
+    type: TransactionActionDefinition.CREATE_FIXED_TRANSACTION_SUCCESS,
+    payload: FixedTransaction
+}
+
+interface CreateFixedTransactionFailedAction extends Action {
+    type: TransactionActionDefinition.CREATE_FIXED_TRANSACTION_FAILED,
+    payload: ErrorMessage
+}
+
+interface CreateFixedTransactionAmountRequestAction extends Action {
+    type: TransactionActionDefinition.CREATE_FIXED_TRANSACTION_AMOUNT_REQUEST,
+    payload: CreateFixedTransactionAmountRequest
+}
+
+interface CreateFixedTransactionAmountSuccessAction extends Action {
+    type: TransactionActionDefinition.CREATE_FIXED_TRANSACTION_AMOUNT_SUCCESS,
+    payload: FixedTransactionAmount
+}
+
+interface CreateFixedTransactionAmountFailedAction extends Action {
+    type: TransactionActionDefinition.CREATE_FIXED_TRANSACTION_AMOUNT_FAILED,
+    payload: ErrorMessage
+}
+
+interface UpdateFixedTransactionRequestAction extends Action {
+    type: TransactionActionDefinition.UPDATE_FIXED_TRANSACTION_REQUEST,
+    payload: UpdateVariableTransactionRequest
+}
+
+interface UpdateFixedTransactionSuccessAction extends Action {
+    type: TransactionActionDefinition.UPDATE_FIXED_TRANSACTION_SUCCESS,
+    payload: FixedTransaction
+}
+
+interface UpdateFixedTransactionFailedAction extends Action {
+    type: TransactionActionDefinition.UPDATE_FIXED_TRANSACTION_FAILED,
+    payload: ErrorMessage
+}
+
+interface DeleteFixedTransactionRequestAction extends Action {
+    type: TransactionActionDefinition.DELETE_FIXED_TRANSACTION_REQUEST,
+    payload: DeleteFixedTransactionRequest
+}
+
+interface DeleteFixedTransactionSuccessAction extends Action {
+    type: TransactionActionDefinition.DELETE_FIXED_TRANSACTION_SUCCESS
+}
+
+interface DeleteFixedTransactionFailedAction extends Action {
+    type: TransactionActionDefinition.DELETE_FIXED_TRANSACTION_FAILED,
+    payload: ErrorMessage
+}
+
+interface DeleteFixedTransactionAmountsRequestAction extends Action {
+    type: TransactionActionDefinition.DELETE_FIXED_TRANSACTION_AMOUNTS_REQUEST,
+    payload: DeleteFixedTransactionAmountsRequest
+}
+
+interface DeleteFixedTransactionAmountsSuccessAction extends Action {
+    type: TransactionActionDefinition.DELETE_FIXED_TRANSACTION_AMOUNTS_SUCCESS
+}
+
+interface DeleteFixedTransactionAmountsFailedAction extends Action {
+    type: TransactionActionDefinition.DELETE_FIXED_TRANSACTION_AMOUNTS_FAILED,
     payload: ErrorMessage
 }

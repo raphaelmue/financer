@@ -10,6 +10,7 @@ import org.financer.shared.domain.model.value.objects.ValueDate;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import java.util.HashSet;
 import java.util.Set;
 
 @Data
@@ -33,7 +34,7 @@ public class CreateVariableTransactionDTO implements DataTransferObject {
     private String vendor;
 
     @Schema(description = "List of attachments of the variable transaction")
-    private Set<@Valid CreateAttachmentDTO> attachments;
+    private Set<@Valid CreateAttachmentDTO> attachments = new HashSet<>();
 
     @Schema(description = "List of products of the variable transaction")
     private Set<@Valid CreateProductDTO> products;

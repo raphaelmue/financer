@@ -28,6 +28,7 @@ public class FixedTransactionAmount implements DataEntity, AmountProvider, UserP
     private Long id;
 
     @ManyToOne(targetEntity = FixedTransaction.class, fetch = FetchType.EAGER, optional = false)
+    @JoinColumn(name = "fixed_transaction_id")
     @ToString.Exclude
     private FixedTransaction fixedTransaction;
 

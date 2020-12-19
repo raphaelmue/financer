@@ -22,7 +22,7 @@ public final class VariableTransaction extends Transaction {
     @Embedded
     private ValueDate valueDate;
 
-    @OneToMany(mappedBy = "transaction", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "variableTransaction", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Product> products = new HashSet<>();
 
     @Override

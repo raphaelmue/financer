@@ -29,7 +29,7 @@ public class VariableTransactionTest {
                 .setDescription("Test Purpose")
                 .setVendor("Test Shop")
                 .addProduct(product);
-        product.setTransaction(variableTransaction);
+        product.setVariableTransaction(variableTransaction);
     }
 
     @Test

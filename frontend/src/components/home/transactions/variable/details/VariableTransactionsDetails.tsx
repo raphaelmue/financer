@@ -2,9 +2,8 @@ import {withTranslation, WithTranslation}                         from 'react-i1
 import React                                                      from 'react';
 import {Link, Redirect, RouteComponentProps}                      from 'react-router-dom';
 import {AppState}                                                 from '../../../../../store/reducers/root.reducers';
-import {bindActionCreators, Dispatch}                             from 'redux';
 import {connect}                                                  from 'react-redux';
-import * as api                                                   from '../../../../../store/api/transaction.api';
+import {transactionDispatchMap}                                   from '../../../../../store/api/transaction.api';
 import {TransactionReducerProps}                                  from '../../../../../store/reducers/transaction.reducer';
 import {CreateProduct, VariableTransaction}                       from '../../../../../.openapi';
 import {Button, Descriptions, Modal, notification, Result, Space} from 'antd';
@@ -35,11 +34,11 @@ interface RouteProps {
     variableTransactionId?: string
 }
 
-interface VariableTransactionsDetailsComponentProps extends RouteComponentProps<RouteProps>,
+interface VariableTransactionDetailsComponentProps extends RouteComponentProps<RouteProps>,
     WithTranslation<'default'>, TransactionReducerProps {
 }
 
-interface VariableTransactionsDetailsComponentState {
+interface VariableTransactionDetailsComponentState {
     variableTransaction: VariableTransaction | undefined,
     activeTab: string,
     showProductDialog: boolean,
@@ -48,10 +47,10 @@ interface VariableTransactionsDetailsComponentState {
     redirectToVariableTransactionList: boolean
 }
 
-class VariableTransactionsDetails extends React.Component<VariableTransactionsDetailsComponentProps,
-    VariableTransactionsDetailsComponentState> {
+class VariableTransactionDetails extends React.Component<VariableTransactionDetailsComponentProps,
+    VariableTransactionDetailsComponentState> {
 
-    constructor(props: VariableTransactionsDetailsComponentProps) {
+    constructor(props: VariableTransactionDetailsComponentProps) {
         super(props);
         this.state = {
             variableTransaction: undefined,
@@ -108,8 +107,8 @@ class VariableTransactionsDetails extends React.Component<VariableTransactionsDe
                         productIds: productIds
                     }, () => {
                         const variableTransaction: VariableTransaction = this.state.variableTransaction!;
-                        variableTransaction.products = variableTransaction.products?.filter(
-                            product => productIds.indexOf(product.id) < 0);
+                        variableTransaction.products = [...variableTransaction.products!].filter(
+                            (product) => productIds.filter(id => id === product.id).length <= 0);
                         this.setState({variableTransaction: variableTransaction});
                         notification.success({
                             message: this.props.t('Transaction.Products'),
@@ -169,16 +168,16 @@ class VariableTransactionsDetails extends React.Component<VariableTransactionsDe
                     <PageContainer
                         content={(
                             <Descriptions column={2}>
-                                <Item label={this.props.t('Transaction.ValueDate')}>
-                                    <Text strong={true}>
-                                        <ValueDateLabel valueDate={this.state.variableTransaction?.valueDate}/>
-                                    </Text>
+                                <Item label={this.props.t('Transaction.Category.Name')}>
+                                    <Text strong={true}>{this.state.variableTransaction?.category.name}</Text>
                                 </Item>
                                 <Item label={this.props.t('Transaction.Vendor')}>
                                     {this.state.variableTransaction?.vendor}
                                 </Item>
-                                <Item label={this.props.t('Transaction.Category.Name')}>
-                                    <Text strong={true}>{this.state.variableTransaction?.category.name}</Text>
+                                <Item label={this.props.t('Transaction.ValueDate')}>
+                                    <Text strong={true}>
+                                        <ValueDateLabel valueDate={this.state.variableTransaction?.valueDate}/>
+                                    </Text>
                                 </Item>
                                 <Item label={this.props.t('Transaction.Description')}>
                                     {this.state.variableTransaction?.description}
@@ -212,7 +211,7 @@ class VariableTransactionsDetails extends React.Component<VariableTransactionsDe
                         onTabChange={activeKey => (this.setState({activeTab: activeKey}))}>
                         <ProCard collapsed={!(this.state.activeTab === 'productsTab')}>
                             <ProductList
-                                products={this.state.variableTransaction?.products}
+                                products={this.state.variableTransaction.products || []}
                                 openProductDialog={() => this.setState({showProductDialog: true})}
                                 onDeleteProducts={products => this.onDeleteProducts(products)}/>
                             <CreateProductDialog
@@ -222,7 +221,7 @@ class VariableTransactionsDetails extends React.Component<VariableTransactionsDe
                         </ProCard>
                         <ProCard collapsed={!(this.state.activeTab === 'attachmentsTab')}>
                             <AttachmentList
-                                attachments={this.state.variableTransaction?.attachments}
+                                attachments={this.state.variableTransaction.attachments || []}
                                 openAttachmentDialog={() => this.setState({showAttachmentDialog: true})}/>
                             <CreateAttachmentDialog
                                 visible={this.state?.showAttachmentDialog || false}
@@ -235,7 +234,7 @@ class VariableTransactionsDetails extends React.Component<VariableTransactionsDe
                         </ProCard>
                         <UpdateVariableTransactionDialog
                             visible={this.state.showUpdateVariableTransactionDialog}
-                            variableTransaction={this.state.variableTransaction}
+                            data={this.state.variableTransaction}
                             onSubmit={variableTransaction => this.setState({
                                 showUpdateVariableTransactionDialog: false,
                                 variableTransaction: variableTransaction
@@ -254,11 +253,4 @@ const mapStateToProps = (state: AppState) => {
     };
 };
 
-const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({
-    dispatchLoadVariableTransaction: api.loadVariableTransaction,
-    dispatchCreateProduct: api.createProduct,
-    dispatchDeleteVariableTransaction: api.deleteVariableTransaction,
-    dispatchDeleteProducts: api.deleteProducts
-}, dispatch);
-
-export default connect(mapStateToProps, mapDispatchToProps)(withTranslation<'default'>()(VariableTransactionsDetails));
+export default connect(mapStateToProps, transactionDispatchMap)(withTranslation<'default'>()(VariableTransactionDetails));

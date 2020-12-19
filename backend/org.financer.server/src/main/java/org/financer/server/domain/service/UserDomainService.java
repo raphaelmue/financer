@@ -334,12 +334,4 @@ public class UserDomainService {
         return variableTransactionRepository.findByCategoryUserId(authenticationService.getUserId(), pageable);
     }
 
-    /**
-     * Returns a list of all fixed transactions that belong to a user.
-     *
-     * @return list of fixed transactions
-     */
-    public List<FixedTransaction> fetchFixedTransactions() {
-        return Iterables.toList(fixedTransactionRepository.findAllActiveTransactionsByUserId(authenticationService.getUserId()));
-    }
 }

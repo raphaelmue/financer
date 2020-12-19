@@ -3,6 +3,7 @@ package org.financer.server.application.api;
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.financer.server.application.configuration.ModelMapperConfiguration;
 import org.financer.server.application.configuration.security.WebSecurityConfiguration;
+import org.financer.server.application.model.transaction.fixed.FixedTransactionAssembler;
 import org.financer.server.application.model.transaction.variable.VariableTransactionAssembler;
 import org.financer.server.application.model.user.UserAssembler;
 import org.financer.server.application.service.AdminConfigurationService;
@@ -23,6 +24,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.test.web.servlet.MvcResult;
 
@@ -32,13 +34,13 @@ import java.util.Map;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @Tag("unit")
-@SpringBootTest(classes = {UserApiController.class, WebSecurityConfiguration.class, ModelMapperConfiguration.class, VariableTransactionAssembler.class, UserAssembler.class, AdminConfigurationService.class})
+@SpringBootTest(classes = {UserApiController.class, WebSecurityConfiguration.class, ModelMapperConfiguration.class,
+        VariableTransactionAssembler.class, FixedTransactionAssembler.class, UserAssembler.class, AdminConfigurationService.class})
 public class UserApiControllerTest extends ApiTest {
 
     private User user;
@@ -170,14 +172,16 @@ public class UserApiControllerTest extends ApiTest {
 
     @Test
     public void testGetUsersFixedTransactions() throws Exception {
-        when(userDomainService.fetchFixedTransactions()).thenReturn(List.of(fixedTransaction()));
+        when(transactionDomainService.fetchFixedTransactions(anyLong(), anyBoolean(), any(), any()))
+                .thenReturn(new PageImpl<>(List.of(fixedTransaction())));
 
         MvcResult result = mockMvc.perform(buildRequest(PathBuilder.Get().users().userId(1).fixedTransactions().build()))
                 .andExpect(status().isOk()).andReturn();
 
-        List<FixedTransactionDTO> transactions = objectMapper.readValue(result.getResponse().getContentAsString(),
+        PagedModel<FixedTransactionDTO> transactions = objectMapper.readValue(result.getResponse().getContentAsString(),
                 new TypeReference<>() {
                 });
-        assertThat(transactions).hasSize(1);
+        assertThat(transactions.getMetadata()).isNotNull();
+        assertThat(transactions.getMetadata().getTotalElements()).isEqualTo(1);
     }
 }

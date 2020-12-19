@@ -15,6 +15,8 @@ import java.io.IOException;
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class SimpleCORSFilter implements Filter {
 
+    private static final String ALLOW_ALL_HOSTS = "ALLOW_ALL";
+
     @Autowired
     private AdminConfigurationService adminConfigurationService;
 
@@ -24,7 +26,7 @@ public class SimpleCORSFilter implements Filter {
         HttpServletRequest request = (HttpServletRequest) req;
         HttpServletResponse response = (HttpServletResponse) res;
 
-        String host = adminConfigurationService.getClientHost().equals("ALLOW_ALL") ?
+        String host = adminConfigurationService.getClientHost().equals(ALLOW_ALL_HOSTS) ?
                 request.getHeader("Origin")
                 : adminConfigurationService.getClientHost();
 

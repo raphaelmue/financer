@@ -7,7 +7,6 @@
     "supportFile": "test/support/index.ts",
     "screenshotsFolder": ".test/.screenshots",
     "videosFolder": ".test/.videos",
-
     "reporter": "junit",
     "reporterOptions": {
         "mochaFile": ".test/.report/cypress-report.xml",

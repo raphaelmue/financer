@@ -24,7 +24,6 @@
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
 
-// @ts-ignore
 Cypress.Commands.add('login', () => {
     cy.fixture('redux-state.json').then((state) => {
         cy.fixture('user.json').then((user) => {
@@ -58,6 +57,42 @@ Cypress.Commands.add('fillProductData', () => {
     cy.get('input[name=amount]').type('{selectall}{backspace}20');
 });
 
+Cypress.Commands.add('fillFixedTransactionData', (hasVariableAmounts: boolean) => {
+    cy.fixture('fixed-transaction.json').then((fixedTransaction) => {
+        cy.get('.ant-picker-clear').click();
+        cy.get('#fixedTransactionDataForm_valueDate').click().type(fixedTransaction.timeRange.startDate + '{enter}{enter}');
+
+        cy.get('.ant-tree-select').click();
+        cy.wait('@getCategories');
+        cy.get('.ant-select-tree-node-content-wrapper[title="Test Category"]').click();
+
+        cy.get('#fixedTransactionDataForm_product').type(fixedTransaction.product);
+
+        cy.get('#fixedTransactionDataForm_amount').should('be.enabled');
+        cy.get('#fixedTransactionDataForm_amount').should('be.enabled');
+
+        if (hasVariableAmounts) {
+            cy.get('#fixedTransactionDataForm_hasVariableAmounts').click();
+            cy.get('#fixedTransactionDataForm_amount').should('be.disabled');
+            cy.get('#fixedTransactionDataForm_day').should('be.disabled');
+        } else {
+            cy.get('#fixedTransactionDataForm_amount').type(fixedTransaction.amount.amount);
+            cy.get('#fixedTransactionDataForm_day').type(fixedTransaction.day);
+        }
+
+        cy.get('#fixedTransactionDataForm_vendor').type(fixedTransaction.vendor);
+        cy.get('#fixedTransactionDataForm_description').type(fixedTransaction.description);
+    });
+});
+
+Cypress.Commands.add('fillFixedTransactionAmountData', () => {
+    cy.get('#fixedTransactionDialog_valueDate').click();
+    cy.get('.ant-picker-today-btn').should('be.visible');
+    cy.get('.ant-picker-today-btn').click();
+
+    cy.get('input[name=amount]:visible').type('{selectall}{backspace}20');
+});
+
 Cypress.Commands.add('shouldDisplayDialog', () => {
     cy.get('.ant-modal-content').should('exist').and('be.visible');
 });
@@ -75,7 +110,7 @@ Cypress.Commands.add('submitDialog', () => {
 });
 
 Cypress.Commands.add('submitConfirmDialog', () => {
-    cy.get('.ant-modal-confirm-btns .ant-btn-primary').click();
+    cy.get('.ant-modal-confirm-btns .ant-btn-primary span').click();
 });
 
 declare namespace Cypress {
@@ -87,6 +122,10 @@ declare namespace Cypress {
         fillVariableTransactionData(): Chainable<Element>,
 
         fillProductData(): Chainable<Element>
+
+        fillFixedTransactionData(hasVariableAmounts: boolean): Chainable<Element>,
+
+        fillFixedTransactionAmountData(): Chainable<Element>,
 
         shouldDisplayDialog(): Chainable<Element>,
 

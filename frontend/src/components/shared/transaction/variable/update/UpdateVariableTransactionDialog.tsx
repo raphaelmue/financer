@@ -1,32 +1,19 @@
 import {Modal, notification}                                      from 'antd';
 import React                                                      from 'react';
-import {
-    CreateProductRequest,
-    CreateTransactionRequest,
-    DeleteProductsRequest,
-    DeleteVariableTransactionRequest,
-    GetUsersVariableTransactionsRequest,
-    GetVariableTransactionByIdRequest,
-    Product,
-    VariableTransaction
-}                                                                 from '../../../../../.openapi';
+import {VariableTransaction}                                      from '../../../../../.openapi';
 import {TransactionReducerProps}                                  from '../../../../../store/reducers/transaction.reducer';
 import {AppState}                                                 from '../../../../../store/reducers/root.reducers';
-import {bindActionCreators, Dispatch}                             from 'redux';
 import {connect}                                                  from 'react-redux';
 import VariableTransactionDataForm, {VariableTransactionMetaData} from '../transactionData/VariableTransactionDataForm';
-import * as api                                                   from '../../../../../store/api/transaction.api';
-import {WithTranslation, withTranslation}                         from 'react-i18next';
+import {transactionDispatchMap}                                   from '../../../../../store/api/transaction.api';
+import {withTranslation, WithTranslation}                         from 'react-i18next';
+import {DataDialog}                                               from '../../../form/modal/data/types';
 
-interface UpdateVariableTransactionDialogComponentProps extends WithTranslation<'default'>, TransactionReducerProps {
-    visible: boolean,
-    variableTransaction: VariableTransaction,
-    onSubmit?: (variableTransaction: VariableTransaction) => void,
-    onCancel?: () => void
+interface UpdateVariableTransactionDialogComponentProps extends DataDialog<VariableTransaction>, WithTranslation<'default'>, TransactionReducerProps {
 }
 
 interface UpdateVariableTransactionDialogComponentState {
-    variableTransactionData: VariableTransactionMetaData
+    fixedTransactionData: VariableTransactionMetaData
     confirmLoading: boolean,
 }
 
@@ -36,19 +23,19 @@ class UpdateVariableTransactionDialog extends React.Component<UpdateVariableTran
         super(props);
 
         this.state = {
-            variableTransactionData: {
-                categoryId: this.props.variableTransaction.category.id,
-                valueDate: this.props.variableTransaction.valueDate.date,
-                vendor: this.props.variableTransaction.vendor,
-                description: this.props.variableTransaction.description
+            fixedTransactionData: {
+                categoryId: this.props.data?.category.id || -1,
+                valueDate: this.props.data?.valueDate.date || new Date,
+                vendor: this.props.data?.vendor,
+                description: this.props.data?.description
             },
             confirmLoading: false,
         };
     }
 
     onSubmit() {
-        if (this.state.variableTransactionData.categoryId !== undefined
-            && this.state.variableTransactionData.valueDate !== undefined) {
+        if (this.state.fixedTransactionData.categoryId !== undefined
+            && this.state.fixedTransactionData.valueDate !== undefined) {
             this.setState({confirmLoading: true}, () => {
                 this.updateVariableTransaction();
             });
@@ -56,24 +43,26 @@ class UpdateVariableTransactionDialog extends React.Component<UpdateVariableTran
     }
 
     updateVariableTransaction() {
-        this.props.dispatchUpdateVariableTransaction({
-            transactionId: this.props.variableTransaction.id,
-            updateVariableTransaction: {
-                categoryId: this.state.variableTransactionData.categoryId!,
-                valueDate: {date: this.state.variableTransactionData.valueDate!},
-                vendor: this.state.variableTransactionData.vendor,
-                description: this.state.variableTransactionData.description
-            }
-        }, (variableTransaction) => {
-            this.setState({confirmLoading: false});
-            if (this.props.onSubmit) {
-                this.props.onSubmit(variableTransaction);
-            }
-            notification.success({
-                message: this.props.t('Transaction.VariableTransaction'),
-                description: this.props.t('Message.Transaction.VariableTransaction.UpdatedVariableTransaction')
+        if (this.props.data) {
+            this.props.dispatchUpdateVariableTransaction({
+                transactionId: this.props.data?.id,
+                updateVariableTransaction: {
+                    categoryId: this.state.fixedTransactionData.categoryId!,
+                    valueDate: {date: this.state.fixedTransactionData.valueDate!},
+                    vendor: this.state.fixedTransactionData.vendor,
+                    description: this.state.fixedTransactionData.description
+                }
+            }, (variableTransaction) => {
+                this.setState({confirmLoading: false});
+                if (this.props.onSubmit) {
+                    this.props.onSubmit(variableTransaction);
+                }
+                notification.success({
+                    message: this.props.t('Transaction.VariableTransaction'),
+                    description: this.props.t('Message.Transaction.VariableTransaction.UpdatedVariableTransaction')
+                });
             });
-        });
+        }
     }
 
     onCancel() {
@@ -92,8 +81,8 @@ class UpdateVariableTransactionDialog extends React.Component<UpdateVariableTran
                 onOk={this.onSubmit.bind(this)}
                 onCancel={this.onCancel.bind(this)}>
                 <VariableTransactionDataForm
-                    variableTransaction={this.props.variableTransaction}
-                    onChange={variableTransactionData => this.setState({variableTransactionData: variableTransactionData})}/>
+                    variableTransaction={this.props.data}
+                    onChange={variableTransactionData => this.setState({fixedTransactionData: variableTransactionData})}/>
             </Modal>
         );
     }
@@ -106,26 +95,4 @@ const mapStateToProps = (state: AppState) => {
     };
 };
 
-const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({
-    dispatchUpdateVariableTransaction: api.updateVariableTransaction,
-    dispatchLoadVariableTransactions: (data: GetUsersVariableTransactionsRequest) => {
-        return;
-    },
-    dispatchLoadVariableTransaction: (data: GetVariableTransactionByIdRequest, callback?: (variableTransaction: VariableTransaction) => void) => {
-        return;
-    },
-    dispatchCreateVariableTransaction: (data: CreateTransactionRequest, callback?: (variableTransaction: VariableTransaction) => void) => {
-        return;
-    },
-    dispatchCreateProduct: (data: CreateProductRequest, callback?: (product: Product) => void) => {
-        return;
-    },
-    dispatchDeleteVariableTransaction: (data: DeleteVariableTransactionRequest, callback?: () => void) => {
-        return;
-    },
-    dispatchDeleteProducts: (data: DeleteProductsRequest, callback?: () => void) => {
-        return;
-    }
-}, dispatch);
-
-export default connect(mapStateToProps, mapDispatchToProps)(withTranslation<"default">()(UpdateVariableTransactionDialog));
+export default connect(mapStateToProps, transactionDispatchMap)(withTranslation<'default'>()(UpdateVariableTransactionDialog));
