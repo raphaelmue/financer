@@ -54,7 +54,8 @@
     "Admin": {
       "Configuration": "Server Konfiguration",
       "UserManagement": "Benutzerverwaltung"
-    }
+    },
+    "Statistics": "Statistiken"
   },
   "Transaction": {
     "Category": {
@@ -95,7 +96,8 @@
       "Status": "Status"
     },
     "FixedTransactionAmounts": "Feste Transaktionsbeträge",
-    "FixedTransactions": "Feste Transaktionen"
+    "FixedTransactions": "Feste Transaktionen",
+    "FixedTransactionAmount": "Feste Transaktionsbetrag"
   },
   "Form": {
     "Table": {

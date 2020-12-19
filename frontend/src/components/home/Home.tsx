@@ -19,17 +19,18 @@ import VariableTransactionList
 import CreateVariableTransaction
                                                                   from './transactions/variable/create/CreateVariableTransaction';
 import VariableTransactionsDetails
-                                from './transactions/variable/details/VariableTransactionsDetails';
+                                                                  from './transactions/variable/details/VariableTransactionsDetails';
+import AdminConfiguration                                         from './admin/configuration/AdminConfiguration';
+import FixedTransactionOverview                                   from './transactions/fixed/FixedTransactionOverview';
+import CreateFixedTransaction
+                                                                  from './transactions/fixed/create/CreateFixedTransaction';
+import FixedTransactionDetails
+                                                                  from './transactions/fixed/details/FixedTransactionDetails';
 
 import '@ant-design/pro-layout/dist/layout.css';
 import '@ant-design/pro-table/dist/table.css';
 import '@ant-design/pro-list/dist/list.css';
 import '@ant-design/pro-card/dist/card.css';
-import AdminConfiguration       from './admin/configuration/AdminConfiguration';
-import FixedTransactionOverview from './transactions/fixed/FixedTransactionOverview';
-import CreateFixedTransaction
-                                from './transactions/fixed/create/CreateFixedTransaction';
-import FixedTransactionDetails  from './transactions/fixed/details/FixedTransactionDetails';
 
 const {Text} = Typography;
 

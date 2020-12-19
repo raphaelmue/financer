@@ -29,6 +29,8 @@ import CreateAttachmentDialog
 import {confirmDialogConfig}                                      from '../../../../shared/form/modal/confirm/config';
 import UpdateFixedTransactionDialog
                                                                   from '../../../../shared/transaction/fixed/update/UpdateFixedTransactionDialog';
+import FixedTransactionAmountHistoryChart
+                                                                  from '../../../../shared/statistics/fixedTransaction/fixedTransactionAmount/FixedTransactionAmountHistoryChart';
 
 const {Item} = Descriptions;
 
@@ -231,6 +233,10 @@ class FixedTransactionDetails extends React.Component<FixedTransactionDetailsCom
                         }, {
                             tab: i18next.t('Transaction.Attachments'),
                             key: 'attachmentsTab',
+                        }, {
+                            tab: this.props.t('Menu.Statistics'),
+                            disabled: !this.state.fixedTransaction.hasVariableAmounts,
+                            key: 'statisticTab'
                         }]}
                         tabActiveKey={this.state.activeTab}
                         onTabChange={activeKey => (this.setState({activeTab: activeKey}))}>
@@ -260,6 +266,11 @@ class FixedTransactionDetails extends React.Component<FixedTransactionDetailsCom
                             />
                         </ProCard>
 
+                        <ProCard collapsed={!(this.state.activeTab === 'statisticTab')}>
+                            <FixedTransactionAmountHistoryChart
+                                data={this.state.fixedTransaction.transactionAmounts}/>
+                        </ProCard>
+
                         <UpdateFixedTransactionDialog
                             visible={this.state.showUpdateFixedTransactionDialog}
                             onSubmit={data => this.setState({
@@ -268,7 +279,6 @@ class FixedTransactionDetails extends React.Component<FixedTransactionDetailsCom
                             })}
                             onCancel={() => this.setState({showUpdateFixedTransactionDialog: false})}
                             data={this.state.fixedTransaction}/>
-
                     </PageContainer>
                 );
             }
