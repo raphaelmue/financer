@@ -103,12 +103,16 @@ pipeline {
                                 script {
                                     if (env.CHANGE_ID) {
                                         sh "${scannerHome}/bin/sonar-scanner " +
+                                                "-Dsonar.pullrequest.base=master " +
                                                 "-Dsonar.pullrequest.key=${env.CHANGE_ID} " +
-                                                "-Dsonar.pullrequest.branch=${env.BRANCH_NAME} "
+                                                "-Dsonar.pullrequest.branch=${env.BRANCH_NAME} " +
+                                                "-Dsonar.pullrequest.provider=github " +
+                                                "-Dsonar.pullrequest.github.repository=raphaelmue/financer"
                                     } else {
                                         if (env.BRANCH_NAME != 'master') {
                                             sh "${scannerHome}/bin/sonar-scanner " +
-                                                    "-Dsonar.branch.name=${env.BRANCH_NAME}"
+                                                    "-Dsonar.branch.name=${env.BRANCH_NAME} " +
+                                                    "-Dsonar.branch.target=master"
                                         } else {
                                             sh "${scannerHome}/bin/sonar-scanner"
                                         }
@@ -129,12 +133,16 @@ pipeline {
                                 script {
                                     if (env.CHANGE_ID) {
                                         sh "${scannerHome}/bin/sonar-scanner " +
+                                                "-Dsonar.pullrequest.base=master " +
                                                 "-Dsonar.pullrequest.key=${env.CHANGE_ID} " +
-                                                "-Dsonar.pullrequest.branch=${env.BRANCH_NAME} "
+                                                "-Dsonar.pullrequest.branch=${env.BRANCH_NAME} " +
+                                                "-Dsonar.pullrequest.provider=github " +
+                                                "-Dsonar.pullrequest.github.repository=raphaelmue/financer"
                                     } else {
                                         if (env.BRANCH_NAME != 'master') {
                                             sh "${scannerHome}/bin/sonar-scanner " +
-                                                    "-Dsonar.branch.name=${env.BRANCH_NAME} "
+                                                    "-Dsonar.branch.name=${env.BRANCH_NAME} " +
+                                                    "-Dsonar.branch.target=master"
                                         } else {
                                             sh "${scannerHome}/bin/sonar-scanner"
                                         }
@@ -145,7 +153,6 @@ pipeline {
                     }
                 }
             }
-
         }
     }
 
