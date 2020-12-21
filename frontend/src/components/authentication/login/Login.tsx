@@ -1,18 +1,15 @@
 import {WithTranslation, withTranslation}       from 'react-i18next';
 import {UserReducerProps}                       from '../../../store/reducers/user.reducers';
-import {LoginUserRequest}                       from '../../../.openapi';
 import * as React                               from 'react';
 import {Button, Form, Input, Space, Typography} from 'antd';
 import {LockOutlined, UserOutlined}             from '@ant-design/icons';
 import {AppState}                               from '../../../store/reducers/root.reducers';
-import {bindActionCreators, Dispatch}           from 'redux';
-import * as action                              from '../../../store/api/user.api';
+import {userDispatchMap}                        from '../../../store/api/user.api';
 import {connect}                                from 'react-redux';
 
 const {Text} = Typography;
 
 interface LoginComponentProps extends WithTranslation<'default'>, UserReducerProps {
-    login: (loginData: LoginUserRequest) => void
 }
 
 interface LoginComponentState {
@@ -28,7 +25,7 @@ class Login extends React.Component <LoginComponentProps, LoginComponentState> {
     };
 
     _handleSubmit() {
-        this.props.login({
+        this.props.dispatchLoginUser({
             email: this.state.email,
             password: this.state.password
         });
@@ -80,8 +77,4 @@ const mapStateToProps = (state: AppState) => {
     };
 };
 
-const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({
-    login: action.loginUser
-}, dispatch);
-
-export default connect(mapStateToProps, mapDispatchToProps)(withTranslation<"default">()(Login));
+export default connect(mapStateToProps, userDispatchMap)(withTranslation<'default'>()(Login));

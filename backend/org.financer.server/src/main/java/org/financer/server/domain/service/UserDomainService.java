@@ -9,7 +9,6 @@ import org.financer.server.application.service.AdminConfigurationService;
 import org.financer.server.application.service.AuthenticationService;
 import org.financer.server.application.service.VerificationService;
 import org.financer.server.domain.model.category.Category;
-import org.financer.server.domain.model.transaction.FixedTransaction;
 import org.financer.server.domain.model.transaction.VariableTransaction;
 import org.financer.server.domain.model.user.Role;
 import org.financer.server.domain.model.user.Token;
@@ -301,7 +300,7 @@ public class UserDomainService {
     public User updateUsersSettings(Map<SettingPair.Property, String> setting) {
         User user = authenticationService.getAuthenticatedUser();
         setting.forEach(user::putOrUpdateSettingProperty);
-        return userRepository.save(user);
+        return userRepository.save(user).setActiveToken(authenticationService.getAuthenticatedUser().getActiveToken());
     }
 
     /**

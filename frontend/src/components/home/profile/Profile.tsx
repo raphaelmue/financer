@@ -1,11 +1,11 @@
-import * as React                     from 'react';
+import * as React                         from 'react';
 import {Button}                           from 'antd';
 import {WithTranslation, withTranslation} from 'react-i18next';
 import {AppState}                         from '../../../store/reducers/root.reducers';
-import {bindActionCreators, Dispatch} from 'redux';
-import * as action                    from '../../../store/api/user.api';
-import {connect}                      from 'react-redux';
-import {UserReducerState}             from '../../../store/reducers/user.reducers';
+import {userDispatchMap}                  from '../../../store/api/user.api';
+import {connect}                          from 'react-redux';
+import {UserReducerState}                 from '../../../store/reducers/user.reducers';
+import {PageContainer}                    from '@ant-design/pro-layout';
 
 interface ProfileProps extends WithTranslation<'default'>, UserReducerState {
 }
@@ -17,10 +17,12 @@ class Profile extends React.Component<ProfileProps, ProfileState> {
 
     render() {
         return (
-            <Button type="primary">
-                {this.props.t("logout")}
-            </Button>
-        )
+            <PageContainer>
+                <Button type="primary">
+                    {this.props.t('logout')}
+                </Button>
+            </PageContainer>
+        );
     }
 
 }
@@ -28,11 +30,7 @@ class Profile extends React.Component<ProfileProps, ProfileState> {
 const mapStateToProps = (state: AppState) => {
     return {
         userState: state.user
-    }
-}
+    };
+};
 
-const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({
-    dispatchLogout: action.logoutUser
-}, dispatch)
-
-export default connect(mapStateToProps, mapDispatchToProps)(withTranslation<"default">()(Profile))
+export default connect(mapStateToProps, userDispatchMap)(withTranslation<'default'>()(Profile));

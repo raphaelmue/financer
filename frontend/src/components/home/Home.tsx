@@ -6,8 +6,7 @@ import {AppState}                                                 from '../../st
 import {connect}                                                  from 'react-redux';
 import {UserReducerProps}                                         from '../../store/reducers/user.reducers';
 import {HashRouter as Router, Link, Redirect, Route, Switch}      from 'react-router-dom';
-import {bindActionCreators, Dispatch}                             from 'redux';
-import * as api                                                   from '../../store/api/user.api';
+import {userDispatchMap}                                          from '../../store/api/user.api';
 import BasicLayout, {BasicLayoutProps, DefaultFooter}             from '@ant-design/pro-layout';
 import menuData                                                   from './menu';
 import {DeleteTokenRequest}                                       from '../../.openapi';
@@ -24,13 +23,21 @@ import AdminConfiguration                                         from './admin/
 import FixedTransactionOverview                                   from './transactions/fixed/FixedTransactionOverview';
 import CreateFixedTransaction
                                                                   from './transactions/fixed/create/CreateFixedTransaction';
+import {isDarkTheme}                                              from '../shared/user/settings/settingsUtil';
 import FixedTransactionDetails
                                                                   from './transactions/fixed/details/FixedTransactionDetails';
 
+
+import 'ant-design-pro/dist/ant-design-pro.min.css';
 import '@ant-design/pro-layout/dist/layout.css';
 import '@ant-design/pro-table/dist/table.css';
 import '@ant-design/pro-list/dist/list.css';
 import '@ant-design/pro-card/dist/card.css';
+
+if (isDarkTheme()) {
+    require('antd/dist/antd.dark.css');
+    require('../../styles/dark-theme.css');
+}
 
 const {Text} = Typography;
 
@@ -141,8 +148,4 @@ const mapStateToProps = (state: AppState) => {
     };
 };
 
-const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({
-    dispatchLogout: api.logoutUser
-}, dispatch);
-
-export default connect(mapStateToProps, mapDispatchToProps)(withTranslation<'default'>()(Home));
+export default connect(mapStateToProps, userDispatchMap)(withTranslation<'default'>()(Home));

@@ -6,7 +6,8 @@ import {WithTranslation, withTranslation} from 'react-i18next';
 import {CategoryReducerProps}             from '../../../../store/reducers/category.reducer';
 import {Input, Tree}                      from 'antd';
 import CategoryUtil                       from '../util';
-import * as api                           from '../../../../store/api/category.api';
+import * as categoryApi                   from '../../../../store/api/category.api';
+import * as userApi                       from '../../../../store/api/user.api';
 import {UserReducerProps}                 from '../../../../store/reducers/user.reducers';
 import {DataNode, EventDataNode}          from 'antd/lib/tree';
 
@@ -81,7 +82,11 @@ const mapStateToProps = (state: AppState) => {
 };
 
 const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({
-    dispatchLoadCategories: api.loadCategories
+    dispatchLoadCategories: categoryApi.loadCategories,
+    dispatchLoginUser: userApi.loginUser,
+    dispatchRegisterUser: userApi.registerUser,
+    dispatchLogoutUser: userApi.logoutUser,
+    dispatchUpdateUsersSettings: userApi.updateUsersSettings
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(withTranslation<'default'>()(CategoryTree));

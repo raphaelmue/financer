@@ -1,0 +1,18 @@
+
+.ant-pro-global-header {
+    background-color: #1F1F1F !important;
+
+}
+.ant-pro-page-container-warp,
+.ant-pro-card {
+    background-color: #141414 !important;
+}
+
+.ant-pro-card.ant-pro-card-border {
+    border: 1px solid black
+}
+
+.ant-layout-footer {
+    background-color: black;
+}
+

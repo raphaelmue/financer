@@ -13,3 +13,7 @@ export function getCurrencySign(): string {
 export function getCurrencySymbol(): string {
     return store.getState().user.user?.settings?.CURRENCY?.value || '$';
 }
+
+export function isDarkTheme(): boolean {
+    return store.getState().user.user?.settings?.THEME?.value === 'dark' || false;
+}

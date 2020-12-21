@@ -171,6 +171,11 @@
       "Configuration": {
         "UpdatedAdminConfiguration": "Server configuration was successfully updated."
       }
+    },
+    "Profile": {
+      "Settings": {
+        "ConfirmReload": "The changes cannot be applied until the page is reloaded. Do you want to reload the page?"
+      }
     }
   },
   "Admin": {
@@ -179,5 +184,16 @@
       "DefaultCurrency": "Default currency"
     },
     "ServerConfiguration": "Server Configuration"
+  },
+  "Profile": {
+    "Settings": {
+      "General": "General Settings",
+      "Language": "Language",
+      "Currency": "Currency",
+      "Appearance": "Appearance",
+      "DarkTheme": "Dark Theme",
+      "LightTheme": "Light Theme",
+      "Theme": "Theme"
+    }
   }
 }

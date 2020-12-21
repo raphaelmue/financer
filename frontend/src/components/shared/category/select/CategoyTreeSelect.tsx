@@ -4,12 +4,13 @@ import {connect}                          from 'react-redux';
 import {WithTranslation, withTranslation} from 'react-i18next';
 import React                              from 'react';
 import {CategoryReducerProps}             from '../../../../store/reducers/category.reducer';
-import * as api                           from '../../../../store/api/category.api';
+import * as categoryApi                   from '../../../../store/api/category.api';
 import {TreeSelect}                       from 'antd';
 import {UserReducerProps}                 from '../../../../store/reducers/user.reducers';
 import {LegacyDataNode}                   from 'rc-tree-select/lib/interface';
 import CategoryUtil                       from '../util';
 import {DataNode}                         from 'antd/lib/tree';
+import * as userApi                       from '../../../../store/api/user.api';
 
 interface CategoryTreeSelectComponentProps extends WithTranslation<'default'>, UserReducerProps, CategoryReducerProps {
     onChange: (categoryId: number | undefined) => void,
@@ -83,7 +84,11 @@ const mapStateToProps = (state: AppState) => {
 };
 
 const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({
-    dispatchLoadCategories: api.loadCategories
+    dispatchLoadCategories: categoryApi.loadCategories,
+    dispatchLoginUser: userApi.loginUser,
+    dispatchRegisterUser: userApi.registerUser,
+    dispatchLogoutUser: userApi.logoutUser,
+    dispatchUpdateUsersSettings: userApi.updateUsersSettings
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(withTranslation<'default'>()(CategoryTreeSelect));

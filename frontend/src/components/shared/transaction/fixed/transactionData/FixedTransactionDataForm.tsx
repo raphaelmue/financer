@@ -1,5 +1,4 @@
 import React                                          from 'react';
-import {AppState}                                     from '../../../../../store/reducers/root.reducers';
 import {bindActionCreators, Dispatch}                 from 'redux';
 import {connect}                                      from 'react-redux';
 import {WithTranslation, withTranslation}             from 'react-i18next';

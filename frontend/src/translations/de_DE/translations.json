@@ -171,6 +171,11 @@
       "Configuration": {
         "UpdatedAdminConfiguration": "Server Konfiguration wurde erfolgreich aktualisiert. "
       }
+    },
+    "Profile": {
+      "Settings": {
+        "ConfirmReload": "Die Änderungen können erst umgesetzt werden, wenn die Seite neu geladen wird. Möchtest du die Seite neu laden?"
+      }
     }
   },
   "Admin": {
@@ -179,5 +184,16 @@
       "DefaultCurrency": "Standardwährung"
     },
     "ServerConfiguration": "Server Konfiguration"
+  },
+  "Profile": {
+    "Settings": {
+      "General": "Allgemeine Einstellung",
+      "Language": "Sprache",
+      "Currency": "Währung",
+      "Appearance": "Darstellung",
+      "DarkTheme": "Dunkles Thema",
+      "LightTheme": "Helles Thema",
+      "Theme": "Thema"
+    }
   }
 }
