@@ -21,12 +21,6 @@
     "repeatPassword": "Passwort wiederholen"
   },
   "birthDate": "Geburtsdatum",
-  "Gender": {
-    "male": "Männlic",
-    "female": "Weiblich",
-    "notSpecified": "Keine Angabe",
-    "gender": "Geschlec"
-  },
   "home": "Home",
   "Menu": {
     "Categories": "Kategorien",
@@ -194,6 +188,24 @@
       "DarkTheme": "Dunkles Thema",
       "LightTheme": "Helles Thema",
       "Theme": "Thema"
+    },
+    "User": {
+      "Name": "Name",
+      "Email": "E-Mail Adresse",
+      "BirthDate": "Geburtsdatum",
+      "Gender": {
+        "MALE": "Männlich",
+        "FEMALE": "Weiblich",
+        "NOT_SPECIFIED": "Keine Angabe",
+        "Gender": "Gender"
+      },
+      "Devices": "Angemeldete Geräte",
+      "Token": {
+        "IPAddress": "IP Adresse",
+        "OperatingSystem": "Betriebsystem",
+        "ExpireDate": "Verfallsdatum"
+      },
+      "Roles": "Rollen"
     }
   }
 }

@@ -1,6 +1,7 @@
 import {bindActionCreators, Dispatch} from 'redux';
 import {
     DeleteTokenRequest,
+    GetUserRequest,
     LoginUserRequest,
     RegisterUserRequest,
     UpdateUsersSettingsRequest,
@@ -46,7 +47,7 @@ export const registerUser = (registeringData: RegisterUserRequest) => {
     };
 };
 
-export const logoutUser = (logoutUserData: DeleteTokenRequest) => {
+export const deleteToken = (logoutUserData: DeleteTokenRequest) => {
     return (dispatch: Dispatch) => {
         dispatch({
             type: UserActionDefinition.LOGOUT_REQUEST,
@@ -57,6 +58,24 @@ export const logoutUser = (logoutUserData: DeleteTokenRequest) => {
             .then(() => dispatch({
                 type: UserActionDefinition.LOGOUT_SUCCESS
             })), UserActionDefinition.REGISTER_FAILED, dispatch);
+    };
+};
+
+export const getUser = (data: GetUserRequest, callback?: (user: User) => void) => {
+    return (dispatch: Dispatch) => {
+        dispatch({
+            type: UserActionDefinition.GET_USER_REQUEST,
+            payload: data
+        });
+        const api = new Api(apiConfiguration());
+        ErrorMessage.resolveError(api.getUser(data)
+            .then((user) => {
+                dispatch({
+                    type: UserActionDefinition.GET_USER_SUCCESS,
+                    payload: user
+                });
+                if (callback) callback(user);
+            }), UserActionDefinition.GET_USER_FAILED, dispatch);
     };
 };
 
@@ -81,13 +100,15 @@ export const updateUsersSettings = (data: UpdateUsersSettingsRequest, callback?:
 export interface UserApi {
     dispatchLoginUser: (loginData: LoginUserRequest) => void,
     dispatchRegisterUser: (registeringData: RegisterUserRequest) => void,
-    dispatchLogoutUser: (logoutUserData: DeleteTokenRequest) => void,
+    dispatchDeleteToken: (logoutUserData: DeleteTokenRequest) => void,
+    dispatchGetUser: (data: GetUserRequest, callback?: (user: User) => void) => void,
     dispatchUpdateUsersSettings: (data: UpdateUsersSettingsRequest, callback?: (user: User) => void) => void
 }
 
 export const userDispatchMap = (dispatch: Dispatch) => bindActionCreators({
     dispatchLoginUser: loginUser,
     dispatchRegisterUser: registerUser,
-    dispatchLogoutUser: logoutUser,
+    dispatchDeleteToken: deleteToken,
+    dispatchGetUser: getUser,
     dispatchUpdateUsersSettings: updateUsersSettings
 }, dispatch);

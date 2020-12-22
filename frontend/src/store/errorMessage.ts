@@ -1,5 +1,6 @@
-import i18next    from 'i18next';
-import {Dispatch} from 'redux';
+import i18next        from 'i18next';
+import {Dispatch}     from 'redux';
+import {notification} from 'antd';
 
 export enum MessageType {
     UNKNOWN_ERROR = 'ErrorMessage.UnknownError',
@@ -24,10 +25,17 @@ export class ErrorMessage implements ErrorMessageDefinition {
     }
 
     static resolveError(promise: Promise<any>, action: string, dispatch: Dispatch): void {
-        promise.catch((reason: any) => dispatch({
-            type: action,
-            payload: ErrorMessage.createErrorMessage(reason)
-        }));
+        promise.catch((reason: any) => {
+            const errorMessage = ErrorMessage.createErrorMessage(reason);
+            dispatch({
+                type: action,
+                payload: errorMessage
+            });
+            notification.error({
+                message: 'Error',
+                description: errorMessage.message
+            });
+        });
     }
 
     static createErrorMessage(reason: any, language = 'en'): ErrorMessage {

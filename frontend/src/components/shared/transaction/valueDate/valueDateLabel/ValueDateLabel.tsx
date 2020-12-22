@@ -1,12 +1,12 @@
 import {UserReducerProps} from '../../../../../store/reducers/user.reducers';
 import {AppState}         from '../../../../../store/reducers/root.reducers';
 import {connect}          from 'react-redux';
-import {ValueDate}        from '../../../../../.openapi/models';
+import {ValueDate}        from '../../../../../.openapi';
 import React              from 'react';
 import {userDispatchMap}  from '../../../../../store/api/user.api';
 
 interface ValueDateLabelComponentProps extends UserReducerProps {
-    valueDate: ValueDate
+    valueDate?: ValueDate
 }
 
 interface ValueDateLabelComponentState {

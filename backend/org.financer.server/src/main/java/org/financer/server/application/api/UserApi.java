@@ -119,6 +119,28 @@ public interface UserApi {
             @RequestBody @NotNull @Valid RegisterUserDTO registerUserDTO);
 
     /**
+     * Returns a user by its id
+     *
+     * @param userId id of the user to return
+     * @return user
+     */
+    @Operation(
+            summary = "Returns a user",
+            tags = {"user"},
+            security = @SecurityRequirement(name = "TokenAuth"))
+    @ApiResponse(
+            responseCode = "200",
+            description = "User was successfully returned",
+            content = @Content(schema = @Schema(implementation = UserDTO.class)))
+    @GetMapping(
+            value = "/users/{userId}",
+            produces = {"application/json"},
+            headers = "Accept=application/json")
+    ResponseEntity<UserDTO> getUser(
+            @Parameter(description = "ID of the user whose password will be changed")
+            @PathVariable("userId") @NotBlank @Min(1) Long userId);
+
+    /**
      * Updates the password of the given user.
      *
      * @param userId      id of the user

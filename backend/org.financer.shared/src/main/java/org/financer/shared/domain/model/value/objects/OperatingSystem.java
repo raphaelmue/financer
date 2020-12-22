@@ -17,6 +17,7 @@ import java.io.Serializable;
 public class OperatingSystem implements Serializable {
     private static final long serialVersionUID = -3238265087964566580L;
 
+    @Schema(name = "OperatingSystemEnum")
     public enum Values {
         WINDOWS("windows", false),
         LINUX("linux", false),

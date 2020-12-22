@@ -87,7 +87,8 @@ const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({
     dispatchLoadCategories: categoryApi.loadCategories,
     dispatchLoginUser: userApi.loginUser,
     dispatchRegisterUser: userApi.registerUser,
-    dispatchLogoutUser: userApi.logoutUser,
+    dispatchDeleteToken: userApi.deleteToken,
+    dispatchGetUser: userApi.getUser,
     dispatchUpdateUsersSettings: userApi.updateUsersSettings
 }, dispatch);
 

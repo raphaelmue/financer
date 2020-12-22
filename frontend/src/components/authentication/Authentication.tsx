@@ -23,7 +23,7 @@ class Authentication extends React.Component<AuthenticationComponentProps, Authe
 
     render() {
         if (this.props.userState.user) {
-            // redirect to main page when user is successfully logged in
+            // redirect to main page when users is successfully logged in
             return <Redirect to={'/dashboard'}/>;
         }
 

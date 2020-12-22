@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.financer.server.application.api.util.PageableParameters;
 import org.financer.shared.domain.model.api.admin.AdminConfigurationDTO;
 import org.financer.shared.domain.model.api.admin.InitAdminConfigurationDTO;
 import org.financer.shared.domain.model.api.admin.UpdateAdminConfigurationDTO;
@@ -84,8 +85,8 @@ public interface AdminApi {
             security = @SecurityRequirement(name = "TokenAuth"))
     @ApiResponse(
             responseCode = "200",
-            description = "Users are successfully fetched",
-            content = @Content(array = @ArraySchema(schema = @Schema(implementation = UserDTO.class))))
+            description = "Users are successfully fetched")
+    @PageableParameters
     @GetMapping(
             value = "/users",
             produces = {"application/json"},

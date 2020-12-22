@@ -62,6 +62,20 @@ public class UserDomainService {
         this.adminConfigurationService = adminConfigurationService;
     }
 
+    public User getUserById(long userId) {
+        if (authenticationService.getUserId() != userId) {
+            authenticationService.throwIfUserHasNotRole("ADMIN");
+        }
+        Optional<User> userOptional = this.userRepository.findById(userId);
+        if (userOptional.isPresent()) {
+            if (userOptional.get().getId() == authenticationService.getUserId()) {
+                userOptional.get().setActiveToken(authenticationService.getAuthenticatedUser().getActiveToken());
+            }
+            return userOptional.get();
+        }
+        throw new NotFoundException(User.class, userId);
+    }
+
     /**
      * Checks, if the users credentials are correct
      *

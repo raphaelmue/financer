@@ -86,6 +86,12 @@ public class UserApiController implements UserApi {
     }
 
     @Override
+    public ResponseEntity<UserDTO> getUser(@NotBlank @Min(1) Long userId) {
+        User user = userDomainService.getUserById(userId);
+        return new ResponseEntity<>(modelMapper.map(user, UserDTO.class), HttpStatus.OK);
+    }
+
+    @Override
     public ResponseEntity<UserDTO> updateUsersPassword(@NotBlank @Min(1) Long userId,
                                                        @NotNull @Valid HashedPassword newPassword) {
         authenticationService.getAuthenticatedUser().throwIfNotUsersProperty(userId);

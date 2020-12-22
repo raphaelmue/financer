@@ -33,6 +33,7 @@ import '@ant-design/pro-layout/dist/layout.css';
 import '@ant-design/pro-table/dist/table.css';
 import '@ant-design/pro-list/dist/list.css';
 import '@ant-design/pro-card/dist/card.css';
+import UserManagement                                             from './admin/users/UserManagement';
 
 if (isDarkTheme()) {
     require('antd/dist/antd.dark.css');
@@ -61,7 +62,7 @@ class Home extends React.Component<HomeProps, HomeState> {
 
     logoutUser() {
         if (this.props.userState.user?.id && this.props.userState.user?.activeToken.id) {
-            this.props.dispatchLogout({
+            this.props.dispatchDeleteToken({
                 userId: this.props.userState.user?.id,
                 tokenId: this.props.userState.user?.activeToken.id
             });
@@ -123,8 +124,7 @@ class Home extends React.Component<HomeProps, HomeState> {
                 {...this.props}>
                 <Router>
                     <Switch>
-                        <Route path='/dashboard' component={Dashboard}/>
-                        <Route path='/profile' component={Profile}/>
+                        <Route path={'/dashboard'} component={Dashboard}/>
                         <Route path={'/transactions/variable/create'} component={CreateVariableTransaction}/>
                         <Route path={'/transactions/variable/:variableTransactionId'}
                                component={VariableTransactionsDetails}/>
@@ -133,8 +133,10 @@ class Home extends React.Component<HomeProps, HomeState> {
                         <Route path={'/transactions/fixed/:fixedTransactionId'}
                                component={FixedTransactionDetails}/>
                         <Route path={'/transactions/fixed/'} component={FixedTransactionOverview}/>
-                        <Route path='/settings' component={Settings}/>
+                        <Route path={'/profile/:userId?'} component={Profile}/>
+                        <Route path={'/settings'} component={Settings}/>
                         <Route path={'/admin/configuration'} component={AdminConfiguration}/>
+                        <Route path={'/admin/users'} component={UserManagement}/>
                     </Switch>
                 </Router>
             </BasicLayout>

@@ -1,5 +1,6 @@
 import {
     DeleteTokenRequest,
+    GetUserRequest,
     LoginUserRequest,
     RegisterUserRequest,
     UpdateUsersSettingsRequest,
@@ -18,6 +19,9 @@ export enum UserActionDefinition {
     LOGOUT_REQUEST = 'AUTHENTICATION:LOGOUT_REQUEST',
     LOGOUT_SUCCESS = 'AUTHENTICATION:LOGOUT_SUCCESS',
     LOGOUT_FAILED = 'AUTHENTICATION:LOGOUT_FAILED',
+    GET_USER_REQUEST = 'USER:GET_USER_REQUEST',
+    GET_USER_SUCCESS = 'USER:GET_USER_SUCCESS',
+    GET_USER_FAILED = 'USER:GET_USER_FAILED',
     UPDATE_USERS_SETTINGS_REQUEST = 'USER:UPDATE_USERS_SETTINGS_REQUEST',
     UPDATE_USERS_SETTINGS_SUCCESS = 'USER:UPDATE_USERS_SETTINGS_SUCCESS',
     UPDATE_USERS_SETTINGS_FAILED = 'USER:UPDATE_USERS_SETTINGS_FAILED'
@@ -27,6 +31,7 @@ export type UserAction =
     LoginRequestAction | LoginSuccessAction | LoginFailedAction
     | RegisterRequestAction | RegisterSuccessAction | RegisterFailedAction
     | LogoutRequestAction | LogoutSuccessAction | LogoutFailedAction
+    | GetUserRequestAction | GetUserSuccessAction | GetUserFailedAction
     | UpdateUsersSettingsRequestAction | UpdateUsersSettingsSuccessAction | UpdateUsersSettingsFailedAction;
 
 interface LoginRequestAction extends Action {
@@ -73,6 +78,21 @@ interface LogoutFailedAction extends Action {
     payload: ErrorMessage;
 }
 
+interface GetUserRequestAction extends Action {
+    type: UserActionDefinition.GET_USER_REQUEST,
+    payload: GetUserRequest
+}
+
+interface GetUserSuccessAction extends Action {
+    type: UserActionDefinition.GET_USER_SUCCESS,
+    payload: User
+}
+
+interface GetUserFailedAction extends Action {
+    type: UserActionDefinition.GET_USER_FAILED,
+    payload: ErrorMessage;
+}
+
 interface UpdateUsersSettingsRequestAction extends Action {
     type: UserActionDefinition.UPDATE_USERS_SETTINGS_REQUEST,
     payload: UpdateUsersSettingsRequest
@@ -87,4 +107,3 @@ interface UpdateUsersSettingsFailedAction extends Action {
     type: UserActionDefinition.UPDATE_USERS_SETTINGS_FAILED,
     payload: ErrorMessage;
 }
-

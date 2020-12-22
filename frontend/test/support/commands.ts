@@ -26,7 +26,7 @@
 
 Cypress.Commands.add('login', () => {
     cy.fixture('redux-state.json').then((state) => {
-        cy.fixture('user.json').then((user) => {
+        cy.fixture('users.json').then((user) => {
             state.user = {
                 'isLoading': false,
                 'user': user

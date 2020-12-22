@@ -54,7 +54,9 @@ export default (): MenuDataItem[] => [
             }, {
                 path: '/profile',
                 name: i18next.t('Menu.Profile'),
-                icon: <UserOutlined/>
+                hideChildrenInMenu: true,
+                flatMenu: true,
+                key: 'profile'
             }, {
                 path: '/settings',
                 name: i18next.t('Menu.Settings'),
