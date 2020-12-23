@@ -117,7 +117,12 @@
       "Previous": "Zurück",
       "Edit": "Bearbeiten",
       "Ok": "Ok",
-      "Refresh": "Aktualisieren"
+      "Refresh": "Aktualisieren",
+      "Profile": {
+        "User": {
+          "UpdatePassword": "Passwort ändern"
+        }
+      }
     },
     "Step": {
       "CreateVariableTransaction": {
@@ -169,6 +174,9 @@
     "Profile": {
       "Settings": {
         "ConfirmReload": "Die Änderungen können erst umgesetzt werden, wenn die Seite neu geladen wird. Möchtest du die Seite neu laden?"
+      },
+      "User": {
+        "UpdatedProfile": "Dein Profil wurde erfolgreich aktualisiert."
       }
     }
   },
@@ -205,7 +213,10 @@
         "OperatingSystem": "Betriebsystem",
         "ExpireDate": "Verfallsdatum"
       },
-      "Roles": "Rollen"
+      "Roles": "Rollen",
+      "Verified": "Verifiziert",
+      "NotVerified": "Nicht verfiziert",
+      "CurrentPassword": "Aktuelles Passwort"
     }
   }
 }

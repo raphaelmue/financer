@@ -13,10 +13,7 @@ import org.financer.shared.domain.model.api.DataTransferObject;
 import org.financer.shared.domain.model.api.category.CategoryDTO;
 import org.financer.shared.domain.model.api.transaction.fixed.FixedTransactionDTO;
 import org.financer.shared.domain.model.api.transaction.variable.VariableTransactionDTO;
-import org.financer.shared.domain.model.api.user.RegisterUserDTO;
-import org.financer.shared.domain.model.api.user.UpdatePersonalInformationDTO;
-import org.financer.shared.domain.model.api.user.UpdateSettingsDTO;
-import org.financer.shared.domain.model.api.user.UserDTO;
+import org.financer.shared.domain.model.api.user.*;
 import org.financer.shared.domain.model.value.objects.*;
 import org.financer.shared.path.PathBuilder;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,7 +21,6 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.test.web.servlet.MvcResult;
 
@@ -92,9 +88,11 @@ public class UserApiControllerTest extends ApiTest {
 
     @Test
     public void testUpdateUsersPassword() throws Exception {
-        when(userDomainService.updatePassword(any(HashedPassword.class))).thenReturn(user);
+        when(userDomainService.updatePassword(anyLong(), anyString(), any(HashedPassword.class))).thenReturn(user);
 
-        DataTransferObject dto = new HashedPassword("newPassword");
+        DataTransferObject dto = new UpdatePasswordDTO()
+                .setPassword("password")
+                .setUpdatedPassword(new HashedPassword("newPassword"));
         mockMvc.perform(buildRequest(PathBuilder.Post().users().userId(1).password().build(), dto))
                 .andExpect(status().isOk());
     }

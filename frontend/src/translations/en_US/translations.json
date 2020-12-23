@@ -117,7 +117,12 @@
       "Previous": "Previous",
       "Edit": "Edit",
       "Ok": "Ok",
-      "Refresh": "Refresh"
+      "Refresh": "Refresh",
+      "Profile": {
+        "User": {
+          "UpdatePassword": "Update password"
+        }
+      }
     },
     "Step": {
       "CreateVariableTransaction": {
@@ -169,6 +174,9 @@
     "Profile": {
       "Settings": {
         "ConfirmReload": "The changes cannot be applied until the page is reloaded. Do you want to reload the page?"
+      },
+      "User": {
+        "UpdatedProfile": "Your profile was successfully updated."
       }
     }
   },
@@ -205,7 +213,10 @@
         "OperatingSystem": "Operatings System",
         "ExpireDate": "Expire Date"
       },
-      "Roles": "Roles"
+      "Roles": "Roles",
+      "Verified": "Verified",
+      "NotVerified": "Not verified",
+      "CurrentPassword": "Current Password"
     }
   }
 }

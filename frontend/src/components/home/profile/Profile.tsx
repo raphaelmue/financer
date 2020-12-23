@@ -1,18 +1,21 @@
-import * as React                         from 'react';
-import {Button, Descriptions, Result}     from 'antd';
-import {WithTranslation, withTranslation} from 'react-i18next';
-import {AppState}                         from '../../../store/reducers/root.reducers';
-import {userDispatchMap}                  from '../../../store/api/user.api';
-import {connect}                          from 'react-redux';
-import {UserReducerProps}                 from '../../../store/reducers/user.reducers';
-import {PageContainer}                    from '@ant-design/pro-layout';
-import {DeleteOutlined, EditOutlined}     from '@ant-design/icons';
-import ProCard                            from '@ant-design/pro-card';
-import {Token, User}                      from '../../../.openapi';
-import ProTable                           from '@ant-design/pro-table';
-import {columns}                          from './columns';
-import {Link, RouteComponentProps}        from 'react-router-dom';
-import ValueDateLabel                     from '../../shared/transaction/valueDate/valueDateLabel/ValueDateLabel';
+import * as React                                   from 'react';
+import {Button, Descriptions, Result, Space, Tag}   from 'antd';
+import {WithTranslation, withTranslation}           from 'react-i18next';
+import {AppState}                                   from '../../../store/reducers/root.reducers';
+import {userDispatchMap}                            from '../../../store/api/user.api';
+import {connect}                                    from 'react-redux';
+import {UserReducerProps}                           from '../../../store/reducers/user.reducers';
+import {PageContainer}                              from '@ant-design/pro-layout';
+import {DeleteOutlined, EditOutlined, LockOutlined} from '@ant-design/icons';
+import ProCard                                      from '@ant-design/pro-card';
+import {Token, User}                                from '../../../.openapi';
+import ProTable                                     from '@ant-design/pro-table';
+import {columns}                                    from './columns';
+import {Link, RouteComponentProps}                  from 'react-router-dom';
+import ValueDateLabel
+                                                    from '../../shared/transaction/valueDate/valueDateLabel/ValueDateLabel';
+import UpdateProfileDialog                          from '../../shared/profile/update/UpdateProfileDialog';
+import UpdatePasswordDialog                         from '../../shared/profile/update/password/UpdatePasswordDialog';
 
 const {Item} = Descriptions;
 
@@ -25,7 +28,9 @@ interface ProfileComponentProps extends RouteComponentProps<RouteProps>, WithTra
 
 interface ProfileComponentState {
     user?: User,
-    selectedTokenIds: number[]
+    selectedTokenIds: number[],
+    showUpdateProfileDialog: boolean,
+    showUpdatePasswordDialog: boolean
 }
 
 class Profile extends React.Component<ProfileComponentProps, ProfileComponentState> {
@@ -34,7 +39,9 @@ class Profile extends React.Component<ProfileComponentProps, ProfileComponentSta
         super(props);
         this.state = {
             user: props.userState.user,
-            selectedTokenIds: []
+            selectedTokenIds: [],
+            showUpdateProfileDialog: false,
+            showUpdatePasswordDialog: false
         };
 
         const {userId} = this.props.match.params;
@@ -93,16 +100,28 @@ class Profile extends React.Component<ProfileComponentProps, ProfileComponentSta
                                         valueDate={{date: this.state.user?.birthDate.birthDate || new Date()}}/>
                                 </Item>
                                 <Item label={this.props.t('Profile.User.Email')}>
-                                    {this.state.user.email.emailAddress}
+                                    <Space>
+                                        {this.state.user.email.emailAddress}
+                                        {this.state.user.verified ?
+                                            <Tag color={'success'}>{this.props.t('Profile.User.Verified')}</Tag> :
+                                            <Tag color={'warning'}>{this.props.t('Profile.User.NotVerified')}</Tag>}
+                                    </Space>
                                 </Item>
                                 <Item label={this.props.t('Profile.User.Gender.Gender')}>
                                     {this.props.t('Profile.User.Gender.' + this.state.user.gender.gender)}
                                 </Item>
                             </Descriptions>)}
                         extra={
-                            <Button icon={<EditOutlined/>}>
-                                {this.props.t('Form.Button.Edit')}
-                            </Button>}
+                            <Space>
+                                <Button icon={<EditOutlined/>}
+                                        onClick={() => this.setState({showUpdateProfileDialog: true})}>
+                                    {this.props.t('Form.Button.Edit')}
+                                </Button>
+                                <Button icon={<LockOutlined/>}
+                                        onClick={() => this.setState({showUpdatePasswordDialog: true})}>
+                                    {this.props.t('Form.Button.Profile.User.UpdatePassword')}
+                                </Button>
+                            </Space>}
                         tabList={[{
                             key: 'devicesTab',
                             tab: this.props.t('Profile.User.Devices')
@@ -119,7 +138,6 @@ class Profile extends React.Component<ProfileComponentProps, ProfileComponentSta
                                 rowKey={'id'}
                                 search={false}
                                 pagination={false}
-                                loading={false}
                                 toolBarRender={() => [
                                     <Button
                                         key={'deleteProductButton'}
@@ -132,6 +150,18 @@ class Profile extends React.Component<ProfileComponentProps, ProfileComponentSta
                                     </Button>,
                                 ]}/>
                         </ProCard>
+
+                        <UpdateProfileDialog
+                            data={this.state.user}
+                            visible={this.state.showUpdateProfileDialog}
+                            onSubmit={data => this.setState({user: data, showUpdateProfileDialog: false})}
+                            onCancel={() => this.setState({showUpdateProfileDialog: false})}/>
+
+                        <UpdatePasswordDialog
+                            data={this.state.user}
+                            visible={this.state.showUpdatePasswordDialog}
+                            onSubmit={data => this.setState({user: data, showUpdatePasswordDialog: false})}
+                            onCancel={() => this.setState({showUpdatePasswordDialog: false})}/>
                     </PageContainer>
                 );
             }

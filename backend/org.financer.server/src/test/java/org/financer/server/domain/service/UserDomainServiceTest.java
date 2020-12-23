@@ -164,7 +164,7 @@ public class UserDomainServiceTest extends ServiceTest {
 
     @Test
     public void testUpdatePassword() {
-        User userToAssert = userDomainService.updatePassword(new HashedPassword("newPassword"));
+        User userToAssert = userDomainService.updatePassword(1L, "password", new HashedPassword("newPassword"));
         assertThat(userToAssert.getPassword().isEqualTo("newPassword")).isTrue();
     }
 
@@ -197,9 +197,12 @@ public class UserDomainServiceTest extends ServiceTest {
 
     @Test
     public void testUpdatePasswordUnauthorizedOperation() {
-        mockAnotherUserAuthenticated();
-        assertThatExceptionOfType(UnauthorizedOperationException.class).isThrownBy(() ->
-                userDomainService.updatePassword(new HashedPassword("newPassword")));
+        assertThatExceptionOfType(UnauthorizedOperationException.class).isThrownBy(
+                () -> userDomainService.updatePassword(1L, "incorrectPassword", new HashedPassword("newPassword")));
+
+        user.setRoles(Set.of(userRole()));
+        assertThatExceptionOfType(UnauthorizedOperationException.class).isThrownBy(
+                () -> userDomainService.updatePassword(2L, "password", new HashedPassword("newPassword")));
     }
 
     @Test

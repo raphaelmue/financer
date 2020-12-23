@@ -4,6 +4,8 @@ import {
     GetUserRequest,
     LoginUserRequest,
     RegisterUserRequest,
+    UpdateUsersPasswordRequest,
+    UpdateUsersPersonalInformationRequest,
     UpdateUsersSettingsRequest,
     User,
     UserApi as Api
@@ -79,6 +81,24 @@ export const getUser = (data: GetUserRequest, callback?: (user: User) => void) =
     };
 };
 
+export const updateUsersPassword = (data: UpdateUsersPasswordRequest, callback?: (user: User) => void) => {
+    return (dispatch: Dispatch) => {
+        dispatch({
+            type: UserActionDefinition.UPDATE_USERS_PASSWORD_REQUEST,
+            payload: data
+        });
+        const api = new Api(apiConfiguration());
+        ErrorMessage.resolveError(api.updateUsersPassword(data)
+            .then((user) => {
+                dispatch({
+                    type: UserActionDefinition.UPDATE_USERS_PASSWORD_SUCCESS,
+                    payload: user
+                });
+                if (callback) callback(user);
+            }), UserActionDefinition.UPDATE_USERS_PASSWORD_FAILED, dispatch);
+    };
+};
+
 export const updateUsersSettings = (data: UpdateUsersSettingsRequest, callback?: (user: User) => void) => {
     return (dispatch: Dispatch) => {
         dispatch({
@@ -97,18 +117,41 @@ export const updateUsersSettings = (data: UpdateUsersSettingsRequest, callback?:
     };
 };
 
+export const updateUsersData = (data: UpdateUsersPersonalInformationRequest, callback?: (user: User) => void) => {
+    return (dispatch: Dispatch) => {
+        dispatch({
+            type: UserActionDefinition.UPDATE_USERS_DATA_REQUEST,
+            payload: data
+        });
+        const api = new Api(apiConfiguration());
+        ErrorMessage.resolveError(api.updateUsersPersonalInformation(data)
+            .then((user) => {
+                dispatch({
+                    type: UserActionDefinition.UPDATE_USERS_DATA_SUCCESS,
+                    payload: user
+                });
+                if (callback) callback(user);
+            }), UserActionDefinition.UPDATE_USERS_DATA_FAILED, dispatch);
+    };
+};
+
 export interface UserApi {
     dispatchLoginUser: (loginData: LoginUserRequest) => void,
     dispatchRegisterUser: (registeringData: RegisterUserRequest) => void,
     dispatchDeleteToken: (logoutUserData: DeleteTokenRequest) => void,
     dispatchGetUser: (data: GetUserRequest, callback?: (user: User) => void) => void,
-    dispatchUpdateUsersSettings: (data: UpdateUsersSettingsRequest, callback?: (user: User) => void) => void
+    dispatchUpdateUsersPassword: (data: UpdateUsersPasswordRequest, callback?: (user: User) => void) => void,
+    dispatchUpdateUsersSettings: (data: UpdateUsersSettingsRequest, callback?: (user: User) => void) => void,
+    dispatchUpdateUsersData: (data: UpdateUsersPersonalInformationRequest, callback?: (user: User) => void) => void
 }
+
 
 export const userDispatchMap = (dispatch: Dispatch) => bindActionCreators({
     dispatchLoginUser: loginUser,
     dispatchRegisterUser: registerUser,
     dispatchDeleteToken: deleteToken,
     dispatchGetUser: getUser,
-    dispatchUpdateUsersSettings: updateUsersSettings
+    dispatchUpdateUsersPassword: updateUsersPassword,
+    dispatchUpdateUsersSettings: updateUsersSettings,
+    dispatchUpdateUsersData: updateUsersData
 }, dispatch);

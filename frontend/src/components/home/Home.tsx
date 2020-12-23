@@ -81,7 +81,6 @@ class Home extends React.Component<HomeProps, HomeState> {
                     height: '100vh'
                 }}
                 title="F I N A N C E R"
-                loading={this.props.userState.isLoading}
                 logo={null}
                 menuDataRender={() => menuData()}
                 menuItemRender={(menuItemProps, defaultDom) => {

@@ -1,12 +1,13 @@
-import {Form, Input}         from 'antd';
-import {UserOutlined}        from '@ant-design/icons';
+import {Form, Input}                      from 'antd';
+import {UserOutlined}                     from '@ant-design/icons';
 import * as React                         from 'react';
 import {WithTranslation, withTranslation} from 'react-i18next';
 import {Name}                             from '../../../../.openapi';
 import {connect}                          from 'react-redux';
-import {fieldIsRequiredRule} from '../form/rules';
+import {fieldIsRequiredRule}              from '../form/rules';
 
 interface NameInputComponentProps extends WithTranslation<'default'> {
+    name?: Name
     onChange: (name: Name) => void
 }
 
@@ -31,7 +32,8 @@ class NameInput extends React.Component<NameInputComponentProps, NameInputCompon
                 <Form.Item
                     name="name"
                     rules={[fieldIsRequiredRule()]}
-                    style={{display: 'inline-block', width: 'calc(50% - 6px)'}}>
+                    style={{display: 'inline-block', width: 'calc(50% - 6px)'}}
+                    initialValue={this.props.name?.firstName}>
                     <Input prefix={<UserOutlined className="site-form-item-icon"/>}
                            type={'text'}
                            name="firstName"
@@ -43,7 +45,8 @@ class NameInput extends React.Component<NameInputComponentProps, NameInputCompon
                 <Form.Item
                     name="surname"
                     rules={[fieldIsRequiredRule()]}
-                    style={{display: 'inline-block', width: 'calc(50% - 6px)'}}>
+                    style={{display: 'inline-block', width: 'calc(50% - 6px)'}}
+                    initialValue={this.props.name?.surname}>
                     <Input prefix={<UserOutlined className="site-form-item-icon"/>}
                            type={'text'}
                            name="surname"
@@ -55,4 +58,4 @@ class NameInput extends React.Component<NameInputComponentProps, NameInputCompon
     }
 }
 
-export default connect()(withTranslation<"default">()(NameInput));
+export default connect()(withTranslation<'default'>()(NameInput));

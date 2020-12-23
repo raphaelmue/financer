@@ -13,7 +13,7 @@ import org.financer.shared.domain.model.value.objects.Name;
 @Schema(name = "UpdatePersonalInformation", description = "Schema for updating users personal information")
 public class UpdatePersonalInformationDTO implements DataTransferObject {
 
-    @Schema(description = "Name of the user", required = true)
+    @Schema(description = "Name of the user")
     private Name name;
 
     @Schema(description = "Birth date of the user", example = "2020-01-01")

@@ -244,9 +244,18 @@ public class UserDomainService {
      * @param updatedPassword new hashed password
      * @return update user object
      */
-    public User updatePassword(HashedPassword updatedPassword) {
+    public User updatePassword(long userId, String password, HashedPassword updatedPassword) {
         logger.info("Updating users password.");
-        Optional<User> userOptional = userRepository.findById(authenticationService.getUserId());
+
+        if (userId != authenticationService.getUserId()) {
+            authenticationService.throwIfUserHasNotRole("ADMIN");
+        }
+
+        if (!authenticationService.getAuthenticatedUser().getPassword().isEqualTo(password)) {
+            throw new UnauthorizedOperationException(userId);
+        }
+
+        Optional<User> userOptional = userRepository.findById(userId);
         if (userOptional.isPresent()) {
             userOptional.get().setPassword(updatedPassword);
             return userRepository.save(userOptional.get());
@@ -275,7 +284,8 @@ public class UserDomainService {
                 | changeUserGender(user, gender);
 
         if (userChanged) {
-            return userRepository.save(user);
+            return userRepository.save(user)
+                    .setActiveToken(authenticationService.getAuthenticatedUser().getActiveToken());
         }
         return user;
     }

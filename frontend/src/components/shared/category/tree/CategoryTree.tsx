@@ -87,7 +87,9 @@ const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({
     dispatchRegisterUser: userApi.registerUser,
     dispatchDeleteToken: userApi.deleteToken,
     dispatchGetUser: userApi.getUser,
-    dispatchUpdateUsersSettings: userApi.updateUsersSettings
+    dispatchUpdateUsersPassword: userApi.updateUsersPassword,
+    dispatchUpdateUsersSettings: userApi.updateUsersSettings,
+    dispatchUpdateUsersData: userApi.updateUsersData
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(withTranslation<'default'>()(CategoryTree));
