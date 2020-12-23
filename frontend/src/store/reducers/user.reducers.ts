@@ -25,6 +25,8 @@ const userReducer = (state: UserReducerState = initialState, action: UserAction)
             return {...state, isLoading: false, user: action.payload, error: undefined};
         case UserActionDefinition.LOGOUT_SUCCESS:
             return {...state, isLoading: false, user: undefined, error: undefined};
+        case UserActionDefinition.UPDATE_USERS_PASSWORD_SUCCESS:
+            return {...state, isLoading: false, error: undefined};
         case UserActionDefinition.GET_USER_SUCCESS:
             if (action.payload.id === state.user?.id) {
                 return {...state, isLoading: false, error: undefined, user: action.payload};
@@ -41,6 +43,7 @@ const userReducer = (state: UserReducerState = initialState, action: UserAction)
         case UserActionDefinition.REGISTER_REQUEST:
         case UserActionDefinition.LOGOUT_REQUEST:
         case UserActionDefinition.GET_USER_REQUEST:
+        case UserActionDefinition.UPDATE_USERS_PASSWORD_REQUEST:
         case UserActionDefinition.UPDATE_USERS_SETTINGS_REQUEST:
         case UserActionDefinition.UPDATE_USERS_DATA_REQUEST:
             return {...state, isLoading: true};
@@ -48,6 +51,7 @@ const userReducer = (state: UserReducerState = initialState, action: UserAction)
         case UserActionDefinition.REGISTER_FAILED:
         case UserActionDefinition.LOGOUT_FAILED:
         case UserActionDefinition.GET_USER_FAILED:
+        case UserActionDefinition.UPDATE_USERS_PASSWORD_FAILED:
         case UserActionDefinition.UPDATE_USERS_SETTINGS_FAILED:
         case UserActionDefinition.UPDATE_USERS_DATA_FAILED:
             return {...state, isLoading: false, error: action.payload};

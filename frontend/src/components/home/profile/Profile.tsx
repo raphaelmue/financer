@@ -113,11 +113,13 @@ class Profile extends React.Component<ProfileComponentProps, ProfileComponentSta
                             </Descriptions>)}
                         extra={
                             <Space>
-                                <Button icon={<EditOutlined/>}
+                                <Button id={'updateProfileButton'}
+                                        icon={<EditOutlined/>}
                                         onClick={() => this.setState({showUpdateProfileDialog: true})}>
                                     {this.props.t('Form.Button.Edit')}
                                 </Button>
-                                <Button icon={<LockOutlined/>}
+                                <Button id={'updatePasswordButton'}
+                                        icon={<LockOutlined/>}
                                         onClick={() => this.setState({showUpdatePasswordDialog: true})}>
                                     {this.props.t('Form.Button.Profile.User.UpdatePassword')}
                                 </Button>

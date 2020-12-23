@@ -20,7 +20,13 @@
         },
         "ipAddress": {
             "ipAddress": "192.168.0.1"
-        }
+        },
+        "expireDate": {
+            "expireDate": "3000-01-01",
+            "valid": true,
+            "expired": false
+        },
+        "operatingSystem": null
     },
     "tokens": [
         {
@@ -30,7 +36,13 @@
             },
             "ipAddress": {
                 "ipAddress": "192.168.0.1"
-            }
+            },
+            "expireDate": {
+                "expireDate": "3000-01-01T00:00:00.000Z",
+                "valid": true,
+                "expired": false
+            },
+            "operatingSystem": null
         }
     ],
     "verified": true,

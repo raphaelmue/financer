@@ -29,7 +29,7 @@ class UpdateProfileDialog extends React.Component<UpdateProfileDialogComponentPr
 
         this.state = {
             name: this.props.data?.name,
-            birthDate: this.props.data?.birthDate,
+            birthDate: {birthDate: new Date(this.props.data?.birthDate.birthDate || '')},
             gender: this.props.data?.gender,
             confirmLoading: false,
         };
