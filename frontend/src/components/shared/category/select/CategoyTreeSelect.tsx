@@ -9,14 +9,14 @@ import {TreeSelect}                       from 'antd';
 import {UserReducerProps}                 from '../../../../store/reducers/user.reducers';
 import {LegacyDataNode}                   from 'rc-tree-select/lib/interface';
 import CategoryUtil                       from '../util';
-import {DataNode}                         from 'antd/lib/tree';
 import * as userApi                       from '../../../../store/api/user.api';
 
 interface CategoryTreeSelectComponentProps extends WithTranslation<'default'>, UserReducerProps, CategoryReducerProps {
     onChange: (categoryId: number | undefined) => void,
     categoryId?: number,
     filterFixed?: boolean,
-    filterVariable?: boolean
+    filterVariable?: boolean,
+    rootSelectable?: boolean
 }
 
 interface CategoryTreeSelectComponentState {
@@ -48,17 +48,6 @@ class CategoryTreeSelect extends React.Component<CategoryTreeSelectComponentProp
         return option?.title?.toString().toLocaleLowerCase().includes(inputValue) || false;
     };
 
-    getTreeData(): DataNode[] {
-        let categories = CategoryUtil.addRootCategories(this.props.categoryState.categories);
-        if (this.props.filterFixed) {
-            categories = CategoryUtil.filterFixed(categories);
-        }
-        if (this.props.filterVariable) {
-            categories = CategoryUtil.filterVariable(categories);
-        }
-        return CategoryUtil.convertCategoriesToDataNode(categories);
-    }
-
     render() {
         return (
             <TreeSelect
@@ -67,7 +56,7 @@ class CategoryTreeSelect extends React.Component<CategoryTreeSelectComponentProp
                 key={'id'}
                 allowClear
                 placeholder={this.props.t('Transaction.Category.SelectCategoryPlaceholder')?.toString()}
-                treeData={this.getTreeData()}
+                treeData={CategoryUtil.getTreeData(this.props.categoryState.categories, this.props.filterFixed, this.props.filterVariable, this.props.rootSelectable)}
                 onChange={value => this.onChange(value)}
                 filterTreeNode={this.filter}
                 treeDefaultExpandAll
@@ -85,6 +74,8 @@ const mapStateToProps = (state: AppState) => {
 
 const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({
     dispatchLoadCategories: categoryApi.loadCategories,
+    dispatchCreateCategory: categoryApi.createCategory,
+    dispatchUpdateCategory: categoryApi.updateCategory,
     dispatchLoginUser: userApi.loginUser,
     dispatchRegisterUser: userApi.registerUser,
     dispatchDeleteToken: userApi.deleteToken,

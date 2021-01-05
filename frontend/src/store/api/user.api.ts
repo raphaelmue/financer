@@ -1,4 +1,4 @@
-import {bindActionCreators, Dispatch} from 'redux';
+import {ActionCreatorsMapObject, bindActionCreators, Dispatch} from 'redux';
 import {
     DeleteTokenRequest,
     GetUserRequest,
@@ -9,10 +9,10 @@ import {
     UpdateUsersSettingsRequest,
     User,
     UserApi as Api
-}                                     from '../../.openapi';
-import {apiConfiguration}             from './index';
-import {UserActionDefinition}         from '../actions/user.actions';
-import {ErrorMessage}                 from '../errorMessage';
+}                                                              from '../../.openapi';
+import {apiConfiguration}                                      from './index';
+import {UserActionDefinition}                                  from '../actions/user.actions';
+import {ErrorMessage}                                          from '../errorMessage';
 
 
 export const loginUser = (loginData: LoginUserRequest) => {
@@ -145,6 +145,15 @@ export interface UserApi {
     dispatchUpdateUsersData: (data: UpdateUsersPersonalInformationRequest, callback?: (user: User) => void) => void
 }
 
+export const userActionCreators: ActionCreatorsMapObject = {
+    dispatchLoginUser: loginUser,
+    dispatchRegisterUser: registerUser,
+    dispatchDeleteToken: deleteToken,
+    dispatchGetUser: getUser,
+    dispatchUpdateUsersPassword: updateUsersPassword,
+    dispatchUpdateUsersSettings: updateUsersSettings,
+    dispatchUpdateUsersData: updateUsersData
+};
 
 export const userDispatchMap = (dispatch: Dispatch) => bindActionCreators({
     dispatchLoginUser: loginUser,

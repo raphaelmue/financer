@@ -80,6 +80,7 @@ class FixedTransactionOverview extends React.Component<FixedTransactionOverviewC
                 <Row>
                     <ProCard colSpan={8} bordered>
                         <CategoryTree
+                            filterFixed
                             onSelect={this.onSelectCategory.bind(this)}/>
                     </ProCard>
                     <ProCard colSpan={16} bordered>

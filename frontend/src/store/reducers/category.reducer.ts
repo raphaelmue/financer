@@ -19,11 +19,18 @@ const initialState: CategoryState = {
 
 export const categoryReducer = (state: CategoryState = initialState, action: CategoryAction) => {
     switch (action.type) {
-        case CategoryActionDefinition.LOAD_CATEGORIES_REQUEST:
-            return {...state, isLoading: true, error: undefined};
         case CategoryActionDefinition.LOAD_CATEGORIES_SUCCESS:
             return {...state, isLoading: false, error: undefined, categories: action.payload};
+        case CategoryActionDefinition.CREATE_CATEGORY_SUCCESS:
+        case CategoryActionDefinition.UPDATE_CATEGORY_SUCCESS:
+            return {...state, isLoading: false, error: undefined};
+        case CategoryActionDefinition.LOAD_CATEGORIES_REQUEST:
+        case CategoryActionDefinition.CREATE_CATEGORY_REQUEST:
+        case CategoryActionDefinition.UPDATE_CATEGORY_REQUEST:
+            return {...state, isLoading: true, error: undefined};
         case CategoryActionDefinition.LOAD_CATEGORIES_FAILED:
+        case CategoryActionDefinition.CREATE_CATEGORY_FAILED:
+        case CategoryActionDefinition.UPDATE_CATEGORY_FAILED:
             return {...state, isLoading: false, error: action.payload};
         default:
             return state;

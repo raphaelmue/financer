@@ -18,11 +18,14 @@ public class CategoryDTO implements DataTransferObject {
     @NotNull
     @Size(min = 1)
     @Schema(description = "Identifier of the category", required = true, minimum = "1")
-    private int id;
+    private long id;
 
     @NotNull
-    @Schema(description = "Category class of the category", required = true)
+    @Schema(description = "Category class of the category", required = true, enumAsRef = true)
     private CategoryClass.Values categoryClass;
+
+    @Schema(description = "Id of the parent category")
+    private Long parentId;
 
     @NotNull
     @Schema(description = "Name of the category", required = true, example = "Food")

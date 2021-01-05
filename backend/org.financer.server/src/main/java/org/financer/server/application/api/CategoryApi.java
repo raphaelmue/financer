@@ -44,7 +44,7 @@ public interface CategoryApi {
                     description = "Category to be created",
                     required = true,
                     content = @Content(schema = @Schema(implementation = CreateCategoryDTO.class)))
-            @RequestBody @NotNull @Valid CreateCategoryDTO category);
+                @RequestBody @NotNull @Valid CreateCategoryDTO category);
 
     /**
      * Updates a specified category.
@@ -74,7 +74,7 @@ public interface CategoryApi {
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     description = "Category to be updated",
                     required = true,
-                    content = @Content(schema = @Schema(implementation = CreateCategoryDTO.class)))
+                    content = @Content(schema = @Schema(implementation = UpdateCategoryDTO.class)))
             @RequestBody @NotNull @Valid UpdateCategoryDTO category);
 
     /**
