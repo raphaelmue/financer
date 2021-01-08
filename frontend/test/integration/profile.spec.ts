@@ -101,7 +101,7 @@ describe('Profile Test', () => {
         cy.get('span[title="Another Test Category"]').should('exist').and('be.visible');
     });
 
-    it.only('should delete a category', () => {
+    it('should delete a category', () => {
         cy.intercept({
             method: 'DELETE',
             url: TestUtil.getServerBaseUrl() + '/categories/1'
