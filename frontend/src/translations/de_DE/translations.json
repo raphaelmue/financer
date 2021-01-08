@@ -60,7 +60,9 @@
         "FIXED_REVENUE": "Feste Einnahmen",
         "VARIABLE_EXPENSES": "Variable Ausgaben",
         "VARIABLE_REVENUE": "Variable Einnahmen"
-      }
+      },
+      "ParentCategory": "Übergeordnete Kategorie",
+      "CategoryName": "Kategoriename"
     },
     "Amount": "Betrag",
     "Description": "Beschreibung",
@@ -178,6 +180,10 @@
       "User": {
         "UpdatedProfile": "Dein Profil wurde erfolgreich aktualisiert."
       }
+    },
+    "Category": {
+      "CreatedCategory": "Neue Kategorie wurde erfolgreich erstellt.",
+      "UpdatedCategory": "Kategorie wurde erfolgreich aktualisiert"
     }
   },
   "Admin": {

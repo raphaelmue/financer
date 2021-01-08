@@ -14,7 +14,7 @@ public class UpdateCategoryDTO implements DataTransferObject {
     @Schema(description = "Name of the category", example = "Food")
     private String name = null;
 
-    @Schema(description = "Name of the category class", example = "FIXED_EXPENSES")
+    @Schema(description = "Name of the category class", example = "FIXED_EXPENSES", enumAsRef = true)
     private CategoryClass.Values categoryClass = null;
 
     @Schema(description = "Id of the parent category", example = "3")

@@ -1,7 +1,8 @@
-import {Category}                                 from '../../.openapi/models';
+import {Category}                                 from '../../.openapi';
 import {CategoryAction, CategoryActionDefinition} from '../actions/category.actions';
 import {ReducerState}                             from './reducers';
 import {CategoryApi}                              from '../api/category.api';
+import CategoryUtil                               from '../../components/shared/category/util';
 
 export interface CategoryState extends ReducerState {
     categories: Category[];
@@ -22,8 +23,11 @@ export const categoryReducer = (state: CategoryState = initialState, action: Cat
         case CategoryActionDefinition.LOAD_CATEGORIES_SUCCESS:
             return {...state, isLoading: false, error: undefined, categories: action.payload};
         case CategoryActionDefinition.CREATE_CATEGORY_SUCCESS:
+            CategoryUtil.insertCategoryIntoTree(state.categories, action.payload);
+            return {...state, isLoading: false, error: undefined, categories: state.categories};
         case CategoryActionDefinition.UPDATE_CATEGORY_SUCCESS:
-            return {...state, isLoading: false, error: undefined};
+            CategoryUtil.insertCategoryIntoTree(state.categories, action.payload);
+            return {...state, isLoading: false, error: undefined, categories: state.categories};
         case CategoryActionDefinition.LOAD_CATEGORIES_REQUEST:
         case CategoryActionDefinition.CREATE_CATEGORY_REQUEST:
         case CategoryActionDefinition.UPDATE_CATEGORY_REQUEST:

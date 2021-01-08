@@ -5,11 +5,11 @@ import {
     GetUsersCategoriesRequest,
     UpdateCategoryRequest,
     UserApi
-}                                                              from '../../.openapi';
-import {ActionCreatorsMapObject, bindActionCreators, Dispatch} from 'redux';
-import {CategoryActionDefinition}                              from '../actions/category.actions';
-import {apiConfiguration}                                      from './index';
-import {ErrorMessage}                                          from '../errorMessage';
+}                                     from '../../.openapi';
+import {bindActionCreators, Dispatch} from 'redux';
+import {CategoryActionDefinition}     from '../actions/category.actions';
+import {apiConfiguration}             from './index';
+import {ErrorMessage}                 from '../errorMessage';
 
 export const loadCategories = (data: GetUsersCategoriesRequest, callback?: (categories: Category[]) => void) => {
     return (dispatch: Dispatch) => {

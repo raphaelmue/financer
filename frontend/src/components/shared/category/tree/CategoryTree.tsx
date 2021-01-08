@@ -59,7 +59,7 @@ class CategoryTree extends React.Component<CategoryTreeComponentProps, CategoryT
                         placeholder={this.props.t('Form.Input.Search')?.toString()}
                         onChange={event => this.setState({searchQuery: event.target.value})}/>
                 <Tree
-                    showLine
+                    showLine={{showLeafIcon: false}}
                     defaultExpandAll
                     onSelect={this.onSelect.bind(this)}
                     filterTreeNode={this.filter}

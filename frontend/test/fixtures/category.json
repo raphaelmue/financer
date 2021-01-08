@@ -1,0 +1,7 @@
+{
+    "id": 3,
+    "categoryClass": "VARIABLE_EXPENSES",
+    "name": "Another Test Category",
+    "parentId": 1,
+    "children": []
+}

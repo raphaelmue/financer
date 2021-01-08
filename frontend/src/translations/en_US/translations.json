@@ -60,7 +60,9 @@
         "FIXED_REVENUE": "Fixed revenue",
         "VARIABLE_EXPENSES": "Variable Expenses",
         "VARIABLE_REVENUE": "Variable Revenue"
-      }
+      },
+      "ParentCategory": "Parent category",
+      "CategoryName": "Category name"
     },
     "Amount": "Amount",
     "Description": "Description",
@@ -178,6 +180,10 @@
       "User": {
         "UpdatedProfile": "Your profile was successfully updated."
       }
+    },
+    "Category": {
+      "CreatedCategory": "New category was successfully created.",
+      "UpdatedCategory": "Category was successfully updated."
     }
   },
   "Admin": {

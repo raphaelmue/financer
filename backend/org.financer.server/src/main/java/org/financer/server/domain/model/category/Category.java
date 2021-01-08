@@ -52,6 +52,7 @@ public class Category implements DataEntity, Tree, AmountProvider, UserProperty 
     private Set<Category> children;
 
     @OneToMany(mappedBy = "category", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @ToString.Exclude
     private Set<Transaction> transactions = new HashSet<>();
 
     @Override

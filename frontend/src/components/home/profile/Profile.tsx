@@ -2,7 +2,7 @@ import * as React                                                 from 'react';
 import {Button, Descriptions, notification, Result, Space, Tag}   from 'antd';
 import {WithTranslation, withTranslation}                         from 'react-i18next';
 import {AppState}                                                 from '../../../store/reducers/root.reducers';
-import {userDispatchMap}                                          from '../../../store/api/user.api';
+import * as userApi                                               from '../../../store/api/user.api';
 import {connect}                                                  from 'react-redux';
 import {UserReducerProps}                                         from '../../../store/reducers/user.reducers';
 import {PageContainer}                                            from '@ant-design/pro-layout';
@@ -23,6 +23,8 @@ import CreateOrUpdateCategoryDialog
                                                                   from '../../shared/category/createOrUpdate/CreateOrUpdateCategoryDialog';
 import CategoryUtil                                               from '../../shared/category/util';
 import {CategoryReducerProps}                                     from '../../../store/reducers/category.reducer';
+import {bindActionCreators, Dispatch}                             from 'redux';
+import * as categoryApi                                           from '../../../store/api/category.api';
 
 const {Item} = Descriptions;
 
@@ -38,7 +40,7 @@ interface ProfileComponentState {
     activeTab: string,
     selectedCategoryId?: number
     selectedTokenIds: number[],
-    showCategoryDialog: boolean,
+    showCategoryDialog?: string,
     showUpdateProfileDialog: boolean,
     showUpdatePasswordDialog: boolean
 }
@@ -51,7 +53,6 @@ class Profile extends React.Component<ProfileComponentProps, ProfileComponentSta
             user: props.userState.user,
             activeTab: 'categoriesTab',
             selectedTokenIds: [],
-            showCategoryDialog: false,
             showUpdateProfileDialog: false,
             showUpdatePasswordDialog: false
         };
@@ -95,12 +96,12 @@ class Profile extends React.Component<ProfileComponentProps, ProfileComponentSta
                 }, () => {
                     notification.success({
                         message: this.props.t('Menu.Categories'),
-                        description: this.props.t('Message.Category.CreatedCategory')
+                        description: this.props.t('Message.Category.UpdatedCategory')
                     });
                     resolve();
                 });
             }
-        });
+        }).then(() => this.setState({showCategoryDialog: undefined}));
     }
 
     onSelectionChange(selectedRowKeys: React.ReactText[]) {
@@ -121,7 +122,7 @@ class Profile extends React.Component<ProfileComponentProps, ProfileComponentSta
     }
 
     getSelectedCategory(): Category | undefined {
-        if (this.state.selectedCategoryId) {
+        if (this.state.selectedCategoryId && this.state.showCategoryDialog === 'update') {
             return CategoryUtil.getCategoryById(this.props.categoryState.categories, this.state.selectedCategoryId);
         }
         return undefined;
@@ -216,23 +217,23 @@ class Profile extends React.Component<ProfileComponentProps, ProfileComponentSta
                             title={this.props.t('Menu.Categories')}
                             extra={
                                 <Space>
-                                    <Button id={'editCategory'}
+                                    <Button id={'editCategoryButton'}
                                             disabled={this.state.selectedCategoryId === undefined}
                                             icon={<EditOutlined/>}
-                                            onClick={() => this.setState({showCategoryDialog: true})}>
+                                            onClick={() => this.setState({showCategoryDialog: 'update'})}>
                                         {this.props.t('Form.Button.Edit')}
                                     </Button>
-                                    <Button id={'deleteCategory'}
+                                    <Button id={'deleteCategoryButton'}
                                             disabled={this.state.selectedCategoryId === undefined}
                                             danger
                                             type={'primary'}
                                             icon={<DeleteOutlined/>}>
                                         {this.props.t('Form.Button.Delete')}
                                     </Button>
-                                    <Button id={'createCategory'}
+                                    <Button id={'createCategoryButton'}
                                             type={'primary'}
                                             icon={<PlusOutlined/>}
-                                            onClick={() => this.setState({showCategoryDialog: true})}>
+                                            onClick={() => this.setState({showCategoryDialog: 'create'})}>
                                         {this.props.t('Form.Button.New')}
                                     </Button>
                                 </Space>}
@@ -257,10 +258,10 @@ class Profile extends React.Component<ProfileComponentProps, ProfileComponentSta
 
                         <CreateOrUpdateCategoryDialog
                             data={this.getSelectedCategory()}
-                            visible={this.state.showCategoryDialog}
-                            onSubmit={this.createOrUpdateCategory}
-                            onCancel={() => this.setState({showCategoryDialog: false})}/>
-
+                            parentCategoryId={this.state.selectedCategoryId}
+                            visible={(this.state.showCategoryDialog !== undefined)}
+                            onSubmit={category => this.createOrUpdateCategory(category)}
+                            onCancel={() => this.setState({showCategoryDialog: undefined})}/>
 
                     </PageContainer>
                 );
@@ -276,4 +277,17 @@ const mapStateToProps = (state: AppState) => {
     };
 };
 
-export default connect(mapStateToProps, userDispatchMap)(withTranslation<'default'>()(Profile));
+const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({
+    dispatchLoadCategories: categoryApi.loadCategories,
+    dispatchCreateCategory: categoryApi.createCategory,
+    dispatchUpdateCategory: categoryApi.updateCategory,
+    dispatchLoginUser: userApi.loginUser,
+    dispatchRegisterUser: userApi.registerUser,
+    dispatchDeleteToken: userApi.deleteToken,
+    dispatchGetUser: userApi.getUser,
+    dispatchUpdateUsersPassword: userApi.updateUsersPassword,
+    dispatchUpdateUsersSettings: userApi.updateUsersSettings,
+    dispatchUpdateUsersData: userApi.updateUsersData
+}, dispatch);
+
+export default connect(mapStateToProps, mapDispatchToProps)(withTranslation<'default'>()(Profile));

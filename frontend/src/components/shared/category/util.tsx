@@ -1,6 +1,6 @@
-import {DataNode}                            from 'antd/lib/tree';
+import {DataNode}                    from 'antd/lib/tree';
 import {Category, CategoryClassEnum} from '../../../.openapi';
-import i18next                               from 'i18next';
+import i18next                       from 'i18next';
 
 export default class CategoryUtil {
 
@@ -35,32 +35,18 @@ export default class CategoryUtil {
         return rootCategories;
     }
 
-    static getCategoryClassFromCategory(categories: Category[], parentId: number): CategoryClassEnum | undefined {
-        let categoryClass: CategoryClassEnum | undefined;
-        for (const category of categories) {
-
-            if (category.id === parentId) {
-                return category.categoryClass;
-            }
-
-            categoryClass = this.getCategoryClassFromCategory(category.children || [], parentId);
-            if (category) {
-                return categoryClass;
-            }
-        }
-        return undefined;
+    static getCategoryClassFromCategory(categories: Category[], categoryId: number): CategoryClassEnum | undefined {
+        return CategoryUtil.getCategoryById(categories, categoryId)?.categoryClass;
     }
 
     static getCategoryById(categories: Category[], categoryId: number): Category | undefined {
-        let foundCategory: Category | undefined;
         for (const category of categories) {
-
             if (category.id === categoryId) {
                 return category;
             }
 
-            foundCategory = this.getCategoryById(category.children || [], categoryId);
-            if (category) {
+            const foundCategory = this.getCategoryById(category.children || [], categoryId);
+            if (foundCategory) {
                 return foundCategory;
             }
         }
@@ -125,5 +111,23 @@ export default class CategoryUtil {
             }
         }
         return [];
+    }
+
+    static insertCategoryIntoTree(categories: Category[], categoryToInsert: Category): void {
+        for (const category of categories) {
+            if (category.id === categoryToInsert.parentId) {
+                if (category.children === undefined) {
+                    category.children = [];
+                }
+                const index = category.children.findIndex(value => value.id === categoryToInsert.id);
+                if (index > 0) {
+                    category.children.splice(index, 1);
+                }
+                category.children.push(categoryToInsert);
+                return;
+            }
+
+            this.insertCategoryIntoTree(category.children || [], categoryToInsert);
+        }
     }
 }

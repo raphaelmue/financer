@@ -12,6 +12,7 @@ import {fieldIsRequiredRule}              from '../../user/form/rules';
 import {categoryDispatchMap}              from '../../../../store/api/category.api';
 
 interface CreateOrUpdateCategoryDialogComponentProps extends DataDialog<Category>, WithTranslation<'default'>, CategoryReducerProps {
+    parentCategoryId?: number
 }
 
 interface CreateOrUpdateCategoryDialogComponentState {
@@ -27,13 +28,16 @@ class CreateOrUpdateCategoryDialog extends React.Component<CreateOrUpdateCategor
 
         this.state = {
             confirmLoading: false,
+            categoryName: props.data?.name,
+            parentCategoryId: props.data?.parentId || props.parentCategoryId
         };
     }
 
 
     onSubmit() {
-        if (this.props.onSubmit && this.state.categoryName && this.state.parentCategoryId) {
-            const categoryClass = CategoryUtil.getCategoryClassFromCategory(this.props.categoryState.categories, this.state.parentCategoryId);
+        const parentId: number | undefined = this.state.parentCategoryId || this.props.data?.parentId || this.props.parentCategoryId;
+        if (this.state.categoryName && parentId) {
+            const categoryClass = CategoryUtil.getCategoryClassFromCategory(this.props.categoryState.categories, parentId);
             if (categoryClass) {
                 this.setState({confirmLoading: true});
 
@@ -43,19 +47,27 @@ class CreateOrUpdateCategoryDialog extends React.Component<CreateOrUpdateCategor
                         id: -1,
                         children: [],
                         name: this.state.categoryName,
+                        parentId: parentId,
                         categoryClass: categoryClass
                     };
                 } else {
-                    category = this.props.data;
+                    category = {
+                        ...this.props.data,
+                        name: this.state.categoryName,
+                        parentId: parentId,
+                        categoryClass: categoryClass
+                    };
                 }
 
-                const promise = this.props.onSubmit(category);
-                if (promise) {
-                    promise.then(() => {
+                if (this.props.onSubmit) {
+                    const promise = this.props.onSubmit(category);
+                    if (promise) {
+                        promise.then(() => {
+                            this.setState({confirmLoading: false});
+                        });
+                    } else {
                         this.setState({confirmLoading: false});
-                    });
-                } else {
-                    this.setState({confirmLoading: false});
+                    }
                 }
             }
         }
@@ -70,6 +82,7 @@ class CreateOrUpdateCategoryDialog extends React.Component<CreateOrUpdateCategor
     render() {
         return (
             <Modal
+                title={this.props.t('Menu.Categories')}
                 visible={this.props.visible}
                 okText={this.props.t('Form.Button.Submit')}
                 cancelText={this.props.t('Form.Button.Cancel')}
@@ -77,30 +90,33 @@ class CreateOrUpdateCategoryDialog extends React.Component<CreateOrUpdateCategor
                 onOk={this.onSubmit.bind(this)}
                 onCancel={this.onCancel.bind(this)}>
                 <Form
+                    labelCol={{span: 8}}
+                    wrapperCol={{span: 16}}
+                    labelAlign={'left'}
                     name={'categoryDialog'}>
                     <Form.Item
                         name={'parentCategory'}
-                        label={''}
+                        label={this.props.t('Transaction.Category.ParentCategory')}
                         rules={[fieldIsRequiredRule()]}>
                         <CategoryTreeSelect
                             rootSelectable
-                            categoryId={this.props.data?.id}
+                            categoryId={this.props.data?.parentId || this.props.parentCategoryId}
                             onChange={categoryId => this.setState({parentCategoryId: categoryId})}/>
                     </Form.Item>
                     <Form.Item
                         name={'categoryName'}
-                        label={''}
+                        label={this.props.t('Transaction.Category.CategoryName')}
                         rules={[fieldIsRequiredRule()]}
                         initialValue={this.props.data?.name}>
                         <Input
                             name={'categoryName'}
-                            maxLength={32}/>
+                            onChange={event => this.setState({categoryName: event.target.value})}
+                            maxLength={255}/>
                     </Form.Item>
                 </Form>
             </Modal>
         );
     }
-
 }
 
 const mapStateToProps = (state: AppState) => {
