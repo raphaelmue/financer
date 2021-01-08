@@ -16,7 +16,8 @@ const {Search} = Input;
 interface CategoryTreeComponentProps extends WithTranslation<'default'>, UserReducerProps, CategoryReducerProps {
     onSelect?: (categoryId?: number) => void,
     filterFixed?: boolean,
-    filterVariable?: boolean
+    filterVariable?: boolean,
+    rootSelectable?: boolean
 }
 
 interface CategoryTreeComponentState {
@@ -63,7 +64,7 @@ class CategoryTree extends React.Component<CategoryTreeComponentProps, CategoryT
                     defaultExpandAll
                     onSelect={this.onSelect.bind(this)}
                     filterTreeNode={this.filter}
-                    treeData={CategoryUtil.getTreeData(this.props.categoryState.categories, this.props.filterFixed, this.props.filterVariable)}/>
+                    treeData={CategoryUtil.getTreeData(this.props.categoryState.categories, this.props.filterFixed, this.props.filterVariable, this.props.rootSelectable)}/>
             </div>
         );
     }
@@ -80,6 +81,7 @@ const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({
     dispatchLoadCategories: categoryApi.loadCategories,
     dispatchCreateCategory: categoryApi.createCategory,
     dispatchUpdateCategory: categoryApi.updateCategory,
+    dispatchDeleteCategory: categoryApi.deleteCategory,
     dispatchLoginUser: userApi.loginUser,
     dispatchRegisterUser: userApi.registerUser,
     dispatchDeleteToken: userApi.deleteToken,

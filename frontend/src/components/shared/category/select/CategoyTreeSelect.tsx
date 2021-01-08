@@ -52,7 +52,7 @@ class CategoryTreeSelect extends React.Component<CategoryTreeSelectComponentProp
         return (
             <TreeSelect
                 showSearch
-                value={this.props.categoryId}
+                defaultValue={this.props.categoryId}
                 key={'id'}
                 allowClear
                 placeholder={this.props.t('Transaction.Category.SelectCategoryPlaceholder')?.toString()}
@@ -76,6 +76,7 @@ const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({
     dispatchLoadCategories: categoryApi.loadCategories,
     dispatchCreateCategory: categoryApi.createCategory,
     dispatchUpdateCategory: categoryApi.updateCategory,
+    dispatchDeleteCategory: categoryApi.deleteCategory,
     dispatchLoginUser: userApi.loginUser,
     dispatchRegisterUser: userApi.registerUser,
     dispatchDeleteToken: userApi.deleteToken,

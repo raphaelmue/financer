@@ -1,6 +1,12 @@
-import {Action}                                                                            from 'redux';
-import {Category, CreateCategoryRequest, GetUsersCategoriesRequest, UpdateCategoryRequest} from '../../.openapi';
-import {ErrorMessage}                                                                      from '../errorMessage';
+import {Action}       from 'redux';
+import {
+    Category,
+    CreateCategoryRequest,
+    DeleteCategoryRequest,
+    GetUsersCategoriesRequest,
+    UpdateCategoryRequest
+}                     from '../../.openapi';
+import {ErrorMessage} from '../errorMessage';
 
 export enum CategoryActionDefinition {
     LOAD_CATEGORIES_REQUEST = 'CATEGORIES:LOAD_CATEGORIES_REQUEST',
@@ -12,12 +18,16 @@ export enum CategoryActionDefinition {
     UPDATE_CATEGORY_REQUEST = 'CATEGORIES:UPDATE_CATEGORY_REQUEST',
     UPDATE_CATEGORY_SUCCESS = 'CATEGORIES:UPDATE_CATEGORY_SUCCESS',
     UPDATE_CATEGORY_FAILED = 'CATEGORIES:UPDATE_CATEGORY_FAILED',
+    DELETE_CATEGORY_REQUEST = 'CATEGORIES:DELETE_CATEGORY_REQUEST',
+    DELETE_CATEGORY_SUCCESS = 'CATEGORIES:DELETE_CATEGORY_SUCCESS',
+    DELETE_CATEGORY_FAILED = 'CATEGORIES:DELETE_CATEGORY_FAILED',
 }
 
 export type CategoryAction =
     LoadCategoriesRequestAction | LoadCategoriesSuccessAction | LoadCategoriesFailedAction
     | CreateCategoryRequestAction | CreateCategorySuccessAction | CreateCategoryFailedAction
-    | UpdateCategoryRequestAction | UpdateCategorySuccessAction | UpdateCategoryFailedAction;
+    | UpdateCategoryRequestAction | UpdateCategorySuccessAction | UpdateCategoryFailedAction
+    | DeleteCategoryRequestAction | DeleteCategorySuccessAction | DeleteCategoryFailedAction;
 
 interface LoadCategoriesRequestAction extends Action {
     type: CategoryActionDefinition.LOAD_CATEGORIES_REQUEST,
@@ -61,5 +71,19 @@ interface UpdateCategorySuccessAction extends Action {
 
 interface UpdateCategoryFailedAction extends Action {
     type: CategoryActionDefinition.UPDATE_CATEGORY_FAILED,
+    payload: ErrorMessage
+}
+
+interface DeleteCategoryRequestAction extends Action {
+    type: CategoryActionDefinition.DELETE_CATEGORY_REQUEST,
+    payload: DeleteCategoryRequest
+}
+
+interface DeleteCategorySuccessAction extends Action {
+    type: CategoryActionDefinition.DELETE_CATEGORY_SUCCESS,
+}
+
+interface DeleteCategoryFailedAction extends Action {
+    type: CategoryActionDefinition.DELETE_CATEGORY_FAILED,
     payload: ErrorMessage
 }

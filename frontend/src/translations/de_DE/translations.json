@@ -183,7 +183,9 @@
     },
     "Category": {
       "CreatedCategory": "Neue Kategorie wurde erfolgreich erstellt.",
-      "UpdatedCategory": "Kategorie wurde erfolgreich aktualisiert"
+      "UpdatedCategory": "Kategorie wurde erfolgreich aktualisiert",
+      "ConfirmDeleteCategory": "Bist du sicher, dass du diese Kategorie löschen möchtest? Alle zugeordneten Transaktionen und Anhänge werden ebenfalls gelöscht und können nicht wiederhergestellt werden. ",
+      "DeletedCategory": "Die ausgewählte Kategorie und alle dazugehörigen Transaktionen und Anhänge wurden erfolgreich gelöscht."
     }
   },
   "Admin": {

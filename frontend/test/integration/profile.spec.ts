@@ -16,7 +16,7 @@ describe('Profile Test', () => {
     it('should display user details, categories and tokens', () => {
         cy.visit('/#/profile/');
 
-        cy.wait('@getCategories')
+        cy.wait('@getCategories');
         cy.get('span[title="Test Category"]').should('exist').and('be.visible');
 
         cy.get('#rc-tabs-0-tab-devicesTab').click();
@@ -79,7 +79,7 @@ describe('Profile Test', () => {
         cy.get('span[title="Another Test Category"]').should('exist').and('be.visible');
     });
 
-    it.only('should update a category', () => {
+    it('should update a category', () => {
         cy.intercept({
             method: 'POST',
             url: TestUtil.getServerBaseUrl() + '/categories/1'
@@ -99,5 +99,23 @@ describe('Profile Test', () => {
 
         cy.get('.anticon-plus-square.ant-tree-switcher-line-icon').click();
         cy.get('span[title="Another Test Category"]').should('exist').and('be.visible');
+    });
+
+    it.only('should delete a category', () => {
+        cy.intercept({
+            method: 'DELETE',
+            url: TestUtil.getServerBaseUrl() + '/categories/1'
+        }, {fixture: 'category.json'}).as('deleteCategory');
+
+        cy.visit('/#/profile/');
+
+        cy.wait('@getCategories');
+        cy.get('span[title="Test Category"]').click();
+        cy.get('#deleteCategoryButton').click();
+
+        cy.shouldDisplayDialog()
+            .submitConfirmDialog()
+            .wait('@deleteCategory')
+            .shouldDisplayNotification();
     });
 });

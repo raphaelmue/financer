@@ -1,30 +1,31 @@
-import * as React                                                 from 'react';
-import {Button, Descriptions, notification, Result, Space, Tag}   from 'antd';
-import {WithTranslation, withTranslation}                         from 'react-i18next';
-import {AppState}                                                 from '../../../store/reducers/root.reducers';
-import * as userApi                                               from '../../../store/api/user.api';
-import {connect}                                                  from 'react-redux';
-import {UserReducerProps}                                         from '../../../store/reducers/user.reducers';
-import {PageContainer}                                            from '@ant-design/pro-layout';
-import {DeleteOutlined, EditOutlined, LockOutlined, PlusOutlined} from '@ant-design/icons';
-import ProCard                                                    from '@ant-design/pro-card';
-import {Category, Token, User}                                    from '../../../.openapi';
-import ProTable                                                   from '@ant-design/pro-table';
-import {columns}                                                  from './columns';
-import {Link, RouteComponentProps}                                from 'react-router-dom';
+import * as React                                                      from 'react';
+import {Button, Descriptions, Modal, notification, Result, Space, Tag} from 'antd';
+import {WithTranslation, withTranslation}                              from 'react-i18next';
+import {AppState}                                                      from '../../../store/reducers/root.reducers';
+import * as userApi                                                    from '../../../store/api/user.api';
+import {connect}                                                       from 'react-redux';
+import {UserReducerProps}                                              from '../../../store/reducers/user.reducers';
+import {PageContainer}                                                 from '@ant-design/pro-layout';
+import {DeleteOutlined, EditOutlined, LockOutlined, PlusOutlined}      from '@ant-design/icons';
+import ProCard                                                         from '@ant-design/pro-card';
+import {Category, Token, User}                                         from '../../../.openapi';
+import ProTable                                                        from '@ant-design/pro-table';
+import {columns}                                                       from './columns';
+import {Link, RouteComponentProps}                                     from 'react-router-dom';
 import ValueDateLabel
-                                                                  from '../../shared/transaction/valueDate/valueDateLabel/ValueDateLabel';
+                                                                       from '../../shared/transaction/valueDate/valueDateLabel/ValueDateLabel';
 import UpdateProfileDialog
-                                                                  from '../../shared/profile/update/UpdateProfileDialog';
+                                                                       from '../../shared/profile/update/UpdateProfileDialog';
 import UpdatePasswordDialog
-                                                                  from '../../shared/profile/update/password/UpdatePasswordDialog';
-import CategoryTree                                               from '../../shared/category/tree/CategoryTree';
+                                                                       from '../../shared/profile/update/password/UpdatePasswordDialog';
+import CategoryTree                                                    from '../../shared/category/tree/CategoryTree';
 import CreateOrUpdateCategoryDialog
-                                                                  from '../../shared/category/createOrUpdate/CreateOrUpdateCategoryDialog';
-import CategoryUtil                                               from '../../shared/category/util';
-import {CategoryReducerProps}                                     from '../../../store/reducers/category.reducer';
-import {bindActionCreators, Dispatch}                             from 'redux';
-import * as categoryApi                                           from '../../../store/api/category.api';
+                                                                       from '../../shared/category/createOrUpdate/CreateOrUpdateCategoryDialog';
+import CategoryUtil                                                    from '../../shared/category/util';
+import {CategoryReducerProps}                                          from '../../../store/reducers/category.reducer';
+import {bindActionCreators, Dispatch}                                  from 'redux';
+import * as categoryApi                                                from '../../../store/api/category.api';
+import {confirmDialogConfig}                                           from '../../shared/form/modal/confirm/config';
 
 const {Item} = Descriptions;
 
@@ -108,6 +109,28 @@ class Profile extends React.Component<ProfileComponentProps, ProfileComponentSta
         this.setState({
             selectedTokenIds: selectedRowKeys.map(value => parseInt(value.toString()))
         });
+    }
+
+    onDeleteCategory() {
+        if (this.state.selectedCategoryId) {
+            Modal.confirm(confirmDialogConfig(
+                this.props.t('Menu.Categories'),
+                this.props.t('Message.Category.ConfirmDeleteCategory'),
+                () => new Promise<void>((resolve, reject) => {
+                    if (this.state.selectedCategoryId) {
+                        this.props.dispatchDeleteCategory({categoryId: this.state.selectedCategoryId}, () => {
+                            notification.success({
+                                message: this.props.t('Menu.Categories'),
+                                description: this.props.t('Message.Category.DeletedCategory')
+                            });
+                            resolve();
+                        });
+                    } else {
+                        reject();
+                    }
+                })
+            ));
+        }
     }
 
     onDeleteTokens() {
@@ -227,7 +250,8 @@ class Profile extends React.Component<ProfileComponentProps, ProfileComponentSta
                                             disabled={this.state.selectedCategoryId === undefined}
                                             danger
                                             type={'primary'}
-                                            icon={<DeleteOutlined/>}>
+                                            icon={<DeleteOutlined/>}
+                                            onClick={this.onDeleteCategory.bind(this)}>
                                         {this.props.t('Form.Button.Delete')}
                                     </Button>
                                     <Button id={'createCategoryButton'}
@@ -240,6 +264,7 @@ class Profile extends React.Component<ProfileComponentProps, ProfileComponentSta
                             collapsed={!(this.state.activeTab === 'categoriesTab')}>
 
                             <CategoryTree
+                                rootSelectable
                                 onSelect={categoryId => this.setState({selectedCategoryId: categoryId})}/>
 
                         </ProCard>
@@ -281,6 +306,7 @@ const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({
     dispatchLoadCategories: categoryApi.loadCategories,
     dispatchCreateCategory: categoryApi.createCategory,
     dispatchUpdateCategory: categoryApi.updateCategory,
+    dispatchDeleteCategory: categoryApi.deleteCategory,
     dispatchLoginUser: userApi.loginUser,
     dispatchRegisterUser: userApi.registerUser,
     dispatchDeleteToken: userApi.deleteToken,

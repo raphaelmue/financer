@@ -130,4 +130,24 @@ export default class CategoryUtil {
             this.insertCategoryIntoTree(category.children || [], categoryToInsert);
         }
     }
+
+    static deleteCategoryFromTree(categories: Category[], categoryIdToDelete: number, root?: Category): void {
+        if (root) {
+            if (root.children) {
+                const index = root.children.findIndex(value => value.id === categoryIdToDelete);
+                if (index > 0) {
+                    root.children.splice(index, 1);
+                }
+            }
+        } else {
+            const index = categories.findIndex(value => value.id === categoryIdToDelete);
+            if (index > 0) {
+                categories.splice(index, 1);
+            } else {
+                for (const category of categories) {
+                    this.deleteCategoryFromTree(categories, categoryIdToDelete, category);
+                }
+            }
+        }
+    }
 }
