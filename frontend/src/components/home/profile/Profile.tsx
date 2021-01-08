@@ -211,7 +211,7 @@ class Profile extends React.Component<ProfileComponentProps, ProfileComponentSta
                         }]}
                         tabActiveKey={this.state.activeTab}
                         onTabChange={activeKey => this.setState({activeTab: activeKey})}>
-                        <ProCard collapsed={!(this.state.activeTab === 'devicesTab')}>
+                        <ProCard hidden={!(this.state.activeTab === 'devicesTab')}>
                             <ProTable<Token>
                                 rowSelection={{
                                     onChange: this.onSelectionChange.bind(this),
@@ -261,7 +261,7 @@ class Profile extends React.Component<ProfileComponentProps, ProfileComponentSta
                                         {this.props.t('Form.Button.New')}
                                     </Button>
                                 </Space>}
-                            collapsed={!(this.state.activeTab === 'categoriesTab')}>
+                            hidden={!(this.state.activeTab === 'categoriesTab')}>
 
                             <CategoryTree
                                 rootSelectable

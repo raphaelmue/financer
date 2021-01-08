@@ -109,7 +109,7 @@ class Home extends React.Component<HomeProps, HomeState> {
                             {key: 'financer', title: 'Financer Website', href: 'https://financer-project.org/'},
                             {key: 'github   ', title: 'GitHub', href: 'https://github.com/raphaelmue/financer/'},
                         ]}
-                        copyright={'Financer Project 2020'}/>
+                        copyright={'Financer Project 2020 - ' + new Date().getFullYear()}/>
                 )}
                 breadcrumbRender={(routers = []) => [{
                     path: '/',

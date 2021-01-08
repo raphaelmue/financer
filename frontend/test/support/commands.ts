@@ -40,7 +40,7 @@ Cypress.Commands.add('fillVariableTransactionData', () => {
     cy.fixture('variable-transaction.json').then((variableTransaction) => {
         cy.get('.ant-tree-select').click();
         cy.wait('@getCategories');
-        cy.get('.ant-select-tree-node-content-wrapper[title="Test Category"]').click();
+        cy.get('.ant-tree-node-content-wrapper[title="Test Category"]').click();
 
         cy.get('#variableTransactionDataForm_valueDate').click();
         cy.get('.ant-picker-today-btn').should('be.visible');
@@ -64,7 +64,7 @@ Cypress.Commands.add('fillFixedTransactionData', (hasVariableAmounts: boolean) =
 
         cy.get('.ant-tree-select').click();
         cy.wait('@getCategories');
-        cy.get('.ant-select-tree-node-content-wrapper[title="Test Category"]').click();
+        cy.get('.ant-select-tree-node-content-wrapper[title="Test Category 2"]').click();
 
         cy.get('#fixedTransactionDataForm_product').type(fixedTransaction.product);
 

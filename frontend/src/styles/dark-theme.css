@@ -3,9 +3,15 @@
     background-color: #1F1F1F !important;
 
 }
+
 .ant-pro-page-container-warp,
 .ant-pro-card {
     background-color: #141414 !important;
+}
+
+.ant-pro-table-list-toolbar-title,
+.ant-pro-table-list-toolbar-setting-item {
+    color: rgba(255, 255, 255, 0.85);
 }
 
 .ant-pro-card.ant-pro-card-border {
@@ -16,3 +22,7 @@
     background-color: black;
 }
 
+.ant-layout-footer a,
+.ant-layout-footer div {
+    color: rgba(255, 255, 255, 0.45) !important;
+}
