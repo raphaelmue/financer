@@ -21,12 +21,6 @@
     "repeatPassword": "Passwort wiederholen"
   },
   "birthDate": "Geburtsdatum",
-  "Gender": {
-    "male": "Männlic",
-    "female": "Weiblich",
-    "notSpecified": "Keine Angabe",
-    "gender": "Geschlec"
-  },
   "home": "Home",
   "Menu": {
     "Categories": "Kategorien",
@@ -66,7 +60,9 @@
         "FIXED_REVENUE": "Feste Einnahmen",
         "VARIABLE_EXPENSES": "Variable Ausgaben",
         "VARIABLE_REVENUE": "Variable Einnahmen"
-      }
+      },
+      "ParentCategory": "Übergeordnete Kategorie",
+      "CategoryName": "Kategoriename"
     },
     "Amount": "Betrag",
     "Description": "Beschreibung",
@@ -123,7 +119,12 @@
       "Previous": "Zurück",
       "Edit": "Bearbeiten",
       "Ok": "Ok",
-      "Refresh": "Aktualisieren"
+      "Refresh": "Aktualisieren",
+      "Profile": {
+        "User": {
+          "UpdatePassword": "Passwort ändern"
+        }
+      }
     },
     "Step": {
       "CreateVariableTransaction": {
@@ -171,6 +172,20 @@
       "Configuration": {
         "UpdatedAdminConfiguration": "Server Konfiguration wurde erfolgreich aktualisiert. "
       }
+    },
+    "Profile": {
+      "Settings": {
+        "ConfirmReload": "Die Änderungen können erst umgesetzt werden, wenn die Seite neu geladen wird. Möchtest du die Seite neu laden?"
+      },
+      "User": {
+        "UpdatedProfile": "Dein Profil wurde erfolgreich aktualisiert."
+      }
+    },
+    "Category": {
+      "CreatedCategory": "Neue Kategorie wurde erfolgreich erstellt.",
+      "UpdatedCategory": "Kategorie wurde erfolgreich aktualisiert",
+      "ConfirmDeleteCategory": "Bist du sicher, dass du diese Kategorie löschen möchtest? Alle zugeordneten Transaktionen und Anhänge werden ebenfalls gelöscht und können nicht wiederhergestellt werden. ",
+      "DeletedCategory": "Die ausgewählte Kategorie und alle dazugehörigen Transaktionen und Anhänge wurden erfolgreich gelöscht."
     }
   },
   "Admin": {
@@ -179,5 +194,37 @@
       "DefaultCurrency": "Standardwährung"
     },
     "ServerConfiguration": "Server Konfiguration"
+  },
+  "Profile": {
+    "Settings": {
+      "General": "Allgemeine Einstellung",
+      "Language": "Sprache",
+      "Currency": "Währung",
+      "Appearance": "Darstellung",
+      "DarkTheme": "Dunkles Thema",
+      "LightTheme": "Helles Thema",
+      "Theme": "Thema"
+    },
+    "User": {
+      "Name": "Name",
+      "Email": "E-Mail Adresse",
+      "BirthDate": "Geburtsdatum",
+      "Gender": {
+        "MALE": "Männlich",
+        "FEMALE": "Weiblich",
+        "NOT_SPECIFIED": "Keine Angabe",
+        "Gender": "Gender"
+      },
+      "Devices": "Angemeldete Geräte",
+      "Token": {
+        "IPAddress": "IP Adresse",
+        "OperatingSystem": "Betriebsystem",
+        "ExpireDate": "Verfallsdatum"
+      },
+      "Roles": "Rollen",
+      "Verified": "Verifiziert",
+      "NotVerified": "Nicht verfiziert",
+      "CurrentPassword": "Aktuelles Passwort"
+    }
   }
 }

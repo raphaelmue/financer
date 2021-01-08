@@ -1,12 +1,12 @@
-import {UserReducerProps}             from '../../../../../store/reducers/user.reducers';
-import {AppState}                     from '../../../../../store/reducers/root.reducers';
-import {bindActionCreators, Dispatch} from 'redux';
-import {connect}                      from 'react-redux';
-import {ValueDate}                    from '../../../../../.openapi/models';
-import React                          from 'react';
+import {UserReducerProps} from '../../../../../store/reducers/user.reducers';
+import {AppState}         from '../../../../../store/reducers/root.reducers';
+import {connect}          from 'react-redux';
+import {ValueDate}        from '../../../../../.openapi';
+import React              from 'react';
+import {userDispatchMap}  from '../../../../../store/api/user.api';
 
 interface ValueDateLabelComponentProps extends UserReducerProps {
-    valueDate: ValueDate
+    valueDate?: ValueDate
 }
 
 interface ValueDateLabelComponentState {
@@ -22,7 +22,7 @@ class ValueDateLabel extends React.Component<ValueDateLabelComponentProps, Value
                 </span>
             );
         } else {
-            return (<span/>)
+            return (<span/>);
         }
     }
 }
@@ -33,6 +33,4 @@ const mapStateToProps = (state: AppState) => {
     };
 };
 
-const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({}, dispatch);
-
-export default connect(mapStateToProps, mapDispatchToProps)(ValueDateLabel);
+export default connect(mapStateToProps, userDispatchMap)(ValueDateLabel);

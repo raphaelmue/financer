@@ -6,8 +6,7 @@ import {AppState}                                                 from '../../st
 import {connect}                                                  from 'react-redux';
 import {UserReducerProps}                                         from '../../store/reducers/user.reducers';
 import {HashRouter as Router, Link, Redirect, Route, Switch}      from 'react-router-dom';
-import {bindActionCreators, Dispatch}                             from 'redux';
-import * as api                                                   from '../../store/api/user.api';
+import {userDispatchMap}                                          from '../../store/api/user.api';
 import BasicLayout, {BasicLayoutProps, DefaultFooter}             from '@ant-design/pro-layout';
 import menuData                                                   from './menu';
 import {DeleteTokenRequest}                                       from '../../.openapi';
@@ -24,13 +23,22 @@ import AdminConfiguration                                         from './admin/
 import FixedTransactionOverview                                   from './transactions/fixed/FixedTransactionOverview';
 import CreateFixedTransaction
                                                                   from './transactions/fixed/create/CreateFixedTransaction';
+import {isDarkTheme}                                              from '../shared/user/settings/settingsUtil';
 import FixedTransactionDetails
                                                                   from './transactions/fixed/details/FixedTransactionDetails';
 
+
+import 'ant-design-pro/dist/ant-design-pro.min.css';
 import '@ant-design/pro-layout/dist/layout.css';
 import '@ant-design/pro-table/dist/table.css';
 import '@ant-design/pro-list/dist/list.css';
 import '@ant-design/pro-card/dist/card.css';
+import UserManagement                                             from './admin/users/UserManagement';
+
+if (isDarkTheme()) {
+    require('antd/dist/antd.dark.css');
+    require('../../styles/dark-theme.css');
+}
 
 const {Text} = Typography;
 
@@ -54,7 +62,7 @@ class Home extends React.Component<HomeProps, HomeState> {
 
     logoutUser() {
         if (this.props.userState.user?.id && this.props.userState.user?.activeToken.id) {
-            this.props.dispatchLogout({
+            this.props.dispatchDeleteToken({
                 userId: this.props.userState.user?.id,
                 tokenId: this.props.userState.user?.activeToken.id
             });
@@ -73,7 +81,6 @@ class Home extends React.Component<HomeProps, HomeState> {
                     height: '100vh'
                 }}
                 title="F I N A N C E R"
-                loading={this.props.userState.isLoading}
                 logo={null}
                 menuDataRender={() => menuData()}
                 menuItemRender={(menuItemProps, defaultDom) => {
@@ -102,7 +109,7 @@ class Home extends React.Component<HomeProps, HomeState> {
                             {key: 'financer', title: 'Financer Website', href: 'https://financer-project.org/'},
                             {key: 'github   ', title: 'GitHub', href: 'https://github.com/raphaelmue/financer/'},
                         ]}
-                        copyright={'Financer Project 2020'}/>
+                        copyright={'Financer Project 2020 - ' + new Date().getFullYear()}/>
                 )}
                 breadcrumbRender={(routers = []) => [{
                     path: '/',
@@ -116,8 +123,7 @@ class Home extends React.Component<HomeProps, HomeState> {
                 {...this.props}>
                 <Router>
                     <Switch>
-                        <Route path='/dashboard' component={Dashboard}/>
-                        <Route path='/profile' component={Profile}/>
+                        <Route path={'/dashboard'} component={Dashboard}/>
                         <Route path={'/transactions/variable/create'} component={CreateVariableTransaction}/>
                         <Route path={'/transactions/variable/:variableTransactionId'}
                                component={VariableTransactionsDetails}/>
@@ -126,8 +132,10 @@ class Home extends React.Component<HomeProps, HomeState> {
                         <Route path={'/transactions/fixed/:fixedTransactionId'}
                                component={FixedTransactionDetails}/>
                         <Route path={'/transactions/fixed/'} component={FixedTransactionOverview}/>
-                        <Route path='/settings' component={Settings}/>
+                        <Route path={'/profile/:userId?'} component={Profile}/>
+                        <Route path={'/settings'} component={Settings}/>
                         <Route path={'/admin/configuration'} component={AdminConfiguration}/>
+                        <Route path={'/admin/users'} component={UserManagement}/>
                     </Switch>
                 </Router>
             </BasicLayout>
@@ -141,8 +149,4 @@ const mapStateToProps = (state: AppState) => {
     };
 };
 
-const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({
-    dispatchLogout: api.logoutUser
-}, dispatch);
-
-export default connect(mapStateToProps, mapDispatchToProps)(withTranslation<'default'>()(Home));
+export default connect(mapStateToProps, userDispatchMap)(withTranslation<'default'>()(Home));

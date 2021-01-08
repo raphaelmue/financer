@@ -1,15 +1,15 @@
-import {DataNode}                            from 'antd/lib/tree';
-import {Category, CategoryCategoryClassEnum} from '../../../.openapi';
-import i18next                               from 'i18next';
+import {DataNode}                    from 'antd/lib/tree';
+import {Category, CategoryClassEnum} from '../../../.openapi';
+import i18next                       from 'i18next';
 
 export default class CategoryUtil {
 
     static addRootCategories(categories: Category[]): Category[] {
         const rootCategories: Category[] = [];
-        Object.values(CategoryCategoryClassEnum).forEach((value, index) => {
+        Object.values(CategoryClassEnum).forEach((value, index) => {
             rootCategories.push({
                 id: -index - 1,
-                name: i18next.t('Transaction.Category.CategoryClass.' + value.valueOf() as CategoryCategoryClassEnum)?.toString(),
+                name: i18next.t('Transaction.Category.CategoryClass.' + value.valueOf() as CategoryClassEnum)?.toString(),
                 categoryClass: value,
                 children: []
             });
@@ -17,16 +17,16 @@ export default class CategoryUtil {
 
         categories.forEach(value => {
             switch (value.categoryClass) {
-                case CategoryCategoryClassEnum.FIXEDREVENUE:
+                case CategoryClassEnum.FIXEDREVENUE:
                     rootCategories[0].children!.push(value);
                     break;
-                case CategoryCategoryClassEnum.VARIABLEREVENUE:
+                case CategoryClassEnum.VARIABLEREVENUE:
                     rootCategories[1].children!.push(value);
                     break;
-                case CategoryCategoryClassEnum.FIXEDEXPENSES:
+                case CategoryClassEnum.FIXEDEXPENSES:
                     rootCategories[2].children!.push(value);
                     break;
-                case CategoryCategoryClassEnum.VARIABLEEXPENSES:
+                case CategoryClassEnum.VARIABLEEXPENSES:
                     rootCategories[3].children!.push(value);
                     break;
             }
@@ -35,25 +35,54 @@ export default class CategoryUtil {
         return rootCategories;
     }
 
+    static getCategoryClassFromCategory(categories: Category[], categoryId: number): CategoryClassEnum | undefined {
+        return CategoryUtil.getCategoryById(categories, categoryId)?.categoryClass;
+    }
+
+    static getCategoryById(categories: Category[], categoryId: number): Category | undefined {
+        for (const category of categories) {
+            if (category.id === categoryId) {
+                return category;
+            }
+
+            const foundCategory = this.getCategoryById(category.children || [], categoryId);
+            if (foundCategory) {
+                return foundCategory;
+            }
+        }
+        return undefined;
+    }
+
     static filterFixed(categories: Category[]): Category[] {
         return categories.filter(value =>
-            value.categoryClass === CategoryCategoryClassEnum.FIXEDEXPENSES ||
-            value.categoryClass === CategoryCategoryClassEnum.FIXEDREVENUE);
+            value.categoryClass === CategoryClassEnum.FIXEDEXPENSES ||
+            value.categoryClass === CategoryClassEnum.FIXEDREVENUE);
     }
 
     static filterVariable(categories: Category[]): Category[] {
         return categories.filter(value =>
-            value.categoryClass === CategoryCategoryClassEnum.VARIABLEEXPENSES ||
-            value.categoryClass === CategoryCategoryClassEnum.VARIABLEREVENUE);
+            value.categoryClass === CategoryClassEnum.VARIABLEEXPENSES ||
+            value.categoryClass === CategoryClassEnum.VARIABLEREVENUE);
     }
 
-    static convertCategoriesToDataNode(categories: Category[], query?: string, root?: Category): DataNode[] {
+    static getTreeData(categories: Category[], filterFixed?: boolean, filterVariable?: boolean, rootSelectable?: boolean): DataNode[] {
+        let rootCategories = CategoryUtil.addRootCategories(categories);
+        if (filterFixed) {
+            rootCategories = CategoryUtil.filterFixed(rootCategories);
+        }
+        if (filterVariable) {
+            rootCategories = CategoryUtil.filterVariable(rootCategories);
+        }
+        return CategoryUtil.convertCategoriesToDataNode(rootCategories, rootSelectable || false);
+    }
+
+    static convertCategoriesToDataNode(categories: Category[], rootSelectable: boolean, query?: string, root?: Category): DataNode[] {
         if (categories.length > 0) {
             if (root) {
                 const children: DataNode[] = [];
                 if (root.children) {
                     root.children.forEach(value => {
-                        children.push(...CategoryUtil.convertCategoriesToDataNode(categories, query, value));
+                        children.push(...CategoryUtil.convertCategoriesToDataNode(categories, rootSelectable, query, value));
                     });
                 }
 
@@ -67,7 +96,7 @@ export default class CategoryUtil {
                     title: root.name,
                     children: children,
                     // root categories cannot be selected
-                    selectable: (root.id > 0),
+                    selectable: (root.id > 0 || rootSelectable),
                     icon: false,
                     isLeaf: children.length === 0,
                     // node is shown, if child is shown or root matches query
@@ -76,11 +105,49 @@ export default class CategoryUtil {
             } else {
                 const nodes: DataNode[] = [];
                 categories.forEach(value => {
-                    nodes.push(...CategoryUtil.convertCategoriesToDataNode(categories, query, value));
+                    nodes.push(...CategoryUtil.convertCategoriesToDataNode(categories, rootSelectable, query, value));
                 });
                 return nodes;
             }
         }
         return [];
+    }
+
+    static insertCategoryIntoTree(categories: Category[], categoryToInsert: Category): void {
+        for (const category of categories) {
+            if (category.id === categoryToInsert.parentId) {
+                if (category.children === undefined) {
+                    category.children = [];
+                }
+                const index = category.children.findIndex(value => value.id === categoryToInsert.id);
+                if (index > 0) {
+                    category.children.splice(index, 1);
+                }
+                category.children.push(categoryToInsert);
+                return;
+            }
+
+            this.insertCategoryIntoTree(category.children || [], categoryToInsert);
+        }
+    }
+
+    static deleteCategoryFromTree(categories: Category[], categoryIdToDelete: number, root?: Category): void {
+        if (root) {
+            if (root.children) {
+                const index = root.children.findIndex(value => value.id === categoryIdToDelete);
+                if (index > 0) {
+                    root.children.splice(index, 1);
+                }
+            }
+        } else {
+            const index = categories.findIndex(value => value.id === categoryIdToDelete);
+            if (index > 0) {
+                categories.splice(index, 1);
+            } else {
+                for (const category of categories) {
+                    this.deleteCategoryFromTree(categories, categoryIdToDelete, category);
+                }
+            }
+        }
     }
 }

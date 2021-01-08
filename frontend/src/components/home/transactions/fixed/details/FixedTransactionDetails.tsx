@@ -70,6 +70,7 @@ class FixedTransactionDetails extends React.Component<FixedTransactionDetailsCom
         const {fixedTransactionId} = this.props.match.params;
 
         if (fixedTransactionId) {
+            console.log(fixedTransactionId);
             this.props.dispatchLoadFixedTransaction({transactionId: parseInt(fixedTransactionId)},
                 fixedTransaction => {
                     this.setState({
@@ -121,7 +122,6 @@ class FixedTransactionDetails extends React.Component<FixedTransactionDetailsCom
                     });
                 }
             });
-
     });
 
     onDeleteFixedTransactionAmounts = (fixedTransactionAmountIds: number[]) => new Promise<void>((resolveConfirm => Modal.confirm(confirmDialogConfig(
@@ -161,7 +161,6 @@ class FixedTransactionDetails extends React.Component<FixedTransactionDetailsCom
             }
         }
         return {amount: 0};
-
     }
 
     render() {

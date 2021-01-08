@@ -45,7 +45,6 @@ class FixedTransactionAmountHistoryChart extends StatisticsComponent<FixedTransa
                     nice: true,
                     label: {
                         formatter: datum => {
-                            console.log({datum: getCurrencySymbol() + ' ' + datum});
                             return getCurrencySymbol() + ' ' + datum;
                         }
                     }

@@ -29,7 +29,7 @@ describe('Fixed Transaction Test', () => {
         cy.visit('/#/transactions/fixed');
         cy.wait('@getCategories');
 
-        cy.get('.ant-tree-node-content-wrapper[title="Test Category"]').click();
+        cy.get('.ant-tree-node-content-wrapper[title="Test Category 2"]').click();
         cy.wait('@getFixedTransactions');
 
         cy.get('.ant-list-item').should('exist');

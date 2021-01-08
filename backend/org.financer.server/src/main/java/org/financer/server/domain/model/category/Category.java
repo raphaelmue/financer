@@ -48,10 +48,11 @@ public class Category implements DataEntity, Tree, AmountProvider, UserProperty 
     @Column(name = "name", nullable = false)
     private String name;
 
-    @OneToMany(mappedBy = "parent", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "parent", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE, orphanRemoval = true)
     private Set<Category> children;
 
     @OneToMany(mappedBy = "category", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @ToString.Exclude
     private Set<Transaction> transactions = new HashSet<>();
 
     @Override

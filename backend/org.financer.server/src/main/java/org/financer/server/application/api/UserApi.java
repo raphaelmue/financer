@@ -15,11 +15,7 @@ import org.financer.server.application.api.util.PageableParameters;
 import org.financer.shared.domain.model.api.category.CategoryDTO;
 import org.financer.shared.domain.model.api.transaction.fixed.FixedTransactionDTO;
 import org.financer.shared.domain.model.api.transaction.variable.VariableTransactionDTO;
-import org.financer.shared.domain.model.api.user.RegisterUserDTO;
-import org.financer.shared.domain.model.api.user.UpdatePersonalInformationDTO;
-import org.financer.shared.domain.model.api.user.UpdateSettingsDTO;
-import org.financer.shared.domain.model.api.user.UserDTO;
-import org.financer.shared.domain.model.value.objects.HashedPassword;
+import org.financer.shared.domain.model.api.user.*;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -119,10 +115,32 @@ public interface UserApi {
             @RequestBody @NotNull @Valid RegisterUserDTO registerUserDTO);
 
     /**
+     * Returns a user by its id
+     *
+     * @param userId id of the user to return
+     * @return user
+     */
+    @Operation(
+            summary = "Returns a user",
+            tags = {"user"},
+            security = @SecurityRequirement(name = "TokenAuth"))
+    @ApiResponse(
+            responseCode = "200",
+            description = "User was successfully returned",
+            content = @Content(schema = @Schema(implementation = UserDTO.class)))
+    @GetMapping(
+            value = "/users/{userId}",
+            produces = {"application/json"},
+            headers = "Accept=application/json")
+    ResponseEntity<UserDTO> getUser(
+            @Parameter(description = "ID of the user whose password will be changed")
+            @PathVariable("userId") @NotBlank @Min(1) Long userId);
+
+    /**
      * Updates the password of the given user.
      *
-     * @param userId      id of the user
-     * @param newPassword updated unencrypted password
+     * @param userId         id of the user
+     * @param updatePassword updated encrypted password
      * @return updated user object
      */
     @Operation(
@@ -143,8 +161,8 @@ public interface UserApi {
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     description = "Users password that will be updated",
                     required = true,
-                    content = @Content(schema = @Schema(implementation = HashedPassword.class)))
-            @RequestBody @NotNull @Valid HashedPassword newPassword);
+                    content = @Content(schema = @Schema(implementation = UpdatePasswordDTO.class)))
+            @RequestBody @NotNull @Valid UpdatePasswordDTO updatePassword);
 
     /**
      * Updates the users personal information

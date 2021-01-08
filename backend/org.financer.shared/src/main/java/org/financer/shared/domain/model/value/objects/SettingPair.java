@@ -31,7 +31,7 @@ public class SettingPair implements Serializable {
         SHOW_CURRENCY_SIGN("showCurrencySign", false, Boolean.class, Boolean::getBoolean),
         CHANGE_AMOUNT_SIGN_AUTOMATICALLY("changeAmountSignAutomatically", false, Boolean.class, Boolean::getBoolean),
         MAX_NUMBER_OF_MONTHS_DISPLAYED("maxNumberOfMonthsDisplayed", 6, Integer.class, Integer::getInteger),
-        THEME("theme", "", String.class, value -> value);
+        THEME("theme", "light", String.class, value -> value);
 
         private final String name;
         private final Object defaultValue;

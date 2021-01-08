@@ -21,7 +21,7 @@ public class CreateCategoryDTO implements DataTransferObject {
     private String name;
 
     @NotNull
-    @Schema(description = "Name of the category class", required = true, example = "FIXED_EXPENSES")
+    @Schema(description = "Name of the category class", required = true, enumAsRef = true, example = "FIXED_EXPENSES")
     private CategoryClass.Values categoryClass;
 
     @Schema(description = "Id of the parent category")

@@ -7,6 +7,7 @@ import React                          from 'react';
 import {Space, Typography}            from 'antd';
 import AmountUtil                     from '../util';
 import {getCurrencySymbol}            from '../../../user/settings/settingsUtil';
+import {userDispatchMap}              from '../../../../../store/api/user.api';
 
 const {Text} = Typography;
 
@@ -41,6 +42,4 @@ const mapStateToProps = (state: AppState) => {
     };
 };
 
-const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({}, dispatch);
-
-export default connect(mapStateToProps, mapDispatchToProps)(AmountLabel);
+export default connect(mapStateToProps, userDispatchMap)(AmountLabel);

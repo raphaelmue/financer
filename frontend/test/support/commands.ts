@@ -64,7 +64,7 @@ Cypress.Commands.add('fillFixedTransactionData', (hasVariableAmounts: boolean) =
 
         cy.get('.ant-tree-select').click();
         cy.wait('@getCategories');
-        cy.get('.ant-select-tree-node-content-wrapper[title="Test Category"]').click();
+        cy.get('.ant-select-tree-node-content-wrapper[title="Test Category 2"]').click();
 
         cy.get('#fixedTransactionDataForm_product').type(fixedTransaction.product);
 

@@ -8,6 +8,7 @@ const {Option} = Select;
 
 
 interface SelectGenderComponentProps extends WithTranslation<'default'> {
+    gender?: Gender
     onChange: (gender: Gender | undefined) => void
 }
 
@@ -24,15 +25,16 @@ class SelectGender extends React.Component<SelectGenderComponentProps, SelectGen
     render() {
         return (
             <Select key={'selectGender'}
-                    placeholder={this.props.t('Gender.gender')}
-                    onChange={(value: string) => this.onChange(value)}>
-                <Option value={GenderEnum.MALE}>{this.props.t('Gender.male')}</Option>
-                <Option value={GenderEnum.FEMALE}>{this.props.t('Gender.female')}</Option>
-                <Option value={GenderEnum.NOTSPECIFIED}>{this.props.t('Gender.notSpecified')}</Option>
+                    placeholder={this.props.t('Profile.User.Gender.Gender')}
+                    onChange={(value: string) => this.onChange(value)}
+                    defaultValue={this.props.gender?.gender.valueOf()}>
+                <Option value={GenderEnum.MALE}>{this.props.t('Profile.User.Gender.MALE')}</Option>
+                <Option value={GenderEnum.FEMALE}>{this.props.t('Profile.User.Gender.FEMALE')}</Option>
+                <Option value={GenderEnum.NOTSPECIFIED}>{this.props.t('Profile.User.Gender.NOT_SPECIFIED')}</Option>
             </Select>
         );
     }
 }
 
-export default connect()(withTranslation<"default">()(SelectGender));
+export default connect()(withTranslation<'default'>()(SelectGender));
 

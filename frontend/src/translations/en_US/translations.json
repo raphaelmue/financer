@@ -21,12 +21,6 @@
     "repeatPassword": "Repeat password"
   },
   "birthDate": "Birth date",
-  "Gender": {
-    "male": "Male",
-    "female": "Female",
-    "notSpecified": "Not specified",
-    "gender": "Gender"
-  },
   "home": "Home",
   "Menu": {
     "Categories": "Categories",
@@ -66,7 +60,9 @@
         "FIXED_REVENUE": "Fixed revenue",
         "VARIABLE_EXPENSES": "Variable Expenses",
         "VARIABLE_REVENUE": "Variable Revenue"
-      }
+      },
+      "ParentCategory": "Parent category",
+      "CategoryName": "Category name"
     },
     "Amount": "Amount",
     "Description": "Description",
@@ -123,7 +119,12 @@
       "Previous": "Previous",
       "Edit": "Edit",
       "Ok": "Ok",
-      "Refresh": "Refresh"
+      "Refresh": "Refresh",
+      "Profile": {
+        "User": {
+          "UpdatePassword": "Update password"
+        }
+      }
     },
     "Step": {
       "CreateVariableTransaction": {
@@ -171,6 +172,20 @@
       "Configuration": {
         "UpdatedAdminConfiguration": "Server configuration was successfully updated."
       }
+    },
+    "Profile": {
+      "Settings": {
+        "ConfirmReload": "The changes cannot be applied until the page is reloaded. Do you want to reload the page?"
+      },
+      "User": {
+        "UpdatedProfile": "Your profile was successfully updated."
+      }
+    },
+    "Category": {
+      "CreatedCategory": "New category was successfully created.",
+      "UpdatedCategory": "Category was successfully updated.",
+      "ConfirmDeleteCategory": "Are you sure you want to delete this category? All assigned transactions and attachments will also be deleted and cannot be restored. ",
+      "DeletedCategory": "The selected category and all associated transactions and attachments have been successfully deleted."
     }
   },
   "Admin": {
@@ -179,5 +194,37 @@
       "DefaultCurrency": "Default currency"
     },
     "ServerConfiguration": "Server Configuration"
+  },
+  "Profile": {
+    "Settings": {
+      "General": "General Settings",
+      "Language": "Language",
+      "Currency": "Currency",
+      "Appearance": "Appearance",
+      "DarkTheme": "Dark Theme",
+      "LightTheme": "Light Theme",
+      "Theme": "Theme"
+    },
+    "User": {
+      "Name": "Name",
+      "Email": "E-Mail Address",
+      "BirthDate": "Birth date",
+      "Gender": {
+        "MALE": "Male",
+        "FEMALE": "Female",
+        "NOT_SPECIFIED": "Not specified",
+        "Gender": "Gender"
+      },
+      "Devices": "Logged in devices",
+      "Token": {
+        "IPAddress": "IP Address",
+        "OperatingSystem": "Operatings System",
+        "ExpireDate": "Expire Date"
+      },
+      "Roles": "Roles",
+      "Verified": "Verified",
+      "NotVerified": "Not verified",
+      "CurrentPassword": "Current Password"
+    }
   }
 }

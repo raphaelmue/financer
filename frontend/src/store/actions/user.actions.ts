@@ -1,7 +1,15 @@
-import {DeleteTokenRequest, LoginUserRequest, RegisterUserRequest} from '../../.openapi/apis';
-import {User}                                                      from '../../.openapi/models';
-import {Action}                                                    from 'redux';
-import {ErrorMessage}                                              from '../errorMessage';
+import {
+    DeleteTokenRequest,
+    GetUserRequest,
+    LoginUserRequest,
+    RegisterUserRequest,
+    UpdateUsersPasswordRequest,
+    UpdateUsersPersonalInformationRequest,
+    UpdateUsersSettingsRequest,
+    User
+}                     from '../../.openapi';
+import {Action}       from 'redux';
+import {ErrorMessage} from '../errorMessage';
 
 export enum UserActionDefinition {
     LOGIN_REQUEST = 'AUTHENTICATION:LOGIN_REQUEST',
@@ -12,13 +20,29 @@ export enum UserActionDefinition {
     REGISTER_FAILED = 'AUTHENTICATION:REGISTER_FAILED',
     LOGOUT_REQUEST = 'AUTHENTICATION:LOGOUT_REQUEST',
     LOGOUT_SUCCESS = 'AUTHENTICATION:LOGOUT_SUCCESS',
-    LOGOUT_FAILED = 'AUTHENTICATION:LOGOUT_FAILED'
+    LOGOUT_FAILED = 'AUTHENTICATION:LOGOUT_FAILED',
+    GET_USER_REQUEST = 'USER:GET_USER_REQUEST',
+    GET_USER_SUCCESS = 'USER:GET_USER_SUCCESS',
+    GET_USER_FAILED = 'USER:GET_USER_FAILED',
+    UPDATE_USERS_PASSWORD_REQUEST = 'USER:UPDATE_USERS_PASSWORD_REQUEST',
+    UPDATE_USERS_PASSWORD_SUCCESS = 'USER:UPDATE_USERS_PASSWORD_SUCCESS',
+    UPDATE_USERS_PASSWORD_FAILED = 'USER:UPDATE_USERS_PASSWORD_FAILED',
+    UPDATE_USERS_SETTINGS_REQUEST = 'USER:UPDATE_USERS_SETTINGS_REQUEST',
+    UPDATE_USERS_SETTINGS_SUCCESS = 'USER:UPDATE_USERS_SETTINGS_SUCCESS',
+    UPDATE_USERS_SETTINGS_FAILED = 'USER:UPDATE_USERS_SETTINGS_FAILED',
+    UPDATE_USERS_DATA_REQUEST = 'USER:UPDATE_USERS_DATA_REQUEST',
+    UPDATE_USERS_DATA_SUCCESS = 'USER:UPDATE_USERS_DATA_SUCCESS',
+    UPDATE_USERS_DATA_FAILED = 'USER:UPDATE_USERS_DATA_FAILED'
 }
 
 export type UserAction =
     LoginRequestAction | LoginSuccessAction | LoginFailedAction
     | RegisterRequestAction | RegisterSuccessAction | RegisterFailedAction
-    | LogoutRequestAction | LogoutSuccessAction | LogoutFailedAction;
+    | LogoutRequestAction | LogoutSuccessAction | LogoutFailedAction
+    | GetUserRequestAction | GetUserSuccessAction | GetUserFailedAction
+    | UpdateUsersPasswordRequestAction | UpdateUsersPasswordSuccessAction | UpdateUsersPasswordFailedAction
+    | UpdateUsersSettingsRequestAction | UpdateUsersSettingsSuccessAction | UpdateUsersSettingsFailedAction
+    | UpdateUsersDataRequestAction | UpdateUsersDataSuccessAction | UpdateUsersDataFailedAction;
 
 interface LoginRequestAction extends Action {
     type: UserActionDefinition.LOGIN_REQUEST;
@@ -61,5 +85,65 @@ interface LogoutSuccessAction extends Action {
 
 interface LogoutFailedAction extends Action {
     type: UserActionDefinition.LOGOUT_FAILED,
+    payload: ErrorMessage;
+}
+
+interface GetUserRequestAction extends Action {
+    type: UserActionDefinition.GET_USER_REQUEST,
+    payload: GetUserRequest
+}
+
+interface GetUserSuccessAction extends Action {
+    type: UserActionDefinition.GET_USER_SUCCESS,
+    payload: User
+}
+
+interface GetUserFailedAction extends Action {
+    type: UserActionDefinition.GET_USER_FAILED,
+    payload: ErrorMessage;
+}
+
+interface UpdateUsersPasswordRequestAction extends Action {
+    type: UserActionDefinition.UPDATE_USERS_PASSWORD_REQUEST,
+    payload: UpdateUsersPasswordRequest
+}
+
+interface UpdateUsersPasswordSuccessAction extends Action {
+    type: UserActionDefinition.UPDATE_USERS_PASSWORD_SUCCESS,
+    payload: User
+}
+
+interface UpdateUsersPasswordFailedAction extends Action {
+    type: UserActionDefinition.UPDATE_USERS_PASSWORD_FAILED,
+    payload: ErrorMessage;
+}
+
+interface UpdateUsersSettingsRequestAction extends Action {
+    type: UserActionDefinition.UPDATE_USERS_SETTINGS_REQUEST,
+    payload: UpdateUsersSettingsRequest
+}
+
+interface UpdateUsersSettingsSuccessAction extends Action {
+    type: UserActionDefinition.UPDATE_USERS_SETTINGS_SUCCESS,
+    payload: User
+}
+
+interface UpdateUsersSettingsFailedAction extends Action {
+    type: UserActionDefinition.UPDATE_USERS_SETTINGS_FAILED,
+    payload: ErrorMessage;
+}
+
+interface UpdateUsersDataRequestAction extends Action {
+    type: UserActionDefinition.UPDATE_USERS_DATA_REQUEST,
+    payload: UpdateUsersPersonalInformationRequest
+}
+
+interface UpdateUsersDataSuccessAction extends Action {
+    type: UserActionDefinition.UPDATE_USERS_DATA_SUCCESS,
+    payload: User
+}
+
+interface UpdateUsersDataFailedAction extends Action {
+    type: UserActionDefinition.UPDATE_USERS_DATA_FAILED,
     payload: ErrorMessage;
 }

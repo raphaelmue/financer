@@ -7,6 +7,7 @@ import {AppState}                         from '../../../../../store/reducers/ro
 import {bindActionCreators, Dispatch}     from 'redux';
 import {connect}                          from 'react-redux';
 import AmountUtil                         from '../util';
+import {userDispatchMap}                  from '../../../../../store/api/user.api';
 
 interface AmountStatisticsComponentProps extends WithTranslation<'default'>, UserReducerProps {
     data: Amount
@@ -43,4 +44,4 @@ const mapStateToProps = (state: AppState) => {
 
 const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({}, dispatch);
 
-export default connect(mapStateToProps, mapDispatchToProps)(withTranslation<'default'>()(AmountStatistics));
+export default connect(mapStateToProps, userDispatchMap)(withTranslation<'default'>()(AmountStatistics));

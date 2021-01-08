@@ -1,5 +1,6 @@
 package org.financer.shared.domain.model.value.objects;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.financer.shared.domain.model.Expireable;
@@ -13,6 +14,7 @@ import java.time.LocalDate;
 @Data
 @Embeddable
 @Immutable
+@Schema(description = "Value object for expire date")
 public class ExpireDate implements Serializable, Expireable {
     private static final long serialVersionUID = -6031939301023199834L;
 

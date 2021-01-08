@@ -6,6 +6,7 @@ import {Amount}                       from '../../../../../.openapi/models';
 import React                          from 'react';
 import {InputNumber}                  from 'antd';
 import {getCurrencySign}              from '../../../user/settings/settingsUtil';
+import {userDispatchMap}              from '../../../../../store/api/user.api';
 
 interface AmountInputComponentProps extends UserReducerProps {
     amount?: Amount,
@@ -57,6 +58,4 @@ const mapStateToProps = (state: AppState) => {
     };
 };
 
-const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({}, dispatch);
-
-export default connect(mapStateToProps, mapDispatchToProps)(AmountInput);
+export default connect(mapStateToProps, userDispatchMap)(AmountInput);

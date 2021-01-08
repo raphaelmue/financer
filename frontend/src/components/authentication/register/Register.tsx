@@ -1,23 +1,21 @@
-import {BirthDate, Gender, HashedPassword, Name, RegisterUserRequest} from '../../../.openapi';
-import * as React                                                     from 'react';
-import {FormInstance}                     from 'antd/lib/form';
-import {WithTranslation, withTranslation} from 'react-i18next';
-import {UserReducerProps}                 from '../../../store/reducers/user.reducers';
-import {AppState}                                                     from '../../../store/reducers/root.reducers';
-import {bindActionCreators, Dispatch}                                 from 'redux';
-import * as action                                                    from '../../../store/api/user.api';
-import {connect}                                                      from 'react-redux';
-import {Button, DatePicker, Form, Input, Space, Typography}           from 'antd';
-import {UserOutlined}                                                 from '@ant-design/icons';
-import SelectGender                                                   from '../../shared/user/gender/SelectGender';
-import PasswordInput                                                  from '../../shared/user/password/PasswordInput';
-import NameInput                                                      from '../../shared/user/name/NameInput';
-import {fieldIsRequiredRule}                                          from '../../shared/user/form/rules';
+import {BirthDate, Gender, HashedPassword, Name}            from '../../../.openapi';
+import * as React                                           from 'react';
+import {FormInstance}                                       from 'antd/lib/form';
+import {WithTranslation, withTranslation}                   from 'react-i18next';
+import {UserReducerProps}                                   from '../../../store/reducers/user.reducers';
+import {AppState}                                           from '../../../store/reducers/root.reducers';
+import {userDispatchMap}                                    from '../../../store/api/user.api';
+import {connect}                                            from 'react-redux';
+import {Button, DatePicker, Form, Input, Space, Typography} from 'antd';
+import {UserOutlined}                                       from '@ant-design/icons';
+import SelectGender                                         from '../../shared/user/gender/SelectGender';
+import PasswordInput                                        from '../../shared/user/password/PasswordInput';
+import NameInput                                            from '../../shared/user/name/NameInput';
+import {fieldIsRequiredRule}                                from '../../shared/user/form/rules';
 
 const {Text} = Typography;
 
 interface RegisterComponentProps extends WithTranslation<'default'>, UserReducerProps {
-    dispatchRegister: (registerData: RegisterUserRequest) => void
 }
 
 interface RegisterComponentState {
@@ -49,7 +47,7 @@ class Register extends React.Component<RegisterComponentProps, RegisterComponent
 
     _handleSubmit() {
         if (this.state.email !== undefined && this.state.name !== undefined && this.state.password !== undefined) {
-            this.props.dispatchRegister({
+            this.props.dispatchRegisterUser({
                 registerUser: {
                     name: this.state.name,
                     email: {emailAddress: this.state.email},
@@ -119,8 +117,4 @@ const mapStateToProps = (state: AppState) => {
     };
 };
 
-const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({
-    dispatchRegister: action.registerUser
-}, dispatch);
-
-export default connect(mapStateToProps, mapDispatchToProps)(withTranslation<"default">()(Register));
+export default connect(mapStateToProps, userDispatchMap)(withTranslation<'default'>()(Register));

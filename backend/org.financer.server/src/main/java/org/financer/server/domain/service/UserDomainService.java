@@ -9,7 +9,6 @@ import org.financer.server.application.service.AdminConfigurationService;
 import org.financer.server.application.service.AuthenticationService;
 import org.financer.server.application.service.VerificationService;
 import org.financer.server.domain.model.category.Category;
-import org.financer.server.domain.model.transaction.FixedTransaction;
 import org.financer.server.domain.model.transaction.VariableTransaction;
 import org.financer.server.domain.model.user.Role;
 import org.financer.server.domain.model.user.Token;
@@ -61,6 +60,20 @@ public class UserDomainService {
         this.fixedTransactionRepository = fixedTransactionRepository;
         this.verificationService = verificationService;
         this.adminConfigurationService = adminConfigurationService;
+    }
+
+    public User getUserById(long userId) {
+        if (authenticationService.getUserId() != userId) {
+            authenticationService.throwIfUserHasNotRole("ADMIN");
+        }
+        Optional<User> userOptional = this.userRepository.findById(userId);
+        if (userOptional.isPresent()) {
+            if (userOptional.get().getId() == authenticationService.getUserId()) {
+                userOptional.get().setActiveToken(authenticationService.getAuthenticatedUser().getActiveToken());
+            }
+            return userOptional.get();
+        }
+        throw new NotFoundException(User.class, userId);
     }
 
     /**
@@ -231,9 +244,18 @@ public class UserDomainService {
      * @param updatedPassword new hashed password
      * @return update user object
      */
-    public User updatePassword(HashedPassword updatedPassword) {
+    public User updatePassword(long userId, String password, HashedPassword updatedPassword) {
         logger.info("Updating users password.");
-        Optional<User> userOptional = userRepository.findById(authenticationService.getUserId());
+
+        if (userId != authenticationService.getUserId()) {
+            authenticationService.throwIfUserHasNotRole("ADMIN");
+        }
+
+        if (!authenticationService.getAuthenticatedUser().getPassword().isEqualTo(password)) {
+            throw new UnauthorizedOperationException(userId);
+        }
+
+        Optional<User> userOptional = userRepository.findById(userId);
         if (userOptional.isPresent()) {
             userOptional.get().setPassword(updatedPassword);
             return userRepository.save(userOptional.get());
@@ -262,7 +284,8 @@ public class UserDomainService {
                 | changeUserGender(user, gender);
 
         if (userChanged) {
-            return userRepository.save(user);
+            return userRepository.save(user)
+                    .setActiveToken(authenticationService.getAuthenticatedUser().getActiveToken());
         }
         return user;
     }
@@ -301,7 +324,7 @@ public class UserDomainService {
     public User updateUsersSettings(Map<SettingPair.Property, String> setting) {
         User user = authenticationService.getAuthenticatedUser();
         setting.forEach(user::putOrUpdateSettingProperty);
-        return userRepository.save(user);
+        return userRepository.save(user).setActiveToken(authenticationService.getAuthenticatedUser().getActiveToken());
     }
 
     /**
