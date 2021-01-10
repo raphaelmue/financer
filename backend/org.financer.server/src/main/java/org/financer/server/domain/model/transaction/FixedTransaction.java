@@ -97,7 +97,11 @@ public final class FixedTransaction extends Transaction {
             }
         } else {
             result = this.getTotalAmount();
-            result = result.multiply(new Amount(this.timeRange.getMonthIntersection(timeRange).getMonthDifference()));
+            int monthDifference = this.timeRange.getMonthIntersection(timeRange).getMonthDifference();
+            if (monthDifference == 0) {
+                monthDifference++;
+            }
+            result = result.multiply(new Amount(monthDifference));
         }
 
         return result;
