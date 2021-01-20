@@ -2,20 +2,19 @@ version: "3"
 
 services:
     server:
-        build: backend/
+        image: raphaelmue/financer-server:latest
         container_name: financer-server
         restart: always
         ports:
             - 3000:3000
 
     client:
-        build:
-            context: .
-            args:
-                REACT_APP_SERVER_URL: http://localhost:3000
+        image: raphaelmue/financer-client
         container_name: financer-client
         restart: always
         ports:
             - 8080:80
         links:
             - server
+        environment:
+            REACT_APP_SERVER_URL: http://financer-server:3001
