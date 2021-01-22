@@ -1,11 +1,8 @@
 import {BASE_PATH, Configuration, FetchParams, Middleware, RequestContext} from '../../.openapi';
 import store                                                               from '../store';
-import * as dotenv                                                         from 'dotenv';
-
-dotenv.config();
 
 const getServerURL = (): string => {
-    return BASE_PATH.replace('https://api.financer-project.org', process.env.REACT_APP_SERVER_URL || 'https://api.financer-project.org');
+    return BASE_PATH.replace('https://api.financer-project.org', financerConfig.serverUrl || 'https://api.financer-project.org');
 };
 
 const middleware: Middleware = {

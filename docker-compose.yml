@@ -7,14 +7,29 @@ services:
         restart: always
         ports:
             - 3000:3000
+        environment:
+            DB_DIALECT=org.hibernate.dialect.MariaDBDialect
+            DB_DRIVER=org.mariadb.jdbc.Driver
+            DB_URL=mariadb://localhost:3306/financer
+            DB_USER=root
+            DB_PASSWORD=password
+
+    mariadb:
+        image: mariadb:latest
+        container_name: financer_db
+        ports:
+            - 3306:3306
+        environment:
+            MYSQL_ROOT_PASSWORD=password
+            MYSQL_DATABASE=financer
 
     client:
-        image: raphaelmue/financer-client
+        image: raphaelmue/financer-client:latest
         container_name: financer-client
         restart: always
         ports:
             - 8080:80
         links:
             - server
-        environment:
-            REACT_APP_SERVER_URL: http://financer-server:3001
+        volumes:
+            - ./config.js:/usr/share/nginx/html/config.js

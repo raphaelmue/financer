@@ -7,10 +7,7 @@ MAINTAINER Raphael Müßeler <raphael@muesseler.de>
 WORKDIR /usr/src/app/
 
 # Copy source files
-COPY org.financer.server/ ./org.financer.server
-COPY org.financer.shared/ ./org.financer.shared
-COPY org.financer.util/ ./org.financer.util
-COPY pom.xml .
+COPY . .
 
 # Build all dependencies for offline use and compile sources
 RUN mvn dependency:go-offline clean package -B -DskipTests

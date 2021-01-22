@@ -1,0 +1,13 @@
+# Run Configurations
+.idea/
+*.iml
+
+# Database content
+.data/
+
+# Build
+**/target/
+
+# Configuration Files
+lombok.config
+sonar-project.properties

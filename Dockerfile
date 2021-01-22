@@ -7,10 +7,7 @@ MAINTAINER Raphael Müßeler <raphael@muesseler.de>
 WORKDIR /usr/src/app/
 
 # Copy source files
-COPY backend/org.financer.server backend/org.financer.server
-COPY backend/org.financer.shared backend/org.financer.shared
-COPY backend/org.financer.util backend/org.financer.util
-COPY backend/pom.xml backend/
+COPY backend/ backend/
 
 # Generate OpenAPI Specification
 RUN cd backend/ && mvn verify -DskipTests -P generate-openapi-specification -q
@@ -38,13 +35,7 @@ FROM node:14.5.0-alpine3.12 AS builder
 WORKDIR /usr/src/app
 
 # Copy directory
-COPY ./frontend/public frontend/public
-COPY ./frontend/src frontend/src
-COPY ./frontend/package.json frontend/
-COPY ./frontend/tsconfig.json frontend/
-COPY ./frontend/webpack.* frontend/
-COPY ./frontend/.eslintrc.json frontend/
-COPY ./frontend/tsconfig* frontend/
+COPY ./frontend/ frontend/
 
 COPY --from=openapi-codegen-builder /usr/src/app/frontend/src/.openapi frontend/.src/openapi
 
@@ -56,9 +47,6 @@ RUN yarn build
 ### 4. Step: Run Binaries ###
 FROM nginx:alpine AS release
 
-ARG REACT_APP_SERVER_URL="https://api.financer-project.org"
-ENV REACT_APP_SERVER_URL=${REACT_APP_SERVER_URL}
-
 # Copy binaries into working directory
 COPY --from=builder /usr/src/app/frontend/build /usr/share/nginx/html
 
@@ -67,4 +55,3 @@ EXPOSE 80
 
 # Run React application
 CMD ["nginx", "-g", "daemon off;"]
-

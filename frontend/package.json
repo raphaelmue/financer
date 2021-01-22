@@ -109,7 +109,6 @@
         "@types/redux-thunk": "^2.1.0",
         "ant-design-pro": "^2.3.2",
         "antd": "^4.9.3",
-        "dotenv": "^8.2.0",
         "electron-squirrel-startup": "^1.0.0",
         "i18next": "^19.8.4",
         "js-sha256": "^0.9.0",
