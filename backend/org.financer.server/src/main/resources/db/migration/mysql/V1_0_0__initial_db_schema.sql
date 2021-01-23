@@ -55,9 +55,9 @@ CREATE TABLE fixed_transactions
 
 CREATE TABLE fixed_transactions_amounts
 (
-    id                  bigint(20) NOT NULL,
-    amount              double     NOT NULL,
-    value_date          date       NOT NULL,
+    id                   bigint(20) NOT NULL,
+    amount               double     NOT NULL,
+    value_date           date       NOT NULL,
     fixed_transaction_id bigint(20) NOT NULL
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;
@@ -134,13 +134,6 @@ CREATE TABLE transaction_id_sequence
     next_val bigint(20) DEFAULT NULL
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;
-
---
--- Dumping data for table transaction_id_sequence
---
-
-INSERT INTO transaction_id_sequence (next_val)
-VALUES (1);
 
 -- --------------------------------------------------------
 
@@ -351,10 +344,6 @@ ALTER TABLE verification_tokens
     MODIFY id bigint(20) NOT NULL AUTO_INCREMENT;
 
 --
--- Constraints for dumped tables
---
-
---
 -- Constraints for table categories
 --
 ALTER TABLE categories
@@ -411,7 +400,14 @@ ALTER TABLE verification_tokens
     ADD CONSTRAINT FK_VERIFICATION_TOKEN_USER FOREIGN KEY (user_id) REFERENCES users (id);
 
 --
--- Default data for dumped tables
+-- Default data for table transaction_id_sequence
+--
+
+INSERT INTO transaction_id_sequence (next_val)
+VALUES (1);
+
+--
+-- Default data for table roles
 --
 
 INSERT INTO roles(id, name)

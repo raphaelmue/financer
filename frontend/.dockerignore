@@ -1,0 +1,25 @@
+# Run Configurations
+.run
+
+# Build directory
+build/
+
+# Dependencies
+node_modules/
+
+# Tests and test reports
+test/
+.test/
+
+# Open API
+**/.openapi/
+
+# Configuration Files
+cypress.json
+docker-compose.test.yaml
+sonar-project.properties
+
+# Log files
+.eslintcache
+*.log
+*.lock
