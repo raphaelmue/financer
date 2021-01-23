@@ -1,14 +1,9 @@
-import {
-    AdminApi as Api,
-    GetConfigurationRequest,
-    GetUsersRequest,
-    UpdateConfigurationRequest
-}                                     from '../../.openapi/apis';
-import {bindActionCreators, Dispatch} from 'redux';
-import {apiConfiguration}             from './index';
-import {ErrorMessage}                 from '../errorMessage';
-import {AdminActionDefinition}        from '../actions/admin.actions';
-import {AdminConfiguration, User}     from '../../.openapi/models';
+import {AdminApi as Api, GetConfigurationRequest, GetUsersRequest, UpdateConfigurationRequest} from '../../.openapi/';
+import {bindActionCreators, Dispatch}                                                          from 'redux';
+import {apiConfiguration}                                                                      from './index';
+import {ErrorMessage}                                                                          from '../errorMessage';
+import {AdminActionDefinition}                                                                 from '../actions/admin.actions';
+import {AdminConfiguration, User}                                                              from '../../.openapi';
 
 export const loadAdminConfiguration = (data: GetConfigurationRequest = {}, callback?: (adminConfiguration: AdminConfiguration) => void) => {
     return (dispatch: Dispatch) => {

@@ -1,6 +1,6 @@
 {
     "name": "financer",
-    "version": "1.0-SNAPSHOT",
+    "version": "1.0.0-alpha",
     "private": true,
     "description": "Financer is an Application that helps to manage all private expenses and revenues.",
     "repository": {

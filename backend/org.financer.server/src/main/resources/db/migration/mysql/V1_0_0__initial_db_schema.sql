@@ -2,7 +2,7 @@
 
 CREATE TABLE attachments
 (
-    id             bigint(20)   NOT NULL AUTO_INCREMENT,
+    id             bigint(20)   NOT NULL,
     content        longblob     NOT NULL,
     name           varchar(255) NOT NULL,
     upload_date    date         NOT NULL,
@@ -18,7 +18,7 @@ CREATE TABLE attachments
 
 CREATE TABLE categories
 (
-    id             bigint(20)   NOT NULL AUTO_INCREMENT,
+    id             bigint(20)   NOT NULL,
     category_class int(11)      NOT NULL,
     name           varchar(255) NOT NULL,
     parent_id      bigint(20) DEFAULT NULL,
@@ -55,7 +55,7 @@ CREATE TABLE fixed_transactions
 
 CREATE TABLE fixed_transactions_amounts
 (
-    id                   bigint(20) NOT NULL AUTO_INCREMENT,
+    id                   bigint(20) NOT NULL,
     amount               double     NOT NULL,
     value_date           date       NOT NULL,
     fixed_transaction_id bigint(20) NOT NULL
@@ -70,7 +70,7 @@ CREATE TABLE fixed_transactions_amounts
 
 CREATE TABLE products
 (
-    id                      bigint(20)  NOT NULL AUTO_INCREMENT,
+    id                      bigint(20)  NOT NULL,
     amount                  double      NOT NULL,
     name                    varchar(64) NOT NULL,
     quantity                int(11)     NOT NULL,
@@ -99,7 +99,7 @@ CREATE TABLE roles
 
 CREATE TABLE settings
 (
-    id       bigint(20)   NOT NULL AUTO_INCREMENT,
+    id       bigint(20)   NOT NULL,
     property varchar(255) NOT NULL,
     value    varchar(255) NOT NULL,
     user_id  bigint(20) DEFAULT NULL
@@ -114,7 +114,7 @@ CREATE TABLE settings
 
 CREATE TABLE tokens
 (
-    id          bigint(20)   NOT NULL AUTO_INCREMENT,
+    id          bigint(20)   NOT NULL,
     expire_date date         NOT NULL,
     ip_address  varchar(255) NOT NULL,
     system      varchar(255) DEFAULT NULL,
@@ -143,7 +143,7 @@ CREATE TABLE transaction_id_sequence
 
 CREATE TABLE users
 (
-    id         bigint(20)   NOT NULL AUTO_INCREMENT,
+    id         bigint(20)   NOT NULL,
     birth_date date         DEFAULT NULL,
     email      varchar(128) NOT NULL,
     gender     varchar(255) DEFAULT NULL,
@@ -191,7 +191,7 @@ CREATE TABLE variable_transactions
 
 CREATE TABLE verification_tokens
 (
-    id             bigint(20)  NOT NULL AUTO_INCREMENT,
+    id             bigint(20)  NOT NULL,
     expire_date    date        NOT NULL,
     token          varchar(64) NOT NULL,
     verifying_date date DEFAULT NULL,
@@ -285,6 +285,63 @@ ALTER TABLE verification_tokens
     ADD PRIMARY KEY (id),
     ADD UNIQUE KEY UK_VERIFICATION_USER (user_id),
     ADD UNIQUE KEY UK_VERIFICATION_TOKEN_USER (user_id, token);
+
+--
+-- AUTO_INCREMENT for dumped tables
+--
+
+--
+-- AUTO_INCREMENT for table attachments
+--
+ALTER TABLE attachments
+    MODIFY id bigint(20) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table categories
+--
+ALTER TABLE categories
+    MODIFY id bigint(20) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table fixed_transactions_amounts
+--
+ALTER TABLE fixed_transactions_amounts
+    MODIFY id bigint(20) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table products
+--
+ALTER TABLE products
+    MODIFY id bigint(20) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table settings
+--
+ALTER TABLE settings
+    MODIFY id bigint(20) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table tokens
+--
+ALTER TABLE tokens
+    MODIFY id bigint(20) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table users
+--
+ALTER TABLE users
+    MODIFY id bigint(20) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table users
+--
+ALTER TABLE roles
+    MODIFY id bigint(20) NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT for table verification_tokens
+--
+ALTER TABLE verification_tokens
+    MODIFY id bigint(20) NOT NULL AUTO_INCREMENT;
 
 --
 -- Constraints for table categories

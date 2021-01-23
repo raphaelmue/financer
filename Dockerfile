@@ -13,7 +13,7 @@ COPY backend/ backend/
 RUN cd backend/ && mvn verify -DskipTests -P generate-openapi-specification -q
 
 ### 2. Step: Generate OpenAPI Code ###
-FROM openapitools/openapi-generator-cli:latest AS openapi-codegen-builder
+FROM openapitools/openapi-generator-cli:v4.3.0 AS openapi-codegen-builder
 
 # Set working directory
 WORKDIR /usr/src/app/
@@ -37,7 +37,7 @@ WORKDIR /usr/src/app
 # Copy directory
 COPY ./frontend/ frontend/
 
-COPY --from=openapi-codegen-builder /usr/src/app/frontend/src/.openapi frontend/.src/openapi
+COPY --from=openapi-codegen-builder /usr/src/app/frontend/src/.openapi frontend/src/.openapi
 
 # Install dependencies and build application
 WORKDIR /usr/src/app/frontend
