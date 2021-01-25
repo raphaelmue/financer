@@ -114,20 +114,24 @@ export default class CategoryUtil {
     }
 
     static insertCategoryIntoTree(categories: Category[], categoryToInsert: Category): void {
-        for (const category of categories) {
-            if (category.id === categoryToInsert.parentId) {
-                if (category.children === undefined) {
-                    category.children = [];
+        if (categoryToInsert.parentId === undefined) {
+            categories.push(categoryToInsert);
+        } else {
+            for (const category of categories) {
+                if (category.id === categoryToInsert.parentId) {
+                    if (category.children === undefined) {
+                        category.children = [];
+                    }
+                    const index = category.children.findIndex(value => value.id === categoryToInsert.id);
+                    if (index > 0) {
+                        category.children.splice(index, 1);
+                    }
+                    category.children.push(categoryToInsert);
+                    return;
                 }
-                const index = category.children.findIndex(value => value.id === categoryToInsert.id);
-                if (index > 0) {
-                    category.children.splice(index, 1);
-                }
-                category.children.push(categoryToInsert);
-                return;
-            }
 
-            this.insertCategoryIntoTree(category.children || [], categoryToInsert);
+                this.insertCategoryIntoTree(category.children || [], categoryToInsert);
+            }
         }
     }
 
