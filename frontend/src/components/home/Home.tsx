@@ -24,6 +24,7 @@ import FixedTransactionOverview                                   from './transa
 import CreateFixedTransaction
                                                                   from './transactions/fixed/create/CreateFixedTransaction';
 import {isDarkTheme}                                              from '../shared/user/settings/settingsUtil';
+import UserManagement                                             from './admin/users/UserManagement';
 import FixedTransactionDetails
                                                                   from './transactions/fixed/details/FixedTransactionDetails';
 
@@ -33,7 +34,6 @@ import '@ant-design/pro-layout/dist/layout.css';
 import '@ant-design/pro-table/dist/table.css';
 import '@ant-design/pro-list/dist/list.css';
 import '@ant-design/pro-card/dist/card.css';
-import UserManagement                                             from './admin/users/UserManagement';
 
 if (isDarkTheme()) {
     require('antd/dist/antd.dark.css');
@@ -81,7 +81,8 @@ class Home extends React.Component<HomeProps, HomeState> {
                     height: '100vh'
                 }}
                 title="F I N A N C E R"
-                logo={null}
+                logo={'images/financer-icon-64.png'}
+                primaryColor={'#00B9AE'}
                 menuDataRender={() => menuData()}
                 menuItemRender={(menuItemProps, defaultDom) => {
                     if (menuItemProps.path) {
