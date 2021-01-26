@@ -55,6 +55,9 @@ module org.financer.server {
 
     uses javax.persistence.spi.PersistenceProvider;
 
+    opens db.migration.h2;
+    opens db.migration.mysql;
+
     opens org.financer.server.domain.service to spring.core, spring.aop;
     opens org.financer.server.domain.repository to spring.core;
 

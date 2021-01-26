@@ -37,7 +37,8 @@ class CreateOrUpdateCategoryDialog extends React.Component<CreateOrUpdateCategor
     onSubmit() {
         const parentId: number | undefined = this.state.parentCategoryId || this.props.data?.parentId || this.props.parentCategoryId;
         if (this.state.categoryName && parentId) {
-            const categoryClass = CategoryUtil.getCategoryClassFromCategory(this.props.categoryState.categories, parentId);
+            const categoryClass = CategoryUtil.getCategoryClassFromCategory(
+                CategoryUtil.addRootCategories(this.props.categoryState.categories), parentId);
             if (categoryClass) {
                 this.setState({confirmLoading: true});
 

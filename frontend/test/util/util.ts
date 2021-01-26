@@ -1,7 +1,9 @@
+import packageInfo from '../../package.json';
+
 export default class TestUtil {
 
     static getServerBaseUrl(): string {
-        return '/api/1.0-SNAPSHOT'
+        return '/api/' + packageInfo.version;
     }
 
 }

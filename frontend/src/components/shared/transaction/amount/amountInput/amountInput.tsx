@@ -30,7 +30,7 @@ class AmountInput extends React.Component<AmountInputComponentProps, AmountInput
         return `${currency} ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
     };
 
-    onChange(value: number | string | undefined) {
+    onChange(value: number | string | null | undefined) {
         this.setState({amount: Number(value) || 0}, () => {
             if (this.props.onChange) {
                 this.props.onChange({amount: this.state.amount});

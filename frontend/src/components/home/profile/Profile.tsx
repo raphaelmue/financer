@@ -241,13 +241,13 @@ class Profile extends React.Component<ProfileComponentProps, ProfileComponentSta
                             extra={
                                 <Space>
                                     <Button id={'editCategoryButton'}
-                                            disabled={this.state.selectedCategoryId === undefined}
+                                            disabled={this.state.selectedCategoryId === undefined || this.state.selectedCategoryId < 0}
                                             icon={<EditOutlined/>}
                                             onClick={() => this.setState({showCategoryDialog: 'update'})}>
                                         {this.props.t('Form.Button.Edit')}
                                     </Button>
                                     <Button id={'deleteCategoryButton'}
-                                            disabled={this.state.selectedCategoryId === undefined}
+                                            disabled={this.state.selectedCategoryId === undefined || this.state.selectedCategoryId < 0}
                                             danger
                                             type={'primary'}
                                             icon={<DeleteOutlined/>}
