@@ -2,18 +2,18 @@ package org.financer.server.domain.model.statistics;
 
 import lombok.Data;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.TreeMap;
 
 @Data
-public class StatisticDataSetImpl<I, N, D> implements StatisticDataSet<I, N, D> {
+public class StatisticDataSetImpl<I extends Comparable<I>, N extends Comparable<I>, D> implements StatisticDataSet<I, N, D> {
 
-    private final Map<I, StatisticRecord<N, D>> records = new HashMap<>();
+    private final Map<I, StatisticRecord<N, D>> records = new TreeMap<>();
 
     @Override
     public void addRecord(I index, N name, D data) {
-        Map<N, D> dataMap = new HashMap<>();
+        Map<N, D> dataMap = new TreeMap<>();
         dataMap.put(name, data);
         this.records.put(index, new StatisticRecordImpl<>(dataMap));
     }

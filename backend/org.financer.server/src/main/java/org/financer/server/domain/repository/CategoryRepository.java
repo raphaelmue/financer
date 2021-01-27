@@ -11,7 +11,7 @@ import java.util.List;
 @Repository
 public interface CategoryRepository extends CrudRepository<Category, Long> {
 
-    @Query("select c from Category c where c.user.id = :userId")
+    @Query("select c from Category c where c.parent is null and c.user.id = :userId")
     List<Category> findAllByUserId(@Param("userId") Long userId);
 
 }

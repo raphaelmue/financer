@@ -226,5 +226,11 @@
       "NotVerified": "Nicht verfiziert",
       "CurrentPassword": "Aktuelles Passwort"
     }
+  },
+  "Statistics": {
+    "History": {
+      "BalanceHistory": "Bilanz Historie"
+    },
+    "Balance": "Bilanz"
   }
 }

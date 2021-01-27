@@ -20,7 +20,7 @@ export const deDEIntl = () => {
             selectPlaceholder: 'Bitte auswählen'
         },
         alert: {
-            clear: 'Löschen',
+            clear: 'Auswahl löschen',
             selected: 'Ausgewählt',
             item: 'Element'
         },

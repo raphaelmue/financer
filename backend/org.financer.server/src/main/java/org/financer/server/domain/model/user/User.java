@@ -108,7 +108,9 @@ public class User implements DataEntity, UserProperty, AmountProvider {
     public Amount getTotalAmount(ValueDate valueDate) {
         Amount amount = new Amount();
         for (Category category : this.categories) {
-            amount = amount.add(category.getTotalAmount(valueDate));
+            if (category.isRoot()) {
+                amount = amount.add(category.getTotalAmount(valueDate));
+            }
         }
         return amount;
     }

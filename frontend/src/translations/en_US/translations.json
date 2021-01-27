@@ -226,5 +226,11 @@
       "NotVerified": "Not verified",
       "CurrentPassword": "Current Password"
     }
+  },
+  "Statistics": {
+    "History": {
+      "BalanceHistory": "Balance History"
+    },
+    "Balance": "Balance"
   }
 }

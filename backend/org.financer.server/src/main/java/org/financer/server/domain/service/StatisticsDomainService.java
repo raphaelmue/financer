@@ -40,7 +40,7 @@ public class StatisticsDomainService {
      * @param numberOfMonths number of months that will be calculated backwards from today
      * @return balance history
      */
-    public DataSet getBalanceHistoryOfUser(Long userId, int numberOfMonths) {
+    public DataSet  getBalanceHistoryOfUser(Long userId, int numberOfMonths) {
         User user = userDomainService.getUserById(userId);
         if (authenticationService.getUserId() != userId) {
             authenticationService.throwIfUserHasNotRole("ADMIN");

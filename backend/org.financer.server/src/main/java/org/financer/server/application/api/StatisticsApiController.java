@@ -22,7 +22,6 @@ public class StatisticsApiController implements StatisticsApi {
     @Override
     public ResponseEntity<BalanceHistoryDataSetDTO> getUsersBalanceHistory(@NotBlank @Min(1) Long userId, @Min(1) @Max(36) @Valid int numberOfMonths) {
         return new ResponseEntity<>(statisticsDomainService.getBalanceHistoryOfUser(userId, numberOfMonths).map(), HttpStatus.OK);
-
     }
 
     @Override
