@@ -6,8 +6,7 @@ import React                              from 'react';
 import {UserReducerState}                 from '../../../store/reducers/user.reducers';
 import {Typography}                       from 'antd';
 import {PageContainer}                    from '@ant-design/pro-layout';
-
-const {Text} = Typography;
+import BalanceHistoryChart                from '../../shared/statistics/balance/BalanceHistoryChart';
 
 interface DashboardProps extends WithTranslation<'default'>, UserReducerState {
 }
@@ -20,7 +19,7 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
     render() {
         return (
             <PageContainer>
-                <Text>Dashboard</Text>
+                <BalanceHistoryChart/>
             </PageContainer>
         );
     }
