@@ -102,11 +102,12 @@ public class StatisticsDomainService {
         DataSet history = new DataSet();
 
         for (Category category : user.getCategories()) {
-            if ((balanceType.equals("expenses") && category.isExpenses()) ||
-                    (balanceType.equals("revenue") && category.isRevenue())) {
+            if (category.isRoot() && (
+                    (balanceType.equals("expenses") && category.isExpenses()) ||
+                            (balanceType.equals("revenue") && category.isRevenue()))) {
                 history.addRecord(category.getName(),
                         "amount",
-                        category.getTotalAmount(new TimeRange(LocalDate.now().minusMonths(numberOfMonths), LocalDate.now())).getAmount());
+                        Math.abs(category.getTotalAmount(new TimeRange(LocalDate.now().minusMonths(numberOfMonths), LocalDate.now())).getAmount()));
             }
         }
         return history;

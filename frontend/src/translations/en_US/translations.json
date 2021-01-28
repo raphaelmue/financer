@@ -59,7 +59,9 @@
         "FIXED_EXPENSES": "Fixed expenses",
         "FIXED_REVENUE": "Fixed revenue",
         "VARIABLE_EXPENSES": "Variable Expenses",
-        "VARIABLE_REVENUE": "Variable Revenue"
+        "VARIABLE_REVENUE": "Variable Revenue",
+        "Expenses": "Expenses",
+        "Revenue": "Revenue"
       },
       "ParentCategory": "Parent category",
       "CategoryName": "Category name"
@@ -229,8 +231,10 @@
   },
   "Statistics": {
     "History": {
-      "BalanceHistory": "Balance History"
+      "BalanceHistory": "Balance History",
+      "CategoryDistribution": "Category distribution"
     },
-    "Balance": "Balance"
+    "Balance": "Balance",
+    "Distribution": "Distribution"
   }
 }

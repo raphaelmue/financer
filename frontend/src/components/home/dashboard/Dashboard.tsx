@@ -7,6 +7,7 @@ import {UserReducerState}                 from '../../../store/reducers/user.red
 import {Typography}                       from 'antd';
 import {PageContainer}                    from '@ant-design/pro-layout';
 import BalanceHistoryChart                from '../../shared/statistics/balance/BalanceHistoryChart';
+import CategoryDistributionChart          from '../../shared/statistics/categoryDistribution/CategoryDistributionChart';
 
 interface DashboardProps extends WithTranslation<'default'>, UserReducerState {
 }
@@ -20,6 +21,7 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
         return (
             <PageContainer>
                 <BalanceHistoryChart/>
+                <CategoryDistributionChart/>
             </PageContainer>
         );
     }

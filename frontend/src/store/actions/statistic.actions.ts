@@ -1,16 +1,28 @@
-import {BalanceHistory, GetUsersBalanceHistoryRequest} from '../../.openapi';
-import {Action}                                        from 'redux';
-import {ErrorMessage}                                  from '../errorMessage';
+import {
+    GetCategoryDistributionRequest,
+    GetUsersBalanceHistoryRequest
+}                             from '../../.openapi';
+import {Action}               from 'redux';
+import {ErrorMessage}         from '../errorMessage';
+import {BalanceHistory}       from '../../.openapi/models/BalanceHistory';
+import {CategoryDistribution} from '../../.openapi/models/CategoryDistribution';
 
 export enum StatisticActionDefinition {
     LOAD_BALANCE_HISTORY_REQUEST = 'STATISTICS:LOAD_BALANCE_HISTORY_REQUEST',
     LOAD_BALANCE_HISTORY_SUCCESS = 'STATISTICS:LOAD_BALANCE_HISTORY_SUCCESS',
-    LOAD_BALANCE_HISTORY_FAILED = 'STATISTICS:LOAD_BALANCE_HISTORY_FAILED'
+    LOAD_BALANCE_HISTORY_FAILED = 'STATISTICS:LOAD_BALANCE_HISTORY_FAILED',
+    LOAD_CATEGORY_DISTRIBUTION_REQUEST = 'STATISTICS:LOAD_CATEGORY_DISTRIBUTION_REQUEST',
+    LOAD_CATEGORY_DISTRIBUTION_SUCCESS = 'STATISTICS:LOAD_CATEGORY_DISTRIBUTION_SUCCESS',
+    LOAD_CATEGORY_DISTRIBUTION_FAILED = 'STATISTICS:LOAD_CATEGORY_DISTRIBUTION_FAILED'
 }
 
 export type StatisticAction =
-    LoadBalanceHistoryRequestAction | LoadBalanceHistorySuccessAction | LoadBalanceHistoryFailedAction;
-
+    LoadBalanceHistoryRequestAction
+    | LoadBalanceHistorySuccessAction
+    | LoadBalanceHistoryFailedAction
+    | LoadCategoryDistributionRequestAction
+    | LoadCategoryDistributionSuccessAction
+    | LoadCategoryDistributionFailedAction;
 
 interface LoadBalanceHistoryRequestAction extends Action {
     type: StatisticActionDefinition.LOAD_BALANCE_HISTORY_REQUEST,
@@ -24,5 +36,20 @@ interface LoadBalanceHistorySuccessAction extends Action {
 
 interface LoadBalanceHistoryFailedAction extends Action {
     type: StatisticActionDefinition.LOAD_BALANCE_HISTORY_FAILED,
+    payload: ErrorMessage
+}
+
+interface LoadCategoryDistributionRequestAction extends Action {
+    type: StatisticActionDefinition.LOAD_CATEGORY_DISTRIBUTION_REQUEST,
+    payload: GetCategoryDistributionRequest
+}
+
+interface LoadCategoryDistributionSuccessAction extends Action {
+    type: StatisticActionDefinition.LOAD_CATEGORY_DISTRIBUTION_SUCCESS,
+    payload: CategoryDistribution
+}
+
+interface LoadCategoryDistributionFailedAction extends Action {
+    type: StatisticActionDefinition.LOAD_CATEGORY_DISTRIBUTION_FAILED,
     payload: ErrorMessage
 }

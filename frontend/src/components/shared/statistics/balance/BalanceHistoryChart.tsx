@@ -8,8 +8,8 @@ import {Line}                             from '@ant-design/charts';
 import {getCurrencySymbol}                from '../../user/settings/settingsUtil';
 import {UserReducerState}                 from '../../../../store/reducers/user.reducers';
 import ProCard                            from '@ant-design/pro-card';
-import {BalanceHistory}                   from '../../../../.openapi';
 import {Select}                           from 'antd';
+import {BalanceHistory}                   from '../../../../.openapi/models/BalanceHistory';
 
 const {Option} = Select;
 
