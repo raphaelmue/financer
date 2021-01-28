@@ -20,4 +20,8 @@ public interface VariableTransactionRepository extends JpaRepository<VariableTra
             "where p.variableTransaction.category.user.id = :userId and p.variableTransaction.valueDate.date between :startDate and :endDate")
     Double getUsersBalanceByMonth(@Param("userId") Long userId, @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
 
+    @Query("select count(t) from VariableTransaction t " +
+            "where t.category.user.id = :userId and t.valueDate.date between :startDate and :endDate")
+    Integer getVariableTransactionCount(@Param("userId") Long userId, @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
+
 }

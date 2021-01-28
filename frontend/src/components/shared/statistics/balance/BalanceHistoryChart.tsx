@@ -7,8 +7,7 @@ import {StatisticReducerProps}            from '../../../../store/reducers/stati
 import {Line}                             from '@ant-design/charts';
 import {getCurrencySymbol}                from '../../user/settings/settingsUtil';
 import {UserReducerState}                 from '../../../../store/reducers/user.reducers';
-import ProCard                            from '@ant-design/pro-card';
-import {Select}                           from 'antd';
+import {Card, Select}                     from 'antd';
 import {DataSet}                          from '../../../../.openapi';
 
 const {Option} = Select;
@@ -73,7 +72,7 @@ class BalanceHistoryChart extends React.Component<BalanceHistoryChartComponentPr
 
     render() {
         return (
-            <ProCard
+            <Card
                 title={this.props.t('Statistics.History.BalanceHistory')}
                 loading={this.state.loading}
                 extra={
@@ -87,7 +86,6 @@ class BalanceHistoryChart extends React.Component<BalanceHistoryChartComponentPr
                     </Select>
                 }>
                 <Line
-                    autoFit
                     smooth
                     tooltip={{
                         title: this.props.t('Statistics.Balance')?.toString(),
@@ -135,7 +133,7 @@ class BalanceHistoryChart extends React.Component<BalanceHistoryChartComponentPr
                         }
                     ]}
                 />
-            </ProCard>
+            </Card>
         );
     }
 }

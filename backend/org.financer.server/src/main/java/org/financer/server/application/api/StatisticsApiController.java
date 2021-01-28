@@ -33,4 +33,9 @@ public class StatisticsApiController implements StatisticsApi {
     public ResponseEntity<DataSetDTO> getCategoryDistribution(@NotBlank @Min(1) Long userId, String balanceType, @Min(1) @Max(36) @Valid int numberOfMonths) {
         return new ResponseEntity<>(statisticsDomainService.getCategoriesDistribution(userId, balanceType, numberOfMonths).map(), HttpStatus.OK);
     }
+
+    @Override
+    public ResponseEntity<DataSetDTO> getVariableTransactionCountHistory(@NotBlank @Min(1) Long userId, @Min(1) @Max(48) @Valid int numberOfMonths) {
+        return new ResponseEntity<>(statisticsDomainService.getVariableTransactionCountHistory(userId, numberOfMonths).map(), HttpStatus.OK);
+    }
 }

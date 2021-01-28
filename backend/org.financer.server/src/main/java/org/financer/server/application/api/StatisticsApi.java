@@ -55,10 +55,10 @@ public interface StatisticsApi {
             produces = {"application/json"},
             headers = "Accept=application/json")
     ResponseEntity<DataSetDTO> getUsersBalanceHistory(
-            @Parameter(description = "ID of the user whose password will be changed")
+            @Parameter(description = "ID of the user")
             @PathVariable("userId") @NotBlank @Min(1) Long userId,
-            @Parameter(description = "Number of months that are displayed")
-            @RequestParam(value = "numberOfMonths", defaultValue = "6") @Min(1) @Max(36) @Valid int numberOfMonths);
+            @Parameter(description = "Number of months that are returned")
+            @RequestParam(value = "numberOfMonths", defaultValue = "6") @Min(1) @Max(48) @Valid int numberOfMonths);
 
 
     /**
@@ -81,12 +81,12 @@ public interface StatisticsApi {
             produces = {"application/json"},
             headers = "Accept=application/json")
     ResponseEntity<DataSetDTO> getCategoryHistory(
-            @Parameter(description = "ID of the user whose password will be changed")
+            @Parameter(description = "ID of the user")
             @PathVariable("userId") @NotBlank @Min(1) Long userId,
             @Parameter(description = "Category IDs to be calculated", required = true)
             @RequestParam(value = "categoryIds") @Valid List<Long> categoryIds,
-            @Parameter(description = "Number of months that are displayed")
-            @RequestParam(value = "numberOfMonths", defaultValue = "6") @Min(1) @Max(36) @Valid int numberOfMonths);
+            @Parameter(description = "Number of months that are returned")
+            @RequestParam(value = "numberOfMonths", defaultValue = "6") @Min(1) @Max(48) @Valid int numberOfMonths);
 
 
     /**
@@ -110,11 +110,29 @@ public interface StatisticsApi {
             produces = {"application/json"},
             headers = "Accept=application/json")
     ResponseEntity<DataSetDTO> getCategoryDistribution(
-            @Parameter(description = "ID of the user whose password will be changed")
+            @Parameter(description = "ID of the user")
             @PathVariable("userId") @NotBlank @Min(1) Long userId,
             @Parameter(description = "Balance type", schema = @Schema(name = "BalanceType", type = "string", allowableValues = {"expenses", "revenue"}))
             @RequestParam(value = "balanceType", defaultValue = "expenses") String balanceType,
-            @Parameter(description = "Number of months that are displayed")
-            @RequestParam(value = "numberOfMonths", defaultValue = "6") @Min(1) @Max(36) @Valid int numberOfMonths);
+            @Parameter(description = "Number of months that are returned")
+            @RequestParam(value = "numberOfMonths", defaultValue = "6") @Min(1) @Max(48) @Valid int numberOfMonths);
+
+    @Operation(
+            summary = "Returns the history of the users balance",
+            tags = {"user"},
+            security = @SecurityRequirement(name = "TokenAuth"))
+    @ApiResponse(
+            responseCode = "200",
+            description = "Users categories were successfully fetched",
+            content = @Content(schema = @Schema(implementation = DataSetDTO.class)))
+    @GetMapping(
+            value = "/users/{userId}/variableTransactions/count",
+            produces = {"application/json"},
+            headers = "Accept=application/json")
+    ResponseEntity<DataSetDTO> getVariableTransactionCountHistory(
+            @Parameter(description = "ID of the user")
+            @PathVariable("userId") @NotBlank @Min(1) Long userId,
+            @Parameter(description = "Number of months that are returned")
+            @RequestParam(value = "numberOfMonths", defaultValue = "6") @Min(1) @Max(48) @Valid int numberOfMonths);
 
 }

@@ -113,6 +113,23 @@ public class StatisticsDomainService {
         return history;
     }
 
+    public DataSet getVariableTransactionCountHistory(Long userId, int numberOfMonths) {
+        User user = userDomainService.getUserById(userId);
+        if (authenticationService.getUserId() != userId) {
+            authenticationService.throwIfUserHasNotRole("ADMIN");
+        }
+
+        DataSet history = new DataSet();
+        for (int i = 0; i < numberOfMonths; i++) {
+            history.addRecord(getDateStringMinusMonths(i),
+                    "balance",
+                    Double.valueOf(variableTransactionRepository.getVariableTransactionCount(userId,
+                            LocalDate.now().minusMonths(i).withDayOfMonth(1),
+                            LocalDate.now().minusMonths(i).withDayOfMonth(LocalDate.now().minusMonths(i).lengthOfMonth()))));
+        }
+        return history;
+    }
+
     public StatisticDataSet<String, String, Double> getVariableBalanceHistoryOfUser(Long userId, int numberOfMonths) {
         StatisticDataSet<String, String, Double> history = new StatisticDataSetImpl<>();
         for (int i = 0; i < numberOfMonths; i++) {

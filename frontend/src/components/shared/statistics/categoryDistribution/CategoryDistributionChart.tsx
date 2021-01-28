@@ -4,12 +4,12 @@ import {StatisticReducerProps}                           from '../../../../store
 import {Pie}                                             from '@ant-design/charts';
 import {getCurrencySymbol}                               from '../../user/settings/settingsUtil';
 import {UserReducerState}                                from '../../../../store/reducers/user.reducers';
-import ProCard                                           from '@ant-design/pro-card';
 import {DataSet, GetCategoryDistributionBalanceTypeEnum} from '../../../../.openapi';
-import {Radio, Select, Space}                            from 'antd';
+import {Card, Radio, Select, Space}                      from 'antd';
 import {AppState}                                        from '../../../../store/reducers/root.reducers';
 import {connect}                                         from 'react-redux';
 import {statisticDispatchMap}                            from '../../../../store/api/statistic.api';
+import {ChartCard}                                       from 'ant-design-pro/lib/Charts';
 
 const {Option} = Select;
 
@@ -32,7 +32,7 @@ class CategoryDistributionChart extends React.Component<CategoryDistributionChar
         this.state = {
             data: [],
             balanceType: GetCategoryDistributionBalanceTypeEnum.Expenses,
-            numberOfMonths: 6,
+            numberOfMonths: 1,
             loading: true
         };
     }
@@ -76,10 +76,11 @@ class CategoryDistributionChart extends React.Component<CategoryDistributionChar
 
     render() {
         return (
-            <ProCard
+            <ChartCard
                 title={this.props.t('Statistics.History.CategoryDistribution')}
+                total={this.state.data.reduce((sum, value) => sum + value.amount, 0)}
                 loading={this.state.loading}
-                extra={
+                action={
                     <Space>
                         <Radio.Group
                             onChange={e => this.setState({balanceType: e.target.value}, () => this.loadCategoryDistribution())}
@@ -92,6 +93,8 @@ class CategoryDistributionChart extends React.Component<CategoryDistributionChar
                         <Select<number>
                             onChange={this.onChangeNumberOfMonths.bind(this)}
                             defaultValue={this.state.numberOfMonths}>
+                            <Option value={1}>1 Month</Option>
+                            <Option value={3}>3 Months</Option>
                             <Option value={6}>6 Months</Option>
                             <Option value={12}>1 Year</Option>
                             <Option value={24}>2 Years</Option>
@@ -104,7 +107,7 @@ class CategoryDistributionChart extends React.Component<CategoryDistributionChar
                     angleField={'amount'}
                     colorField={'category'}
                     radius={1}
-                    innerRadius={0.6}
+                    innerRadius={0.7}
                     appendPadding={10}
                     statistic={{
                         title: {
@@ -138,7 +141,7 @@ class CategoryDistributionChart extends React.Component<CategoryDistributionChar
                         {type: 'pie-statistic-active'},
                     ]}
                 />
-            </ProCard>
+            </ChartCard>
         );
     }
 }
