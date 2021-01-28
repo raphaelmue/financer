@@ -4,10 +4,10 @@ import {connect}                          from 'react-redux';
 import {WithTranslation, withTranslation} from 'react-i18next';
 import React                              from 'react';
 import {UserReducerState}                 from '../../../store/reducers/user.reducers';
-import {Typography}                       from 'antd';
 import {PageContainer}                    from '@ant-design/pro-layout';
 import BalanceHistoryChart                from '../../shared/statistics/balance/BalanceHistoryChart';
 import CategoryDistributionChart          from '../../shared/statistics/categoryDistribution/CategoryDistributionChart';
+import {Col, Row}                         from 'antd';
 
 interface DashboardProps extends WithTranslation<'default'>, UserReducerState {
 }
@@ -20,8 +20,16 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
     render() {
         return (
             <PageContainer>
-                <BalanceHistoryChart/>
-                <CategoryDistributionChart/>
+                <Row gutter={[16, 16]}>
+                    <Col span={24}>
+                        <BalanceHistoryChart/>
+                    </Col>
+                </Row>
+                <Row gutter={[16, 16]}>
+                    <Col span={12}>
+                        <CategoryDistributionChart/>
+                    </Col>
+                </Row>
             </PageContainer>
         );
     }

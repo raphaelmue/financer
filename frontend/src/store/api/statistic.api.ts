@@ -1,16 +1,10 @@
-import {
-    GetCategoryDistributionRequest,
-    GetUsersBalanceHistoryRequest,
-    StatisticsApi
-}                                     from '../../.openapi';
-import {bindActionCreators, Dispatch} from 'redux';
-import {apiConfiguration}             from './index';
-import {ErrorMessage}                 from '../errorMessage';
-import {StatisticActionDefinition}    from '../actions/statistic.actions';
-import {BalanceHistory}               from '../../.openapi/models/BalanceHistory';
-import {CategoryDistribution}         from '../../.openapi/models/CategoryDistribution';
+import {DataSet, GetCategoryDistributionRequest, GetUsersBalanceHistoryRequest, StatisticsApi} from '../../.openapi';
+import {bindActionCreators, Dispatch}                                                          from 'redux';
+import {apiConfiguration}                                                                      from './index';
+import {ErrorMessage}                                                                          from '../errorMessage';
+import {StatisticActionDefinition}                                                             from '../actions/statistic.actions';
 
-const loadBalanceHistory = (data: GetUsersBalanceHistoryRequest, callback?: (balanceHistory: BalanceHistory) => void) => {
+const loadBalanceHistory = (data: GetUsersBalanceHistoryRequest, callback?: (balanceHistory: DataSet) => void) => {
     return (dispatch: Dispatch) => {
         dispatch({
             type: StatisticActionDefinition.LOAD_BALANCE_HISTORY_REQUEST,
@@ -18,7 +12,7 @@ const loadBalanceHistory = (data: GetUsersBalanceHistoryRequest, callback?: (bal
         });
         const api = new StatisticsApi(apiConfiguration());
         ErrorMessage.resolveError(api.getUsersBalanceHistory(data)
-            .then((balanceHistory: BalanceHistory) => {
+            .then((balanceHistory: DataSet) => {
                 dispatch({
                     type: StatisticActionDefinition.LOAD_BALANCE_HISTORY_SUCCESS,
                     payload: balanceHistory
@@ -28,7 +22,7 @@ const loadBalanceHistory = (data: GetUsersBalanceHistoryRequest, callback?: (bal
     };
 };
 
-const loadCategoryDistribution = (data: GetCategoryDistributionRequest, callback?: (balanceHistory: CategoryDistribution) => void) => {
+const loadCategoryDistribution = (data: GetCategoryDistributionRequest, callback?: (balanceHistory: DataSet) => void) => {
     return (dispatch: Dispatch) => {
         dispatch({
             type: StatisticActionDefinition.LOAD_CATEGORY_DISTRIBUTION_REQUEST,
@@ -36,7 +30,7 @@ const loadCategoryDistribution = (data: GetCategoryDistributionRequest, callback
         });
         const api = new StatisticsApi(apiConfiguration());
         ErrorMessage.resolveError(api.getCategoryDistribution(data)
-            .then((balanceHistory: CategoryDistribution) => {
+            .then((balanceHistory: DataSet) => {
                 dispatch({
                     type: StatisticActionDefinition.LOAD_CATEGORY_DISTRIBUTION_SUCCESS,
                     payload: balanceHistory

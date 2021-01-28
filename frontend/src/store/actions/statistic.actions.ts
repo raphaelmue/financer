@@ -1,11 +1,6 @@
-import {
-    GetCategoryDistributionRequest,
-    GetUsersBalanceHistoryRequest
-}                             from '../../.openapi';
-import {Action}               from 'redux';
-import {ErrorMessage}         from '../errorMessage';
-import {BalanceHistory}       from '../../.openapi/models/BalanceHistory';
-import {CategoryDistribution} from '../../.openapi/models/CategoryDistribution';
+import {DataSet, GetCategoryDistributionRequest, GetUsersBalanceHistoryRequest} from '../../.openapi';
+import {Action}                                                                 from 'redux';
+import {ErrorMessage}                                                           from '../errorMessage';
 
 export enum StatisticActionDefinition {
     LOAD_BALANCE_HISTORY_REQUEST = 'STATISTICS:LOAD_BALANCE_HISTORY_REQUEST',
@@ -31,7 +26,7 @@ interface LoadBalanceHistoryRequestAction extends Action {
 
 interface LoadBalanceHistorySuccessAction extends Action {
     type: StatisticActionDefinition.LOAD_BALANCE_HISTORY_SUCCESS,
-    payload: BalanceHistory
+    payload: DataSet
 }
 
 interface LoadBalanceHistoryFailedAction extends Action {
@@ -46,7 +41,7 @@ interface LoadCategoryDistributionRequestAction extends Action {
 
 interface LoadCategoryDistributionSuccessAction extends Action {
     type: StatisticActionDefinition.LOAD_CATEGORY_DISTRIBUTION_SUCCESS,
-    payload: CategoryDistribution
+    payload: DataSet
 }
 
 interface LoadCategoryDistributionFailedAction extends Action {

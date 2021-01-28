@@ -9,7 +9,7 @@ import {getCurrencySymbol}                from '../../user/settings/settingsUtil
 import {UserReducerState}                 from '../../../../store/reducers/user.reducers';
 import ProCard                            from '@ant-design/pro-card';
 import {Select}                           from 'antd';
-import {BalanceHistory}                   from '../../../../.openapi/models/BalanceHistory';
+import {DataSet}                          from '../../../../.openapi';
 
 const {Option} = Select;
 
@@ -54,7 +54,7 @@ class BalanceHistoryChart extends React.Component<BalanceHistoryChartComponentPr
         }
     }
 
-    transformData(balanceHistory: BalanceHistory): Record<string, any>[] {
+    transformData(balanceHistory: DataSet): Record<string, any>[] {
         const records: Record<string, any>[] = [];
         if (balanceHistory.records !== undefined) {
             for (const key of Object.keys(balanceHistory.records)) {

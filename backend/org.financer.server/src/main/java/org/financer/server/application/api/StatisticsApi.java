@@ -49,7 +49,7 @@ public interface StatisticsApi {
     @ApiResponse(
             responseCode = "200",
             description = "Users categories were successfully fetched",
-            content = @Content(schema = @Schema(name = "BalanceHistory", implementation = DataSetDTO.class)))
+            content = @Content(schema = @Schema(implementation = DataSetDTO.class)))
     @GetMapping(
             value = "/users/{userId}/history",
             produces = {"application/json"},
@@ -75,7 +75,7 @@ public interface StatisticsApi {
     @ApiResponse(
             responseCode = "200",
             description = "Users categories were successfully fetched",
-            content = @Content(schema = @Schema(name = "CategoryHistory", implementation = DataSetDTO.class)))
+            content = @Content(schema = @Schema(implementation = DataSetDTO.class)))
     @GetMapping(
             value = "/users/{userId}/categories/history",
             produces = {"application/json"},
@@ -104,7 +104,7 @@ public interface StatisticsApi {
     @ApiResponse(
             responseCode = "200",
             description = "Users categories were successfully fetched",
-            content = @Content(schema = @Schema(name = "CategoryDistribution", implementation = DataSetDTO.class)))
+            content = @Content(schema = @Schema(implementation = DataSetDTO.class)))
     @GetMapping(
             value = "/users/{userId}/categories/distribution",
             produces = {"application/json"},

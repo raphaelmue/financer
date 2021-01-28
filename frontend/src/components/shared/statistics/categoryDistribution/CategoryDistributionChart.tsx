@@ -1,16 +1,15 @@
-import React                                    from 'react';
-import {connect}                                from 'react-redux';
-import {WithTranslation, withTranslation}       from 'react-i18next';
-import {statisticDispatchMap}                   from '../../../../store/api/statistic.api';
-import {AppState}                               from '../../../../store/reducers/root.reducers';
-import {StatisticReducerProps}                  from '../../../../store/reducers/statistic.reducer';
-import {Pie}                                    from '@ant-design/charts';
-import {getCurrencySymbol}                      from '../../user/settings/settingsUtil';
-import {UserReducerState}                       from '../../../../store/reducers/user.reducers';
-import ProCard                                  from '@ant-design/pro-card';
-import {GetCategoryDistributionBalanceTypeEnum} from '../../../../.openapi';
-import {Select, Space, Radio}                   from 'antd';
-import {CategoryDistribution}                   from '../../../../.openapi/models/CategoryDistribution';
+import React                                             from 'react';
+import {withTranslation, WithTranslation}                from 'react-i18next';
+import {StatisticReducerProps}                           from '../../../../store/reducers/statistic.reducer';
+import {Pie}                                             from '@ant-design/charts';
+import {getCurrencySymbol}                               from '../../user/settings/settingsUtil';
+import {UserReducerState}                                from '../../../../store/reducers/user.reducers';
+import ProCard                                           from '@ant-design/pro-card';
+import {DataSet, GetCategoryDistributionBalanceTypeEnum} from '../../../../.openapi';
+import {Radio, Select, Space}                            from 'antd';
+import {AppState}                                        from '../../../../store/reducers/root.reducers';
+import {connect}                                         from 'react-redux';
+import {statisticDispatchMap}                            from '../../../../store/api/statistic.api';
 
 const {Option} = Select;
 
@@ -58,7 +57,7 @@ class CategoryDistributionChart extends React.Component<CategoryDistributionChar
         }
     }
 
-    transformData(balanceHistory: CategoryDistribution): Record<string, any>[] {
+    transformData(balanceHistory: DataSet): Record<string, any>[] {
         const records: Record<string, any>[] = [];
         if (balanceHistory.records !== undefined) {
             for (const key of Object.keys(balanceHistory.records)) {
@@ -68,7 +67,6 @@ class CategoryDistributionChart extends React.Component<CategoryDistributionChar
                 });
             }
         }
-        console.log(records);
         return records;
     }
 
@@ -79,7 +77,7 @@ class CategoryDistributionChart extends React.Component<CategoryDistributionChar
     render() {
         return (
             <ProCard
-                title={this.props.t('Statistics.History.BalanceHistory')}
+                title={this.props.t('Statistics.History.CategoryDistribution')}
                 loading={this.state.loading}
                 extra={
                     <Space>
@@ -102,23 +100,43 @@ class CategoryDistributionChart extends React.Component<CategoryDistributionChar
                     </Space>
                 }>
                 <Pie
-
                     data={this.state.data}
                     angleField={'amount'}
                     colorField={'category'}
-                    padding={'auto'}
                     radius={1}
                     innerRadius={0.6}
                     appendPadding={10}
+                    statistic={{
+                        title: {
+                            customHtml: this.props.t('Statistics.Total')
+                        },
+                        content: {
+                            formatter: (datum, data) => {
+                                return `${getCurrencySymbol()} ${datum?.amount || data?.reduce((sum, value) => sum + value.amount, 0)}`;
+                            }
+                        }
+                    }}
                     tooltip={{
                         title: this.props.t('Statistics.Balance')?.toString(),
                         formatter: datum => {
                             return {
                                 name: this.props.t('Transaction.Amount')?.toString() || '',
-                                value: getCurrencySymbol() + ' ' + datum.amount
+                                value: `${getCurrencySymbol()} ${datum.amount}`
                             };
                         }
                     }}
+                    label={{
+                        type: 'inner',
+                        offset: '-50%',
+                        style: {textAlign: 'center'},
+                        autoRotate: false,
+                        content: '{value} ' + getCurrencySymbol(),
+                    }}
+                    interactions={[
+                        {type: 'element-selected'},
+                        {type: 'element-active'},
+                        {type: 'pie-statistic-active'},
+                    ]}
                 />
             </ProCard>
         );

@@ -10,6 +10,7 @@ import java.util.Map;
 
 @Data
 @Accessors(chain = true)
+@Schema(name = "DataSet", description = "Set of records")
 public class DataSetDTO extends RepresentationModel<DataSetDTO> implements DataTransferObject {
 
     @Schema(description = "Data Records")

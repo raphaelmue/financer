@@ -1,12 +1,11 @@
 import {ReducerState}                               from './reducers';
 import {StatisticApi}                               from '../api/statistic.api';
 import {StatisticAction, StatisticActionDefinition} from '../actions/statistic.actions';
-import {BalanceHistory}                             from '../../.openapi/models/BalanceHistory';
-import {CategoryDistribution}                       from '../../.openapi/models/CategoryDistribution';
+import {DataSet}                                    from '../../.openapi';
 
 export interface StatisticState extends ReducerState {
-    balanceHistory: BalanceHistory | undefined,
-    categoryDistribution: CategoryDistribution | undefined
+    balanceHistory: DataSet | undefined,
+    categoryDistribution: DataSet | undefined
 }
 
 export interface StatisticReducerProps extends StatisticApi {
