@@ -232,10 +232,12 @@
   "Statistics": {
     "History": {
       "BalanceHistory": "Bilanz Historie",
-      "CategoryDistribution": "Kategorieverteilung"
+      "CategoryDistribution": "Kategorieverteilung",
+      "VariableTransactionCountHistory": "Anzahl der Transaktionen"
     },
     "Balance": "Bilanz",
     "Distribution": "Verteilung",
-    "Total": "Gesamt"
+    "Total": "Gesamt",
+    "Count": "Anzahl"
   }
 }

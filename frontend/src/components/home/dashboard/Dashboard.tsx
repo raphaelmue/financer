@@ -6,8 +6,11 @@ import React                              from 'react';
 import {UserReducerState}                 from '../../../store/reducers/user.reducers';
 import {PageContainer}                    from '@ant-design/pro-layout';
 import BalanceHistoryChart                from '../../shared/statistics/balance/BalanceHistoryChart';
-import CategoryDistributionChart          from '../../shared/statistics/categoryDistribution/CategoryDistributionChart';
+import CategoryDistributionChart
+                                          from '../../shared/statistics/categoryDistribution/CategoryDistributionChart';
 import {Col, Row}                         from 'antd';
+import VariableTransactionCountHistoryChart
+                                          from '../../shared/statistics/variableTransaction/variableTransactionCount/VariableTransactionCountChart';
 
 interface DashboardProps extends WithTranslation<'default'>, UserReducerState {
 }
@@ -28,6 +31,9 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
                 <Row gutter={[16, 16]}>
                     <Col span={12}>
                         <CategoryDistributionChart/>
+                    </Col>
+                    <Col span={12}>
+                        <VariableTransactionCountHistoryChart/>
                     </Col>
                 </Row>
             </PageContainer>

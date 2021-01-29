@@ -114,7 +114,6 @@ public class StatisticsDomainService {
     }
 
     public DataSet getVariableTransactionCountHistory(Long userId, int numberOfMonths) {
-        User user = userDomainService.getUserById(userId);
         if (authenticationService.getUserId() != userId) {
             authenticationService.throwIfUserHasNotRole("ADMIN");
         }
@@ -122,7 +121,7 @@ public class StatisticsDomainService {
         DataSet history = new DataSet();
         for (int i = 0; i < numberOfMonths; i++) {
             history.addRecord(getDateStringMinusMonths(i),
-                    "balance",
+                    "count",
                     Double.valueOf(variableTransactionRepository.getVariableTransactionCount(userId,
                             LocalDate.now().minusMonths(i).withDayOfMonth(1),
                             LocalDate.now().minusMonths(i).withDayOfMonth(LocalDate.now().minusMonths(i).lengthOfMonth()))));

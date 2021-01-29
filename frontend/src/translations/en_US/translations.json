@@ -232,10 +232,12 @@
   "Statistics": {
     "History": {
       "BalanceHistory": "Balance History",
-      "CategoryDistribution": "Category distribution"
+      "CategoryDistribution": "Category distribution",
+      "VariableTransactionCountHistory": "Count of transactions"
     },
     "Balance": "Balance",
     "Distribution": "Distribution",
-    "Total": "Total"
+    "Total": "Total",
+    "Count": "Count"
   }
 }

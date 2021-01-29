@@ -78,10 +78,13 @@ class Home extends React.Component<HomeProps, HomeState> {
             <BasicLayout
                 style={{
                     overflow: 'auto',
-                    height: '100vh'
+                    minHeight: '100vh'
                 }}
                 title="F I N A N C E R"
                 logo={null}
+                fixedHeader
+                fixSiderbar
+                forceSubMenuRender
                 menuDataRender={() => menuData()}
                 menuItemRender={(menuItemProps, defaultDom) => {
                     if (menuItemProps.path) {
