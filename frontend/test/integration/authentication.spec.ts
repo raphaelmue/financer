@@ -1,6 +1,10 @@
 import TestUtil from '../util/util';
 
 describe('Authentication Test', () => {
+    beforeEach(() => {
+        cy.clearCookies();
+    });
+
     it('should login correctly with email and password', () => {
         cy.intercept({
             method: 'GET',
