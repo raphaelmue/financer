@@ -3,6 +3,32 @@ import TestUtil from '../util/util';
 describe('Authentication Test', () => {
     beforeEach(() => {
         cy.clearCookies();
+        cy.clearLocalStorage();
+
+        cy.intercept({
+            method: 'GET',
+            url: TestUtil.getServerBaseUrl() + '/statistics/users/1/history',
+            query: {
+                numberOfMonths: '6'
+            }
+        }, {body: {records: []}}).as('getBalanceHistory');
+
+        cy.intercept({
+            method: 'GET',
+            url: TestUtil.getServerBaseUrl() + '/statistics/users/1/categories/distribution',
+            query: {
+                balanceType: 'expenses',
+                numberOfMonths: '1'
+            }
+        }, {body: {records: []}}).as('getCategoriesDistribution');
+
+        cy.intercept({
+            method: 'GET',
+            url: TestUtil.getServerBaseUrl() + '/statistics/users/1/variableTransactions/count',
+            query: {
+                numberOfMonths: '6'
+            }
+        }, {body: {records: []}}).as('getVariableTransactionCountHistory');
     });
 
     it('should login correctly with email and password', () => {
@@ -29,6 +55,10 @@ describe('Authentication Test', () => {
             .and('contain.text', 'Dashboard');
 
         cy.location('href').should('contain', '/dashboard');
+
+        cy.wait('@getBalanceHistory')
+            .wait('@getCategoriesDistribution')
+            .wait('@getVariableTransactionCountHistory');
     });
 
     it('should register user', () => {
@@ -60,6 +90,10 @@ describe('Authentication Test', () => {
             .and('contain.text', 'Dashboard');
 
         cy.location('href').should('contain', '/dashboard');
+
+        cy.wait('@getBalanceHistory')
+            .wait('@getCategoriesDistribution')
+            .wait('@getVariableTransactionCountHistory');
     });
 });
 
