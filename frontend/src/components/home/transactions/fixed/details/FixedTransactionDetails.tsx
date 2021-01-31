@@ -240,7 +240,7 @@ class FixedTransactionDetails extends React.Component<FixedTransactionDetailsCom
                         tabActiveKey={this.state.activeTab}
                         onTabChange={activeKey => (this.setState({activeTab: activeKey}))}>
 
-                        <ProCard collapsed={!(this.state.activeTab === 'fixedTransactionAmountsTab')}>
+                        <ProCard collapsed={(this.state.activeTab !== 'fixedTransactionAmountsTab')}>
                             <FixedTransactionAmountList
                                 fixedTransactionAmounts={this.state.fixedTransaction?.transactionAmounts || []}
                                 openFixedTransactionAmountDialog={() => this.setState({showFixedTransactionAmountDialog: true})}
@@ -251,7 +251,7 @@ class FixedTransactionDetails extends React.Component<FixedTransactionDetailsCom
                                 onCancel={() => this.setState({showFixedTransactionAmountDialog: false})}/>
                         </ProCard>
 
-                        <ProCard collapsed={!(this.state.activeTab === 'attachmentsTab')}>
+                        <ProCard collapsed={(this.state.activeTab !== 'attachmentsTab')}>
                             <AttachmentList
                                 attachments={this.state.fixedTransaction.attachments || []}
                                 openAttachmentDialog={() => this.setState({showAttachmentDialog: true})}/>
@@ -265,7 +265,7 @@ class FixedTransactionDetails extends React.Component<FixedTransactionDetailsCom
                             />
                         </ProCard>
 
-                        <ProCard collapsed={!(this.state.activeTab === 'statisticTab')}>
+                        <ProCard collapsed={(this.state.activeTab !== 'statisticTab')}>
                             <FixedTransactionAmountHistoryChart
                                 data={this.state.fixedTransaction.transactionAmounts}/>
                         </ProCard>

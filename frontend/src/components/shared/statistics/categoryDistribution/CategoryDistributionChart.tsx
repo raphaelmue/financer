@@ -5,7 +5,7 @@ import {Pie}                                             from '@ant-design/chart
 import {getCurrencySymbol}                               from '../../user/settings/settingsUtil';
 import {UserState}                                       from '../../../../store/reducers/user.reducers';
 import {DataSet, GetCategoryDistributionBalanceTypeEnum} from '../../../../.openapi';
-import {Card, Radio, Select, Space}                      from 'antd';
+import {Radio, Select, Space}                            from 'antd';
 import {AppState}                                        from '../../../../store/reducers/root.reducers';
 import {connect}                                         from 'react-redux';
 import {statisticDispatchMap}                            from '../../../../store/api/statistic.api';

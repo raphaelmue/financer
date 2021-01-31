@@ -13,8 +13,6 @@ import {DeleteTokenRequest}                                       from '../../.o
 import Dashboard                                                  from './dashboard/Dashboard';
 import Profile                                                    from './profile/Profile';
 import Settings                                                   from './settings/Settings';
-import VariableTransactionList
-                                                                  from '../shared/transaction/variable/transactionList/VariableTransactionList';
 import CreateVariableTransaction
                                                                   from './transactions/variable/create/CreateVariableTransaction';
 import VariableTransactionsDetails
