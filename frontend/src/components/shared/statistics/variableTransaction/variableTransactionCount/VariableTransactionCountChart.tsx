@@ -4,21 +4,19 @@ import {WithTranslation, withTranslation} from 'react-i18next';
 import {statisticDispatchMap}             from '../../../../../store/api/statistic.api';
 import {AppState}                         from '../../../../../store/reducers/root.reducers';
 import {StatisticReducerProps}            from '../../../../../store/reducers/statistic.reducer';
-import {Area, Line}                       from '@ant-design/charts';
-import {getCurrencySymbol}                from '../../../user/settings/settingsUtil';
-import {UserReducerState}                 from '../../../../../store/reducers/user.reducers';
-import {Card, Select}                     from 'antd';
+import {Area}                             from '@ant-design/charts';
+import {UserState}                        from '../../../../../store/reducers/user.reducers';
+import {Button, Card, Select, Space}      from 'antd';
 import {DataSet}                          from '../../../../../.openapi';
 import {ChartCard}                        from 'ant-design-pro/lib/Charts';
-import {Charts}                           from 'ant-design-pro';
-import VariableTransactionList            from '../../../../home/transactions/variable/VariableTransactionList';
-import StatisticNumber                    from 'antd/es/statistic/Number';
-import ProCard                            from '@ant-design/pro-card';
+import VariableTransactionList            from '../../../transaction/variable/transactionList/VariableTransactionList';
+import {PlusOutlined}                     from '@ant-design/icons';
+import {Link}                             from 'react-router-dom';
 
 const {Option} = Select;
 
 interface VariableTransactionCountChartHistoryComponentProps extends WithTranslation<'default'>, StatisticReducerProps {
-    userState: UserReducerState
+    userState: UserState
 }
 
 interface VariableTransactionCountChartHistoryComponentState {
@@ -88,14 +86,26 @@ class VariableTransactionCountHistoryChart extends React.Component<VariableTrans
                 title={this.props.t('Menu.Transaction.Transactions')}
                 loading={this.state.loading}
                 extra={
-                    <Select<number>
-                        onChange={this.onChangeNumberOfMonths.bind(this)}
-                        defaultValue={this.state.numberOfMonths}>
-                        <Option value={6}>6 Months</Option>
-                        <Option value={12}>1 Year</Option>
-                        <Option value={24}>2 Years</Option>
-                        <Option value={48}>4 Years</Option>
-                    </Select>
+                    <Space>
+                        <Link key={'linkToCreateVariableTransaction'}
+                              to={'/transactions/variable/create'}>
+                            <Button
+                                id={'createVariableTransactionButton'}
+                                key={'createVariableTransactionButton'}
+                                type="primary"
+                                icon={<PlusOutlined/>}>
+                                {this.props.t('Form.Button.New')}
+                            </Button>
+                        </Link>
+                        <Select<number>
+                            onChange={this.onChangeNumberOfMonths.bind(this)}
+                            defaultValue={this.state.numberOfMonths}>
+                            <Option value={6}>6 Months</Option>
+                            <Option value={12}>1 Year</Option>
+                            <Option value={24}>2 Years</Option>
+                            <Option value={48}>4 Years</Option>
+                        </Select>
+                    </Space>
                 }>
                 <ChartCard
                     title={this.props.t('Statistics.History.VariableTransactionCountHistory')}
@@ -128,6 +138,8 @@ class VariableTransactionCountHistoryChart extends React.Component<VariableTrans
                         height={50}
                     />
                 </ChartCard>
+                <VariableTransactionList
+                    simpleView={true}/>
             </Card>
         );
     }

@@ -3,7 +3,7 @@ import {withTranslation, WithTranslation}                from 'react-i18next';
 import {StatisticReducerProps}                           from '../../../../store/reducers/statistic.reducer';
 import {Pie}                                             from '@ant-design/charts';
 import {getCurrencySymbol}                               from '../../user/settings/settingsUtil';
-import {UserReducerState}                                from '../../../../store/reducers/user.reducers';
+import {UserState}                                       from '../../../../store/reducers/user.reducers';
 import {DataSet, GetCategoryDistributionBalanceTypeEnum} from '../../../../.openapi';
 import {Card, Radio, Select, Space}                      from 'antd';
 import {AppState}                                        from '../../../../store/reducers/root.reducers';
@@ -14,7 +14,7 @@ import {ChartCard}                                       from 'ant-design-pro/li
 const {Option} = Select;
 
 interface CategoryDistributionChartComponentProps extends WithTranslation<'default'>, StatisticReducerProps {
-    userState: UserReducerState
+    userState: UserState
 }
 
 interface CategoryDistributionChartComponentState {

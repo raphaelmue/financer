@@ -5,15 +5,15 @@ import {statisticDispatchMap}             from '../../../../store/api/statistic.
 import {AppState}                         from '../../../../store/reducers/root.reducers';
 import {StatisticReducerProps}            from '../../../../store/reducers/statistic.reducer';
 import {Line}                             from '@ant-design/charts';
-import {getCurrencySymbol}                from '../../user/settings/settingsUtil';
-import {UserReducerState}                 from '../../../../store/reducers/user.reducers';
-import {Card, Select}                     from 'antd';
+import {getCurrencySymbol} from '../../user/settings/settingsUtil';
+import {UserState}         from '../../../../store/reducers/user.reducers';
+import {Card, Select}      from 'antd';
 import {DataSet}                          from '../../../../.openapi';
 
 const {Option} = Select;
 
 interface BalanceHistoryChartComponentProps extends WithTranslation<'default'>, StatisticReducerProps {
-    userState: UserReducerState
+    userState: UserState
 }
 
 interface BalanceHistoryChartComponentState {
@@ -115,6 +115,7 @@ class BalanceHistoryChart extends React.Component<BalanceHistoryChartComponentPr
                     }}
                     xField={'date'}
                     yField={'amount'}
+                    height={250}
                     padding={'auto'}
                     annotations={[
                         {

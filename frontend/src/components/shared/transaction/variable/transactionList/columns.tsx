@@ -1,7 +1,7 @@
 import {ProColumns}          from '@ant-design/pro-table';
-import {VariableTransaction} from '../../../../.openapi';
+import {VariableTransaction} from '../../../../../.openapi';
 import i18next               from 'i18next';
-import AmountLabel           from '../../../shared/transaction/amount/amountLabel/AmountLabel';
+import AmountLabel           from '../../amount/amountLabel/AmountLabel';
 import React                 from 'react';
 
 export const columns = (): ProColumns<VariableTransaction>[] => [
