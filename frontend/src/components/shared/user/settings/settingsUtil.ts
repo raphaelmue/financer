@@ -1,4 +1,5 @@
-import store from '../../../../store/store';
+import store                         from '../../../../store/store';
+import {Category, CategoryClassEnum} from '../../../../.openapi';
 
 export function getCurrencySign(): string {
     switch (store.getState().user.user?.settings?.CURRENCY?.value) {
@@ -16,4 +17,14 @@ export function getCurrencySymbol(): string {
 
 export function isDarkTheme(): boolean {
     return store.getState().user.user?.settings?.THEME?.value === 'dark' || false;
+}
+
+export function adjustAmountSign(amount: number, category: Category): number {
+    if (store.getState().user.user?.settings?.CHANGE_AMOUNT_SIGN_AUTOMATICALLY?.value === 'true') {
+        if ((amount > 0 && category.categoryClass === (CategoryClassEnum.FIXEDEXPENSES || CategoryClassEnum.VARIABLEEXPENSES)) ||
+            (amount < 0 && category.categoryClass === (CategoryClassEnum.FIXEDREVENUE || CategoryClassEnum.FIXEDREVENUE))) {
+            amount = amount * -1;
+        }
+    }
+    return amount;
 }

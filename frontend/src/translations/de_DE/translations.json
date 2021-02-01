@@ -205,7 +205,8 @@
       "Appearance": "Darstellung",
       "DarkTheme": "Dunkles Thema",
       "LightTheme": "Helles Thema",
-      "Theme": "Thema"
+      "Theme": "Thema",
+      "ChangeAmountSignAutomatically": "Betragsvorzeichen automatisch anpassen"
     },
     "User": {
       "Name": "Name",
