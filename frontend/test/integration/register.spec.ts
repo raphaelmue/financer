@@ -30,9 +30,5 @@ describe('Registration Test', () => {
             .and('contain.text', 'Dashboard');
 
         cy.location('href').should('contain', '/dashboard');
-
-        cy.wait('@getBalanceHistory')
-            .wait('@getCategoriesDistribution')
-            .wait('@getVariableTransactionCountHistory');
     });
 });
