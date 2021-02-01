@@ -3,21 +3,21 @@ import {User}                             from '../../.openapi';
 import {UserAction, UserActionDefinition} from '../actions/user.actions';
 import {UserApi}                          from '../api/user.api';
 
-export interface UserReducerState extends ReducerState {
+export interface UserState extends ReducerState {
     user: User | undefined;
 }
 
 export interface UserReducerProps extends UserApi {
-    userState: UserReducerState
+    userState: UserState
 }
 
-const initialState: UserReducerState = {
+const initialState: UserState = {
     user: undefined,
     error: undefined,
     isLoading: false
 };
 
-const userReducer = (state: UserReducerState = initialState, action: UserAction) => {
+const userReducer = (state: UserState = initialState, action: UserAction) => {
     switch (action.type) {
         case UserActionDefinition.LOGIN_SUCCESS:
             return {...state, isLoading: false, user: action.payload, error: undefined};

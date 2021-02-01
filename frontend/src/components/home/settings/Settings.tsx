@@ -72,9 +72,9 @@ class Settings extends React.Component<SettingsComponentProps, SettingsComponent
                             <Select
                                 showSearch
                                 filterOption={(input, option) =>
-                                    option!.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                    option?.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
                                 }
-                                onChange={value => this.updateUsersSettings(value.toString(), undefined)}>
+                                onChange={value => this.updateUsersSettings(value.toString())}>
                                 <Option value={'en'}>English</Option>
                                 <Option value={'de'}>Deutsch</Option>
                             </Select>
@@ -87,7 +87,7 @@ class Settings extends React.Component<SettingsComponentProps, SettingsComponent
                             <Select
                                 showSearch
                                 filterOption={(input, option) =>
-                                    option!.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                    option?.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
                                 }
                                 onChange={value => this.updateUsersSettings(undefined, value.toString())}>
                                 <Option value={'EUR'}>EUR</Option>
@@ -104,7 +104,7 @@ class Settings extends React.Component<SettingsComponentProps, SettingsComponent
                             <Select
                                 showSearch
                                 filterOption={(input, option) =>
-                                    option!.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                    option?.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
                                 }
                                 onChange={value => this.updateUsersSettings(undefined, undefined, value.toString())}>
                                 <Option value={'light'}>{this.props.t('Profile.Settings.LightTheme')}</Option>

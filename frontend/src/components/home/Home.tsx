@@ -13,8 +13,6 @@ import {DeleteTokenRequest}                                       from '../../.o
 import Dashboard                                                  from './dashboard/Dashboard';
 import Profile                                                    from './profile/Profile';
 import Settings                                                   from './settings/Settings';
-import VariableTransactionList
-                                                                  from './transactions/variable/VariableTransactionList';
 import CreateVariableTransaction
                                                                   from './transactions/variable/create/CreateVariableTransaction';
 import VariableTransactionsDetails
@@ -34,6 +32,8 @@ import '@ant-design/pro-table/dist/table.css';
 import '@ant-design/pro-list/dist/list.css';
 import '@ant-design/pro-card/dist/card.css';
 import UserManagement                                             from './admin/users/UserManagement';
+import VariableTransactionOverview
+                                                                  from './transactions/variable/VariableTransactionOverview';
 
 if (isDarkTheme()) {
     require('antd/dist/antd.dark.css');
@@ -78,10 +78,13 @@ class Home extends React.Component<HomeProps, HomeState> {
             <BasicLayout
                 style={{
                     overflow: 'auto',
-                    height: '100vh'
+                    minHeight: '100vh'
                 }}
                 title="F I N A N C E R"
                 logo={null}
+                fixedHeader
+                fixSiderbar
+                forceSubMenuRender
                 menuDataRender={() => menuData()}
                 menuItemRender={(menuItemProps, defaultDom) => {
                     if (menuItemProps.path) {
@@ -127,7 +130,7 @@ class Home extends React.Component<HomeProps, HomeState> {
                         <Route path={'/transactions/variable/create'} component={CreateVariableTransaction}/>
                         <Route path={'/transactions/variable/:variableTransactionId'}
                                component={VariableTransactionsDetails}/>
-                        <Route path={'/transactions/variable/'} component={VariableTransactionList}/>
+                        <Route path={'/transactions/variable/'} component={VariableTransactionOverview}/>
                         <Route path={'/transactions/fixed/create'} component={CreateFixedTransaction}/>
                         <Route path={'/transactions/fixed/:fixedTransactionId'}
                                component={FixedTransactionDetails}/>

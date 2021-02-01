@@ -70,6 +70,7 @@ module org.financer.server {
     opens org.financer.server.domain.model.user to spring.core, org.hibernate.orm.core, modelmapper;
     opens org.financer.server.domain.model.category to spring.core, org.hibernate.orm.core, modelmapper;
     opens org.financer.server.domain.model.transaction to spring.core, org.hibernate.orm.core, modelmapper;
+    opens org.financer.server.domain.model.statistics to modelmapper;
 
     opens org.financer.server.application.model to spring.core;
     opens org.financer.server.application.model.user to spring.core;
@@ -81,6 +82,7 @@ module org.financer.server {
     exports org.financer.server.domain.model.user to spring.beans, modelmapper;
     exports org.financer.server.domain.model.category to spring.beans, modelmapper;
     exports org.financer.server.domain.model.transaction to spring.beans, modelmapper;
+    exports org.financer.server.domain.model.statistics to modelmapper, com.fasterxml.jackson.databind;
 
     exports org.financer.server.application to spring.beans, spring.context;
     exports org.financer.server.application.api to spring.beans, spring.web;

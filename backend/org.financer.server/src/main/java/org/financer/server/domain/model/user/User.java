@@ -6,6 +6,7 @@ import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 import org.financer.server.domain.model.DataEntity;
 import org.financer.server.domain.model.category.Category;
+import org.financer.shared.domain.model.AmountProvider;
 import org.financer.shared.domain.model.value.objects.*;
 
 import javax.persistence.*;
@@ -20,7 +21,7 @@ import java.util.Set;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
 @Table(name = "users")
-public class User implements DataEntity, UserProperty {
+public class User implements DataEntity, UserProperty, AmountProvider {
     private static final long serialVersionUID = 8551108621522985674L;
 
     @Id
@@ -91,6 +92,52 @@ public class User implements DataEntity, UserProperty {
             this.getSettings().put(property, new Setting()
                     .setUser(this)
                     .setPair(new SettingPair(property, value)));
+        }
+    }
+
+    @Override
+    public Amount getTotalAmount() {
+        Amount amount = new Amount();
+        for (Category category : this.categories) {
+            amount = amount.add(category.getTotalAmount());
+        }
+        return amount;
+    }
+
+    @Override
+    public Amount getTotalAmount(ValueDate valueDate) {
+        Amount amount = new Amount();
+        for (Category category : this.categories) {
+            if (category.isRoot()) {
+                amount = amount.add(category.getTotalAmount(valueDate));
+            }
+        }
+        return amount;
+    }
+
+    @Override
+    public Amount getTotalAmount(TimeRange timeRange) {
+        Amount amount = new Amount();
+        for (Category category : this.categories) {
+            amount = amount.add(category.getTotalAmount(timeRange));
+        }
+        return amount;
+    }
+
+    @Override
+    public boolean isFixed() {
+        return false;
+    }
+
+    @Override
+    public boolean isRevenue() {
+        return false;
+    }
+
+    @Override
+    public void adjustAmountSign() {
+        for (Category category : this.categories) {
+            category.adjustAmountSign();
         }
     }
 }

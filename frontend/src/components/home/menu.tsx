@@ -1,9 +1,9 @@
-import {MenuDataItem}                                                                  from '@ant-design/pro-layout/es/typings';
-import i18next                                                                         from 'i18next';
-import {AreaChartOutlined, DollarOutlined, SettingOutlined, TagOutlined, UserOutlined} from '@ant-design/icons';
-import React                                                                           from 'react';
-import AdminUtils                                                                      from '../shared/admin/utils';
-import store                                                                           from '../../store/store';
+import {MenuDataItem}                                                     from '@ant-design/pro-layout/es/typings';
+import i18next                                                            from 'i18next';
+import {AreaChartOutlined, DollarOutlined, SettingOutlined, UserOutlined} from '@ant-design/icons';
+import React                                                              from 'react';
+import AdminUtils                                                         from '../shared/admin/utils';
+import store                                                              from '../../store/store';
 
 export default (): MenuDataItem[] => [
     {
