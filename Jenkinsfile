@@ -69,7 +69,7 @@ pipeline {
                     }
                     post {
                         always {
-                            junit '**/.test/.report/cypress-report.xml'
+                            junit '**/.test/.report/cypress-report.*.xml'
                             step([$class: 'CoberturaPublisher',
                                 coberturaReportFile: 'frontend/.test/.coverage/cobertura-coverage.xml',
                                 autoUpdateHealth: false,
