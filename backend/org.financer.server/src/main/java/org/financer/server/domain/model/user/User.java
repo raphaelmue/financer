@@ -100,7 +100,10 @@ public class User implements DataEntity, UserProperty, AmountProvider, Settings 
     @SuppressWarnings("unchecked")
     @Override
     public <T> T getValue(SettingPair.Property property) {
-        return (T) this.getSettings().get(property).getPair().getValueObject();
+        if (this.getSettings() != null && this.getSettings().get(property) != null) {
+            return (T) this.getSettings().get(property).getPair().getValueObject();
+        }
+        return null;
     }
 
     @Override
