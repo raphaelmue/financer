@@ -25,8 +25,6 @@ export const categoryReducer = (state: CategoryState = initialState, action: Cat
         case CategoryActionDefinition.LOAD_CATEGORIES_SUCCESS:
             return {...state, isLoading: false, error: undefined, categories: action.payload};
         case CategoryActionDefinition.CREATE_CATEGORY_SUCCESS:
-            CategoryUtil.insertCategoryIntoTree(state.categories, action.payload);
-            return {...state, isLoading: false, error: undefined, categories: state.categories};
         case CategoryActionDefinition.UPDATE_CATEGORY_SUCCESS:
             CategoryUtil.insertCategoryIntoTree(state.categories, action.payload);
             return {...state, isLoading: false, error: undefined, categories: state.categories};

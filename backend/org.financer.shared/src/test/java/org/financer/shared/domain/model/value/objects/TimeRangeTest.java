@@ -23,6 +23,15 @@ public class TimeRangeTest extends MockData {
     public void testGetMonthIntersection() {
         assertThat(new TimeRange(LocalDate.now().minusMonths(3), LocalDate.now()).getMonthIntersection(new TimeRange(LocalDate.now().minusMonths(1), LocalDate.now().plusMonths(1))))
                 .isEqualTo(new TimeRange(LocalDate.now().minusMonths(1), LocalDate.now()));
+
+        assertThat(new TimeRange(LocalDate.now().minusMonths(3)).getMonthIntersection(new TimeRange(LocalDate.now().minusMonths(1), LocalDate.now().plusMonths(1))))
+                .isEqualTo(new TimeRange(LocalDate.now().minusMonths(1), LocalDate.now()));
+
+        assertThat(new TimeRange(LocalDate.now().minusMonths(3), LocalDate.now()).getMonthIntersection(new TimeRange(LocalDate.now().minusMonths(1))))
+                .isEqualTo(new TimeRange(LocalDate.now().minusMonths(1), LocalDate.now()));
+
+        assertThat(new TimeRange(LocalDate.now().minusMonths(3)).getMonthIntersection(new TimeRange(LocalDate.now().minusMonths(1))))
+                .isEqualTo(new TimeRange(LocalDate.now().minusMonths(1), LocalDate.now()));
     }
 
     @Test

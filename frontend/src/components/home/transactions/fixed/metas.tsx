@@ -12,7 +12,7 @@ export const metas = (): ProListMetas<FixedTransaction> => {
         title: {
             dataIndex: 'product',
             // eslint-disable-next-line react/display-name
-            render: (dom, entity) => <Link to={'/transactions/fixed/' + entity.id}>{entity.product}</Link>
+            render: (dom, entity) => <Link to={'/transactions/fixed/' + entity.id}>{entity.product || entity.category.name}</Link>
         },
         subTitle: {
             // eslint-disable-next-line react/display-name

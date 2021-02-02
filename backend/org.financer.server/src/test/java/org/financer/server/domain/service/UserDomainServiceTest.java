@@ -39,6 +39,9 @@ public class UserDomainServiceTest extends ServiceTest {
     @MockBean
     private TransactionDomainService transactionDomainService;
 
+    @MockBean
+    private StatisticsDomainService statisticsDomainService;
+
     @Autowired
     private UserDomainService userDomainService;
 

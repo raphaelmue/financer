@@ -36,6 +36,9 @@ public class CategoryDomainServiceTest extends ServiceTest {
     @MockBean
     private TransactionDomainService transactionDomainService;
 
+    @MockBean
+    private StatisticsDomainService statisticsDomainService;
+
     @Autowired
     private CategoryDomainService categoryDomainService;
 

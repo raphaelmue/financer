@@ -209,7 +209,7 @@ class VariableTransactionDetails extends React.Component<VariableTransactionDeta
                             key: 'attachmentsTab',
                         }]}
                         onTabChange={activeKey => (this.setState({activeTab: activeKey}))}>
-                        <ProCard collapsed={!(this.state.activeTab === 'productsTab')}>
+                        <ProCard collapsed={(this.state.activeTab !== 'productsTab')}>
                             <ProductList
                                 products={this.state.variableTransaction.products || []}
                                 openProductDialog={() => this.setState({showProductDialog: true})}
@@ -219,7 +219,7 @@ class VariableTransactionDetails extends React.Component<VariableTransactionDeta
                                 onCancel={() => this.setState({showProductDialog: false})}
                                 onSubmit={product => this.onCreateProduct(product)}/>
                         </ProCard>
-                        <ProCard collapsed={!(this.state.activeTab === 'attachmentsTab')}>
+                        <ProCard collapsed={(this.state.activeTab !== 'attachmentsTab')}>
                             <AttachmentList
                                 attachments={this.state.variableTransaction.attachments || []}
                                 openAttachmentDialog={() => this.setState({showAttachmentDialog: true})}/>

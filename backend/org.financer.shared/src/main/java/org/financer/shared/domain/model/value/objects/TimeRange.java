@@ -85,21 +85,16 @@ public class TimeRange implements Serializable, Formattable, Comparable<TimeRang
     @JsonIgnore
     public TimeRange getMonthIntersection(TimeRange timeRange) {
         // if both time ranges are disjoint, return 0
-        if (this.getStartDate().isAfter(timeRange.getEndDate()) && this.getEndDate().isBefore(timeRange.getStartDate())) {
+        if (this.getStartDate().isAfter(timeRange.getEndDateOrCurrentDate()) && this.getEndDateOrCurrentDate().isBefore(timeRange.getStartDate())) {
             return null;
         }
 
         ValueDate maxStartDate;
         ValueDate minEndDate;
-
-        if (this.getEndDate() == null) {
-            minEndDate = new ValueDate(timeRange.getEndDate());
+        if (timeRange.getEndDateOrCurrentDate().isAfter(this.getEndDateOrCurrentDate())) {
+            minEndDate = new ValueDate(this.getEndDateOrCurrentDate());
         } else {
-            if (timeRange.getEndDate().isAfter(this.endDate)) {
-                minEndDate = new ValueDate(this.endDate);
-            } else {
-                minEndDate = new ValueDate(timeRange.getEndDate());
-            }
+            minEndDate = new ValueDate(timeRange.getEndDateOrCurrentDate());
         }
 
         if (timeRange.getStartDate().isBefore(this.startDate)) {

@@ -11,9 +11,8 @@ import {deDEIntl}                       from './de_DE/intl';
 
 export function getCurrentLocale(): Locale {
     if (store.getState().user.user?.settings?.LANGUAGE?.value) {
-        switch (store.getState().user.user?.settings?.LANGUAGE?.value) {
-            case 'de':
-                return deDE;
+        if (store.getState().user.user?.settings?.LANGUAGE?.value === 'de') {
+            return deDE;
         }
     }
     return enUS;
@@ -22,9 +21,8 @@ export function getCurrentLocale(): Locale {
 
 export function getCurrentIntlType(): IntlType {
     if (store.getState().user.user?.settings?.LANGUAGE?.value) {
-        switch (store.getState().user.user?.settings?.LANGUAGE?.value) {
-            case 'de':
-                return createIntl('de_DE', deDEIntl());
+        if (store.getState().user.user?.settings?.LANGUAGE?.value === 'de') {
+            return createIntl('de_DE', deDEIntl());
         }
     }
     return enUSIntl;

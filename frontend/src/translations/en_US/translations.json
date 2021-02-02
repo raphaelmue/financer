@@ -59,7 +59,9 @@
         "FIXED_EXPENSES": "Fixed expenses",
         "FIXED_REVENUE": "Fixed revenue",
         "VARIABLE_EXPENSES": "Variable Expenses",
-        "VARIABLE_REVENUE": "Variable Revenue"
+        "VARIABLE_REVENUE": "Variable Revenue",
+        "Expenses": "Expenses",
+        "Revenue": "Revenue"
       },
       "ParentCategory": "Parent category",
       "CategoryName": "Category name"
@@ -226,5 +228,16 @@
       "NotVerified": "Not verified",
       "CurrentPassword": "Current Password"
     }
+  },
+  "Statistics": {
+    "History": {
+      "BalanceHistory": "Balance History",
+      "CategoryDistribution": "Category distribution",
+      "VariableTransactionCountHistory": "Count of transactions"
+    },
+    "Balance": "Balance",
+    "Distribution": "Distribution",
+    "Total": "Total",
+    "Count": "Count"
   }
 }

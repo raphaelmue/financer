@@ -8,8 +8,9 @@ module org.financer.shared {
     exports org.financer.shared.domain.model.api.transaction;
     exports org.financer.shared.domain.model.api.transaction.variable;
     exports org.financer.shared.domain.model.api.transaction.fixed;
-    exports org.financer.shared.domain.model.value.objects;
+    exports org.financer.shared.domain.model.api.statistics;
     exports org.financer.shared.domain.model.api.admin;
+    exports org.financer.shared.domain.model.value.objects;
 
     requires static lombok;
     requires org.financer.util;
