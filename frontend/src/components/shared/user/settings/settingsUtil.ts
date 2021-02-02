@@ -22,7 +22,7 @@ export function isDarkTheme(): boolean {
 export function adjustAmountSign(amount: number, category: Category): number {
     if (store.getState().user.user?.settings?.CHANGE_AMOUNT_SIGN_AUTOMATICALLY?.value === 'true') {
         if ((amount > 0 && category.categoryClass === (CategoryClassEnum.FIXEDEXPENSES || CategoryClassEnum.VARIABLEEXPENSES)) ||
-            (amount < 0 && category.categoryClass === (CategoryClassEnum.FIXEDREVENUE || CategoryClassEnum.FIXEDREVENUE))) {
+            (amount < 0 && category.categoryClass === (CategoryClassEnum.FIXEDREVENUE || CategoryClassEnum.VARIABLEREVENUE))) {
             amount = amount * -1;
         }
     }
