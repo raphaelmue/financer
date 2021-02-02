@@ -63,7 +63,7 @@ pipeline {
                                 --name financer-integration-tests \
                                 --entrypoint yarn \
                                 --env CYPRESS_RECORD_KEY \
-                                cypress/included:6.3.0 \
+                                cypress/included:6.4.0 \
                                 test'
                         }
                     }
