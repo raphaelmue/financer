@@ -239,5 +239,10 @@
     "Distribution": "Verteilung",
     "Total": "Gesamt",
     "Count": "Anzahl"
+  },
+  "Landing": {
+    "Banner": {
+      "FinancerDescription": "Financer ist eine Anwendung, die Dir hilft, alle Deine privaten Ausgaben und Einnahmen zu verwalten."
+    }
   }
 }

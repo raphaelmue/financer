@@ -239,5 +239,10 @@
     "Distribution": "Distribution",
     "Total": "Total",
     "Count": "Count"
+  },
+  "Landing": {
+    "Banner": {
+      "FinancerDescription": "Financer is an Application that helps to manage all private expenses and revenues."
+    }
   }
 }
