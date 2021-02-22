@@ -1,14 +1,14 @@
-import {withTranslation, WithTranslation} from 'react-i18next';
-import React                              from 'react';
-import {PageContainer}                    from '@ant-design/pro-layout';
-import ProCard                            from '@ant-design/pro-card';
-import {Divider, Form, Modal, Select}     from 'antd';
-import {fieldIsRequiredRule}              from '../../shared/user/form/rules';
-import {UserReducerProps}                 from '../../../store/reducers/user.reducers';
-import {AppState}                         from '../../../store/reducers/root.reducers';
-import {connect}                          from 'react-redux';
-import {userDispatchMap}                  from '../../../store/api/user.api';
-import {confirmDialogConfig}              from '../../shared/form/modal/confirm/config';
+import {withTranslation, WithTranslation}     from 'react-i18next';
+import React                                  from 'react';
+import {PageContainer}                        from '@ant-design/pro-layout';
+import ProCard                                from '@ant-design/pro-card';
+import {Divider, Form, Modal, Select, Switch} from 'antd';
+import {fieldIsRequiredRule}                  from '../../shared/user/form/rules';
+import {UserReducerProps}                     from '../../../store/reducers/user.reducers';
+import {AppState}                             from '../../../store/reducers/root.reducers';
+import {connect}                              from 'react-redux';
+import {userDispatchMap}                      from '../../../store/api/user.api';
+import {confirmDialogConfig}                  from '../../shared/form/modal/confirm/config';
 
 const {Option} = Select;
 
@@ -26,22 +26,33 @@ class Settings extends React.Component<SettingsComponentProps, SettingsComponent
         super(props);
     }
 
-    updateUsersSettings(language?: string, currency?: string, theme?: string): void {
+    updateUsersSettings(changedSettings: { language?: string, currency?: string, theme?: string, changeAmountSignAutomatically?: boolean }): void {
         if (this.props.userState.user?.id) {
+            let reloadNecessary = false;
             let settings: { [key: string]: string; } = {};
-            if (language) {
-                settings = {...settings, LANGUAGE: language};
+            if (changedSettings.language) {
+                settings = {...settings, LANGUAGE: changedSettings.language};
+                reloadNecessary = true;
             }
-            if (currency) {
-                settings = {...settings, CURRENCY: currency};
+            if (changedSettings.currency) {
+                settings = {...settings, CURRENCY: changedSettings.currency};
             }
-            if (theme) {
-                settings = {...settings, THEME: theme};
+            if (changedSettings.theme) {
+                settings = {...settings, THEME: changedSettings.theme};
+                reloadNecessary = true;
+            }
+            if (changedSettings.changeAmountSignAutomatically !== undefined) {
+                settings = {
+                    ...settings,
+                    CHANGE_AMOUNT_SIGN_AUTOMATICALLY: changedSettings.changeAmountSignAutomatically.toString()
+                };
             }
             this.props.dispatchUpdateUsersSettings({
                 userId: this.props.userState.user.id,
                 updateSettings: {settings: settings}
-            }, () => this.openReloadPageDialog());
+            }, () => {
+                if (reloadNecessary) this.openReloadPageDialog();
+            });
         }
     }
 
@@ -74,7 +85,7 @@ class Settings extends React.Component<SettingsComponentProps, SettingsComponent
                                 filterOption={(input, option) =>
                                     option?.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
                                 }
-                                onChange={value => this.updateUsersSettings(value.toString())}>
+                                onChange={value => this.updateUsersSettings({language: value.toString()})}>
                                 <Option value={'en'}>English</Option>
                                 <Option value={'de'}>Deutsch</Option>
                             </Select>
@@ -89,10 +100,18 @@ class Settings extends React.Component<SettingsComponentProps, SettingsComponent
                                 filterOption={(input, option) =>
                                     option?.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
                                 }
-                                onChange={value => this.updateUsersSettings(undefined, value.toString())}>
+                                onChange={value => this.updateUsersSettings({currency: value.toString()})}>
                                 <Option value={'EUR'}>EUR</Option>
                                 <Option value={'USD'}>USD</Option>
                             </Select>
+                        </Form.Item>
+                        <Form.Item
+                            name={'changeAmountSignAutomatically'}
+                            label={this.props.t('Profile.Settings.ChangeAmountSignAutomatically')}
+                            rules={[fieldIsRequiredRule()]}>
+                            <Switch
+                                checked={(this.props.userState.user?.settings?.CHANGE_AMOUNT_SIGN_AUTOMATICALLY?.value === 'true')}
+                                onChange={checked => this.updateUsersSettings({changeAmountSignAutomatically: checked})}/>
                         </Form.Item>
 
                         <Divider orientation={'left'}>{this.props.t('Profile.Settings.Appearance')}</Divider>
@@ -106,7 +125,7 @@ class Settings extends React.Component<SettingsComponentProps, SettingsComponent
                                 filterOption={(input, option) =>
                                     option?.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
                                 }
-                                onChange={value => this.updateUsersSettings(undefined, undefined, value.toString())}>
+                                onChange={value => this.updateUsersSettings({theme: value.toString()})}>
                                 <Option value={'light'}>{this.props.t('Profile.Settings.LightTheme')}</Option>
                                 <Option value={'dark'}>{this.props.t('Profile.Settings.DarkTheme')}</Option>
                             </Select>

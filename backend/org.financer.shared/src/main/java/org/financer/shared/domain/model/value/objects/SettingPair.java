@@ -28,9 +28,8 @@ public class SettingPair implements Serializable {
     public enum Property {
         LANGUAGE("language", Locale.ENGLISH, Locale.class, Locale::forLanguageTag),
         CURRENCY("currency", Currency.getInstance("USD"), Currency.class, Currency::getInstance),
-        SHOW_CURRENCY_SIGN("showCurrencySign", false, Boolean.class, Boolean::getBoolean),
-        CHANGE_AMOUNT_SIGN_AUTOMATICALLY("changeAmountSignAutomatically", false, Boolean.class, Boolean::getBoolean),
-        MAX_NUMBER_OF_MONTHS_DISPLAYED("maxNumberOfMonthsDisplayed", 6, Integer.class, Integer::getInteger),
+        SHOW_CURRENCY_SIGN("showCurrencySign", false, Boolean.class, Boolean::valueOf),
+        CHANGE_AMOUNT_SIGN_AUTOMATICALLY("changeAmountSignAutomatically", true, Boolean.class, Boolean::valueOf),
         THEME("theme", "light", String.class, value -> value);
 
         private final String name;
