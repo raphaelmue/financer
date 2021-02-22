@@ -243,6 +243,11 @@
   "Landing": {
     "Banner": {
       "FinancerDescription": "Financer is an Application that helps to manage all private expenses and revenues."
-    }
+    },
+    "Footer": {
+      "Contact": "Contact",
+      "Resources": "Resources"
+    },
+    "Content": {}
   }
 }

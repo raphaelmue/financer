@@ -243,6 +243,11 @@
   "Landing": {
     "Banner": {
       "FinancerDescription": "Financer ist eine Anwendung, die Dir hilft, alle Deine privaten Ausgaben und Einnahmen zu verwalten."
-    }
+    },
+    "Footer": {
+      "Contact": "Kontakt",
+      "Resources": "Weitere Links"
+    },
+    "Content": {}
   }
 }
