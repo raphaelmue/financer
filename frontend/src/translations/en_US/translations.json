@@ -205,7 +205,8 @@
       "Appearance": "Appearance",
       "DarkTheme": "Dark Theme",
       "LightTheme": "Light Theme",
-      "Theme": "Theme"
+      "Theme": "Theme",
+      "ChangeAmountSignAutomatically": "Change amount sign automatically"
     },
     "User": {
       "Name": "Name",

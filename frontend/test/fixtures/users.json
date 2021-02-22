@@ -1,0 +1,82 @@
+{
+    "_links": [],
+    "_embedded": {
+        "userDToes": [
+            {
+                "id": 1,
+                "email": {
+                    "emailAddress": "test@gmail.com"
+                },
+                "name": {
+                    "firstName": "John",
+                    "surname": "Doe"
+                },
+                "birthDate": {
+                    "birthDate": "2020-01-01"
+                },
+                "gender": {
+                    "gender": "MALE"
+                },
+                "activeToken": {
+                    "id": 1,
+                    "token": {
+                        "token": "UPOPBEZR7c9GqpGs0IFrKdgtRvUuZMsI8ubfOK33cDX6ArmtFiqxnP6ayHQFHsbu"
+                    },
+                    "ipAddress": {
+                        "ipAddress": "192.168.0.1"
+                    },
+                    "expireDate": {
+                        "expireDate": "3000-01-01",
+                        "valid": true,
+                        "expired": false
+                    },
+                    "operatingSystem": null
+                },
+                "tokens": [
+                    {
+                        "id": 1,
+                        "token": {
+                            "token": "UPOPBEZR7c9GqpGs0IFrKdgtRvUuZMsI8ubfOK33cDX6ArmtFiqxnP6ayHQFHsbu"
+                        },
+                        "ipAddress": {
+                            "ipAddress": "192.168.0.1"
+                        },
+                        "expireDate": {
+                            "expireDate": "3000-01-01T00:00:00.000Z",
+                            "valid": true,
+                            "expired": false
+                        },
+                        "operatingSystem": null
+                    }
+                ],
+                "verified": true,
+                "settings": {
+                    "LANGUAGE": {
+                        "id": 1,
+                        "value": "en"
+                    },
+                    "CURRENCY": {
+                        "id": 1,
+                        "value": "EUR"
+                    }
+                },
+                "roles": [
+                    {
+                        "id": 1,
+                        "name": "USER"
+                    },
+                    {
+                        "id": 2,
+                        "name": "ADMIN"
+                    }
+                ]
+            }
+        ]
+    },
+    "page": {
+        "size": 20,
+        "totalElements": 1,
+        "totalPages": 1,
+        "number": 0
+    }
+}
