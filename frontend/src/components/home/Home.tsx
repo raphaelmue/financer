@@ -71,7 +71,7 @@ class Home extends React.Component<HomeProps, HomeState> {
 
     render() {
         if (!this.props.userState.user) {
-            return <Redirect to={'/authentication'}/>;
+            return <Redirect to={'/landing'}/>;
         }
 
         return (

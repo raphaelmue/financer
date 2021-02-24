@@ -249,6 +249,29 @@
       "Contact": "Kontakt",
       "Resources": "Weitere Links"
     },
-    "Content": {}
+    "Content": {
+      "OpenSource": {
+        "Description": "Financer ist eine Open-Source-Anwendung. Dadurch wird ist es noch sicherer und - was noch wichtiger ist - kostenlos. Du kannst unser Git Repository hier finden:",
+        "Title": "Open Source"
+      },
+      "Productivity": {
+        "Title": "Produktivität",
+        "Description": "Financer ist nicht nur einfach zu bedienen, sondern erhöht auch Ihre Produktivität. Zum Beispiel, wenn Sie Ihre Steuererklärung erstellen müssen, können Sie leicht auf alle Ihre Transaktionen und Ausgaben zugreifen."
+      },
+      "Statistics": {
+        "Description": "Du kannst alle deine persönlichen Ausgaben leicht analysieren. So erhalten Sie einen Überblick über Ihren aktuellen Finanzstatus und Ihr Ausgabenprofil.",
+        "Title": "Statistiken"
+      },
+      "Features": "Features",
+      "GettingStarted": "Loslegen",
+      "Cloud": {
+        "Title": "Financer Cloud",
+        "Description": "Financer Cloud bietet eine von Financer gehosteten Server, der von überall erreichbar ist, an. So kannst du auf deine Finanzen von überall zugreifen - über die Android App oder die Desktop Applikation."
+      },
+      "OnPremise": {
+        "Description": "Du möchtest lieber Deinen eigenen Financer Server konfigurieren und nach Deinen Wünschen gestalten? Das kannst du tun, indem du Financer selber hostest. Hier findest du eine Anleitung für die Installation des Servers. Bei Fragen wende Dich an den Support.",
+        "Title": "On Premise"
+      }
+    }
   }
 }

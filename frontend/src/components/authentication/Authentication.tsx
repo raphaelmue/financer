@@ -1,25 +1,41 @@
 import * as React                         from 'react';
 import 'antd/dist/antd.css';
-import {Card, Col, Row, Tabs, Typography} from 'antd';
+import {Card, Col, Row, Tabs}             from 'antd';
 import {Redirect}                         from 'react-router-dom';
 import {connect}                          from 'react-redux';
 import {AppState}                         from '../../store/reducers/root.reducers';
 import {UserReducerProps}                 from '../../store/reducers/user.reducers';
-import {bindActionCreators, Dispatch}     from 'redux';
 import {WithTranslation, withTranslation} from 'react-i18next';
 import Login                              from './login/Login';
 import Register                           from './register/Register';
-
-const {Title} = Typography;
-const {TabPane} = Tabs;
+import {userDispatchMap}                  from '../../store/api/user.api';
 
 interface AuthenticationComponentProps extends WithTranslation<'default'>, UserReducerProps {
 }
 
 interface AuthenticationComponentState {
+    activeTab: string
 }
 
 class Authentication extends React.Component<AuthenticationComponentProps, AuthenticationComponentState> {
+
+    constructor(props: AuthenticationComponentProps) {
+        super(props);
+
+        this.state = {
+            activeTab: 'login'
+        };
+    }
+
+    tabContent = (key: string): React.ReactNode => {
+        switch (key) {
+            case 'login':
+                return <Login/>;
+            case 'register':
+                return <Register/>;
+        }
+        return <div/>;
+    };
 
     render() {
         if (this.props.userState.user) {
@@ -28,20 +44,27 @@ class Authentication extends React.Component<AuthenticationComponentProps, Authe
         }
 
         return (
-            <Row justify="center" align="middle" style={{minHeight: '100vh'}}>
-                <Col span={24} md={12}>
-                    <Card>
-                        <Typography>
-                            <Title>Financer</Title>
-                        </Typography>
-                        <Tabs defaultActiveKey="loginTab">
-                            <TabPane tab={this.props.t('login')} key="loginTab">
-                                <Login/>
-                            </TabPane>
-                            <TabPane tab={this.props.t('register')} key="registerTab">
-                                <Register/>
-                            </TabPane>
-                        </Tabs>
+            <Row
+                style={{
+                    height: '100vh',
+                    background: 'url(\'images/banner.jpg\') no-repeat',
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center'
+                }}
+                justify="space-around"
+                align="middle">
+                <Col md={{span: 12}} span={22} data-aos={'fade-up'} data-aos-delay={'0'}>
+                    <Card
+                        tabList={[{
+                            tab: this.props.t('login'),
+                            key: 'login'
+                        }, {
+                            tab: this.props.t('register'),
+                            key: 'register'
+                        }]}
+                        onTabChange={key => this.setState({activeTab: key})}
+                        activeTabKey={this.state.activeTab}>
+                        {this.tabContent(this.state.activeTab)}
                     </Card>
                 </Col>
             </Row>
@@ -55,6 +78,4 @@ const mapStateToProps = (state: AppState) => {
     };
 };
 
-const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({}, dispatch);
-
-export default connect(mapStateToProps, mapDispatchToProps)(withTranslation<"default">()(Authentication));
+export default connect(mapStateToProps, userDispatchMap)(withTranslation<'default'>()(Authentication));
