@@ -7,6 +7,7 @@ import lombok.experimental.Accessors;
 import org.financer.server.domain.model.DataEntity;
 import org.financer.server.domain.model.category.Category;
 import org.financer.shared.domain.model.AmountProvider;
+import org.financer.shared.domain.model.Settings;
 import org.financer.shared.domain.model.value.objects.*;
 
 import javax.persistence.*;
@@ -21,7 +22,7 @@ import java.util.Set;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
 @Table(name = "users")
-public class User implements DataEntity, UserProperty, AmountProvider {
+public class User implements DataEntity, UserProperty, AmountProvider, Settings {
     private static final long serialVersionUID = 8551108621522985674L;
 
     @Id
@@ -85,14 +86,24 @@ public class User implements DataEntity, UserProperty, AmountProvider {
         return this.id == userId;
     }
 
-    public void putOrUpdateSettingProperty(SettingPair.Property property, String value) {
+    @Override
+    public <T> void putOrUpdateSettingProperty(SettingPair.Property property, T value) {
         if (this.getSettings().containsKey(property)) {
-            this.getSettings().get(property).setValue(value);
+            this.getSettings().get(property).setValue(value.toString());
         } else {
             this.getSettings().put(property, new Setting()
                     .setUser(this)
                     .setPair(new SettingPair(property, value)));
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public <T> T getValue(SettingPair.Property property) {
+        if (this.getSettings() != null && this.getSettings().get(property) != null) {
+            return (T) this.getSettings().get(property).getPair().getValueObject();
+        }
+        return null;
     }
 
     @Override

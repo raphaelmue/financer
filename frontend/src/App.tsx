@@ -4,6 +4,7 @@ import {HashRouter as Router, Route, Switch} from 'react-router-dom';
 import Authentication                        from './components/authentication/Authentication';
 import {configureI18N}                       from './translations/translations';
 import Home                                  from './components/home/Home';
+import Landing                               from './components/landing/Landing';
 
 configureI18N();
 
@@ -12,6 +13,7 @@ export default class App extends React.Component {
         return (
             <Router>
                 <Switch>
+                    <Route path={'/landing'} component={Landing}/>
                     <Route path='/authentication' component={Authentication}/>
                     <Route path='/' component={Home}/>
                 </Switch>

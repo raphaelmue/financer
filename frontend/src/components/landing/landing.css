@@ -1,0 +1,38 @@
+.landing .icon-box {
+    text-align: center;
+}
+
+.landing .icon-box span.anticon {
+    transition: .5s ease-in-out;
+    padding: 32px;
+    font-size: 32px;
+    background: white;
+    border-radius: 100%;
+    box-shadow: 0 0 30px 0 rgba(0,0,0,0.3);
+    margin: 12px;
+}
+
+.landing .icon-box:hover span.anticon {
+    box-shadow: 0 0 30px 0 rgba(0,0,0,0.5);
+}
+
+.landing .ant-divider {
+    margin-top: -13px !important;
+    margin-bottom: -13px !important;
+}
+
+.landing .ant-divider span.ant-divider-inner-text {
+    text-transform: uppercase !important;
+    letter-spacing: 4px;
+}
+
+.landing .card-box {
+    height: 33vh;
+    box-shadow: 0 0 30px 0 rgba(0,0,0,0.3);
+}
+
+.landing .card-box span.anticon {
+    font-size: 24px;
+    padding-right: 12px;
+}
+

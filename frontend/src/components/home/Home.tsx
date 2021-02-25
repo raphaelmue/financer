@@ -22,8 +22,11 @@ import FixedTransactionOverview                                   from './transa
 import CreateFixedTransaction
                                                                   from './transactions/fixed/create/CreateFixedTransaction';
 import {isDarkTheme}                                              from '../shared/user/settings/settingsUtil';
+import UserManagement                                             from './admin/users/UserManagement';
 import FixedTransactionDetails
                                                                   from './transactions/fixed/details/FixedTransactionDetails';
+import VariableTransactionOverview
+                                                                  from './transactions/variable/VariableTransactionOverview';
 
 
 import 'ant-design-pro/dist/ant-design-pro.min.css';
@@ -31,9 +34,6 @@ import '@ant-design/pro-layout/dist/layout.css';
 import '@ant-design/pro-table/dist/table.css';
 import '@ant-design/pro-list/dist/list.css';
 import '@ant-design/pro-card/dist/card.css';
-import UserManagement                                             from './admin/users/UserManagement';
-import VariableTransactionOverview
-                                                                  from './transactions/variable/VariableTransactionOverview';
 
 if (isDarkTheme()) {
     require('antd/dist/antd.dark.css');
@@ -71,7 +71,7 @@ class Home extends React.Component<HomeProps, HomeState> {
 
     render() {
         if (!this.props.userState.user) {
-            return <Redirect to={'/authentication'}/>;
+            return <Redirect to={'/landing'}/>;
         }
 
         return (
@@ -81,7 +81,8 @@ class Home extends React.Component<HomeProps, HomeState> {
                     minHeight: '100vh'
                 }}
                 title="F I N A N C E R"
-                logo={null}
+                logo={'images/financer-icon-64.png'}
+                primaryColor={'#00B9AE'}
                 fixedHeader
                 fixSiderbar
                 forceSubMenuRender

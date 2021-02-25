@@ -5,7 +5,9 @@ import org.financer.server.application.service.AuthenticationService;
 import org.financer.server.domain.model.category.Category;
 import org.financer.server.domain.model.transaction.*;
 import org.financer.server.domain.repository.*;
+import org.financer.shared.domain.model.AmountProvider;
 import org.financer.shared.domain.model.value.objects.Amount;
+import org.financer.shared.domain.model.value.objects.SettingPair;
 import org.financer.shared.domain.model.value.objects.TimeRange;
 import org.financer.shared.domain.model.value.objects.ValueDate;
 import org.slf4j.Logger;
@@ -100,6 +102,7 @@ public class TransactionDomainService {
                 attachment.setUploadDate(LocalDate.now());
             }
 
+            this.adjustAmountSign(variableTransactionEntity);
             return variableTransactionRepository.save(variableTransactionEntity);
         }
         throw new NotFoundException(Category.class, variableTransactionEntity.getCategory().getId());
@@ -130,6 +133,8 @@ public class TransactionDomainService {
                 | changeTransactionVendor(variableTransaction, vendor);
 
         if (transactionChanged) {
+            this.adjustAmountSign(variableTransaction);
+
             return variableTransactionRepository.save(variableTransaction);
         }
         return variableTransaction;
@@ -201,6 +206,7 @@ public class TransactionDomainService {
         VariableTransaction variableTransaction = getVariableTransactionById(transactionId);
         product.setVariableTransaction(variableTransaction);
         product.throwIfNotUsersProperty(authenticationService.getUserId());
+        this.adjustAmountSign(product);
         return productRepository.save(product);
     }
 
@@ -277,6 +283,7 @@ public class TransactionDomainService {
                 fixedTransactionRepository.save(activeTransactionOptional.get());
             }
 
+            this.adjustAmountSign(fixedTransaction);
             return fixedTransactionRepository.save(fixedTransaction);
         }
         throw new NoResultException(String.format("No category with id %d found!", fixedTransaction.getCategory().getId()));
@@ -319,6 +326,7 @@ public class TransactionDomainService {
                 | changeFixedTransactionTransactionAmounts(fixedTransaction, transactionAmounts);
 
         if (fixedTransactionChanged) {
+            this.adjustAmountSign(fixedTransaction);
             fixedTransactionRepository.save(fixedTransaction);
         }
         return fixedTransaction;
@@ -410,6 +418,7 @@ public class TransactionDomainService {
         logger.info("Create new transaction amount for transaction {}", fixedTransactionId);
         FixedTransaction fixedTransaction = getFixedTransactionById(fixedTransactionId);
         transactionAmount.setFixedTransaction(fixedTransaction);
+        this.adjustAmountSign(transactionAmount);
         return fixedTransactionAmountRepository.save(transactionAmount);
     }
 
@@ -436,6 +445,7 @@ public class TransactionDomainService {
                 | changeFixedTransactionAmountValueDate(fixedTransactionAmount, valueDate);
 
         if (fixedTransactionAmountChanged) {
+            this.adjustAmountSign(fixedTransactionAmount);
             return fixedTransactionAmountRepository.save(fixedTransactionAmount);
         }
         return fixedTransactionAmount;
@@ -554,5 +564,12 @@ public class TransactionDomainService {
         logger.info("Deleting attachment {} of transaction {}.", attachmentId, transactionId);
         Attachment attachment = getAttachmentById(transactionId, attachmentId);
         attachmentRepository.delete(attachment);
+    }
+
+    private void adjustAmountSign(AmountProvider amountProvider) {
+        Boolean changeSignAutomaticallySetting = authenticationService.getAuthenticatedUser().getValueOrDefault(SettingPair.Property.CHANGE_AMOUNT_SIGN_AUTOMATICALLY);
+        if (changeSignAutomaticallySetting) {
+            amountProvider.adjustAmountSign();
+        }
     }
 }

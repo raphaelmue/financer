@@ -205,7 +205,8 @@
       "Appearance": "Appearance",
       "DarkTheme": "Dark Theme",
       "LightTheme": "Light Theme",
-      "Theme": "Theme"
+      "Theme": "Theme",
+      "ChangeAmountSignAutomatically": "Change amount sign automatically"
     },
     "User": {
       "Name": "Name",
@@ -239,5 +240,38 @@
     "Distribution": "Distribution",
     "Total": "Total",
     "Count": "Count"
+  },
+  "Landing": {
+    "Banner": {
+      "FinancerDescription": "Financer is an Application that helps to manage all private expenses and revenues."
+    },
+    "Footer": {
+      "Contact": "Contact",
+      "Resources": "Resources"
+    },
+    "Content": {
+      "OpenSource": {
+        "Description": "Financer is an open source application. This makes it even more secure and - even more important - it's free. You can checkout our Git Repository here:",
+        "Title": "Open Source"
+      },
+      "Productivity": {
+        "Title": "Productivity",
+        "Description": "Financer is not only easy to use, it increases your productivity. For instance, when have to do your tax return, you easily can access all your transactions and spends."
+      },
+      "Statistics": {
+        "Description": "You can easily analyze all your personal expenses. This helps to give you an overview about your current financial status and your spending profile.",
+        "Title": "Statistics"
+      },
+      "Features": "Features",
+      "GettingStarted": "Getting Started",
+      "Cloud": {
+        "Title": "Financer Cloud",
+        "Description": "Financer Cloud offers a server hosted by Financer that is accessible from anywhere. So you can access your finances from anywhere - via the Android app or the desktop application."
+      },
+      "OnPremise": {
+        "Description": "You prefer to configure your own Financer Server and design it according to your needs? You can do that by hosting Financer yourself. Here you will find instructions for installing the server. If you have any questions please contact the support.",
+        "Title": "On Premise"
+      }
+    }
   }
 }

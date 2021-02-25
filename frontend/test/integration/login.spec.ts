@@ -41,7 +41,7 @@ describe('Login Test', () => {
 
         cy.visit('/');
 
-        cy.location('href').should('contain', '/authentication');
+        cy.location('href').should('contain', '/landing');
         cy.get('#login_email').type('test@gmail.com');
         cy.get('#login_password').type('password{enter}');
 

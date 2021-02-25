@@ -137,6 +137,7 @@ public class TransactionDomainServiceTest extends ServiceTest {
         final String description = "Updated description";
         final String vendor = "Updated vendor";
         fixedCategory.setCategoryClass(variableCategory.getCategoryClass());
+        variableTransaction.getProducts().forEach(product1 -> product1.setVariableTransaction(variableTransaction));
         VariableTransaction transactionToAssert = transactionDomainService.updateVariableTransaction(
                 variableTransaction.getId(), fixedCategory.getId(), new ValueDate(LocalDate.now().plusMonths(1)), description, vendor);
 
@@ -249,12 +250,13 @@ public class TransactionDomainServiceTest extends ServiceTest {
         final String vendor = "New Vendor";
         final boolean hasVariableAmounts = true;
         final int day = 3;
+        fixedTransaction.getTransactionAmounts().forEach(fixedTransactionAmount1 -> fixedTransactionAmount1.setFixedTransaction(fixedTransaction));
         FixedTransaction updatedTransaction = transactionDomainService.updateFixedTransaction(fixedTransaction.getId(),
                 fixedCategory.getId(), amount, timeRange, product, description, vendor, hasVariableAmounts, day,
                 fixedTransaction.getTransactionAmounts());
 
         assertThat(updatedTransaction.getAmount()).isEqualTo(amount);
-        assertThat(updatedTransaction.getTotalAmount()).isEqualTo(new Amount(50));
+        assertThat(updatedTransaction.getTotalAmount()).isEqualTo(new Amount(-50));
         assertThat(updatedTransaction.getTimeRange()).isEqualTo(timeRange);
         assertThat(updatedTransaction.getProduct()).isEqualTo(product);
         assertThat(updatedTransaction.getDescription()).isEqualTo(description);
@@ -318,7 +320,7 @@ public class TransactionDomainServiceTest extends ServiceTest {
                 fixedTransactionAmount.getId(), new Amount(20), valueDate);
         assertThat(transactionAmount.getFixedTransaction()).isEqualToComparingFieldByField(fixedTransaction);
         assertThat(transactionAmount.getFixedTransaction().getTransactionAmounts()).isNotEmpty().first().isEqualTo(transactionAmount);
-        assertThat(transactionAmount.getTotalAmount(valueDate).getAmount()).isEqualTo(20);
+        assertThat(transactionAmount.getTotalAmount(valueDate).getAmount()).isEqualTo(-20);
     }
 
     @Test

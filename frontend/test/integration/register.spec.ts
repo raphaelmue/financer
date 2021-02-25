@@ -9,8 +9,8 @@ describe('Registration Test', () => {
 
         cy.visit('/');
 
-        cy.location('href').should('contain', '/authentication');
-        cy.get('#rc-tabs-0-tab-registerTab').click();
+        cy.location('href').should('contain', '/landing');
+        cy.get('#rc-tabs-0-tab-register').click();
         cy.get('#register_email').type('test@gmail.com');
         cy.get('#register_name').type('John');
         cy.get('#register_surname').type('Doe');
