@@ -21,7 +21,7 @@ class FixedTransactionAmountHistoryChart extends StatisticsComponent<FixedTransa
                 date: value.valueDate.date.toLocaleDateString(),
                 amount: value.amount.amount
             };
-        }) || [];
+        }).reverse() || [];
     }
 
     render() {

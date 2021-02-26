@@ -154,7 +154,7 @@ class FixedTransactionDetails extends React.Component<FixedTransactionDetailsCom
         if (this.state.fixedTransaction) {
             if (this.state.fixedTransaction.hasVariableAmounts) {
                 if (this.state.fixedTransaction.transactionAmounts.length > 0) {
-                    return this.state.fixedTransaction.transactionAmounts[this.state.fixedTransaction.transactionAmounts.length - 1].amount;
+                    return this.state.fixedTransaction.transactionAmounts[0].amount;
                 }
             } else {
                 return this.state.fixedTransaction.amount;
