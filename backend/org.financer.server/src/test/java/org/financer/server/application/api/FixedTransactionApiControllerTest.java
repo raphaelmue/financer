@@ -18,6 +18,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MvcResult;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
 
@@ -55,6 +56,36 @@ public class FixedTransactionApiControllerTest extends ApiTest {
         assertThat(transaction.getVendor()).isEqualTo(dto.getVendor());
 
         verify(transactionDomainService, times(1)).createFixedTransaction(any(FixedTransaction.class));
+    }
+
+    @Test
+    public void testGetFixedTransactionById() throws Exception {
+        FixedTransaction fixedTransaction = fixedTransaction();
+        fixedTransaction.addFixedTransactionAmount(new FixedTransactionAmount()
+                .setId(2L)
+                .setAmount(new Amount(20L))
+                .setFixedTransaction(fixedTransaction)
+                .setValueDate(new ValueDate(LocalDate.now().minusMonths(1))));
+        when(transactionDomainService.findTransactionById(anyLong())).thenReturn(fixedTransaction);
+
+        MvcResult result = mockMvc.perform(buildRequest(PathBuilder.Get().fixedTransactions().fixedTransactionId(2L).build()))
+                .andExpect(status().isOk()).andReturn();
+
+        FixedTransactionDTO transaction = objectMapper.readValue(result.getResponse().getContentAsString(), FixedTransactionDTO.class);
+        assertThat(transaction.getId()).isEqualTo(2L);
+        assertThat(transaction.getTransactionAmounts()).hasSize(2);
+        assertThat(transaction.getHasVariableAmounts()).isEqualTo(fixedTransaction.getHasVariableAmounts());
+        assertThat(transaction.getAmount()).isEqualTo(fixedTransaction.getAmount());
+        assertThat(transaction.getTimeRange()).isEqualTo(fixedTransaction.getTimeRange());
+        assertThat(transaction.getDescription()).isEqualTo(fixedTransaction.getDescription());
+        assertThat(transaction.getVendor()).isEqualTo(fixedTransaction.getVendor());
+
+        // assert that fixed transaction amounts are sorted
+        LocalDate localDate = LocalDate.now().minusMonths(3);
+        for (FixedTransactionAmountDTO fixedTransactionAmount : transaction.getTransactionAmounts()) {
+            assertThat(fixedTransactionAmount.getValueDate().getDate()).isAfter(localDate);
+            localDate = fixedTransactionAmount.getValueDate().getDate();
+        }
     }
 
     @Test

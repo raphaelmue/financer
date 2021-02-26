@@ -12,8 +12,9 @@ import org.springframework.hateoas.RepresentationModel;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import java.util.List;
+import java.util.Comparator;
 import java.util.Set;
+import java.util.TreeSet;
 
 @Data
 @Accessors(chain = true)
@@ -57,7 +58,7 @@ public class FixedTransactionDTO extends RepresentationModel<FixedTransactionDTO
     private Set<AttachmentDTO> attachments;
 
     @Schema(description = "List of fixed transaction amounts", required = true, example = "Amazon")
-    private List<@Valid FixedTransactionAmountDTO> transactionAmounts;
+    private Set<@Valid FixedTransactionAmountDTO> transactionAmounts = new TreeSet<>(Comparator.comparing(FixedTransactionAmountDTO::getValueDate).reversed());
 
     @Schema(description = "Indicates wether this transaction is active")
     private boolean isActive;

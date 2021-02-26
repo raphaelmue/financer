@@ -250,6 +250,11 @@ public class TransactionDomainServiceTest extends ServiceTest {
         final String vendor = "New Vendor";
         final boolean hasVariableAmounts = true;
         final int day = 3;
+        fixedTransaction.addFixedTransactionAmount(new FixedTransactionAmount()
+                .setId(2L)
+                .setFixedTransaction(fixedTransaction)
+                .setAmount(new Amount(20))
+                .setValueDate(new ValueDate(LocalDate.now().minusMonths(1))));
         fixedTransaction.getTransactionAmounts().forEach(fixedTransactionAmount1 -> fixedTransactionAmount1.setFixedTransaction(fixedTransaction));
         FixedTransaction updatedTransaction = transactionDomainService.updateFixedTransaction(fixedTransaction.getId(),
                 fixedCategory.getId(), amount, timeRange, product, description, vendor, hasVariableAmounts, day,
@@ -257,6 +262,7 @@ public class TransactionDomainServiceTest extends ServiceTest {
 
         assertThat(updatedTransaction.getAmount()).isEqualTo(amount);
         assertThat(updatedTransaction.getTotalAmount()).isEqualTo(new Amount(-50));
+        assertThat(updatedTransaction.getTransactionAmounts()).hasSize(2);
         assertThat(updatedTransaction.getTimeRange()).isEqualTo(timeRange);
         assertThat(updatedTransaction.getProduct()).isEqualTo(product);
         assertThat(updatedTransaction.getDescription()).isEqualTo(description);
