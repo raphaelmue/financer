@@ -66,6 +66,7 @@ public class FixedTransactionApiControllerTest extends ApiTest {
                 .setAmount(new Amount(20L))
                 .setFixedTransaction(fixedTransaction)
                 .setValueDate(new ValueDate(LocalDate.now().minusMonths(1))));
+        fixedTransaction.setHasVariableAmounts(true);
         when(transactionDomainService.findTransactionById(anyLong())).thenReturn(fixedTransaction);
 
         MvcResult result = mockMvc.perform(buildRequest(PathBuilder.Get().fixedTransactions().fixedTransactionId(2L).build()))
@@ -81,9 +82,9 @@ public class FixedTransactionApiControllerTest extends ApiTest {
         assertThat(transaction.getVendor()).isEqualTo(fixedTransaction.getVendor());
 
         // assert that fixed transaction amounts are sorted
-        LocalDate localDate = LocalDate.now().minusMonths(3);
+        LocalDate localDate = LocalDate.now().plusMonths(1);
         for (FixedTransactionAmountDTO fixedTransactionAmount : transaction.getTransactionAmounts()) {
-            assertThat(fixedTransactionAmount.getValueDate().getDate()).isAfter(localDate);
+            assertThat(fixedTransactionAmount.getValueDate().getDate()).isBefore(localDate);
             localDate = fixedTransactionAmount.getValueDate().getDate();
         }
     }
