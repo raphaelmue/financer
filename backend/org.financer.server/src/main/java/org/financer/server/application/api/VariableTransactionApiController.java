@@ -37,6 +37,17 @@ public class VariableTransactionApiController implements VariableTransactionApi 
     @Override
     public ResponseEntity<VariableTransactionDTO> createVariableTransaction(@NotNull @Valid CreateVariableTransactionDTO variableTransaction) {
         VariableTransaction variableTransactionEntity = modelMapper.map(variableTransaction, VariableTransaction.class);
+        variableTransactionEntity.getProducts().clear();
+        long id = -1;
+        for (CreateProductDTO product : variableTransaction.getProducts()) {
+            variableTransactionEntity.addProduct(new Product()
+                    .setId(id)
+                    .setVariableTransaction(variableTransactionEntity)
+                    .setName(product.getName())
+                    .setAmount(product.getAmount())
+                    .setQuantity(product.getQuantity()));
+            id--;
+        }
         variableTransactionEntity = transactionDomainService.createVariableTransaction(variableTransactionEntity);
         return new ResponseEntity<>(modelMapper.map(variableTransactionEntity, VariableTransactionDTO.class), HttpStatus.OK);
     }
