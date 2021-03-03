@@ -1,7 +1,7 @@
+@import url(../../../../../node_modules/antd/dist/antd.dark.css);
 
 .ant-pro-global-header {
     background-color: #1F1F1F !important;
-
 }
 
 .ant-pro-page-container-warp,
@@ -13,7 +13,7 @@
 .ant-pro-table-list-toolbar-title,
 .ant-pro-table-list-toolbar-setting-item,
 .antd-pro-charts-chart-card-metaWrap div,
-.antd-pro-charts-chart-card-content div{
+.antd-pro-charts-chart-card-content div {
     color: rgba(255, 255, 255, 0.85) !important;
 }
 

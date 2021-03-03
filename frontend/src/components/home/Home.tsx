@@ -21,24 +21,19 @@ import AdminConfiguration                                         from './admin/
 import FixedTransactionOverview                                   from './transactions/fixed/FixedTransactionOverview';
 import CreateFixedTransaction
                                                                   from './transactions/fixed/create/CreateFixedTransaction';
-import {isDarkTheme}                                              from '../shared/user/settings/settingsUtil';
 import UserManagement                                             from './admin/users/UserManagement';
 import FixedTransactionDetails
                                                                   from './transactions/fixed/details/FixedTransactionDetails';
+import packageInfo                                                from '../../../package.json';
 import VariableTransactionOverview
                                                                   from './transactions/variable/VariableTransactionOverview';
-
-
+import {isDarkTheme}                                              from '../shared/user/settings/settingsUtil';
 import 'ant-design-pro/dist/ant-design-pro.min.css';
 import '@ant-design/pro-layout/dist/layout.css';
 import '@ant-design/pro-table/dist/table.css';
 import '@ant-design/pro-list/dist/list.css';
 import '@ant-design/pro-card/dist/card.css';
-
-if (isDarkTheme()) {
-    require('antd/dist/antd.dark.css');
-    require('../../styles/dark-theme.css');
-}
+import ThemeProvider, {Theme} from '../shared/theme/ThemeProvider';
 
 const {Text} = Typography;
 
@@ -75,74 +70,80 @@ class Home extends React.Component<HomeProps, HomeState> {
         }
 
         return (
-            <BasicLayout
-                style={{
-                    overflow: 'auto',
-                    minHeight: '100vh'
-                }}
-                title="F I N A N C E R"
-                logo={'images/financer-icon-64.png'}
-                primaryColor={'#00B9AE'}
-                fixedHeader
-                fixSiderbar
-                forceSubMenuRender
-                menuDataRender={() => menuData()}
-                menuItemRender={(menuItemProps, defaultDom) => {
-                    if (menuItemProps.path) {
-                        return (<Link to={menuItemProps.path}>{defaultDom}</Link>);
-                    }
-                    return defaultDom;
-                }}
-                rightContentRender={() => (
-                    <Space>
-                        <Avatar shape="square" size="small" icon={<UserOutlined/>}/>
-                        <Text>
-                            {this.props.userState.user?.name.firstName + ' ' + this.props.userState.user?.name.surname}
-                        </Text>
-                        <Tooltip placement="left" title={this.props.t('logout')}>
-                            <Button
-                                type="text"
-                                icon={<LogoutOutlined/>}
-                                onClick={() => this.logoutUser()}/>
-                        </Tooltip>
-                    </Space>
-                )}
-                footerRender={() => (
-                    <DefaultFooter
-                        links={[
-                            {key: 'financer', title: 'Financer Website', href: 'https://financer-project.org/'},
-                            {key: 'github   ', title: 'GitHub', href: 'https://github.com/raphaelmue/financer/'},
-                        ]}
-                        copyright={'Financer Project 2020 - ' + new Date().getFullYear()}/>
-                )}
-                breadcrumbRender={(routers = []) => [{
-                    path: '/',
-                    breadcrumbName: this.props.t('Menu.Home')?.toString() || ''
-                }, ...routers,]}
-                itemRender={(route, params, routes) => {
-                    return routes.indexOf(route) === 0 ? (<span>{route.breadcrumbName}</span>) : (
-                        <Link to={route.path}>{route.breadcrumbName}</Link>
-                    );
-                }}
-                {...this.props}>
-                <Router>
-                    <Switch>
-                        <Route path={'/dashboard'} component={Dashboard}/>
-                        <Route path={'/transactions/variable/create'} component={CreateVariableTransaction}/>
-                        <Route path={'/transactions/variable/:variableTransactionId'}
-                               component={VariableTransactionsDetails}/>
-                        <Route path={'/transactions/variable/'} component={VariableTransactionOverview}/>
-                        <Route path={'/transactions/fixed/create'} component={CreateFixedTransaction}/>
-                        <Route path={'/transactions/fixed/:fixedTransactionId'}
-                               component={FixedTransactionDetails}/>
-                        <Route path={'/transactions/fixed/'} component={FixedTransactionOverview}/>
-                        <Route path={'/profile/:userId?'} component={Profile}/>
-                        <Route path={'/settings'} component={Settings}/>
-                        <Route path={'/admin/configuration'} component={AdminConfiguration}/>
-                        <Route path={'/admin/users'} component={UserManagement}/>
-                    </Switch>
-                </Router>
-            </BasicLayout>
+            <ThemeProvider theme={(this.props.userState.user?.settings?.THEME?.value as Theme) || Theme.LIGHT}>
+                <BasicLayout
+                    style={{
+                        overflow: 'auto',
+                        minHeight: '100vh'
+                    }}
+                    title="F I N A N C E R"
+                    logo={'images/financer-icon-64.png'}
+                    fixedHeader
+                    fixSiderbar
+                    forceSubMenuRender
+                    menuDataRender={() => menuData()}
+                    menuItemRender={(menuItemProps, defaultDom) => {
+                        if (menuItemProps.path) {
+                            return (<Link to={menuItemProps.path}>{defaultDom}</Link>);
+                        }
+                        return defaultDom;
+                    }}
+                    rightContentRender={() => (
+                        <Space>
+                            <Avatar shape="square" size="small" icon={<UserOutlined/>}/>
+                            <Text>
+                                {this.props.userState.user?.name.firstName + ' ' + this.props.userState.user?.name.surname}
+                            </Text>
+                            <Tooltip placement="left" title={this.props.t('logout')}>
+                                <Button
+                                    type="text"
+                                    icon={<LogoutOutlined/>}
+                                    onClick={() => this.logoutUser()}/>
+                            </Tooltip>
+                        </Space>
+                    )}
+                    footerRender={() => (
+                        <DefaultFooter
+                            links={[
+                                {key: 'financer', title: 'Financer Website', href: 'https://financer-project.org/'},
+                                {
+                                    key: 'version',
+                                    title: 'v' + packageInfo.version,
+                                    href: 'https://github.com/raphaelmue/financer/releases/tag/' + packageInfo.version
+                                },
+                                {key: 'github', title: 'GitHub', href: 'https://github.com/raphaelmue/financer/'}
+                            ]}
+                            copyright={'Financer Project 2020 - ' + new Date().getFullYear()}/>
+                    )}
+                    breadcrumbRender={(routers = []) => [{
+                        path: '/',
+                        breadcrumbName: this.props.t('Menu.Home')?.toString() || ''
+                    }, ...routers,]}
+                    itemRender={(route, params, routes) => {
+                        return routes.indexOf(route) === 0 ? (<span>{route.breadcrumbName}</span>) : (
+                            <Link to={route.path}>{route.breadcrumbName}</Link>
+                        );
+                    }}
+                    {...this.props}>
+                    <Router>
+                        <Switch>
+                            <Route path={'/dashboard'} component={Dashboard}/>
+                            <Route path={'/transactions/variable/create'} component={CreateVariableTransaction}/>
+                            <Route path={'/transactions/variable/:variableTransactionId'}
+                                   component={VariableTransactionsDetails}/>
+                            <Route path={'/transactions/variable/'} component={VariableTransactionOverview}/>
+                            <Route path={'/transactions/fixed/create'} component={CreateFixedTransaction}/>
+                            <Route path={'/transactions/fixed/:fixedTransactionId'}
+                                   component={FixedTransactionDetails}/>
+                            <Route path={'/transactions/fixed/'} component={FixedTransactionOverview}/>
+                            <Route path={'/profile/:userId?'} component={Profile}/>
+                            <Route path={'/settings'} component={Settings}/>
+                            <Route path={'/admin/configuration'} component={AdminConfiguration}/>
+                            <Route path={'/admin/users'} component={UserManagement}/>
+                        </Switch>
+                    </Router>
+                </BasicLayout>
+            </ThemeProvider>
         );
     }
 }
