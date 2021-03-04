@@ -136,8 +136,20 @@ public class Category implements DataEntity, Tree, AmountProvider, UserProperty 
         }
     }
 
+    public void throwIfRecursionOccurred(Category parent) {
+        if (this.equals(parent)) {
+            throw new IllegalCategoryParentStateException(this, parent);
+        }
+        if (!this.isLeaf()) {
+            for (Category child : this.getChildren()) {
+                child.throwIfRecursionOccurred(parent);
+            }
+        }
+    }
+
     @Override
     public Category setParent(Tree parent) {
+        throwIfRecursionOccurred((Category) parent);
         this.parent = (Category) parent;
         return this;
     }

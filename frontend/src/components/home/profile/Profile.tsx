@@ -151,6 +151,16 @@ class Profile extends React.Component<ProfileComponentProps, ProfileComponentSta
         return undefined;
     }
 
+    getParentId(): number | undefined {
+        let parentId: number | undefined = undefined;
+        if (this.state.showCategoryDialog === 'update') {
+            parentId = this.getSelectedCategory()?.parentId;
+        } else if (this.state.showCategoryDialog === 'create') {
+            parentId = this.state.selectedCategoryId;
+        }
+        return parentId;
+    }
+
     render() {
         if (!this.props.userState.isLoading && this.state.user === undefined) {
             return (
@@ -283,7 +293,7 @@ class Profile extends React.Component<ProfileComponentProps, ProfileComponentSta
 
                         <CreateOrUpdateCategoryDialog
                             data={this.getSelectedCategory()}
-                            parentCategoryId={this.state.selectedCategoryId}
+                            parentCategoryId={this.getParentId()}
                             visible={(this.state.showCategoryDialog !== undefined)}
                             onSubmit={category => this.createOrUpdateCategory(category)}
                             onCancel={() => this.setState({showCategoryDialog: undefined})}/>

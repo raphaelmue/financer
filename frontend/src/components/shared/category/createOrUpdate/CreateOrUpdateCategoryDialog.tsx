@@ -3,7 +3,7 @@ import {connect}                          from 'react-redux';
 import {WithTranslation, withTranslation} from 'react-i18next';
 import React                              from 'react';
 import {DataDialog}                       from '../../form/modal/data/types';
-import {Category}                         from '../../../../.openapi';
+import {Category, CategoryClassEnum}      from '../../../../.openapi';
 import {Form, Input, Modal}               from 'antd';
 import {CategoryReducerProps}             from '../../../../store/reducers/category.reducer';
 import CategoryTreeSelect                 from '../select/CategoyTreeSelect';
@@ -33,10 +33,18 @@ class CreateOrUpdateCategoryDialog extends React.Component<CreateOrUpdateCategor
         };
     }
 
+    getParentId(): number | undefined {
+        return this.state.parentCategoryId || this.props.data?.parentId || this.props.parentCategoryId;
+    }
+
+    getCategoryName(): string | undefined {
+        return this.state.categoryName || this.props.data?.name;
+    }
 
     onSubmit() {
-        const parentId: number | undefined = this.state.parentCategoryId || this.props.data?.parentId || this.props.parentCategoryId;
-        if (this.state.categoryName && parentId) {
+        const parentId: number | undefined = this.getParentId();
+        const categoryName: string | undefined = this.getCategoryName();
+        if (categoryName && parentId) {
             const categoryClass = CategoryUtil.getCategoryClassFromCategory(
                 CategoryUtil.addRootCategories(this.props.categoryState.categories), parentId);
             if (categoryClass) {
@@ -47,14 +55,14 @@ class CreateOrUpdateCategoryDialog extends React.Component<CreateOrUpdateCategor
                     category = {
                         id: -1,
                         children: [],
-                        name: this.state.categoryName,
+                        name: categoryName,
                         parentId: parentId,
                         categoryClass: categoryClass
                     };
                 } else {
                     category = {
                         ...this.props.data,
-                        name: this.state.categoryName,
+                        name: categoryName,
                         parentId: parentId,
                         categoryClass: categoryClass
                     };
@@ -74,6 +82,13 @@ class CreateOrUpdateCategoryDialog extends React.Component<CreateOrUpdateCategor
         }
     }
 
+    filterByCategoryClass(categoryClass: CategoryClassEnum): boolean {
+        const parentId: number | undefined = this.getParentId();
+        return (this.props.data !== undefined &&
+            parentId !== undefined &&
+            CategoryUtil.getCategoryClassFromCategory(this.props.categoryState.categories, parentId) === categoryClass);
+    }
+
     onCancel() {
         if (this.props.onCancel) {
             this.props.onCancel();
@@ -88,6 +103,7 @@ class CreateOrUpdateCategoryDialog extends React.Component<CreateOrUpdateCategor
                 okText={this.props.t('Form.Button.Submit')}
                 cancelText={this.props.t('Form.Button.Cancel')}
                 confirmLoading={this.state.confirmLoading}
+                destroyOnClose
                 onOk={this.onSubmit.bind(this)}
                 onCancel={this.onCancel.bind(this)}>
                 <Form
@@ -102,6 +118,8 @@ class CreateOrUpdateCategoryDialog extends React.Component<CreateOrUpdateCategor
                         <CategoryTreeSelect
                             rootSelectable
                             categoryId={this.props.data?.parentId || this.props.parentCategoryId}
+                            filterFixed={(this.filterByCategoryClass(CategoryClassEnum.FIXEDEXPENSES) || this.filterByCategoryClass(CategoryClassEnum.FIXEDREVENUE))}
+                            filterVariable={(this.filterByCategoryClass(CategoryClassEnum.VARIABLEEXPENSES) || this.filterByCategoryClass(CategoryClassEnum.VARIABLEREVENUE))}
                             onChange={categoryId => this.setState({parentCategoryId: categoryId})}/>
                     </Form.Item>
                     <Form.Item
