@@ -12,7 +12,7 @@ import javax.validation.constraints.NotNull;
 @Data
 @Accessors(chain = true)
 @Schema(name = "FixedTransactionAmount", description = "Schema of the fixed transaction amount")
-public class FixedTransactionAmountDTO {
+public class FixedTransactionAmountDTO implements Comparable<FixedTransactionAmountDTO> {
 
     @NotNull
     @Min(1)
@@ -26,4 +26,9 @@ public class FixedTransactionAmountDTO {
     @NotNull
     @Schema(description = "Amount of the fixed transaction amount", required = true, example = "50")
     private Amount amount;
+
+    @Override
+    public int compareTo(FixedTransactionAmountDTO o) {
+        return o.getValueDate().compareTo(this.getValueDate());
+    }
 }

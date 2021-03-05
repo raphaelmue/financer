@@ -27,8 +27,6 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
                     <Col span={24}>
                         <BalanceHistoryChart/>
                     </Col>
-                </Row>
-                <Row gutter={[16, 16]}>
                     <Col span={24} md={{span: 12}}>
                         <CategoryDistributionChart/>
                     </Col>

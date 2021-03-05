@@ -1,6 +1,8 @@
-import i18next        from 'i18next';
-import {Dispatch}     from 'redux';
-import {notification} from 'antd';
+import i18next                from 'i18next';
+import {Dispatch}             from 'redux';
+import {notification}         from 'antd';
+import store                  from './store';
+import {UserActionDefinition} from './actions/user.actions';
 
 export enum MessageType {
     UNKNOWN_ERROR = 'ErrorMessage.UnknownError',
@@ -35,6 +37,9 @@ export class ErrorMessage implements ErrorMessageDefinition {
                 message: 'Error',
                 description: errorMessage.message
             });
+            if (errorMessage.message === i18next.t(MessageType.UNAUTHORIZED_OPERATION)) {
+                store.dispatch({type: UserActionDefinition.LOGOUT_SUCCESS});
+            }
         });
     }
 

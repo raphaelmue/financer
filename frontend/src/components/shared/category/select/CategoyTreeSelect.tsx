@@ -10,13 +10,15 @@ import {UserReducerProps}                 from '../../../../store/reducers/user.
 import {LegacyDataNode}                   from 'rc-tree-select/lib/interface';
 import CategoryUtil                       from '../util';
 import * as userApi                       from '../../../../store/api/user.api';
+import {Category}                         from '../../../../.openapi';
 
 interface CategoryTreeSelectComponentProps extends WithTranslation<'default'>, UserReducerProps, CategoryReducerProps {
     onChange: (categoryId: number | undefined) => void,
     categoryId?: number,
     filterFixed?: boolean,
     filterVariable?: boolean,
-    rootSelectable?: boolean
+    rootSelectable?: boolean,
+    filter?: (category: Category) => boolean
 }
 
 interface CategoryTreeSelectComponentState {

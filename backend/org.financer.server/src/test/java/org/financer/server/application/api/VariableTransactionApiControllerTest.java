@@ -46,12 +46,16 @@ public class VariableTransactionApiControllerTest extends ApiTest {
                 .setValueDate(new ValueDate(LocalDate.now()))
                 .setDescription("Test Description")
                 .setVendor("Test Vendor")
-                .setProducts(Set.of(new CreateProductDTO().setName("Test Product").setAmount(new Amount(20)).setQuantity(new Quantity(2))));
+                .setProducts(Set.of(
+                        new CreateProductDTO().setName("Test Product").setAmount(new Amount(20)).setQuantity(new Quantity(2)),
+                        new CreateProductDTO().setName("Test Product 2").setAmount(new Amount(40)).setQuantity(new Quantity(2))));
         MvcResult result = mockMvc.perform(buildRequest(PathBuilder.Put().variableTransactions().build(), dto))
                 .andExpect(status().isOk()).andReturn();
 
         VariableTransactionDTO transaction = objectMapper.readValue(result.getResponse().getContentAsString(), VariableTransactionDTO.class);
-        assertThat(transaction.getId()).isEqualTo(1);
+        assertThat(transaction.getId()).isEqualTo(1L);
+        assertThat(transaction.getTotalAmount().getAmount()).isEqualTo(120);
+        assertThat(transaction.getProducts()).hasSize(2);
         assertThat(transaction.getValueDate()).isEqualTo(dto.getValueDate());
         assertThat(transaction.getDescription()).isEqualTo(dto.getDescription());
         assertThat(transaction.getVendor()).isEqualTo(dto.getVendor());

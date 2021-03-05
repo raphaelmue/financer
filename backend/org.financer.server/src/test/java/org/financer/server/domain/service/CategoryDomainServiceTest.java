@@ -19,6 +19,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -114,6 +115,14 @@ public class CategoryDomainServiceTest extends ServiceTest {
         parent.setCategoryClass(new CategoryClass(CategoryClass.Values.FIXED_EXPENSES));
         assertThatExceptionOfType(IllegalCategoryParentStateException.class).isThrownBy(() ->
                 categoryDomainService.updateCategory(category.getId(), parent.getId(), null, null));
+    }
+
+    @Test
+    public void testUpdateCategoryRecursionOccurred() {
+        category.setParent(parent);
+        parent.setChildren(Set.of(category));
+        assertThatExceptionOfType(IllegalCategoryParentStateException.class).isThrownBy(() ->
+                categoryDomainService.updateCategory(parent.getId(), category.getId(), null, null));
     }
 
     @Test

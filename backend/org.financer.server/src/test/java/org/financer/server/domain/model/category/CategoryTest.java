@@ -22,33 +22,35 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 public class CategoryTest extends SpringTest {
 
     private Category category;
-    private Product product;
-    private VariableTransaction variableTransaction;
+    private Category categoryChild1;
+    private Category categoryChild2;
 
     @BeforeEach
     public void setup() {
-        variableTransaction = variableTransaction();
-        product = product().setVariableTransaction(variableTransaction);
+        VariableTransaction variableTransaction = variableTransaction();
+        Product product = product().setVariableTransaction(variableTransaction);
         variableTransaction.setProducts(Set.of(product));
 
+        categoryChild1 = new Category()
+                .setId(2L)
+                .setUser(user())
+                .setName("Child Category 1")
+                .setCategoryClass(new CategoryClass(CategoryClass.Values.VARIABLE_EXPENSES))
+                .setTransactions(Set.of(variableTransaction));
+        categoryChild2 = new Category()
+                .setId(3L)
+                .setUser(user())
+                .setName("Child Category 2")
+                .setCategoryClass(new CategoryClass(CategoryClass.Values.VARIABLE_EXPENSES));
         category = new Category()
                 .setId(1L)
                 .setUser(user())
                 .setName("Parent Category")
                 .setCategoryClass(new CategoryClass(CategoryClass.Values.VARIABLE_EXPENSES))
-                .setChildren(Set.of(
-                        new Category()
-                                .setId(2L)
-                                .setUser(user())
-                                .setName("Child Category 1")
-                                .setCategoryClass(new CategoryClass(CategoryClass.Values.VARIABLE_EXPENSES))
-                                .setTransactions(Set.of(variableTransaction)),
-                        new Category()
-                                .setId(3L)
-                                .setUser(user())
-                                .setName("Child Category 2")
-                                .setCategoryClass(new CategoryClass(CategoryClass.Values.VARIABLE_EXPENSES))
-                ));
+                .setChildren(Set.of(categoryChild1, categoryChild2));
+
+        categoryChild1.setParent(category);
+        categoryChild2.setParent(category);
     }
 
     @Test
@@ -103,6 +105,18 @@ public class CategoryTest extends SpringTest {
     public void testAdjustAmountSign() {
         category.adjustAmountSign();
         assertThat(category.getTotalAmount()).isEqualTo(new Amount(-100));
+    }
+
+    @Test
+    public void testThrowIfRecursionOccurred() {
+        assertThatExceptionOfType(IllegalCategoryParentStateException.class).isThrownBy(() -> category.throwIfRecursionOccurred(category));
+        assertThatExceptionOfType(IllegalCategoryParentStateException.class).isThrownBy(() -> category.setParent(category));
+
+        assertThatExceptionOfType(IllegalCategoryParentStateException.class).isThrownBy(() -> category.throwIfRecursionOccurred(categoryChild1));
+        assertThatExceptionOfType(IllegalCategoryParentStateException.class).isThrownBy(() -> category.setParent(categoryChild1));
+
+        assertThatExceptionOfType(IllegalCategoryParentStateException.class).isThrownBy(() -> category.throwIfRecursionOccurred(categoryChild2));
+        assertThatExceptionOfType(IllegalCategoryParentStateException.class).isThrownBy(() -> category.setParent(categoryChild2));
     }
 
 }

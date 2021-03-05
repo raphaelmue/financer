@@ -10,8 +10,10 @@ import org.financer.shared.domain.model.value.objects.ValueDate;
 
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.util.HashSet;
+import java.util.Comparator;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 @Data
 @Accessors(chain = true)
@@ -36,7 +38,7 @@ public final class FixedTransaction extends Transaction {
     private String product;
 
     @OneToMany(mappedBy = "fixedTransaction", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<FixedTransactionAmount> transactionAmounts = new HashSet<>();
+    private Set<FixedTransactionAmount> transactionAmounts = new TreeSet<>(Comparator.comparing(FixedTransactionAmount::getValueDate).reversed());
 
     /**
      * Indicates whether this transaction is active, i.e. whether the time range of this transaction includes the

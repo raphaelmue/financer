@@ -19,15 +19,19 @@ export default class CategoryUtil {
             switch (value.categoryClass) {
                 case CategoryClassEnum.FIXEDREVENUE:
                     rootCategories[0].children!.push(value);
+                    value.parentId = rootCategories[0].id
                     break;
                 case CategoryClassEnum.VARIABLEREVENUE:
                     rootCategories[1].children!.push(value);
+                    value.parentId = rootCategories[1].id
                     break;
                 case CategoryClassEnum.FIXEDEXPENSES:
                     rootCategories[2].children!.push(value);
+                    value.parentId = rootCategories[2].id
                     break;
                 case CategoryClassEnum.VARIABLEEXPENSES:
                     rootCategories[3].children!.push(value);
+                    value.parentId = rootCategories[3].id
                     break;
             }
         });
@@ -36,6 +40,18 @@ export default class CategoryUtil {
     }
 
     static getCategoryClassFromCategory(categories: Category[], categoryId: number): CategoryClassEnum | undefined {
+        if (categoryId < 0) {
+            switch (categoryId) {
+                case -1:
+                    return CategoryClassEnum.FIXEDREVENUE;
+                case -2:
+                    return CategoryClassEnum.VARIABLEREVENUE;
+                case -3:
+                    return CategoryClassEnum.FIXEDEXPENSES;
+                case -4:
+                    return CategoryClassEnum.VARIABLEEXPENSES;
+            }
+        }
         return CategoryUtil.getCategoryById(categories, categoryId)?.categoryClass;
     }
 

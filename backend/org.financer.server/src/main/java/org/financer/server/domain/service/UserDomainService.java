@@ -3,7 +3,6 @@ package org.financer.server.domain.service;
 import org.apache.commons.mail.EmailException;
 import org.financer.server.application.api.error.NotFoundException;
 import org.financer.server.application.api.error.UnauthorizedOperationException;
-import org.financer.server.application.api.error.UnauthorizedTokenException;
 import org.financer.server.application.api.error.UniqueEmailViolationException;
 import org.financer.server.application.service.AdminConfigurationService;
 import org.financer.server.application.service.AuthenticationService;
@@ -40,7 +39,6 @@ public class UserDomainService {
     private final VerificationTokenRepository verificationTokenRepository;
     private final CategoryRepository categoryRepository;
     private final VariableTransactionRepository variableTransactionRepository;
-    private final FixedTransactionRepository fixedTransactionRepository;
     private final VerificationService verificationService;
     private final AdminConfigurationService adminConfigurationService;
 
@@ -48,8 +46,7 @@ public class UserDomainService {
                              RoleRepository roleRepository, TokenRepository tokenRepository,
                              VerificationTokenRepository verificationTokenRepository, CategoryRepository categoryRepository,
                              VariableTransactionRepository variableTransactionRepository,
-                             FixedTransactionRepository fixedTransactionRepository, VerificationService verificationService,
-                             AdminConfigurationService adminConfigurationService) {
+                             VerificationService verificationService, AdminConfigurationService adminConfigurationService) {
         this.authenticationService = authenticationService;
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
@@ -57,7 +54,6 @@ public class UserDomainService {
         this.verificationTokenRepository = verificationTokenRepository;
         this.categoryRepository = categoryRepository;
         this.variableTransactionRepository = variableTransactionRepository;
-        this.fixedTransactionRepository = fixedTransactionRepository;
         this.verificationService = verificationService;
         this.adminConfigurationService = adminConfigurationService;
     }
@@ -162,14 +158,9 @@ public class UserDomainService {
         if (tokenOptional.isPresent()) {
             tokenOptional.get().isPropertyOfUser(user);
 
-            // check if token is not expired
-            if (tokenOptional.get().getExpireDate().isValid()) {
-                // update expire date
-                tokenOptional.get().setExpireDate(tokenOptional.get().getExpireDate().update());
-                token = tokenRepository.save(tokenOptional.get());
-            } else {
-                throw new UnauthorizedTokenException(tokenOptional.get().getToken());
-            }
+            // update expire date
+            tokenOptional.get().setExpireDate(tokenOptional.get().getExpireDate().update());
+            token = tokenRepository.save(tokenOptional.get());
         } else {
             token = tokenRepository.save(
                     new Token()
