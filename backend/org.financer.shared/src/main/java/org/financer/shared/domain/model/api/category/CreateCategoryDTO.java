@@ -6,7 +6,7 @@ import lombok.experimental.Accessors;
 import org.financer.shared.domain.model.api.DataTransferObject;
 import org.financer.shared.domain.model.value.objects.CategoryClass;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 /**
  * DTO for creating a new category.

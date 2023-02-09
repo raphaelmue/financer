@@ -10,31 +10,33 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
-public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
+public class WebSecurityConfiguration {
 
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.cors().and().csrf().disable().authorizeRequests()
-                .antMatchers(PathBuilder.Get().apiDocumentation().any().build().getPath()).permitAll()                                  // OpenAPI Documentation
-                .antMatchers(PathBuilder.Get().apiDocumentationUI().any().build().getPath()).permitAll()                                // SpringDoc UI
-                .antMatchers(HttpMethod.GET, PathBuilder.Get().users().build().getPath()).permitAll()                                   // login
-                .antMatchers(HttpMethod.PUT, PathBuilder.Get().users().build().getPath()).permitAll()                                   // register
-                .antMatchers(HttpMethod.GET, PathBuilder.Get().users().userId().verificationToken().build().getPath()).permitAll()      // verify users email
-                .antMatchers(PathBuilder.Get().admin().any().build().getPath()).hasAuthority(Role.ROLE_ADMIN)
-                .antMatchers(HttpMethod.GET, PathBuilder.Get().admin().configuration().build().getPath()).hasAuthority(Role.ROLE_USER)
+                .requestMatchers(PathBuilder.Get().apiDocumentation().any().build().getPath()).permitAll()                                  // OpenAPI Documentation
+                .requestMatchers(PathBuilder.Get().apiDocumentationUI().any().build().getPath()).permitAll()                                // SpringDoc UI
+                .requestMatchers(HttpMethod.GET, PathBuilder.Get().users().build().getPath()).permitAll()                                   // login
+                .requestMatchers(HttpMethod.PUT, PathBuilder.Get().users().build().getPath()).permitAll()                                   // register
+                .requestMatchers(HttpMethod.GET, PathBuilder.Get().users().userId().verificationToken().build().getPath()).permitAll()      // verify users email
+                .requestMatchers(PathBuilder.Get().admin().any().build().getPath()).hasAuthority(Role.ROLE_ADMIN)
+                .requestMatchers(HttpMethod.GET, PathBuilder.Get().admin().configuration().build().getPath()).hasAuthority(Role.ROLE_USER)
                 .anyRequest().hasAuthority(Role.ROLE_USER).and()
                 .addFilterBefore(authenticationTokenFilter(), UsernamePasswordAuthenticationFilter.class);
 
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+
+        return http.build();
     }
 
     @Bean
@@ -43,13 +45,12 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    @Override
     public UserDetailsService userDetailsService() {
         return new UserDetailsServiceImpl();
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder() {
+    public static PasswordEncoder passwordEncoder() {
         return new PasswordEncoder() {
             @Override
             public String encode(CharSequence rawPassword) {

@@ -8,8 +8,8 @@ import org.financer.util.security.Hash;
 import org.financer.util.security.RandomString;
 import org.hibernate.annotations.Immutable;
 
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
 import java.io.Serializable;
 
 @Data

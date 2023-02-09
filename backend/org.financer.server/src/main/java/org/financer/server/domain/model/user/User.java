@@ -10,7 +10,7 @@ import org.financer.shared.domain.model.AmountProvider;
 import org.financer.shared.domain.model.Settings;
 import org.financer.shared.domain.model.value.objects.*;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.util.EnumMap;
 import java.util.HashSet;

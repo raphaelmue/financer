@@ -6,9 +6,9 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 import org.financer.shared.domain.model.api.DataTransferObject;
 
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.PastOrPresent;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PastOrPresent;
 import java.time.LocalDate;
 
 @Data

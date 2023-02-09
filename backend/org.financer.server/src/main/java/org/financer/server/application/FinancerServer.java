@@ -2,6 +2,7 @@ package org.financer.server.application;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.hateoas.config.EnableHypermediaSupport;
@@ -17,7 +18,6 @@ import org.springframework.hateoas.config.EnableHypermediaSupport;
                 "org.financer.server.domain.repository"
         })
 @EnableHypermediaSupport(type = EnableHypermediaSupport.HypermediaType.HAL)
-@EnableJpaRepositories(basePackages = "org.financer.server.domain.repository")
 public class FinancerServer {
 
     public static void main(String[] args) {

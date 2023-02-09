@@ -5,7 +5,7 @@ import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 import org.financer.server.domain.model.DataEntity;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Data
 @Accessors(chain = true)

@@ -7,7 +7,7 @@ import lombok.experimental.Accessors;
 import org.financer.server.domain.model.DataEntity;
 import org.financer.shared.domain.model.value.objects.SettingPair;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Data
 @Accessors(chain = true)

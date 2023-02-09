@@ -17,7 +17,7 @@ public class UserTest {
     private VerificationToken verificationToken;
 
     @BeforeEach
-    private void setUp() {
+    public void setUp() {
         verificationToken = new VerificationToken()
                 .setId(1L)
                 .setToken(new TokenString())
