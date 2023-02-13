@@ -26,11 +26,6 @@ jobs:
             -   name: Build Backend with Maven
                 run: mvn clean install -DskipTests
 
-    test:
-        runs-on: ubuntu-latest
-        needs: build
-
-        steps:
             -   name: Execute all tests
                 run: mvn test
 
