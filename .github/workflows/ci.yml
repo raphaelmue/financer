@@ -6,17 +6,20 @@ on:
     pull_request:
         branches: [ "master" ]
 
-defaults:
-    run:
-        working-directory: ./backend
+
 
 jobs:
-    build:
+    backend:
+        name: Build and Test Backend
         runs-on: ubuntu-latest
+
+        defaults:
+            run:
+                working-directory: ./backend
 
         steps:
             -   uses: actions/checkout@v3
-            -   name: Set up JDK 17
+            -   name: Setup JDK 17
                 uses: actions/setup-java@v3
                 with:
                     java-version: '17'
@@ -24,7 +27,13 @@ jobs:
                     cache: maven
 
             -   name: Build Backend with Maven
-                run: mvn clean install -DskipTests
+                run: mvn clean install -DskipTests -P generate-openapi-specification
+
+            -   name: Archive OpenAPI Specification
+                uses: actions/upload-artifact@v3
+                with:
+                    name: openapi-specification
+                    path: org.financer.server/target/financer.openapi.json
 
             -   name: Execute all tests
                 run: mvn test
@@ -32,3 +41,34 @@ jobs:
             -   name: Publish Test Report
                 if: success() || failure()
                 uses: scacap/action-surefire-report@v1
+
+    frontend:
+        name: Build and Test Frontend
+        needs: backend
+        runs-on: ubuntu-latest
+
+        defaults:
+            run:
+                working-directory: ./frontend
+
+        steps:
+            -   uses: actions/checkout@v3
+
+            -   name: Setup NodeJS and Yarn
+                uses: mskelton/setup-yarn@v1
+                with:
+                    node-version: '16.x'
+
+            -   uses: actions/download-artifact@v3
+                with:
+                    name: openapi-specification
+                    path: ../backend/org.financer.server/target/financer.openapi.json
+
+            -   name: Install Dependencies
+                run: yarn install --ignore-engines
+
+            -   name: Generate API from Specification
+                run: yarn run generate:api
+
+            -   name: Build
+                run: yarn build
