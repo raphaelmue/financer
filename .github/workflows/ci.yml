@@ -61,11 +61,6 @@ jobs:
                     cache: yarn
                     cache-dependency-path: frontend/yarn.lock
 
-            -   name: Setup NodeJS and Yarn
-                uses: mskelton/setup-yarn@v1
-                with:
-                    node-version: '16.x'
-
             -   uses: actions/download-artifact@v3
                 with:
                     name: openapi-specification
