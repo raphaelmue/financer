@@ -1,5 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="FinancerServer (dev)" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
+    <option name="ACTIVE_PROFILES" value="dev" />
     <module name="org.financer.server" />
     <option name="SPRING_BOOT_MAIN_CLASS" value="org.financer.server.application.FinancerServer" />
     <method v="2">

@@ -7,7 +7,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -18,12 +17,11 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfiguration {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.cors().and().csrf().disable().authorizeRequests()
+        http.cors().and().csrf().disable().authorizeHttpRequests((request) -> request
                 .requestMatchers(PathBuilder.Get().apiDocumentation().any().build().getPath()).permitAll()                                  // OpenAPI Documentation
                 .requestMatchers(PathBuilder.Get().apiDocumentationUI().any().build().getPath()).permitAll()                                // SpringDoc UI
                 .requestMatchers(HttpMethod.GET, PathBuilder.Get().users().build().getPath()).permitAll()                                   // login
@@ -31,8 +29,10 @@ public class WebSecurityConfiguration {
                 .requestMatchers(HttpMethod.GET, PathBuilder.Get().users().userId().verificationToken().build().getPath()).permitAll()      // verify users email
                 .requestMatchers(PathBuilder.Get().admin().any().build().getPath()).hasAuthority(Role.ROLE_ADMIN)
                 .requestMatchers(HttpMethod.GET, PathBuilder.Get().admin().configuration().build().getPath()).hasAuthority(Role.ROLE_USER)
-                .anyRequest().hasAuthority(Role.ROLE_USER).and()
-                .addFilterBefore(authenticationTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+                .anyRequest().hasAuthority(Role.ROLE_USER)
+                .and()
+                .addFilterBefore(authenticationTokenFilter(), UsernamePasswordAuthenticationFilter.class)
+        );
 
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 

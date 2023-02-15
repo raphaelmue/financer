@@ -48,7 +48,7 @@ module org.financer.server {
     requires org.springdoc.openapi.common;
     requires org.springdoc.openapi.ui;
     requires org.springdoc.openapi.webmvc.core;
-    requires org.springdoc.openapi.hateoas;
+//    requires org.springdoc.openapi.hateoas;
     requires io.swagger.v3.core;
     requires io.swagger.v3.oas.models;
     requires io.swagger.v3.oas.annotations;
