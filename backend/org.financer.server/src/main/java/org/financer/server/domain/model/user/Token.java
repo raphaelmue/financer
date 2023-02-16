@@ -11,7 +11,7 @@ import org.financer.shared.domain.model.value.objects.IPAddress;
 import org.financer.shared.domain.model.value.objects.OperatingSystem;
 import org.financer.shared.domain.model.value.objects.TokenString;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Data
 @Accessors(chain = true)

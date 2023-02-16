@@ -5,8 +5,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.Immutable;
 
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
 
 @Data
 @Embeddable

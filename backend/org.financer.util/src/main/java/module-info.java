@@ -4,7 +4,7 @@ module org.financer.util {
     exports org.financer.util.mapping;
     exports org.financer.util.security;
 
+    requires jakarta.validation;
     requires commons.beanutils;
-    requires java.validation;
     requires modelmapper;
 }

@@ -9,7 +9,7 @@ import org.financer.server.domain.model.category.Category;
 import org.financer.server.domain.model.user.UserProperty;
 import org.financer.shared.domain.model.AmountProvider;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 

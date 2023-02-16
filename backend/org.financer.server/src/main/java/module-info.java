@@ -4,16 +4,20 @@ module org.financer.server {
 
     // hibernate
     requires org.hibernate.orm.core;
+    requires org.hibernate.validator;
+
 
     // java
-    requires java.persistence;
     requires java.xml;
     requires java.logging;
     requires java.naming;
     requires java.sql;
-    requires java.activation;
-    requires java.validation;
+    requires jakarta.persistence;
+    requires jakarta.activation;
+    requires jakarta.validation;
     requires commons.email;
+
+    requires lombok;
 
     //spring
     requires spring.boot.autoconfigure;
@@ -32,28 +36,24 @@ module org.financer.server {
     requires spring.security.config;
     requires spring.core;
     requires spring.hateoas;
-    requires slf4j.api;
-    requires net.bytebuddy;
-    requires com.fasterxml.classmate;
+    requires spring.security.crypto;
+
+    requires org.slf4j;
     requires com.fasterxml.jackson.databind;
     requires org.apache.tomcat.embed.core;
     requires modelmapper;
     requires jdk.unsupported;
 
     // springdoc
-    requires springdoc.openapi.common;
-    requires springdoc.openapi.ui;
-    requires springdoc.openapi.webmvc.core;
-    requires springdoc.openapi.hateoas;
+    requires org.springdoc.openapi.common;
+    requires org.springdoc.openapi.ui;
+    requires org.springdoc.openapi.webmvc.core;
+//    requires org.springdoc.openapi.hateoas;
     requires io.swagger.v3.core;
     requires io.swagger.v3.oas.models;
     requires io.swagger.v3.oas.annotations;
     requires io.github.classgraph;
     requires org.flywaydb.core;
-
-    requires static lombok;
-
-    uses javax.persistence.spi.PersistenceProvider;
 
     opens db.migration.h2;
     opens db.migration.mysql;

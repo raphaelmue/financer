@@ -24,7 +24,8 @@
     },
     "rules": {
         "@typescript-eslint/no-empty-interface": 0,
-        "@typescript-eslint/explicit-function-return-type": "off"
+        "@typescript-eslint/explicit-function-return-type": "off",
+        "react/prop-types": "off"
     },
     "ignorePatterns": [
         ".test/",

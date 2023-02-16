@@ -9,7 +9,7 @@ import org.financer.shared.domain.model.Expireable;
 import org.financer.shared.domain.model.value.objects.ExpireDate;
 import org.financer.shared.domain.model.value.objects.TokenString;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.time.LocalDate;
 
 @Data

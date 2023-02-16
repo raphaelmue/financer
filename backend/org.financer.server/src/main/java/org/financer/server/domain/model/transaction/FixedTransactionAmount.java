@@ -11,7 +11,7 @@ import org.financer.shared.domain.model.value.objects.Amount;
 import org.financer.shared.domain.model.value.objects.TimeRange;
 import org.financer.shared.domain.model.value.objects.ValueDate;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Data
 @Accessors(chain = true)

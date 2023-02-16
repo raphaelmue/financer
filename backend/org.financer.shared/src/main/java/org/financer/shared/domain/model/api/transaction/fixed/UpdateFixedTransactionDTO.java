@@ -7,7 +7,7 @@ import org.financer.shared.domain.model.api.DataTransferObject;
 import org.financer.shared.domain.model.value.objects.Amount;
 import org.financer.shared.domain.model.value.objects.TimeRange;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 import java.util.HashSet;
 import java.util.Set;
 

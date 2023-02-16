@@ -1,0 +1,76 @@
+name: CI Pipeline
+
+on:
+    push:
+        branches: [ "master" ]
+    pull_request:
+        branches: [ "master" ]
+
+
+
+jobs:
+    backend:
+        name: Build and Test Backend
+        runs-on: ubuntu-latest
+
+        defaults:
+            run:
+                working-directory: ./backend
+
+        steps:
+            -   uses: actions/checkout@v3
+            -   name: Setup JDK 17
+                uses: actions/setup-java@v3
+                with:
+                    java-version: '17'
+                    distribution: 'oracle'
+                    cache: maven
+
+            -   name: Build Backend with Maven
+                run: mvn clean install -DskipTests -P generate-openapi-specification
+
+            -   name: Archive OpenAPI Specification
+                uses: actions/upload-artifact@v3
+                with:
+                    name: openapi-specification
+                    path: backend/org.financer.server/target/financer.openapi.json
+
+            -   name: Execute all tests
+                run: mvn test
+
+            -   name: Publish Test Report
+                if: success() || failure()
+                uses: scacap/action-surefire-report@v1
+
+    frontend:
+        name: Build and Test Frontend
+        needs: backend
+        runs-on: ubuntu-latest
+
+        defaults:
+            run:
+                working-directory: ./frontend
+
+        steps:
+            -   uses: actions/checkout@v3
+
+            -   name: Set Node.js 16.x
+                uses: actions/setup-node@v3
+                with:
+                    node-version: 16.x
+                    cache: yarn
+                    cache-dependency-path: frontend/yarn.lock
+
+            -   uses: actions/download-artifact@v3
+                with:
+                    name: openapi-specification
+                    path: backend/org.financer.server/target/
+
+            -   name: Install Dependencies
+                run: yarn install --ignore-engines
+
+            -   name: Generate API from Specification
+                run: yarn run generate:api
+
+            -   name: Build
+                run: yarn build

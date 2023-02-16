@@ -6,7 +6,7 @@ import lombok.experimental.Accessors;
 import org.financer.shared.domain.model.api.DataTransferObject;
 import org.financer.shared.domain.model.value.objects.SettingPair;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 import java.util.Map;
 
 @Data

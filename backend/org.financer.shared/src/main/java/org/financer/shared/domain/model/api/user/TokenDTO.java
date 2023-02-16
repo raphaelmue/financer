@@ -9,8 +9,8 @@ import org.financer.shared.domain.model.value.objects.IPAddress;
 import org.financer.shared.domain.model.value.objects.OperatingSystem;
 import org.financer.shared.domain.model.value.objects.TokenString;
 
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 
 @Data
 @Accessors(chain = true)

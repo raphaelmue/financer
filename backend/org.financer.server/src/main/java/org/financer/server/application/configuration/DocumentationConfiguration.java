@@ -4,10 +4,9 @@ import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
+import io.swagger.v3.oas.models.parameters.HeaderParameter;
 import io.swagger.v3.oas.models.servers.Server;
-import org.springdoc.core.GroupedOpenApi;
-import org.springdoc.core.customizers.OpenApiCustomiser;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springdoc.core.models.GroupedOpenApi;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,15 +21,11 @@ public class DocumentationConfiguration {
     @Value("${server.servlet.context-path}")
     private String contextPath;
 
-    @Autowired
-    private OpenApiCustomiser linksSchemaCustomiser;
-
     @Bean
     public GroupedOpenApi publicApi() {
         return GroupedOpenApi.builder()
                 .group("public-api")
                 .packagesToScan("org.financer.server.application.api")
-                .addOpenApiCustomiser(linksSchemaCustomiser)
                 .build();
     }
 

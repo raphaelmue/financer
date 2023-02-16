@@ -16,7 +16,7 @@ import org.financer.shared.domain.model.value.objects.TimeRange;
 import org.financer.shared.domain.model.value.objects.ValueDate;
 import org.financer.util.collections.Tree;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 

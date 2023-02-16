@@ -9,16 +9,16 @@ import org.financer.shared.domain.model.value.objects.Amount;
 import org.financer.shared.domain.model.value.objects.TimeRange;
 import org.financer.util.validation.NotNullConditional;
 
-import javax.validation.Valid;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import java.util.HashSet;
 import java.util.Set;
 
 @Data
 @Accessors(chain = true)
 @NotNullConditional(
-        fieldName = "isVariable",
+        fieldName = "hasVariableAmounts",
         fieldValue = "false",
         dependFieldName = "amount")
 @Schema(name = "CreateFixedTransaction", description = "Schema for creating a new fixed transaction")

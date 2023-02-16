@@ -1,6 +1,9 @@
 package org.financer.shared.domain.model.api.transaction.fixed;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import org.financer.shared.domain.model.api.category.CategoryDTO;
@@ -9,10 +12,6 @@ import org.financer.shared.domain.model.value.objects.Amount;
 import org.financer.shared.domain.model.value.objects.TimeRange;
 import org.springframework.hateoas.RepresentationModel;
 
-import javax.validation.Valid;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-import java.util.Collections;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
